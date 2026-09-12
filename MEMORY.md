@@ -732,6 +732,24 @@ must confirm · source entry.
   Expo; expect version nits from `expo install --fix`, not logic errors.
 - **Next:** step 3, LessonView.
 
+### 2026-09-12 — STEP 2 VERIFIED ON THE FOUNDER'S iPHONE + a production regression fixed
+- **Meyy runs on a real phone.** Expo Go (tunnel mode — LAN was blocked; needed `expo login` +
+  `@expo/ngrok` devDep), SDK bumped 54→**57** (the store Expo Go had moved on; iOS only carries
+  the latest). Signed in `9000000003` / `123456` → the proof screen shows the REAL record from
+  Render+Supabase: "Social Sciences · Class IX", trial 1 of 3 — not the stub. Fonts, dark theme,
+  OTP boxes, sign-out all correct. Full chain proven: phone → Supabase OTP → Bearer → Render API
+  (supabase mode) → Supabase Postgres.
+- **Regression found & fixed — render.yaml was reverting the cutover.** The phone first showed
+  "local" (header-mode fallback). Root cause: `ARUVI_AUTH_PROVIDER` and `ARUVI_STATE_BACKEND` had
+  the 2026-09-10 cutover values set ONLY in the Render DASHBOARD, while render.yaml still said
+  `header`/`file`. Render is Blueprint-managed, so every deploy re-syncs the file over the
+  dashboard for keys with an explicit `value:` — a redeploy reverted the whole product (web too)
+  to disk + header auth. Fix: pinned `supabase`/`postgres` IN render.yaml (commit 41be8c6d), with
+  comments so it isn't undone. Secrets (ARUVI_SUPABASE_URL, ARUVI_DATABASE_URL) are `sync:false`
+  so they survived; confirmed present, deploy Live, dashboard now reads supabase/postgres.
+  ⚠️ RULE: env that must persist goes in render.yaml with a `value:`, never a dashboard-only edit.
+- **Next:** step 3, LessonView against live `/plans/…/view`.
+
 ## 2026-09-11 (newest) — THE WHOLE PRODUCT ON THE PRODUCTION STACK, DRIVEN LIVE
 
 `NEXT_PUBLIC_API_URL` (web/.env.local; `format.js` falls back to `<host>:8000` when unset)

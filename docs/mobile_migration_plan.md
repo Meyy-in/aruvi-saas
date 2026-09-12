@@ -253,6 +253,14 @@ the phone owed.** Expo managed + Expo Router, presentation only:
   `cd mobile && npx expo install --fix && npx expo-doctor && npx expo start` → Expo Go on the
   founder's phone: sign in with a test number → the proof screen shows `9000000003`'s profile
   and 1/3 trial chapters from Render → Dark → Sign out → returning sign-in.
+★ **STEP 2 VERIFIED on the founder's iPhone 2026-09-12** (Expo Go, tunnel; SDK 54→57): signed in
+`9000000003`/`123456` → real record from Render+Supabase (Social Sciences · Class IX, trial 1/3).
+En route, fixed a production regression: `ARUVI_AUTH_PROVIDER`/`ARUVI_STATE_BACKEND` were flipped
+to supabase/postgres only in the Render dashboard, and a Blueprint sync reverts dashboard values
+back to render.yaml's `value:` on every deploy — so a redeploy had knocked the WHOLE product back
+to header auth + the disk. Now pinned in render.yaml (commit 41be8c6d). Rule: persistent env goes
+in the file, not a dashboard-only edit.
+
 Next: step 3, LessonView against live `/plans/…/view`.
 
 ## 3. Phasing
