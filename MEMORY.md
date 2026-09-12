@@ -762,6 +762,14 @@ must confirm · source entry.
   (same lu_ keys + pushSectionState as the web's inline writes); shared tests 9/9.
 - Verified: babel-parse ×3, all @aruvi/shared imports resolve. OWED: reload on the phone and walk
   9A → Continue → Social Sciences Ch1 → tabs → bookmark → mark complete → undo.
+- **Founder rule (2026-09-12, now CLAUDE.md §4): THE PHONE MATCHES THE WEB BY DEFAULT.** The web
+  was designed mobile-first with the phone in mind; the Expo app is a port, not a re-design.
+  Divergence only for a named technical limitation or a phone capability that clearly improves
+  UX — anything else is a product change needing the founder's say-so. My first LessonView cut
+  had drifted (top pip strip, LO in Overview, flat Assess, no ChapterOrg) — re-ported 1:1:
+  LessonView shell + pvNav + completion strings, PhaseBookmark (drag), ChapterOrg (incl. the SS
+  competency map + chapter-notes modal), the whole Assess family. Pure logic (itemTabSet etc.)
+  verified identical to the web on the real items. Phone re-test owed.
 - **Next:** step 4, My Classes "+" binding + full My Lessons library.
 
 ## 2026-09-11 (newest) — THE WHOLE PRODUCT ON THE PRODUCTION STACK, DRIVEN LIVE

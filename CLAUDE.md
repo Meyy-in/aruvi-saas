@@ -143,6 +143,19 @@ Pixel 7 412, custom 360×800 Android for the Indian budget-phone case); final iP
 iOS Safari for safe-area/`100vh`/sticky quirks Blink won't catch. Live render is local
 (`next dev` can't run in the Cowork sandbox — see §11).
 
+★ **THE PHONE APP MATCHES THE WEB BY DEFAULT (founder, 2026-09-12).** The web was designed
+mobile-first *with the eventual phone interface in mind*, so the Expo app (Track D) is a port of
+the web's screens — the same information architecture, the same tabs, labels, order, copy, and
+interaction model — not a re-design. Divergence is allowed in exactly two cases, and each one is
+named in the component's header comment: (1) a **technical limitation** of the phone (no cursor →
+a drag becomes drag-or-tap; no measured `--nav-h` → native layout; browser-only APIs replaced per
+docs/mobile_migration_assessment.md §3), or (2) a **capability the phone adds** that clearly
+improves the teacher's experience (a share sheet, SMS-code autofill, haptics). Anything else —
+adding a field to a tab, dropping a sub-tab, moving a navigator, relabelling — is a product change
+and needs the founder's say-so first. When porting, read the web component and reproduce its
+structure; simplify only with a written reason. Redoing the design on the phone would mean doing
+the whole design exercise twice.
+
 **Two product phases (the big structural change):**
 - **Phase 1 — Guided First Experience:** there is **NO app shell** (no sidebar, no tabs, no nav)
   until the teacher has (a) generated one lesson, (b) attached it to ≥1 section, and (c) completed

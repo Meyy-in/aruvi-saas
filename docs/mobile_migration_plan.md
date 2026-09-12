@@ -288,6 +288,44 @@ in the file, not a dashboard-only edit.
   opens Social Sciences Ch1 at unit 2 → tab through Overview/Material/Lesson/Assess → move the
   bookmark → Mark unit complete (pointer → unit 3, server updated) → Undo → back.
 
+★ **PARITY PASS (founder rule, 2026-09-12): the phone matches the web by default** — now in
+CLAUDE.md §4. The first cut had diverged (a top pip strip instead of pvNav, learning outcomes
+added to Overview, a flat Assess, no ChapterOrg). Re-ported 1:1 from the web's JSX:
+- `LessonView.jsx` — the web's anatomy: ChapterOrg landing (preview opens on it; tracking via
+  "← Orgn."), pinned header (kicker "social sciences·IX·Ch. 01" · "← Orgn." · "{n}. title"),
+  tab bar, panel, `pvNav` at the END of the body ("‹ Chapter org." / "← Previous unit" ·
+  "Unit n / N" · "Next unit →"; dropped units paged after, "Dropped sections →", "✦" title +
+  "Dropped section · for self-study · not scheduled"). Overview = the web's four ledger rows
+  exactly (Chapter · Section/Spine/Stage… · Time · Pedagogy; SS shows `section_anchor`).
+  Material = "Prepared table · title" / "Prepared text". Lesson = "Teacher notes" ribbon (open,
+  tap collapses to a teaser; the "Refer to Prepared Table…" lead bolded), the phase spine with
+  `phaseMin` (Number.isFinite, so string minutes fall back to the label as on the web), homework.
+  completionUI strings verbatim ("Mark this unit complete" / "Mark chapter complete" / "Unit
+  complete ↺ Undo" / "Chapter complete ↺ Reopen"). Paging remounts the tabs (key={previewAt}).
+- `lesson/PhaseBookmark.jsx` — the clay arrow, PanResponder drag, snaps to the nearest
+  measured phase centre; tap on the minutes = the web's arrow keys (named touch translation).
+- `lesson/ChapterOrg.jsx` — topbar/title/"{n} Learning Units 1 × 50 min"/tick rail/axis legend
+  ("The map" / "Units" / Stages·Sections·Competencies·Spines with the web's blurbs) + the ochre
+  "Notes" gutter tab → ChapterNotesModal (all the web's strings incl. the child-privacy warning,
+  "{wc} / 500 words", Speak, Save; lapsed → read-only "Renew to write notes…"); body = the SS
+  competency MAP (ribbons drawn with react-native-svg between onLayout-measured rows, focus
+  dims/opens exactly as the web, "Taught in full — builds no competency edge, by design", "Tap a
+  unit or a competency to follow its connections"), the maths-prep flat list, or the accordion
+  (science section titles stripped, SS competency labels truncated to 12 words while closed).
+- `lesson/AssessPanel.jsx` — the full family: pager "← Previous · Question n / N · Next →",
+  sub-tabs Overview · Question · Answer(if hasAnswer) · Inclusivity(if any), "Q{n}." mark,
+  AOverviewPanel rows (Competency · Learning outcome · Section · Question type (full words) ·
+  Cognitive demand), AQuestionPanel (passage / TF / interleaved / parts / plain stems, audio_ref,
+  ATyped svg|number_line|table|prose, plain options, WHAT TO PRODUCE, SCAFFOLD, READING THIS
+  TASK, TEXTBOOK EXERCISE with the quoted description), AAnswerPanel by template (CORRECT ANSWER
+  ✓ rows, ANSWER, WHAT EACH CHOICE REVEALS with the "Choice X" popup, SUGGESTED ANSWER, LOOK FOR,
+  EXPECTED ELEMENTS, METHOD, ANSWER KEY, SPEAKING RUBRIC, WORKED ANSWER), InclusivityText
+  (Support/Stretch/Challenge emphasis, maths splits), ALegacyCard, "Question →"/"Answer →"/"Next
+  question →" inline nav. `itemTabSet`/`groupedOptionSets`/`qtypeName` verified IDENTICAL to the
+  web's on the 20 real items + a grouped case + 7 type names (node, transpiled side by side).
+Phone re-test owed (same walk as before, plus: "← Orgn." → the SS map → tap a unit → "→";
+Assess → page questions → sub-tabs → "Choice X"; drag the bookmark).
+
 Next: step 4, My Classes "+" binding and the full My Lessons library (Year Plan, prepared filter).
 
 ## 3. Phasing
