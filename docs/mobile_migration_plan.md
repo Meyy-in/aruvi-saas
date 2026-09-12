@@ -261,7 +261,34 @@ back to render.yaml's `value:` on every deploy — so a redeploy had knocked the
 to header auth + the disk. Now pinned in render.yaml (commit 41be8c6d). Rule: persistent env goes
 in the file, not a dashboard-only edit.
 
-Next: step 3, LessonView against live `/plans/…/view`.
+**Step 3 — LessonView + My Classes (AUTHORED 2026-09-12, phone test owed).**
+- `mobile/components/LessonView.jsx` — the teaching screen, ported from the web's. Data comes
+  IN as `view` (never fetched here). A unit = one `view.lesson_plan.groups[].periods[]`
+  (flattenUnits walks children too). Unit strip (scrollable pips, ‹/›, marks the teaching
+  pointer). Four tabs: Overview (Chapter/Focus=`meta.section_anchor`/Time=`meta.duration_minutes`/
+  Pedagogy=`approach` + learning_outcomes), Material (`materials` checklist + typed
+  `meta.visual_aids` tables/prose), Lesson (teacher_notes ribbon → `phases[]` spine with a
+  tappable bookmark → homework via parseBold → the completion footer), Assess (items filtered by
+  `meta.anchor_period === unit.number`; MCQ options with reveal, teacher_guide, cognitive demand;
+  `visual_stimulus.type==="svg"` via react-native-svg SvgXml). Mark-complete/undo/reopen and the
+  bookmark use the shared sectionState helpers.
+- NEW shared helpers (additive, web untouched): `readUnitPointer/setUnitPointer/readChapterDone/
+  setChapterDone` — the phone's LessonView writes lu_pointer_/lu_done_ through these, same keys +
+  pushSectionState as the web's inline writes.
+- `mobile/app/(app)/lesson.jsx` — the route: params {subject,grade,filename,section}, pulls the
+  section's server state, fetches `/plans/{s}/{g}/{file}/view`, renders LessonView (loading state
+  until both are in). Opened WITH a section = tracking; without = read-only preview.
+- `mobile/app/(app)/index.jsx` — now My Classes (was the proof screen): one card per
+  subject·grade·section from readiness; the attached chapter shows CONTINUE + "unit N" and opens
+  in tracking; other prepared chapters open read-only. pullSectionState on load; a loading state
+  until /plans arrives (finding 1). Plan status + theme + sign-out sit at the foot until Settings
+  (step 6). The section→lesson "+" binding and full My Lessons library are step 4.
+- Verified here: babel-parse clean on all three + LessonView; every `@aruvi/shared/*` import
+  resolves; shared tests still 9/9. **Owed on the phone:** reload → My Classes shows 9A → Continue
+  opens Social Sciences Ch1 at unit 2 → tab through Overview/Material/Lesson/Assess → move the
+  bookmark → Mark unit complete (pointer → unit 3, server updated) → Undo → back.
+
+Next: step 4, My Classes "+" binding and the full My Lessons library (Year Plan, prepared filter).
 
 ## 3. Phasing
 

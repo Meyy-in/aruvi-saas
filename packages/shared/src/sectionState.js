@@ -79,6 +79,38 @@ export function writeLocalBookmark(sectionKey, unit, phase) {
 }
 
 /* Read one section's current state straight from the localStorage cache. */
+/* ───────── the teaching pointer + done flag (shared 2026-09-12, Track D step 3) ─────────
+ * The web's LessonView wrote lu_pointer_ / lu_done_ inline (its writePointer/setDone). The
+ * phone's LessonView needs the same two writes, so they live here as named helpers keyed by
+ * the SAME keys and each pushes to the server — one implementation both apps can call. The
+ * web keeps its inline copy for now; these are additive. Pointer + phase are 0-based. */
+export function readUnitPointer(sectionKey) {
+  if (!sectionKey) return 0;
+  try { const n = Number(storage.getItem(pointerKey(sectionKey))); return Number.isFinite(n) && n >= 0 ? n : 0; }
+  catch { return 0; }
+}
+export function setUnitPointer(sectionKey, unitIndex) {
+  if (!sectionKey) return;
+  const i = Math.max(0, Number(unitIndex) || 0);
+  try {
+    if (i === 0) storage.removeItem(pointerKey(sectionKey));   // 0 is the implicit default — mirror pullSectionState
+    else storage.setItem(pointerKey(sectionKey), String(i));
+  } catch {}
+  pushSectionState(sectionKey);
+}
+export function readChapterDone(sectionKey) {
+  if (!sectionKey) return false;
+  try { return storage.getItem(doneKey(sectionKey)) === "1"; } catch { return false; }
+}
+export function setChapterDone(sectionKey, done) {
+  if (!sectionKey) return;
+  try {
+    if (done) storage.setItem(doneKey(sectionKey), "1");
+    else storage.removeItem(doneKey(sectionKey));
+  } catch {}
+  pushSectionState(sectionKey);
+}
+
 export function readLocalSection(sectionKey) {
   try {
     return {

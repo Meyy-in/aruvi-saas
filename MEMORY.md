@@ -750,6 +750,20 @@ must confirm · source entry.
   ⚠️ RULE: env that must persist goes in render.yaml with a `value:`, never a dashboard-only edit.
 - **Next:** step 3, LessonView against live `/plans/…/view`.
 
+### 2026-09-12 (later) — TRACK D STEP 3: LessonView + My Classes AUTHORED (phone test owed)
+- `mobile/components/LessonView.jsx` (the teaching screen, ported from web), `app/(app)/lesson.jsx`
+  (route: pull section state → fetch /view → render), and `app/(app)/index.jsx` rebuilt as My
+  Classes (one card per subject·grade·section; attached chapter = CONTINUE + unit N, opens tracked;
+  others read-only). Unit model = periods; four tabs Overview/Material/Lesson/Assess; phases spine
+  + tappable bookmark; mark-complete/undo/reopen. Data shape confirmed against a REAL /view dumped
+  from the engine (/tmp/sample_view.json): units at view.lesson_plan.groups[].periods[], assess
+  filtered by meta.anchor_period===unit.number.
+- Shared gained additive helpers readUnitPointer/setUnitPointer/readChapterDone/setChapterDone
+  (same lu_ keys + pushSectionState as the web's inline writes); shared tests 9/9.
+- Verified: babel-parse ×3, all @aruvi/shared imports resolve. OWED: reload on the phone and walk
+  9A → Continue → Social Sciences Ch1 → tabs → bookmark → mark complete → undo.
+- **Next:** step 4, My Classes "+" binding + full My Lessons library.
+
 ## 2026-09-11 (newest) — THE WHOLE PRODUCT ON THE PRODUCTION STACK, DRIVEN LIVE
 
 `NEXT_PUBLIC_API_URL` (web/.env.local; `format.js` falls back to `<host>:8000` when unset)
