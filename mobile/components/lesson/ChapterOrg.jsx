@@ -118,13 +118,13 @@ function SSFlowBody({ t, units, pointer, doneAll, onOpenUnit, gapNote }) {
 
   return (
     <View>
-      <View style={s.cofWrap} onLayout={(e) => setCols((c) => ({ ...c, w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height }))}>
+      <View style={s.cofWrap} onLayout={(e) => { const { width, height } = e.nativeEvent.layout; setCols((c) => ({ ...c, w: width, h: height })); }}>
         {cols.w ? (
           <Svg width={cols.w} height={cols.h} style={StyleSheet.absoluteFill} pointerEvents="none">
             {paths.map((p, k) => <Path key={k} d={p.d} fill="none" stroke={p.color} strokeWidth={p.w} strokeOpacity={p.o} strokeLinecap="round" />)}
           </Svg>
         ) : null}
-        <View style={s.cofUnits} onLayout={(e) => setCols((c) => ({ ...c, u: e.nativeEvent.layout }))}>
+        <View style={s.cofUnits} onLayout={(e) => { const l = e.nativeEvent.layout; setCols((c) => ({ ...c, u: l })); }}>
           {units.map((u, i) => {
             const st = pointer == null ? "" : (doneAll || i < pointer) ? "done" : i === pointer ? "cur" : "";
             const edges = (u.meta && u.meta.competency_edges) || [];
@@ -156,7 +156,7 @@ function SSFlowBody({ t, units, pointer, doneAll, onOpenUnit, gapNote }) {
             );
           })}
         </View>
-        <View style={s.cofComps} onLayout={(e) => setCols((c) => ({ ...c, c: e.nativeEvent.layout }))}>
+        <View style={s.cofComps} onLayout={(e) => { const l = e.nativeEvent.layout; setCols((c) => ({ ...c, c: l })); }}>
           {comps.map((c) => {
             const dimmed = focus && ((focus.t === "c" && focus.id !== c.code) || (focus.t === "u" && !c.units.includes(focus.id)));
             const open = focus && focus.t === "c" && focus.id === c.code;
