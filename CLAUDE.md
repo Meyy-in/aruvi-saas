@@ -1021,9 +1021,24 @@ test. No web UI yet (Step 6). Full entry: MEMORY.md 2026-08-22.
 **Administrative architecture Step 5 (2026-08-24) — the entitlement seam, built to the
 SETTLED SUBSCRIPTION MODEL: `docs/subscription_model_discussion.md` §0 (read it before
 any pricing/entitlement/monetization work — it supersedes its own earlier hypotheses).**
-Billing unit = teacher × SUBJECT-STAGE, unlimited serves in scope; Individual = mobile
-app only · Enterprise = website (the channel split is the price fence; the Expo app is
-now THE individual product); trial = all 11 subject-stages, ANY 3 chapters, unlimited
+Billing unit = teacher × SUBJECT-STAGE, unlimited serves in scope; ~~Individual = mobile
+app only · Enterprise = website (the channel split is the price fence)~~ — **SUPERSEDED
+(founder, 2026-09-13): individual teachers get the WEB TOO, fenced by a DEVICE CAP of three
+(one mobile + up to two computers) instead of by channel.** Reasoning: the mobile is "a
+travelling promise but not the contained space of operation" — teachers prepare on personal
+and school PCs, and denying that costs far more adoption than channel-sharing ever leaks.
+The fence now rests on what the product already does: the account IS a mobile number and
+every web sign-in (typed as mobile OR email — email is only a lookup) sends the OTP to that
+phone, so the subscriber's handset must be present at every laptop login; the subscription
+is scoped per subject-stage, so "one subscription supplies the school" is impossible in any
+channel; and one account holds one profile/one pointer per section, so sharing collides and
+degrades to exports only. Accepted residual leak: a school buying N subject-stage
+subscriptions and running them on one phone + two PCs. TO BUILD (after Track D step 6): the
+device registry — sign-in registers the Supabase session against the account, cap 3, the
+API refuses a fourth with a clear sentence, Settings › "Your devices" lists and signs one
+out. OPEN KNOB: a web idle timeout — today the web session persists like the phone's; a
+timeout is friction for honest teachers too, so default = none for the beta, revisit on
+evidence. The Expo app stays the primary individual product; trial = all 11 subject-stages, ANY 3 chapters, unlimited
 re-serves per chapter, no time limit; trial-exhausted keeps plans + tracker,
 lapsed keeps plans but not the tracker (**§2.5 amended in place** — no longer
 export-and-delete-only); upsell only at the profile-expansion moment, pull never push;
