@@ -4,7 +4,8 @@
  * holds until BOTH the view and the pull are in — the live-walk finding (no false first
  * frame) applied here too. */
 import { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { Text } from "../../components/Text";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getJSON } from "@aruvi/shared/format";
 import { pullSectionState } from "@aruvi/shared/sectionState";

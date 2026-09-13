@@ -2,7 +2,8 @@
  * same `lgl-*` roles as the web's renderer (h2/h3/p/ul/hr/table); a table stacks each row
  * into a card with the column heading before each cell — the web's ≤600px rule, here the
  * only rule. Nothing here can emit markup: every branch is an element we constructed. */
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Text } from "./Text";
 import { parseMarkdown } from "@aruvi/shared/legalmd";
 import { useTheme } from "../theme/ThemeContext";
 import { type } from "../theme/type";

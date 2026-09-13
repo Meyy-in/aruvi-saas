@@ -3,7 +3,8 @@
  * The first box carries textContentType/autoComplete oneTimeCode so iOS and Android offer the
  * SMS code above the keyboard; the whole code lands in box 0 and is spread from there. */
 import { useRef } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { TextInput } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { mono } from "../theme/fonts";
 

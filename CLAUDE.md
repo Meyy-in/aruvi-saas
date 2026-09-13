@@ -181,6 +181,13 @@ in a true 390px frame — and compare the same screen in the same state. Claude 
 through Claude in Chrome before any change reaches the founder's phone; the phone remains the
 sign-off (react-native-web is close, not pixel-identical — e.g. the web's variable Fraunces with
 optical sizing vs the bundled static cut reads a touch heavier on the phone side).
+**Font scaling (founder decision, 2026-09-13): the design is font-size-neutral — the web's
+sizes are the sizes.** iOS scales native text by the phone's system text size; a web page does
+not, so a phone with enlarged text drifted 12–15% from the web. The app now follows a teacher's
+enlarged text only up to a ceiling of **1.15×** (`mobile/components/Text.jsx`, which every
+Text/TextInput imports instead of react-native's — React 19 ignores defaultProps, so there is no
+global switch). Accessibility kept, blow-outs prevented, drift bounded. For design-time parity
+checks the founder's phone is set to the DEFAULT text size; the ceiling is for teachers.
 
 **Two product phases (the big structural change):**
 - **Phase 1 — Guided First Experience:** there is **NO app shell** (no sidebar, no tabs, no nav)

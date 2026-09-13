@@ -1,6 +1,7 @@
 /* The few primitives every screen uses — primary/link buttons, a field, quiet and error
  * lines — styled from the tokens so a screen never names a colour. */
-import { Pressable, Text, TextInput, View, StyleSheet, ActivityIndicator } from "react-native";
+import { Pressable, View, StyleSheet, ActivityIndicator } from "react-native";
+import { Text, TextInput } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { type } from "../theme/type";
 

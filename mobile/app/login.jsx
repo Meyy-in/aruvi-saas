@@ -12,7 +12,8 @@
  * door — Free to try — and subscription comes later behind BillingProvider. Without Supabase
  * env the stub stays (four boxes, 0000), labelled, so a header-mode dev API still works. */
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { API, getJSON, idInUse, setUser } from "@aruvi/shared/format";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, authHeaders } from "@aruvi/shared/auth";

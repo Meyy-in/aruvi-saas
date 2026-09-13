@@ -17,7 +17,8 @@
  * teacher-notes <details> is a Pressable that toggles. Everything else — order, labels, copy,
  * which field feeds which row — is the web's. */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import { View, ScrollView, Pressable, StyleSheet } from "react-native";
+import { Text } from "./Text";
 import { parseBold } from "@aruvi/shared/format";
 import {
   readUnitPointer, setUnitPointer, readChapterDone, setChapterDone,

@@ -7,7 +7,8 @@
  * accordion of groups. Tapping a unit card opens it (navigation only; the pointer is unmoved).
  * Chapter notes ride the shared plan-notes helpers — server authoritative, device cache. */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, ScrollView, Pressable, Modal, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, ScrollView, Pressable, Modal, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { Text, TextInput } from "../Text";
 import Svg, { Path } from "react-native-svg";
 import { fetchEntitlement, fetchPlanNotes, savePlanNote, planNoteKey, userKey } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";

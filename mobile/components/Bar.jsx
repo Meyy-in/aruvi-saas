@@ -1,7 +1,8 @@
 /* The ONE bar — pine fill, cream mark, "LESSON STUDIO" tag (.hdr-brand-tag: 10px uppercase mono, measured 2026-09-13) — the chrome every screen wears
  * (the web's .topbar / .fr-brand). Sits under the status bar via the safe-area inset; there is
  * no measured --nav-h here, native layout does it (assessment §3). */
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Text } from "./Text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MeyyMark from "./MeyyMark";
 import { useTheme } from "../theme/ThemeContext";

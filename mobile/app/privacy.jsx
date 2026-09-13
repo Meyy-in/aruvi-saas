@@ -2,7 +2,8 @@
  * needs none — DPDP §5 wants the notice at or before first collection, which is the OTP
  * screen). Rendered from the shared parser; Back returns to wherever she was. */
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ScrollView, ActivityIndicator, StyleSheet } from "react-native";
+import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { API } from "@aruvi/shared/config";
 import Bar from "../components/Bar";

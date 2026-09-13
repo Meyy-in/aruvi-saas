@@ -10,7 +10,8 @@
  * Plan status, theme and sign-out live at the foot for now; they move to Settings in step 6.
  * The section→lesson binding ("+") and the full My Lessons library are step 4. */
 import { useEffect, useState, useCallback } from "react";
-import { View, Text, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
+import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
+import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, getJSON, fetchEntitlement, subjectSlug, classNum } from "@aruvi/shared/format";
 import { signOutAuth } from "@aruvi/shared/auth";

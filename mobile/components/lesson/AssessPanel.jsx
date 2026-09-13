@@ -10,7 +10,8 @@
  * Pressable toggle, collapsed by default as on the web; the choice popup is a Modal; the SVG
  * stimulus goes through react-native-svg's SvgXml. */
 import { useState } from "react";
-import { View, Text, Pressable, Modal, ScrollView, StyleSheet } from "react-native";
+import { View, Pressable, Modal, ScrollView, StyleSheet } from "react-native";
+import { Text } from "../Text";
 import Svg, { Line, Polygon, Text as SvgText, SvgXml } from "react-native-svg";
 
 const QTYPE_NAME = {
