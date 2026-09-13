@@ -174,6 +174,13 @@ colours mapped to tokens. Components use those keys, never an invented type scal
 LessonView cut used 17px Newsreader where the web sets 13px phase text, 11px mono tabs, 10.5px
 mono kickers, and read "bigger" for exactly that reason. When globals.css changes, re-measure
 and update web.js; `theme/tokens.js` is likewise generated from globals.css.
+**How parity is SEEN (2026-09-13):** the Expo app has a web target (`npx expo start` → `w`,
+`localhost:8081`, react-native-web; storage = localStorage via the shared adapter). Open
+**`http://localhost:3000/parity.html`** — the web app and the Expo web target side by side, each
+in a true 390px frame — and compare the same screen in the same state. Claude does this itself
+through Claude in Chrome before any change reaches the founder's phone; the phone remains the
+sign-off (react-native-web is close, not pixel-identical — e.g. the web's variable Fraunces with
+optical sizing vs the bundled static cut reads a touch heavier on the phone side).
 
 **Two product phases (the big structural change):**
 - **Phase 1 — Guided First Experience:** there is **NO app shell** (no sidebar, no tabs, no nav)

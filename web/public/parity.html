@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Meyy parity — web app vs Expo web, 390px</title>
+<!-- The parity check (CLAUDE.md §4, 2026-09-13): the web app and the Expo app's web target, side
+     by side, each in a true 390px viewport. Needs `npm --prefix web run dev` (3000) and
+     `npx expo start` + `w` (8081) running. Open http://localhost:3000/parity.html. Scroll the
+     page; each frame is tall enough to show a whole lesson without inner scrolling. -->
+<style>
+  body{margin:0;background:#2e2e2e;font:12px "IBM Plex Mono",ui-monospace,monospace;color:#ddd}
+  .row{display:flex;gap:16px;padding:12px;align-items:flex-start}
+  .col{width:390px}.lab{padding:4px 0 6px;letter-spacing:.06em;text-transform:uppercase}
+  iframe{width:390px;height:2400px;border:0;background:#fff;display:block}
+  .note{padding:0 12px 12px;color:#aaa;max-width:60ch}
+</style>
+<div class="row">
+  <div class="col"><div class="lab">Web app · localhost:3000 · 390px</div><iframe src="http://localhost:3000/"></iframe></div>
+  <div class="col"><div class="lab">Expo web · localhost:8081 · 390px</div><iframe src="http://localhost:8081/"></iframe></div>
+</div>
+<p class="note">Both frames keep their own sign-in (different origins). Compare proportions and structure; the Expo web target is close to but not pixel-identical with iOS — the phone signs off.</p>

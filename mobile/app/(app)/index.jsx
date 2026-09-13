@@ -135,8 +135,10 @@ function ClassCard({ c, plans, onContinue, onOpen }) {
   const [browse, setBrowse] = useState(false);
   const sec = readLocalSection(c.sectionKey);          // {chapter(filename), unit, done}
   const attached = sec.chapter ? plans[sec.chapter] : null;
-  // the tag she has always seen — "9A" — unless she named the section, then her word
-  const tag = c.sectionName || `${classNum(c.grade)}${c.sectionTag}`;
+  // the tag she has always seen — "9A" — unless she named the section, then her word.
+  // sec.tag already carries the class number (readiness stores "9A"), exactly as the web's
+  // SectionTag renders it; the earlier `${classNum(grade)}${tag}` doubled it to "99A".
+  const tag = c.sectionName || c.sectionTag;
   const prepared = Object.values(plans).filter((p) => p.prepared).sort((a, b) => (a.chapter_number || 0) - (b.chapter_number || 0));
   const list = prepared.length ? prepared : Object.values(plans).sort((a, b) => (a.chapter_number || 0) - (b.chapter_number || 0));
 
