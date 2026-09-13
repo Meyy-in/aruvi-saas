@@ -1185,17 +1185,12 @@ export default function Home() {
         </div>
       </header>
 
-      {/* The two tabs — the app's entire nav, at the TOP (under the header), active tab
-          marked with the same clay-red underline the original My Plans/Generate tabs used.
-          Nouns only: My Classes (where did I stop?) and My Lessons (the plan repository).
-          "+ Prepare Lesson" is a verb, so it lives as an action inside both views, never here. */}
-      {inSettingsBar ? (
-        /* The frozen Settings bar (founder, 2026-08-24): while in Settings — or the
-           profile reached through it — the tabs and the Ask mark are replaced by the
-           Ask-Aruvi idiom: title left, ✕ at the right end. The ✕ closes whatever the bar
-           NAMES — a subview back to the Settings list, the list back to where she came
-           from (2026-09-07); every option keeps this row. Same nav slot and classes, so
-           it stays pinned exactly as the tab row does. */
+      {/* ★ THE PRIMARY NAV MOVED TO THE FOOT (founder, 2026-09-13) — see .bnav below the
+          scroll region. The top bar keeps only the brand row, plus the frozen Settings bar
+          while she is in Settings (or the profile reached through it): title left, ✕ right.
+          The ✕ closes whatever the bar NAMES — a subview back to the Settings list, the list
+          back to where she came from (2026-09-07). */}
+      {inSettingsBar && (
         <nav className="tabs main-tabs set-bar" aria-label="Settings">
           {/* ★ THE BAR NAMES THE CHOSEN ITEM, NOT THE MENU (founder, 2026-09-03: "why
               should the word Settings take so much real estate"). The gear is the
@@ -1213,29 +1208,6 @@ export default function Home() {
           <button className="set-bar-x" onClick={settingsClose}
             aria-label={`Close ${settingsBarLabel}`}>✕</button>
         </nav>
-      ) : (
-      <nav className="tabs main-tabs" aria-label="Primary">
-        {/* Lapsed hides My Classes — tracking is a productivity tool she has let go;
-            the reading room is My Lessons (§2.5 as amended). */}
-        {!entLapsed && (
-        <button className={`tab ${activeNav === "classes" ? "active" : ""}`} onClick={goClasses}
-          data-tour="nav-classes">
-          My Classes
-        </button>
-        )}
-        <button className={`tab ${activeNav === "lessons" ? "active" : ""}`} onClick={goLessons}
-          data-tour="nav-lessons">
-          My Lessons
-        </button>
-        {/* Ask Aruvi — permanent "?" at the right of the tab row; opens the deterministic Q&A screen. */}
-        <button className="ask-q" onClick={() => setAskOpen(true)} aria-label="Ask Meyy" title="Ask Meyy" data-tour="ask-aruvi">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M7 6.5c6 1 6 5 3.5 7.5S6 18 6 18" />
-            <path d="M10.5 14c3.5 0 5.5-1.8 6.5-4" />
-            <circle cx="17.3" cy="8.6" r="1.6" fill="#c0392b" stroke="none" />
-          </svg>
-        </button>
-      </nav>
       )}
       </div>
       {/* reserves the fixed bar's height in the flow — see the .topbar comment above */}
@@ -1336,6 +1308,68 @@ export default function Home() {
               sectionCheck={!!portalWin && portalWin.reason === "tour"} />}
         </main>
       </div>
+
+      {/* ★ BOTTOM NAV (founder, 2026-09-13: "switch My Classes / My Lessons, Ask Meyy and the
+          big plus to the bottom"). The app's ENTIRE nav, now a static bar at the FOOT of the
+          app-shell flex column, below the one scroll container (.bodycontent) — so, like the
+          top bar, it is plain flow that cannot scroll away. Four items, icon over an uppercase
+          mono label, the active one in clay: My Classes · My Lessons · Add (the standing "+"
+          portal, formerly in the My Classes greeting row) · Ask Meyy. Chosen skin (bottom-nav
+          mock, option A + edge 4): sunk paper, a 1 px --edge top edge — the same weight as the
+          clay rule between lesson phases, which is why the last phase drops its own rule
+          (.uv-phase:last-child) — and no rule under the bar. Hidden entirely while the frozen
+          Settings bar is up: Settings is a modal room, and the ✕ is its only exit.
+          This bar carries to Expo as-is (CLAUDE.md §4, match-the-web): the same four items,
+          the same measures in mobile/theme/web.js. */}
+      {!inSettingsBar && (
+        <nav className="bnav" aria-label="Primary">
+          <div className="bnav-in">
+            {/* Lapsed hides My Classes — tracking is a productivity tool she has let go;
+                the reading room is My Lessons (§2.5 as amended). */}
+            {!entLapsed && (
+            <button className={`bnav-item ${activeNav === "classes" ? "active" : ""}`} onClick={goClasses}
+              data-tour="nav-classes">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></svg>
+              <span>My Classes</span>
+            </button>
+            )}
+            <button className={`bnav-item ${activeNav === "lessons" ? "active" : ""}`} onClick={goLessons}
+              data-tour="nav-lessons">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4z" /><path d="M15 4v5h5M8 13h8M8 17h6" /></svg>
+              <span>My Lessons</span>
+            </button>
+            {/* The standing "+" portal — "what would you like to change?" (ProfilePortal, change
+                mood). `!entLapsed`: an expired subscription hides the growth portal (§2.5 as
+                amended; the server 402s regardless). Unlike its old greeting-row seat it does
+                NOT hide during the tour — a nav item that vanishes shifts the bar; step 16 rings
+                it here instead. Its glyph is the ringed plus with four dots ("grow in every
+                direction", founder 2026-07-06). */}
+            {ready && !entLapsed && (
+            <button className="bnav-item" data-tour="grow-add" onClick={() => setPortalWin({ mode: "change" })}
+              aria-label="Add or change subjects, classes, or sections" title="Add or change what you teach">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="5.9" strokeWidth="1.5" />
+                <path d="M12 8.9v6.2M8.9 12h6.2" strokeWidth="2.1" />
+                <circle cx="12" cy="3.3" r="1.4" fill="currentColor" stroke="none" />
+                <circle cx="12" cy="20.7" r="1.4" fill="currentColor" stroke="none" />
+                <circle cx="3.3" cy="12" r="1.4" fill="currentColor" stroke="none" />
+                <circle cx="20.7" cy="12" r="1.4" fill="currentColor" stroke="none" />
+              </svg>
+              <span>Add</span>
+            </button>
+            )}
+            {/* Ask Meyy — opens the deterministic Q&A screen. The stream-a mark with its red dot. */}
+            <button className="bnav-item" onClick={() => setAskOpen(true)} aria-label="Ask Meyy" title="Ask Meyy" data-tour="ask-aruvi">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 6.5c6 1 6 5 3.5 7.5S6 18 6 18" />
+                <path d="M10.5 14c3.5 0 5.5-1.8 6.5-4" />
+                <circle cx="17.3" cy="8.6" r="1.6" fill="#c0392b" stroke="none" />
+              </svg>
+              <span>Ask Meyy</span>
+            </button>
+          </div>
+        </nav>
+      )}
 
       {/* First-run guided tour overlay — 17 guide-driven steps ("N of 17", Back on every one).
           Skip closes it for this session. */}

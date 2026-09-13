@@ -56,10 +56,10 @@ const Hand = () => (
 );
 
 const STEPS = [
-  { anchor: "nav-classes", place: "below",
+  { anchor: "nav-classes", place: "above",
     title: "This is where your classes sit.",
     body: () => "On the ‘My Classes’ tab you may always access your sections. Each section points to where you are in the lesson plan with it. Soon we will see how." },
-  { anchor: "nav-lessons", place: "below",
+  { anchor: "nav-lessons", place: "above",
     title: "This is where your generated lesson plans sit.",
     body: () => "On the ‘My Lessons’ tab you can access all your generated lesson plans as well as generate new ones." },
   { anchor: "lesson-first", place: "below", hand: true, handPos: "center",
@@ -117,7 +117,7 @@ const STEPS = [
   { anchor: "attach-pop", place: "over",
     title: "Select a plan.",
     body: () => "You can use the same window shown in step 8 to select an existing chapter or generate a new plan." },
-  { anchor: "grow-add", place: "below",
+  { anchor: "grow-add", place: "above",
     title: "Add/amend sections, classes and/or subjects.",
     body: () => "Use this button to quickly add sections, classes or subjects to your teaching profile." },
   /* Step 17 — the settings gear. ★ RE-WORDED 2026-08-28 (founder): the profile is now a VIEW.
@@ -130,7 +130,7 @@ const STEPS = [
     title: "Your teaching profile.",
     body: () => "Your profile is built from what you do — read it whole here, at any time. Changes are made with the button above; removing a subject is the one thing done here." },
   // Step 17 — Ask Aruvi (the bare stream-a mark on the tab row). Transparent hand centred on it.
-  { anchor: "ask-aruvi", place: "below",
+  { anchor: "ask-aruvi", place: "above",
     title: "Use Ask Meyy to answer your queries",
     body: () => "Get answers for up to 100 questions across 5 categories and use intelligent search to narrow your query." },
   // Step 18 — the panel is now OPEN (page.jsx opened it on Next from 17), so she sees the thing

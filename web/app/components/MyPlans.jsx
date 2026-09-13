@@ -49,20 +49,6 @@ const RouteIcon = (
   </svg>
 );
 
-// The standing "+" portal's glyph (founder, 2026-07-06): a plus RINGED by a circle, with a
-// dot on each side outside the ring — "grow in every direction". Inherits pine.
-const GrowIcon = (
-  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor"
-    strokeLinecap="round" aria-hidden="true">
-    <circle cx="12" cy="12" r="5.9" strokeWidth="1.5" />
-    <path d="M12 8.9v6.2M8.9 12h6.2" strokeWidth="2.1" />
-    <circle cx="12" cy="3.3" r="1.4" fill="currentColor" stroke="none" />
-    <circle cx="12" cy="20.7" r="1.4" fill="currentColor" stroke="none" />
-    <circle cx="3.3" cy="12" r="1.4" fill="currentColor" stroke="none" />
-    <circle cx="20.7" cy="12" r="1.4" fill="currentColor" stroke="none" />
-  </svg>
-);
-
 // Small "history" glyph (clock + counter-clockwise arrow) for the section card's history button.
 const HistoryIcon = (
   <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
@@ -174,7 +160,9 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   // though the tour is active.
   // `!lapsed`: an expired subscription hides the growth portal — profile changes are
   // productivity tools she lets go of (§2.5 as amended; the server 402s regardless).
-  const plusShow = !!onOpenPortal && ready && !lapsed && (tourStep === 16 || !tourActive);
+  // ★ 2026-09-13 — the "+" left this screen for the bottom nav (page.jsx .bnav "Add"), where
+  // it is always on hand and no longer competes with the tour; `plusShow` and the two greeting-
+  // row buttons went with it. the ringed-plus glyph now lives in page.jsx.
 
   /* ★ RE-ASSERT THE BINDING WHEN THE TOUR ENDS (founder, 2026-08-21: "all actions should end up
    * with LP being loaded onto the default section"). First run binds the lesson to her section
@@ -872,10 +860,6 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
             <div className="dash-title">{greeting}{firstName ? `, ${firstName}` : ""}!</div>
             <div className="dash-sub">Continue where you left off with every class.</div>
           </div>
-          {plusShow && (
-            <button className="sc-grow" data-tour="grow-add" aria-label="Add or change subjects, classes, or sections"
-              title="Add or change what you teach" onClick={() => onOpenPortal()}>{GrowIcon}</button>
-          )}
         </div>
       )}
 
@@ -894,10 +878,6 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
                   : <>Tap <b>+</b> on a class to prepare its first lesson.</>
             }</div>
           </div>
-          {plusShow && (
-            <button className="sc-grow" data-tour="grow-add" aria-label="Add or change subjects, classes, or sections"
-              title="Add or change what you teach" onClick={() => onOpenPortal()}>{GrowIcon}</button>
-          )}
         </div>
       )}
 

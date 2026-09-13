@@ -203,6 +203,7 @@ html.app-shell body { display: flex; flex-direction: column; }
 html.app-shell .topbar { position: static; flex: none; }
 html.app-shell .topbar-spacer { display: none; }
 html.app-shell .bodycontent { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+html.app-shell .bnav { position: static; flex: none; }
 html.app-shell .dash-hd,
 html.app-shell .dash-welcome,
 html.app-shell .dash-success,
@@ -4554,6 +4555,9 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 .uv-phases { margin-top: 2px; position: relative; }
 .uv-phase { display: grid; grid-template-columns: 34px 1fr; gap: 0 10px; padding: 13px 0; }
 .uv-phase + .uv-phase { border-top: 1px solid var(--clay); }
+/* 2026-09-13 — no rule under the LAST phase: the bottom nav's 1 px --edge (the same weight)
+   is the only line at the foot, so the spine ends on the bar's edge rather than doubling it. */
+.uv-phase:last-child { border-bottom: 0; }
 .uv-ph-time { text-align: left; }
 .uv-ph-n { display: block; font-family: var(--f-mono); font-size: 16px; font-weight: 600;
   color: var(--pine); line-height: 1.1; }
@@ -4814,6 +4818,37 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 .ask-q:hover { color: var(--pine-d); }
 .ask-q:focus-visible { outline: 2px solid var(--pine); outline-offset: 3px; border-radius: 6px; }
 @media (max-width: 600px) { .ask-q { right: 18px; } }
+
+/* ───────── The bottom nav (founder, 2026-09-13) ─────────
+ * My Classes · My Lessons · Add · Ask Meyy moved from the top tab row to a bar at the FOOT.
+ * Chosen skin (bottom-nav mock, option A with edge 4, lightened): SUNK paper — the material
+ * card's fill, so the floor reads as a different surface, not a line — under a 1 px --edge top
+ * edge, the same weight as the clay rule between lesson phases (see .uv-phase:last-child), and
+ * nothing under the bar. Items: 22px stroke icon over a 10.5px uppercase mono label (the
+ * .kicker measure), soft ink at rest, CLAY when active with a short clay underline — the same
+ * clay the top tabs carried. The bar spans the viewport; its contents cap to --shell-w so on a
+ * Mac the four items sit over the content column, not the screen's corners.
+ * In the app shell it is static flow at the foot of the body column (html.app-shell .bnav);
+ * pre-shell it is fixed to the bottom and .bodycontent reserves its height. Safe-area bottom inset
+ * (the iPhone home indicator) is padding INSIDE the bar, so the sunk paper runs to the physical
+ * edge and the items sit above the indicator. Carried to Expo item for item (mobile/theme/web.js). */
+.bnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+  background: var(--paper-sunk); border-top: 1px solid var(--edge);
+  padding-bottom: env(safe-area-inset-bottom); }
+html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: reserve the fixed bar */
+.bnav-in { display: flex; justify-content: space-around; align-items: flex-end;
+  width: 100%; max-width: var(--shell-w); margin: 0 auto; padding: 7px 4px 4px; }
+.bnav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 84px;
+  border: none; background: none; cursor: pointer; padding: 0;
+  font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-soft); transition: color .18s ease; }
+.bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9;
+  stroke-linecap: round; stroke-linejoin: round; }
+.bnav-item::after { content: ""; width: 22px; height: 2.5px; border-radius: 2px; background: transparent; margin-top: 1px; }
+.bnav-item:hover { color: var(--ink); }
+.bnav-item.active { color: var(--clay); }
+.bnav-item.active::after { background: var(--clay); }
+.bnav-item:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; border-radius: 6px; }
 
 /* ───────── The preparing card (founder, 2026-08-04) ─────────
  * A genon serve is ~0.3 ms, so without a hold the plan is simply there and the moment reads
