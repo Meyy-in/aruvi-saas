@@ -297,6 +297,9 @@ export default function Home() {
   // breakpoints and the two-line brand — no magic numbers:
   //   --nav-h  the FULL height of the frozen bar (what inner stickies sit under)
   //   --hdr-h  the brand row's underside (AskAruvi's scrim hangs off this)
+  //   --bnav-h the BOTTOM nav's height — what anything covering the body must stop ABOVE
+  //            (founder, 2026-09-13: the bar must stay visible behind Ask Meyy). 0px when the
+  //            bar is not rendered (Settings), so one expression works on every screen.
   // Both are measured RELATIVE TO .topbar's top edge, so the safe-area inset a home-screen
   // iPhone adds above the brand row is counted once and only once. ResizeObserver as well as
   // resize: fonts landing late or the status-bar inset changing must not leave stale offsets.
@@ -306,6 +309,10 @@ export default function Home() {
     const setVars = () => {
       const b = document.querySelector(".topbar");
       const h = document.querySelector(".hdr");
+      const n = document.querySelector(".bnav");
+      // Set BEFORE the .topbar early-return: the two are independent, and a screen without a
+      // topbar must still publish an honest 0 rather than leave a stale height behind.
+      root.style.setProperty("--bnav-h", n ? `${Math.round(n.getBoundingClientRect().height)}px` : "0px");
       if (!b) return;
       const bt = b.getBoundingClientRect();
       if (h) root.style.setProperty("--hdr-h", `${Math.round(h.getBoundingClientRect().bottom - bt.top)}px`);
@@ -314,9 +321,13 @@ export default function Home() {
     setVars();
     window.addEventListener("resize", setVars);
     let ro;
-    if (bar && typeof ResizeObserver !== "undefined") {
+    if (typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver(setVars);
-      ro.observe(bar);
+      if (bar) ro.observe(bar);
+      // The bottom bar too: the safe-area inset it carries inside itself changes on rotation
+      // and on a home-screen iPhone, and a stale --bnav-h would leave a gap under the scrim.
+      const bnav = document.querySelector(".bnav");
+      if (bnav) ro.observe(bnav);
     }
     return () => { window.removeEventListener("resize", setVars); if (ro) ro.disconnect(); };
   }, [ready, tab, editFlow, user]);
@@ -1344,19 +1355,28 @@ export default function Home() {
           Settings bar is up: Settings is a modal room, and the ✕ is its only exit.
           This bar carries to Expo as-is (CLAUDE.md §4, match-the-web): the same four items,
           the same measures in mobile/theme/web.js. */}
+      {/* ★ THE BAR STAYS UP BEHIND ASK MEYY (founder, 2026-09-13). Its scrim used to run to the
+          foot of the screen, so opening Ask Meyy took the app's ENTIRE nav away and the panel's
+          own ✕ was the only way out — the one screen she could not simply leave. The scrim now
+          stops at --bnav-h, which means the bar is not merely VISIBLE but live, so each item has
+          to say what it does to an open panel: the three destinations close it and go, and Ask
+          Meyy itself toggles. While it is open Ask Meyy carries the clay, and My Classes / My
+          Lessons do not — the panel is where she is. */}
       {!inSettingsBar && (
         <nav className="bnav" aria-label="Primary">
           <div className="bnav-in">
             {/* Lapsed hides My Classes — tracking is a productivity tool she has let go;
                 the reading room is My Lessons (§2.5 as amended). */}
             {!entLapsed && (
-            <button className={`bnav-item ${activeNav === "classes" ? "active" : ""}`} onClick={goClasses}
+            <button className={`bnav-item ${activeNav === "classes" && !askOpen ? "active" : ""}`}
+              onClick={() => { setAskOpen(false); goClasses(); }}
               data-tour="nav-classes">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></svg>
               <span>My Classes</span>
             </button>
             )}
-            <button className={`bnav-item ${activeNav === "lessons" ? "active" : ""}`} onClick={goLessons}
+            <button className={`bnav-item ${activeNav === "lessons" && !askOpen ? "active" : ""}`}
+              onClick={() => { setAskOpen(false); goLessons(); }}
               data-tour="nav-lessons">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4z" /><path d="M15 4v5h5M8 13h8M8 17h6" /></svg>
               <span>My Lessons</span>
@@ -1368,7 +1388,8 @@ export default function Home() {
                 it here instead. Its glyph is the ringed plus with four dots ("grow in every
                 direction", founder 2026-07-06). */}
             {ready && !entLapsed && (
-            <button className="bnav-item" data-tour="grow-add" onClick={() => setPortalWin({ mode: "change" })}
+            <button className="bnav-item" data-tour="grow-add"
+              onClick={() => { setAskOpen(false); setPortalWin({ mode: "change" }); }}
               aria-label="Add or change subjects, classes, or sections" title="Add or change what you teach">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="5.9" strokeWidth="1.5" />
@@ -1382,7 +1403,9 @@ export default function Home() {
             </button>
             )}
             {/* Ask Meyy — opens the deterministic Q&A screen. The stream-a mark with its red dot. */}
-            <button className="bnav-item" onClick={() => setAskOpen(true)} aria-label="Ask Meyy" title="Ask Meyy" data-tour="ask-aruvi">
+            <button className={`bnav-item ${askOpen ? "active" : ""}`}
+              onClick={() => setAskOpen((v) => !v)}
+              aria-label="Ask Meyy" title="Ask Meyy" data-tour="ask-aruvi">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M7 6.5c6 1 6 5 3.5 7.5S6 18 6 18" />
                 <path d="M10.5 14c3.5 0 5.5-1.8 6.5-4" />

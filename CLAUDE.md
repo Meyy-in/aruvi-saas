@@ -804,6 +804,19 @@ generic look.
   `mobile/components/BottomNav.jsx`, mounted in `mobile/app/(app)/_layout.jsx`, measures in
   `mobile/theme/web.js` under `bnav*` (measured 390×844: bar 56.85 tall, items 84 wide, label
   10.5/13.75, letter-spacing 1.05) — same four items, same glyphs.
+  ★ **AND NOTHING COVERS IT (founder, 2026-09-13).** Ask Meyy's scrim ran to the foot of the
+  screen, so opening it took the app's ENTIRE nav away and the panel's own ✕ became the only way
+  out — the one screen she could not simply leave. A panel that is a DESTINATION must not cover
+  the nav that reaches it. `page.jsx` now publishes **`--bnav-h`** beside `--nav-h`/`--hdr-h`
+  (measured live, ResizeObserver on `.bnav` as well as `.topbar`, **0px wherever the bar is not
+  rendered** — so one expression is correct on every screen, including Settings, where Ask Meyy
+  is reached from a row instead and rightly gets the full height), and `.aa-scrim` stops at it.
+  The bar is then not merely visible but LIVE, so each item states what it does to an open panel:
+  the three destinations close it and go, **Ask Meyy toggles**, and while the panel is up Ask Meyy
+  carries the clay and My Classes / My Lessons do not. `aria-modal` on the panel is now **false** —
+  the bar sits outside the dialog and works, and claiming otherwise lies to a screen reader.
+  ⚠️ Still covering the bar, by design for now: `.ap-overlay` (the ProfilePortal window, `inset:0`,
+  z 60) — a true modal with one question and its own ✕, not a destination.
 
 - ★ **THE BOTTOM NAV STAYS AT FOUR — YEAR PLAN IS A LENS, NOT A PLACE (founder, 2026-09-13).**
   Considered as a fifth item and declined on two grounds. **Measured:** "MY LESSONS" is 73.7px

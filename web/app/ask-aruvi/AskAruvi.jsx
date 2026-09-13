@@ -84,8 +84,11 @@ export default function AskAruvi({ onClose, autoFocus = true }) {
 
   const togglePair = (id) => setOpenPair((cur) => (cur === id ? null : id));
 
+  /* aria-modal is FALSE deliberately: the bottom nav stays OUTSIDE this dialog and stays
+     operable (2026-09-13), so claiming the rest of the app is inert would be a lie to a screen
+     reader. Escape still closes it, and there is no focus trap to undo. */
   return (
-    <div className="aa-scrim" role="dialog" aria-modal="true" aria-label="Ask Meyy">
+    <div className="aa-scrim" role="dialog" aria-modal="false" aria-label="Ask Meyy">
       {/* data-tour: guided-tour step 18 rings the OPEN panel (page.jsx opens it on 17→18). */}
       <div className="aa-panel" data-tour="ask-aruvi-root">
 
@@ -182,8 +185,15 @@ export default function AskAruvi({ onClose, autoFocus = true }) {
       <style jsx>{`
         /* Opens BELOW the frozen header — its grey bottom border (the line under the
            "Aruvi · lesson studio" logo) stays visible and frozen. --hdr-h is the header
-           height page.jsx measures live; 72px is the pre-measure fallback. */
-        .aa-scrim { position: fixed; top: var(--hdr-h, 72px); left: 0; right: 0; bottom: 0;
+           height page.jsx measures live; 72px is the pre-measure fallback.
+           ★ AND IT STOPS ABOVE THE BOTTOM NAV (founder, 2026-09-13). The scrim ran to
+           bottom:0 and buried the bar, so opening Ask Meyy took the app's ENTIRE nav off
+           the screen and the only way out was the panel's own ✕ — the one screen where she
+           could not simply go to My Classes. The bar is the app's nav; it does not disappear
+           behind a panel. --bnav-h is measured live in page.jsx and is 0px wherever the bar
+           is not rendered, so this one line is correct on every screen. */
+        .aa-scrim { position: fixed; top: var(--hdr-h, 72px); left: 0; right: 0;
+          bottom: var(--bnav-h, 0px);
           z-index: 40; background: rgba(20,16,10,.34);
           display: flex; justify-content: center; align-items: stretch; }
         /* NOTE: the section palette (--sec-a…d) that the category accents resolve against is
