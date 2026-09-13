@@ -10,8 +10,8 @@ import { useEffect, useRef, useState } from "react";
  * Steps 13–15 demo the completed state without touching her real progress.
  *
  * Step model (1-based; page.jsx owns shell navigation, MyPlans/MyLessonPlans own view state):
- *    1 My Classes tab         — where your classes sit
- *    2 My Lessons tab         — where your generated lesson plans sit
+ *    1 My Classes (bottom nav) — where your classes sit
+ *    2 My Lessons (bottom nav) — where your generated lesson plans sit
  *    3 the lesson row + hand  — the plan she just generated (hand centred on the card)
  *    4 the report button + hand — generate PDF reports of the lesson plan / assessment
  *    5 the archive button + hand — archive a lesson plan (restore it anytime)
@@ -27,9 +27,9 @@ import { useEffect, useRef, useState } from "react";
  *   14 completed card's "+"   — card demoed as Complete; box pinned to the viewport bottom so the
  *                               progress rail AND the second section card stay visible
  *   15 the popup again        — pick the next chapter (bound one excluded)
- *   16 the big "+" grow button — add/amend sections, classes or subjects (My Classes home)
+ *   16 the bottom nav's "Add"  — add/amend sections, classes or subjects (the standing portal)
  *   17 the settings gear      — where the teaching profile lives
- *   18 the Ask Aruvi mark      — up to 100 Q&A across 5 categories + intelligent search
+ *   18 the bottom nav's Ask Meyy — up to 100 Q&A across 5 categories + intelligent search
  *   19 Ask Aruvi OPEN          — page.jsx opens the panel on 18→19; the box rings the panel itself
  *   20 "Welcome to Aruvi"      — a centred sign-off, no anchor, no hand; Done lands on My Classes
  *
@@ -58,10 +58,10 @@ const Hand = () => (
 const STEPS = [
   { anchor: "nav-classes", place: "above",
     title: "This is where your classes sit.",
-    body: () => "On the ‘My Classes’ tab you may always access your sections. Each section points to where you are in the lesson plan with it. Soon we will see how." },
+    body: () => "The bar at the foot of the screen is how you move around Meyy. ‘My Classes’ is where your sections always are — each one points to where you have reached in its lesson plan. Soon we will see how." },
   { anchor: "nav-lessons", place: "above",
     title: "This is where your generated lesson plans sit.",
-    body: () => "On the ‘My Lessons’ tab you can access all your generated lesson plans as well as generate new ones." },
+    body: () => "‘My Lessons’, beside it at the foot of the screen, holds every lesson plan you have generated — and is where you generate new ones." },
   { anchor: "lesson-first", place: "below", hand: true, handPos: "center",
     title: "See the lesson plan you just now generated.",
     body: () => "You can filter your lesson plans by subject and class to see them all in one place." },
@@ -83,7 +83,7 @@ const STEPS = [
   { anchor: "preview-root", place: "over", lift: 130,
     scrollTop: true,
     title: "Let us open the plan to have a quick view.",
-    body: (i) => `You may review a lesson plan in its entirety here anytime. We will now attach this lesson to section ${i.tag} from the ‘My Classes’ tab.` },
+    body: (i) => `You may review a lesson plan in its entirety here anytime. We will now attach this lesson to section ${i.tag} from ‘My Classes’ at the foot of the screen.` },
   { anchor: "section-add", place: "below", hand: true,
     title: "Let us attach a lesson plan to a section.",
     body: (i) => `You want to attach “${i.chapter}” to section ${i.tag}. Click the + sign of that section card.` },
@@ -128,8 +128,8 @@ const STEPS = [
      purchase), and that is what this card now says. */
   { anchor: "settings-gear", place: "below",
     title: "Your teaching profile.",
-    body: () => "Your profile is built from what you do — read it whole here, at any time. Changes are made with the button above; removing a subject is the one thing done here." },
-  // Step 17 — Ask Aruvi (the bare stream-a mark on the tab row). Transparent hand centred on it.
+    body: () => "Your profile is built from what you do — read it whole here, at any time. Changes are made with ‘Add’ at the foot of the screen; removing a subject is the one thing done here." },
+  // Step 18 — Ask Meyy (the stream-a mark in the bottom nav). Transparent hand centred on it.
   { anchor: "ask-aruvi", place: "above",
     title: "Use Ask Meyy to answer your queries",
     body: () => "Get answers for up to 100 questions across 5 categories and use intelligent search to narrow your query." },

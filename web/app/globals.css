@@ -2233,10 +2233,12 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
   .mlp2-title { font-size:20px; }   /* match .dash-title's mobile size so the two tab headers stay identical */
   /* The switch words follow the title down, and the archive box tightens, so "Your lessons" +
      box + "Year plan" all clear a 360px phone without wrapping. */
-  .mlp2-vtab { font-size:20px; }
-  .mlp2-titleleft { gap:6px; }
-  .mlp2-titlerow { gap:8px; }
-  .mlp2-archfolder { padding:4px 5px; }
+  /* ★ The .mlp2-vtab / .mlp2-titleleft / .mlp2-titlerow / .mlp2-archfolder phone sizes USED to
+     sit here and were DEAD — their base rules live ~2400 lines further down at the same
+     specificity, so source order beat them and the title row rendered at its DESKTOP size on
+     every phone (measured 2026-09-13: 23px, not the 20px intended here; gap 9px, not 6px).
+     This is the .ap-row-line trap of 2026-08-27 in a third place. They now sit in a ≤600px
+     block placed immediately AFTER those base rules — see ".mlp2-vtab" below. */
   .mlp-allocate { flex-direction:column; align-items:stretch; }
   .mlp-allocate-btn { width:100%; min-height:44px; }
   .mlp-row-open { min-height:44px; }
@@ -4648,6 +4650,26 @@ select option { background-color: var(--field-bg); color: var(--ink); }
   .mlp2-vtab:not(.on):hover { color: var(--ink); }
 }
 .mlp2-vtab:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
+
+/* The hairline between the paired words (founder, 2026-09-13). Same face and size as the words
+   so it sits on their baseline, but in --edge: it separates, it does not speak. Decorative —
+   the buttons carry the semantics (aria-hidden in the JSX). */
+.mlp2-vsep {
+  flex: none; font-family: var(--f-display); font-weight: 500; font-size: 23px; line-height: 1.15;
+  color: var(--edge); padding: 2px 0 4px; user-select: none;
+}
+
+/* ★ PHONE SIZES — this block MUST stay after the base rules above (same specificity, so source
+   order decides). Moved here 2026-09-13 from the ≤600px block ~2400 lines up, where it had been
+   silently dead. Paired, at 20px with a 6px gap, the row measures ~230px — inside the 258px the
+   360px stress width leaves once the archive box takes the right end. */
+@media (max-width: 600px) {
+  .mlp2-vtab { font-size: 20px; }
+  .mlp2-vsep { font-size: 20px; }
+  .mlp2-titleleft { gap: 6px; }
+  .mlp2-titlerow { gap: 8px; }
+  .mlp2-archfolder { padding: 4px 5px; }
+}
 
 /* ── Year Plan view ── */
 .yp { --yp-card: #fff; padding: 4px 18px 10px; }

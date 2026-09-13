@@ -796,12 +796,21 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
       <div className="mlp2-frozen" ref={frozenRef}>
         <div className="mlp2-titlerow">
           {/* The two panes are NAMED, both always on screen, and the live one carries a clay
-              underline (2026-08-06). The old icon-only Year-Plan button was undiscoverable —
-              nothing told a teacher the pane existed. Words, not tabs: no boxes, no chrome, the
-              title itself IS the switch. "Your lessons" holds the left end (with the archive box
-              folded in beside it — archive is a sub-state of THIS pane, so it belongs with its
-              own word, not floating opposite it); "Year plan" holds the right end at the same
-              display size. */}
+              underline (2026-08-06). Words, not tabs: no boxes, no chrome, the title itself IS
+              the switch.
+              ★ THE TWO WORDS ARE PAIRED (founder, 2026-09-13). They used to hold OPPOSITE ENDS
+              of the row with the archive box between them, and the 2026-08-06 note's own worry
+              — "nothing told a teacher the pane existed" — had not actually been answered: a
+              word alone at the far end reads as a HEADING for whatever sits under it, not as
+              the other half of a choice. ADJACENCY is what makes two words read as a switch, so
+              they now sit together behind a hairline "/" and the archive box takes the right
+              end. Nothing else changed: same face, same size, same clay rule on the live one,
+              and the resting word stays --ink-soft. Deliberately NOT pine, and deliberately no
+              box: inking the RESTING word louder than the live one inverts the hierarchy, and
+              a box is the chrome this switch was designed without. If it still reads too quiet
+              on a phone, a 1px dashed rule under the resting word is the one-line addition.
+              The archive box keeps its own rule — it is a sub-state of the LESSONS pane, so it
+              renders only while that pane is live, wherever it sits. */}
           <div className="mlp2-titleleft">
             <button className={`mlp2-vtab${pane === "lessons" ? " on" : ""}`}
               onClick={() => { if (pane !== "lessons") onPane("lessons"); }}
@@ -809,29 +818,33 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
               title="Your lessons">
               {pane === "lessons" && effView === "archived" ? "Archive" : "Your lessons"}
             </button>
-            {/* Archive control — only while the lessons pane is live. */}
-            {pane !== "lessons" ? null : effView === "archived" ? (
-              // Open box = you're inside the archive; tapping it closes the box and drops you back
-              // to your lessons (the one, symmetric way in and out).
-              <button className="mlp2-archfolder open" onClick={() => setView("active")}
-                aria-label="Close archive, back to your lessons" title="Back to your lessons">
-                <OpenArchiveIcon size={22} />
-                <span className="mlp2-archcount">{archivedPlans.length}</span>
-              </button>
-            ) : hasArchived ? (
-              <button className="mlp2-archfolder" onClick={() => setView("archived")}
-                aria-label={`Open archive (${archivedPlans.length})`} title="Archived lessons">
-                <ArchiveIcon size={22} />
-                <span className="mlp2-archcount">{archivedPlans.length}</span>
-              </button>
-            ) : null}
+            {/* The hairline that makes the pair read as one choice. Decorative: the two buttons
+                carry the semantics, so it is aria-hidden and never a tab stop. */}
+            <span className="mlp2-vsep" aria-hidden="true">/</span>
+            <button className={`mlp2-vtab${pane === "plan" ? " on" : ""}`}
+              onClick={() => { if (pane !== "plan") onPane("plan"); }}
+              aria-current={pane === "plan" ? "page" : undefined}
+              title="Year plan">
+              Year plan
+            </button>
           </div>
-          <button className={`mlp2-vtab${pane === "plan" ? " on" : ""}`}
-            onClick={() => { if (pane !== "plan") onPane("plan"); }}
-            aria-current={pane === "plan" ? "page" : undefined}
-            title="Year plan">
-            Year plan
-          </button>
+          {/* Archive control — only while the lessons pane is live. Holds the right end now
+              that the pair holds the left. */}
+          {pane !== "lessons" ? null : effView === "archived" ? (
+            // Open box = you're inside the archive; tapping it closes the box and drops you back
+            // to your lessons (the one, symmetric way in and out).
+            <button className="mlp2-archfolder open" onClick={() => setView("active")}
+              aria-label="Close archive, back to your lessons" title="Back to your lessons">
+              <OpenArchiveIcon size={22} />
+              <span className="mlp2-archcount">{archivedPlans.length}</span>
+            </button>
+          ) : hasArchived ? (
+            <button className="mlp2-archfolder" onClick={() => setView("archived")}
+              aria-label={`Open archive (${archivedPlans.length})`} title="Archived lessons">
+              <ArchiveIcon size={22} />
+              <span className="mlp2-archcount">{archivedPlans.length}</span>
+            </button>
+          ) : null}
         </div>
         <div className="mlp2-wheels">
           <div className="mlp2-wcol">

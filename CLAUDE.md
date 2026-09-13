@@ -805,6 +805,37 @@ generic look.
   `mobile/theme/web.js` under `bnav*` (measured 390×844: bar 56.85 tall, items 84 wide, label
   10.5/13.75, letter-spacing 1.05) — same four items, same glyphs.
 
+- ★ **THE BOTTOM NAV STAYS AT FOUR — YEAR PLAN IS A LENS, NOT A PLACE (founder, 2026-09-13).**
+  Considered as a fifth item and declined on two grounds. **Measured:** "MY LESSONS" is 73.7px
+  at the bar's type; five items leave a 70.4px slot at the 360px stress width, so a label would
+  have to shrink or truncate on every phone (390 leaves ~1px of air per side; only 412 is
+  comfortable). **Structural:** Year Plan is a view of ONE subject·class, and that choice is made
+  by the wheels inside My Lessons — a bar item would have to guess the class or drop her into My
+  Lessons to ask, which is where she already was. The other four are places; this is a lens on
+  one of them. The discoverability worry behind the question was real and is answered where it
+  belongs — see the paired switch below.
+- ★ **"YOUR LESSONS / YEAR PLAN" ARE PAIRED (founder, 2026-09-13).** The 2026-08-06 switch put the
+  two words at OPPOSITE ends of `.mlp2-titlerow` with the archive box between them, and its own
+  note ("nothing told a teacher the pane existed") had not actually been answered: a word alone at
+  the far end reads as a HEADING for what sits under it, not as the other half of a choice.
+  **Adjacency is the fix** — the pair now holds the left behind a hairline `.mlp2-vsep` ("/", in
+  `--edge`, aria-hidden), and the archive box takes the right end (still rendered only while the
+  lessons pane is live — it is a sub-state of THAT pane wherever it sits). Everything else is
+  unchanged: same face, same size, live word `--ink` + the 1px clay rule, resting word
+  `--ink-soft`. **Two treatments were built and rejected:** inking the resting word pine, alone or
+  with the pairing — it makes the option she is NOT on the more colourful one, inverting the
+  hierarchy. If the pair still reads too quiet on a phone, a 1px dashed rule under the resting
+  word is the one-line addition; a box is not (this switch was designed without chrome).
+  Measured paired at 360px: 231px of the 324px row, no wrap, 93px spare.
+  ⚠️ **AND IT UNCOVERED THE `.ap-row-line` TRAP IN A THIRD PLACE.** `.mlp2-vtab { font-size:20px }`,
+  `.mlp2-titleleft { gap:6px }` and `.mlp2-archfolder { padding:4px 5px }` sat in the ≤600px block
+  at ~line 2231 while their BASE rules sit ~2400 lines further down at the same specificity — so
+  source order beat them and **the title row had been rendering at its DESKTOP size on every
+  phone** (measured: 23px, not 20px; gap 9px, not 6px). Only `.mlp2-titlerow` worked, because its
+  base rule happens to sit earlier. All four now live in a ≤600px block placed immediately AFTER
+  the base rules. **A same-specificity override placed before its base rule does nothing — in this
+  file, always check source order.**
+
 ---
 
 ## 5. Repo layout
