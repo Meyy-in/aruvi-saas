@@ -14,12 +14,10 @@ import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshCont
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, getJSON, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
-import { signOutAuth } from "@aruvi/shared/auth";
-import { clearTeacherCaches } from "@aruvi/shared/signout";
+import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
 import Bar from "../../components/Bar";
-import { Button } from "../../components/ui";
 import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -61,6 +59,7 @@ function classesFrom(readiness) {
 
 export default function Home() {
   const { t, pref, setPref } = useTheme();
+  const ws = useWebStyles();
   const router = useRouter();
   const user = getUser();
   const [st, setSt] = useState({ loading: true, err: "", classes: [], plansBySG: {}, ent: null });
@@ -75,11 +74,7 @@ export default function Home() {
      a real account deletion. The pieces were all here; nothing called them.
      Note it is only a 401 — an unreachable server is NOT a refusal and must never sign her
      out mid-lesson on a school network (the existing "couldn't reach Meyy" path). */
-  const endSession = useCallback(async () => {
-    await signOutAuth();
-    clearTeacherCaches(["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"]);
-    router.replace("/login");
-  }, [router]);
+  const endSession = useCallback(() => endSessionShared(router), [router]);
 
   const load = useCallback(async () => {
     let err = "";
@@ -111,7 +106,6 @@ export default function Home() {
   useEffect(() => { load(); }, [load]);
   useFocusEffect(useCallback(() => { setTick((n) => n + 1); }, []));
 
-  const signOut = endSession;
 
   const openAttached = (c, plan) => router.push({ pathname: "/lesson",
     params: { subject: c.subjectSlug, grade: c.gradeSlug, filename: plan.filename, section: c.sectionTag } });
@@ -170,10 +164,16 @@ export default function Home() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar />
-      <ScrollView contentContainerStyle={s.body}
+      <Bar user={user} />
+      {/* ★ THE GREETING (the web's .dash-hd). It is sticky on the web — pinned under the bar at
+          the top of the one scroll region — so here it sits ABOVE the scroller, which is the
+          same thing without a sticky. The "My classes" mono label that used to open this screen
+          is GONE: the web has no such label, and two headers is worse than either. */}
+      {!st.loading && !st.err ? <DashHead classes={st.classes} plansBySG={st.plansBySG} user={user} /> : null}
+      {/* The header sits outside the scroller, so it takes main's 26px top padding with it and
+          the scroller must not repeat it — otherwise the card list starts 26px too low. */}
+      <ScrollView contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
         refreshControl={<RefreshControl refreshing={false} onRefresh={load} tintColor={t.pine} />}>
-        <Text style={[type.label, { color: t.ink_soft }]}>My classes</Text>
 
         {st.loading ? (
           <View style={s.loading}><ActivityIndicator color={t.pine} /><Text style={[type.small, { color: t.ink_soft, marginLeft: 10 }]}>Loading your classes…</Text></View>
@@ -182,7 +182,7 @@ export default function Home() {
         ) : st.classes.length === 0 ? (
           <Text style={[type.body, { color: t.ink_soft, marginTop: 14 }]}>No classes yet — set up your teaching profile (first run comes in a later step).</Text>
         ) : (
-          <View style={{ marginTop: 12, gap: 14 }} key={tick}>
+          <View style={ws.sc_list} key={tick}>
             {st.classes.map((c) => (
               <ClassCard key={c.sectionKey} c={c}
                 plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`] || {}}
@@ -197,8 +197,11 @@ export default function Home() {
         {/* foot — moves to Settings in step 6 */}
         {!st.loading && (
           <View style={[s.footcard, { borderTopColor: t.line }]}>
+            {/* Identity and Log out moved to the bar (2026-09-13), where the web has always had
+                them; what is left here is the trial counter and the appearance choice, both of
+                which belong in Settings at step 6. */}
             <Text style={[type.small, { color: t.ink_soft }]}>
-              {st.ent ? `${dash(st.ent.status)}${st.ent.enforced ? ` · ${dash(st.ent.trial_chapters_used)} of ${dash(st.ent.trial_chapter_cap)} trial chapters used` : ""}` : ""} · signed in as {user}
+              {st.ent ? `${dash(st.ent.status)}${st.ent.enforced ? ` · ${dash(st.ent.trial_chapters_used)} of ${dash(st.ent.trial_chapter_cap)} trial chapters used` : ""}` : ""}
             </Text>
             <View style={s.segs}>
               {[["system", "Auto"], ["light", "Light"], ["dark", "Dark"]].map(([v, label]) => (
@@ -207,7 +210,6 @@ export default function Home() {
                 </Pressable>
               ))}
             </View>
-            <Button kind="link" title="Sign out" onPress={signOut} style={{ marginTop: 14, alignSelf: "flex-start" }} />
           </View>
         )}
       </ScrollView>
@@ -218,6 +220,44 @@ export default function Home() {
         alsoAttachable={attachFor ? boundFilesForGrade(attachFor.c.subjectSlug, attachFor.c.gradeSlug) : null}
         onAttach={attachChapter} onClose={() => setAttachFor(null)} />
       <UntrackSheet target={untrackFor} onUntrack={untrackChapter} onClose={() => setUntrackFor(null)} />
+    </View>
+  );
+}
+
+/* ───────── The greeting (the web's .dash-hd) ─────────
+ * Time of day, and her name only when there IS one: the id is a mobile number for every teacher
+ * who has not subscribed, and "Good evening, 9000000003!" is nobody's name (founder, 2026-08-25).
+ * A named dev id keeps the personal touch.
+ * The sub-line is the web's rule too: "Continue where you left off" appears only once at least
+ * one section is actually bound. Before that the WELCOME copy speaks instead — telling a teacher
+ * to tap "+" the second her classes appear is an instruction she has no context for yet. */
+function DashHead({ classes, plansBySG, user }) {
+  const ws = useWebStyles();
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const rawId = (user || "").trim();
+  const firstName = /^\d+$/.test(rawId) ? "" : rawId;
+  const anyBound = classes.some((c) => !!readLocalSection(c.sectionKey).chapter);
+  const anyPlans = Object.values(plansBySG || {}).some((m) => Object.values(m || {}).some((p) => p.prepared));
+
+  return (
+    <View style={{ paddingHorizontal: 18, paddingTop: 26 }}>
+      <View style={ws.dash_hd}>
+        <Text style={ws.dash_title}>{greeting}{firstName ? `, ${firstName}` : ""}!</Text>
+        {classes.length > 0 && anyBound ? (
+          <Text style={ws.dash_sub}>Continue where you left off with every class.</Text>
+        ) : null}
+      </View>
+      {classes.length > 0 && !anyBound ? (
+        <View style={{ paddingBottom: 10 }}>
+          <Text style={ws.dash_welcome_title}>Your classes are ready</Text>
+          <Text style={ws.dash_welcome_sub}>
+            {anyPlans
+              ? "Your lesson is waiting in My Lessons — tap + on a class to start teaching it."
+              : "Tap + on a class to prepare its first lesson."}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -299,7 +339,6 @@ function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
           {c.subjectName}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}
         </Text>
         <Text style={ws.sc_title} numberOfLines={2}>{plan.chapter_title}</Text>
-        {plan.duration_label ? <Text style={ws.sc_durline}>{plan.duration_label}</Text> : null}
         {total ? (
           <View style={ws.sc_rail} accessibilityLabel={
             done ? `${total} units, completed` : lu ? `Unit ${lu} of ${total}` : `${total} units, not started`}>
@@ -330,7 +369,6 @@ function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
 }
 
 const s = StyleSheet.create({
-  body: { paddingHorizontal: 20, paddingVertical: 20, paddingBottom: 44 },
   loading: { flexDirection: "row", alignItems: "center", marginTop: 20 },
   footcard: { marginTop: 30, paddingTop: 18, borderTopWidth: StyleSheet.hairlineWidth },
   segs: { flexDirection: "row", gap: 8, marginTop: 12 },

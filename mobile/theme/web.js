@@ -29,6 +29,30 @@ export function webStyles(t) {
     body:            { fontFamily: F.body(400), fontSize: 17, lineHeight: 26.35, color: t.ink },
     main:            { paddingHorizontal: 18, paddingTop: 26, paddingBottom: 72 },
     hdr_brand_tag:   { fontFamily: F.mono(400), fontSize: 10, lineHeight: 11, letterSpacing: 1.8, textTransform: UP, color: t.bar_ink_soft, marginTop: 2 },
+    /* ── the bar's own row (.hdr) and what sits at its ends — measured 2026-09-13, 390×844 ──
+       The bar is 64 tall because the STACKED brand lockup is 35 and the row centres it in 29 of
+       padding. The mark and "lesson studio" are a COLUMN (.brand): side by side they read as a
+       different product. At the right end, the gear then the identity block, which stacks the
+       mobile number over its own Log out, right-aligned. */
+    hdr:             { flexDirection: "row", alignItems: "center", columnGap: 18,
+                       paddingHorizontal: 18, width: "100%", maxWidth: 860, alignSelf: "center" },
+    hdr_brand:       { flexDirection: "column" },
+    hdr_user:        { flexDirection: "row", alignItems: "center", columnGap: 14, marginLeft: "auto" },
+    hdr_gear:        { fontSize: 18, lineHeight: 22, padding: 4, color: t.bar_ink_soft },
+    hdr_user_id:     { flexDirection: "column", alignItems: "flex-end", rowGap: 2 },
+    hdr_user_name:   { fontFamily: F.mono(400), fontSize: 11, lineHeight: 17.05, letterSpacing: 0.33, color: t.bar_ink },
+    hdr_user_logout: { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13, letterSpacing: 0.6,
+                       textTransform: UP, color: t.bar_ink_soft },
+
+    /* ── My Classes' header (.dash-hd) and its card list (.sc-list) ──
+       The time-of-day greeting is the screen's opening line. The sub-line appears only once at
+       least one section is bound — before that the welcome copy speaks instead. */
+    dash_hd:         { paddingTop: 6, paddingBottom: 10, marginBottom: 2 },
+    dash_title:      { fontFamily: F.display(500), fontSize: 20, lineHeight: 31, marginTop: 2, color: t.ink },
+    dash_sub:        { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, marginTop: 2, color: t.ink_soft },
+    dash_welcome_title: { fontFamily: F.display(500), fontSize: 20, lineHeight: 31, color: t.ink },
+    dash_welcome_sub:   { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, marginTop: 2, color: t.ink_soft },
+    sc_list:         { rowGap: 9, marginTop: 4 },
     main_tab:        { fontFamily: F.mono(400), fontSize: 14, letterSpacing: 1.12, textTransform: UP, color: t.pine_d, paddingVertical: 13, paddingHorizontal: 1, borderBottomWidth: 3, borderBottomColor: "transparent" },
     main_tab_on:     { borderBottomColor: t.clay },
     kicker:          { fontFamily: F.mono(500), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 1.89, textTransform: UP, color: t.pine },

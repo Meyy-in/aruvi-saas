@@ -725,7 +725,9 @@ generic look.
   `_html_body` bakes subscription facts into its rows.
 - **One shell measure — `--shell-w` (860px) / `--shell-pad` (34px), 2026-08-21.** The signed-in
   shell is ONE centred column and the chrome aligns TO it, never to the screen. `main`,
-  `.topbar .hdr` (brand · theme · gear · user/log-out) and the Ask-Aruvi mark's right offset all
+  `.topbar .hdr` (brand · gear · user/log-out — ⚠️ NOT a theme toggle: this line said "theme"
+  until 2026-09-13, when the parity audit measured `.hdr-user` and found exactly two children,
+  the gear and the identity block; appearance is chosen in Settings) and the Ask-Aruvi mark's right offset all
   derive from these two tokens; the `.topbar` pine fill and `.main-tabs` paper strip still span
   edge to edge (only their CONTENTS are capped — that is what makes the bar read as a bar).
   Before this only `main` was capped, so on a Mac the content sat as an 860px column mid-screen
