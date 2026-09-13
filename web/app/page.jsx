@@ -625,7 +625,27 @@ export default function Home() {
     // device, so this fetch is the whole offline guarantee — see ask-aruvi/bank.js.
     primeBank();
   };
+  /* ★ ERASED, BUT STILL ON SCREEN (founder, 2026-09-13 — found live after a real deletion).
+     The account is destroyed the moment the receipt lands, but Settings' farewell card kept
+     rendering inside the shell and its "Done" button was the ONLY control that signed her out.
+     The frozen Settings bar's ✕ sits right above it and knew nothing about the erasure, so
+     closing that way dropped her back into a fully-rendered My Classes for an account that no
+     longer exists — the readiness effect below re-reads only on `user`, so nothing refetched
+     and the dead profile stayed until a manual refresh (which 401s and signs out properly).
+     Now: the DEVICE is swept the instant the receipt arrives — nothing of hers survives even
+     if she simply closes the tab — and `erased` arms settingsClose, so BOTH exits land at the
+     front door. `user` is deliberately NOT cleared here: that would unmount the farewell she
+     has not read yet. onSignOut is idempotent, so whichever exit she takes is safe. */
+  const [erased, setErased] = useState(false);
+  const onErased = () => {
+    setErased(true);
+    clearUser();
+    signOutAuth();
+    clearTeacherCaches(["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"]);
+  };
+
   const onSignOut = () => {
+    setErased(false);
     clearUser(); setUserState("");
     signOutAuth();   // the Supabase session, when there is one (lib/auth.js)
     // EVERY per-teacher cache goes: the bank (licensed content behind an account — never
@@ -915,6 +935,9 @@ export default function Home() {
      rule (no back-and-title pair; one titled row, one ✕) is untouched; what changed is that
      "close" is read against the named screen rather than against the whole of Settings. */
   const settingsClose = () => {
+    // There is no account to go back TO — the ✕ is an exit from the product, not from a
+    // screen (see onErased above). Checked FIRST, before every subview branch.
+    if (erased) { onSignOut(); return; }
     // The teaching profile is reached THROUGH the list, so it closes back to it (it renders
     // under editFlow "profile", which is why this branch restores editFlow as well).
     if (editFlow === "profile" && profileViaSettings) {
@@ -1286,7 +1309,7 @@ export default function Home() {
                 onOpenProfile={openProfileFromSettings} syncTick={entSyncTick}
                 trial={entTrial}
                 onSubscribe={() => setSubscribeOpen(true)}
-                onAsk={() => setAskOpen(true)} onSignOut={onSignOut} />
+                onAsk={() => setAskOpen(true)} onSignOut={onSignOut} onErased={onErased} />
             </div>
           ) :
             !subject ? <div className="empty">Connecting to the Meyy engine…</div> :

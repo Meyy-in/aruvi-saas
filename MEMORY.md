@@ -5960,3 +5960,29 @@ Meyy right now" path is untouched and deliberately separate.
 **The lesson worth carrying:** when the web gains a rule about identity, ask the same day what
 the phone does with it. This one was in CLAUDE.md §4's "every UI change lands on both surfaces"
 all along; it hid because it is not a UI change — it is a behaviour with no pixels.
+
+### Addendum, same day — the report was about the WEB, and the web had its own version of it
+
+The entry above was written from the phone's symptom; the founder was using **only the web app**.
+Both bugs are real and they are the same bug wearing two coats — *a session that has ended
+underneath the teacher, and a screen that does not notice* — but the web's door is a different one.
+
+On the web the erasure SUCCEEDS and the receipt renders a farewell card whose **"Done" button was
+the only control that signed her out**. The frozen Settings bar's ✕ sits directly above it and knew
+nothing about the erasure, so `settingsClose` did its ordinary thing and returned her to a fully
+rendered **My Classes for an account the server had already destroyed**. Nothing refetched, because
+the readiness effect in page.jsx re-reads only when `user` changes — so the dead profile stayed on
+screen until a manual refresh, at which point `GET /readiness` 401s and the existing (correct)
+401 branch signs her out. Hence "after deletion, the 03 profile continues to show".
+
+★ **The receipt is the moment of death, not the Done button.** `onErased` now fires the instant the
+receipt lands: the DEVICE is swept immediately (`clearUser` + `signOutAuth` + `clearTeacherCaches`),
+so nothing of hers survives even if she just closes the tab, and an `erased` flag is checked FIRST
+in `settingsClose`, so both exits land at the front door. `user` is deliberately NOT cleared there —
+that would unmount the farewell she has not read yet; `onSignOut` is idempotent, so whichever exit
+she takes is safe.
+
+⚠️ **The generalisation worth keeping:** a screen reached by a control that "closes what the bar
+NAMES" (2026-09-07) assumes there is something to go back to. When a screen can destroy the thing
+underneath it, its close must be re-asked — the ✕ was correct for every OTHER Settings subview and
+wrong only for this one.

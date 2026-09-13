@@ -518,6 +518,10 @@ const scopeRows = (scope) => {
 export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOut,
                                    onSubscribe, onAccountSaved, syncTick = 0,
                                    trial = false,
+                                   /* Fired the instant the erasure receipt lands. The account
+                                      is GONE at that moment, so the shell ends the session
+                                      underneath this screen — see page.jsx onErased. */
+                                   onErased = () => {},
                                    /* Which document the Legal card shows — "agreement" |
                                       "privacy". Lifted to page.jsx so the shell's
                                       "notice updated" note can open Legal ON the notice. */
@@ -684,6 +688,16 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       }));
       if (!r.ok) throw new Error(String(r.status));
       setReceipt(await r.json());
+      /* ★ THE SESSION ENDS HERE, NOT AT "DONE" (founder, 2026-09-13 — found live).
+         The farewell used to be the ONLY thing standing between a deleted account and the
+         shell, and its Done button the only control that signed her out. The frozen Settings
+         bar's ✕ sits directly above it and knew nothing about the erasure, so closing that
+         way returned her to a fully-rendered My Classes for an account the server had already
+         destroyed — page.jsx re-reads /readiness only when `user` changes, so it persisted
+         until a manual refresh (which 401s and signs out). Reported as "after deletion the
+         profile continues to show". The receipt is the moment of death: the shell clears the
+         device and arms its exits now, and the farewell simply stays on screen to be read. */
+      onErased();
     } catch {
       setFailMsg("Couldn't delete the account right now. Nothing was removed — try again.");
     } finally {
