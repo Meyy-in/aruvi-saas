@@ -167,6 +167,13 @@ adding a field to a tab, dropping a sub-tab, moving a navigator, relabelling —
 and needs the founder's say-so first. When porting, read the web component and reproduce its
 structure; simplify only with a written reason. Redoing the design on the phone would mean doing
 the whole design exercise twice.
+**How the SKIN matches (2026-09-13):** `mobile/theme/web.js` holds the web's styles keyed by
+the web's own CSS class names (`ws.uv_tab`, `ws.kicker`, `ws.co_card`…), with values READ
+FROM THE LIVE WEB at phone width (Chrome, iPhone 12 Pro emulation, `getComputedStyle`),
+colours mapped to tokens. Components use those keys, never an invented type scale — the first
+LessonView cut used 17px Newsreader where the web sets 13px phase text, 11px mono tabs, 10.5px
+mono kickers, and read "bigger" for exactly that reason. When globals.css changes, re-measure
+and update web.js; `theme/tokens.js` is likewise generated from globals.css.
 
 **Two product phases (the big structural change):**
 - **Phase 1 — Guided First Experience:** there is **NO app shell** (no sidebar, no tabs, no nav)

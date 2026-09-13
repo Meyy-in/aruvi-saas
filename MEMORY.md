@@ -770,7 +770,20 @@ must confirm · source entry.
   LessonView shell + pvNav + completion strings, PhaseBookmark (drag), ChapterOrg (incl. the SS
   competency map + chapter-notes modal), the whole Assess family. Pure logic (itemTabSet etc.)
   verified identical to the web on the real items. Phone re-test owed.
-- **Next:** step 4, My Classes "+" binding + full My Lessons library.
+- **2026-09-13 — the SKIN gap, found by the founder's side-by-side (web at iPhone 12 Pro
+  emulation vs the Expo screen).** The 1:1 port had the web's structure but a guessed type
+  scale. Diagnosed with Claude in Chrome: the DevTools tab was first at a 304px viewport (hence
+  "looks large"); at a true 390 the web's computed styles are far smaller than I'd used —
+  phase text 13px, notes 14.5px italic, unit tabs 11px uppercase mono, kickers 10.5px mono,
+  "← ORGN." a 30px pine pill, mark-complete a mono uppercase 44px bar, pvNav a clay strip with
+  11px bold mono. Measured EVERY LessonView/ChapterOrg/Assess/SS-map class from the live page
+  → `mobile/theme/web.js` (keyed by web class names, token-mapped); re-skinned LessonView,
+  ChapterOrg (+notes modal, SS map), AssessPanel, Bar onto it; fonts gained Fraunces 600
+  italic + Plex Mono 700. Rule added to CLAUDE.md §4. Phone re-check owed. Note for the
+  comparison: a CSS px is ~10% physically larger on the Mac than on the iPhone, so DevTools at
+  100% always looks a touch bigger than the handset — proportions are what to compare.
+- **Next:** step 4, My Classes "+" binding + full My Lessons library — and measure the web's
+  My Classes / My Lessons classes into web.js the same way before building them.
 
 ## 2026-09-11 (newest) — THE WHOLE PRODUCT ON THE PRODUCTION STACK, DRIVEN LIVE
 

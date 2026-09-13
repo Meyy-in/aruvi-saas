@@ -24,8 +24,7 @@ import {
   readLocalBookmark, writeLocalBookmark,
 } from "@aruvi/shared/sectionState";
 import { useTheme } from "../theme/ThemeContext";
-import { type } from "../theme/type";
-import { display, mono } from "../theme/fonts";
+import { useWebStyles } from "../theme/web";
 import Bar from "./Bar";
 import ChapterOrg, { kickerOf } from "./lesson/ChapterOrg";
 import PhaseBookmark from "./lesson/PhaseBookmark";
@@ -55,63 +54,59 @@ const phaseMin = (ph) =>
 
 const CTX_LABEL = { spine: "Spine", section: "Section", competency: "Competency", stage: "Stage", progression_stage: "Stage" };
 
-/* ── Overview: ledger rows, exactly the web's four ── */
-function OverviewPanel({ t, u, chapterTitle }) {
+/* ── Overview: ledger rows, exactly the web's four (.uv-ovrows) ── */
+function OverviewPanel({ ws, u, chapterTitle }) {
   const m = u.meta || {};
   const axisVal = m.section_label || u.context;
   const isSS = u.groupType === "competency" || (u.groupType === "unit" && m.section_anchor);
   const axisRow = isSS ? ["Section", m.section_anchor] : [CTX_LABEL[u.groupType] || "Spine", axisVal];
   const rows = [["Chapter", chapterTitle], axisRow, ["Time", m.duration_minutes ? `${m.duration_minutes} mins` : null], ["Pedagogy", u.approach]].filter(([, v]) => v);
-  if (!rows.length) return <Text style={[type.body, { color: t.ink_soft }]}>No overview details recorded for this unit.</Text>;
+  if (!rows.length) return <Text style={ws.empty}>No overview details recorded for this unit.</Text>;
   return (
-    <View>
+    <View style={ws.uv_ovrows}>
       {rows.map(([k, v]) => (
-        <View key={k} style={[s.ovrow, { borderBottomColor: t.line_soft }]}>
-          <Text style={[type.label, { color: t.ink_soft, width: 92 }]}>{k}</Text>
-          <Text style={[type.body, { color: t.ink, flex: 1 }]}>{v}</Text>
+        <View key={k} style={ws.uv_ovrow}>
+          <Text style={[ws.kicker, { width: 84 }]}>{k}</Text>
+          <Text style={ws.uv_ovval}>{v}</Text>
         </View>
       ))}
     </View>
   );
 }
 
-/* ── Material: the checklist + prepared tables/text ── */
-function MaterialPanel({ t, u }) {
+/* ── Material: the checklist + prepared tables/text (.uv-mat) ── */
+function MaterialPanel({ ws, t, u }) {
   const va = u.meta && u.meta.visual_aids;
   const aids = Array.isArray(va) ? va : [];
   const legacyAid = typeof va === "string" && va ? va : null;
   const mats = u.materials || [];
-  if (!mats.length && !aids.length && !legacyAid) return <Text style={[type.body, { color: t.ink_soft }]}>Nothing to prepare — this unit needs no materials.</Text>;
+  if (!mats.length && !aids.length && !legacyAid) return <Text style={ws.empty}>Nothing to prepare — this unit needs no materials.</Text>;
   return (
-    <View>
-      {mats.map((mm, i) => (
-        <View key={i} style={s.li}><Text style={[type.body, { color: t.ink_soft }]}>•</Text><Text style={[type.body, { color: t.ink, flex: 1 }]}>{mm}</Text></View>
-      ))}
-      {legacyAid ? <Text style={[type.body, { color: t.ink, marginTop: 8 }]}>{legacyAid}</Text> : null}
+    <View style={ws.uv_mat}>
+      {mats.map((mm, i) => <Text key={i} style={ws.uv_mat_li}>•  {mm}</Text>)}
+      {legacyAid ? <Text style={ws.uv_va_prose}>{legacyAid}</Text> : null}
       {aids.map((a, i) => (
-        <View key={i} style={{ marginTop: 16 }}>
-          <Text style={[type.label, { color: t.ink_soft, marginBottom: 6 }]}>
-            {a.type === "table" ? "Prepared table" : "Prepared text"}{a.title ? ` · ${a.title}` : ""}
-          </Text>
-          {a.type === "table" && a.table ? <AidTable t={t} table={a.table} /> : null}
-          {a.type === "table" && a.table && a.table.source_note ? <Text style={[type.small, { color: t.ink_soft, marginTop: 6 }]}>{a.table.source_note}</Text> : null}
-          {a.type === "prose" ? <Text style={[type.body, { color: t.ink }]}>{a.text}</Text> : null}
+        <View key={i} style={ws.uv_va_kicker}>
+          <Text style={ws.kicker}>{a.type === "table" ? "Prepared table" : "Prepared text"}{a.title ? ` · ${a.title}` : ""}</Text>
+          {a.type === "table" && a.table ? <AidTable ws={ws} t={t} table={a.table} /> : null}
+          {a.type === "table" && a.table && a.table.source_note ? <Text style={ws.uv_va_src}>{a.table.source_note}</Text> : null}
+          {a.type === "prose" ? <Text style={ws.uv_va_prose}>{a.text}</Text> : null}
         </View>
       ))}
     </View>
   );
 }
-function AidTable({ t, table }) {
+function AidTable({ ws, t, table }) {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 6 }}>
       <View style={{ borderWidth: 1, borderColor: t.line, borderRadius: 6, overflow: "hidden" }}>
-        {table.caption ? <Text style={[type.small, { color: t.ink_soft, padding: 8 }]}>{table.caption}</Text> : null}
+        {table.caption ? <Text style={[ws.uv_va_src, { padding: 8, marginTop: 0 }]}>{table.caption}</Text> : null}
         <View style={{ flexDirection: "row", backgroundColor: t.paper_sunk }}>
-          {(table.header || []).map((h, i) => <Text key={i} style={[type.label, s.td, { color: t.ink }]}>{h}</Text>)}
+          {(table.header || []).map((h, i) => <Text key={i} style={[ws.assess_ovk, s.td]}>{h}</Text>)}
         </View>
         {(table.rows || []).map((row, ri) => (
           <View key={ri} style={{ flexDirection: "row", borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: t.line }}>
-            {row.map((c, ci) => <Text key={ci} style={[type.small, s.td, { color: t.ink }]}>{c}</Text>)}
+            {row.map((c, ci) => <Text key={ci} style={[ws.uv_mat_li, s.td, { paddingLeft: 10 }]}>{c}</Text>)}
           </View>
         ))}
       </View>
@@ -120,54 +115,58 @@ function AidTable({ t, table }) {
 }
 
 /* ── Lesson: the notes ribbon → the phase spine (with the bookmark) → homework ── */
-function LessonPanel({ t, u, bookmark, footer }) {
+function LessonPanel({ ws, t, u, bookmark, footer }) {
   const phases = (u.phases || []).filter((ph) => ph.text || ph.label);
   const notes = u.teacher_notes && u.teacher_notes.length ? u.teacher_notes.join(" ") : null;
   const POINTER = /^(Refer to Prepared Table[^.]*\.)\s*/;
   const m = notes ? notes.match(POINTER) : null;
   const notesLead = m ? m[1] : null;
   const notesRest = notes ? notes.replace(POINTER, "") : "";
-  const [notesOpen, setNotesOpen] = useState(true);
-  const [rows, setRows] = useState({});       // i → {y, timeH}
-  const centres = useMemo(() => phases.map((_, i) => rows[i] ? rows[i].y + rows[i].timeH / 2 : null).filter((v) => v != null), [rows, phases.length]);
+  const [notesOpen, setNotesOpen] = useState(true);   // <details open> on the web
+  const [rows, setRows] = useState({});
+  const centres = useMemo(() => phases.map((_, i) => rows[i] ? rows[i].y + 13 + rows[i].timeH / 2 : null).filter((v) => v != null), [rows, phases.length]);
   return (
     <View>
       {notes ? (
-        <Pressable onPress={() => setNotesOpen((o) => !o)} style={[s.ribbon, { backgroundColor: t.tint_clay, borderColor: t.edge_clay }]}>
-          <Text style={[type.label, { color: t.clay }]}>Teacher notes</Text>
+        <View style={ws.uv_tnotes_rib}>
+          <Pressable onPress={() => setNotesOpen((o) => !o)} style={ws.uv_tnotes_sum}>
+            <Text style={ws.uv_tnotes_k}>Teacher notes</Text>
+            {notesOpen ? <Text style={[ws.uv_tnotes_k, { marginLeft: "auto" }]}>–</Text> : <Text style={ws.uv_tnotes_teaser} numberOfLines={1}>{notes}</Text>}
+          </Pressable>
           {notesOpen ? (
-            <Text style={[type.body, { color: t.ink, marginTop: 4 }]}>
-              {notesLead ? <Text style={{ fontFamily: display(600) }}>{notesLead} </Text> : null}{notesLead ? notesRest : notes}
+            <Text style={ws.uv_tnotes_p}>
+              {notesLead ? <Text style={ws.uv_tnotes_ref}>{notesLead} </Text> : null}{notesLead ? notesRest : notes}
             </Text>
-          ) : <Text style={[type.small, { color: t.ink_soft, marginTop: 2 }]} numberOfLines={1}>{notes}</Text>}
-        </Pressable>
+          ) : null}
+        </View>
       ) : null}
 
       {phases.length ? (
-        <View style={s.phases}>
+        <View style={ws.uv_phases}>
           {bookmark ? <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)} onMove={bookmark.onMove} color={t.clay} /> : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
             return (
-              <View key={i} style={s.phase} onLayout={(e) => { const { y } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { timeH: 20 }), y } })); }}>
-                <Pressable disabled={!bookmark} onPress={() => bookmark && bookmark.onMove(i)} style={s.phTime}
+              <View key={i} style={[ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 }]}
+                onLayout={(e) => { const { y } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { timeH: 18 }), y } })); }}>
+                <Pressable disabled={!bookmark} onPress={() => bookmark && bookmark.onMove(i)} style={ws.uv_ph_time}
                   onLayout={(e) => { const { height } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { y: 0 }), timeH: height } })); }}>
-                  <Text style={[s.phN, { color: t.ink }]}>{mins != null ? mins : (ph.label || "—")}</Text>
-                  {mins != null ? <Text style={[s.phU, { color: t.ink_soft }]}>min</Text> : null}
+                  <Text style={ws.uv_ph_n}>{mins != null ? mins : (ph.label || "—")}</Text>
+                  {mins != null ? <Text style={ws.uv_ph_u}>min</Text> : null}
                 </Pressable>
-                <Text style={[type.body, { color: t.ink, flex: 1 }]}>{ph.text}</Text>
+                <Text style={ws.uv_ph_t}>{ph.text}</Text>
               </View>
             );
           })}
         </View>
       ) : (u.activities && u.activities.length) ? u.activities.map((a, i) => (
-        <Text key={i} style={[type.body, { color: t.ink, marginBottom: 10 }]}>{a}</Text>
-      )) : <Text style={[type.body, { color: t.ink_soft }]}>No phases recorded for this unit.</Text>}
+        <Text key={i} style={ws.phaserow}>{a}</Text>
+      )) : <Text style={ws.empty}>No phases recorded for this unit.</Text>}
 
       {u.homework ? (
-        <View style={[s.hw, { backgroundColor: t.tint_cream, borderColor: t.edge }]}>
-          <Text style={[type.label, { color: t.ink_soft, marginBottom: 4 }]}>Homework</Text>
-          <Text style={[type.body, { color: t.ink }]}>{parseBold(u.homework).map((r, i) => r.bold ? <Text key={i} style={{ fontFamily: display(600) }}>{r.text}</Text> : r.text)}</Text>
+        <View style={ws.uv_hw}>
+          <Text style={ws.kicker}>Homework</Text>
+          <Text style={ws.uv_hw_p}>{parseBold(u.homework).map((r, i) => r.bold ? <Text key={i} style={ws.uv_tnotes_ref}>{r.text}</Text> : r.text)}</Text>
         </View>
       ) : null}
       {footer}
@@ -175,29 +174,29 @@ function LessonPanel({ t, u, bookmark, footer }) {
   );
 }
 
-/* ── one unit: pinned header + tab bar, the panel beneath ── */
-function PreviewUnit({ t, header, u, assessment, chapterTitle, lessonFooter, defaultTab, bookmark, tail }) {
+/* ── one unit: pinned header + tab bar (.lv-stick), the panel beneath ── */
+function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter, defaultTab, bookmark, tail }) {
   const items = unitAssessItems(assessment, u);
   const [tab, setTab] = useState(defaultTab);
   const tabs = [["overview", "Overview"], ["material", "Material"], ["lesson", "Lesson"], ...(items.length ? [["assess", "Assess"]] : [])];
   return (
     <>
-      <View style={[s.stick, { backgroundColor: t.paper, borderBottomColor: t.line }]}>
+      <View style={[ws.lv_stick, { paddingHorizontal: 18 }]}>
         {header}
-        <View style={s.tabbar} accessibilityRole="tablist">
+        <View style={ws.uv_tabs} accessibilityRole="tablist">
           {tabs.map(([id, label]) => (
             <Pressable key={id} onPress={() => setTab(id)} accessibilityRole="tab" accessibilityState={{ selected: tab === id }}
-              style={[s.tab, tab === id && { borderBottomColor: t.clay }]}>
-              <Text style={[type.small, { color: tab === id ? t.ink : t.ink_soft, fontFamily: tab === id ? display(600) : undefined }]}>{label}</Text>
+              style={[ws.uv_tab, tab === id && ws.uv_tab_on]}>
+              <Text style={[ws.uv_tab_t, tab === id && ws.uv_tab_on_t]}>{label}</Text>
             </Pressable>
           ))}
         </View>
       </View>
       <ScrollView contentContainerStyle={s.body}>
-        {tab === "overview" ? <OverviewPanel t={t} u={u} chapterTitle={chapterTitle} /> : null}
-        {tab === "material" ? <MaterialPanel t={t} u={u} /> : null}
-        {tab === "lesson" ? <LessonPanel t={t} u={u} bookmark={bookmark} footer={lessonFooter} /> : null}
-        {tab === "assess" ? <AssessPanel t={t} items={items} assessment={assessment} /> : null}
+        {tab === "overview" ? <OverviewPanel ws={ws} u={u} chapterTitle={chapterTitle} /> : null}
+        {tab === "material" ? <MaterialPanel ws={ws} t={t} u={u} /> : null}
+        {tab === "lesson" ? <LessonPanel ws={ws} t={t} u={u} bookmark={bookmark} footer={lessonFooter} /> : null}
+        {tab === "assess" ? <AssessPanel ws={ws} t={t} items={items} assessment={assessment} /> : null}
         {tail}
       </ScrollView>
     </>
@@ -206,6 +205,7 @@ function PreviewUnit({ t, header, u, assessment, chapterTitle, lessonFooter, def
 
 export default function LessonView({ view, sectionKey = "", onExit, preview = false }) {
   const { t } = useTheme();
+  const ws = useWebStyles();
   const lp = view.lesson_plan;
   const units = useMemo(() => flattenUnits(lp), [lp]);
   const droppedUnits = useMemo(() => (view.dropped_lp ? flattenUnits(view.dropped_lp) : []), [view.dropped_lp]);
@@ -237,9 +237,9 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   if (!total) {
     return (
       <View style={{ flex: 1, backgroundColor: t.paper }}><Bar />
-        <View style={{ padding: 24 }}>
-          <Pressable onPress={onExit}><Text style={[type.small, { color: t.pine }]}>← back</Text></Pressable>
-          <Text style={[type.body, { color: t.ink_soft, marginTop: 14 }]}>This plan has no units.</Text>
+        <View style={{ padding: 18 }}>
+          <Pressable onPress={onExit} style={{ alignSelf: "flex-start" }}><Text style={ws.back_tr}>← back</Text></Pressable>
+          <Text style={[ws.empty, { marginTop: 14 }]}>This plan has no units.</Text>
         </View>
       </View>
     );
@@ -261,43 +261,43 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   const totalAll = units.length + droppedUnits.length;
 
   const pvNav = (
-    <View style={[s.pvnav, { borderTopColor: t.line }]}>
-      {previewAt <= 0 ? <NavBtn t={t} onPress={goOrg} label="‹ Chapter org." />
-        : previewAt === units.length ? <NavBtn t={t} onPress={() => pvGoto(units.length - 1)} label={`← Back to unit ${units.length}`} />
-        : <NavBtn t={t} onPress={() => pvGoto(previewAt - 1)} label="← Previous unit" />}
-      <Text style={[type.mono, { fontSize: 12, color: t.ink_soft }]}>
+    <View style={ws.lv_pvnav}>
+      {previewAt <= 0 ? <NavBtn ws={ws} onPress={goOrg} label="‹ Chapter org." />
+        : previewAt === units.length ? <NavBtn ws={ws} onPress={() => pvGoto(units.length - 1)} label={`← Back to unit ${units.length}`} />
+        : <NavBtn ws={ws} onPress={() => pvGoto(previewAt - 1)} label="← Previous unit" />}
+      <Text style={ws.lv_pvmid}>
         {inDropped ? `Dropped ${previewAt - units.length + 1} / ${droppedUnits.length}` : `Unit ${previewAt + 1} / ${units.length}`}
       </Text>
-      {previewAt === units.length - 1 && droppedUnits.length ? <NavBtn t={t} onPress={() => pvGoto(units.length)} label="Dropped sections →" />
-        : <NavBtn t={t} onPress={() => previewAt < totalAll - 1 && pvGoto(previewAt + 1)} label="Next unit →" off={previewAt >= totalAll - 1} />}
+      {previewAt === units.length - 1 && droppedUnits.length ? <NavBtn ws={ws} onPress={() => pvGoto(units.length)} label="Dropped sections →" />
+        : <NavBtn ws={ws} onPress={() => previewAt < totalAll - 1 && pvGoto(previewAt + 1)} label="Next unit →" off={previewAt >= totalAll - 1} />}
     </View>
   );
 
   const header = (
-    <View>
-      <View style={s.topbar}>
-        <Text style={[type.label, { color: t.ink_soft, flex: 1 }]} numberOfLines={1}>{kickerOf(lp)}</Text>
-        <Pressable onPress={goOrg} hitSlop={8}><Text style={[type.small, { color: t.pine }]}>← Orgn.</Text></Pressable>
+    <View style={ws.lv_hd}>
+      <View style={ws.co_topbar}>
+        <Text style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp)}</Text>
+        <Pressable onPress={goOrg} hitSlop={8}><Text style={ws.back_tr}>← Orgn.</Text></Pressable>
       </View>
-      <Text style={[s.title, { color: t.ink }]}>
-        <Text style={{ color: t.clay }}>{inDropped ? "✦ " : `${previewAt + 1}.`}</Text> {pu.title}
+      <Text style={ws.lv_title}>
+        <Text style={ws.lv_unum}>{inDropped ? "✦ " : `${previewAt + 1}.`}</Text>  {pu.title}
       </Text>
-      {inDropped ? <Text style={[type.small, { color: t.ink_soft, marginTop: 2 }]}>Dropped section · for self-study · not scheduled</Text> : null}
+      {inDropped ? <Text style={ws.uv_durline}>Dropped section · for self-study · not scheduled</Text> : null}
     </View>
   );
 
   const actUnit = undoTo != null ? undoTo : cur;
   const completionUI = !tracking ? null : undoTo != null ? (
-    <DoneCard t={t} title="Unit complete" action="↺ Undo" onAction={undoComplete} tint={t.tint_pine} edge={t.pine} />
+    <DoneCard ws={ws} title="Unit complete" action="↺ Undo" onAction={undoComplete} />
   ) : cur >= total - 1 ? (
-    doneFlag ? <DoneCard t={t} title="Chapter complete" action="↺ Reopen" onAction={() => setDone(false)} tint={t.ochre_tint || t.tint_cream} edge={t.ochre} />
-      : <MarkBtn t={t} label="Mark chapter complete" onPress={markComplete} />
-  ) : <MarkBtn t={t} label="Mark this unit complete" onPress={markComplete} />;
+    doneFlag ? <DoneCard ws={ws} title="Chapter complete" action="↺ Reopen" onAction={() => setDone(false)} chapter />
+      : <MarkBtn ws={ws} label="Mark chapter complete" onPress={markComplete} />
+  ) : <MarkBtn ws={ws} label="Mark this unit complete" onPress={markComplete} />;
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Bar />
-      <PreviewUnit key={previewAt} t={t} header={header} u={pu} assessment={view.assessment} chapterTitle={lp.chapter_title}
+      <PreviewUnit key={previewAt} ws={ws} t={t} header={header} u={pu} assessment={view.assessment} chapterTitle={lp.chapter_title}
         defaultTab={tracking ? "lesson" : "overview"}
         lessonFooter={tracking && !inDropped && previewAt === actUnit ? completionUI : null}
         bookmark={tracking && !inDropped && previewAt === cur ? { phase: bkmkPhase, onMove: moveBookmark } : null}
@@ -306,40 +306,23 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   );
 }
 
-const NavBtn = ({ t, label, onPress, off }) => (
-  <Pressable onPress={onPress} disabled={off} hitSlop={6}><Text style={[type.small, { color: t.pine, opacity: off ? 0.35 : 1 }]}>{label}</Text></Pressable>
+const NavBtn = ({ ws, label, onPress, off }) => (
+  <Pressable onPress={onPress} disabled={off} hitSlop={6}><Text style={[ws.lv_pvbtn, off && ws.lv_pvbtn_off]}>{label}</Text></Pressable>
 );
-const MarkBtn = ({ t, label, onPress }) => (
-  <Pressable onPress={onPress} style={[s.markbtn, { backgroundColor: t.pine }]}><Text style={[type.button, { color: "#f3efe6" }]}>{label}</Text></Pressable>
+const MarkBtn = ({ ws, label, onPress }) => (
+  <View style={ws.lv_markcard}><Pressable onPress={onPress} style={ws.lv_markbtn}><Text style={ws.lv_markbtn_t}>{label}</Text></Pressable></View>
 );
-const DoneCard = ({ t, title, action, onAction, tint, edge }) => (
-  <View style={[s.donecard, { backgroundColor: tint, borderColor: edge }]}>
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-      <Text style={{ color: edge, fontSize: 18 }}>✓</Text>
-      <Text style={[type.bodyStrong, { color: t.ink }]}>{title}</Text>
+const DoneCard = ({ ws, title, action, onAction, chapter }) => (
+  <View style={[ws.lv_donecard, chapter && ws.lv_chapterdone]}>
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <Text style={ws.lv_donemark}>✓</Text>
+      <Text style={ws.lv_donetitle}>{title}</Text>
     </View>
-    <Pressable onPress={onAction} hitSlop={6}><Text style={[type.small, { color: t.pine }]}>{action}</Text></Pressable>
+    <Pressable onPress={onAction} hitSlop={6}><Text style={ws.lv_undo}>{action}</Text></Pressable>
   </View>
 );
 
 const s = StyleSheet.create({
-  stick: { paddingHorizontal: 18, paddingTop: 12, borderBottomWidth: StyleSheet.hairlineWidth },
-  topbar: { flexDirection: "row", alignItems: "center", gap: 12 },
-  title: { fontFamily: "Fraunces_500Medium", fontSize: 20, lineHeight: 25, marginTop: 8 },
-  tabbar: { flexDirection: "row", marginTop: 14, gap: 20 },
-  tab: { paddingBottom: 10, borderBottomWidth: 2, borderBottomColor: "transparent" },
-  body: { paddingHorizontal: 20, paddingVertical: 18, paddingBottom: 30 },
-  ovrow: { flexDirection: "row", gap: 10, paddingVertical: 9, borderBottomWidth: StyleSheet.hairlineWidth, alignItems: "flex-start" },
-  li: { flexDirection: "row", gap: 10, alignItems: "flex-start", marginBottom: 8 },
+  body: { paddingHorizontal: 18, paddingTop: 10, paddingBottom: 30 },   // main: 26px 18px 72px, minus the pinned block
   td: { paddingVertical: 7, paddingHorizontal: 10, minWidth: 110 },
-  ribbon: { borderWidth: 1, borderRadius: 10, padding: 12, marginBottom: 16 },
-  phases: { position: "relative", paddingLeft: 30 },
-  phase: { flexDirection: "row", gap: 12, marginBottom: 16, alignItems: "flex-start" },
-  phTime: { width: 44, alignItems: "flex-end", paddingTop: 3 },
-  phN: { fontFamily: "IBMPlexMono_500Medium", fontSize: 15, lineHeight: 18 },
-  phU: { fontFamily: "IBMPlexMono_400Regular", fontSize: 10, lineHeight: 12 },
-  hw: { borderWidth: 1, borderRadius: 10, padding: 13, marginTop: 8 },
-  markbtn: { borderRadius: 11, paddingVertical: 15, alignItems: "center", marginTop: 24 },
-  donecard: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderRadius: 11, padding: 14, marginTop: 22 },
-  pvnav: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 14, marginTop: 26, gap: 10 },
 });
