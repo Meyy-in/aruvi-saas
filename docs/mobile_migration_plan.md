@@ -344,8 +344,39 @@ padding inside the bar.
 - **Owed on the phone (iPhone 14, `npx expo start --tunnel`):** the bar over the home indicator,
   the four glyph weights, and the active clay underline against the web frame.
 
-Next: step 4, My Classes "+" binding and the full My Lessons library (Year Plan, prepared filter);
-the bar's My Lessons / Add / Ask Meyy items are mounted but inert until their screens exist.
+**Step 4a — the My Classes "+" binding (2026-09-13).** The improvised "Open another chapter"
+browse list is gone; the screen now carries the web's actual card and its actual picker.
+- `mobile/components/AttachSheet.jsx` — `AttachSheet` (the "+" track-a-chapter picker) and
+  `UntrackSheet` (the "−" confirm), both ports of MyPlans' `attachModal`/`untrackModal` over one
+  shared `Sheet` (dimmed ground, ✕, ochre kicker / Fraunces title / sub). The picker's filter is
+  the web's, clause for clause: only chapters SHE prepared, plus any bound to a SIBLING section of
+  the same subject·class, never the one already on this section, never an archived plan.
+- `app/(app)/index.jsx` — `ClassCard` rebuilt in the web's three states (st-new sand · st-going
+  green · st-done clay, each with its own edge and a 4px spine), tag + optional section name,
+  kicker, two-line title, duration line, the unit rail (done pine / current ochre / rest
+  card_tick), and the right slot: "+" to track on an empty or finished card, "−" to untrack while
+  teaching. Handlers mirror the web's: attach binds through the shared writer and bumps a tick so
+  the card refreshes at once (the web's "+ works late" lag, designed out); untrack logs history
+  only past ≥1 unit (the anti-noise gate); a completed card moves on with no confirm and opens the
+  picker for the next chapter.
+- `theme/web.js` — `sc_*`, `ap_*` and `ch_*` measures read off the live web at 390.
+- ⚠️ **One deliberate structural difference, named as CLAUDE.md §4 requires:** the card's tap
+  target is the tag + body, not the whole card. The web nests a `<button>` inside a clickable
+  `<div>` and calls stopPropagation; react-native-web renders a role="button" Pressable as a real
+  `<button>`, and a nested button is invalid (it warns, and the inner press is unreliable). The
+  row is split instead — identical on screen, and the actions simply are not inside the card's
+  press target, which is what stopPropagation was simulating.
+- The web's 11px graph rule is not ported (RN has no repeating gradient); the fill carries the
+  status, which is what the rule was never doing.
+- Verified on the Expo web target: card in its going state with rail and "−", the untrack confirm
+  opening with the web's exact words and cancelling cleanly. **Phone pass owed.**
+- Deferred with their own reasons, neither changing the modal's shape: "prepare a new one"
+  (PrepareLesson is step 5, so the footer would lead nowhere) and last year's lessons
+  (`.ap-prior`, which needs the year record the phone does not read yet).
+
+Next: step 4b, the full My Lessons library — the paired "Your lessons / Year plan" switch
+(2026-09-13), subject·class wheels, the prepared filter, archive, and the Year Plan pane. The
+bar's My Lessons / Add / Ask Meyy items stay inert until it lands.
 
 ## 3. Phasing
 

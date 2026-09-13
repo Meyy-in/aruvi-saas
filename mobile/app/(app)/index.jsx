@@ -13,15 +13,30 @@ import { useEffect, useState, useCallback } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, getJSON, fetchEntitlement, subjectSlug, classNum } from "@aruvi/shared/format";
+import { getUser, getJSON, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
 import { signOutAuth } from "@aruvi/shared/auth";
 import { clearTeacherCaches } from "@aruvi/shared/signout";
-import { pullSectionState, readLocalSection } from "@aruvi/shared/sectionState";
+import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
+import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
 import Bar from "../../components/Bar";
 import { Button } from "../../components/ui";
+import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
 import { useTheme } from "../../theme/ThemeContext";
+import { useWebStyles } from "../../theme/web";
 import { type } from "../../theme/type";
-import { display } from "../../theme/fonts";
+
+/* The web's pointerFor / unitsDoneFor, over the shared cache rather than window.localStorage.
+   The stored pointer is 0-BASED; the rail and "unit N" are 1-based, and an ABSENT pointer means
+   untouched — which is why a bound-but-unstarted chapter is still the sand "st-new" card. */
+const pointerOf = (sectionKey) => {
+  const raw = readLocalSection(sectionKey).unit;
+  const n = Number(raw);
+  return raw != null && raw !== "" && Number.isFinite(n) && n >= 0 ? n + 1 : null;
+};
+const unitsDone = (sectionKey) => {
+  const n = Number(readLocalSection(sectionKey).unit);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+};
 
 const gradeSlug = (g) => (g || "").toLowerCase();
 const classNo = (g) => (g || "").replace(/grade/i, "").trim().toUpperCase();
@@ -100,8 +115,58 @@ export default function Home() {
 
   const openAttached = (c, plan) => router.push({ pathname: "/lesson",
     params: { subject: c.subjectSlug, grade: c.gradeSlug, filename: plan.filename, section: c.sectionTag } });
-  const openPreview = (c, plan) => router.push({ pathname: "/lesson",
-    params: { subject: c.subjectSlug, grade: c.gradeSlug, filename: plan.filename } });
+
+  /* ── the "+" / "−" binding (Track D step 4) — the web's MyPlans handlers, verbatim in effect.
+     Every write goes through @aruvi/shared, so the phone and the web agree on disk and on the
+     server; this screen only decides WHEN. `bump` forces the re-render that shows the new state
+     at once: the card reads its binding from the local cache during render, so without it the
+     card would only refresh on the next incidental render — the web's own "+ works late" lag. */
+  const [attachFor, setAttachFor] = useState(null);    // { c, sectionKey }
+  const [untrackFor, setUntrackFor] = useState(null);  // { c, sectionKey, plan }
+  const bump = () => setTick((n) => n + 1);
+
+  const attachChapter = (c, sectionKey, plan) => {
+    bindSectionChapter(sectionKey, plan.filename);
+    setAttachFor(null);
+    bump();
+  };
+  /* Untracking logs a history row ONLY when at least one unit was done — the anti-noise gate, so
+     a casual attach-then-untrack leaves no trace — and stamps how far the section got. */
+  const untrackChapter = (sectionKey, plan) => {
+    const done = unitsDone(sectionKey);
+    if (plan && done >= 1) {
+      recordHistory(sectionKey, {
+        file: plan.filename, chapter_number: plan.chapter_number, chapter_title: plan.chapter_title,
+        status: "untracked", units_done: done, total_units: plan.total_units || null, ts: Date.now(),
+      });
+    }
+    unbindSection(sectionKey); setUntrackFor(null); bump();
+  };
+  /* A finished chapter has no progress to lose, so moving on needs no confirm: it frees the
+     section and opens the picker for the next chapter. It always earns its history row. */
+  const moveOnFromCompleted = (c, sectionKey, plan) => {
+    if (plan) {
+      recordHistory(sectionKey, {
+        file: plan.filename, chapter_number: plan.chapter_number, chapter_title: plan.chapter_title,
+        status: "completed", units_done: plan.total_units || null,
+        total_units: plan.total_units || null, ts: Date.now(),
+      });
+    }
+    unbindSection(sectionKey); setAttachFor({ c, sectionKey }); bump();
+  };
+
+  /* Every chapter bound to ANY section of this subject·class. A chapter she already teaches to
+     9A is the ordinary thing to offer 9B, so the picker lets those through even though the
+     plans listing marks only HER prepared ones. */
+  const boundFilesForGrade = (sSlug, gSlug) => {
+    const set = new Set();
+    st.classes.forEach((c) => {
+      if (c.subjectSlug !== sSlug || c.gradeSlug !== gSlug) return;
+      const f = readLocalSection(c.sectionKey).chapter;
+      if (f) set.add(f);
+    });
+    return set;
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
@@ -119,9 +184,12 @@ export default function Home() {
         ) : (
           <View style={{ marginTop: 12, gap: 14 }} key={tick}>
             {st.classes.map((c) => (
-              <ClassCard key={c.sectionKey} t={c && t} c={c}
+              <ClassCard key={c.sectionKey} c={c}
                 plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`] || {}}
-                onContinue={openAttached} onOpen={openPreview} />
+                onOpen={openAttached}
+                onAttach={() => setAttachFor({ c, sectionKey: c.sectionKey })}
+                onUntrack={(plan) => setUntrackFor({ c, sectionKey: c.sectionKey, plan })}
+                onMoveOn={(plan) => moveOnFromCompleted(c, c.sectionKey, plan)} />
             ))}
           </View>
         )}
@@ -143,51 +211,120 @@ export default function Home() {
           </View>
         )}
       </ScrollView>
+
+      <AttachSheet target={attachFor}
+        plans={attachFor ? (st.plansBySG[`${attachFor.c.subjectSlug}/${attachFor.c.gradeSlug}`] || {}) : null}
+        boundFile={attachFor ? readLocalSection(attachFor.sectionKey).chapter : null}
+        alsoAttachable={attachFor ? boundFilesForGrade(attachFor.c.subjectSlug, attachFor.c.gradeSlug) : null}
+        onAttach={attachChapter} onClose={() => setAttachFor(null)} />
+      <UntrackSheet target={untrackFor} onUntrack={untrackChapter} onClose={() => setUntrackFor(null)} />
     </View>
   );
 }
 
-function ClassCard({ c, plans, onContinue, onOpen }) {
+/* ───────── ONE section card, in the web's three states (Track D step 4) ─────────
+ * st-new (sand) · st-going (green) · st-done (clay) — the FILL carries the teaching status and
+ * the 4px left spine repeats it (founder, 2026-08-30). A chapter bound but never opened is
+ * still st-new: the status is about TEACHING, not about binding.
+ * The right slot is one position holding opposite acts, exactly as the web: "+" to track (pine)
+ * on an empty or finished card, "−" to untrack (clay) while she is teaching. Measures in
+ * theme/web.js under sc_*; the web's 11px graph rule is the one thing not ported (RN has no
+ * repeating gradient) — the card keeps its fill, which is what carries the status anyway. */
+function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
   const { t } = useTheme();
-  const [browse, setBrowse] = useState(false);
-  const sec = readLocalSection(c.sectionKey);          // {chapter(filename), unit, done}
-  const attached = sec.chapter ? plans[sec.chapter] : null;
-  // the tag she has always seen — "9A" — unless she named the section, then her word.
-  // sec.tag already carries the class number (readiness stores "9A"), exactly as the web's
-  // SectionTag renders it; the earlier `${classNum(grade)}${tag}` doubled it to "99A".
-  const tag = c.sectionName || c.sectionTag;
-  const prepared = Object.values(plans).filter((p) => p.prepared).sort((a, b) => (a.chapter_number || 0) - (b.chapter_number || 0));
-  const list = prepared.length ? prepared : Object.values(plans).sort((a, b) => (a.chapter_number || 0) - (b.chapter_number || 0));
+  const ws = useWebStyles();
+  const sec = readLocalSection(c.sectionKey);
+  const plan = sec.chapter ? plans[sec.chapter] : null;
+  const hist = hasHistory(c.sectionKey);
+  // sec.tag already carries the class number ("9A"); her own name for the section, when she gave
+  // one, sits in fine print beneath it — the web's .sc-tag-name.
+  const tag = c.sectionTag;
+  const name = c.sectionName;
 
-  return (
-    <View style={[s.card, { backgroundColor: t.card_going, borderColor: t.card_going_edge }]}>
-      <View style={s.chead}>
-        <Text style={[s.tag, { color: t.ink, backgroundColor: t.paper_2, borderColor: t.edge }]}>{tag}</Text>
-        <Text style={[type.small, { color: t.card_muted, flex: 1 }]}>{c.subjectName}</Text>
-      </View>
+  const Round = ({ glyph, color, label, onPress }) => (
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} hitSlop={6}
+      style={[ws.sc_round, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
+      <Text style={[ws.sc_round_glyph, { color }]}>{glyph}</Text>
+    </Pressable>
+  );
+  const Tag = ({ muted }) => (
+    <View style={{ minWidth: 40 }}>
+      <Text style={[ws.sc_tag, muted && ws.sc_tag_muted]}>{tag}</Text>
+      {name ? <Text style={ws.sc_tag_name} numberOfLines={1}>{name}</Text> : null}
+    </View>
+  );
 
-      {attached ? (
-        <Pressable onPress={() => onContinue(c, attached)} style={[s.continue, { borderColor: t.pine, backgroundColor: t.paper_2 }]}>
-          <Text style={[type.mono, { fontSize: 11, color: t.pine }]}>CONTINUE · {sec.done ? "chapter complete" : `unit ${Number(sec.unit || 0) + 1}`}</Text>
-          <Text style={[type.bodyStrong, { color: t.ink, marginTop: 3 }]}>Ch {attached.chapter_number} · {attached.chapter_title}</Text>
-        </Pressable>
-      ) : (
-        <Text style={[type.body, { color: t.card_muted }]}>No chapter open yet — pick one to start.</Text>
-      )}
-
-      <Pressable onPress={() => setBrowse((b) => !b)} hitSlop={6} style={{ marginTop: 12 }}>
-        <Text style={[type.small, { color: t.pine }]}>{browse ? "Hide chapters" : (attached ? "Open another chapter" : "Pick a chapter")}</Text>
-      </Pressable>
-      {browse ? (
-        <View style={{ marginTop: 8, gap: 2 }}>
-          {list.length ? list.map((p) => (
-            <Pressable key={p.filename} onPress={() => (attached && p.filename === attached.filename ? onContinue(c, p) : onOpen(c, p))} style={s.prow}>
-              <Text style={[type.mono, { fontSize: 12, color: t.ink_soft, width: 34 }]}>{p.chapter_number != null ? `Ch${p.chapter_number}` : ""}</Text>
-              <Text style={[type.body, { color: t.ink, flex: 1 }]} numberOfLines={1}>{p.chapter_title}</Text>
-            </Pressable>
-          )) : <Text style={[type.small, { color: t.card_muted }]}>No chapters available for this class yet.</Text>}
+  /* No chapter bound — "Pick a chapter to begin". The card is NOT tappable-to-generate; the
+     "+" opens the picker (founder, 2026-07-09: a freshly generated lesson lands in My Lessons
+     and is never auto-named onto a section card). */
+  if (!plan) {
+    return (
+      <View style={[ws.sc_card, { backgroundColor: t.card_new, borderColor: t.card_new_edge }]}>
+        <View style={[ws.sc_spine, { backgroundColor: t.edge }]} />
+        <Tag muted />
+        <View style={ws.sc_body}>
+          <Text style={ws.sc_kicker}>{c.subjectName}</Text>
+          <Text style={[ws.sc_title, ws.sc_title_muted]}>Pick a chapter to begin</Text>
         </View>
-      ) : null}
+        <View style={ws.sc_right}>
+          <Round glyph="+" color={t.pine_d} label="Attach a lesson to this section" onPress={onAttach} />
+        </View>
+      </View>
+    );
+  }
+
+  const lu = pointerOf(c.sectionKey);
+  const done = sec.done;
+  const total = plan.total_units || null;
+  const fill = done ? t.card_done : lu ? t.card_going : t.card_new;
+  const edge = done ? t.card_done_edge : lu ? t.card_going_edge : t.card_new_edge;
+  const spine = done ? t.clay : lu ? t.pine : t.edge;
+
+  /* ⚠️ The tappable area is the tag + body, NOT the whole card — the right slot's "+"/"−" sit
+     OUTSIDE it. The web can nest a <button> inside a clickable <div> and call stopPropagation;
+     react-native-web renders an accessibilityRole="button" Pressable as a real <button>, and a
+     button inside a button is invalid (it warns, and the inner one's press is unreliable). So
+     the row is split instead: same flex row, same 13px gap, identical on screen, and the
+     actions simply are not inside the card's own press target — which is what stopPropagation
+     was simulating anyway. */
+  return (
+    <View style={[ws.sc_card, { backgroundColor: fill, borderColor: edge }]}>
+      <View style={[ws.sc_spine, { backgroundColor: spine }]} />
+      <Pressable onPress={() => onOpen(c, plan)} accessibilityRole="button"
+        accessibilityLabel={`Open ${plan.chapter_title} for ${tag}`}
+        style={{ flex: 1, flexDirection: "row", alignItems: "center", columnGap: 13 }}>
+      <Tag />
+      <View style={ws.sc_body}>
+        <Text style={ws.sc_kicker}>
+          {c.subjectName}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}
+        </Text>
+        <Text style={ws.sc_title} numberOfLines={2}>{plan.chapter_title}</Text>
+        {plan.duration_label ? <Text style={ws.sc_durline}>{plan.duration_label}</Text> : null}
+        {total ? (
+          <View style={ws.sc_rail} accessibilityLabel={
+            done ? `${total} units, completed` : lu ? `Unit ${lu} of ${total}` : `${total} units, not started`}>
+            {Array.from({ length: total }).map((_, i) => (
+              <View key={i} style={[ws.sc_tick, {
+                backgroundColor: done || (lu && i < lu - 1) ? t.pine
+                  : lu && i === lu - 1 ? t.ochre : t.card_tick,
+              }]} />
+            ))}
+          </View>
+        ) : null}
+      </View>
+      </Pressable>
+      {done ? (
+        <View style={ws.sc_actions_col}>
+          <Text style={ws.sc_status_done}>Complete</Text>
+          <Round glyph="+" color={t.pine_d} label="Finish with this chapter and track the next"
+            onPress={() => onMoveOn(plan)} />
+        </View>
+      ) : (
+        <View style={ws.sc_right}>
+          <Round glyph="−" color={t.clay} label="Stop tracking this chapter"
+            onPress={() => onUntrack(plan)} />
+        </View>
+      )}
     </View>
   );
 }
@@ -195,11 +332,6 @@ function ClassCard({ c, plans, onContinue, onOpen }) {
 const s = StyleSheet.create({
   body: { paddingHorizontal: 20, paddingVertical: 20, paddingBottom: 44 },
   loading: { flexDirection: "row", alignItems: "center", marginTop: 20 },
-  card: { borderWidth: 1, borderRadius: 13, padding: 15 },
-  chead: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 12 },
-  tag: { fontFamily: "Fraunces_600SemiBold", fontSize: 15, paddingHorizontal: 9, paddingVertical: 3, borderRadius: 7, borderWidth: 1, overflow: "hidden" },
-  continue: { borderWidth: 1, borderRadius: 10, padding: 13 },
-  prow: { flexDirection: "row", gap: 10, alignItems: "center", paddingVertical: 9, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: "rgba(128,128,128,0.15)" },
   footcard: { marginTop: 30, paddingTop: 18, borderTopWidth: StyleSheet.hairlineWidth },
   segs: { flexDirection: "row", gap: 8, marginTop: 12 },
   seg: { flex: 1, borderWidth: 1, borderRadius: 8, paddingVertical: 9, alignItems: "center" },
