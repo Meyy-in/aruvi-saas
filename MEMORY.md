@@ -5930,3 +5930,33 @@ anchors flipped to `place: "above"`). Expo port this commit: `mobile/components/
 mounted in `app/(app)/_layout.jsx`, measures in `mobile/theme/web.js` under `bnav*`. Full
 decision text in CLAUDE.md §4; verification log in docs/mobile_migration_plan.md (Track D
 step 3). Owed: the iPhone 14 pass over the home indicator.
+
+---
+
+## 2026-09-13 — An erased account went on showing itself on the phone (401 ≠ a message)
+
+Found live, the best way: the founder deleted account 9000000003 through Settings ›
+Delete my account, and the Expo app carried on announcing "signed in as 9000000003".
+
+**Nothing was wrong on the server.** Readiness is not cached client-side — it comes only from
+`GET /readiness` — and the server was correctly answering **401**, the account being gone. The
+web did the right thing with that and had done since its own live check: *"a 401 is not 'no
+profile': the server REFUSED this session"* (page.jsx) → `onSignOut()`. The PHONE only set an
+error string, `"Your sign-in has expired — please sign in again."`, and went on rendering the
+shell with `getUser()` reading the stale `aruvi_user` out of local storage. So the identity,
+`current_chapter_*`, `lu_pointer_*` and `lu_bookmark_*` of an ERASED teacher sat on the device
+indefinitely — the "sign-out residue" item of the privacy notice, reached through a door
+nobody had listed: not sign-out, but a session that ends underneath her.
+
+★ **Every piece needed was already there and nothing called it.** `signOutAuth` +
+`clearTeacherCaches` + `router.replace("/login")` existed as the sign-out handler two screens
+down. Ending the session is now ONE act, `endSession`, and the 401 path and the Sign out button
+are its two doors (`mobile/app/(app)/index.jsx`).
+
+⚠️ **ONLY a 401.** An unreachable server is not a refusal, and signing a teacher out mid-lesson
+because a school network dropped is a worse bug than the one being fixed — the "Couldn't reach
+Meyy right now" path is untouched and deliberately separate.
+
+**The lesson worth carrying:** when the web gains a rule about identity, ask the same day what
+the phone does with it. This one was in CLAUDE.md §4's "every UI change lands on both surfaces"
+all along; it hid because it is not a UI change — it is a behaviour with no pixels.

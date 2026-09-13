@@ -51,12 +51,32 @@ export default function Home() {
   const [st, setSt] = useState({ loading: true, err: "", classes: [], plansBySG: {}, ent: null });
   const [tick, setTick] = useState(0);   // re-read local section state after returning from a lesson
 
+  /* ★ ENDING THE SESSION IS ONE ACT, AND A 401 IS ONE OF ITS DOORS (2026-09-13).
+     The web has held this since its own live check: "a 401 is not 'no profile' — the server
+     REFUSED this session" (page.jsx), and it signs out on the spot. The phone only PRINTED
+     "your sign-in has expired" and carried on rendering the shell, with getUser() reading the
+     stale `aruvi_user` out of local storage — so an ERASED account went on announcing "signed
+     in as 9000000003", over its own cached pointers and bookmarks, for ever. Found live after
+     a real account deletion. The pieces were all here; nothing called them.
+     Note it is only a 401 — an unreachable server is NOT a refusal and must never sign her
+     out mid-lesson on a school network (the existing "couldn't reach Meyy" path). */
+  const endSession = useCallback(async () => {
+    await signOutAuth();
+    clearTeacherCaches(["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"]);
+    router.replace("/login");
+  }, [router]);
+
   const load = useCallback(async () => {
     let err = "";
     const ent = await fetchEntitlement();
     let readiness = null;
+    let refused = false;
     try { readiness = (await getJSON("/readiness"))?.readiness || null; }
-    catch (e) { err = String(e.message) === "401" ? "Your sign-in has expired — please sign in again." : "Couldn't reach Meyy right now."; }
+    catch (e) {
+      if (String(e.message) === "401") refused = true;
+      else err = "Couldn't reach Meyy right now.";
+    }
+    if (refused) { await endSession(); return; }
     const classes = classesFrom(readiness);
     // reconcile every section's server state, then fetch plans for each distinct subject·grade
     if (classes.length) { try { await pullSectionState(classes.map((c) => c.sectionKey)); } catch {} }
@@ -71,16 +91,12 @@ export default function Home() {
       } catch { plansBySG[key] = {}; }
     }));
     setSt({ loading: false, err, classes, plansBySG, ent });
-  }, []);
+  }, [endSession]);
 
   useEffect(() => { load(); }, [load]);
   useFocusEffect(useCallback(() => { setTick((n) => n + 1); }, []));
 
-  const signOut = async () => {
-    await signOutAuth();
-    clearTeacherCaches(["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"]);
-    router.replace("/login");
-  };
+  const signOut = endSession;
 
   const openAttached = (c, plan) => router.push({ pathname: "/lesson",
     params: { subject: c.subjectSlug, grade: c.gradeSlug, filename: plan.filename, section: c.sectionTag } });
