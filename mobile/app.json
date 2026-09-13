@@ -25,7 +25,18 @@
       },
       "edgeToEdgeEnabled": true
     },
-    "plugins": ["expo-router", "expo-font", "expo-sqlite"],
-    "experiments": { "typedRoutes": false }
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-sqlite"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/icon.png"
+    }
   }
 }

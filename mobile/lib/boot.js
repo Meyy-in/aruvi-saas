@@ -16,19 +16,31 @@
  *                 works on a cold start here too. detectSessionInUrl is off — there is no URL
  *                 to detect from; the OTP flow hands the session back directly. */
 import "react-native-url-polyfill/auto";
-import { AppState } from "react-native";
-import Storage from "expo-sqlite/kv-store";
+import { AppState, Platform } from "react-native";
 import { createClient } from "@supabase/supabase-js";
 import { configure } from "@aruvi/shared/config";
-import { setStorage } from "@aruvi/shared/storage";
+import { setStorage, webStorage } from "@aruvi/shared/storage";
 import { configureAuth, accessToken } from "@aruvi/shared/auth";
 
-export const kv = {
-  getItem: (k) => Storage.getItemSync(k),
-  setItem: (k, v) => Storage.setItemSync(k, String(v)),
-  removeItem: (k) => Storage.removeItemSync(k),
-  keys: () => Storage.getAllKeysSync(),
-};
+/* ★ THE WEB TARGET (2026-09-13). `npx expo start` → `w` renders this same app in a browser via
+ * react-native-web, which is how parity with the web app is CHECKED before a build reaches the
+ * founder's phone (Claude in Chrome opens localhost:8081 and localhost:3000 side by side at
+ * 390px). It is a verification surface, not a product: react-native-web is not pixel-identical
+ * to iOS, and the phone stays the sign-off. On that target the on-device SQLite store does not
+ * exist, so storage is the browser's localStorage through the shared webStorage() adapter — the
+ * very adapter the web app uses — and the Supabase client keeps its own default (localStorage). */
+export const IS_WEB = Platform.OS === "web";
+export const kv = IS_WEB
+  ? webStorage()
+  : (() => {
+      const Storage = require("expo-sqlite/kv-store").default;
+      return {
+        getItem: (k) => Storage.getItemSync(k),
+        setItem: (k, v) => Storage.setItemSync(k, String(v)),
+        removeItem: (k) => Storage.removeItemSync(k),
+        keys: () => Storage.getAllKeysSync(),
+      };
+    })();
 setStorage(kv);
 
 export const API_URL = (process.env.EXPO_PUBLIC_API_URL || "").replace(/\/+$/, "");
@@ -39,11 +51,11 @@ const KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
 export const supabase = URL && KEY
   ? createClient(URL, KEY, {
       auth: {
-        storage: {   // supabase-js accepts a sync adapter; it awaits whatever comes back
+        ...(IS_WEB ? {} : { storage: {   // supabase-js accepts a sync adapter; it awaits whatever comes back
           getItem: (k) => kv.getItem(k),
           setItem: (k, v) => kv.setItem(k, v),
           removeItem: (k) => kv.removeItem(k),
-        },
+        } }),
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: false,

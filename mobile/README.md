@@ -37,3 +37,11 @@ components/          MeyyMark (svg), Bar, OtpBoxes, Markdown (shared parser → 
 ```
 
 Stress width 360×800 first, then 375 / 390 / 412 (CLAUDE.md §4).
+
+## The web target — how parity is checked
+
+`npx expo start` then press **`w`** (or `npx expo start --web`) renders this app in a browser at
+`http://localhost:8081` via react-native-web. Open it at 390px beside the web app at
+`http://localhost:3000` and compare — that is the check Claude runs before a change reaches the
+phone. Not the product: react-native-web is close but not pixel-identical to iOS, so the phone
+signs off. First time: `npx expo install react-dom react-native-web @expo/metro-runtime`.
