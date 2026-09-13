@@ -780,6 +780,31 @@ generic look.
   (Fraunces/Newsreader/mono kickers) — warmth comes from the words and pacing, not a
   different visual language.
 
+- ★ **THE PRIMARY NAV IS AT THE FOOT (founder, 2026-09-13: "switch My Classes / My Lessons,
+  Ask Meyy and the big plus to the bottom").** The app's ENTIRE nav is one bar at the bottom of
+  the shell — `.bnav` in `web/app/globals.css`, rendered after `.bodycontent` in `page.jsx`.
+  Four items, icon over a 10.5px uppercase mono label: **My Classes · My Lessons · Add · Ask
+  Meyy**. The top bar keeps only the brand row (and the frozen ⚙ Settings `set-bar` while she is
+  in Settings); the old `.tabs.main-tabs` are gone, and so are the two greeting-row "+" buttons
+  in `MyPlans.jsx` — the standing "+" portal is now the bar's **Add**. Skin (chosen from a
+  bottom-nav mock, "option A + edge 4, light edge"): **sunk paper** (`--paper-sunk`) under a
+  **1 px `--edge` top rule** — the same weight as the clay rule between lesson phases, which is
+  why the last phase drops its own (`.uv-phase:last-child { border-bottom: 0 }`) — and nothing
+  under the bar. Active item is **clay**, with a short clay underline. In the app shell it is
+  static flow at the foot of the body column (`html.app-shell .bnav`), so like the top bar it
+  cannot scroll away; pre-shell it is fixed and `.bodycontent` reserves 62px. The safe-area
+  bottom inset is padding INSIDE the bar, so the sunk paper runs to the physical edge and the
+  items sit above the home indicator. Contents cap to `--shell-w`, so on a Mac the four items
+  sit over the 860px content column, not the screen's corners. **Hidden entirely in Settings** —
+  Settings is a modal room and the ✕ is its only exit. Which item lights up is `activeNav`: My
+  Lessons only when the repository is open; Settings/profile light neither; everything else —
+  the class cards, Generate, a lesson opened from them — reads as My Classes. Lapsed hides My
+  Classes and Add (§2.5 as amended). GuidedTour's four anchors (`nav-classes`, `nav-lessons`,
+  `grow-add`, `ask-aruvi`) are `place: "above"`. **Ported 1:1 to Expo** as
+  `mobile/components/BottomNav.jsx`, mounted in `mobile/app/(app)/_layout.jsx`, measures in
+  `mobile/theme/web.js` under `bnav*` (measured 390×844: bar 56.85 tall, items 84 wide, label
+  10.5/13.75, letter-spacing 1.05) — same four items, same glyphs.
+
 ---
 
 ## 5. Repo layout

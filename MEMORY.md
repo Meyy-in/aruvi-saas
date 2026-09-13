@@ -5911,3 +5911,22 @@ coverage note); golden-8 link resolution relocates to compile-time unchanged; co
 back-fill to v1.1 schema approved but NOT done (pre-warm checklist entry owed when run);
 SS-secondary v1.1 constitution drafts in genon/amended/. Adaptation economics measured:
 partition Rs.0/ms + polish Rs.1.75–3.88/14–36s vs Rs.67.6/minutes original generation.
+
+---
+
+## 2026-09-13 — The primary nav moved to the foot (web + Expo)
+
+Founder: "switch My Classes / My Lessons, Ask Meyy and the big plus to the bottom." The top
+`.tabs.main-tabs` are gone; the app's entire nav is one bottom bar — **My Classes · My Lessons ·
+Add · Ask Meyy** — on both surfaces. Skin chosen from a mock: "option A + edge 4, light edge" —
+sunk paper under a 1px `--edge` top rule (so the last lesson phase drops its own rule), clay
+active item with a short clay underline, nothing under the bar. Static flow at the foot of the
+app shell, so it cannot scroll away; hidden entirely in Settings; safe-area inset is padding
+INSIDE the bar; contents cap to `--shell-w` so on a Mac the items sit over the content column.
+The standing "+" portal left the My Classes greeting row and became the bar's **Add**.
+
+Web `bbe00d7a` (`page.jsx` · `globals.css` · `MyPlans.jsx` · `GuidedTour.jsx`, whose four bar
+anchors flipped to `place: "above"`). Expo port this commit: `mobile/components/BottomNav.jsx`
+mounted in `app/(app)/_layout.jsx`, measures in `mobile/theme/web.js` under `bnav*`. Full
+decision text in CLAUDE.md §4; verification log in docs/mobile_migration_plan.md (Track D
+step 3). Owed: the iPhone 14 pass over the home indicator.

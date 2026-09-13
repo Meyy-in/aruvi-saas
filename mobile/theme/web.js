@@ -34,6 +34,21 @@ export function webStyles(t) {
     kicker:          { fontFamily: F.mono(500), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 1.89, textTransform: UP, color: t.pine },
     empty:           { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink_soft },
 
+    /* ── bottom nav (.bnav / .bnav-in / .bnav-item) — measured 2026-09-13, 390×844, light ──
+       Bar 56.85 tall over the safe-area inset; a 1 px --edge top rule; contents capped to
+       --shell-w (860) and centred, so on a Mac the four items sit over the content column.
+       Label line-height is the CSS `normal` for 10.5 px IBM Plex Mono, measured at 13.75.
+       Colours are applied by the component from the theme (paper_sunk / edge / ink_soft /
+       clay) so dark mode follows for free. */
+    bnav:            { borderTopWidth: 1, width: "100%" },
+    bnav_in:         { flexDirection: "row", justifyContent: "space-around", alignItems: "flex-end",
+                       width: "100%", maxWidth: 860, alignSelf: "center",
+                       paddingTop: 7, paddingHorizontal: 4, paddingBottom: 4 },
+    bnav_item:       { flexDirection: "column", alignItems: "center", width: 84, rowGap: 3 },
+    bnav_label:      { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 13.75, letterSpacing: 1.05,
+                       textTransform: UP, color: t.ink_soft },
+    bnav_rule:       { width: 22, height: 2.5, borderRadius: 2, marginTop: 1, backgroundColor: "transparent" },
+
     /* ── LessonView header (.lv-hd / .co-topbar / .lv-title) ── */
     lv_stick:        { paddingTop: 18, paddingBottom: 10, backgroundColor: t.paper },
     lv_hd:           { paddingBottom: 6, marginBottom: 10 },

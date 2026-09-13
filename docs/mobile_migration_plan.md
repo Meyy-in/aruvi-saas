@@ -326,7 +326,26 @@ added to Overview, a flat Assess, no ChapterOrg). Re-ported 1:1 from the web's J
 Phone re-test owed (same walk as before, plus: "← Orgn." → the SS map → tap a unit → "→";
 Assess → page questions → sub-tabs → "Choice X"; drag the bookmark).
 
-Next: step 4, My Classes "+" binding and the full My Lessons library (Year Plan, prepared filter).
+★ **BOTTOM NAV (founder, 2026-09-13; web `bbe00d7a`, Expo this commit).** The app's entire nav
+moved from the top tabs to one bar at the foot — My Classes · My Lessons · Add · Ask Meyy — and
+it lands on BOTH surfaces, as §4 requires. Web: `.bnav` after `.bodycontent` in `page.jsx`, skin
+"option A + edge 4" (sunk paper, 1px `--edge` top rule, clay active + underline), static in the
+app shell so it cannot scroll away, hidden in Settings, contents capped to `--shell-w`; the
+greeting-row "+" buttons left `MyPlans.jsx` and the tour's four bar anchors flipped to
+`place: "above"`. Expo: `mobile/components/BottomNav.jsx` mounted in `app/(app)/_layout.jsx`,
+measures in `theme/web.js` under `bnav*` (390×844: bar 56.85, items 84 wide, label 10.5/13.75,
+letter-spacing 1.05, rule 22×2.5), the four glyphs copied path for path, safe-area inset as
+padding inside the bar.
+- Verified on the parity page at 390: web bar sits at the foot with `.bodycontent` ending exactly
+  at its top (786.90 = navTop), four items at x 10/105/201/296, Settings hides it and the body
+  reclaims the space, the last lesson phase drops its rule so there is no double line, dark theme
+  reads as a floor (bar #11170f under body #161d19), and at Mac width the items sit over the
+  860px column. Expo web renders item-for-item beside it.
+- **Owed on the phone (iPhone 14, `npx expo start --tunnel`):** the bar over the home indicator,
+  the four glyph weights, and the active clay underline against the web frame.
+
+Next: step 4, My Classes "+" binding and the full My Lessons library (Year Plan, prepared filter);
+the bar's My Lessons / Add / Ask Meyy items are mounted but inert until their screens exist.
 
 ## 3. Phasing
 
