@@ -143,6 +143,18 @@ Pixel 7 412, custom 360×800 Android for the Indian budget-phone case); final iP
 iOS Safari for safe-area/`100vh`/sticky quirks Blink won't catch. Live render is local
 (`next dev` can't run in the Cowork sandbox — see §11).
 
+★ **WHERE EACH VIEW IS VERIFIED — amended 2026-09-13 (founder).** Now that the Expo app
+exists, the two surfaces divide the work: **the phone view is verified on the Expo app**
+(Expo Go / a build on the founder's iPhone), and **the web app is verified as the website
+view** (desktop widths). Chrome DevTools device mode (⌘⌥I → 360/375/390/412) is RETIRED as
+the mobile check; the "mobile-first" paragraph above still describes how the web was
+designed and remains the reference the phone port draws on, but a phone-width screenshot of
+the web is no longer the evidence that a change works on a phone — the Expo screen is.
+**Every UI change is made on BOTH surfaces** (or, where a technical limitation prevents
+parity, the component header names it — see the rule below), and a change is "done" only
+when the website view and the Expo view have both been seen. Two apps, one product, one
+source of design truth.
+
 ★ **THE PHONE APP MATCHES THE WEB BY DEFAULT (founder, 2026-09-12).** The web was designed
 mobile-first *with the eventual phone interface in mind*, so the Expo app (Track D) is a port of
 the web's screens — the same information architecture, the same tabs, labels, order, copy, and
