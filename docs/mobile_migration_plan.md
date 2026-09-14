@@ -447,6 +447,15 @@ the repository is a real screen on the phone, scoped to one subject·class like 
   plan half: the table, the totals, the note → attach a chapter on My Classes and confirm the unit
   rail appears at once.
 
+★ **THE PARITY AUDIT'S LAST DIVERGENCE IS SETTLED (founder, 2026-09-14): the unit title on the
+chapter-organization page takes the WEB's face** — Newsreader 12 over line-height 1.3, not
+Fraunces 13.5. A unit title is read as content, so it takes the body face, and §4's default
+(the phone matches the web) decides the rest. Settling it uncovered two more misses in the same
+rule: `.co-utitle` drops a further notch to 10.5 for **science and social_sciences** on a phone
+(globals.css 3819-3822 — those two carry the longest titles and were wrapping), and
+`.co-card.done .co-utitle` dims to `--ink-soft` (3825), where the phone had been dimming only
+the NUMBER so a taught unit read half-finished. All three now match.
+
 ★ **STEP 4b SPEED PASS (founder, same day): the phone's screens are ROUTES.** "Web My Classes is
 instantaneous but on Expo it first shows 'Loading your classes' which takes a second." On the web
 these two are COMPONENTS under one shell that fetched `/readiness` once; on the phone they are

@@ -65,12 +65,15 @@ const SS_TIER_DOTS = { Central: "●●●", Substantive: "●●", Present: "�
 const SS_RIBBON_W = { Central: 5, Substantive: 3.5, Present: 2.5 };
 
 /* ── one unit card (.co-card) ── */
-function UnitCard({ ws, n, p, status, onOpen }) {
+/* `tight` = the web's ≤600px Science / Social Sciences rule: those two carry the longest unit
+   titles, so they drop a further notch rather than wrap. */
+function UnitCard({ ws, n, p, status, onOpen, tight }) {
   const dur = p.meta && p.meta.duration_minutes;
   return (
     <Pressable onPress={() => onOpen(n)} style={[ws.co_card, status === "cur" && ws.co_card_cur, status === "done" && ws.co_card_done]}>
       <Text style={[ws.co_num, status === "done" && ws.co_num_done, status === "up" && ws.co_num_up]}>{n + 1}.</Text>
-      <Text style={ws.co_utitle} numberOfLines={2}>{p.title || `Unit ${n + 1}`}</Text>
+      <Text style={[ws.co_utitle, tight && ws.co_utitle_tight, status === "done" && ws.co_utitle_done]}
+        numberOfLines={2}>{p.title || `Unit ${n + 1}`}</Text>
       <View style={ws.co_side}>
         {status === "cur" ? <Text style={ws.co_now}>now</Text> : null}
         {dur ? (
@@ -376,7 +379,8 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
       idx += 1; const n = idx;
       if (!visible) return;
       const status = pointer == null ? "" : (doneAll || n < pointer) ? "done" : n === pointer ? "cur" : "up";
-      out.push(<UnitCard key={`${keyPrefix}-${i}`} ws={ws} n={n} p={p} status={status} onOpen={onOpenUnit} />);
+      out.push(<UnitCard key={`${keyPrefix}-${i}`} ws={ws} n={n} p={p} status={status} onOpen={onOpenUnit}
+        tight={lp.subject === "science" || lp.subject === "social_sciences"} />);
     });
     (g.children || []).forEach((c, i) => out.push(...renderGroup(c, `${keyPrefix}-${i}`, visible)));
     return out;

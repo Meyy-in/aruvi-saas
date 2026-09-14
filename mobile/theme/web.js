@@ -301,7 +301,17 @@ export function webStyles(t, scheme = "light") {
     co_num_done:     { color: t.pine },
     co_num_up:       { opacity: 0.72 },
     co_side:         { flexDirection: "row", alignItems: "center", columnGap: 10 },
-    co_utitle:       { fontFamily: F.display(500), fontSize: 13.5, lineHeight: 18, color: t.ink, flex: 1 },
+    /* ★ NEWSREADER 12, NOT FRAUNCES 13.5 (founder, 2026-09-14) — the parity audit's one
+       unresolved divergence, settled toward the web as §4's default says. A unit title is read
+       as CONTENT, so it takes the body face, and the web's ≤600px rule is the phone's rule:
+       12px over line-height 1.3. Two things the port had missed along with the face:
+         · `.co-utitle` drops another notch, to 10.5, for SCIENCE and SOCIAL SCIENCES only
+           (globals.css 3819-3822) — those two carry the longest unit titles and were wrapping;
+         · `.co-card.done .co-utitle` dims to --ink-soft (3825). The phone dimmed the NUMBER
+           (co_num_done) and left the title at full ink, so a taught unit read half-finished. */
+    co_utitle:       { fontFamily: F.body(400), fontSize: 12, lineHeight: 15.6, color: t.ink, flex: 1 },
+    co_utitle_tight: { fontSize: 10.5, lineHeight: 13.65 },
+    co_utitle_done:  { color: t.ink_soft },
     /* ★ "now" is a FILLED OCHRE PILL with paper ink (.co-now) — it was an outlined CLAY pill
        here, which read as a bordered label rather than the one lit marker on the page. */
     co_now:          { fontFamily: F.mono(400), fontSize: 9, letterSpacing: 1.08, textTransform: UP,
