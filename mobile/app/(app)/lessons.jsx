@@ -49,8 +49,8 @@
  * Measures live in theme/web.js under `mlp2_*` / `sc_*` (§4 rule 2).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, AppState, RefreshControl, StyleSheet } from "react-native";
-import Svg, { Defs, Pattern, Path, Rect } from "react-native-svg";
+import { View, ScrollView, Pressable, AppState, RefreshControl } from "react-native";
+import Svg, { Path, Rect } from "react-native-svg";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
@@ -64,6 +64,7 @@ import { pullSectionState, readLocalSection } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsArchived } from "@aruvi/shared/verify";
 import { endSession as endSessionShared } from "../../lib/session";
 import Bar from "../../components/Bar";
+import CardGrid from "../../components/CardGrid";
 import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import YearPlan from "../../components/YearPlan";
@@ -570,29 +571,6 @@ export default function MyLessons() {
   );
 }
 
-/* ───────── The constant graph rule ─────────
- * The same 11px rule on every card whatever its state — a MATERIAL, not a code: because it never
- * varies it carries no meaning, needs no legend, and cannot compete with the status colours.
- * ⚠️ It belongs HERE because the web puts it on the `.sc-card` BASE rule (two repeating
- * linear-gradients, globals.css ~2577), and My Lessons' document plane overrides only
- * `background-color` — so these cards inherit the rule on the web and were the one place on the
- * phone without it. Identical to My Classes' copy: RN has no repeating gradient, so it is an SVG
- * <Pattern> — a true tile, not an approximation — with the line on the TOP and LEFT edge of each
- * 11px cell, as the web's gradients are. The weight lives in ONE place, --card-grid.
- * The pattern id is scoped to this file: two <Defs> sharing an id in one tree is undefined, and
- * My Classes already owns "sc-grid". */
-function CardGrid({ color }) {
-  return (
-    <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
-      <Defs>
-        <Pattern id="mlp-grid" width={11} height={11} patternUnits="userSpaceOnUse">
-          <Path d="M0 0.5 H11 M0.5 0 V11" stroke={color} strokeWidth={1} fill="none" />
-        </Pattern>
-      </Defs>
-      <Rect x="0" y="0" width="100%" height="100%" fill="url(#mlp-grid)" />
-    </Svg>
-  );
-}
 
 /* ───────── ONE lesson card ─────────
  * The `.sc-card` the section list uses, on the DOCUMENT plane: only the 4px spine carries the

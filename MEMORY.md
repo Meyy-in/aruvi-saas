@@ -6243,3 +6243,52 @@ part — her profile and her listings, both from the device copy — and paints;
 behind it and updates in place. A returning teacher sees no spinner at all. A first-ever load
 still shows one, honestly, because there is genuinely nothing yet to draw. The only thing that may
 not move behind the paint is the 401.
+
+---
+
+## 2026-09-14 · An absolutely-positioned `<Svg>` has no size on the web, and only on the web
+
+Founder: *"iPhone shows the color of the prepare button correctly but expo on mac (parity.html) is
+not properly showing."* The Prepare CTA's clay→ochre gradient drew on the phone and not on the
+Expo web target — one component, two surfaces, opposite answers, which is the exact class of bug
+the parity page exists to catch and the only place it can be seen.
+
+★ **THE CAUSE, in one line of the library.** `react-native-svg/lib/commonjs/elements/Svg.js`:
+
+```js
+if (width === undefined && height === undefined && position !== 'absolute') {
+  width = height = '100%';
+}
+```
+
+An `<Svg style={StyleSheet.absoluteFill}>` with no explicit size therefore keeps width and height
+UNDEFINED — the 100% default is withheld precisely because it is absolute. On native that is
+harmless: the layout engine gives the view bounds and the SVG draws into them. On web it becomes a
+real `<svg>` element with no intrinsic size, and collapses to nothing.
+
+★ **AND IT WAS NEVER ONLY THE BUTTON.** The same construction was in BOTH copies of `CardGrid` —
+the constant 11px graph rule on every card — so the rule has been invisible on the Expo web target
+since the day it was ported, on My Classes and My Lessons alike. The founder had in fact asked
+about exactly that earlier the same day ("the light grid on web app not replicated in expo"), then
+looked at the phone and said "its there". Both observations were true; they were of different
+surfaces. **When two people disagree about whether something renders, ask which target each was
+looking at before looking for the bug.**
+
+Fixed by MEASURING: `onLayout` on the wrapper, the size passed to the `<Svg>` explicitly. That is
+right on both targets rather than accidentally right on one. A sweep found no other instance —
+every other `<Svg>` in the app already carries a width and height (ChapterOrg's SS-map ribbons
+measure their columns first, which is why that one was fine).
+
+★ **A SECOND FAULT THE SAME FIX CARRIES: SVG ids are DOM ids on the web.** Every section card
+declared `id="sc-grid"`, so a list of six cards was a document with six duplicate ids and
+`url(#sc-grid)` resolved to whichever the browser saw first — every card referencing a pattern
+owned by a card that may unmount. It looked correct only because the tiles are identical. Ids are
+now per instance, from a module counter.
+
+The two `CardGrid` copies became one shared component while fixing it; duplicating it is what let
+the same defect exist twice.
+
+★ **The standing lesson for the whole port: native tolerance is not correctness.** RN's layout
+engine forgives a missing dimension and the DOM does not, so anything sized implicitly works on
+the phone and can fail on the web target — and the phone is where we look first. The parity page
+is not a nicety for pixel-matching; for this class of bug it is the only detector we have.
