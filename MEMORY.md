@@ -6188,3 +6188,58 @@ corpus, which is why `config.py` keeps the two buckets on separate variables.
 The 19 residue files are removed. Every one belonged to a test tenant; the real accounts
 (`9000000003`, `9900000099`) were never touched. **32 passed, twice in a row from a clean tree,
 with `data/` still clean afterwards** — the second run is the one that means anything.
+
+---
+
+## 2026-09-14 · The phone's screens are ROUTES, and that is the whole of the delay
+
+Founder, on the Expo app and a real iPhone: *"web My Classes / My Lessons is instantaneous but on
+Expo, when I click My Classes, it first shows 'Loading your classes' which takes a second. My
+Lessons also does similar but is a wee bit faster."*
+
+★ **THE STRUCTURAL DIFFERENCE, which will recur on every screen the phone gains.** On the web
+these two are **components** inside one shell: `page.jsx` fetches `/readiness` once per sign-in
+and passes it down, so crossing between them is a re-render. On the phone they are **routes**,
+each mounting with nothing and asking the server itself. Nothing was slow; the same work was
+simply being done per visit instead of per session. **Whenever a web component becomes a phone
+route, ask what the shell was holding for it** — that is the thing the route now has to hold for
+itself.
+
+Three causes, in the order they cost:
+
+**1. My Classes made four round trips IN SERIES before it painted anything.** `load()` awaited
+`fetchEntitlement()` → `/readiness` → `pullSectionState()` → `fetchPlans()`, all behind
+`loading: true`, so the wait was their SUM on a link where the bill is latency. Three of the four
+had no business being there: **entitlement** feeds one status line at the foot and was awaited
+FIRST, in front of the one response the screen cannot draw without; **section state** is a
+RECONCILE — the cards read their pointers from the local cache during render, so the pull corrects
+what is already on screen and was never a precondition for drawing it; and the **plan listings**
+already paint from `cachedPlans` synchronously, so awaiting the refresh held the screen for a
+correction it could apply later. My Lessons did the reconcile correctly in its own effect, which
+is exactly why the founder measured it "a wee bit faster" — the difference he felt was one of
+these four, not a mystery.
+
+**2. Readiness had no device copy.** The plan listing got one the same week; the profile — the
+most stable record a teacher has, and the one BOTH screens need before they can draw at all — had
+none. `packages/shared/src/readiness.js` is the plans store's shape line for line: module-level
+memory, a synchronous `cachedReadiness()` read during render, one revalidation per session,
+per-teacher keys, swept at sign-out. No ETag, deliberately — `GET /readiness` sends no validator,
+and the trip now happens behind a painted screen, where the earlier measurement already said the
+saving would be.
+⚠️ **The one thing it must not do is fall back on a 401.** A refusal is not a network failure, and
+a cached profile standing in for a refused identity would leave an erased account rendering its
+own classes for ever — the defect My Classes' header already warns about. `fetchReadiness`
+rethrows it; a test pins that with a copy sitting on the device.
+
+**3. `router.push` stacked a new screen on every tap.** The bottom bar's four items are PLACES,
+not steps in a journey, but pushing put a second copy of My Classes on the stack every time she
+came back — so the stack grew for as long as she used the app, and, because every push is a fresh
+MOUNT, **this is what made the loads re-run at all.** `router.navigate` returns to the instance
+already on the stack. The two stores make a genuine first mount cheap; this is what stops most of
+the mounts happening.
+
+★ **The rule that came out of it: PAINT FIRST, THEN CHECK.** The load now does the synchronous
+part — her profile and her listings, both from the device copy — and paints; everything else lands
+behind it and updates in place. A returning teacher sees no spinner at all. A first-ever load
+still shows one, honestly, because there is genuinely nothing yet to draw. The only thing that may
+not move behind the paint is the 401.

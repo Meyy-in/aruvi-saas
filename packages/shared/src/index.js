@@ -10,5 +10,6 @@ export * from "./legalmd.js";
 export * from "./auth.js";
 export * from "./ask-aruvi/bank.js";
 export * from "./plans.js";
+export * from "./readiness.js";
 export * from "./signout.js";
 export * as askAruviSearch from "./ask-aruvi/askAruviSearch.js";

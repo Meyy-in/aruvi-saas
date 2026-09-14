@@ -57,6 +57,7 @@ import {
 } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
+import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { pullSectionState, readLocalSection } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsArchived } from "@aruvi/shared/verify";
 import { endSession as endSessionShared } from "../../lib/session";
@@ -108,13 +109,19 @@ export default function MyLessons() {
   const LS_SUBJECT = userKey("mylessons_subject");
   const LS_CLASS = userKey("mylessons_class");
 
-  const [readiness, setReadiness] = useState(null);
+  /* ★ SEEDED SYNCHRONOUSLY FROM THE DEVICE COPY (founder, 2026-09-14). Her profile comes from
+     the shared store, which holds it in module memory and on the device — so a returning teacher
+     arrives with her wheels already populated and no round trip in front of them. On the web
+     these two screens are COMPONENTS under one shell that fetched /readiness once; on the phone
+     they are ROUTES that each asked for themselves, which is the whole of the difference she
+     saw. The full account is in @aruvi/shared/readiness. */
+  const [readiness, setReadiness] = useState(() => cachedReadiness());
   /* ★ "NOT ASKED YET" IS NOT "NOTHING THERE" (the live-walk finding, 2026-09-12). Without this
      flag the screen reads `subjects = []` while /readiness is still in flight and tells her "No
-     subjects set up yet. Finish setup in My Classes" — a false statement about her own record,
-     held for the whole round trip, which on a school network is seconds. My Classes was built
-     with the guard and its header says why; this screen went without it. */
-  const [loaded, setLoaded] = useState(false);
+     subjects set up yet. Finish setup in My Classes" — a false statement about her own record.
+     It now starts TRUE whenever the device already holds her profile: there is nothing to wait
+     for, so there is nothing to say. */
+  const [loaded, setLoaded] = useState(() => !!cachedReadiness());
   const [loadErr, setLoadErr] = useState("");
   const [plansByKey, setPlansByKey] = useState({});
   const [view, setView] = useState("active");       // active | archived — one list, a server flag
@@ -141,18 +148,18 @@ export default function MyLessons() {
 
   const endSession = useCallback(() => endSessionShared(router), [router]);
 
-  const loadReadiness = useCallback(async () => {
+  const loadReadiness = useCallback(async ({ force = false } = {}) => {
     try {
-      const r = (await getJSON("/readiness"))?.readiness || null;
-      setReadiness(r);
+      setReadiness(await fetchReadiness({ force }));
       setLoadErr("");
       setLoaded(true);
     } catch (e) {
       /* ★ A 401 is not "no profile" — the server REFUSED this session, and ending the session is
          one act whichever door it comes through (the rule My Classes states at length). An
-         unreachable server is NOT a refusal and must never sign her out on a school network. */
+         unreachable server is NOT a refusal and must never sign her out on a school network, so
+         it only ever produces a message — and only when the screen had nothing to draw anyway. */
       if (String(e.message) === "401") { await endSession(); return; }
-      setLoadErr("Couldn’t reach Meyy right now.");
+      if (!cachedReadiness()) setLoadErr("Couldn’t reach Meyy right now.");
       setLoaded(true);
     }
   }, [endSession]);
@@ -501,7 +508,7 @@ export default function MyLessons() {
            instead would throw the ETag away and buy the whole body every time — the opposite of
            what the store is for. My Classes refreshes the same way. */
         refreshControl={<RefreshControl refreshing={false} tintColor={t.pine} onRefresh={() => {
-          loadReadiness();
+          loadReadiness({ force: true });
           if (key) fetchPlans(key, { force: true })
             .then((rows) => setPlansByKey((prev) => ({ ...prev, [key]: rows })))
             .catch(() => {});

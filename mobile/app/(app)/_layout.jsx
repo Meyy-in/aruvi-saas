@@ -27,11 +27,20 @@ export default function AppLayout() {
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.paper } }} />
       {/* My Lessons is live as of step 4b. The "+" portal and Ask Meyy get their screens in
           steps 5 and 6 — until then those two items render (the bar must not change shape
-          later) and do nothing. */}
+          later) and do nothing.
+
+          ⚠️ `navigate`, NEVER `push` (founder-reported delay, 2026-09-14). These four are PLACES,
+          not steps in a journey: pushing put a SECOND copy of My Classes on the stack every time
+          she came back to it, so a morning of crossing between the two screens grew the stack
+          without bound — and, because every push is a fresh MOUNT, it is what made both screens
+          re-run their loads and show a spinner at all. `navigate` returns to the instance already
+          on the stack, so a crossing costs nothing and the screen she returns to is the one she
+          left, scroll position and all. The stores behind them (plans, readiness) make a genuine
+          first mount cheap; this is what stops most of the mounts happening. */}
       <BottomNav
         active={active}
-        onClasses={() => router.push("/")}
-        onLessons={() => router.push("/lessons")}
+        onClasses={() => router.navigate("/")}
+        onLessons={() => router.navigate("/lessons")}
         onAdd={() => {}}
         onAsk={() => {}}
       />

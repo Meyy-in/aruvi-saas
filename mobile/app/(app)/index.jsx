@@ -14,8 +14,9 @@ import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshCont
 import Svg, { Defs, Pattern, Path, Rect } from "react-native-svg";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, getJSON, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
+import { getUser, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
+import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
@@ -78,34 +79,81 @@ export default function Home() {
      out mid-lesson on a school network (the existing "couldn't reach Meyy" path). */
   const endSession = useCallback(() => endSessionShared(router), [router]);
 
+  /* Index a plan listing by filename — the shape the cards read. */
+  const indexPlans = (rows) => {
+    const byFile = {};
+    (rows || []).forEach((p) => { byFile[p.filename] = p; });
+    return byFile;
+  };
+  const keysOf = (classes) => [...new Set(classes.map((c) => `${c.subjectSlug}/${c.gradeSlug}`))];
+
+  /* ★ PAINT FIRST, THEN CHECK (founder, 2026-09-14: "web My Classes is instantaneous but on
+     Expo it first shows 'Loading your classes' which takes a second").
+     THE SHAPE OF THE BUG WAS THE SEQUENCE, NOT ANY ONE CALL. This screen used to hold the whole
+     view behind `loading: true` while it awaited FOUR round trips IN SERIES — entitlement, then
+     /readiness, then pullSectionState, then the plan listings — so the wait was the sum of them,
+     on a link where the bill is latency. Three of those four had no business being there:
+       · ENTITLEMENT feeds one status line at the foot and nothing else can need it, yet it was
+         awaited FIRST, in front of the one response the screen cannot draw without.
+       · SECTION STATE is a RECONCILE. The cards read their pointers from the local cache during
+         render, so the pull corrects what is already on screen — it was never a precondition for
+         drawing it. (My Lessons always had this right, which is why it felt faster.)
+       · THE PLAN LISTINGS already paint from `cachedPlans` synchronously; awaiting the refresh
+         held the screen for a correction it could apply later.
+     So the load now does the synchronous part — her profile and her listings, both from the
+     device copy — and PAINTS. Everything else lands behind it and updates in place. A returning
+     teacher sees her classes with no spinner at all; a first-ever load still shows one, honestly,
+     because there is genuinely nothing yet to draw.
+     ⚠️ The one thing that must NOT move behind the paint is the 401: that is the server refusing
+     the session, and it still ends it. `fetchReadiness` rethrows it for exactly this. */
   const load = useCallback(async ({ force = false } = {}) => {
-    let err = "";
-    const ent = await fetchEntitlement();
-    let readiness = null;
-    let refused = false;
-    try { readiness = (await getJSON("/readiness"))?.readiness || null; }
-    catch (e) {
-      if (String(e.message) === "401") refused = true;
-      else err = "Couldn't reach Meyy right now.";
+    // ── synchronous: whatever the device already holds ──
+    const cached = cachedReadiness();
+    if (cached) {
+      const classes = classesFrom(cached);
+      const plansBySG = {};
+      keysOf(classes).forEach((key) => { plansBySG[key] = indexPlans(cachedPlans(key)); });
+      setSt((prev) => ({ ...prev, loading: false, err: "", classes, plansBySG }));
     }
-    if (refused) { await endSession(); return; }
+
+    // ── behind the paint: the status line, on its own, blocking nothing ──
+    fetchEntitlement().then((ent) => { if (ent) setSt((prev) => ({ ...prev, ent })); });
+
+    // ── behind the paint: the profile, then what depends on it ──
+    let readiness = null;
+    try {
+      readiness = await fetchReadiness({ force });
+    } catch (e) {
+      if (String(e.message) === "401") { await endSession(); return; }
+      // Nothing stored and the server is unreachable — say so, but only if we painted nothing.
+      setSt((prev) => (prev.loading
+        ? { ...prev, loading: false, err: "Couldn't reach Meyy right now." }
+        : prev));
+      return;
+    }
     const classes = classesFrom(readiness);
-    // reconcile every section's server state, then fetch plans for each distinct subject·grade
-    if (classes.length) { try { await pullSectionState(classes.map((c) => c.sectionKey)); } catch {} }
+    const plansBySG = {};
+    keysOf(classes).forEach((key) => { plansBySG[key] = indexPlans(cachedPlans(key)); });
+    setSt((prev) => ({ ...prev, loading: false, err: "", classes, plansBySG }));
+
     /* The listing comes from the SHARED STORE (@aruvi/shared/plans), which the web uses too —
        one copy per subject·class kept in module memory and on the device, one request in
-       flight, and one revalidation per session unless something invalidated it. This screen
-       remounts on every trip through the bottom bar, and without the store each trip re-read a
-       list that had not moved (the web measured six such calls in one session). Pull-to-refresh
+       flight, and one revalidation per session unless something invalidated it. Pull-to-refresh
        passes force, which is the teacher's own "check again". */
-    const plansBySG = {};
-    await Promise.all([...new Set(classes.map((c) => `${c.subjectSlug}/${c.gradeSlug}`))].map(async (key) => {
-      plansBySG[key] = {};
-      const index = (rows) => { plansBySG[key] = {}; (rows || []).forEach((p) => { plansBySG[key][p.filename] = p; }); };
-      index(cachedPlans(key));                 // synchronous: the cards can paint from this
-      try { index(await fetchPlans(key, { force })); } catch {}
-    }));
-    setSt({ loading: false, err, classes, plansBySG, ent });
+    keysOf(classes).forEach((key) => {
+      fetchPlans(key, { force })
+        .then((rows) => setSt((prev) => ({
+          ...prev, plansBySG: { ...prev.plansBySG, [key]: indexPlans(rows) },
+        })))
+        .catch(() => {});
+    });
+
+    // The reconcile: corrects the pointers the cards already drew from the local cache.
+    if (classes.length) {
+      pullSectionState(classes.map((c) => c.sectionKey))
+        .then(() => setTick((n) => n + 1))
+        .catch(() => {});
+    }
   }, [endSession]);
 
   useEffect(() => { load(); }, [load]);

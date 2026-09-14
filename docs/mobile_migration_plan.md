@@ -447,6 +447,20 @@ the repository is a real screen on the phone, scoped to one subject·class like 
   plan half: the table, the totals, the note → attach a chapter on My Classes and confirm the unit
   rail appears at once.
 
+★ **STEP 4b SPEED PASS (founder, same day): the phone's screens are ROUTES.** "Web My Classes is
+instantaneous but on Expo it first shows 'Loading your classes' which takes a second." On the web
+these two are COMPONENTS under one shell that fetched `/readiness` once; on the phone they are
+routes that each asked for themselves. Three fixes: **(a)** My Classes was awaiting FOUR round
+trips in series before painting — entitlement, readiness, the section-state reconcile, the plan
+listings — of which only readiness is a precondition for drawing anything; it now paints from the
+device copy and lets the rest land behind it. **(b)** `packages/shared/src/readiness.js`, the
+plans store's shape line for line, gives the profile the synchronous device copy it never had
+(⚠️ it rethrows a 401 rather than falling back — a refusal is not a network failure). **(c)** The
+bottom bar uses `router.navigate`, not `push`: the four items are PLACES, and pushing stacked a
+second copy of each screen on every crossing, which is what made the loads re-run at all.
+`packages/shared/test/readiness.test.js` pins it (10 tests). **Owed on the phone:** cross between
+the two screens twice — the second crossing should show no spinner at all.
+
 Next: step 5 — PrepareLesson and the profile portal, which between them light the bar's "Add"
 item and unlock what 4b deferred: the proposed card, the prepare CTA, and the Year Plan's budget
 pencil. Ask Meyy is step 6.
