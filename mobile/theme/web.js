@@ -476,13 +476,12 @@ export function webStyles(t, scheme = "light") {
     mlp_allocate_q:  { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19.5, color: t.ink },
     mlp_allocate_btn:{ borderRadius: 6, minHeight: 44, alignItems: "center", justifyContent: "center",
                        paddingHorizontal: 14 },
-    /* ⚠️ `#f4efe6`, a LITERAL — not `--paper`. Three near-identical creams sit on pine in this
-       app (the bar's #f3efe6, this button's #f4efe6, .primary's #f6f1e7) and the web states each
-       one outright. --paper is a THEME token that goes near-black in dark, so a label painted
-       with it vanishes on a pine button — which is exactly what this said before the founder
-       caught it (2026-09-14). */
+    /* ⚠️ THE SIZE ONLY. This button is `.mlp-allocate-btn prepare-cta` — the pine fill and cream
+       label in the base rule are OVERRIDDEN by the prepare-cta layer, which owns the colour,
+       the weight, the glow and the ✦. The identity lives in components/PrepareCta.jsx; what
+       stays here is what the CONTEXT contributes, which is the web's own division of labour. */
     mlp_allocate_t:  { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13, letterSpacing: 0.5,
-                       textTransform: UP, color: "#f4efe6" },
+                       textTransform: UP },
 
     /* ── the peek RollWheel (.fr-wheel-shell.peek) ──
        One compact row showing ONLY the item in use, rolled by drag with a single cycling ▼.
@@ -576,13 +575,32 @@ export function webStyles(t, scheme = "light") {
     prep_brk_tot_v:  { fontFamily: F.mono(500), fontSize: 14, lineHeight: 17, color: t.pine_d },
     /* The CTA bar. `savebar-prep` is a 56px lift off the form above it. */
     prep_savebar:    { marginTop: 56, rowGap: 10 },
-    /* button.primary, verbatim: 3px radius (not a pill), 11/22 padding, .08em at 12px = 0.96,
-       and #f6f1e7. Disabled is OPACITY .45 on the same pine — never a different fill, which
-       would read as a third button state rather than as the same button, unavailable. */
-    prep_cta:        { borderRadius: 3, paddingVertical: 11, paddingHorizontal: 22, alignItems: "center" },
-    prep_cta_t:      { fontFamily: F.mono(400), fontSize: 12, lineHeight: 15, letterSpacing: 0.96,
-                       textTransform: UP, color: "#f6f1e7" },
-    prep_cta_off:    { opacity: 0.45 },
+    /* ── the Prepare CTA (button.prepare-cta, globals.css 3371) ──
+       "Every ordinary primary button is calm pine. The one action that actually spends tokens to
+       build a plan gets a SINGULAR warm identity." The layer owns colour, weight, glow and ✦;
+       each CONTEXT keeps its own size — `.primary` on the prepare screen (3px radius, 11/22,
+       .08em at 12), `.mlp-allocate-btn` under the lesson list (6px radius, full width, 44 min
+       on a phone). Both boxes below; the identity is applied by components/PrepareCta.jsx. */
+    pcta_box_primary:  { borderRadius: 3, paddingVertical: 11, paddingHorizontal: 22,
+                         alignItems: "center", justifyContent: "center" },
+    pcta_box_allocate: { borderRadius: 6, minHeight: 44, paddingHorizontal: 14,
+                         alignItems: "center", justifyContent: "center" },
+    pcta_t_primary:    { fontFamily: F.mono(600), fontSize: 12, lineHeight: 15, letterSpacing: 0.96,
+                         textTransform: UP },
+    pcta_t_allocate:   { fontFamily: F.mono(600), fontSize: 10, lineHeight: 13, letterSpacing: 0.5,
+                         textTransform: UP },
+    /* The identity: #fdf8ef at weight 600 over the clay→ochre gradient. */
+    pcta_ident:        { color: "#fdf8ef" },
+    pcta_row:          { flexDirection: "row", alignItems: "center", justifyContent: "center" },
+    pcta_spark:        { marginRight: 8 },
+    /* `overflow: hidden` clips the gradient to the radius — and would clip the glow with it on
+       iOS, so the glow sits on an OUTER wrapper. 0 2px 15px rgba(182,90,49,.32). */
+    pcta_clip:         { overflow: "hidden" },
+    pcta_glow:         { shadowColor: "#b65a31", shadowOffset: { width: 0, height: 2 },
+                         shadowRadius: 15, shadowOpacity: 0.32, elevation: 4 },
+    /* inset 0 1px 0 rgba(255,255,255,.14) — an inner top highlight RN has no property for. */
+    pcta_inset:        { position: "absolute", top: 0, left: 0, right: 0, height: 1,
+                         backgroundColor: "rgba(255,255,255,.14)" },
     prep_hint:       { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18, color: t.ink_soft },
     /* ── the preparing card (.prep-wait) — she stays HERE while it builds ── */
     prep_wait:       { paddingTop: 6, paddingBottom: 40 },

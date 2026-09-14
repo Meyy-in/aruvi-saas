@@ -65,6 +65,7 @@ import { verifiedWrite, planIsArchived } from "@aruvi/shared/verify";
 import { endSession as endSessionShared } from "../../lib/session";
 import Bar from "../../components/Bar";
 import { RollWheel } from "../../components/RollWheel";
+import PrepareCta from "../../components/PrepareCta";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -548,10 +549,8 @@ export default function MyLessons() {
         {!loadErr && current && pane === "lessons" && effView !== "archived" && plans !== undefined ? (
           <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
             <Text style={ws.mlp_allocate_q}>Need a chapter you don’t have yet?</Text>
-            <Pressable accessibilityRole="button" style={[ws.mlp_allocate_btn, { backgroundColor: t.pine }]}
-              onPress={() => router.push({ pathname: "/prepare", params: { subject: sSlug, grade: gSlug } })}>
-              <Text style={ws.mlp_allocate_t}>Prepare a new lesson →</Text>
-            </Pressable>
+            <PrepareCta size="allocate" label="Prepare a new lesson →"
+              onPress={() => router.push({ pathname: "/prepare", params: { subject: sSlug, grade: gSlug } })} />
           </View>
         ) : null}
       </ScrollView>

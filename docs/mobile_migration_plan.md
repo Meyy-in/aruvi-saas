@@ -504,6 +504,19 @@ of its own rather than only teaching what was prepared on the web.
   import resolves against the module it is imported FROM; **every `ws.*` and `type.*` key
   referenced across the app exists** (342 web keys — a new standing check, and the one that
   catches a silently unstyled element); shared tests 28/28; API 32/32.
+- ★ **THE PREPARE CTA IS ITS OWN IDENTITY, AND THE FIRST PORT MISSED IT ENTIRELY** (founder,
+  twice: "the color of 'prepare a new lesson' button and letters on expo must match web app").
+  Both buttons carry `prepare-cta` LAYERED on a base class — `.mlp-allocate-btn` in My Lessons,
+  `.primary` on the prepare screen — and globals.css 3371 is where the button actually gets its
+  look: a clay→ochre gradient, a warm glow, a leading ✦, `#fdf8ef` at weight 600. Porting the
+  base rules alone gave a pine button with a cream label: right for the layer underneath, wrong
+  on screen. **A layered class is not decoration; check for one before measuring a button.**
+  Now `components/PrepareCta.jsx` — one identity, a `size` per context, which is the web's own
+  division of labour. Divergences named there: the gradient is drawn with react-native-svg (RN
+  has no CSS gradient, and this adds no native dependency where expo-linear-gradient would —
+  the same call the graph rule made), and the inset top highlight is a hairline because RN has
+  only outer shadows. The glow needs two views: `overflow: hidden` clips the gradient to the
+  radius and would clip the shadow with it on iOS.
 - **Owed on the phone:** My Lessons → "Prepare a new lesson" → the chapter wheel rolls and its ▲▼
   clamp at both ends → the stepper, and the mix line under it → the Suggestion's "use" and its
   ⓘ → the budget ledger and the committed breakdown → prepare a chapter and watch the five-second

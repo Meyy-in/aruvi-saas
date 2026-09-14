@@ -45,7 +45,7 @@
  * Measures live in theme/web.js under `prep_*` (§4 rule 2).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, TextInput, ActivityIndicator } from "react-native";
+import { View, ScrollView, Pressable, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
@@ -59,6 +59,7 @@ import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
 import Bar from "../../components/Bar";
 import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
+import PrepareCta from "../../components/PrepareCta";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
 import { type } from "../../theme/type";
@@ -497,19 +498,9 @@ export default function Prepare() {
             ) : null}
 
             <View style={ws.prep_savebar}>
-              <Pressable disabled={!chosen || busy} onPress={onPrepareClick} accessibilityRole="button"
-                style={[ws.prep_cta, { backgroundColor: t.pine }, (!chosen || busy) && ws.prep_cta_off]}>
-                {busy ? (
-                  <View style={{ flexDirection: "row", alignItems: "center", columnGap: 8 }}>
-                    <ActivityIndicator color="#f6f1e7" size="small" />
-                    <Text style={ws.prep_cta_t}>Building the lesson…</Text>
-                  </View>
-                ) : (
-                  <Text style={ws.prep_cta_t}>
-                    {chosenAlreadyPrepared ? "Prepare again →" : "Prepare the lesson →"}
-                  </Text>
-                )}
-              </Pressable>
+              <PrepareCta size="primary" disabled={!chosen} busy={busy} onPress={onPrepareClick}
+                label={busy ? "Building the lesson…"
+                  : chosenAlreadyPrepared ? "Prepare again →" : "Prepare the lesson →"} />
               {busy ? (
                 <Text style={ws.prep_hint} accessibilityLiveRegion="polite">Working on it…</Text>
               ) : !chosen ? (
