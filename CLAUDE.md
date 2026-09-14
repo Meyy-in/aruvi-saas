@@ -842,7 +842,24 @@ generic look.
   hierarchy. If the pair still reads too quiet on a phone, a 1px dashed rule under the resting
   word is the one-line addition; a box is not (this switch was designed without chrome).
   Measured paired at 360px: 231px of the 324px row, no wrap, 93px spare.
-  ⚠️ **AND IT UNCOVERED THE `.ap-row-line` TRAP IN A THIRD PLACE.** `.mlp2-vtab { font-size:20px }`,
+- ★ **A BOUND CHAPTER IS BEING TAUGHT, FROM UNIT 1 (founder, 2026-09-14).** A section card is
+  green the moment a chapter is attached, and stays so until it is complete; the sand `st-new`
+  card belongs to the NO-chapter case alone. The web already behaved this way **by accident** —
+  `pointerFor` read the stored pointer straight into `Number()`, and `Number(null)` is `0`, which
+  passed `n >= 0` and came back as unit 1 — so the rule was right and the reason was not, and the
+  `: "st-new"` branch for a bound plan was unreachable dead code. The phone guarded for null
+  honestly and rendered the SAME section sand, which is how the parity audit found it. Both
+  surfaces now state the rule instead of inheriting it: `pointerFor` is honest (absent → null) and
+  the card reads `pointerFor(sk) || 1`. ⚠️ `unitsDoneFor` still counts 0 for an untouched section,
+  so the untrack history gate (≥1 unit) is unaffected — do not "tidy" the two into one helper.
+- ★ **THE GRAPH RULE IS ON BOTH SURFACES, AND LIGHTER (founder, 2026-09-14).** It was web-only
+  because React Native has no repeating gradient; the phone now tiles a react-native-svg
+  `<Pattern>` instead — a true 11px tile, line on the top and left edge of each cell, exactly what
+  the web's two gradients draw. Weight dropped to **5%** light / **4%** dark (from 7.5 / 5.5): it
+  is a material, and it must not interfere with reading. ⚠️ The weight lives in ONE place,
+  `--card-grid` in globals.css — `mobile/theme/gen-tokens.py` regenerates `theme/tokens.js` from
+  it, so changing it there changes both. Run that script after any token edit.
+    ⚠️ **AND IT UNCOVERED THE `.ap-row-line` TRAP IN A THIRD PLACE.** `.mlp2-vtab { font-size:20px }`,
   `.mlp2-titleleft { gap:6px }` and `.mlp2-archfolder { padding:4px 5px }` sat in the ≤600px block
   at ~line 2231 while their BASE rules sit ~2400 lines further down at the same specificity — so
   source order beat them and **the title row had been rendering at its DESKTOP size on every

@@ -52,7 +52,7 @@
   --card-done:       #efd4c4;
   --card-done-edge:  #ddac95;
   --card-muted:      #5f5f59;
-  --card-grid:       rgba(22, 68, 54, .075);
+  --card-grid:       rgba(22, 68, 54, .05);
   /* ⚠️ THE EMPTY PROGRESS TICK HAD TO MOVE WITH THE FILL. The unit rail's unfilled ticks were
      --line, which against the OLD fills sat at 1.08–1.21 — already weak, and at the new depth
      1.04. That is not a cosmetic loss: the empty ticks ARE the denominator, so "unit 3 of 6"
@@ -2559,9 +2559,14 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
      no legend, and cannot compete with the status colours the way a per-class pattern would.
      It is a third separation channel that costs neither colour nor text contrast — paper keeps
      its grain, cards get their rule, and each surface reads as its own substance.
-     7.5% is the settled weight: 5% disappears into the fill, 13% starts competing with the
-     serif title running over it. Kept as a token so the dark theme can invert it to a LIGHT
-     rule — a dark rule on a dark card is nothing at all. */
+     ★ 5% since 2026-09-14 (founder: the rule must not interfere with reading) — down from 7.5%,
+     and the dark theme's light rule from 5.5% to 4%. The earlier note here called 5% the point
+     where the rule "disappears into the fill"; on the phone's tiled SVG and on a retina web
+     screen it does not, and the founder's call is the one that stands. 13% remains the ceiling:
+     above it the rule competes with the serif title running over it. Kept as a token so the dark
+     theme can invert it to a LIGHT rule — a dark rule on a dark card is nothing at all — and so
+     that ONE value governs both surfaces: theme/tokens.js is generated from this file, and the
+     phone's <Pattern> reads the generated token, so lightening here lightens the phone too. */
   background-image:
     linear-gradient(var(--card-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--card-grid) 1px, transparent 1px);
@@ -3557,7 +3562,7 @@ button.prepare-cta:disabled::before, .prepare-cta:disabled::before { content: no
     --card-done:       #3f2d23;
     --card-done-edge:  #644737;
     --card-muted:      #a29b8c;
-    --card-grid:       rgba(233, 228, 215, .055);
+    --card-grid:       rgba(233, 228, 215, .04);
     --card-tick:       #4a544d;
     /* No --card-doc pair here: it aliases --paper-2 / --edge, which flip on this very block. */
     --spine-shelf:     #8aa79b;

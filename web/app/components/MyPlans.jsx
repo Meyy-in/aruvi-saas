@@ -449,10 +449,19 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   };
 
   // current-LU pointer (per section) from localStorage, for the "On: Learning Unit N" line
+  /* ★ ATTACHING A CHAPTER MEANS SHE IS TEACHING IT, FROM UNIT 1 (founder, 2026-09-14).
+     This function used to say so BY ACCIDENT: it read the pointer straight into Number(), and
+     Number(null) is 0, which passed `n >= 0` and came back as unit 1. The behaviour was right
+     and the reason was not — anyone tidying that away would have silently changed the product,
+     and the phone (which guarded for null honestly) rendered a DIFFERENT colour for the same
+     section, which is how the parity audit found it. So the function is now honest — absent
+     means null — and the card states the rule itself. `unitsDoneFor` below still counts 0 for
+     an untouched section, so the untrack history gate is unaffected. */
   const pointerFor = (sectionKey) => {
     if (typeof window === "undefined") return null;
-    const n = Number(window.localStorage.getItem(`lu_pointer_${sectionKey}`));
-    return Number.isFinite(n) && n >= 0 ? n + 1 : null;
+    const raw = window.localStorage.getItem(`lu_pointer_${sectionKey}`);
+    const n = Number(raw);
+    return raw != null && raw !== "" && Number.isFinite(n) && n >= 0 ? n + 1 : null;
   };
   // How many learning units this section has marked complete (= the raw pointer index; 0 when
   // untouched). This is the anti-noise gate for history: a chapter only enters the log if ≥1 unit
@@ -1085,13 +1094,16 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
             );
           }
 
-          const lu = pointerFor(sectionKey);          // current LU, 1-based (null = untouched)
+          // A bound chapter is BEING TAUGHT, from unit 1 until the pointer says otherwise
+          // (founder, 2026-09-14) — so a bound card is never the unstarted sand one, and
+          // `st-new` below belongs to the no-chapter card alone.
+          const lu = pointerFor(sectionKey) || 1;     // current LU, 1-based
           // Steps 9–10 DEMO the target card as completed (render-only — her real done flag and
           // pointer are untouched; the underlying state stays "attached, not started").
           const done = isDone(sectionKey) || (tourDemoDone && i === tourIdx);
           const total = plan.total_units || null;      // LU count from the plans listing
           const ticks = total ? Array.from({ length: total }) : null;
-          const status = done ? "st-done" : lu ? "st-going" : "st-new";
+          const status = done ? "st-done" : "st-going";
           return (
             <div className={`sc-card ${status}`} key={i}
               data-tour={i === tourIdx ? "section-card-target" : undefined}

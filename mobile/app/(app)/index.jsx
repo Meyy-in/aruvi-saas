@@ -11,6 +11,7 @@
  * The section→lesson binding ("+") and the full My Lessons library are step 4. */
 import { useEffect, useState, useCallback } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
+import Svg, { Defs, Pattern, Path, Rect } from "react-native-svg";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, getJSON, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
@@ -262,6 +263,29 @@ function DashHead({ classes, plansBySG, user }) {
   );
 }
 
+/* ───────── The constant graph rule (founder, 2026-08-30; on the phone too, 2026-09-14) ─────────
+ * The same 11px rule on every card whatever its state. It is a MATERIAL, not a code: because it
+ * never varies it carries no meaning, needs no legend, and cannot compete with the status colours
+ * the way a per-class pattern would. Paper keeps its grain, cards get their rule.
+ * The web draws it with two repeating linear-gradients; React Native has no repeating gradient,
+ * so it is an SVG <Pattern> instead — a true tile, not an approximation. The line sits on the TOP
+ * and LEFT edge of each 11px cell, as the web's gradients do.
+ * ⚠️ The weight lives in ONE place, --card-grid in globals.css (theme/tokens.js is generated from
+ * it), so lightening the rule lightens BOTH surfaces. It was taken from 7.5% to 5% on 2026-09-14
+ * (founder: it should not interfere with reading); the dark theme's light rule went 5.5% → 4%. */
+function CardGrid({ color }) {
+  return (
+    <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+      <Defs>
+        <Pattern id="sc-grid" width={11} height={11} patternUnits="userSpaceOnUse">
+          <Path d="M0 0.5 H11 M0.5 0 V11" stroke={color} strokeWidth={1} fill="none" />
+        </Pattern>
+      </Defs>
+      <Rect x="0" y="0" width="100%" height="100%" fill="url(#sc-grid)" />
+    </Svg>
+  );
+}
+
 /* ───────── ONE section card, in the web's three states (Track D step 4) ─────────
  * st-new (sand) · st-going (green) · st-done (clay) — the FILL carries the teaching status and
  * the 4px left spine repeats it (founder, 2026-08-30). A chapter bound but never opened is
@@ -300,6 +324,7 @@ function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
   if (!plan) {
     return (
       <View style={[ws.sc_card, { backgroundColor: t.card_new, borderColor: t.card_new_edge }]}>
+        <CardGrid color={t.card_grid} />
         <View style={[ws.sc_spine, { backgroundColor: t.edge }]} />
         <Tag muted />
         <View style={ws.sc_body}>
@@ -313,12 +338,17 @@ function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
     );
   }
 
-  const lu = pointerOf(c.sectionKey);
+  /* ★ ATTACHING A CHAPTER MEANS SHE IS TEACHING IT, FROM UNIT 1 (founder, 2026-09-14).
+     So a bound card is green unless it is finished, and the sand card belongs to the
+     no-chapter case alone. The web reached the same place by accident — Number(null) is 0, so
+     its pointer read an untouched section as unit 1 — and now says so on purpose in MyPlans;
+     this is the same rule stated once on each surface. */
+  const lu = pointerOf(c.sectionKey) || 1;
   const done = sec.done;
   const total = plan.total_units || null;
-  const fill = done ? t.card_done : lu ? t.card_going : t.card_new;
-  const edge = done ? t.card_done_edge : lu ? t.card_going_edge : t.card_new_edge;
-  const spine = done ? t.clay : lu ? t.pine : t.edge;
+  const fill = done ? t.card_done : t.card_going;
+  const edge = done ? t.card_done_edge : t.card_going_edge;
+  const spine = done ? t.clay : t.pine;
 
   /* ⚠️ The tappable area is the tag + body, NOT the whole card — the right slot's "+"/"−" sit
      OUTSIDE it. The web can nest a <button> inside a clickable <div> and call stopPropagation;
@@ -329,6 +359,7 @@ function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
      was simulating anyway. */
   return (
     <View style={[ws.sc_card, { backgroundColor: fill, borderColor: edge }]}>
+      <CardGrid color={t.card_grid} />
       <View style={[ws.sc_spine, { backgroundColor: spine }]} />
       <Pressable onPress={() => onOpen(c, plan)} accessibilityRole="button"
         accessibilityLabel={`Open ${plan.chapter_title} for ${tag}`}
