@@ -6081,3 +6081,32 @@ and by definition asking for a different year's answer than the one cached.
 The phone takes the same store on the same terms (`mobile/app/(app)/index.jsx`), which is what
 §4 asks for: the behaviour lives in `@aruvi/shared`, and each surface only decides when to call it.
 Pull-to-refresh passes `force` — the teacher's own "check again".
+
+**Confirmed on the deployed stack, same afternoon.** The entry above was written from local
+numbers; the founder then instrumented his own browser on Render + Supabase and walked the
+teacher's path. Result:
+
+| | before | after |
+|---|---|---|
+| listing calls per session | 6 (~1.8 s) | **1** |
+| that one call | full list, 450–900 ms | **304, 0.2 kB** |
+| first paint of the cards | after the round trip | **immediate, from the device copy** |
+
+Silence across every My Classes ↔ My Lessons crossing, every lesson open, Ask Meyy and Settings.
+Generating Chapter 03 English III produced **exactly one** `PLANS 200`, and the stack trace named
+the right path — PrepareLesson → `plansNonce` → MyLessonPlans → `plans.js` — so the invalidation
+is doing its job rather than merely appearing to.
+
+★ **What the ETag actually bought, stated honestly: bytes and server work, NOT waiting.** The 304
+still took 517 ms on the wire, near enough the same as the full 200 it replaced, because on a
+Chennai→Singapore link the bill is latency, not payload — shrinking the parcel does not shorten
+the journey. The waiting disappeared for the OTHER reason: the cards paint from the device copy
+and the round trip happens behind them. Worth remembering the next time a cache is proposed as a
+speed fix — on this stack, a device copy that lets the screen draw early beats a smaller response
+every time, and the two are not the same lever.
+
+**Two leftovers, seen in that same network panel, both craft rather than rescue.** (a)
+`plans-prepared` is a SECOND round trip on every load asking a question the listing already
+answers — the prepared flags are in the body we just 304'd; folding it in removes 320 ms from the
+load. (b) The CORS preflight is cached for ten minutes (`max_age`), so it recurs a few times a
+day for 73 ms; raising it removes it from most loads.
