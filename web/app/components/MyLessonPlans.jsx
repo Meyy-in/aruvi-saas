@@ -696,6 +696,27 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
     return () => ro.disconnect();
   });
 
+  /* ★ MEMOISED, AND THE WHEEL'S ▼ DEPENDS ON IT (2026-09-14). RollWheel reparks the box on
+     `[items]`, whose comment says "whenever the wheel (re)mounts or the list changes" — but a
+     freshly built array is a new identity on EVERY render, so the effect was firing on every
+     render, including the one `stepCycle` causes when it commits the pick before animating. Its
+     direct `scrollTop =` then landed on the arrow's own target and cancelled the smooth roll, so
+     the ▼ jumped instead of rolling. Memoised, the effect fires when the LIST changes, which is
+     what it always meant.
+     ⚠️ AND THEY MUST LIVE ABOVE THE EARLY RETURNS BELOW. They were first written where the plain
+     arrays were — after `if (openPlan) return <LessonView/>` — which was harmless for an array
+     and fatal for a HOOK: opening a lesson took that return, those two useMemos never ran, and
+     React threw "Rendered fewer hooks than expected" the moment a teacher tapped a plan. A hook
+     may not sit after a conditional return, however innocuous the expression it wraps. */
+  const subjectItems = useMemo(() => subjects
+    .map((s) => ({ id: s.name, label: subjectLabel(s.name) }))
+    .sort((a, b) => a.label.localeCompare(b.label)), [subjects]);
+  /* ONLY the classes she has enrolled for this subject, low-to-high — never the content superset. */
+  const gradeItems = useMemo(() => grades
+    .map((g) => g.grade)
+    .sort((a, b) => classNum(a) - classNum(b))
+    .map((g) => ({ id: g, label: `${classNum(g)}` })), [grades]);
+
   if (opening) return <div className="spin">Opening plan…</div>;
   if (openPlan) {
     // READ-ONLY preview. The old "Attach to a class" CTA + section chooser are RETIRED
@@ -710,23 +731,7 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
 
   // Subject filter, alphabetical by name (profile order is arbitrary — a stable A–Z list is easier
   // to scan). Copy before sort so the source subjects[] order is untouched.
-  /* ★ MEMOISED, AND THE WHEEL'S ▼ DEPENDS ON IT (2026-09-14). RollWheel reparks the box on
-     `[items]`, whose comment says "whenever the wheel (re)mounts or the list changes" — but a
-     freshly built array is a new identity on EVERY render, so the effect was firing on every
-     render, including the one `stepCycle` causes when it commits the pick before animating. Its
-     direct `scrollTop =` then landed on the arrow's own target and cancelled the smooth roll, so
-     the ▼ jumped instead of rolling — the animation `stepCycle` is written around, undone by the
-     commit that is supposed to make it safe. Memoised, the effect fires when the LIST changes,
-     which is what it always meant. Found while porting this view to Expo, where the same
-     construction had the same effect. */
-  const subjectItems = useMemo(() => subjects
-    .map((s) => ({ id: s.name, label: subjectLabel(s.name) }))
-    .sort((a, b) => a.label.localeCompare(b.label)), [subjects]);
   // ONLY the classes she has enrolled for this subject, low-to-high — never the content superset.
-  const gradeItems = useMemo(() => grades
-    .map((g) => g.grade)
-    .sort((a, b) => classNum(a) - classNum(b))
-    .map((g) => ({ id: g, label: `${classNum(g)}` })), [grades]);
 
   /* LAPSED (§2.5 as amended, founder 2026-08-24): My Lessons becomes the reading room —
      open, export, print. The prepare bar disappears entirely; renewal is offered in

@@ -164,23 +164,6 @@ export default function MyLessons() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prepKey]);
 
-  /* ── AND RE-READ THE LISTING WHEN ONE FINISHES (the web's plansNonce) ──
-     `preparing` going non-null → null IS the completion signal. A FAILED card keeps the
-     descriptor non-null, so the edge is "was preparing, and is no longer preparing" — and a
-     failed prepare produced no plan, so the refetch is skipped rather than merely harmless.
-     The prepare screen has already invalidated, so this reads the server, not the stale copy. */
-  const wasPreparing = useRef(false);
-  useEffect(() => {
-    const live = !!preparing && !preparing.failed;
-    if (wasPreparing.current && !live && !(preparing && preparing.failed) && key) {
-      fetchPlans(key, { force: true })
-        .then((rows) => setPlansByKey((prev) => ({ ...prev, [key]: rows })))
-        .catch(() => {});
-    }
-    wasPreparing.current = live;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [preparing, key]);
-
   const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
 
   /* Subject in focus (by display name); class in focus (uppercase Roman). RESTORE the last choice;
@@ -258,6 +241,31 @@ export default function MyLessons() {
       .then((rows) => setPlansByKey((prev) => ({ ...prev, [key]: rows })))
       .catch(() => setPlansByKey((prev) => ({ ...prev, [key]: prev[key] || [] })));
   }, [key]);
+
+  /* ── AND RE-READ THE LISTING WHEN ONE FINISHES (the web's plansNonce) ──
+     `preparing` going non-null → null IS the completion signal. A FAILED card keeps the
+     descriptor non-null, so the edge is "was preparing, and is no longer preparing" — and a
+     failed prepare produced no plan, so the refetch is skipped rather than merely harmless.
+     The prepare screen has already invalidated, so this reads the server, not the stale copy.
+
+     ⚠️ AND IT MUST SIT BELOW `key`, NOT BESIDE THE STEERING EFFECT ABOVE (2026-09-14). It was
+     first written up there, next to its sibling, which reads well and throws: `key` is a const
+     declared further down, and a DEPENDENCY ARRAY is evaluated during render, so `[preparing,
+     key]` touched it inside its temporal dead zone — "Cannot access 'key' before
+     initialization", the whole screen, the moment she opened My Lessons. A name used only INSIDE
+     an effect body is safe wherever the effect sits (it runs after render); a name in the DEPS
+     is not. */
+  const wasPreparing = useRef(false);
+  useEffect(() => {
+    const live = !!preparing && !preparing.failed;
+    if (wasPreparing.current && !live && !(preparing && preparing.failed) && key) {
+      fetchPlans(key, { force: true })
+        .then((rows) => setPlansByKey((prev) => ({ ...prev, [key]: rows })))
+        .catch(() => {});
+    }
+    wasPreparing.current = live;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preparing, key]);
 
   /* Reconcile this class's section teaching-state from the server into the local cache so the
      status lines match what she set on My Classes or another device. Re-syncs on load, when the
