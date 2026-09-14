@@ -9,11 +9,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { View, ScrollView, Pressable, Modal, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { Text, TextInput } from "../Text";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Path, Rect } from "react-native-svg";
 import { fetchEntitlement, fetchPlanNotes, savePlanNote, planNoteKey, userKey } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
+import { BAR_CONTENT_H } from "../Bar";
 
 export const kickerOf = (lp) =>
   String(lp.subject || "").replace(/_/g, " ")
@@ -216,6 +218,7 @@ function MicIcon({ color }) {
 const RULE_H = 32;
 
 function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave, onClose, readOnly }) {
+  const insets = useSafeAreaInsets();
   const [text, setText] = useState(initial || "");
   const [paperH, setPaperH] = useState(0);      // the visible sheet
   const [contentH, setContentH] = useState(0);  // how far the writing actually runs
@@ -227,8 +230,14 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
   const ruled = Math.ceil(Math.max(paperH, contentH) / RULE_H) + 1;
 
   return (
+    /* ★ IT OPENS BELOW THE BAR (founder, 2026-09-14). The window covered the top bar, and the
+       app already has a rule for this: Ask Meyy's panel opens beneath the frozen header
+       (`top: var(--hdr-h)`) and, since yesterday, stops above the bottom nav. A panel is a room
+       INSIDE the app, so the app's own chrome stays visible and lit. The offset is the bar's
+       published height plus the status-bar inset — the phone's --hdr-h. */
     <Modal visible transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1, paddingTop: insets.top + BAR_CONTENT_H }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <Pressable style={ws.cn_scrim} onPress={onClose}>
           <Pressable style={[ws.cn_modal, { backgroundColor: t.paper, borderColor: t.line }]} onPress={() => {}}>
             <View style={[ws.cn_head, { borderBottomColor: t.line_soft }]}>
@@ -252,8 +261,11 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
                   {Array.from({ length: ruled }).map((_, i) => (
                     <View key={i} pointerEvents="none" style={[ws.cn_rule, { top: RULE_H * (i + 1) - 1 }]} />
                   ))}
+                  {/* No autoFocus: the window opens whole — the child-privacy rule is readable
+                      before the keyboard covers half the screen — and the sheet only gives up
+                      its room once she taps to write. "Speak" focuses it too. */}
                   <TextInput ref={ref} multiline scrollEnabled={false}
-                    autoFocus={!readOnly} editable={!readOnly} value={text} onChangeText={change}
+                    editable={!readOnly} value={text} onChangeText={change}
                     onContentSizeChange={(e) => setContentH(e.nativeEvent.contentSize.height)}
                     placeholder={readOnly ? "No notes were written for this chapter." : CN_GUIDE}
                     placeholderTextColor="#b3ab9c" textAlignVertical="top"

@@ -22,6 +22,11 @@ import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { endSession } from "../lib/session";
 
+/* The bar's own height BELOW the status bar: the 35px lockup centred in 14 + 15 of padding.
+   Published so a panel that must open beneath the bar can offset by it without re-deriving the
+   number — the phone's answer to the web's measured --hdr-h. */
+export const BAR_CONTENT_H = 64;
+
 export default function Bar({ user = null, onSettings = null }) {
   const { t } = useTheme();
   const ws = useWebStyles();

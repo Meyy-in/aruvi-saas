@@ -332,11 +332,16 @@ export function webStyles(t) {
        is why it felt like a different thing. */
     cn_scrim:        { flex: 1, backgroundColor: "rgba(31,42,36,.42)", alignItems: "center",
                        justifyContent: "center", padding: 20 },
-    cn_modal:        { width: "100%", maxWidth: 468, maxHeight: "90%", borderRadius: 12,
+    /* ★ THE CARD FILLS WHAT IS LEFT, AND THE SHEET IS THE PART THAT GIVES (founder, 2026-09-14).
+       flex: 1 under a cap, so the card takes the room between the bar and the keyboard; the head
+       and foot never shrink (flexShrink: 0) and the writing sheet absorbs the difference. That
+       is what keeps SAVE on screen with the keyboard up — the alternative, a fixed-height card
+       pushed below the bar, pushes its own foot off the bottom. */
+    cn_modal:        { width: "100%", maxWidth: 468, flex: 1, maxHeight: 620, borderRadius: 12,
                        borderWidth: 1, overflow: "hidden" },
     cn_head:         { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between",
                        columnGap: 12, paddingTop: 18, paddingHorizontal: 22, paddingBottom: 14,
-                       borderBottomWidth: 1 },
+                       borderBottomWidth: 1, flexShrink: 0 },
     cn_title:        { fontFamily: F.display(600), fontSize: 16, lineHeight: 20, letterSpacing: -0.3,
                        marginTop: 3, color: t.pine_d },
     cn_sg:           { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15, letterSpacing: 0.8,
@@ -354,14 +359,16 @@ export function webStyles(t) {
        caps it), so a flex child had no space to grow into and the sheet rendered at ZERO —
        head and foot with nothing between them, which is exactly what the founder's phone showed.
        The web sets .cn-paper to a fixed 232px, 204px at phone width; that is this number. */
-    cn_paper_wrap:   { height: 204, backgroundColor: t.paper_2 },
+    /* flex: 1 so it takes the slack, minHeight so it stays writable when the keyboard is up and
+       the slack is small. The web's fixed 204 is the value it lands on with room to spare. */
+    cn_paper_wrap:   { flex: 1, minHeight: 128, backgroundColor: t.paper_2 },
     cn_rule:         { position: "absolute", left: 0, right: 0, height: 1, backgroundColor: t.line },
     cn_paper:        { fontFamily: F.body(400), fontSize: 16, lineHeight: 32, letterSpacing: 0.1,
                        color: t.ink, backgroundColor: "transparent",
                        paddingTop: 5, paddingHorizontal: 22, paddingBottom: 0 },
     cn_foot:         { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
                        columnGap: 12, paddingTop: 12, paddingHorizontal: 22, paddingBottom: 16,
-                       borderTopWidth: 1 },
+                       borderTopWidth: 1, flexShrink: 0 },
     cn_foot_l:       { flexDirection: "row", alignItems: "center", columnGap: 14 },
     cn_count:        { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.44, color: t.ink_soft },
     cn_count_over:   { color: t.clay },
