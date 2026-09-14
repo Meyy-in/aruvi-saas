@@ -27,12 +27,11 @@
  * the plans API uses SLUGS. We convert at the boundary. Section tags are already stored as "6A".
  *
  * ⚠️ FOUR THINGS THE WEB HAS HERE AND THIS DOES NOT YET, each named as CLAUDE.md §4 requires:
- *   1. The PROPOSED card — a lesson mid-prepare, drawn at full strength where the finished card
- *      will land. The prepare CTA below the list is LIVE as of step 5 and opens /prepare; the
- *      card is not, because the web's shell holds `preparing` across a tab switch and the phone's
- *      routes have no shell between them. The wait therefore happens on the prepare screen
- *      itself (the web's own `prep-wait` fallback, "for a caller that has nowhere to put one").
- *      A cross-route store is what moves it here, and is the next step rather than a redesign.
+ *   1. (CLOSED 2026-09-14, step 5b.) The proposed card is here, and so is the prepare CTA. The
+ *      phone's routes have no shell to hold `preparing` across a navigation, so `lib/preparing`
+ *      is that shell: the prepare screen hands the descriptor over and leaves in the same tick,
+ *      and the card is drawn at the head of this list while the request runs on in a closure the
+ *      old screen no longer owns.
  *   2. The REPORTS modal and its card trigger. The web downloads a blob through an anchor with
  *      `download`; saving a file on a phone is expo-file-system + expo-sharing — a native
  *      dependency and a founder decision about where the document lands. The card still reserves
@@ -65,8 +64,11 @@ import { verifiedWrite, planIsArchived } from "@aruvi/shared/verify";
 import { endSession as endSessionShared } from "../../lib/session";
 import Bar from "../../components/Bar";
 import CardGrid from "../../components/CardGrid";
+import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
+import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
+import { subscribePreparing, clearPreparing, clearPaywall } from "../../lib/preparing";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -138,6 +140,46 @@ export default function MyLessons() {
   const [pane, setPane] = useState("lessons");
   const [toast, setToast] = useState(null);         // { kind: "ok" | "block", text } | null
   const [tick, setTick] = useState(0);              // bumped after a section-state sync → re-read
+  const [prep, setPrep] = useState({ descriptor: null, paywall: "" });
+  useEffect(() => subscribePreparing(setPrep), []);
+  const preparing = prep.descriptor;
+
+  /* ── FOLLOW THE LESSON BEING PREPARED INTO VIEW (the web's rule, 2026-08-06) ──
+     This screen remembers its OWN subject·class across visits, which is right for browsing and
+     wrong the one time it matters: if she was last looking at English VI and prepares Science IX,
+     the proposed card would be drawn into a list she is not on and she would arrive at an
+     unchanged screen — a worse outcome than the screen she used to wait on. So a new descriptor
+     STEERS the panes: its subject·class, the lessons pane, the live view. Keyed on the
+     descriptor's identity, so it fires once per prepare and never fights her wheels mid-wait. */
+  const prepKey = preparing
+    ? `${preparing.subject}|${preparing.grade}|${preparing.chapterNo}` : "";
+  useEffect(() => {
+    if (!preparing) return;
+    const sub = subjects.find((x) => subjectSlug(x.name) === preparing.subject);
+    if (sub && sub.name !== activeSubject) { setActiveSubject(sub.name); lsSet(LS_SUBJECT, sub.name); }
+    const g = (preparing.grade || "").toUpperCase();
+    if (g && g !== activeGrade) { setActiveGrade(g); lsSet(LS_CLASS, g); }
+    setView("active");
+    setPane("lessons");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prepKey]);
+
+  /* ── AND RE-READ THE LISTING WHEN ONE FINISHES (the web's plansNonce) ──
+     `preparing` going non-null → null IS the completion signal. A FAILED card keeps the
+     descriptor non-null, so the edge is "was preparing, and is no longer preparing" — and a
+     failed prepare produced no plan, so the refetch is skipped rather than merely harmless.
+     The prepare screen has already invalidated, so this reads the server, not the stale copy. */
+  const wasPreparing = useRef(false);
+  useEffect(() => {
+    const live = !!preparing && !preparing.failed;
+    if (wasPreparing.current && !live && !(preparing && preparing.failed) && key) {
+      fetchPlans(key, { force: true })
+        .then((rows) => setPlansByKey((prev) => ({ ...prev, [key]: rows })))
+        .catch(() => {});
+    }
+    wasPreparing.current = live;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preparing, key]);
 
   const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
 
@@ -381,6 +423,36 @@ export default function MyLessons() {
   const effView = hasArchived ? view : "active";     // auto-fall-back when nothing's archived
   const shown = effView === "archived" ? archivedPlans : activePlans;
 
+  /* ── THE PLAN BEING PREPARED MAY ALREADY BE ON SCREEN (ARV-D-066) ──
+     The proposed card is worded to read exactly like the finished card, on purpose. Drawn
+     unconditionally above the list, that means whenever the run is going to land on a card that
+     already exists she sees her lesson TWICE — same title, same length — until the response
+     arrives and the duplicate vanishes. Two ordinary paths hit it: any re-prepare, and every
+     identity serve (an X equal to a canonical's own count returns that canonical's filename and
+     writes no new file, so the card is already there).
+     The result lands on an existing card exactly when chapter AND matrix match — the served
+     filename is derived from chapter + matrix — so that pair is the key. On a match we do not
+     draw a second card; we mark the real one busy. */
+  const showProposed = !!preparing && pane === "lessons" && effView !== "archived"
+    && (!preparing.subject || preparing.subject === sSlug)
+    && (!preparing.grade || preparing.grade === gSlug);
+  const proposedLabel = preparing ? matrixLabel(preparing.rows) : "";
+  const matchIdx = showProposed
+    ? shown.findIndex((p) => String(p.chapter_number) === String(preparing.chapterNo)
+        && String(p.duration_label || "") === proposedLabel)
+    : -1;
+  const showProposedCard = showProposed && matchIdx < 0;
+  /* HOIST the busy card to the head while it runs (ARV-D-068). The proposed card was always
+     drawn FIRST, where she is looking; marking an existing card busy in place moved the progress
+     bar to wherever that card happened to sit — with seven cards that is often below the fold,
+     and the fix for the duplicate read as "no progress bar at all". Hoisting puts the indicator
+     back where the proposed card would have been, and it is the rule the list already follows:
+     the plan she just acted on comes first. */
+  const ordered = matchIdx > 0
+    ? [shown[matchIdx], ...shown.slice(0, matchIdx), ...shown.slice(matchIdx + 1)]
+    : shown;
+  const busyIdx = matchIdx >= 0 ? 0 : -1;
+
   /* Subject filter, alphabetical by LABEL (profile order is arbitrary — a stable A–Z list is
      easier to scan). Copy before sort so the source order is untouched. */
   const subjectItems = useMemo(() => subjects
@@ -522,7 +594,7 @@ export default function MyLessons() {
           <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness} />
         ) : plans === undefined ? (
           <Text style={ws.mlp2_loading}>Loading plans…</Text>
-        ) : shown.length === 0 ? (
+        ) : shown.length === 0 && !showProposedCard ? (
           <Text style={ws.mlp2_emptybody}>
             {effView === "archived"
               ? "Nothing archived here."
@@ -532,9 +604,16 @@ export default function MyLessons() {
           </Text>
         ) : (
           <View style={ws.sc_list}>
-            {shown.map((p) => (
+            {/* The lesson being prepared sits FIRST, where the finished card will land —
+                including when this is her very first plan and the list is otherwise the empty
+                state (hence the guard on that branch above). */}
+            {showProposedCard ? (
+              <ProposedCard preparing={preparing} onDismiss={clearPreparing} />
+            ) : null}
+            {ordered.map((p, pi) => (
               <PlanCard key={p.filename} p={p} archived={effView === "archived"}
                 status={statusFor(p)} attached={isAttached(p)}
+                busy={pi === busyIdx ? preparing : null} onDismissBusy={clearPreparing}
                 onOpen={() => openLesson(p)}
                 onArchive={() => archivePlan(p)} onRestore={() => restorePlan(p)} />
             ))}
@@ -555,6 +634,22 @@ export default function MyLessons() {
           </View>
         ) : null}
       </ScrollView>
+
+      {/* ★ THE PAYWALL IS NOT AN ERROR (founder, 2026-08-24). A 402 — trial exhausted, or out of
+          subscription — must never render as a failed card or an inline card message: the card
+          comes DOWN and a window carries the sentence instead. The server's own wording travels
+          up unchanged, because it is written FOR HER. It lands here rather than on the prepare
+          screen because by the time a 402 arrives that screen is gone. */}
+      <Sheet visible={!!prep.paywall} onClose={clearPaywall} confirm
+        kicker={`${pretty(sSlug)} · Class ${classNum(activeGrade)}`}
+        title="Your free chapters are used up" sub={prep.paywall}>
+        <View style={ws.ap_actions}>
+          <Pressable onPress={clearPaywall} accessibilityRole="button"
+            style={[ws.ap_btn, { borderColor: t.line }]}>
+            <Text style={[ws.ap_btn_label, { color: t.ink_soft }]}>Close</Text>
+          </Pressable>
+        </View>
+      </Sheet>
 
       {/* Transient confirmation / block message — bottom-centre, non-blocking, auto-dismissed.
           It sits clear of the bottom bar rather than under it. */}
@@ -585,7 +680,7 @@ export default function MyLessons() {
  * action simply is not inside the card's press target — which is what stopPropagation was
  * simulating. Same divergence, same reason, as the section card's (step 4a).
  */
-function PlanCard({ p, archived, status, attached, onOpen, onArchive, onRestore }) {
+function PlanCard({ p, archived, status, attached, busy, onDismissBusy, onOpen, onArchive, onRestore }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const { completed, live } = status;
@@ -599,10 +694,11 @@ function PlanCard({ p, archived, status, attached, onOpen, onArchive, onRestore 
 
   return (
     <View style={[ws.sc_card, !archived && ws.mlp2_cardpad,
-      { backgroundColor: fill, borderColor: edge }]}>
+      { backgroundColor: busy ? t.paper_2 : fill, borderColor: busy ? t.edge_clay : edge },
+      busy && ws.sc_proposed]}>
       <CardGrid color={t.card_grid} />
       <View style={[ws.sc_spine, { backgroundColor: spine }]} />
-      <Pressable onPress={onOpen} accessibilityRole="button"
+      <Pressable onPress={busy ? undefined : onOpen} disabled={!!busy} accessibilityRole="button"
         accessibilityLabel={`Open ${p.chapter_title}`}
         style={{ flex: 1, flexDirection: "row", alignItems: "center", columnGap: 13 }}>
         <Text style={ws.sc_tag}>{pad(p.chapter_number)}</Text>
@@ -628,7 +724,12 @@ function PlanCard({ p, archived, status, attached, onOpen, onArchive, onRestore 
               ) : null}
             </View>
           ) : null}
-          {archived ? (
+          {busy ? (
+            /* Re-preparing THIS plan: the progress line takes the status line's place on the card
+               she is already looking at, rather than a second card appearing above it
+               (ARV-D-066). Same component as the proposed card, so the two cannot drift. */
+            <ProposedCard preparing={busy} onDismiss={onDismissBusy} bare />
+          ) : archived ? (
             <Text style={ws.mlp2_ready}>Archived</Text>
           ) : completed.length || live.length ? (
             /* EXHAUSTIVE and single-colour, completed first. */
@@ -655,7 +756,7 @@ function PlanCard({ p, archived, status, attached, onOpen, onArchive, onRestore 
           style={[ws.mlp2_restore, { backgroundColor: t.pine, borderColor: t.pine }]}>
           <Text style={[ws.mlp2_restore_t, { color: t.paper }]}>Restore</Text>
         </Pressable>
-      ) : !attached ? (
+      ) : !attached && !busy ? (
         <Pressable onPress={onArchive} accessibilityRole="button" hitSlop={6}
           accessibilityLabel={`Archive ${p.chapter_title}`} style={ws.mlp2_iconbtn}>
           <ArchiveIcon size={18} color={t.ink_soft} />

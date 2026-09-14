@@ -30,17 +30,23 @@
  * where a plan another teacher happened to warm is still HER first sight of it and gets the full
  * wait. That makes the pause a property of her experience rather than of our infrastructure.
  *
- * ⚠️ TWO DIVERGENCES FROM THE WEB, named as CLAUDE.md §4 requires:
- *   1. THE WAIT HAPPENS HERE, on this screen, not as a proposed card at the head of My Lessons.
- *      The web moved it there on 2026-08-06 because its shell holds `preparing` across a tab
- *      switch; on the phone these are separate ROUTES with no shell between them, so there is
- *      nowhere to put the card without a cross-route store. The web's own `prep-wait` card — the
- *      fallback it still keeps "for a caller that has nowhere to put one" — is what runs here,
- *      verbatim. The store and the proposed card are the next step, not a redesign.
- *   2. NO PREVIEW STEP. The web falls back to rendering the built plan inline when no
- *      `onPrepared` handler is passed; here there is always somewhere to go, so a successful
- *      prepare returns to My Lessons with the chapter now in the list. Attaching it to a class
- *      stays a separate, deliberate act from the "+" on a section card — one true way.
+ * ★ THE WAIT DOES NOT HAPPEN HERE (founder, 2026-09-14: "iPhone and expo when preparing a new
+ * plan takes us out into a new screen, whereas web app shows the lesson plan generating in My
+ * Lessons itself at the top with a progress bar"). Step 5a shipped the web's own `prep-wait`
+ * fallback and named it a divergence; this is it closed. Pressing Prepare hands the descriptor
+ * to `lib/preparing` and navigates to My Lessons in the SAME tick, where the proposed card is
+ * drawn at the head of the list — which is where the web has put it since 2026-08-06, because
+ * "she left the place the lesson was going to appear."
+ *   ⚠️ THE REQUEST IS DELIBERATELY NOT AWAITED BEFORE THE HANDOFF. This component unmounts
+ * immediately, but the async function's closure does not: the fetch keeps running, holds the
+ * five-second beat and resolves into the store the screen she is now looking at is watching.
+ * Awaiting it is exactly what would keep her here. Same trick the web's `prepareAndHandOff`
+ * relies on, and the reason `setState` after the await is never used on this path.
+ *
+ * ⚠️ ONE DIVERGENCE LEFT, named as CLAUDE.md §4 requires: NO PREVIEW STEP. The web falls back to
+ * rendering the built plan inline when no `onPrepared` handler is passed; here there is always
+ * somewhere to go, so a successful prepare leaves the chapter in My Lessons' list. Attaching it
+ * to a class stays a separate, deliberate act from the "+" on a section card — one true way.
  *
  * Measures live in theme/web.js under `prep_*` (§4 rule 2).
  */
@@ -57,6 +63,7 @@ import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { readLocalSection } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
 import Bar from "../../components/Bar";
+import { startPreparing, clearPreparing, failPreparing, paywallPreparing } from "../../lib/preparing";
 import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
@@ -85,11 +92,9 @@ export default function Prepare() {
   const [trialInfo, setTrialInfo] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [preparing, setPreparing] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [warnRegen, setWarnRegen] = useState(false);
-  const [paywall, setPaywall] = useState("");
   /* Re-entry guard, kept although a partition is free and instant: a second press during an
      in-flight request would still double-register and can race the return. The ref blocks
      re-entry even if a press slips past the disabled button. */
@@ -285,11 +290,15 @@ export default function Prepare() {
     setBusy(true); setError("");
     const startedAt = Date.now();
     /* The card goes up FIRST, from what she just told us — chapter, class, period shape. Nothing
-       here is invented and nothing is fetched to draw it. */
-    setPreparing({
+       here is invented and nothing is fetched to draw it. Then we LEAVE, in the same tick, and
+       everything below resolves into the store from a closure this screen no longer owns. */
+    const descriptor = {
+      subject, grade, chapterNo,
       chapterTitle: (chosen.chapter_title || chosen.title) || `Chapter ${chapterNo}`,
       rows: matrix,
-    });
+    };
+    startPreparing(descriptor);
+    router.navigate("/lessons");
     try {
       const resp = await postJSON(`/genon/${subject}/${grade}/${chapterNo}/plan`, { rows: matrix });
       /* READ-AFTER-WRITE (area 2). The serve returned a filename, so Y is now knowable: "that
@@ -308,9 +317,10 @@ export default function Prepare() {
 
       await holdPreparing(startedAt, !!resp.already_yours);
       /* Her flags just moved, so the shared listing must be re-read rather than re-used — the
-         same rule every other prepare path follows. */
+         same rule every other prepare path follows. Invalidate BEFORE clearing: My Lessons
+         refetches on the clear, and it must not be served the copy that predates this plan. */
       invalidatePlans(`${subject}/${grade}`);
-      router.replace("/lessons");
+      clearPreparing();
     } catch (e) {
       /* ── THE PAYWALL IS NOT AN ERROR (founder, 2026-08-24). A 402 (trial exhausted / out of
          subscription) must never render as a failed card or an inline message — the card comes
@@ -319,10 +329,12 @@ export default function Prepare() {
       const msg = (e && e.detail)
         ? e.detail
         : "Couldn’t build the lesson plan right now. Try again in a moment.";
-      if (e && e.status === 402) setPaywall(msg);
-      else setError(msg);
+      /* She is in My Lessons watching the card, so the failure has to reach HER, not this
+         screen — it goes back up the way it went down. The 402 pulls the card and raises the
+         window there instead, because a paywall is not a failed build. */
+      if (e && e.status === 402) paywallPreparing(msg);
+      else failPreparing(msg);
     } finally {
-      setPreparing(null);
       setBusy(false);
     }
   };
@@ -340,32 +352,6 @@ export default function Prepare() {
   };
 
   const setP = (n) => setPeriods(Number.isFinite(n) && n >= 0 ? n : 0);
-
-  /* ── the preparing card — SHE STAYS HERE; the lesson she is about to get, at rest ── */
-  if (preparing) {
-    const totalP = (preparing.rows || []).reduce((a, r) => a + (Number(r.count) || 0), 0);
-    const shape = (preparing.rows || []).map((r) => `${r.count} × ${r.duration} min`).join(" + ");
-    return (
-      <View style={{ flex: 1, backgroundColor: t.paper }}>
-        <Bar user={getUser()} />
-        <View style={[ws.main, ws.prep_wait]} accessibilityLiveRegion="polite">
-          <Text style={ws.prep_scope}>{pretty(subject)} · Class {classNum(grade)}</Text>
-          <View style={[ws.prep_wait_card, { backgroundColor: t.paper_2, borderColor: t.line }]}>
-            <Text style={ws.prep_wait_title}>{preparing.chapterTitle}</Text>
-            <Text style={ws.prep_wait_meta}>
-              {totalP} {totalP === 1 ? "period" : "periods"}{shape ? ` · ${shape}` : ""}
-            </Text>
-            <View style={ws.prep_wait_dots}>
-              {[0, 1, 2, 3, 4].map((i) => (
-                <View key={i} style={[ws.prep_wait_dot, { backgroundColor: t.line }]} />
-              ))}
-            </View>
-            <Text style={ws.prep_wait_note}>Preparing your lesson plan…</Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
 
   const Box = ({ children, style }) => (
     <View style={[ws.prep_box, { backgroundColor: t.paper, borderColor: t.line }, style]}>{children}</View>
@@ -569,18 +555,6 @@ export default function Prepare() {
         </View>
       </Sheet>
 
-      {/* ── the paywall. NOT an error: the card comes down and this carries the server's own
-             sentence, with nowhere to go but back. Subscribing happens on the web for now. ── */}
-      <Sheet visible={!!paywall} onClose={() => setPaywall("")} confirm
-        kicker={`${pretty(subject)} · Class ${classNum(grade)}`} title="Your free chapters are used up"
-        sub={paywall}>
-        <View style={ws.ap_actions}>
-          <Pressable onPress={() => setPaywall("")} accessibilityRole="button"
-            style={[ws.ap_btn, { borderColor: t.line }]}>
-            <Text style={[ws.ap_btn_label, { color: t.ink_soft }]}>Close</Text>
-          </Pressable>
-        </View>
-      </Sheet>
     </View>
   );
 }

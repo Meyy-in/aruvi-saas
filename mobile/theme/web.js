@@ -483,6 +483,26 @@ export function webStyles(t, scheme = "light") {
     mlp_allocate_t:  { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13, letterSpacing: 0.5,
                        textTransform: UP },
 
+    /* ── the PROPOSED card (.sc-card.sc-proposed + .sc-prep*) ──
+       The one "not yet" signal is STRUCTURE, never colour: a dashed edge and a clay spine on an
+       otherwise ordinary card. ⚠️ At phone width the web STACKS the progress line — the note
+       leads and the bar sits under it at full width, rather than being squeezed to a stub beside
+       it (globals.css ≤600px) — so that is the only arrangement here. */
+    sc_proposed:     { borderStyle: "dashed" },
+    sc_prep:         { flexDirection: "column", alignItems: "flex-start", rowGap: 5, marginTop: 5 },
+    sc_prep_note:    { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 17, color: t.ink_soft },
+    sc_prep_bar:     { width: "100%", height: 3, borderRadius: 2, overflow: "hidden" },
+    sc_prep_fill:    { position: "absolute", left: 0, top: 0, bottom: 0, borderRadius: 2 },
+    /* ★ FAILED IS ONE ROW, so the card is the same HEIGHT as its neighbours (globals.css ≤420px
+       undoes the column stacking for exactly this reason: there is no bar to protect, and a
+       taller card reads as a different KIND of thing). */
+    sc_prep_failed:  { flexDirection: "row", alignItems: "center", columnGap: 10, rowGap: 0 },
+    sc_prep_note_failed: { fontFamily: F.body(400), fontSize: 12, lineHeight: 16.5, color: t.ink,
+                           flex: 1, minWidth: 0 },
+    sc_prep_dismiss: { borderBottomWidth: 1, paddingTop: 2, paddingBottom: 1 },
+    sc_prep_dismiss_t: { fontFamily: F.mono(400), fontSize: 11, lineHeight: 14, letterSpacing: 0.66,
+                         textTransform: UP, color: t.clay },
+
     /* ── the peek RollWheel (.fr-wheel-shell.peek) ──
        One compact row showing ONLY the item in use, rolled by drag with a single cycling ▼.
        rowPx is 72 here (My Lessons passes it); the shell's hairline adds 1 top and bottom. */
@@ -625,19 +645,6 @@ export function webStyles(t, scheme = "light") {
     pcta_inset:        { position: "absolute", top: 0, left: 0, right: 0, height: 1,
                          backgroundColor: "rgba(255,255,255,.14)" },
     prep_hint:       { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18, color: t.ink_soft },
-    /* ── the preparing card (.prep-wait) — she stays HERE while it builds ── */
-    prep_wait:       { paddingTop: 6, paddingBottom: 40 },
-    prep_wait_card:  { borderWidth: 1, borderRadius: 12, paddingVertical: 18, paddingHorizontal: 18,
-                       marginTop: 16 },
-    prep_wait_title: { fontFamily: F.display(500), fontSize: 20, lineHeight: 26, color: t.ink },
-    /* .06em at 11 = 0.66, and UPPERCASE — both missed in the first cut and found by
-       check-parity.mjs rather than by eye, which is what it is for. */
-    prep_wait_meta:  { fontFamily: F.mono(400), fontSize: 11, lineHeight: 15, letterSpacing: 0.66,
-                       textTransform: UP, color: t.ink_soft, marginTop: 6 },
-    prep_wait_dots:  { flexDirection: "row", columnGap: 6, marginTop: 16 },
-    prep_wait_dot:   { width: 5, height: 5, borderRadius: 2.5 },
-    prep_wait_note:  { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19, color: t.ink_soft,
-                       marginTop: 12 },
 
     /* ── Year Plan (.yp + children) — globals.css, with the ≤400px pad ──
        Two period figures side by side: Suggested (Meyy's proposal, her budget distributed by

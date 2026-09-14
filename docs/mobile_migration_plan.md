@@ -527,6 +527,39 @@ Next: step 5b — the profile portal, and the proposed-card store, which between
 item and unlock what 4b deferred: the proposed card, the prepare CTA, and the Year Plan's budget
 pencil. Ask Meyy is step 6.
 
+**Step 5b — the proposed card, and the wait moves to My Lessons (2026-09-14).** Founder: "iPhone
+and expo when preparing a new plan takes us out into a new screen, whereas web app shows the
+lesson plan generating in My Lessons itself at the top with a progress bar." Step 5a shipped the
+web's own `prep-wait` fallback and named it a divergence; this closes it.
+- `mobile/lib/preparing.js` is the missing SHELL. On the web `preparing` lives in page.jsx, above
+  the tab, so My Lessons unmounts and remounts around it; the phone's routes have nothing above
+  them. One module-level descriptor with a subscription is the equivalent, and the callback fires
+  immediately on subscribe so a screen mounting mid-prepare draws the card on its FIRST render.
+- `prepare.jsx` hands the descriptor over and navigates in the SAME tick. ⚠️ The request is
+  deliberately NOT awaited first: the component unmounts, but the async closure does not — it
+  keeps running, holds the five-second beat and resolves into the store the screen she is now
+  looking at is watching. Awaiting is exactly what would keep her on the old screen. Same trick
+  the web's `prepareAndHandOff` relies on.
+- `components/ProposedCard.jsx` — the card at full strength in the ordinary structure (number tag
+  · title · duration line), the one "not yet" signal being STRUCTURE (a dashed edge, a clay
+  spine), never colour. A faded card reads as "something is missing" when every fact on it is
+  already known and final. Not tappable, and `accessibilityLiveRegion` so the wait is announced.
+- Three terminal states, as the web has them: CLEARED (the real card replaces it in place), FAILED
+  (the card STAYS, at rest, carrying the reason — ARV-D-087: she is looking at it, and a card that
+  vanishes silently reads as a mis-tap; ONE ROW, so it stays the same height as its neighbours),
+  and PAYWALL (a 402 is not an error — the card comes down and a window carries the server's own
+  sentence, raised in My Lessons because by then the prepare screen is gone).
+- The web's dedupe and hoist came with it: chapter + matrix is the key, because the served
+  filename derives from that pair, so a re-prepare or an identity serve marks the EXISTING card
+  busy instead of drawing her lesson twice (ARV-D-066) — and hoists it to the head, because
+  marking a card busy in place puts the progress bar wherever that card happened to sit, often
+  below the fold (ARV-D-068).
+- ⚠️ One divergence, named in the component: the web's bar is a CSS keyframe (0 → 96% on a
+  cubic-bezier); RN has no keyframes, so it is an `Animated.timing` with the same duration, curve
+  and 96% end point — it stops just short because the card is replaced at that moment and a bar
+  that visibly completes then lingers reads as stuck.
+- The in-place `prep-wait` card and its measures are deleted with it.
+
 ★ **A PARITY CHECKER (2026-09-14) — `node mobile/theme/check-parity.mjs`.** In one afternoon the
 founder caught four parity misses by eye, each costing a round trip, and every one was the same
 mechanical fault: `theme/web.js` mirrors a CSS class, but the value the BROWSER applies to that
