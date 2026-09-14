@@ -350,7 +350,11 @@ export function webStyles(t) {
     cn_x:            { fontSize: 14, lineHeight: 18, padding: 4, color: t.ink_soft },
     /* The ruled sheet. RULE_H is the web's 32px band; the text carries the same line-height so
        it sits on the rules, and both scroll together (the web's background-attachment: local). */
-    cn_paper_wrap:   { flex: 1, backgroundColor: t.paper_2 },
+    /* ⚠️ A FIXED HEIGHT, not flex: 1. The card's height comes from its content (maxHeight only
+       caps it), so a flex child had no space to grow into and the sheet rendered at ZERO —
+       head and foot with nothing between them, which is exactly what the founder's phone showed.
+       The web sets .cn-paper to a fixed 232px, 204px at phone width; that is this number. */
+    cn_paper_wrap:   { height: 204, backgroundColor: t.paper_2 },
     cn_rule:         { position: "absolute", left: 0, right: 0, height: 1, backgroundColor: t.line },
     cn_paper:        { fontFamily: F.body(400), fontSize: 16, lineHeight: 32, letterSpacing: 0.1,
                        color: t.ink, backgroundColor: "transparent",

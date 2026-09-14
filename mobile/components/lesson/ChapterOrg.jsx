@@ -236,8 +236,6 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
                 <Text style={ws.kicker}>Chapter notes</Text>
                 <Text style={ws.cn_title}>{chapterTitle}</Text>
                 {subjectGrade ? <Text style={ws.cn_sg}>{subjectGrade}</Text> : null}
-                <Text style={ws.cn_scope}>Shared across every section on this plan</Text>
-                <Text style={ws.cn_scope}>Saved to your account · opens on any device you sign in from</Text>
                 <Text style={[ws.cn_scope, ws.cn_warn, { borderTopColor: t.line }]}>
                   Private data like name, age of child must not be recorded. Meyy reserves
                   right to delete if entered.

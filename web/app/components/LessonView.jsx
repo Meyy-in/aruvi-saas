@@ -1290,10 +1290,16 @@ function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClos
             <div className="kicker kicker-soft">Chapter notes</div>
             <div className="cn-title">{chapterTitle}</div>
             {subjectGrade ? <div className="cn-sg">{subjectGrade}</div> : null}
-            <div className="cn-scope">Shared across every section on this plan</div>
-            {/* Disclosure (admin architecture Step 3): holding her notes server-side is
-                legitimate because she is TOLD — "done when … she is told that they do". */}
-            <div className="cn-scope">Saved to your account · opens on any device you sign in from</div>
+            {/* ★ THE TWO SCOPE LINES ARE GONE (founder, 2026-09-14, from the phone): the window
+                had grown to five lines of preamble above a writing area she opens in order to
+                WRITE. "Shared across every section on this plan" was pure scope information.
+                The second was the Step-3 disclosure — "holding her notes server-side is
+                legitimate because she is TOLD" — written on 2026-08-22, BEFORE the privacy
+                notice existed. The notice now carries it almost verbatim in its own data table
+                ("Saved to your account so your note opens on any device. There is no version
+                history…"), is given at or before collection as DPDP §5 requires, and is linked
+                from the front door. The inline line was reinforcement, not the disclosure
+                itself. ⚠️ If that row ever leaves the notice, this line has to come back. */}
             {/* CHILD-PRIVACY WARNING (founder, 2026-08-26). Notes are free text a teacher
                 writes right after class, which is exactly the moment she might name a
                 child. Aruvi holds these on the server, so the boundary has to be stated
