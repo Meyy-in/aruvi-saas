@@ -194,9 +194,20 @@ export function webStyles(t) {
     lv_pvmid:        { fontFamily: F.mono(700), fontSize: 11, lineHeight: 15.4, letterSpacing: 0.88, textTransform: UP, color: t.paper, opacity: 0.82 },
 
     /* ── Assess (.uv-assess-stick / .uv-apager / .assess-*) ── */
-    uv_apager:       { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 6 },
-    uv_apgbtn:       { fontFamily: F.mono(600), fontSize: 11, letterSpacing: 0.66, textTransform: UP, color: t.pine },
-    uv_apgmid:       { fontFamily: F.mono(400), fontSize: 10.5, letterSpacing: 1, textTransform: UP, color: t.ink_soft },
+    /* ── the assessment pager (.uv-apager) — the PINE BAND, measured 2026-09-14 ──
+       It appears only when a unit anchors more than one item, and it is a filled band, not a row
+       of links: pine, 6px radius, cream ink. The first Expo cut had it as bare text on paper
+       (no fill, no radius, pine ink, both labels uppercased), so on the phone the band simply
+       was not there — founder-reported. The two quieter inks take the button's own token at
+       reduced opacity rather than a literal cream, so the band holds in dark too, where --pine
+       is a mid green and a cream sibling would read inverted against the near-black button. */
+    uv_apager:       { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                       backgroundColor: t.pine, borderRadius: 6,
+                       paddingVertical: 5, paddingHorizontal: 13, marginTop: -6, marginBottom: 14 },
+    uv_apgbtn:       { fontFamily: F.mono(700), fontSize: 11, lineHeight: 15.4, color: t.paper },
+    uv_apgbtn_off:   { opacity: 0.42 },
+    uv_apgmid:       { fontFamily: F.mono(400), fontSize: 10, lineHeight: 14, letterSpacing: 0.8,
+                       textTransform: UP, color: t.paper, opacity: 0.85 },
     assess_mtabs:    { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: t.line },
     assess_mt:       { paddingTop: 8, paddingBottom: 7, paddingHorizontal: 1, marginBottom: -1, borderBottomWidth: 2, borderBottomColor: "transparent", flex: 1, alignItems: "center" },
     assess_mt_t:     { fontFamily: F.mono(400), fontSize: 10.5, letterSpacing: 0.42, textTransform: UP, color: t.ink_soft },

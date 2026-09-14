@@ -421,9 +421,9 @@ export default function AssessPanel({ ws, t, items, assessment }) {
       <View style={{ backgroundColor: t.paper }}>
         {many ? (
           <View style={ws.uv_apager}>
-            <Pressable disabled={idx <= 0} onPress={() => goto(idx - 1)} hitSlop={6}><Text style={[ws.uv_apgbtn, idx <= 0 && { opacity: 0.35 }]}>← Previous</Text></Pressable>
+            <Pressable disabled={idx <= 0} onPress={() => goto(idx - 1)} hitSlop={6}><Text style={[ws.uv_apgbtn, idx <= 0 && ws.uv_apgbtn_off]}>← Previous</Text></Pressable>
             <Text style={ws.uv_apgmid}>Question {idx + 1} / {items.length}</Text>
-            <Pressable disabled={idx >= items.length - 1} onPress={() => goto(idx + 1)} hitSlop={6}><Text style={[ws.uv_apgbtn, idx >= items.length - 1 && { opacity: 0.35 }]}>Next →</Text></Pressable>
+            <Pressable disabled={idx >= items.length - 1} onPress={() => goto(idx + 1)} hitSlop={6}><Text style={[ws.uv_apgbtn, idx >= items.length - 1 && ws.uv_apgbtn_off]}>Next →</Text></Pressable>
           </View>
         ) : null}
         {set ? (

@@ -1452,8 +1452,14 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
    unit tab row so it reads as the assess panel's own navigation. */
 .uv-apager { display:flex; justify-content:space-between; align-items:center; background:var(--pine); border-radius:6px; padding:5px 13px; margin:-6px 0 14px; }
 .uv-apgbtn { font-family:var(--f-mono); font-size:11px; font-weight:700; color:var(--paper); background:none; border:none; cursor:pointer; padding:0; line-height:1.4; }
-.uv-apgbtn.off { color:rgba(255,255,255,.42); cursor:default; }
-.uv-apgmid { font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:rgba(250,247,241,.85); }
+/* ⚠️ Both of these were LITERALS — a 42% white and an 85% cream — written when only the light
+   theme existed. The band is var(--pine), which in dark is a mid green (#3f8f76) against which
+   the ENABLED button (var(--paper), near-black there) reads correctly while a cream sibling
+   reads inverted: one band, two opposite inks. They now take the button's own token and differ
+   from it only in opacity, so the band holds together in both themes (found porting the pager
+   to Expo, 2026-09-14). */
+.uv-apgbtn.off { color:var(--paper); opacity:.42; cursor:default; }
+.uv-apgmid { font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--paper); opacity:.85; }
 /* per-item tabs (OVERVIEW · QUESTION · ANSWER · INCLUSIVITY) — same grammar as
    .uv-tabs, one notch smaller/quieter so the two bars don't read as one control. */
 .assess-mtabs { display:flex; border-bottom:1px solid var(--line); margin:0 0 12px; }
