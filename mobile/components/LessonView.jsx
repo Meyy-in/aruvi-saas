@@ -176,7 +176,11 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
 }
 
 /* ── one unit: pinned header + tab bar (.lv-stick), the panel beneath ── */
-function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter, defaultTab, bookmark, tail }) {
+/* `defaultTab = "lesson"` is a DEFAULT PARAMETER, as it is on the web (`useUnitTabsParts` and
+   `PreviewUnit` both carry it), so a caller that forgets to pass one still opens on the teaching
+   spine rather than on an undefined tab. */
+function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
+                       defaultTab = "lesson", bookmark, tail }) {
   const items = unitAssessItems(assessment, u);
   const [tab, setTab] = useState(defaultTab);
   const tabs = [["overview", "Overview"], ["material", "Material"], ["lesson", "Lesson"], ...(items.length ? [["assess", "Assess"]] : [])];
@@ -298,8 +302,13 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Bar />
+      {/* ★ ALWAYS THE LESSON TAB (founder, 2026-09-14). The web's `useUnitTabsParts` and
+          `PreviewUnit` both DEFAULT to "lesson", and page.jsx passes it explicitly too, so a unit
+          opens on the teaching spine whether she is tracking or previewing. This opened a preview
+          on Overview — a ledger of chapter, time and pedagogy — when what she came for, either
+          way, is the lesson. */}
       <PreviewUnit key={previewAt} ws={ws} t={t} header={header} u={pu} assessment={view.assessment} chapterTitle={lp.chapter_title}
-        defaultTab={tracking ? "lesson" : "overview"}
+        defaultTab="lesson"
         lessonFooter={tracking && !inDropped && previewAt === actUnit ? completionUI : null}
         bookmark={tracking && !inDropped && previewAt === cur ? { phase: bkmkPhase, onMove: moveBookmark } : null}
         tail={pvNav} />

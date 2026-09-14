@@ -18,6 +18,7 @@ import { useRouter } from "expo-router";
 import { Text } from "./Text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MeyyMark from "./MeyyMark";
+import { getUser } from "@aruvi/shared/format";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { endSession } from "../lib/session";
@@ -27,7 +28,19 @@ import { endSession } from "../lib/session";
    number — the phone's answer to the web's measured --hdr-h. */
 export const BAR_CONTENT_H = 64;
 
-export default function Bar({ user = null, onSettings = null }) {
+/* ⚠️ `user` DEFAULTS TO THE SIGNED-IN ID, and does not have to be passed (founder, 2026-09-14:
+   "when in iphone/expo I open a lesson plan from My Class or My Lessons, the login and wheel on
+   top right bar disappears").
+   The whole right-hand block — gear, identity, Log out — is gated on `user`, and FIVE call sites
+   rendered `<Bar />` with nothing: both branches of the lesson route and all three of LessonView.
+   So the bar lost half itself on exactly the screen a teacher spends her lesson in, where the web
+   (one shell, one topbar) never changes at all. Requiring every screen to hand the bar the
+   session was the bug: it is the same value everywhere, and the only question a screen ever has
+   is whether anyone is signed in — which this can answer for itself.
+   The prop stays as an override, and login/privacy keep passing nothing: `getUser()` is null
+   before sign-in, so those screens still render the bare lockup, correctly and without a
+   special case. */
+export default function Bar({ user = getUser(), onSettings = null }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const insets = useSafeAreaInsets();
