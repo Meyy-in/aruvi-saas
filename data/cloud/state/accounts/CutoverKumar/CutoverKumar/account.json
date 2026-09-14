@@ -1,0 +1,18 @@
+{
+  "account_id": "CutoverKumar",
+  "tenant_id": "CutoverKumar",
+  "display_name": "CutoverKumar",
+  "email": "",
+  "phone": "",
+  "locale": "en-IN",
+  "school_name": "",
+  "role": "",
+  "state": "",
+  "city": "",
+  "status": "active",
+  "created_at": "2026-09-14T08:55:17.499598+00:00",
+  "consent": {},
+  "notify": {},
+  "tour_offered_at": "",
+  "privacy_notice": {}
+}

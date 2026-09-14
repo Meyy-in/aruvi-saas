@@ -1,0 +1,19 @@
+{
+  "years": [
+    {
+      "year_id": "2026-27",
+      "starts_on": "2026-04-01",
+      "ends_on": "2027-03-31",
+      "is_current": false,
+      "cleanup_pending": false
+    },
+    {
+      "year_id": "2027-28",
+      "starts_on": "2027-04-01",
+      "ends_on": "2028-03-31",
+      "is_current": true,
+      "cleanup_pending": false
+    }
+  ],
+  "updated_at": "2026-09-14T08:55:17.554110+00:00"
+}

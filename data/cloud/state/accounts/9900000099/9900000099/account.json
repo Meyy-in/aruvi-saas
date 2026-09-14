@@ -1,0 +1,18 @@
+{
+  "account_id": "9900000099",
+  "tenant_id": "9900000099",
+  "display_name": "9900000099",
+  "email": "",
+  "phone": "",
+  "locale": "en-IN",
+  "school_name": "",
+  "role": "",
+  "state": "",
+  "city": "",
+  "status": "active",
+  "created_at": "2026-09-14T08:55:38.837708+00:00",
+  "consent": {},
+  "notify": {},
+  "tour_offered_at": "",
+  "privacy_notice": {}
+}
