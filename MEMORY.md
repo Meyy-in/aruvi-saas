@@ -5986,3 +5986,45 @@ she takes is safe.
 NAMES" (2026-09-07) assumes there is something to go back to. When a screen can destroy the thing
 underneath it, its close must be re-asked — the ✕ was correct for every OTHER Settings subview and
 wrong only for this one.
+
+---
+
+## 2026-09-14 — The /plans delay was a query loop, and the deploy proved it
+
+Measured on the deployed stack (Render singapore/starter + Supabase), founder's browser, twice:
+
+| | before | after |
+|---|---|---|
+| `GET /plans/english/iii` | **3,470 ms** | **487 ms** |
+
+★ **The cause was 48 database round trips to answer one question.** Building each row's
+provenance stamp called `_prior_years_desc()` — and inside it `prepared_plans_repo.load_all()`
+per year — for EVERY plan in the listing. The answer depends on the TEACHER and the year, never
+on the plan, so english/iii made 48 academic-year reads per request to compute one constant —
+and today that constant is EMPTY, because Meyy has run one academic year, so the loop those
+queries fed never executed at all. Hoisted above the loop (commit `7598ff2f`); the entry above
+it in this file recorded the hypothesis as unconfirmed. **It is now confirmed: 86% of the wall
+clock, about three seconds, was that loop.**
+
+⚠️ It was also built to get WORSE at the worst moment: once a cutover gives her a prior year the
+inner `load_all` starts running too — 48 more reads per prior year — and that bill arrives in
+June, when every teacher opens the app to plan the new year.
+
+**What the remaining 487 ms is, and why nothing more is urgent.** The other deployed endpoints
+(`/section-state` 323 ms, `/academic-year` 384 ms) put the Chennai→Singapore round trip at
+roughly 300 ms, so `/plans` now carries only ~150–200 ms of server work — consistent with the
+45 ms measured locally on a box some four to five times faster. It is no longer an outlier.
+
+★ **Two known inefficiencies REMAIN, deliberately unfixed, and they are craft now rather than
+rescue.** (a) The listing enriches every row with `total_units` by RE-READING each plan file and
+running the full view-model normalisation — the same work `/view` does for one plan, 48 times;
+locally that is 26 ms of the 45. (b) More fundamentally, the endpoint answers "what exists?" when
+every teaching screen asks "what's hers?": her `prepared_plans` and `section_state` already name
+the only files those screens can need — today ONE, against a library of 48 files across 17
+chapters — so the walk could be driven by her state and scale with her work rather than with the
+catalogue. Do these when next in that area.
+
+**The lesson worth carrying:** the migration did not create waste, it REPRICED it. A per-teacher
+fact fetched inside a per-item loop cost nothing on a Mac and three seconds on Render. The same
+shape is worth looking for in the section-state and section-history reconciles, which also run
+on every load.
