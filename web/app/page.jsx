@@ -1351,8 +1351,14 @@ export default function Home() {
           portal, formerly in the My Classes greeting row) · Ask Meyy. Chosen skin (bottom-nav
           mock, option A + edge 4): sunk paper, a 1 px --edge top edge — the same weight as the
           clay rule between lesson phases, which is why the last phase drops its own rule
-          (.uv-phase:last-child) — and no rule under the bar. Hidden entirely while the frozen
-          Settings bar is up: Settings is a modal room, and the ✕ is its only exit.
+          (.uv-phase:last-child) — and no rule under the bar.
+          ★ IT IS UP ON EVERY SCREEN, SETTINGS INCLUDED (founder, 2026-09-14). It used to hide
+          behind the frozen Settings bar on the reasoning that Settings is a modal room and the ✕
+          is its only exit. Struck for the same reason as Ask Meyy's scrim the day before: the
+          nav is the app's nav, and a screen that takes it away leaves exactly one way out of
+          itself. The ✕ still closes what the bar NAMES; the bottom bar is simply also there, and
+          `activeNav` lights NOTHING in Settings, so the bar says "you are somewhere else"
+          without pretending Settings is one of its four places.
           This bar carries to Expo as-is (CLAUDE.md §4, match-the-web): the same four items,
           the same measures in mobile/theme/web.js. */}
       {/* ★ THE BAR STAYS UP BEHIND ASK MEYY (founder, 2026-09-13). Its scrim used to run to the
@@ -1362,8 +1368,7 @@ export default function Home() {
           to say what it does to an open panel: the three destinations close it and go, and Ask
           Meyy itself toggles. While it is open Ask Meyy carries the clay, and My Classes / My
           Lessons do not — the panel is where she is. */}
-      {!inSettingsBar && (
-        <nav className="bnav" aria-label="Primary">
+      <nav className="bnav" aria-label="Primary">
           <div className="bnav-in">
             {/* Lapsed hides My Classes — tracking is a productivity tool she has let go;
                 the reading room is My Lessons (§2.5 as amended). */}
@@ -1414,8 +1419,7 @@ export default function Home() {
               <span>Ask Meyy</span>
             </button>
           </div>
-        </nav>
-      )}
+      </nav>
 
       {/* First-run guided tour overlay — 17 guide-driven steps ("N of 17", Back on every one).
           Skip closes it for this session. */}

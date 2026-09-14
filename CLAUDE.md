@@ -797,8 +797,11 @@ generic look.
   cannot scroll away; pre-shell it is fixed and `.bodycontent` reserves 62px. The safe-area
   bottom inset is padding INSIDE the bar, so the sunk paper runs to the physical edge and the
   items sit above the home indicator. Contents cap to `--shell-w`, so on a Mac the four items
-  sit over the 860px content column, not the screen's corners. **Hidden entirely in Settings** —
-  Settings is a modal room and the ✕ is its only exit. Which item lights up is `activeNav`: My
+  sit over the 860px content column, not the screen's corners. ★ **UP ON EVERY SCREEN,
+  SETTINGS INCLUDED** (founder, 2026-09-14) — it used to hide behind the frozen Settings bar on
+  the reasoning that Settings is a modal room whose ✕ is its only exit; struck the day after Ask
+  Meyy's scrim, for the same reason: the nav is the app's nav, and a screen that takes it away
+  leaves exactly one way out of itself. Which item lights up is `activeNav`: My
   Lessons only when the repository is open; Settings/profile light neither; everything else —
   the class cards, Generate, a lesson opened from them — reads as My Classes. Lapsed hides My
   Classes and Add (§2.5 as amended). GuidedTour's four anchors (`nav-classes`, `nav-lessons`,

@@ -190,8 +190,9 @@ export default function AskAruvi({ onClose, autoFocus = true }) {
            bottom:0 and buried the bar, so opening Ask Meyy took the app's ENTIRE nav off
            the screen and the only way out was the panel's own ✕ — the one screen where she
            could not simply go to My Classes. The bar is the app's nav; it does not disappear
-           behind a panel. --bnav-h is measured live in page.jsx and is 0px wherever the bar
-           is not rendered, so this one line is correct on every screen. */
+           behind a panel. --bnav-h is measured live in page.jsx; since 2026-09-14 the bar is up
+           on every screen, so it is simply the bar's height, and 0px only on a surface that has
+           no bar at all (Login, first run). One line, correct everywhere. */
         .aa-scrim { position: fixed; top: var(--hdr-h, 72px); left: 0; right: 0;
           bottom: var(--bnav-h, 0px);
           z-index: 40; background: rgba(20,16,10,.34);

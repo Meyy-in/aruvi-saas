@@ -12,8 +12,11 @@
  * padding INSIDE the bar, so the sunk paper runs to the physical edge and the items sit above
  * the home indicator, exactly as the web reserves env(safe-area-inset-bottom).
  *
- * Hidden entirely while Settings is up (Settings is a modal room, the ✕ its only exit) —
- * the caller decides that, as the web's `!inSettingsBar` does. */
+ * ★ It is up on EVERY screen, Settings included (founder, 2026-09-14). It used to hide behind
+ * the frozen Settings bar; that was struck for the same reason as Ask Meyy's scrim — the nav is
+ * the app's nav, and a screen that takes it away leaves exactly one way out of itself. In
+ * Settings nothing lights, so the bar says "you are somewhere else" without claiming Settings is
+ * one of its four places. */
 import { View, Pressable, StyleSheet } from "react-native";
 import Svg, { Path, Rect, Circle } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
