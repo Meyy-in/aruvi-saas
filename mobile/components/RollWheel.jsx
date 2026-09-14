@@ -91,9 +91,18 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   // The settle timer must not outlive the wheel — it calls onChange, and the parent may be gone.
   useEffect(() => () => { if (settle.current) clearTimeout(settle.current); }, []);
 
-  /* Whatever settles in the box becomes the pick. `onMomentumScrollEnd` fires after a flick;
-     `onScrollEndDrag` covers the slow drag that never gains momentum — RN sends only one of the
-     two, so both are wired and the 120ms settle timer (the web's) coalesces them. */
+  /* Whatever settles in the box becomes the pick.
+     ⚠️ AND `onScroll` IS THE ONE THAT MAKES IT WORK ON THE WEB TARGET (founder, 2026-09-14: "on
+     the parity screen when I prepare a new lesson plan it goes back to chapter 1; iPhone works
+     properly"). Native sends `onMomentumScrollEnd` after a flick and `onScrollEndDrag` after a
+     slow drag, and one of the two always arrives. react-native-web sends NEITHER for a trackpad
+     or mouse-wheel scroll — only `onScroll` — so the box moved, the pick was never committed,
+     and the next render put it back where the value still said. On the phone the same code
+     committed and looked correct, which is the same shape as the absolutely-positioned <Svg>:
+     native is forgiving, the DOM is not, and the parity page is where it shows.
+     The 120ms timer is what makes `onScroll` safe on native too — it fires continuously during
+     a flick and each event resets the timer, so the commit still happens once, when the wheel
+     actually stops. */
   const onSettle = (e) => {
     const y = e.nativeEvent.contentOffset.y;
     if (settle.current) clearTimeout(settle.current);
@@ -112,6 +121,13 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
       } else {
         const idx = Math.min(N - 1, Math.max(0, raw));
         if (items[idx]) onChange(String(items[idx].id));
+        /* Land ON the row. `snapToInterval` is a native prop; react-native-web has to express it
+           as CSS scroll-snap and may not, in which case the box comes to rest between two rows
+           and the pick is ambiguous to the eye even though it committed correctly. Nudging it
+           here is right on both: on native the offset already matches and this is a no-op, and
+           the guard stops the scrollTo→onScroll→settle loop from repeating. */
+        const y2 = idx * rowPx;
+        if (Math.abs(y - y2) > 1) { try { el.scrollTo({ y: y2, animated: false }); } catch {} }
       }
     }, 120);
   };
@@ -149,7 +165,8 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
       accessibilityLabel={ariaLabel}>
       <ScrollView ref={ref} showsVerticalScrollIndicator={false}
         snapToInterval={rowPx} decelerationRate="fast" disableIntervalMomentum
-        onMomentumScrollEnd={onSettle} onScrollEndDrag={onSettle}
+        scrollEventThrottle={16}
+        onScroll={onSettle} onMomentumScrollEnd={onSettle} onScrollEndDrag={onSettle}
         contentContainerStyle={{ paddingRight: 0 }}>
         {rendered.map((it) => {
           const sel = String(value) === String(it.id);

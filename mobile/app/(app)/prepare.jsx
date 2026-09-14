@@ -200,6 +200,16 @@ export default function Prepare() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterNo, chapters, annualBudget, sumW]);
 
+  /* ★ MEMOISED, and the wheel does not work without it. RollWheel reparks the box on `[items]`;
+     a list rebuilt inline is a new identity on EVERY render, so the effect fired on every render
+     and dragged the box back to whatever `value` still held. Paired with the missing web scroll
+     event above, that is precisely "it goes back to chapter 1": the pick never committed, and the
+     repark then restored the stale one. The same fix the two My Lessons wheels already carry —
+     this one was written after them and missed it. */
+  const chapterItems = useMemo(() => chapters.map((c) => ({
+    id: String(c.chapter_number), chip: c.chapter_number, label: c.chapter_title,
+  })), [chapters]);
+
   const rows = useMemo(() => seedRows(Math.max(0, Number(periods) || 0)), [periods, seedRows]);
   const mixLabel = rows.map((r) => `${r.count} × ${r.duration} min`).join(" · ");
 
@@ -403,9 +413,7 @@ export default function Prepare() {
                 chapter. Only the error is cleared — the period count she set is hers to keep. */}
             <RollWheel ariaLabel="Chapter" value={chapterNo} rowPx={92} padLeft={14} clamp={2}
               onChange={(id) => { setChapterNo(id); setError(""); }}
-              items={chapters.map((c) => ({
-                id: String(c.chapter_number), chip: c.chapter_number, label: c.chapter_title,
-              }))} />
+              items={chapterItems} />
 
             <View style={ws.prep_block}>
               <View style={ws.prep_left}>

@@ -6330,3 +6330,36 @@ prepares lands in My Lessons; a back that leaves her somewhere else is the one-w
 rows were fixed for in August. It now takes `onBack` = page.jsx's `goLessons`, which sets the pane
 as well as the tab. **§4 is not "the phone copies the web" — it is "the two agree"; when the phone
 is right, the web moves.**
+
+---
+
+## 2026-09-14 · react-native-web sends no momentum events — the second "native is forgiving" bug
+
+Founder: *"expo on parity screen — when I prepare a new lesson plan it goes back to chapter 1
+existing. iPhone works properly."* The chapter wheel would not hold a pick on the web target and
+held it perfectly on the phone. TWO faults, and it took both to produce the symptom:
+
+**1. The pick was never committed on the web.** `RollWheel` settled on `onMomentumScrollEnd` (after
+a flick) and `onScrollEndDrag` (after a slow drag) — native always sends one of the two.
+**react-native-web sends NEITHER for a trackpad or mouse-wheel scroll; it sends only `onScroll`.**
+So the box moved and `onChange` never fired.
+
+**2. The repark then restored the stale value.** The chapter wheel's `items` were built inline in
+the JSX, so every render was a new array identity and the "park the box on the current pick"
+effect — which keys on `[items]` — ran on EVERY render, dragging the box back to whatever `value`
+still held. On first load that is index 0: chapter 1. The two My Lessons wheels already carried
+the memo; this one was written after them and missed it.
+
+Either alone is survivable. Together they are a wheel that visibly moves and always snaps back.
+
+★ **THIS IS THE SAME SHAPE AS THE ABSOLUTELY-POSITIONED `<Svg>` OF THE SAME DAY, and that is the
+lesson worth keeping: NATIVE TOLERANCE IS NOT CORRECTNESS.** RN's layout engine supplies a size
+the DOM will not; RN's ScrollView supplies momentum events the DOM does not. Anything the phone
+gets for free is a candidate to be missing on the web target — and the phone is where we look
+first, so these fail silently in the direction we do not check. The parity page is not a nicety
+for pixel-matching; for this class of bug it is the only detector there is.
+
+Fixed by committing on `onScroll` as well (the 120ms settle timer makes that safe on native too —
+it fires continuously during a flick and each event resets the timer, so the commit still happens
+once, when the wheel stops), memoising the chapter list, and nudging the box onto the exact row
+after a settle, since `snapToInterval` is a native prop that react-native-web may not express.
