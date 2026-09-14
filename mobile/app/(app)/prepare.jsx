@@ -366,9 +366,14 @@ export default function Prepare() {
       <Bar user={getUser()} />
       <ScrollView contentContainerStyle={ws.main} keyboardShouldPersistTaps="handled">
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", columnGap: 16 }}>
-          <Text style={type.h2}>Prepare a lesson plan</Text>
-          <Pressable onPress={() => router.back()} accessibilityRole="button" hitSlop={8}>
-            <Text style={[type.small, { color: t.pine_d }]}>← back</Text>
+          <Text style={[ws.prep_h2, { flex: 1, minWidth: 0 }]}>Prepare a lesson plan</Text>
+          {/* Back to MY LESSONS, which is where she came from and where the lesson will land —
+              `navigate` so it returns to the screen already on the stack rather than pushing a
+              second copy of it (the bar's own rule). The web was changed to match this the same
+              day: it had been landing on My Classes. */}
+          <Pressable onPress={() => router.navigate("/lessons")} accessibilityRole="button" hitSlop={8}
+            style={[ws.prep_back, { borderColor: t.pine }]}>
+            <Text style={[ws.prep_back_t, { color: t.pine }]}>← back</Text>
           </Pressable>
         </View>
         <Text style={ws.prep_scope}>{pretty(subject)} · Class {classNum(grade)}</Text>
@@ -411,10 +416,13 @@ export default function Prepare() {
                     style={[ws.prep_step_btn, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
                     <Text style={ws.prep_step_glyph}>–</Text>
                   </Pressable>
-                  <TextInput value={String(periods)} keyboardType="number-pad"
+                  {/* `selectTextOnFocus` so tapping it replaces the number rather than making
+                      her clear it digit by digit — the one number on this screen she is most
+                      likely to want to overwrite outright. */}
+                  <TextInput value={String(periods)} keyboardType="number-pad" selectTextOnFocus
                     onChangeText={(v) => setP(parseInt(v, 10))}
                     accessibilityLabel="Periods for this chapter"
-                    style={ws.prep_step_v} />
+                    style={[ws.prep_step_v, { borderColor: t.line, backgroundColor: t.paper_2 }]} />
                   <Pressable onPress={() => setP((Number(periods) || 0) + 1)} hitSlop={6}
                     accessibilityRole="button" accessibilityLabel="more periods"
                     style={[ws.prep_step_btn, { borderColor: t.line, backgroundColor: t.paper_2 }]}>

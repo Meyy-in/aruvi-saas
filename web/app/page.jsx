@@ -1325,7 +1325,7 @@ export default function Home() {
           ) :
             !subject ? <div className="empty">Connecting to the Meyy engine…</div> :
             tab === "generate" ? <GenerateTab subject={subject} grade={grade} ready={ready} readiness={readiness}
-              onNavigate={setTab} entry={generateEntry} onScope={(s, g) => { setSubject(s); setGrade(g); }}
+              onNavigate={setTab} onBack={goLessons} entry={generateEntry} onScope={(s, g) => { setSubject(s); setGrade(g); }}
               onConsumeEntry={() => setGenerateEntry(null)} onPrepared={onPrepared}
               onPreparing={onPreparing} onPrepareError={onPrepareError} onPaywall={onPaywall} /> :
             <MyPlans subject={subject} grade={grade} ready={ready} readiness={readiness}

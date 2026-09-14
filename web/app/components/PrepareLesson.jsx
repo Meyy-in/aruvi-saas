@@ -34,7 +34,7 @@ const classNum = (g) => {
   return idx >= 0 ? idx + 3 : (g || "").toUpperCase();
 };
 
-export default function PrepareLesson({ subject, grade, readiness, onNavigate, onPrepared,
+export default function PrepareLesson({ subject, grade, readiness, onNavigate, onBack, onPrepared,
                                         onPreparing, onPrepareError, onPaywall }) {
   const [chapters, setChapters] = useState([]);
   const [chapterNo, setChapterNo] = useState("");          // chapter_number as string
@@ -460,7 +460,16 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
     <div>
       <div className="prep-hdr-row">
         <p className="h2">Prepare a lesson plan</p>
-        <button className="back back-tr" onClick={() => onNavigate && onNavigate("myplans")}>← back</button>
+        {/* ★ BACK LANDS ON MY LESSONS (founder, 2026-09-14: the phone did this and "latter is
+            correct"). It used to call onNavigate("myplans"), which is the TAB alone — and both
+            routes into this screen clear `editFlow` first (onEnterGenerate, onAllocateScoped),
+            so "myplans" resolved to My Classes. She arrives here from My Lessons' own "Need a
+            chapter you don't have yet?", and the lesson she is preparing lands in My Lessons; a
+            back that leaves her somewhere else is a one-way door of the kind the portal rows
+            were fixed for. `onBack` is page.jsx's `goLessons`, which sets the pane as well as
+            the tab; the onNavigate fallback keeps an older caller working. */}
+        <button className="back back-tr"
+          onClick={() => (onBack ? onBack() : onNavigate && onNavigate("myplans"))}>← back</button>
       </div>
       <div className="ap-kicker prep-scope">{pretty(subject)} · Class {classNum(grade)}</div>
       <p className="h2-sub prep-instr">

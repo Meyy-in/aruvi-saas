@@ -6292,3 +6292,41 @@ the same defect exist twice.
 engine forgives a missing dimension and the DOM does not, so anything sized implicitly works on
 the phone and can fail on the web target — and the phone is where we look first. The parity page
 is not a nicety for pixel-matching; for this class of bug it is the only detector we have.
+
+---
+
+## 2026-09-14 · The `.ap-row-line` trap, fourth sighting — and it had made dead CSS of an intent
+
+Four mismatches on the Expo prepare screen, reported by the founder against the parity page. Three
+were ordinary porting misses; the fourth is the one worth recording.
+
+**The scope line ("English · Class 3") is OCHRE on the web, and nobody meant it to be.** The
+element is `<div className="ap-kicker prep-scope">`. `.prep-scope` (globals.css **938**) sets
+`color: var(--ink)`; `.ap-kicker` (**2703**) sets `color: var(--ochre)`. Both are (0,1,0), so
+source order decides — and `.ap-kicker` is 1,765 lines later, so it wins. **`.prep-scope`'s colour
+has never once taken effect.** The port read the rule that looked authoritative (the one named
+after this screen) and produced ink, which is what the CSS says and not what the browser does.
+
+★ **The rule this makes explicit, on top of "always check source order in this file": when a port
+disagrees with the live web, the WEB is right by definition — so read the rule that WINS, not the
+rule that reads like the intent.** §4 says match what the web does. Matching what a stylesheet
+means, where the two differ, is how a port acquires a bug the original never had. (If ink was the
+intent, the fix is on the web — raise `.prep-scope`'s specificity or move it below — and then both
+surfaces change together.)
+
+The other three, all the same shape as the Prepare CTA's layered class: the title is `.h2` at
+**22px** Fraunces, not the app's generic 18; the periods field is `.v.g4-vinput`, a **real
+bordered box** (56px, `--line` ring, 6px radius, `--paper-2` fill) and had been ported borderless,
+so the one number she is most likely to change did not look changeable; and the back control is
+`.back.back-tr`, a **pine pill** (1px ring, fully rounded, mono 12 at 600, uppercase), not the text
+link it had become.
+
+★ **AND THE WEB TOOK A FIX FROM THE PHONE, for once in the right direction** (founder: "pressing
+back on web app takes you to my classes whereas expo takes you to my lessons. Latter is correct").
+PrepareLesson's back called `onNavigate("myplans")` — the TAB alone — and both routes into that
+screen clear `editFlow` first (`onEnterGenerate`, `onAllocateScoped`), so "myplans" resolved to My
+Classes. She arrives from My Lessons' own "Need a chapter you don't have yet?", and the lesson she
+prepares lands in My Lessons; a back that leaves her somewhere else is the one-way door the portal
+rows were fixed for in August. It now takes `onBack` = page.jsx's `goLessons`, which sets the pane
+as well as the tab. **§4 is not "the phone copies the web" — it is "the two agree"; when the phone
+is right, the web moves.**

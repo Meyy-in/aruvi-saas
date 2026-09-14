@@ -514,10 +514,27 @@ export function webStyles(t, scheme = "light") {
        she teaches them — and only echoed back underneath as small print. A duration field here
        was a second place for the same fact to live, and a second place for it to disagree with
        the profile. */
-    prep_scope:      { fontFamily: F.mono(500), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 1.89,
-                       textTransform: UP, color: t.ink, marginTop: 7 },
-    prep_instr:      { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, color: t.ink_soft,
+    /* `.h2` — 22px Fraunces at 500, not the 18 of the app's generic h2 scale. */
+    prep_h2:         { fontFamily: F.display(500), fontSize: 22, lineHeight: 28, color: t.ink },
+    /* ⚠️ OCHRE, not ink — and the reason is the `.ap-row-line` trap for the FOURTH time.
+       The element is `<div className="ap-kicker prep-scope">`. `.prep-scope` (globals.css 938)
+       says `color: var(--ink)`, `.ap-kicker` (2703) says `color: var(--ochre)`, both at (0,1,0)
+       — so SOURCE ORDER decides and `.ap-kicker` wins, being 1,765 lines later. The web renders
+       this line OCHRE and `.prep-scope`'s colour is dead CSS that has never taken effect. §4
+       says match what the web DOES, so this is ochre; if the ink was the intent, the fix is on
+       the web (raise .prep-scope's specificity or move it below), not here.
+       Letter-spacing is .12em at 10.5 = 1.26 — `.ap-kicker`'s, not the 1.89 of `.kicker`. */
+    prep_scope:      { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 14, letterSpacing: 1.26,
+                       textTransform: UP, color: t.ochre, marginTop: 7 },
+    /* `.h2-sub`: 14.5px, --ink-soft. */
+    prep_instr:      { fontFamily: F.body(400), fontSize: 14.5, lineHeight: 21.75, color: t.ink_soft,
                        marginTop: 8, marginBottom: 22 },
+    /* `.back.back-tr` — a PILL, not a text link: 1px pine ring, fully rounded, mono 12 at 600,
+       .06em, uppercase, pine. `.back-tr` (3725) overrides `.back` (931) for margin and padding. */
+    prep_back:       { flexGrow: 0, flexShrink: 0, borderWidth: 1, borderRadius: 999,
+                       paddingVertical: 6, paddingHorizontal: 15 },
+    prep_back_t:     { fontFamily: F.mono(600), fontSize: 12, lineHeight: 15, letterSpacing: 0.72,
+                       textTransform: UP },
     trial_note:      { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18.75,
                        color: t.ink_soft, textAlign: "center", marginTop: 6, marginBottom: 10 },
     /* Two columns, as the web has them at every width: the stepper takes the slack, the boxes
@@ -532,8 +549,14 @@ export function webStyles(t, scheme = "light") {
     prep_step_btn:   { width: 28, height: 28, borderRadius: 6, borderWidth: 1,
                        alignItems: "center", justifyContent: "center" },
     prep_step_glyph: { fontSize: 14, lineHeight: 16, color: t.pine_d },
-    prep_step_v:     { minWidth: 40, textAlign: "center", fontFamily: F.display(400), fontSize: 18,
-                       lineHeight: 22, color: t.pine_d, padding: 0 },
+    /* ⚠️ A REAL, BORDERED FIELD (founder, 2026-09-14: "the periods for this chapter available for
+       direct amendment"). It is `.v.g4-vinput` — `.steppermini .v` gives the 18px display face in
+       pine, `.g4-vinput` the 56px box with a --line ring, 6px radius and --paper-2 fill. Ported
+       borderless it read as a label between two buttons, so the one number on the screen she is
+       most likely to change did not look changeable. */
+    prep_step_v:     { width: 56, textAlign: "center", fontFamily: F.display(400), fontSize: 18,
+                       lineHeight: 22, color: t.pine_d, borderWidth: 1, borderRadius: 6,
+                       paddingVertical: 4, paddingHorizontal: 6 },
     prep_mix:        { fontFamily: F.mono(400), fontSize: 11, lineHeight: 14, letterSpacing: 0.44,
                        color: t.ink_soft, marginTop: 8, marginHorizontal: 2 },
     /* The single coverage warning — quiet grey, not an alarm. */
