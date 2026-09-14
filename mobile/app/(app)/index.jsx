@@ -15,7 +15,7 @@ import Svg, { Defs, Pattern, Path, Rect } from "react-native-svg";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, getJSON, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
-import { cachedPlans, fetchPlans } from "@aruvi/shared/plans";
+import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
@@ -128,6 +128,25 @@ export default function Home() {
     bindSectionChapter(sectionKey, plan.filename);
     setAttachFor(null);
     bump();
+    /* ★ THE ATTACH CHANGED THE LISTING, NOT JUST THE BINDING (2026-09-14) — the web has done
+       this since MyPlans.jsx:548 and the phone had not caught up. It became visible with the
+       speed work's part 3: `total_units` is now computed only for chapters she ACTUALLY HOLDS
+       (api/main.py derives it from her bound files), so attaching is itself a payload change.
+       Without the invalidation the store answers the next read from its `fresh` copy, where this
+       chapter still has total_units = null — and the card renders with NO UNIT RAIL until the app
+       is restarted and the once-per-session revalidation finally sees a different ETag.
+       Invalidate, then re-read: the binding is already written locally, so the card is correct on
+       screen throughout and the fetch only fills the rail in. A failed fetch changes nothing —
+       the optimistic card stands, exactly as the web's does. */
+    const key = `${c.subjectSlug}/${c.gradeSlug}`;
+    invalidatePlans(key);
+    fetchPlans(key)
+      .then((rows) => setSt((prev) => {
+        const byFile = {};
+        (rows || []).forEach((p) => { byFile[p.filename] = p; });
+        return { ...prev, plansBySG: { ...prev.plansBySG, [key]: byFile } };
+      }))
+      .catch(() => {});
   };
   /* Untracking logs a history row ONLY when at least one unit was done — the anti-noise gate, so
      a casual attach-then-untrack leaves no trace — and stamps how far the section got. */

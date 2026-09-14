@@ -6110,3 +6110,65 @@ every time, and the two are not the same lever.
 answers — the prepared flags are in the body we just 304'd; folding it in removes 320 ms from the
 load. (b) The CORS preflight is cached for ten minutes (`max_age`), so it recurs a few times a
 day for 73 ms; raising it removes it from most loads.
+
+---
+
+## 2026-09-14 · The invalidation set was one item short — archive, and the phone's attach
+
+Two defects in the plans store's invalidation, both found while porting My Lessons to Expo
+(Track D step 4b) rather than by anyone using the product. Same root: the 2026-09-14 speed work
+made the listing a SHARED, session-long copy, which turned "does this write change the listing?"
+into a question every write path now has to answer — and two of them had not been asked.
+
+**1. Archive and restore never invalidated (web, live since `cab83c07`).** The listing carries
+`archived` per teacher — `api/main.py` sets it beside `prepared` in the same enrichment loop — so
+archiving IS a change to the payload. Every other write that moves her flags already said so
+(`MyPlans.jsx:310` prepare, `:548` attach, `MyLessonPlans.jsx:454` prepare, `FirstRun.jsx:472`);
+archive and restore did not. Because `fetchPlans` answers a `fresh` entry without consulting the
+server, the next read inside that session handed back the PRE-archive truth and the card she had
+just archived reappeared in Your lessons. Reachable two ordinary ways: cross to My Classes and
+back (My Lessons remounts), or turn either wheel away and back. It healed only on the next
+session, when the revalidation finally met a different ETag.
+
+**2. The phone's attach never invalidated, and part 3 of the speed work gave that teeth.**
+`total_units` is now computed only for chapters she ACTUALLY HOLDS — derived from her bound files
+— which is exactly what made the listing cheap, and also what turned attach into a payload change.
+The web had already added the invalidation (`MyPlans.jsx:548`); the phone's attach predates the
+speed work by a day and still only bound and bumped. So on the phone, attaching a chapter left
+`total_units` at null in the store and the section card rendered with **no unit rail** until the
+app was restarted. The card looked half-built and nothing on screen said why.
+
+**Fixed** in `MyLessonPlans.jsx`, `mobile/app/(app)/lessons.jsx` and `mobile/app/(app)/index.jsx`.
+
+★ **Where the archive invalidation goes is not arbitrary — it waits for the write to SETTLE.**
+Beside the optimistic flip it races its own POST: a read that overtook the write would pull the
+old truth back over the new flag, which is the same bug through the other door. It sits in
+`verifiedWrite`'s `.then` instead, where the server's answer is already in, and it runs on both
+outcomes — on a mismatch the flag is put back as well, so the cache and the screen agree either
+way.
+
+★ **The standing lesson, worth more than either fix.** A cache that spans a session converts every
+write into a question about a payload it may not obviously touch. `archived` and `total_units`
+both look like somebody else's business — one is a per-teacher flag, the other a rail on a
+different screen — and both ride in the plans listing. Anything added to that listing's
+enrichment loop in `api/main.py` inherits this obligation, so the loop is the place to check when
+a stale card is reported, not the screen that showed it.
+
+Not invalidated, deliberately: untrack and move-on. They change `bound_files` too, so the
+server's `total_units` for that chapter goes back to null — but nothing renders a rail for an
+unbound section, so the stale number is never seen, and buying a full payload to correct an
+invisible field is the opposite of what the store is for. The web makes the same call.
+
+★ **Test residue is committed, and it makes the suite fail against itself.** `data/cloud/state/`
+is deliberately TRACKED (the `.gitignore` note says why — GitHub Desktop backs it up). The API
+suite writes real tenant state there under six invented ids — `CutoverKumar`, `TwiceKumar`,
+`NotesKumar`, `FlagKumar`, `Kumar88`, `OtherKumar` — so running the tests dirties the working
+tree, and commit `04a46f99` duly committed 24 files of it. The next run then met state it
+expected to create fresh: `test_the_whole_june_walk`, `test_tapping_twice_is_safe` and
+`test_api_routes` all failed, the second on `already_done: True` — the cutover it was about to
+perform had already happened in the persisted data. Clearing those six ids restores **32 passed**,
+which is the number this repo has always reported. The loop closes on itself: the suite dirties
+tracked state, the dirt gets committed, the suite fails against the dirt. It wants either a
+fixture that tears its own tenants down or those six ids untracked — and since the tracking is a
+deliberate decision, that is a founder call, not a tidy-up. UNRESOLVED; the six ids are junk
+on disk today and the real accounts (`9000000003`, `9900000099`) are NOT among them.

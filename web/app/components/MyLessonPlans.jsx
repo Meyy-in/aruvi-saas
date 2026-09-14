@@ -625,6 +625,20 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
       read: () => getJSON("/plan-archive").then((d) => (d && (d.archived || d.plans)) || d || {}),
       expect: (y) => planIsArchived(y, sSlug, gSlug, p.filename) === want,
     }).then(({ status }) => {
+      /* ★ ARCHIVING MOVES HER FLAGS TOO (2026-09-14). The shared listing carries `archived` per
+         teacher (api/main.py sets it beside `prepared`), so an archive that does not invalidate
+         leaves the store holding the pre-archive truth — and because `fetchPlans` answers a
+         `fresh` entry without asking the server, the very next read puts the card back in Your
+         lessons. It showed on any re-entry to this view inside one session: cross to My Classes
+         and back, or turn either wheel away and back. Every other write that moves her flags
+         already did this (prepare here and in MyPlans, attach, first run); this pair was the one
+         omission in the 2026-09-14 speed work's "explicit and exhaustive" set.
+         Done HERE rather than beside the optimistic flip because the write is only settled once
+         verifiedWrite resolves: invalidating earlier races the POST, and a read that overtook it
+         would pull the OLD truth back over the new optimistic flag — the exact bug, by the other
+         door. On a mismatch the flag is put back below, so the cache and the screen agree either
+         way. */
+      invalidatePlans(key);
       if (status !== "mismatch") return;
       setArchivedFlag(p.filename, !want);
       setToast({ kind: "block",
