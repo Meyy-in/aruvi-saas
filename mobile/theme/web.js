@@ -264,20 +264,44 @@ export function webStyles(t) {
     co_notetab:      { backgroundColor: t.ochre, borderRadius: 8, minHeight: 58, width: 28, alignItems: "center", justifyContent: "center" },
     co_notetab_label:{ fontFamily: F.mono(400), fontSize: 11, letterSpacing: 1.32, textTransform: UP, color: "#fbf6ea" },
     co_groupbar:     { marginTop: 10, marginBottom: 6 },
-    co_subname:      { fontFamily: F.mono(500), fontSize: 10.5, letterSpacing: 1.89, textTransform: UP, color: t.pine },
-    co_acc:          { borderWidth: 1, borderColor: t.line, borderRadius: 11, marginBottom: 10 },
+    /* The spine/section label above a run of units (.co-subname) — mono, sentence case, quiet.
+       It was uppercase pine here, which read as a heading competing with the accordion's own
+       name; the web sets it as a caption. */
+    co_subname:      { fontFamily: F.mono(400), fontSize: 11, lineHeight: 16.5, letterSpacing: 0.33, color: t.ink_soft, flex: 1 },
+    /* ★ THE SECTION BOX IS FILLED WHEN CLOSED, PLAIN WHEN OPEN (.co-acc / .co-acc.open).
+       Closed axes carry --tint-pine on a --edge-green edge so the choices read AS choices; the
+       open one drops to plain --paper so the units inside sit on the page rather than in a
+       tinted well. The phone had no fill at all and turned the open one WHITE, which inverted
+       the whole idea. */
+    co_acc:          { backgroundColor: t.tint_pine, borderWidth: 1, borderColor: t.edge_green,
+                       borderRadius: 14, marginBottom: 12, overflow: "hidden" },
+    co_acc_open:     { backgroundColor: t.paper, borderColor: t.line },
     co_acchead:      { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 12, paddingHorizontal: 13 },
     co_acc_name:     { fontFamily: F.display(500), fontSize: 14.5, lineHeight: 20, color: t.ink, flex: 1 },
     co_count:        { fontFamily: F.mono(400), fontSize: 11, color: t.ink_soft },
-    co_card:         { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.line_soft, borderRadius: 999, paddingVertical: 9, paddingHorizontal: 14, marginBottom: 8 },
-    co_card_cur:     { borderColor: t.clay },
+    co_card:         { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.line, borderRadius: 999, paddingVertical: 9, paddingHorizontal: 14, marginBottom: 8 },
+    /* The CURRENT unit's capsule is ringed in OCHRE, the same ochre as its "now" pill — not
+       clay, which is the phase-bookmark's colour elsewhere. */
+    co_card_cur:     { borderColor: t.ochre },
     co_card_done:    { borderColor: t.pine },
-    co_num:          { fontFamily: F.display(600, true), fontSize: 15, color: t.clay },
+    /* The sitting's number: clay by default, PINE once taught, and eased back on units still
+       ahead — the three states the web gives .co-num. */
+    co_num:          { fontFamily: F.display(600, true), fontSize: 15, color: t.clay, minWidth: 20 },
+    co_num_done:     { color: t.pine },
+    co_num_up:       { opacity: 0.72 },
+    co_side:         { flexDirection: "row", alignItems: "center", columnGap: 10 },
     co_utitle:       { fontFamily: F.display(500), fontSize: 13.5, lineHeight: 18, color: t.ink, flex: 1 },
-    co_now:          { fontFamily: F.mono(500), fontSize: 9, letterSpacing: 1, textTransform: UP, color: t.clay, borderWidth: 1, borderColor: t.clay, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 1, overflow: "hidden" },
-    co_dur_n:        { fontFamily: F.mono(600), fontSize: 12, color: t.ink_soft },
-    co_dur_u:        { fontFamily: F.mono(400), fontSize: 8.5, letterSpacing: 1, textTransform: UP, color: t.ink_soft },
-    co_mark:         { fontFamily: F.mono(400), fontSize: 9.5, letterSpacing: 1, textTransform: UP, color: t.pine },
+    /* ★ "now" is a FILLED OCHRE PILL with paper ink (.co-now) — it was an outlined CLAY pill
+       here, which read as a bordered label rather than the one lit marker on the page. */
+    co_now:          { fontFamily: F.mono(400), fontSize: 9, letterSpacing: 1.08, textTransform: UP,
+                       color: t.paper, backgroundColor: t.ochre, borderRadius: 9,
+                       paddingHorizontal: 8, paddingVertical: 2, overflow: "hidden" },
+    /* Duration in the phases idiom (.co-dur): a mono number in PINE STACKED over a small "MIN",
+       not an inline "40 min". It was inline and grey here. */
+    co_dur:          { alignItems: "center" },
+    co_dur_n:        { fontFamily: F.mono(600), fontSize: 16, lineHeight: 17.6, color: t.pine },
+    co_dur_u:        { fontFamily: F.mono(400), fontSize: 9, letterSpacing: 1.26, textTransform: UP, color: t.ink_soft, marginTop: 2 },
+    co_mark:         { fontFamily: F.mono(400), fontSize: 10, color: t.pine },
     co_go:           { color: t.ink_soft, fontSize: 14 },
     /* the SS map (.cof-*) */
     cof_wrap:        { flexDirection: "row", justifyContent: "space-between", gap: 4, paddingTop: 8, paddingBottom: 4, paddingHorizontal: 14, position: "relative" },

@@ -67,11 +67,16 @@ function UnitCard({ ws, n, p, status, onOpen }) {
   const dur = p.meta && p.meta.duration_minutes;
   return (
     <Pressable onPress={() => onOpen(n)} style={[ws.co_card, status === "cur" && ws.co_card_cur, status === "done" && ws.co_card_done]}>
-      <Text style={ws.co_num}>{n + 1}.</Text>
-      <Text style={ws.co_utitle}>{p.title || `Unit ${n + 1}`}</Text>
-      <View style={{ alignItems: "flex-end", gap: 2 }}>
+      <Text style={[ws.co_num, status === "done" && ws.co_num_done, status === "up" && ws.co_num_up]}>{n + 1}.</Text>
+      <Text style={ws.co_utitle} numberOfLines={2}>{p.title || `Unit ${n + 1}`}</Text>
+      <View style={ws.co_side}>
         {status === "cur" ? <Text style={ws.co_now}>now</Text> : null}
-        {dur ? <Text><Text style={ws.co_dur_n}>{dur}</Text><Text style={ws.co_dur_u}> min</Text></Text> : null}
+        {dur ? (
+          <View style={ws.co_dur}>
+            <Text style={ws.co_dur_n}>{dur}</Text>
+            <Text style={ws.co_dur_u}>min</Text>
+          </View>
+        ) : null}
         {status === "done" ? <Text style={ws.co_mark}>✓ taught</Text> : null}
       </View>
       <Text style={ws.co_go}>→</Text>
@@ -286,16 +291,26 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
   const collectAxis = (groups) => (groups || []).forEach((g) => { if (g.type && AXIS_INFO[g.type] && !axisTypes.includes(g.type)) axisTypes.push(g.type); collectAxis(g.children); });
   collectAxis(lp.groups);
 
+  /* ★ THE UNIT NUMBER IS CHAPTER-WIDE, NOT PER-SECTION (founder-reported, 2026-09-14).
+     `idx` used to advance only inside the OPEN accordion, because renderGroup was called only
+     for that one group. So every section restarted at 01, and — the same bug wearing its other
+     face — the number handed to onOpenUnit was an offset within the section, so tapping the
+     first sitting of ANY section opened unit 1 of the chapter.
+     The web has always done it the other way and says so: "visible gates rendering but NOT the
+     flat index: idx advances across every period of every group (open or collapsed) so a unit's
+     number matches the pointer regardless of which drop-down is expanded." Same here now —
+     renderGroup runs for every group in order and `visible` decides only what is drawn. */
   let idx = -1;
-  const renderGroup = (g, keyPrefix) => {
+  const renderGroup = (g, keyPrefix, visible) => {
     const out = [];
-    if (g.label) out.push(<View key={`${keyPrefix}-bar`} style={ws.co_groupbar}><Text style={ws.co_subname}>{lp.subject === "science" && g.type === "section" ? sectionTitleOnly(g.label) : g.label}</Text></View>);
+    if (visible && g.label) out.push(<View key={`${keyPrefix}-bar`} style={ws.co_groupbar}><Text style={ws.co_subname}>{lp.subject === "science" && g.type === "section" ? sectionTitleOnly(g.label) : g.label}</Text></View>);
     (g.periods || []).forEach((p, i) => {
       idx += 1; const n = idx;
+      if (!visible) return;
       const status = pointer == null ? "" : (doneAll || n < pointer) ? "done" : n === pointer ? "cur" : "up";
       out.push(<UnitCard key={`${keyPrefix}-${i}`} ws={ws} n={n} p={p} status={status} onOpen={onOpenUnit} />);
     });
-    (g.children || []).forEach((c, i) => out.push(...renderGroup(c, `${keyPrefix}-${i}`)));
+    (g.children || []).forEach((c, i) => out.push(...renderGroup(c, `${keyPrefix}-${i}`, visible)));
     return out;
   };
 
@@ -342,17 +357,19 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
           })
         ) : (lp.groups || []).map((g, gi) => {
           const open = openIdx === gi;
+          // Built for EVERY group, open or not — that walk is what keeps `idx` chapter-wide.
+          const body = renderGroup({ periods: g.periods, children: g.children, type: g.type }, `g${gi}`, open);
           const cnt = countUnits(g);
           const rawLabel = (lp.subject === "science" && g.type === "section" ? sectionTitleOnly(g.label) : g.label) || `Section ${gi + 1}`;
           const shownLabel = (lp.subject === "social_sciences" && g.type === "competency" && !open) ? truncateWords(rawLabel, 12) : rawLabel;
           return (
-            <View key={gi} style={[ws.co_acc, open && { backgroundColor: t.paper_2 }]}>
+            <View key={gi} style={[ws.co_acc, open && ws.co_acc_open]}>
               <Pressable onPress={() => setOpenIdx(open ? -1 : gi)} style={ws.co_acchead} accessibilityState={{ expanded: open }}>
                 <Text style={ws.co_acc_name}>{shownLabel}</Text>
                 <Text style={ws.co_count}>{cnt}</Text>
                 <Text style={{ color: t.ink_soft, transform: [{ rotate: open ? "180deg" : "0deg" }] }}>⌄</Text>
               </Pressable>
-              {open ? <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>{renderGroup({ periods: g.periods, children: g.children, type: g.type }, `g${gi}`)}</View> : null}
+              {open ? <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>{body}</View> : null}
             </View>
           );
         })}
