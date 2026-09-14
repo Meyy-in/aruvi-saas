@@ -470,7 +470,47 @@ second copy of each screen on every crossing, which is what made the loads re-ru
 `packages/shared/test/readiness.test.js` pins it (10 tests). **Owed on the phone:** cross between
 the two screens twice — the second crossing should show no spinner at all.
 
-Next: step 5 — PrepareLesson and the profile portal, which between them light the bar's "Add"
+**Step 5a — Prepare a lesson (2026-09-14).** `mobile/app/(app)/prepare.jsx`, a port of
+`PrepareLesson.jsx`: the everyday single-chapter generate flow. The phone can now make a lesson
+of its own rather than only teaching what was prepared on the web.
+- ONE control, as the web has since 2026-07-26: a period stepper. The duration matrix is DERIVED
+  from it — her declared lengths in the weekly ratio she teaches them — and echoed back as small
+  print. A duration field here would be a second place for a timetable fact to live and a second
+  place for it to disagree with the profile.
+- The suggestion is `largestRemainder` over the whole chapter list, against the FULL syllabus
+  weight (placeholder chapters included), from the shared `format.js` — the same function Year
+  Plan and `master_plan.py` use. ARV-D-142 is the reason that matters: an independent per-chapter
+  round is a different number that does not conserve the budget and can ask for more periods than
+  the library holds.
+- Both coverage warnings (floor and surrender), the Suggestion box with its explainer, the budget
+  ledger with its committed breakdown, the trial counter, the re-prepare confirm, the 402 paywall
+  as a window rather than an error, and the read-after-write verify against `/plans-prepared`.
+- `RollWheel` gained the BASE mode the chapter step needs — tint-pine box, a ▲▼ pair clamped at
+  both ends (the list has ends; a wrap through 40 chapters is disorienting, not convenient), and
+  the numbered chip. My Lessons' two wheels now say `peek` explicitly.
+- `AttachSheet`'s `Sheet` is EXPORTED and reused for all three of this screen's windows — a second
+  implementation of a window is how two windows start to differ.
+- ⚠️ **Two divergences, named in the header:** (1) the wait happens ON this screen (the web's own
+  `prep-wait` fallback) rather than as a proposed card at the head of My Lessons — the web's shell
+  holds `preparing` across a tab switch and the phone's routes have no shell between them; a
+  cross-route store is what moves it, and is the next step, not a redesign. (2) No preview step:
+  a successful prepare returns to My Lessons with the chapter in the list, because attaching stays
+  a separate act from the "+" on a section card.
+- The picker's "prepare a new one" footer is STILL deferred, but for a new and truer reason: the
+  destination exists now; what is missing is the RETURN, which must carry the section she opened
+  the window for across a route change. A footer that prepares and then forgets that section is
+  worse than no footer.
+- Verified here: babel-parse clean on all 32 mobile files; every relative and `@aruvi/shared/*`
+  import resolves against the module it is imported FROM; **every `ws.*` and `type.*` key
+  referenced across the app exists** (342 web keys — a new standing check, and the one that
+  catches a silently unstyled element); shared tests 28/28; API 32/32.
+- **Owed on the phone:** My Lessons → "Prepare a new lesson" → the chapter wheel rolls and its ▲▼
+  clamp at both ends → the stepper, and the mix line under it → the Suggestion's "use" and its
+  ⓘ → the budget ledger and the committed breakdown → prepare a chapter and watch the five-second
+  card → land back in My Lessons with it listed → prepare the SAME chapter again and meet the
+  confirm.
+
+Next: step 5b — the profile portal, and the proposed-card store, which between them light the bar's "Add"
 item and unlock what 4b deferred: the proposed card, the prepare CTA, and the Year Plan's budget
 pencil. Ask Meyy is step 6.
 

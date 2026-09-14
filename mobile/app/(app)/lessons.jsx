@@ -27,10 +27,12 @@
  * the plans API uses SLUGS. We convert at the boundary. Section tags are already stored as "6A".
  *
  * ⚠️ FOUR THINGS THE WEB HAS HERE AND THIS DOES NOT YET, each named as CLAUDE.md §4 requires:
- *   1. The PROPOSED card (a lesson mid-prepare, drawn at full strength where the finished card
- *      will land) and the prepare CTA under the list. Both are downstream of PrepareLesson, which
- *      is Track D step 5 — there is nothing on this phone that can set `preparing`, and a CTA
- *      that leads nowhere is the call step 4a already made about the picker's footer.
+ *   1. The PROPOSED card — a lesson mid-prepare, drawn at full strength where the finished card
+ *      will land. The prepare CTA below the list is LIVE as of step 5 and opens /prepare; the
+ *      card is not, because the web's shell holds `preparing` across a tab switch and the phone's
+ *      routes have no shell between them. The wait therefore happens on the prepare screen
+ *      itself (the web's own `prep-wait` fallback, "for a caller that has nowhere to put one").
+ *      A cross-route store is what moves it here, and is the next step rather than a redesign.
  *   2. The REPORTS modal and its card trigger. The web downloads a blob through an anchor with
  *      `download`; saving a file on a phone is expo-file-system + expo-sharing — a native
  *      dependency and a founder decision about where the document lands. The card still reserves
@@ -476,7 +478,7 @@ export default function MyLessons() {
             <View style={ws.mlp2_wcol_s}>
               {subjectItems.length > 1 ? (
                 <RollWheel items={subjectItems} value={activeSubject} onChange={onSubject}
-                  ariaLabel="Subject" rowPx={72} padLeft={16} />
+                  ariaLabel="Subject" rowPx={72} padLeft={16} peek />
               ) : (
                 <View style={ws.mlp2_static}>
                   <Text style={ws.mlp2_static_t} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
@@ -491,7 +493,7 @@ export default function MyLessons() {
                    inset-left position keeps the number visible beside the rolling thumb instead
                    of under it. */
                 <RollWheel items={gradeItems} value={activeGrade} onChange={onGrade}
-                  ariaLabel="Class" rowPx={72} padLeft={28} />
+                  ariaLabel="Class" rowPx={72} padLeft={28} peek />
               ) : (
                 <View style={ws.mlp2_static}>
                   <Text style={ws.mlp2_static_t}>Class {classNum(activeGrade)}</Text>
@@ -536,6 +538,22 @@ export default function MyLessons() {
             ))}
           </View>
         )}
+
+        {/* ── "Need a chapter you don't have yet?" ──
+            ⚠️ LAPSED HIDES IT ENTIRELY (§2.5 as amended, founder 2026-08-24): My Lessons becomes
+            the reading room — open, export, print — and renewal is offered in Settings, never
+            pushed here. The phone does not read entitlement on this screen yet, so the bar shows
+            for everyone for now; when Settings lands (step 6) this takes the same `lapsed` flag
+            the web's does. Only in the lessons pane, and never over the archive. */}
+        {!loadErr && current && pane === "lessons" && effView !== "archived" && plans !== undefined ? (
+          <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
+            <Text style={ws.mlp_allocate_q}>Need a chapter you don’t have yet?</Text>
+            <Pressable accessibilityRole="button" style={[ws.mlp_allocate_btn, { backgroundColor: t.pine }]}
+              onPress={() => router.push({ pathname: "/prepare", params: { subject: sSlug, grade: gSlug } })}>
+              <Text style={[ws.mlp_allocate_t, { color: t.paper }]}>Prepare a new lesson →</Text>
+            </Pressable>
+          </View>
+        ) : null}
       </ScrollView>
 
       {/* Transient confirmation / block message — bottom-centre, non-blocking, auto-dismissed.

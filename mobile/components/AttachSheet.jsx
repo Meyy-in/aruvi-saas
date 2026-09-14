@@ -14,7 +14,13 @@
  *     circulation, so it is restored in My Lessons first and attached after.
  *
  * Deliberately NOT ported yet, and both are Track D's own sequence rather than omissions:
- *   · "prepare a new one" — PrepareLesson is step 5, so a footer offering it would lead nowhere;
+ *   · "prepare a new one" — the destination now EXISTS (step 5 landed /prepare), so the reason
+ *     has changed and is worth restating honestly: what is missing is the RETURN. The web's
+ *     footer leaves the picker, prepares, and comes back to attach the new chapter to the very
+ *     section she opened this window for — an auto-attach return path that has to carry the
+ *     section across a route change and survive a cancel. A footer that prepares and then drops
+ *     her on My Lessons, with the section she started from forgotten, is worse than no footer:
+ *     she came here to fill THAT slot. Wire the return, then the footer.
  *   · last year's lessons (`.ap-prior`) — it needs the year record the phone does not read yet.
  * Neither changes the shape of the modal, so both drop in without moving anything.
  */
@@ -26,7 +32,10 @@ import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
 /* The shared chrome of both windows: the dimmed ground, the card, the ✕, the header block. */
-function Sheet({ visible, onClose, kicker, title, sub, confirm, children }) {
+/* ★ EXPORTED (step 5, 2026-09-14) — Prepare needs the same window for its re-prepare confirm,
+   its committed breakdown and the paywall, and a second implementation of a window is how two
+   windows start to differ. One shape, one file. */
+export function Sheet({ visible, onClose, kicker, title, sub, confirm, children }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   return (

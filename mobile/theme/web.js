@@ -468,6 +468,16 @@ export function webStyles(t, scheme = "light") {
     sc_yearstamp:    { fontFamily: F.mono(400), fontSize: 9.5, lineHeight: 13, letterSpacing: 0.67,
                        textTransform: UP, color: t.ochre },
 
+    /* The prepare bar under the lesson list (.mlp-allocate). The web lays it out as a row that
+       wraps; at ≤600px it goes to a COLUMN with a full-width 44px button, which is the phone's
+       shape and so the only one here. */
+    mlp_allocate:    { marginTop: 14, borderWidth: 1, borderRadius: 8, paddingVertical: 11,
+                       paddingHorizontal: 14, rowGap: 12 },
+    mlp_allocate_q:  { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19.5, color: t.ink },
+    mlp_allocate_btn:{ borderRadius: 6, minHeight: 44, alignItems: "center", justifyContent: "center",
+                       paddingHorizontal: 14 },
+    mlp_allocate_t:  { fontFamily: F.mono(400), fontSize: 10, letterSpacing: 0.5, textTransform: UP },
+
     /* ── the peek RollWheel (.fr-wheel-shell.peek) ──
        One compact row showing ONLY the item in use, rolled by drag with a single cycling ▼.
        rowPx is 72 here (My Lessons passes it); the shell's hairline adds 1 top and bottom. */
@@ -478,6 +488,102 @@ export function webStyles(t, scheme = "light") {
     rw_cue:          { position: "absolute", right: 7, top: 0, bottom: 0, justifyContent: "center" },
     rw_cue_btn:      { width: 34, height: 26, alignItems: "center", justifyContent: "center" },
     rw_cue_glyph:    { fontSize: 15, lineHeight: 17, color: t.pine },
+    /* ── the BASE wheel (.fr-wheel, no .peek) — first run's and Prepare's box ──
+       Tint-pine rather than white, a wider right gutter for the ▲▼ PAIR (52 against peek's 44),
+       and a 12px gap for the optional chip. Height comes from the caller's rowPx: 64 is the
+       web's WHEEL_ROW, Prepare's chapter wheel passes 92 so a two-line title fits. */
+    rw_shell_base:   { borderWidth: 1, borderColor: "#c7d9cf", borderRadius: 12,
+                       overflow: "hidden", backgroundColor: t.tint_pine_2 },
+    rw_row_base:     { flexDirection: "row", alignItems: "center", columnGap: 12, paddingRight: 52 },
+    rw_label_base:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 15, lineHeight: 19.2, color: t.ink },
+    /* The chapter number in its own square, inked pine when its row is the pick. */
+    rw_chip:         { width: 30, height: 30, borderRadius: 8, alignItems: "center",
+                       justifyContent: "center", backgroundColor: t.paper_sunk },
+    rw_chip_on:      { backgroundColor: t.pine },
+    rw_chip_t:       { fontFamily: F.mono(600), fontSize: 14, lineHeight: 18, color: t.pine_d },
+    rw_chip_t_on:    { color: "#fdfaf4" },
+
+    /* ── Prepare a lesson (.prep-* ) — globals.css, measured at the phone's own sizes ──
+       ONE control on this screen (founder, 2026-07-26): a period stepper. The duration matrix
+       the server needs is DERIVED from that number — her declared lengths, in the weekly ratio
+       she teaches them — and only echoed back underneath as small print. A duration field here
+       was a second place for the same fact to live, and a second place for it to disagree with
+       the profile. */
+    prep_scope:      { fontFamily: F.mono(500), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 1.89,
+                       textTransform: UP, color: t.ink, marginTop: 7 },
+    prep_instr:      { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, color: t.ink_soft,
+                       marginTop: 8, marginBottom: 22 },
+    trial_note:      { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18.75,
+                       color: t.ink_soft, textAlign: "center", marginTop: 6, marginBottom: 10 },
+    /* Two columns, as the web has them at every width: the stepper takes the slack, the boxes
+       are a fixed 152 behind a hairline. */
+    prep_block:      { flexDirection: "row", alignItems: "stretch", marginTop: 16, marginBottom: 4 },
+    prep_left:       { flex: 1, minWidth: 0, paddingRight: 16, justifyContent: "center" },
+    prep_right:      { width: 152, flexGrow: 0, flexShrink: 0, rowGap: 10,
+                       borderLeftWidth: 1, paddingLeft: 16 },
+    prep_fieldlab:   { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13, letterSpacing: 1.5,
+                       textTransform: UP, color: t.ink_soft, marginBottom: 10 },
+    prep_stepper:    { flexDirection: "row", alignItems: "center", columnGap: 8 },
+    prep_step_btn:   { width: 28, height: 28, borderRadius: 6, borderWidth: 1,
+                       alignItems: "center", justifyContent: "center" },
+    prep_step_glyph: { fontSize: 14, lineHeight: 16, color: t.pine_d },
+    prep_step_v:     { minWidth: 40, textAlign: "center", fontFamily: F.display(400), fontSize: 18,
+                       lineHeight: 22, color: t.pine_d, padding: 0 },
+    prep_mix:        { fontFamily: F.mono(400), fontSize: 11, lineHeight: 14, letterSpacing: 0.44,
+                       color: t.ink_soft, marginTop: 8, marginHorizontal: 2 },
+    /* The single coverage warning — quiet grey, not an alarm. */
+    prep_floor:      { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 19.375,
+                       color: t.ink_soft, marginTop: 10, marginHorizontal: 2 },
+    prep_box:        { borderWidth: 1, borderRadius: 10, paddingVertical: 8, paddingHorizontal: 10 },
+    prep_sugg_hd:    { flexDirection: "row", alignItems: "center", columnGap: 5 },
+    prep_sugg_k:     { fontFamily: F.mono(400), fontSize: 9, lineHeight: 12, letterSpacing: 1.26,
+                       textTransform: UP, color: t.ochre },
+    prep_info:       { width: 15, height: 15, borderRadius: 7.5, borderWidth: 1, borderColor: "#c9b986",
+                       alignItems: "center", justifyContent: "center" },
+    prep_info_t:     { fontFamily: F.display(400, true), fontSize: 10, lineHeight: 12, color: t.ochre },
+    prep_sugg_body:  { flexDirection: "row", alignItems: "baseline", columnGap: 7, marginTop: 2 },
+    prep_sugg_val:   { fontFamily: F.display(600), fontSize: 17, lineHeight: 21, color: t.ochre },
+    prep_sugg_ok:    { fontSize: 14, lineHeight: 18, color: t.pine },
+    prep_use:        { borderWidth: 1, borderColor: "#ddcfa6", borderRadius: 6,
+                       paddingVertical: 2, paddingHorizontal: 7 },
+    prep_use_t:      { fontFamily: F.mono(400), fontSize: 9, lineHeight: 12, letterSpacing: 0.45,
+                       textTransform: UP, color: t.ochre },
+    prep_tip:        { borderWidth: 1, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 14,
+                       marginTop: 8 },
+    prep_tip_t:      { fontFamily: F.body(400), fontSize: 13, lineHeight: 19.5, color: t.ink },
+    prep_brow:       { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between",
+                       columnGap: 8, paddingVertical: 3 },
+    prep_brow_div:   { borderTopWidth: 1 },
+    prep_brow_k:     { fontFamily: F.mono(400), fontSize: 9, lineHeight: 12, letterSpacing: 0.45,
+                       textTransform: UP, color: t.ink_soft },
+    prep_brow_v:     { fontFamily: F.mono(400), fontSize: 12, lineHeight: 15, color: t.ink },
+    prep_brk_row:    { flexDirection: "row", alignItems: "baseline", columnGap: 11, paddingVertical: 10,
+                       paddingHorizontal: 2 },
+    prep_brk_ch:     { fontFamily: F.mono(500), fontSize: 11, lineHeight: 14, color: t.clay, width: 46 },
+    prep_brk_name:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 15, lineHeight: 19.2, color: t.ink },
+    prep_brk_p:      { fontFamily: F.mono(400), fontSize: 13, lineHeight: 16, color: t.ink },
+    prep_brk_total:  { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                       columnGap: 12, paddingTop: 12, paddingBottom: 2, paddingHorizontal: 2,
+                       borderTopWidth: 1, marginTop: 4 },
+    prep_brk_tot_k:  { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13, letterSpacing: 1.4,
+                       textTransform: UP, color: t.ink_soft },
+    prep_brk_tot_v:  { fontFamily: F.mono(500), fontSize: 14, lineHeight: 17, color: t.pine_d },
+    /* The CTA bar. `savebar-prep` is a 56px lift off the form above it. */
+    prep_savebar:    { marginTop: 56, rowGap: 10 },
+    prep_cta:        { borderRadius: 8, paddingVertical: 13, alignItems: "center" },
+    prep_cta_t:      { fontFamily: F.mono(500), fontSize: 12, letterSpacing: 0.72, textTransform: UP },
+    prep_hint:       { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18, color: t.ink_soft },
+    /* ── the preparing card (.prep-wait) — she stays HERE while it builds ── */
+    prep_wait:       { paddingTop: 6, paddingBottom: 40 },
+    prep_wait_card:  { borderWidth: 1, borderRadius: 12, paddingVertical: 18, paddingHorizontal: 18,
+                       marginTop: 16 },
+    prep_wait_title: { fontFamily: F.display(500), fontSize: 20, lineHeight: 26, color: t.ink },
+    prep_wait_meta:  { fontFamily: F.mono(400), fontSize: 11, lineHeight: 15, letterSpacing: 0.44,
+                       color: t.ink_soft, marginTop: 6 },
+    prep_wait_dots:  { flexDirection: "row", columnGap: 6, marginTop: 16 },
+    prep_wait_dot:   { width: 5, height: 5, borderRadius: 2.5 },
+    prep_wait_note:  { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19, color: t.ink_soft,
+                       marginTop: 12 },
 
     /* ── Year Plan (.yp + children) — globals.css, with the ≤400px pad ──
        Two period figures side by side: Suggested (Meyy's proposal, her budget distributed by

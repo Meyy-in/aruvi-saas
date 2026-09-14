@@ -18,10 +18,16 @@
  *     shows in full. RN has `adjustsFontSizeToFit`, which does the same job per-row against the
  *     real box width, so the longest subject ("Mathematics", "Social Sciences") is never clipped.
  *
- * ⚠️ ONE DELIBERATE DIVERGENCE, named as CLAUDE.md §4 requires: the web's ▲▼ pair is a single ▼
- * here, which is what `peek` already is on the web (`.fr-wheel-cue.single`) — but the web ALSO
- * keeps arrow-key stepping for a keyboard, and there is no keyboard to serve on a phone. Nothing
- * visible differs; the keyboard handler simply has no counterpart.
+ * ★ TWO MODES, as the web has (step 5, 2026-09-14). `peek` is the compact white one-row box My
+ * Lessons uses for Subject and Class — continuous, one cycling ▼. WITHOUT it this is the BASE
+ * wheel the first-run and Prepare steps use: the tint-pine box, a ▲▼ pair that steps one row
+ * each, no wrapping (the list has ends, and on a 40-chapter list a wrap is disorienting rather
+ * than convenient), and an optional `chip` — the chapter number, in its own square, inked pine
+ * when that row is the pick.
+ *
+ * ⚠️ ONE DELIBERATE DIVERGENCE, named as CLAUDE.md §4 requires: the web also steps on arrow keys.
+ * There is no keyboard to serve on a phone, so that handler has no counterpart. Nothing visible
+ * differs.
  *
  * Measures live in theme/web.js under `rw_*` (§4 rule 2). rowPx is the caller's — My Lessons
  * passes 72 — and it MUST equal the snap interval or the box settles between rows.
@@ -34,11 +40,13 @@ import { useWebStyles } from "../theme/web";
 export const WHEEL_ROW = 64;   // the web's WHEEL_ROW; My Lessons overrides it with 72
 
 export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW,
-                            align = "left", padLeft = 16 }) {
+                            align = "left", padLeft = 16, peek = false, clamp = 1 }) {
   const ref = useRef(null);
   const settle = useRef(null);
   const N = items.length;
-  const loop = N > 1;
+  /* Continuous wheeling is a PEEK behaviour. The base wheel's list has ends and the ▲▼ pair
+     respects them — the web's `stepScroll` clamps to [0, N-1] for exactly this reason. */
+  const loop = peek && N > 1;
   // The real index of the current value. A value that is not in the list at all is corrected by
   // the effect below, which tells the PARENT — it is never silently displayed as item 0.
   const selIdx = Math.max(0, items.findIndex((it) => String(it.id) === String(value)));
@@ -123,21 +131,46 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
     } catch {}
   };
 
+  /* The base wheel's ▲▼: exactly one row, CLAMPED at both ends — the web's `stepScroll`. The
+     pick is committed before the box moves, for the same reason the ▼ does it. */
+  const step = (dir) => {
+    if (!N) return;
+    const next = Math.min(N - 1, Math.max(0, selIdx + dir));
+    if (next === selIdx) return;
+    onChange(String(items[next].id));
+    const el = ref.current;
+    if (!el) return;
+    try { el.scrollTo({ y: next * rowPx, animated: true }); } catch {}
+  };
+
   const ws = useWebStyles();
   return (
-    <View style={ws.rw_shell} accessibilityLabel={ariaLabel}>
+    <View style={[peek ? ws.rw_shell : ws.rw_shell_base, { height: rowPx + 2 }]}
+      accessibilityLabel={ariaLabel}>
       <ScrollView ref={ref} showsVerticalScrollIndicator={false}
         snapToInterval={rowPx} decelerationRate="fast" disableIntervalMomentum
         onMomentumScrollEnd={onSettle} onScrollEndDrag={onSettle}
         contentContainerStyle={{ paddingRight: 0 }}>
-        {rendered.map((it) => (
-          <View key={it._k} style={[ws.rw_row,
-            { justifyContent: align === "left" ? "flex-start" : "center", paddingLeft: padLeft }]}>
-            <Text style={ws.rw_label} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
-              {it.label}
-            </Text>
-          </View>
-        ))}
+        {rendered.map((it) => {
+          const sel = String(value) === String(it.id);
+          return (
+            <View key={it._k} style={[peek ? ws.rw_row : ws.rw_row_base, { height: rowPx },
+              { justifyContent: align === "left" ? "flex-start" : "center", paddingLeft: padLeft }]}>
+              {it.chip != null ? (
+                <View style={[ws.rw_chip, sel && ws.rw_chip_on]}>
+                  <Text style={[ws.rw_chip_t, sel && ws.rw_chip_t_on]}>{it.chip}</Text>
+                </View>
+              ) : null}
+              {/* `adjustsFontSizeToFit` only makes sense on ONE line — it is the peek wheel's
+                  stand-in for the web's measured auto-fit. A clamped multi-line label (the
+                  Chapter wheel's two lines) keeps its size and wraps, as the web's does. */}
+              <Text style={peek ? ws.rw_label : ws.rw_label_base} numberOfLines={clamp}
+                adjustsFontSizeToFit={clamp === 1} minimumFontScale={0.7}>
+                {it.label}
+              </Text>
+            </View>
+          );
+        })}
       </ScrollView>
       {/* The cue sits OUTSIDE the scroller so it never scrolls away — the web pins it with
           `position: absolute` on the shell for the same reason. It does not bob: the web's
@@ -145,10 +178,23 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
           wheel, and a thumb on a phone finds that out by touching it. */}
       {N > 1 ? (
         <View style={ws.rw_cue} pointerEvents="box-none">
-          <Pressable onPress={stepCycle} style={ws.rw_cue_btn} hitSlop={8}
-            accessibilityRole="button" accessibilityLabel={`Next ${ariaLabel || "item"}`}>
-            <Text style={ws.rw_cue_glyph}>▼</Text>
-          </Pressable>
+          {peek ? (
+            <Pressable onPress={stepCycle} style={ws.rw_cue_btn} hitSlop={8}
+              accessibilityRole="button" accessibilityLabel={`Next ${ariaLabel || "item"}`}>
+              <Text style={ws.rw_cue_glyph}>▼</Text>
+            </Pressable>
+          ) : (
+            <>
+              <Pressable onPress={() => step(-1)} style={ws.rw_cue_btn} hitSlop={6}
+                accessibilityRole="button" accessibilityLabel={`Previous ${ariaLabel || "item"}`}>
+                <Text style={ws.rw_cue_glyph}>▲</Text>
+              </Pressable>
+              <Pressable onPress={() => step(1)} style={ws.rw_cue_btn} hitSlop={6}
+                accessibilityRole="button" accessibilityLabel={`Next ${ariaLabel || "item"}`}>
+                <Text style={ws.rw_cue_glyph}>▼</Text>
+              </Pressable>
+            </>
+          )}
         </View>
       ) : null}
     </View>
