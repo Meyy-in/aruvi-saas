@@ -194,16 +194,42 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
      went on offering last year's lessons as though they were this year's (while the
      prior-year folder, correctly excluding them, sat empty). The year is part of what
      this data means, so it belongs in the dependencies. */
+  /* ★ FETCH EACH SUBJECT·CLASS ONCE (founder-reported, 2026-09-14).
+     This effect has THREE dependencies that settle at different moments — `ready` flips, then
+     `readiness` arrives, then `yearInfo` — so it ran three times on a cold load, and the guard
+     below it only ever protected the PLACEHOLDER, never the request. Measured against the
+     deployed API: /plans/english/iii fetched three times in one load at 9.6s, 6.8s and 3.4s.
+     The listing is the same both times, so two of the three were pure waste — and each one
+     re-reads and re-parses every plan file in that chapter library server-side (48 files, 1.9 MB
+     for english/iii), which is what made them cost seconds rather than milliseconds.
+     ⚠️ The stamp is the KEY ALONE, deliberately. Stamping it key+year looked safer and cost a
+     second request: `yearInfo` is null on the first run and resolves on the third, so the stamp
+     changed from "english/iii|" to "english/iii|2026-27" and refetched — for nothing, because
+     the request carries NO year_id and the server resolves her current year itself, so the first
+     response was already the right year's. A REAL year change (a cutover) still invalidates, via
+     the ref below: unknown → known is not a change, known → different is.
+     The stamp is dropped on failure so a retry is still possible. The explicit refreshes after an
+     attach (see attachPriorChapter and the pending-attach effect) do NOT go through this — they
+     are deliberate invalidations, not first loads. */
+  const plansFetchedRef = useRef(new Set());
+  const plansYearRef = useRef(null);
   useEffect(() => { setOpenPlan(null);
     if (!ready) return;
+    const year = (yearInfo && yearInfo.current_year) || null;
+    if (year && plansYearRef.current && plansYearRef.current !== year) plansFetchedRef.current.clear();
+    if (year) plansYearRef.current = year;
     const seen = new Set();
     classes.forEach((c) => {
       const key = `${c.subjectSlug}/${c.gradeSlug}`;
       if (seen.has(key)) return; seen.add(key);
+      const stamp = key;
+      if (plansFetchedRef.current.has(stamp)) return;
+      plansFetchedRef.current.add(stamp);
       setPlansByKey((prev) => (key in prev ? prev : { ...prev, [key]: undefined }));
       getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}`)
         .then((d) => setPlansByKey((prev) => ({ ...prev, [key]: d.plans || [] })))
-        .catch(() => setPlansByKey((prev) => ({ ...prev, [key]: [] })));
+        .catch(() => { plansFetchedRef.current.delete(stamp);
+                       setPlansByKey((prev) => ({ ...prev, [key]: [] })); });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, readiness, yearInfo && yearInfo.current_year]);
@@ -1060,6 +1086,28 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
           const file = currentChapterFile(sectionKey);
           const plan = file && Array.isArray(gradePlans) ? gradePlans.find((p) => p.filename === file) : null;
           const hist = hasHistory(sectionKey);   // any PAST chapters logged → show the history glyph
+
+          /* ★ A BOUND CHAPTER WHOSE LIST HAS NOT ARRIVED IS NOT AN UNBOUND SECTION
+             (founder-reported, 2026-09-14). `plan` needs TWO things — the binding, which is in
+             localStorage and known instantly, and the plan object, which comes from /plans and
+             may take seconds against the deployed API. With only the second missing the card
+             used to fall through to "Pick a chapter to begin" — telling her, in words, that a
+             class she is teaching has nothing attached, then correcting itself a second later.
+             On the Mac's local API the fetch was a few milliseconds and nobody ever saw it.
+             `file` is the tell: it says a chapter IS bound, so the card waits instead of
+             claiming otherwise. The phone already did this ("no false 'pick a chapter' flashes
+             on a real network", app/(app)/index.jsx); the web did not. */
+          if (!plan && file && gradePlans === undefined) {
+            return (
+              <div className="sc-card st-going" key={i}>
+                <SectionTag c={c} />
+                <div className="sc-body">
+                  {banded ? null : <span className="sc-kicker">{pretty(c.subjectSlug)}</span>}
+                  <div className="sc-title muted">Loading your lesson…</div>
+                </div>
+              </div>
+            );
+          }
 
           // No chapter bound to this class yet → "pick a chapter to begin" (grey / not started).
           // The card is NOT tappable-to-generate anymore; the "+" opens the attach picker instead.
