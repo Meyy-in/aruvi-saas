@@ -630,8 +630,10 @@ export function webStyles(t, scheme = "light") {
     prep_wait_card:  { borderWidth: 1, borderRadius: 12, paddingVertical: 18, paddingHorizontal: 18,
                        marginTop: 16 },
     prep_wait_title: { fontFamily: F.display(500), fontSize: 20, lineHeight: 26, color: t.ink },
-    prep_wait_meta:  { fontFamily: F.mono(400), fontSize: 11, lineHeight: 15, letterSpacing: 0.44,
-                       color: t.ink_soft, marginTop: 6 },
+    /* .06em at 11 = 0.66, and UPPERCASE — both missed in the first cut and found by
+       check-parity.mjs rather than by eye, which is what it is for. */
+    prep_wait_meta:  { fontFamily: F.mono(400), fontSize: 11, lineHeight: 15, letterSpacing: 0.66,
+                       textTransform: UP, color: t.ink_soft, marginTop: 6 },
     prep_wait_dots:  { flexDirection: "row", columnGap: 6, marginTop: 16 },
     prep_wait_dot:   { width: 5, height: 5, borderRadius: 2.5 },
     prep_wait_note:  { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19, color: t.ink_soft,

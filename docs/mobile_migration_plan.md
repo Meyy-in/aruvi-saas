@@ -527,6 +527,33 @@ Next: step 5b — the profile portal, and the proposed-card store, which between
 item and unlock what 4b deferred: the proposed card, the prepare CTA, and the Year Plan's budget
 pencil. Ask Meyy is step 6.
 
+★ **A PARITY CHECKER (2026-09-14) — `node mobile/theme/check-parity.mjs`.** In one afternoon the
+founder caught four parity misses by eye, each costing a round trip, and every one was the same
+mechanical fault: `theme/web.js` mirrors a CSS class, but the value the BROWSER applies to that
+element is not the one that class declares. The checker answers "which rule wins?" mechanically.
+
+**A · cascade landmines.** For every element in the web's JSX carrying more than one class, any
+property two of its classes both declare, with its winner and loser. No mobile involvement — it is
+a web smell list in its own right, and a losing declaration at equal specificity is dead code.
+First run: **27 ties decided by source order**, including `mlp-allocate-btn prepare-cta` · color
+(today's bug) and `lv-pvnav lv-pvnav-thin` · background, which is why the phone's pager was right
+to use `--paper` on clay.
+
+**B · `theme/web.js` against the winner.** Each `ws.*` key whose name maps to a class, compared on
+face size, tracking and case — combo-aware (a class is rarely worn alone: `.lv-title` declares
+17.5 but every element carrying it also carries `.lv-title-full` at 19.5) and own-value-first on
+the phone side (RN splits a container from its Text; CSS does not). First run: **35 disagreements**,
+one of them mine from the same day (`prep-wait-meta` is uppercase at .06em and had been ported
+lowercase at 0.44). The rest are drift from earlier sessions — `co-num` 16 vs 15, `co-go` 15 vs 14,
+`dash-welcome-title` 17 vs 20, most of the assess panel — and are a task of their own, because
+some may be deliberate and each wants checking against its component header before it is "fixed".
+
+⚠️ **It is not a renderer.** It resolves the cascade for the properties a port transcribes; a clean
+run means those values are the ones that win, not that the screens match. The parity page is still
+the eye. `--dump .some-class` prints every parsed rule touching a class with its context,
+specificity and order — the first thing to reach for when a finding looks wrong, and the thing
+that showed the checker's own parser was silently dropping every landmine.
+
 ## 3. Phasing
 
 | Wk | Backend | Mobile |
