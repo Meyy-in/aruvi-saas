@@ -6159,16 +6159,32 @@ server's `total_units` for that chapter goes back to null — but nothing render
 unbound section, so the stale number is never seen, and buying a full payload to correct an
 invisible field is the opposite of what the store is for. The web makes the same call.
 
-★ **Test residue is committed, and it makes the suite fail against itself.** `data/cloud/state/`
-is deliberately TRACKED (the `.gitignore` note says why — GitHub Desktop backs it up). The API
-suite writes real tenant state there under six invented ids — `CutoverKumar`, `TwiceKumar`,
-`NotesKumar`, `FlagKumar`, `Kumar88`, `OtherKumar` — so running the tests dirties the working
-tree, and commit `04a46f99` duly committed 24 files of it. The next run then met state it
-expected to create fresh: `test_the_whole_june_walk`, `test_tapping_twice_is_safe` and
-`test_api_routes` all failed, the second on `already_done: True` — the cutover it was about to
-perform had already happened in the persisted data. Clearing those six ids restores **32 passed**,
-which is the number this repo has always reported. The loop closes on itself: the suite dirties
-tracked state, the dirt gets committed, the suite fails against the dirt. It wants either a
-fixture that tears its own tenants down or those six ids untracked — and since the tracking is a
-deliberate decision, that is a founder call, not a tidy-up. UNRESOLVED; the six ids are junk
-on disk today and the real accounts (`9000000003`, `9900000099`) are NOT among them.
+★ **The suite was writing into the repository, and failing against its own residue. FIXED.**
+`data/cloud/state/` is deliberately TRACKED (the `.gitignore` note says why — GitHub Desktop
+backs it up). The API suite was writing real tenant state there under six invented ids —
+`CutoverKumar`, `TwiceKumar`, `NotesKumar`, `FlagKumar`, `Kumar88`, `OtherKumar` — so running the
+tests dirtied the working tree, commit `04a46f99` duly committed 24 files of it, and the next run
+met state it expected to create fresh: `test_the_whole_june_walk`, `test_tapping_twice_is_safe`
+and `test_api_routes` failed, the second on `already_done: True` — the cutover it was about to
+perform had already happened in the persisted data. **A suite that passes on its first run and
+fails on its second**, which is worse than one that simply fails, because the first run teaches
+you to trust it.
+
+★ **The protection was already written, and import order defeated it.** Four modules open with
+`mkdtemp` + `os.environ.setdefault("ARUVI_STATE_DIR", ...)`. But `tests/test_api.py` does
+`from api.main import app` and `tests/test_lp_year.py` does `from api import config, data`,
+neither setting the variable first, and `api/config.py` reads it at IMPORT time
+(`STATE_DIR = os.environ.get("ARUVI_STATE_DIR", _DEFAULT_STATE)`). So in a whole-suite run
+whichever of those two is imported first binds the app to the real directory for the whole
+process, and every later `setdefault` is either too late or a no-op. The careful modules were
+only ever safe when run ALONE — which is exactly how they were each tested when written, and why
+nobody saw it. **The general lesson: a module-level `os.environ.setdefault` cannot protect a
+value that another module reads at import time. Only a conftest can, because pytest imports it
+first.** `tests/conftest.py` now sets it for every module at once, which also makes those four
+`setdefault` calls do precisely what their author intended — defer to a value already set, and
+still work standalone. Only STATE is redirected; `ARUVI_DATA_DIR` still points at the real
+corpus, which is why `config.py` keeps the two buckets on separate variables.
+
+The 19 residue files are removed. Every one belonged to a test tenant; the real accounts
+(`9000000003`, `9900000099`) were never touched. **32 passed, twice in a row from a clean tree,
+with `data/` still clean afterwards** — the second run is the one that means anything.

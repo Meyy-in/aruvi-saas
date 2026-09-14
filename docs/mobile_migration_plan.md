@@ -424,6 +424,22 @@ the repository is a real screen on the phone, scoped to one subject·class like 
   resolves, including each named export against the module it is imported FROM (not merely against
   the package); shared tests 18/18; API tests 32/32 once the committed test residue is cleared
   (see MEMORY.md — that residue is an open founder call, not a code defect).
+- **Review pass, same day.** The founder caught the switch sitting almost on the top bar — the
+  frozen header lives OUTSIDE the scroller, so it never took `main`'s 26px with it and
+  `.mlp2-frozen`'s own 6px was the whole gap. An independent read of the port against the web
+  then found six more, five of them unnamed divergences: no loading state (so `/readiness` in
+  flight rendered "No subjects set up yet", a false statement about her record); no graph rule on
+  the cards (the web carries it on the `.sc-card` BASE rule, so My Lessons inherits it); no
+  "skip while a plan is open" guard on the section sync; a `key={tick}` that remounted every card
+  on each 20s sync; the wheel and static boxes hardcoded to light; and the Year Plan's plane and
+  dashes off their tokens. All fixed. One finding was WRONG and was not taken — `.sc-title`
+  clamps to two lines in CSS, so `numberOfLines={2}` was already right; worth recording that the
+  review's hit rate was six of seven, so its findings are worth checking rather than applying.
+- ★ **The wheel's ▼ was broken on BOTH surfaces, and the port is what exposed it.** RollWheel
+  reparks on `[items]` — "whenever the wheel (re)mounts or the list changes" — but `subjectItems`
+  and `gradeItems` are rebuilt every render, so the effect fired every render, including the one
+  `stepCycle` causes when it commits the pick before animating; its direct scroll then landed on
+  the arrow's own target and cancelled the roll. Memoising both lists restores it, on the web too.
 - **Owed on the phone (iPhone, `npx expo start --tunnel`):** My Lessons from the bar → the two
   wheels roll and wrap, and the ▼ cycles → a lesson card opens read-only and comes back → archive
   a detached plan, the box appears with its count, open it, Restore → cross to My Classes and back
