@@ -12,6 +12,7 @@
  *   section_history_ + owner section chapter ledger (sectionHistory.js)
  *   chapter_notes_           the notes editor's optimistic cache (LessonView / web page.jsx)
  *   aruvi_ask_bank(_etag)    the Ask Meyy bank (ask-aruvi/bank.js)
+ *   aruvi_plans_            the per-subject·class plan listing, with her prepared flags (plans.js)
  *   sb-…-auth-token          supabase-js's own session, when the app gave it the same storage
  *
  * `extraPrefixes` lets an app add keys only it writes (the web's per-user `userKey()` caches
@@ -20,6 +21,7 @@ import { removeByPrefix, storage } from "./storage.js";
 import { clearLocalSectionCache } from "./sectionState.js";
 import { clearLocalHistoryCache } from "./sectionHistory.js";
 import { clearBank } from "./ask-aruvi/bank.js";
+import { clearPlans, PLANS_CACHE_PREFIX } from "./plans.js";
 import { clearUser } from "./format.js";
 
 export const TEACHER_CACHE_PREFIXES = [
@@ -27,6 +29,7 @@ export const TEACHER_CACHE_PREFIXES = [
   "section_history_",            // includes the owner stamp, section_history_owner
   "chapter_notes_",
   "aruvi_ask_bank",
+  PLANS_CACHE_PREFIX,            // the per-subject plan listing (plans.js) — carries HER flags
 ];
 
 export function clearTeacherCaches(extraPrefixes = []) {
@@ -34,6 +37,7 @@ export function clearTeacherCaches(extraPrefixes = []) {
   n += clearLocalSectionCache();
   n += clearLocalHistoryCache();
   clearBank();
+  clearPlans();                  // the memory copy, which no prefix sweep can reach
   clearUser();
   // belt and braces: anything the named clears missed, plus the app's own per-user keys
   n += removeByPrefix([...TEACHER_CACHE_PREFIXES, ...extraPrefixes]);

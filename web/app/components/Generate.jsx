@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getJSON } from "../lib/format";
+import { readPlans } from "../lib/plans";
 import PeriodRows, { toPeriodRows } from "./PeriodRows";
 import ViewModelView from "./ViewModelView";
 
@@ -15,7 +16,7 @@ export default function Generate({ subject, grade }) {
 
   useEffect(() => { setView(null); setNote("");
     getJSON(`/subjects/${subject}/${grade}/chapters`).then((d) => { setChapters(d.chapters); setChNum(String(d.chapters[0]?.chapter_number ?? "")); }).catch(() => setChapters([]));
-    getJSON(`/plans/${subject}/${grade}`).then((d) => setPlans(d.plans)).catch(() => setPlans([]));
+    readPlans(`${subject}/${grade}`, setPlans).catch(() => setPlans([]));
   }, [subject, grade]);
 
   const run = async () => { setBusy(true); setView(null); setNote("");

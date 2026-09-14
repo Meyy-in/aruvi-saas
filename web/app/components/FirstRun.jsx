@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { getJSON, postJSON, markPrepared, pretty, gradeUp, ROMAN, stageOfGrade, fetchEntitlement,
          ppwFromAnnual } from "../lib/format";
 import { bindSectionChapter, pushSectionState } from "../lib/sectionState";
+import { invalidatePlans } from "../lib/plans";
 import { RollWheel, normPpw, ppwMapSum, lowestDuration, DEFAULT_PPW } from "./wheels";
 import MeyyMark from "./MeyyMark";
 
@@ -468,6 +469,7 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
       .then(async (resp) => {
         await holdBar();
         markPrepared(subject, grade, resp.filename);
+        invalidatePlans(`${subject}/${grade}`);   // her flags moved — the shared listing must re-read
         /* ★ ATTACH IT (founder, 2026-08-21) — reverses the 2026-07-05 "cards land UNATTACHED"
          * rule, for first run only. That rule was written when binding here made the first class
          * look finished while the profile behind it was never built; the profile IS built now

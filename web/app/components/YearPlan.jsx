@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { API, annualBudgetPeriods, getJSON, largestRemainder, pad, withUser } from "../lib/format";
+import { fetchPlans } from "../lib/plans";
 
 /* ───────── YearPlan — the whole teaching year for ONE subject·class, at a glance ─────────
  * This is the restructured "allocation report" (founder decision, 2026-07-21): a LIVING mobile
@@ -104,7 +105,7 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onAlloc
     setChapters(null); setPlans([]); setErr(false);
     Promise.all([
       getJSON(`/subjects/${sSlug}/${gSlug}/chapters`),
-      getJSON(`/plans/${sSlug}/${gSlug}`).catch(() => ({ plans: [] })),
+      fetchPlans(`${sSlug}/${gSlug}`).then((plans) => ({ plans })).catch(() => ({ plans: [] })),
     ])
       .then(([ch, pl]) => {
         if (!live) return;

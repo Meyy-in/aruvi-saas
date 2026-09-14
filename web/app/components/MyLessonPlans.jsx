@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { API, getJSON, pad, pretty, userKey, withUser } from "../lib/format";
 import { pullSectionState, readLocalSection } from "../lib/sectionState";
 import { YearStamp } from "./MyPlans";
+import { cachedPlans, fetchPlans, invalidatePlans, notePlansYear } from "../lib/plans";
 import { verifiedWrite, planIsArchived } from "../lib/verify";
 import LessonView from "./LessonView";
 import YearPlan from "./YearPlan";
@@ -434,39 +435,29 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
     wasPreparing.current = live;
   }, [preparing]);
 
-  /* Fetch the saved plans for the scoped subject·grade.
-     ★ ONCE PER COMBO (2026-09-14). The note here used to say "a single small call per combo,
-     cached" — it was neither. The effect called getJSON unconditionally, and `yearInfo` resolves
-     AFTER the first run, so every mount fired it twice for the same listing. Measured in the
-     founder's browser after the deploy: SEVEN calls to /plans/english/iii in one session, 452–899
-     ms each, about 4.2 seconds of waiting for one unchanging list. Same fault, same fix as MyPlans.
-     What must still invalidate does: a fresh prepare (plansNonce) and a real year change both
-     clear the stamp — unknown → known is not a change, known → different is — and a failure drops
-     it so a retry is possible.
-     ⚠️ The ref dies with the component, and this view REMOUNTS on every visit to My Lessons, so
-     this removes the double-fire per visit but not the re-fetch per visit. That needs the listing
-     shared across components rather than held twice; see MEMORY.md 2026-09-14. */
-  const plansFetchedRef = useRef(new Set());
-  const plansYearRef = useRef(null);
+  /* The saved plans for the scoped subject·grade — from the shared store, not from here.
+     ★ ONE COPY (2026-09-14). This view held its own ref-cached copy and REMOUNTS on every visit
+     to My Lessons, so the same unchanging list was re-read on every trip: seven calls in one
+     session, 452–899 ms each, about 4.2 seconds of waiting. The listing now lives in
+     @aruvi/shared/plans — one module-level copy per subject·class that My Classes and this view
+     share, a device copy read synchronously so the list paints before the network is consulted,
+     and one revalidation per session per key.
+     A fresh prepare (plansNonce) is a real change to HER flags, so it invalidates rather than
+     re-uses; a cutover clears everything through notePlansYear, because `prepared` and
+     `archived` are year-scoped (the twin note in MyPlans says why that matters). */
   const plansNonceRef = useRef(plansNonce);
   useEffect(() => {
     if (!key) return;
-    const year = (yearInfo && yearInfo.current_year) || null;
-    if (year && plansYearRef.current && plansYearRef.current !== year) plansFetchedRef.current.clear();
-    if (year) plansYearRef.current = year;
+    notePlansYear((yearInfo && yearInfo.current_year) || null);
     if (plansNonceRef.current !== plansNonce) {
       plansNonceRef.current = plansNonce;
-      plansFetchedRef.current.clear();          // a prepare changed the listing — re-read it
+      invalidatePlans(key);                     // a prepare changed the listing — re-read it
     }
-    if (plansFetchedRef.current.has(key)) return;
-    plansFetchedRef.current.add(key);
-    setPlansByKey((prev) => (key in prev ? prev : { ...prev, [key]: undefined }));
-    getJSON(`/plans/${sSlug}/${gSlug}`)
-      .then((d) => setPlansByKey((prev) => ({ ...prev, [key]: d.plans || [] })))
-      .catch(() => { plansFetchedRef.current.delete(key);
-                     setPlansByKey((prev) => ({ ...prev, [key]: [] })); });
-    // The `prepared` flag is YEAR-SCOPED — see the twin note in MyPlans. A cutover while
-    // this view is mounted must re-read, or it keeps last year's flags.
+    const cached = cachedPlans(key);
+    setPlansByKey((prev) => (key in prev && prev[key] ? prev : { ...prev, [key]: cached || undefined }));
+    fetchPlans(key)
+      .then((plans) => setPlansByKey((prev) => ({ ...prev, [key]: plans })))
+      .catch(() => setPlansByKey((prev) => ({ ...prev, [key]: prev[key] || [] })));
   }, [key, sSlug, gSlug, plansNonce, yearInfo && yearInfo.current_year]);
 
   // Reconcile this grade's section teaching-state from the server into the localStorage cache so

@@ -6028,3 +6028,56 @@ catalogue. Do these when next in that area.
 fact fetched inside a per-item loop cost nothing on a Mac and three seconds on Render. The same
 shape is worth looking for in the section-state and section-history reconciles, which also run
 on every load.
+
+## 2026-09-14 — The listing is now asked for once, kept on the device, and costs only her own chapters
+
+The entry above closed the 3,470 ms → 487 ms gap and left two things standing: the listing was
+still FETCHED repeatedly (six calls in one session, ~1.8 s of waiting), and each fetch still did
+the whole library's work to serve the one chapter she holds. Both are done, in the three parts
+the founder asked for.
+
+**1 · One copy, shared — `packages/shared/src/plans.js` (new).** Four screens asked for
+`/plans/{subject}/{grade}` independently, each keeping its copy in a component ref; a ref dies
+with the component and My Classes / My Lessons REMOUNT on every trip through the bottom bar, so
+the same unchanging list was re-read on every visit. The store is module-level, so it outlives
+every mount: the second screen to ask gets the first screen's answer, and so does the same screen
+on its second visit. Concurrent mounts share one in-flight promise. **Six calls per session → one.**
+
+**2 · A copy on the device, revalidated by ETag.** Written straight after `ask-aruvi/bank.js`,
+which is the house pattern: `cachedPlans()` is SYNCHRONOUS and may be read during render, so a
+returning teacher's cards paint before the network is consulted at all. The server now returns an
+ETag over the whole payload (flags included) and honours `If-None-Match`, so the freshness check
+answers 304 with no body — and because the tag covers HER flags, an attach made on another device
+still changes it. Per teacher by construction (`userKey()`), and `PLANS_CACHE_PREFIX` is in
+`TEACHER_CACHE_PREFIXES`, so a shared staffroom phone cannot show the last teacher's chapters.
+
+**3 · Her state drives the expensive part.** `total_units` has ONE reader — the progress rail on
+a section card, which can only draw a chapter she is actually teaching. Computing it for all 48
+plans meant 48 file re-reads and 48 view-model normalisations per request to serve the one or two
+she holds. Her own state already names them (a prepared record, a carry-forward, or a bound
+section), so everything else ships `total_units: None`, exactly as an unreadable plan always has —
+and the catalogue screens (Prepare, Generate, Allocate, Year Plan) never read the field. The count
+is also memoised per file+`saved_at`: the library is Bucket A, read-only content that changes only
+when the founder publishes. Measured locally: **45 ms → 16 ms warm, 13 ms for a 304.**
+
+★ **Invalidation was the part that had to be right, and it is explicit, not clever.** A stale
+`prepared` flag after an attach is a worse bug than a slow list — it would put a chapter she
+already tracks back into the "+" picker. So the listing is re-read at each of the four places her
+flags can move: a prepare finished (`plansNonce`, PrepareLesson's return, FirstRun), a chapter was
+attached, her year cut over (`notePlansYear` — the flags are year-scoped), sign-out. Within a
+session those are exhaustive; a change made on another device is caught by the ETag on the next
+session load. `packages/shared/test/plans.test.js` pins all four, plus the two failure rules
+(offline falls back to the stored copy; nothing stored rejects so the caller shows its empty state).
+
+⚠️ **Unknown → known is not a change.** Both `notePlansYear` and the refs it replaces are written
+around this: `yearInfo` is null on the first render and resolves later, and treating that arrival
+as a year change cost an extra request for nothing — the request carries no `year_id` and the
+server resolves her year itself, so the first answer was already the right year's. Only
+known → *different* invalidates.
+
+⚠️ **Prior-year listings (`?year_id=…`) stay direct `getJSON` calls** — opened rarely, deliberately,
+and by definition asking for a different year's answer than the one cached.
+
+The phone takes the same store on the same terms (`mobile/app/(app)/index.jsx`), which is what
+§4 asks for: the behaviour lives in `@aruvi/shared`, and each surface only decides when to call it.
+Pull-to-refresh passes `force` — the teacher's own "check again".

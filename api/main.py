@@ -12,6 +12,7 @@ Data comes from local disk (api/data.py) for now; live generation and the DB com
 from __future__ import annotations
 
 import hashlib
+import json
 from datetime import date, datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -962,9 +963,41 @@ def _count_units(groups) -> int:
     return n
 
 
+# ── the LU count, memoised across requests (2026-09-14) ───────────────────────────────
+# `total_units` is the only field in the listing that costs real work: it re-reads the plan
+# FILE and runs the full view-model normalisation, per plan. The library is Bucket A —
+# shared, read-only content that changes only when the founder publishes — so the answer for
+# a given file is a constant for the life of the process. Keyed by saved_at as well as the
+# filename, so a republished plan is recounted rather than remembered.
+_UNIT_COUNTS: Dict[tuple, Optional[int]] = {}
+
+
+def _total_units(sub, subject: str, grade: str, p: Dict[str, Any]) -> Optional[int]:
+    ck = (subject, grade, p.get("filename"), p.get("saved_at"))
+    if ck in _UNIT_COUNTS:
+        return _UNIT_COUNTS[ck]
+    n = None
+    try:
+        saved = data.load_saved_plan(subject, grade, p["filename"]) or {}
+        r = saved.get("result", {})
+        chapter = {"chapter_number": saved.get("chapter_number"),
+                   "chapter_title": saved.get("chapter_title")}
+        # Pass the FULL result (2026-07-09): every plugin unwraps via
+        # raw.get("lesson_plan", raw), and Science secondary needs the
+        # result-level coverage_handoff for its section-group rejoin.
+        lp = sub.lesson_plan_to_view(r, grade=saved.get("grade", grade), chapter=chapter)
+        n = _count_units(lp.groups)
+    except Exception:
+        n = None
+    _UNIT_COUNTS[ck] = n
+    return n
+
+
 @app.get("/plans/{subject}/{grade}")
-def get_plans(subject: str, grade: str, year_id: Optional[str] = None,
-              identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+def get_plans(subject: str, grade: str, response: Response,
+              year_id: Optional[str] = None,
+              if_none_match: Optional[str] = Header(default=None),
+              identity: tuple = Depends(_current_identity)) -> Any:
     sub = _subject(subject)
     tenant_id, user_id = identity
     year = _resolve_year(tenant_id, user_id, year_id)
@@ -988,6 +1021,17 @@ def get_plans(subject: str, grade: str, year_id: Optional[str] = None,
     prior_years = _prior_years_desc(tenant_id, user_id, year)
     prepared_by_prior_year = {y: (prepared_plans_repo.load_all(tenant_id, user_id, y) or {})
                               for y in prior_years}
+    # ★ THE RAIL IS HERS, SO THE COUNT IS TOO (founder-reported delay, 2026-09-14).
+    # `total_units` exists for ONE reader: the progress rail on a section card, which can only
+    # draw a chapter she is actually teaching. Computing it for the whole library meant 48 file
+    # re-reads and 48 view-model normalisations per request to serve the one or two she holds —
+    # the bulk of the server time left after the N+1 fix. Her own state already names them: a
+    # prepared record, a carry-forward from an earlier year, or a section bound to the file.
+    # Everything else ships total_units=None, exactly as an unreadable plan always has, and the
+    # catalogue screens (Prepare, Generate, Allocate, Year Plan) never read the field at all.
+    bound_files = {st.chapter for st in
+                   (section_state_repo.load_all(tenant_id, user_id, year) or {}).values()
+                   if getattr(st, "chapter", None)}
     # Enrich each listing with total_units (LU count) for the section-card rail. Best-effort:
     # a plan that fails to normalize just ships total_units=None and the card skips its rail.
     for p in plans:
@@ -1040,24 +1084,25 @@ def get_plans(subject: str, grade: str, year_id: Optional[str] = None,
         p["lp_year_display"] = (p.get("lp_year")
                                 if p.get("lp_year") and p["lp_year"] < config.LP_YEAR
                                 else None)
-        p["total_units"] = None
-        try:
-            saved = data.load_saved_plan(subject, grade, p["filename"]) or {}
-            r = saved.get("result", {})
-            chapter = {"chapter_number": saved.get("chapter_number"),
-                       "chapter_title": saved.get("chapter_title")}
-            # Pass the FULL result (2026-07-09): every plugin unwraps via
-            # raw.get("lesson_plan", raw), and Science secondary needs the
-            # result-level coverage_handoff for its section-group rejoin.
-            lp = sub.lesson_plan_to_view(r,
-                                         grade=saved.get("grade", grade), chapter=chapter)
-            p["total_units"] = _count_units(lp.groups)
-        except Exception:
-            pass
+        hers = (p.get("prepared") or p.get("prepared_source_year")
+                or p["filename"] in bound_files)
+        p["total_units"] = _total_units(sub, subject, grade, p) if hers else None
     # The edition currently being served, so a client can label a prior-year folder
     # without re-deriving the comparison the per-plan rule above already made.
-    return {"subject": subject, "grade": grade, "plans": plans,
-            "current_lp_year": config.LP_YEAR}
+    payload = {"subject": subject, "grade": grade, "plans": plans,
+               "current_lp_year": config.LP_YEAR}
+    # ★ AN ETAG, SO THE FRESHNESS CHECK IS NEARLY FREE (2026-09-14). The client keeps this
+    # listing on the device (packages/shared/src/plans.js) and sends the tag back; a listing
+    # that has not moved — which is most of them, most days — answers 304 with no body. The
+    # tag is over the WHOLE payload, flags included, so an attach or a prepare made on another
+    # device still changes it. Per-teacher by construction, hence no shared cache header.
+    body = json.dumps(payload, sort_keys=True, default=str)
+    etag = '"%s"' % hashlib.sha256(body.encode("utf-8")).hexdigest()[:32]
+    if if_none_match and if_none_match.strip() == etag:
+        return Response(status_code=304, headers={"ETag": etag, "Cache-Control": "no-cache"})
+    response.headers["ETag"] = etag
+    response.headers["Cache-Control"] = "no-cache"
+    return payload
 
 
 @app.get("/plans/{subject}/{grade}/{filename}/view")

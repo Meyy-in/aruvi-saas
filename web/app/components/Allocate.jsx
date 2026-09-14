@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { getJSON, pad, API, pretty, gradeUp, userKey, withUser } from "../lib/format";
+import { readPlans } from "../lib/plans";
 import PeriodRows, { Stepper, toPeriodRows, periodTypeNames, totalsFinePrint } from "./PeriodRows";
 import ViewModelView from "./ViewModelView";
 import Dropdown from "./Dropdown";
@@ -214,7 +215,7 @@ export default function Allocate({ subject, grade, readiness, onNavigate, single
 
     // saved plans power the generate spoke's previews (live gen deferred)
     setGenView(null);
-    getJSON(`/plans/${subject}/${grade}`).then((d) => setGenPlans(d.plans || [])).catch(() => setGenPlans([]));
+    readPlans(`${subject}/${grade}`, setGenPlans).catch(() => setGenPlans([]));
 
     // Server register is the source of truth — overrides the localStorage paint above
     // once it arrives, so a restarted server / fresh browser still shows saved work.

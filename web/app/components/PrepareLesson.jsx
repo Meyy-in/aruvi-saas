@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, largestRemainder, fetchEntitlement } from "../lib/format";
+import { readPlans } from "../lib/plans";
 import { verifiedWrite, planIsPrepared } from "../lib/verify";
 import { RollWheel } from "./wheels";
 import ViewModelView from "./ViewModelView";
@@ -99,8 +100,9 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
       // so it never enters this picker; the Year Plan is where those rows live (2026-08-06).
       .then((d) => { setChapters((d.chapters || []).filter((c) => !c.placeholder)); setSyllabusW(d.syllabus_total_weight || null); })
       .catch(() => { setChapters([]); setSyllabusW(null); });
-    getJSON(`/plans/${subject}/${grade}`)
-      .then((d) => setPlans(d.plans || [])).catch(() => setPlans([]));
+    // The listing comes from the shared store, so the copy My Classes / My Lessons already
+    // hold serves this picker too (@aruvi/shared/plans, 2026-09-14).
+    readPlans(`${subject}/${grade}`, setPlans).catch(() => setPlans([]));
     getJSON(`/genon/${subject}/${grade}/chapters`)
       .then((d) => { setGenonChs(d.chapters || []); setCanonMinutes(d.canonical_minutes || {}); setCanonPeriods(d.canonical_periods || {}); })
       .catch(() => { setGenonChs([]); setCanonMinutes({}); });

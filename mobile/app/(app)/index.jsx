@@ -15,6 +15,7 @@ import Svg, { Defs, Pattern, Path, Rect } from "react-native-svg";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, getJSON, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
+import { cachedPlans, fetchPlans } from "@aruvi/shared/plans";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
@@ -77,7 +78,7 @@ export default function Home() {
      out mid-lesson on a school network (the existing "couldn't reach Meyy" path). */
   const endSession = useCallback(() => endSessionShared(router), [router]);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async ({ force = false } = {}) => {
     let err = "";
     const ent = await fetchEntitlement();
     let readiness = null;
@@ -91,15 +92,18 @@ export default function Home() {
     const classes = classesFrom(readiness);
     // reconcile every section's server state, then fetch plans for each distinct subject·grade
     if (classes.length) { try { await pullSectionState(classes.map((c) => c.sectionKey)); } catch {} }
+    /* The listing comes from the SHARED STORE (@aruvi/shared/plans), which the web uses too —
+       one copy per subject·class kept in module memory and on the device, one request in
+       flight, and one revalidation per session unless something invalidated it. This screen
+       remounts on every trip through the bottom bar, and without the store each trip re-read a
+       list that had not moved (the web measured six such calls in one session). Pull-to-refresh
+       passes force, which is the teacher's own "check again". */
     const plansBySG = {};
     await Promise.all([...new Set(classes.map((c) => `${c.subjectSlug}/${c.gradeSlug}`))].map(async (key) => {
-      try {
-        const [sub, gr] = key.split("/");
-        const d = await getJSON(`/plans/${sub}/${gr}`);
-        const rows = d.plans || d || [];
-        plansBySG[key] = {};
-        rows.forEach((p) => { plansBySG[key][p.filename] = p; });
-      } catch { plansBySG[key] = {}; }
+      plansBySG[key] = {};
+      const index = (rows) => { plansBySG[key] = {}; (rows || []).forEach((p) => { plansBySG[key][p.filename] = p; }); };
+      index(cachedPlans(key));                 // synchronous: the cards can paint from this
+      try { index(await fetchPlans(key, { force })); } catch {}
     }));
     setSt({ loading: false, err, classes, plansBySG, ent });
   }, [endSession]);
@@ -174,7 +178,7 @@ export default function Home() {
       {/* The header sits outside the scroller, so it takes main's 26px top padding with it and
           the scroller must not repeat it — otherwise the card list starts 26px too low. */}
       <ScrollView contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
-        refreshControl={<RefreshControl refreshing={false} onRefresh={load} tintColor={t.pine} />}>
+        refreshControl={<RefreshControl refreshing={false} onRefresh={() => load({ force: true })} tintColor={t.pine} />}>
 
         {st.loading ? (
           <View style={s.loading}><ActivityIndicator color={t.pine} /><Text style={[type.small, { color: t.ink_soft, marginLeft: 10 }]}>Loading your classes…</Text></View>
