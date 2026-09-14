@@ -6398,3 +6398,34 @@ fixes both: ignore a scroll whose target is inside the popup.
 
 The lesson, general: **a capture-phase listener on `window` hears its own subtree.** Any handler
 written to react to "the page moved" must first ask whether what moved was the thing it owns.
+
+---
+
+## 2026-09-14 — Two crashes on opening a lesson, one per surface, and the same author's error
+
+Founder: *"both web app and expo on mac when i click a lp is showing error."* Both were mine, from
+the same week's work, and both came of putting code where it **read** well rather than where it was
+**legal**.
+
+**The web — a hook below an early return.** The wheels' ▼ animation had been cancelling on every
+re-render, so I memoised the two item lists. I put the `useMemo`s exactly where the plain arrays
+they replaced had stood, which happened to be under `if (openPlan) return <LessonView/>`. Placement
+that is a matter of taste for an array is a matter of law for a hook: clicking a plan set `openPlan`,
+took the return, skipped two hooks, and React threw *"Rendered fewer hooks than expected."*
+
+**The phone — a const read from a dependency array before it exists.** The "re-read the listing when
+a prepare finishes" effect went next to its sibling, the prepare-steering effect, near the top of the
+component. Its deps are `[preparing, key]`; `key` is declared some eighty lines below. The effect
+BODY would have been fine — it runs after render, by which time every binding is live — but a
+**dependency array is evaluated during render**, so it touched `key` in its temporal dead zone:
+*"Cannot access 'key' before initialization"*, the whole screen, on entering My Lessons.
+
+★ **The distinction worth keeping: inside an effect body, a later name is fine; in the deps, it is a
+crash.** The two sit three characters apart on the page and obey opposite rules.
+
+★ **AND "BOTH SURFACES" DID NOT MEAN ONE BUG.** I found the web's cause, fixed it, confirmed the web,
+and nearly stopped — the phone's file had no hook after a return, so it looked cleared. It wasn't; it
+had a different fault on the same screen. **When a founder reports one symptom on two surfaces, the
+report is two reports until each is reproduced.** The parity page is what made that cheap: the Expo
+pane threw its own error, in its own file, at its own line, side by side with a web pane that by then
+was working.
