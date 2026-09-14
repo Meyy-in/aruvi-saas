@@ -324,15 +324,49 @@ export function webStyles(t) {
     cof_pop_quiet:   { fontFamily: F.body(400, true), fontSize: 12, lineHeight: 17, color: t.ink_soft, marginTop: 4 },
 
     /* ── chapter notes modal (.cn-*) ── */
-    cn_title:        { fontFamily: F.display(600), fontSize: 19, lineHeight: 24, color: t.ink },
-    cn_sg:           { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.5, color: t.ink_soft },
-    cn_scope:        { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18, color: t.ink_soft },
-    cn_warn:         { color: t.clay },
-    cn_paper:        { fontFamily: F.body(400), fontSize: 15, lineHeight: 24, color: t.ink, backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.edge, borderRadius: 10, padding: 14 },
-    cn_count:        { fontFamily: F.mono(400), fontSize: 11, color: t.ink_soft },
-    cn_save:         { backgroundColor: t.pine, borderRadius: 3, paddingVertical: 10, paddingHorizontal: 20 },
-    cn_save_t:       { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.96, textTransform: UP, color: cream },
-    cn_speak:        { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.66, textTransform: UP, color: t.pine },
+    /* ── chapter notes (.cn-*) — measured 2026-09-14 ──
+       A CENTRED CARD over a dimmed page, not a sheet that slides up from the foot: the web is a
+       468-wide modal with a hairline under the head and another over the foot, and the writing
+       area is RULED PAPER — a line every 32px with the text set at a 32px line-height so she
+       writes ON the rules. The first Expo cut was a pageSheet with a plain bordered box, which
+       is why it felt like a different thing. */
+    cn_scrim:        { flex: 1, backgroundColor: "rgba(31,42,36,.42)", alignItems: "center",
+                       justifyContent: "center", padding: 20 },
+    cn_modal:        { width: "100%", maxWidth: 468, maxHeight: "90%", borderRadius: 12,
+                       borderWidth: 1, overflow: "hidden" },
+    cn_head:         { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between",
+                       columnGap: 12, paddingTop: 18, paddingHorizontal: 22, paddingBottom: 14,
+                       borderBottomWidth: 1 },
+    cn_title:        { fontFamily: F.display(600), fontSize: 16, lineHeight: 20, letterSpacing: -0.3,
+                       marginTop: 3, color: t.pine_d },
+    cn_sg:           { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15, letterSpacing: 0.8,
+                       marginTop: 4, color: t.ink_soft },
+    cn_scope:        { fontFamily: F.body(400, true), fontSize: 11.5, lineHeight: 16.5,
+                       marginTop: 3, color: t.ink_soft },
+    /* The child-privacy line is a RULE, not scope information (founder, 2026-08-26): clay,
+       UPRIGHT — not italic like the two grey lines above — under its own hairline. */
+    cn_warn:         { fontFamily: F.body(400), color: t.clay, marginTop: 6, paddingTop: 5,
+                       borderTopWidth: 1 },
+    cn_x:            { fontSize: 14, lineHeight: 18, padding: 4, color: t.ink_soft },
+    /* The ruled sheet. RULE_H is the web's 32px band; the text carries the same line-height so
+       it sits on the rules, and both scroll together (the web's background-attachment: local). */
+    cn_paper_wrap:   { flex: 1, backgroundColor: t.paper_2 },
+    cn_rule:         { position: "absolute", left: 0, right: 0, height: 1, backgroundColor: t.line },
+    cn_paper:        { fontFamily: F.body(400), fontSize: 16, lineHeight: 32, letterSpacing: 0.1,
+                       color: t.ink, backgroundColor: "transparent",
+                       paddingTop: 5, paddingHorizontal: 22, paddingBottom: 0 },
+    cn_foot:         { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                       columnGap: 12, paddingTop: 12, paddingHorizontal: 22, paddingBottom: 16,
+                       borderTopWidth: 1 },
+    cn_foot_l:       { flexDirection: "row", alignItems: "center", columnGap: 14 },
+    cn_count:        { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.44, color: t.ink_soft },
+    cn_count_over:   { color: t.clay },
+    cn_save:         { backgroundColor: t.pine, borderRadius: 5, paddingVertical: 9, paddingHorizontal: 20 },
+    cn_save_t:       { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.72, textTransform: UP, color: t.paper },
+    /* "Speak" is a bordered PILL with a line-art mic, not plain text with an emoji glyph. */
+    cn_speak:        { flexDirection: "row", alignItems: "center", columnGap: 6, borderWidth: 1,
+                       borderColor: t.line, borderRadius: 20, paddingVertical: 6, paddingHorizontal: 12 },
+    cn_speak_t:      { fontFamily: F.mono(400), fontSize: 10.5, letterSpacing: 0.84, textTransform: UP, color: t.ink_soft },
   };
 }
 

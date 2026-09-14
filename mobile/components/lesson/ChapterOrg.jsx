@@ -9,7 +9,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { View, ScrollView, Pressable, Modal, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { Text, TextInput } from "../Text";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Path, Rect } from "react-native-svg";
 import { fetchEntitlement, fetchPlanNotes, savePlanNote, planNoteKey, userKey } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { useTheme } from "../../theme/ThemeContext";
@@ -191,42 +191,100 @@ function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote }) {
 }
 
 /* ── the notes modal ── */
+function MicIcon({ color }) {
+  return (
+    <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={color}
+      strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <Rect x={9} y={2} width={6} height={12} rx={3} />
+      <Path d="M5 11a7 7 0 0 0 14 0" />
+      <Path d="M12 18v4M8 22h8" />
+    </Svg>
+  );
+}
+
+/* ───────── Chapter notes — the web's .cn-* window (aligned 2026-09-14) ─────────
+ * A CENTRED CARD over a dimmed page. It was a pageSheet sliding up from the foot, which is a
+ * different object to the hand even before any styling: the web's is a 468-wide modal you tap
+ * outside to dismiss, with a hairline under the head and another over the foot.
+ * The writing area is RULED PAPER — a line every RULE_H, with the text set at the same
+ * line-height so she writes ON the rules rather than between them. The web gets this from a
+ * repeating gradient with `background-attachment: local`, which React Native has no equivalent
+ * for; here the rules are real Views behind a transparent TextInput, and both live inside one
+ * ScrollView sized to the text, so the rules scroll WITH the writing exactly as the web's do.
+ * That is the whole reason the TextInput has scrollEnabled={false}: if it scrolled its own
+ * content the text would drift off the rules the moment the note ran past one screen. */
+const RULE_H = 32;
+
 function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave, onClose, readOnly }) {
   const [text, setText] = useState(initial || "");
+  const [paperH, setPaperH] = useState(0);      // the visible sheet
+  const [contentH, setContentH] = useState(0);  // how far the writing actually runs
   const ref = useRef(null);
   const wc = cnWordCount(text);
   const change = (v) => { if (cnWordCount(v) > CN_CAP && cnWordCount(v) > wc) return; setText(v); };
+
+  // Enough rules to cover whichever is taller — the sheet, or the writing running past it.
+  const ruled = Math.ceil(Math.max(paperH, contentH) / RULE_H) + 1;
+
   return (
-    <Modal visible animationType="slide" onRequestClose={onClose} presentationStyle="pageSheet">
-      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: t.paper }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <View style={s.cnHead}>
-          <View style={{ flex: 1, gap: 3 }}>
-            <Text style={ws.kicker}>Chapter notes</Text>
-            <Text style={ws.cn_title}>{chapterTitle}</Text>
-            {subjectGrade ? <Text style={ws.cn_sg}>{subjectGrade}</Text> : null}
-            <Text style={ws.cn_scope}>Shared across every section on this plan</Text>
-            <Text style={ws.cn_scope}>Saved to your account · opens on any device you sign in from</Text>
-            <Text style={[ws.cn_scope, ws.cn_warn]}>Private data like name, age of child must not be recorded. Meyy reserves right to delete if entered.</Text>
-          </View>
-          <Pressable onPress={onClose} hitSlop={10} accessibilityLabel="Close"><Text style={{ color: t.ink_soft, fontSize: 18 }}>✕</Text></Pressable>
-        </View>
-        <TextInput ref={ref} multiline autoFocus={!readOnly} editable={!readOnly} value={text} onChangeText={change}
-          placeholder={readOnly ? "No notes were written for this chapter." : CN_GUIDE} placeholderTextColor={t.ink_soft}
-          textAlignVertical="top" style={[ws.cn_paper, { flex: 1, marginHorizontal: 20 }]} />
-        <View style={s.cnFoot}>
-          {readOnly ? (
-            <>
-              <Text style={[ws.cn_count, { flex: 1 }]}>Renew to write notes — what you wrote stays yours.</Text>
-              <Pressable onPress={onClose} style={ws.cn_save}><Text style={ws.cn_save_t}>Close</Text></Pressable>
-            </>
-          ) : (
-            <>
-              <Pressable onPress={() => ref.current && ref.current.focus()} hitSlop={6}><Text style={ws.cn_speak}>🎙 Speak</Text></Pressable>
-              <Text style={[ws.cn_count, { flex: 1, marginLeft: 12 }, wc >= CN_CAP && { color: t.danger }]}>{wc} / {CN_CAP} words</Text>
-              <Pressable onPress={() => onSave(text)} style={ws.cn_save}><Text style={ws.cn_save_t}>Save</Text></Pressable>
-            </>
-          )}
-        </View>
+    <Modal visible transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <Pressable style={ws.cn_scrim} onPress={onClose}>
+          <Pressable style={[ws.cn_modal, { backgroundColor: t.paper, borderColor: t.line }]} onPress={() => {}}>
+            <View style={[ws.cn_head, { borderBottomColor: t.line_soft }]}>
+              <View style={{ flex: 1 }}>
+                <Text style={ws.kicker}>Chapter notes</Text>
+                <Text style={ws.cn_title}>{chapterTitle}</Text>
+                {subjectGrade ? <Text style={ws.cn_sg}>{subjectGrade}</Text> : null}
+                <Text style={ws.cn_scope}>Shared across every section on this plan</Text>
+                <Text style={ws.cn_scope}>Saved to your account · opens on any device you sign in from</Text>
+                <Text style={[ws.cn_scope, ws.cn_warn, { borderTopColor: t.line }]}>
+                  Private data like name, age of child must not be recorded. Meyy reserves
+                  right to delete if entered.
+                </Text>
+              </View>
+              <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel="Close">
+                <Text style={ws.cn_x}>✕</Text>
+              </Pressable>
+            </View>
+
+            <View style={ws.cn_paper_wrap} onLayout={(e) => setPaperH(e.nativeEvent.layout.height)}>
+              <ScrollView keyboardShouldPersistTaps="handled">
+                <View style={{ minHeight: paperH }}>
+                  {Array.from({ length: ruled }).map((_, i) => (
+                    <View key={i} pointerEvents="none" style={[ws.cn_rule, { top: RULE_H * (i + 1) - 1 }]} />
+                  ))}
+                  <TextInput ref={ref} multiline scrollEnabled={false}
+                    autoFocus={!readOnly} editable={!readOnly} value={text} onChangeText={change}
+                    onContentSizeChange={(e) => setContentH(e.nativeEvent.contentSize.height)}
+                    placeholder={readOnly ? "No notes were written for this chapter." : CN_GUIDE}
+                    placeholderTextColor="#b3ab9c" textAlignVertical="top"
+                    style={[ws.cn_paper, { minHeight: paperH }]} />
+                </View>
+              </ScrollView>
+            </View>
+
+            <View style={[ws.cn_foot, { borderTopColor: t.line_soft }]}>
+              {readOnly ? (
+                <>
+                  <Text style={[ws.cn_count, { flex: 1 }]}>Renew to write notes — what you wrote stays yours.</Text>
+                  <Pressable onPress={onClose} style={ws.cn_save}><Text style={ws.cn_save_t}>Close</Text></Pressable>
+                </>
+              ) : (
+                <>
+                  <View style={ws.cn_foot_l}>
+                    <Pressable onPress={() => ref.current && ref.current.focus()} style={ws.cn_speak}>
+                      <MicIcon color={t.ink_soft} />
+                      <Text style={ws.cn_speak_t}>Speak</Text>
+                    </Pressable>
+                    <Text style={[ws.cn_count, wc >= CN_CAP && ws.cn_count_over]}>{wc} / {CN_CAP} words</Text>
+                  </View>
+                  <Pressable onPress={() => onSave(text)} style={ws.cn_save}><Text style={ws.cn_save_t}>Save</Text></Pressable>
+                </>
+              )}
+            </View>
+          </Pressable>
+        </Pressable>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -388,6 +446,4 @@ const AxisRow = ({ ws, name, blurb }) => (
 
 const s = StyleSheet.create({
   body: { paddingHorizontal: 18, paddingTop: 4, paddingBottom: 40 },
-  cnHead: { flexDirection: "row", gap: 12, padding: 20, paddingTop: 22 },
-  cnFoot: { flexDirection: "row", alignItems: "center", padding: 20 },
 });
