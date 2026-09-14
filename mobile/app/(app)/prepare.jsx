@@ -498,14 +498,14 @@ export default function Prepare() {
 
             <View style={ws.prep_savebar}>
               <Pressable disabled={!chosen || busy} onPress={onPrepareClick} accessibilityRole="button"
-                style={[ws.prep_cta, { backgroundColor: (!chosen || busy) ? t.card_muted : t.pine }]}>
+                style={[ws.prep_cta, { backgroundColor: t.pine }, (!chosen || busy) && ws.prep_cta_off]}>
                 {busy ? (
                   <View style={{ flexDirection: "row", alignItems: "center", columnGap: 8 }}>
-                    <ActivityIndicator color={t.paper} size="small" />
-                    <Text style={[ws.prep_cta_t, { color: t.paper }]}>Building the lesson…</Text>
+                    <ActivityIndicator color="#f6f1e7" size="small" />
+                    <Text style={ws.prep_cta_t}>Building the lesson…</Text>
                   </View>
                 ) : (
-                  <Text style={[ws.prep_cta_t, { color: t.paper }]}>
+                  <Text style={ws.prep_cta_t}>
                     {chosenAlreadyPrepared ? "Prepare again →" : "Prepare the lesson →"}
                   </Text>
                 )}
@@ -535,7 +535,9 @@ export default function Prepare() {
           </Pressable>
           <Pressable disabled={busy} onPress={() => { setWarnRegen(false); doGenerate(); }}
             accessibilityRole="button" style={[ws.ap_btn, { borderColor: t.clay, backgroundColor: t.clay }]}>
-            <Text style={[ws.ap_btn_label, { color: t.paper }]}>Prepare again</Text>
+            {/* `#fff`, matching .ap-btn-danger — not --paper, which goes near-black in dark.
+                The same literal AttachSheet's "Stop tracking" already uses. */}
+            <Text style={[ws.ap_btn_label, { color: "#fff" }]}>Prepare again</Text>
           </Pressable>
         </View>
       </Sheet>

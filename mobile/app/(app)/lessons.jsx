@@ -550,7 +550,7 @@ export default function MyLessons() {
             <Text style={ws.mlp_allocate_q}>Need a chapter you don’t have yet?</Text>
             <Pressable accessibilityRole="button" style={[ws.mlp_allocate_btn, { backgroundColor: t.pine }]}
               onPress={() => router.push({ pathname: "/prepare", params: { subject: sSlug, grade: gSlug } })}>
-              <Text style={[ws.mlp_allocate_t, { color: t.paper }]}>Prepare a new lesson →</Text>
+              <Text style={ws.mlp_allocate_t}>Prepare a new lesson →</Text>
             </Pressable>
           </View>
         ) : null}

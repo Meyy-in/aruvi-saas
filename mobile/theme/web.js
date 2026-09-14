@@ -476,7 +476,13 @@ export function webStyles(t, scheme = "light") {
     mlp_allocate_q:  { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19.5, color: t.ink },
     mlp_allocate_btn:{ borderRadius: 6, minHeight: 44, alignItems: "center", justifyContent: "center",
                        paddingHorizontal: 14 },
-    mlp_allocate_t:  { fontFamily: F.mono(400), fontSize: 10, letterSpacing: 0.5, textTransform: UP },
+    /* ⚠️ `#f4efe6`, a LITERAL — not `--paper`. Three near-identical creams sit on pine in this
+       app (the bar's #f3efe6, this button's #f4efe6, .primary's #f6f1e7) and the web states each
+       one outright. --paper is a THEME token that goes near-black in dark, so a label painted
+       with it vanishes on a pine button — which is exactly what this said before the founder
+       caught it (2026-09-14). */
+    mlp_allocate_t:  { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13, letterSpacing: 0.5,
+                       textTransform: UP, color: "#f4efe6" },
 
     /* ── the peek RollWheel (.fr-wheel-shell.peek) ──
        One compact row showing ONLY the item in use, rolled by drag with a single cycling ▼.
@@ -570,8 +576,13 @@ export function webStyles(t, scheme = "light") {
     prep_brk_tot_v:  { fontFamily: F.mono(500), fontSize: 14, lineHeight: 17, color: t.pine_d },
     /* The CTA bar. `savebar-prep` is a 56px lift off the form above it. */
     prep_savebar:    { marginTop: 56, rowGap: 10 },
-    prep_cta:        { borderRadius: 8, paddingVertical: 13, alignItems: "center" },
-    prep_cta_t:      { fontFamily: F.mono(500), fontSize: 12, letterSpacing: 0.72, textTransform: UP },
+    /* button.primary, verbatim: 3px radius (not a pill), 11/22 padding, .08em at 12px = 0.96,
+       and #f6f1e7. Disabled is OPACITY .45 on the same pine — never a different fill, which
+       would read as a third button state rather than as the same button, unavailable. */
+    prep_cta:        { borderRadius: 3, paddingVertical: 11, paddingHorizontal: 22, alignItems: "center" },
+    prep_cta_t:      { fontFamily: F.mono(400), fontSize: 12, lineHeight: 15, letterSpacing: 0.96,
+                       textTransform: UP, color: "#f6f1e7" },
+    prep_cta_off:    { opacity: 0.45 },
     prep_hint:       { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18, color: t.ink_soft },
     /* ── the preparing card (.prep-wait) — she stays HERE while it builds ── */
     prep_wait:       { paddingTop: 6, paddingBottom: 40 },
