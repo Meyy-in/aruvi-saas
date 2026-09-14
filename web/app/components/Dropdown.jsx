@@ -30,8 +30,10 @@ import { useEffect, useRef, useState } from "react";
  * Behaviour carried over from PpwSplitCell, which earned each of these the hard way:
  *   · position:FIXED, so an overflow:auto ancestor cannot clip the open list;
  *   · flips ABOVE the button when there is no room below (phones, low fields);
- *   · closes on select, Escape, outside press, and any scroll or resize — closing
- *     beats chasing the anchor's rect around;
+ *   · closes on select, Escape, outside press, resize, and a scroll of the PAGE — closing
+ *     beats chasing the anchor's rect around. NOT on a scroll of its own list: the listener
+ *     is on window in the capture phase, so it sees the popup's own overflow scroll too, and
+ *     for months that made every list longer than its box unusable past the visible rows;
  *   · Escape calls stopPropagation, or the modal behind it closes too.
  * Added here because this one is a form field where PpwSplitCell was a number chip:
  * full keyboard support (Arrows/Home/End/Enter/Space/Escape/Tab), `aria-activedescendant`,
@@ -62,15 +64,33 @@ export default function Dropdown({
       setOpen(false);
     };
     const onKey = (e) => { if (e.key === "Escape") { e.stopPropagation(); setOpen(false); } };
+    /* ⚠️ CLOSE ON A SCROLL OF THE PAGE — NEVER ON A SCROLL OF THE LIST ITSELF (founder,
+       2026-09-14: "'select your state' in profile is not allowing me to choose states below
+       Jharkhand").
+       The listener is on `window` in the CAPTURE phase, which is what lets it see a scroll in
+       any overflow ancestor and close before the anchor drifts. But capture also delivers a
+       scroll of the POPUP, and `.dd-pop` is `overflow-y: auto` — so the moment she scrolled the
+       list to reach anything past the tenth row, the list closed under her. States is 23 long
+       and Jharkhand is the tenth: exactly the last one reachable without scrolling, which is why
+       the report named it. Every long Dropdown had it — the chapter adder in Allocate too; the
+       short ones (Role, four; Support, five) fit and so never showed it.
+       It also broke the KEYBOARD: the effect below calls `scrollIntoView` to keep the cursor
+       visible, and that scroll is a scroll of the popup too, so arrowing past the tenth row
+       closed the list as well. One guard fixes both. */
+    const onScroll = (e) => {
+      const n = e.target;
+      if (popRef.current && n && n.nodeType === 1 && popRef.current.contains(n)) return;
+      setOpen(false);
+    };
     document.addEventListener("mousedown", onDown, true);
     document.addEventListener("keydown", onKey, true);
     window.addEventListener("resize", close);
-    window.addEventListener("scroll", close, true);
+    window.addEventListener("scroll", onScroll, true);
     return () => {
       document.removeEventListener("mousedown", onDown, true);
       document.removeEventListener("keydown", onKey, true);
       window.removeEventListener("resize", close);
-      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("scroll", onScroll, true);
     };
   }, [open]);
 

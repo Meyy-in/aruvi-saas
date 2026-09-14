@@ -6363,3 +6363,38 @@ Fixed by committing on `onScroll` as well (the 120ms settle timer makes that saf
 it fires continuously during a flick and each event resets the timer, so the commit still happens
 once, when the wheel stops), memoising the chapter list, and nudging the box onto the exact row
 after a settle, since `snapToInterval` is a native prop that react-native-web may not express.
+
+---
+
+## 2026-09-14 · A capture-phase scroll listener cannot tell the page from its own popup
+
+Founder: *"'select your state' on web app in profile is not allowing me to choose states below
+Jharkhand."* STATES is 23 long and Jharkhand is the **tenth** — exactly the last row that fits in
+the open list without scrolling. Everything past it needed a scroll, and the scroll closed the
+list.
+
+`Dropdown.jsx` closes on a scroll so it never has to chase the anchor's rect around:
+
+```js
+window.addEventListener("scroll", close, true);   // capture
+```
+
+Capture on `window` is the right choice for the stated purpose — it is what lets one listener see
+a scroll in ANY overflow ancestor. It also delivers **the popup's own scroll**, and `.dd-pop` is
+`overflow-y: auto`. So the control closed itself the instant she used it as a list.
+
+★ **The bug is invisible on every short list, which is why it survived.** Role is four options,
+Support's categories five, the subscribe cart's Subject and Stage a handful — all fit, none ever
+scrolls, none ever closes. Only two lists in the app are longer than their box: STATES, and
+Allocate's chapter adder. **A defect that only appears past the fold of a control is a defect
+nobody meets until a real user does** — and the fix that hid it is the same one that made the
+control good (sizing the popup from the room actually available rather than a row count, so short
+lists are never clipped).
+
+★ **AND IT BROKE THE KEYBOARD BY THE SAME PATH, which is the tell I should have taken.** The
+"keep the cursor visible" effect calls `scrollIntoView({ block: "nearest" })`, and that is a
+scroll of the popup too — so arrowing down past the tenth row closed the list as well. One guard
+fixes both: ignore a scroll whose target is inside the popup.
+
+The lesson, general: **a capture-phase listener on `window` hears its own subtree.** Any handler
+written to react to "the page moved" must first ask whether what moved was the thing it owns.
