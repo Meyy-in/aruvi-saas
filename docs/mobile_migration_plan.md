@@ -374,9 +374,66 @@ browse list is gone; the screen now carries the web's actual card and its actual
   (PrepareLesson is step 5, so the footer would lead nowhere) and last year's lessons
   (`.ap-prior`, which needs the year record the phone does not read yet).
 
-Next: step 4b, the full My Lessons library — the paired "Your lessons / Year plan" switch
-(2026-09-13), subject·class wheels, the prepared filter, archive, and the Year Plan pane. The
-bar's My Lessons / Add / Ask Meyy items stay inert until it lands.
+**Step 4b — the full My Lessons library (2026-09-14).** The bottom bar's My Lessons item is live;
+the repository is a real screen on the phone, scoped to one subject·class like the web's.
+- `mobile/app/(app)/lessons.jsx` — a port of `MyLessonPlans.jsx`. The frozen header carries the
+  PAIRED switch ("Your lessons / Year plan" behind a hairline "/", founder 2026-09-13 — only the
+  live word inked and ruled in clay, the archive box holding the right end) over the two wheels;
+  the card list scrolls beneath. The web pins the header with `position: sticky`; here it sits
+  ABOVE the scroller, which is the same thing on a screen that owns its scroll region (My Classes'
+  greeting already does this). Cards are `.sc-card` on the DOCUMENT plane (founder 2026-08-30 — a
+  lesson plan is not a class), the 4px spine alone carrying the lifecycle: sage on the shelf, pine
+  teaching now, clay all done. The status line is the web's, exhaustive and single-colour,
+  completed first. The prepared filter is clause for clause, `prepared_source_year && !prepared`
+  excluded so last year's work cannot flood this year's list. Archive works both ways, through
+  `verifiedWrite` + `planIsArchived`, with the web's optimistic flip, its two toasts and its rule
+  that an attached plan simply has no archive affordance.
+- `mobile/components/RollWheel.jsx` — the web's `peek` wheel. `snapToInterval` +
+  `decelerationRate="fast"` for the web's scroll-snap; the list rendered THREE times with the box
+  riding the middle copy and silently recentring, so rolling wraps for ever; one cycling ▼ that
+  commits the pick BEFORE it moves the box, so a throttled animation can never leave it a no-op
+  (the web's B1 fix). `adjustsFontSizeToFit` stands in for the web's measured auto-fit, so
+  "Mathematics" shows in full on a narrow column. ⚠️ Divergence: the web also steps on arrow keys;
+  there is no keyboard here, so that handler has no counterpart. Nothing visible differs.
+- `mobile/components/YearPlan.jsx` — the whole teaching year for one subject·class. Suggested and
+  Your plan side by side, both computed on this side from `largestRemainder` and
+  `annualBudgetPeriods` in `@aruvi/shared/format` — the SAME functions the web calls, which is the
+  point: a second implementation of that arithmetic is how the 2026-08-21 defect happened (Year
+  Plan said 14 where the chapter step said 19). The table is one raised object; the note sits
+  below the totals and always shows.
+- `theme/web.js` — `mlp2_*`, `yp_*`, `rw_*`, `sc_metarow`, `sc_yearstamp`, read off globals.css at
+  the **≤600px phone sizes**, not the base ones. That distinction is load-bearing: the switch's
+  phone sizes live in a ≤600px block placed deliberately AFTER the base rules, because they were
+  silently dead for months when they sat earlier in the file (the `.ap-row-line` trap, third
+  occurrence). Taking the 23px base here would have reproduced that bug on the phone.
+- ⚠️ **Four things deferred, each with its own reason** (CLAUDE.md §4 — divergences are named):
+  (1) the PROPOSED card and the prepare CTA — both downstream of PrepareLesson, which is step 5;
+  nothing on this phone can set `preparing`, and a CTA that leads nowhere is the call step 4a made
+  about the picker's footer. (2) The REPORTS modal — the web downloads a blob through an anchor
+  with `download`, and saving a file on a phone is expo-file-system + expo-sharing: a native
+  dependency and a founder decision about where the document lands. The card already reserves the
+  right column and the 82px floor, so adding it moves nothing. (3) Last year's folders and
+  `notePlansYear` — they hang off `yearInfo.prior_years` and the phone does not read the year
+  record yet, the same reason 4a deferred the picker's `.ap-prior`. (4) The guided tour's steps
+  3–7, which have no phone counterpart to drive.
+- ★ **Two store defects found on the way through, both fixed** — archive/restore never invalidated
+  the shared listing (web, live since `cab83c07`), and the phone's attach never invalidated either,
+  which since the speed work's `total_units` change meant a freshly attached card had no unit rail
+  until the app restarted. Full account in MEMORY.md, 2026-09-14.
+- Verified here: all five files babel-parse clean; every relative and `@aruvi/shared/*` import
+  resolves, including each named export against the module it is imported FROM (not merely against
+  the package); shared tests 18/18; API tests 32/32 once the committed test residue is cleared
+  (see MEMORY.md — that residue is an open founder call, not a code defect).
+- **Owed on the phone (iPhone, `npx expo start --tunnel`):** My Lessons from the bar → the two
+  wheels roll and wrap, and the ▼ cycles → a lesson card opens read-only and comes back → archive
+  a detached plan, the box appears with its count, open it, Restore → cross to My Classes and back
+  and confirm the archive HOLDS (this is the bug above, so it is the test that matters) → the Year
+  plan half: the table, the totals, the note → attach a chapter on My Classes and confirm the unit
+  rail appears at once.
+
+Next: step 5 — PrepareLesson and the profile portal, which between them light the bar's "Add"
+item and unlock what 4b deferred: the proposed card, the prepare CTA, and the Year Plan's budget
+pencil. Ask Meyy is step 6.
 
 ## 3. Phasing
 

@@ -378,6 +378,125 @@ export function webStyles(t) {
     cn_speak:        { flexDirection: "row", alignItems: "center", columnGap: 6, borderWidth: 1,
                        borderColor: t.line, borderRadius: 20, paddingVertical: 6, paddingHorizontal: 12 },
     cn_speak_t:      { fontFamily: F.mono(400), fontSize: 10.5, letterSpacing: 0.84, textTransform: UP, color: t.ink_soft },
+
+    /* ── My Lessons (.mlp2 + children) — read from globals.css at the ≤600px phone sizes,
+          2026-09-14 (Track D step 4b) ───────────────────────────────────────────────────
+       The frozen header is the title row (the paired "Your lessons / Year plan" switch plus
+       the archive box) over the two wheels; the lesson list scrolls beneath it. The web holds
+       it with `position: sticky`; here it simply sits ABOVE the scroller, which is the same
+       thing on a screen that owns its own scroll region (the pattern My Classes' greeting
+       already uses).
+       ⚠️ The switch words are 20px on a phone, NOT the 23px base — globals.css carries that in
+       a ≤600px block placed deliberately AFTER the base rules (it was dead for months when it
+       sat earlier in the file). Taking the base size here would reproduce that bug on the
+       phone, so these are the ≤600px values throughout: vtab/vsep 20, titleleft gap 6,
+       titlerow gap 8, archfolder padding 4×5. */
+    mlp2_frozen:     { paddingTop: 6, paddingBottom: 12, marginBottom: 6, borderBottomWidth: 1 },
+    mlp2_titlerow:   { flexDirection: "row", alignItems: "center", justifyContent: "space-between", columnGap: 8 },
+    mlp2_titleleft:  { flexDirection: "row", alignItems: "center", columnGap: 6, minWidth: 0, flexShrink: 1 },
+    /* The word IS the title: same face and size as the retired .mlp2-title, no button chrome.
+       Only the live one is inked, and it carries a 1px clay rule directly under it. */
+    mlp2_vtab:       { fontFamily: F.display(500), fontSize: 20, lineHeight: 23, color: t.ink_soft,
+                       paddingTop: 2, paddingBottom: 4, borderBottomWidth: 1, borderBottomColor: "transparent" },
+    mlp2_vtab_on:    { color: t.ink, borderBottomColor: t.clay },
+    mlp2_vsep:       { fontFamily: F.display(500), fontSize: 20, lineHeight: 23, color: t.edge,
+                       paddingTop: 2, paddingBottom: 4 },
+    mlp2_archfolder: { flexDirection: "row", alignItems: "center", columnGap: 6, paddingVertical: 4,
+                       paddingHorizontal: 5, borderRadius: 10, borderWidth: 1, borderColor: "transparent" },
+    mlp2_archcount:  { fontFamily: F.mono(600), fontSize: 11, letterSpacing: 0.22, color: t.ink_soft },
+    /* Subject box wider than Class at 2:1 — the web's `flex:2` / `flex:1` on the two columns. */
+    mlp2_wheels:     { flexDirection: "row", columnGap: 14, marginTop: 12 },
+    mlp2_wcol_s:     { flex: 2, minWidth: 0 },
+    mlp2_wcol_g:     { flex: 1, minWidth: 0 },
+    /* A single-option axis renders STATIC — but at the wheel's own footprint, always: rowPx 72
+       plus the peek shell's 1px hairline top and bottom = 74. */
+    mlp2_static:     { minHeight: 74, alignItems: "center", justifyContent: "center",
+                       paddingHorizontal: 14, borderWidth: 1, borderColor: "#c7d9cf", borderRadius: 12,
+                       backgroundColor: t.tint_pine_2 },
+    mlp2_static_t:   { fontFamily: F.body(600), fontSize: 17, lineHeight: 22, color: t.ink, textAlign: "center" },
+    /* The status line is exhaustive and single-colour: "Completed 6A, 6C · Teaching now 6B". */
+    mlp2_status:     { flexDirection: "row", flexWrap: "wrap", alignItems: "baseline" },
+    mlp2_status_t:   { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15, letterSpacing: 0.2, color: t.ink_soft },
+    mlp2_status_sep: { marginHorizontal: 6, color: t.line },
+    mlp2_ready:      { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 17, color: t.ink_soft },
+    mlp2_emptybody:  { fontFamily: F.body(400, true), fontSize: 14, lineHeight: 21, color: t.ink_soft,
+                       paddingVertical: 22, paddingHorizontal: 4 },
+    mlp2_loading:    { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19, color: t.ink_soft,
+                       paddingVertical: 10, paddingHorizontal: 4 },
+    /* The card reserves a right column for the archive icon (top) and, on the web, the report
+       trigger (bottom); the floor of 82 keeps the two clear of each other. Only the archive
+       icon is ported in this step — see the screen's header for why — but the reservation and
+       the floor stay, so adding the report later moves nothing. */
+    mlp2_cardpad:    { paddingRight: 44, minHeight: 82 },
+    mlp2_iconbtn:    { position: "absolute", top: 7, right: 8, zIndex: 2, width: 30, height: 30,
+                       borderRadius: 8, borderWidth: 1, borderColor: "transparent",
+                       alignItems: "center", justifyContent: "center" },
+    mlp2_restore:    { borderRadius: 9, borderWidth: 1, paddingVertical: 7, paddingHorizontal: 15 },
+    mlp2_restore_t:  { fontFamily: F.mono(400), fontSize: 10, letterSpacing: 0.6, textTransform: UP },
+    /* Transient confirmation / block message — bottom-centre, non-blocking, auto-dismissed.
+       `bottom` clears the bottom bar (56.85 + its safe-area inset, applied by the component). */
+    mlp2_toast:      { position: "absolute", left: 16, right: 16, alignItems: "center",
+                       paddingVertical: 11, paddingHorizontal: 18, borderRadius: 11, borderWidth: 1 },
+    mlp2_toast_t:    { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 18.2, textAlign: "center" },
+    /* One meta row, not two stacked lines (founder, 2026-08-27): the matrix and the year stamp
+       are both small-print provenance and read as the one thing they are. Wraps on a narrow
+       phone rather than squashing. */
+    sc_metarow:      { flexDirection: "row", alignItems: "baseline", flexWrap: "wrap",
+                       columnGap: 12, rowGap: 4, marginTop: 2 },
+    sc_metarow_item: { marginTop: 0 },
+    sc_yearstamp:    { fontFamily: F.mono(400), fontSize: 9.5, lineHeight: 13, letterSpacing: 0.67,
+                       textTransform: UP, color: t.ochre },
+
+    /* ── the peek RollWheel (.fr-wheel-shell.peek) ──
+       One compact row showing ONLY the item in use, rolled by drag with a single cycling ▼.
+       rowPx is 72 here (My Lessons passes it); the shell's hairline adds 1 top and bottom. */
+    rw_shell:        { height: 74, borderWidth: 1, borderColor: "#c7d9cf", borderRadius: 10,
+                       overflow: "hidden", backgroundColor: "#fff" },
+    rw_row:          { height: 72, flexDirection: "row", alignItems: "center", paddingRight: 44 },
+    rw_label:        { fontFamily: F.body(600), fontSize: 19, lineHeight: 24, color: t.ink },
+    rw_cue:          { position: "absolute", right: 7, top: 0, bottom: 0, justifyContent: "center" },
+    rw_cue_btn:      { width: 34, height: 26, alignItems: "center", justifyContent: "center" },
+    rw_cue_glyph:    { fontSize: 15, lineHeight: 17, color: t.pine },
+
+    /* ── Year Plan (.yp + children) — globals.css, with the ≤400px pad ──
+       Two period figures side by side: Suggested (Meyy's proposal, her budget distributed by
+       chapter weight) and Your plan (what she set when she prepared each lesson). The table is
+       ONE object on its own plane (founder, 2026-08-30) — the note and the totals' own controls
+       sit outside it, on the page. Columns 1fr / 54 / 68, keyed across header, rows and totals. */
+    yp:              { paddingTop: 4, paddingBottom: 10, paddingHorizontal: 10 },
+    yp_loading:      { paddingVertical: 28, paddingHorizontal: 12, textAlign: "center",
+                       fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink_soft },
+    yp_table:        { borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, paddingBottom: 12 },
+    yp_colhd:        { flexDirection: "row", alignItems: "flex-end", columnGap: 6, marginTop: 15,
+                       paddingBottom: 7, borderBottomWidth: 1 },
+    yp_c:            { fontFamily: F.mono(400), fontSize: 8.5, lineHeight: 10.6, letterSpacing: 0.26,
+                       textTransform: UP, color: t.ink, textAlign: "right" },
+    yp_c_chap:       { flex: 1, minWidth: 0, textAlign: "center" },
+    yp_c_sug:        { width: 54 },
+    yp_c_plan:       { width: 68 },
+    yp_row:          { flexDirection: "row", alignItems: "flex-start", columnGap: 6,
+                       paddingVertical: 6, borderBottomWidth: 1 },
+    yp_row_pend:     { opacity: 0.7 },
+    yp_cell_ch:      { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "baseline", columnGap: 9 },
+    yp_cn:           { fontFamily: F.mono(400), fontSize: 11, lineHeight: 14, color: t.ink },
+    yp_cname:        { flex: 1, minWidth: 0, fontFamily: F.display(500), fontSize: 11, lineHeight: 13.75, color: t.ink },
+    yp_cname_await:  { fontFamily: F.display(400, true), color: t.ink_soft },
+    yp_sug:          { width: 54, textAlign: "right", fontFamily: F.display(400), fontSize: 19,
+                       lineHeight: 23, color: t.ink },
+    yp_planw:        { width: 68, alignItems: "flex-end" },
+    yp_plan:         { fontFamily: F.display(600), fontSize: 19, lineHeight: 23, color: t.ink },
+    yp_set:          { fontFamily: F.display(500), fontSize: 13, lineHeight: 17, color: t.ink_soft },
+    yp_dash:         { color: t.line, fontFamily: F.display(400) },
+    yp_pend:         { marginTop: 3, fontFamily: F.mono(400), fontSize: 8, lineHeight: 10,
+                       letterSpacing: 0.48, textTransform: UP, color: t.ink_soft, opacity: 0.85 },
+    yp_tot:          { flexDirection: "row", alignItems: "baseline", columnGap: 6, marginTop: 2,
+                       paddingTop: 12, paddingBottom: 10, borderBottomWidth: 2 },
+    yp_tot_l:        { flex: 1, minWidth: 0, fontFamily: F.mono(400), fontSize: 10, lineHeight: 13,
+                       letterSpacing: 0.6, textTransform: UP, color: t.ink_soft },
+    yp_tot_n:        { textAlign: "right", fontFamily: F.display(600), fontSize: 18, lineHeight: 22, color: t.ink },
+    yp_note:         { marginTop: 16, marginBottom: 20, fontFamily: F.body(400, true), fontSize: 14,
+                       lineHeight: 22.68, color: t.ink },
+    yp_note_b:       { fontFamily: F.body(600), fontStyle: "normal" },
   };
 }
 
