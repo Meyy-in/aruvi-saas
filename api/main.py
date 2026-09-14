@@ -979,6 +979,15 @@ def get_plans(subject: str, grade: str, year_id: Optional[str] = None,
     # sample plan to every teacher. `prepared` lets the client show only what she actually made;
     # a plan a section is attached to is treated as prepared client-side too (belt-and-braces).
     prepared = prepared_plans_repo.load_all(tenant_id, user_id, year)
+    # ★ HER PRIOR YEARS, READ ONCE (2026-09-14). The provenance look-back below used to call
+    # _prior_years_desc() — and, inside it, prepared_plans_repo.load_all() per year — for EVERY
+    # plan in the listing. The answer is identical for all of them: it depends on the teacher and
+    # the year, not on the plan. For english/iii that was 48 academic-year queries per request,
+    # plus 48×N prepared-record reads for a teacher with prior years, to compute one constant.
+    # Hoisted here, so the loop below only tests membership in a dict it already has.
+    prior_years = _prior_years_desc(tenant_id, user_id, year)
+    prepared_by_prior_year = {y: (prepared_plans_repo.load_all(tenant_id, user_id, y) or {})
+                              for y in prior_years}
     # Enrich each listing with total_units (LU count) for the section-card rail. Best-effort:
     # a plan that fails to normalize just ships total_units=None and the card skips its rail.
     for p in plans:
@@ -1012,8 +1021,8 @@ def get_plans(subject: str, grade: str, year_id: Optional[str] = None,
         # a section card finds its plan by filename regardless of this flag, so a chapter
         # she is still teaching still says which version she holds.
         if not p.get("prepared") and not p.get("prepared_source_year"):
-            for prior_year in _prior_years_desc(tenant_id, user_id, year):
-                if pkey in (prepared_plans_repo.load_all(tenant_id, user_id, prior_year) or {}):
+            for prior_year in prior_years:
+                if pkey in prepared_by_prior_year[prior_year]:
                     p["prepared_source_year"] = prior_year
                     break
         # ★ THE LP EDITION STAMP — SHOWN ONLY WHEN IT IS A PRIOR EDITION (founder, §2.2).
