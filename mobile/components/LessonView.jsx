@@ -1,7 +1,8 @@
 /* ───────── LessonView — the screen a teacher teaches from (Track D step 3, 2026-09-12) ─────────
  *
  * A 1:1 port of web/app/components/LessonView.jsx (CLAUDE.md §4: the phone matches the web).
- * Same anatomy: a chapter-org landing (preview opens on it; tracking reaches it via "← Orgn."),
+ * Same anatomy: a chapter-org landing (the front door until she has taught a unit; reachable
+ * thereafter via "← Orgn."),
  * a pinned header (kicker · "← Orgn." · "{n}. title") + the Overview/Material/Lesson/Assess tab
  * bar, the active panel scrolling beneath, and the pvNav strip at the END of the body
  * ("‹ Chapter org." / "← Previous unit" · "Unit n / N" · "Next unit →"). Paging remounts the
@@ -218,7 +219,23 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   const tracking = !!sectionKey && !preview;
 
   const [cur, setCur] = useState(() => Math.min(tracking ? readUnitPointer(sectionKey) : 0, Math.max(0, total - 1)));
-  const [showOrg, setShowOrg] = useState(preview);
+  /* ★ THE CHAPTER'S FRONT DOOR IS THE ORG PAGE UNTIL SHE HAS TAUGHT SOMETHING (founder,
+     2026-09-14): "first time when someone clicks a lesson plan from My Lessons as well as My
+     Class, it should by default open in the org page. When they click on a specific spine or
+     section, it should open in the Lesson tab. Once they complete the first unit, clicking the
+     lesson must henceforth take them to the sitting that they are now teaching."
+     So the landing is about PROGRESS, not about which screen she came from. It used to be
+     `useState(preview)` — preview landed on the org page and tracking went straight to a unit,
+     which meant a chapter she had never opened dropped her into unit 1 with no sense of the
+     shape of the thing. Now: no progress → the map; any progress → the sitting she is on.
+     ⚠️ THE STORED POINTER *IS* THE COUNT OF COMPLETED UNITS (0-based index of the current unit),
+     which is why `> 0` is the test and not `>= 0`. `doneAll` is checked too, for the one-unit
+     chapter whose pointer never leaves 0 even when it is finished — without it, a completed
+     one-unit chapter would keep opening on the map for ever.
+     Preview has no pointer to consult, so it always lands on the map, which is what it already
+     did and what "first time" means for a plan attached to no class. */
+  const [showOrg, setShowOrg] = useState(() => preview
+    || !(tracking && (readUnitPointer(sectionKey) > 0 || readChapterDone(sectionKey))));
   const [previewAt, setPreviewAt] = useState(cur);
   const [doneFlag, setDoneFlag] = useState(() => (tracking ? readChapterDone(sectionKey) : false));
   const [undoTo, setUndoTo] = useState(null);

@@ -1959,6 +1959,9 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   // Preview root — used to reset scroll to the top of the unit when paging (see pvGoto).
   const pvRef = useRef(null);
   const storageKey = `lu_pointer_${sectionKey || lp.subject + "_" + lp.grade + "_" + (lp.chapter_title || "")}`;
+  // Hoisted to sit beside storageKey: the org-page landing below needs it, and both are pure
+  // string expressions of the same inputs.
+  const doneKey = `lu_done_${sectionKey || lp.subject + "_" + lp.grade + "_" + (lp.chapter_title || "")}`;
 
   // current pointer (which LU the teacher is on) — restore from localStorage
   const [cur, setCur] = useState(() => {
@@ -1966,10 +1969,32 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
     const saved = Number(window.localStorage.getItem(storageKey));
     return Number.isFinite(saved) && saved >= 0 && saved < units.length ? saved : 0;
   });
-  // Chapter Organization altitude (the chapter's front door). Preview OPENS here — reading a
-  // plan starts at chapter altitude (arch-plan §E); once a pointer is live (tracking), the unit
-  // view is the default and the org page is one tap away ("chapter organization →").
-  const [showOrg, setShowOrg] = useState(preview);
+  /* ★ THE CHAPTER'S FRONT DOOR IS THE ORG PAGE UNTIL SHE HAS TAUGHT SOMETHING (founder,
+     2026-09-14): "first time when someone clicks a lesson plan from My Lessons as well as My
+     Class, it should by default open in the org page. When they click on a specific spine or
+     section, it should open in the Lesson tab. Once they complete the first unit, clicking the
+     lesson must henceforth take them to the sitting that they are now teaching."
+     So the landing is about PROGRESS, not about which screen she came from. It used to be
+     `useState(preview)` — preview landed on the org page and tracking went straight to a unit,
+     which meant a chapter she had never opened dropped her into unit 1 with no sense of the
+     shape of the thing. Now: no progress → the map; any progress → the sitting she is on.
+     ⚠️ THE STORED POINTER *IS* THE COUNT OF COMPLETED UNITS (0-based index of the current unit),
+     which is why `> 0` is the test and not `>= 0`. `doneAll` is checked too, for the one-unit
+     chapter whose pointer never leaves 0 even when it is finished — without it, a completed
+     one-unit chapter would keep opening on the map for ever.
+     Preview has no pointer to consult, so it always lands on the map, which is what it already
+     did and what "first time" means for a plan attached to no class. */
+  const [showOrg, setShowOrg] = useState(() => {
+    if (preview) return true;
+    if (typeof window === "undefined") return true;
+    let started = false, done = false;
+    try {
+      const saved = Number(window.localStorage.getItem(storageKey));
+      started = Number.isFinite(saved) && saved > 0;
+      done = window.localStorage.getItem(doneKey) === "1";
+    } catch { /* private mode — treat as no progress, which lands on the map */ }
+    return !(started || done);
+  });
   // After "Mark complete" we show a confirmation + an Undo that reverts to this index. The undo
   // target is INTENTIONALLY in-session only (not persisted): the pointer itself is the source of
   // truth and already saved, so undo is just a convenience for the immediate "oops, wrong button"
@@ -1991,7 +2016,6 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   // pointer clamps at the last unit and can't otherwise distinguish "on the last LU" from "done".
   // My Classes reads `lu_done_${sectionKey}` to shade the card as completed. Mirrored in React
   // state so marking the chapter complete re-renders the view (confirmation card) immediately.
-  const doneKey = `lu_done_${sectionKey || lp.subject + "_" + lp.grade + "_" + (lp.chapter_title || "")}`;
   const [doneFlag, setDoneFlag] = useState(() => {
     if (typeof window === "undefined") return false;
     try { return window.localStorage.getItem(doneKey) === "1"; } catch { return false; }

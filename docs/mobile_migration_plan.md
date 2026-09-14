@@ -560,6 +560,25 @@ web's own `prep-wait` fallback and named it a divergence; this closes it.
   that visibly completes then lingers reads as stuck.
 - The in-place `prep-wait` card and its measures are deleted with it.
 
+★ **THE CHAPTER'S FRONT DOOR IS THE ORG PAGE UNTIL SHE HAS TAUGHT A UNIT (founder, 2026-09-14,
+BOTH SURFACES).** "First time when someone clicks a lesson plan from My Lessons as well as My
+Class, it should by default open in the org page. When they click on a specific spine or section,
+it should open in the Lesson tab. Once they complete the first unit, clicking the lesson must
+henceforth take them to the sitting that they are now teaching."
+The landing is about PROGRESS, not about which screen she came from. Both LessonViews had
+`useState(preview)` — preview landed on the map and tracking went straight to a unit, so a chapter
+she had never opened dropped her into unit 1 with no sense of the shape of the thing. Now: no
+progress → the map; any progress → the sitting she is on (`previewAt` already initialises from the
+pointer on both surfaces, and the unit opens on the Lesson tab, so the other two thirds of the ask
+were already true once that tab default was fixed).
+⚠️ **The stored pointer IS the count of completed units** (it is the 0-based index of the current
+unit), which is why the test is `> 0` and not `>= 0`. `doneAll` is checked beside it for the
+one-unit chapter whose pointer never leaves 0 even when finished — without that, a completed
+one-unit chapter would open on the map for ever. Preview has no pointer to consult and so always
+lands on the map, which is what it already did and what "first time" means for a plan attached to
+no class. On the web this needed `doneKey` hoisted to sit beside `storageKey`; both are pure
+string expressions of the same inputs.
+
 ★ **A PARITY CHECKER (2026-09-14) — `node mobile/theme/check-parity.mjs`.** In one afternoon the
 founder caught four parity misses by eye, each costing a round trip, and every one was the same
 mechanical fault: `theme/web.js` mirrors a CSS class, but the value the BROWSER applies to that
