@@ -137,7 +137,9 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
   }
 
   const { rows, budget, committedTotal, sugTotal } = model;
-  const Dash = () => <Text style={ws.yp_dash}>—</Text>;
+  /* The web nests `.yp-dash` INSIDE the 19px `.yp-plan` / `.yp-sug` cell, so it overrides only
+     colour and weight and inherits the size. Composed here rather than relied on. */
+  const Dash = () => <Text style={[ws.yp_plan, ws.yp_dash]}>—</Text>;
 
   return (
     <View style={ws.yp}>
@@ -149,7 +151,7 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
           scrolls inside My Lessons' own ScrollView and RN has no sticky-within-a-child, so the
           header simply travels with its rows. Named as a divergence: nothing moves position, the
           column labels just don't pin. */}
-      <View style={[ws.yp_table, { backgroundColor: t.card_bg, borderColor: t.edge }]}>
+      <View style={[ws.yp_table, { borderColor: t.edge }]}>
         {/* Column header — the last line of the web's frozen head. All three are plain labels
             (the disclosure chevron went in 2026-08-27 with the note it used to hide). The plan
             label breaks over two lines, which is what keeps this header level with the other
@@ -169,7 +171,9 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
                 {r.title}
               </Text>
             </View>
-            <Text style={ws.yp_sug}>{r.sug != null ? String(r.sug) : "—"}</Text>
+            {r.sug != null
+              ? <Text style={ws.yp_sug}>{r.sug}</Text>
+              : <Text style={[ws.yp_sug, ws.yp_dash]}>—</Text>}
             <View style={ws.yp_planw}>
               {r.awaited ? (
                 <Dash />

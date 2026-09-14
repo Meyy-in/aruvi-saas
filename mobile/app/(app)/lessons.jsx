@@ -47,9 +47,10 @@
  * Measures live in theme/web.js under `mlp2_*` / `sc_*` (§4 rule 2).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, AppState, RefreshControl } from "react-native";
-import Svg, { Path, Rect } from "react-native-svg";
+import { View, ScrollView, Pressable, AppState, RefreshControl, StyleSheet } from "react-native";
+import Svg, { Defs, Pattern, Path, Rect } from "react-native-svg";
 import { useRouter, useFocusEffect } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
   API, classNum, getJSON, getUser, pad, pretty, subjectSlug, userKey, withUser,
@@ -108,6 +109,12 @@ export default function MyLessons() {
   const LS_CLASS = userKey("mylessons_class");
 
   const [readiness, setReadiness] = useState(null);
+  /* ★ "NOT ASKED YET" IS NOT "NOTHING THERE" (the live-walk finding, 2026-09-12). Without this
+     flag the screen reads `subjects = []` while /readiness is still in flight and tells her "No
+     subjects set up yet. Finish setup in My Classes" — a false statement about her own record,
+     held for the whole round trip, which on a school network is seconds. My Classes was built
+     with the guard and its header says why; this screen went without it. */
+  const [loaded, setLoaded] = useState(false);
   const [loadErr, setLoadErr] = useState("");
   const [plansByKey, setPlansByKey] = useState({});
   const [view, setView] = useState("active");       // active | archived — one list, a server flag
@@ -129,6 +136,9 @@ export default function MyLessons() {
   const [activeSubject, setActiveSubject] = useState("");
   const [activeGrade, setActiveGrade] = useState("");
 
+  // True while a lesson is open over this screen — read by the section sync below.
+  const busyRef = useRef(false);
+
   const endSession = useCallback(() => endSessionShared(router), [router]);
 
   const loadReadiness = useCallback(async () => {
@@ -136,12 +146,14 @@ export default function MyLessons() {
       const r = (await getJSON("/readiness"))?.readiness || null;
       setReadiness(r);
       setLoadErr("");
+      setLoaded(true);
     } catch (e) {
       /* ★ A 401 is not "no profile" — the server REFUSED this session, and ending the session is
          one act whichever door it comes through (the rule My Classes states at length). An
          unreachable server is NOT a refusal and must never sign her out on a school network. */
       if (String(e.message) === "401") { await endSession(); return; }
       setLoadErr("Couldn’t reach Meyy right now.");
+      setLoaded(true);
     }
   }, [endSession]);
 
@@ -203,8 +215,11 @@ export default function MyLessons() {
       .map((s) => `${sSlug}_${gSlug}_${s.tag}`).filter(Boolean);
     if (!keys.length) return;
     let live = true;
+    /* Skipped while a plan is open so an in-flight read is never interrupted — this screen stays
+       mounted behind the lesson route, so without the guard the 20s interval goes on pulling and
+       re-rendering underneath her. The web holds the same guard on `openPlan`. */
     const sync = () => {
-      if (!live) return;
+      if (!live || busyRef.current) return;
       pullSectionState(keys).then(() => { if (live) setTick((n) => n + 1); }).catch(() => {});
     };
     sync();
@@ -214,7 +229,7 @@ export default function MyLessons() {
   }, [sSlug, gSlug, taughtGradeObj]);
 
   // Returning from a lesson: re-read the local section cache so the status lines are current.
-  useFocusEffect(useCallback(() => { setTick((n) => n + 1); }, []));
+  useFocusEffect(useCallback(() => { busyRef.current = false; setTick((n) => n + 1); }, []));
 
   const onSubject = (name) => {
     setActiveSubject(name); lsSet(LS_SUBJECT, name);
@@ -227,9 +242,10 @@ export default function MyLessons() {
   /* READ-ONLY. The old "Attach to a class" CTA and its section chooser are RETIRED (2026-07-06):
      attaching happens ONLY via the "+" on a My Classes section card — one true way. Opening
      WITHOUT a section is exactly what `lesson.jsx` reads as preview. */
-  const openLesson = (p) => router.push({
-    pathname: "/lesson", params: { subject: sSlug, grade: gSlug, filename: p.filename },
-  });
+  const openLesson = (p) => {
+    busyRef.current = true;
+    router.push({ pathname: "/lesson", params: { subject: sSlug, grade: gSlug, filename: p.filename } });
+  };
 
   /* Exhaustive per-section state for one chapter: which sections completed it, which are on it
      now. A section counts only if it is currently tracking THIS chapter. */
@@ -356,20 +372,49 @@ export default function MyLessons() {
 
   /* Subject filter, alphabetical by LABEL (profile order is arbitrary — a stable A–Z list is
      easier to scan). Copy before sort so the source order is untouched. */
-  const subjectItems = subjects
+  const subjectItems = useMemo(() => subjects
     .map((s) => ({ id: s.name, label: subjectLabel(s.name) }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort((a, b) => a.label.localeCompare(b.label)), [subjects]);
   /* ONLY the classes she has enrolled for this subject, low to high — never the content superset.
      The teacher's word is "Class", shown as a plain number: never "Grade", never Roman. */
-  const gradeItems = grades
+  /* ★ MEMOISED — RollWheel reparks the box on `[items]`, so a freshly built array (a new
+     identity every render) made that effect fire on every render, including the one `stepCycle`
+     causes when it commits the pick before animating, cancelling the ▼'s roll. The web carries
+     the same fix and the fuller note. */
+  const gradeItems = useMemo(() => grades
     .map((g) => g.grade)
     .sort((a, b) => classNum(a) - classNum(b))
-    .map((g) => ({ id: g, label: `${classNum(g)}` }));
+    .map((g) => ({ id: g, label: `${classNum(g)}` })), [grades]);
+
+  const insets = useSafeAreaInsets();
+
+  /* The frozen header is drawn ONLY when there are wheels to put in it. The web returns before
+     rendering anything at all in these two states, and a switch with two empty wheel boxes above
+     "No subjects set up yet" is worse than the sentence alone. */
+  const bare = (msg, style) => (
+    <View style={{ flex: 1, backgroundColor: t.paper }}>
+      <Bar user={getUser()} />
+      <View style={ws.main}><Text style={style}>{msg}</Text></View>
+    </View>
+  );
+  if (loadErr && !current) return bare(loadErr, [type.body, { color: t.danger }]);
+  if (!loaded) return bare("Loading your lessons…", ws.mlp2_loading);
+  if (!current) {
+    return bare("No subjects set up yet. Finish setup in My Classes to see your lessons here.",
+      ws.mlp2_emptybody);
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Bar user={getUser()} />
-      <View style={{ paddingHorizontal: 18 }}>
+      {/* ★ THE HEADER STARTS A ROW DOWN FROM THE BAR (founder, 2026-09-14). The switch was
+          sitting almost ON the bar: `.mlp2-frozen`'s own 6px is all it has, and on the web that
+          6px is measured from the top of `main`, which already opens with 26px of page padding
+          (`ws.main.paddingTop`). Here the header lives OUTSIDE the scroller — that is what makes
+          it frozen without a sticky — so it took none of `main`'s padding with it and the 6px
+          was the whole gap. My Classes has the same shape and the same 26 above its greeting;
+          this is the row that was missing, not a new one. */}
+      <View style={{ paddingHorizontal: 18, paddingTop: 26 }}>
         {/* ── the frozen header ──
             The web pins this with `position: sticky` at the top of the one scroll region; here it
             sits ABOVE the scroller, which is the same thing on a screen that owns its own scroll
@@ -462,13 +507,7 @@ export default function MyLessons() {
             .catch(() => {});
         }} />}>
 
-        {loadErr ? (
-          <Text style={[type.body, { color: t.danger, marginTop: 18 }]}>{loadErr}</Text>
-        ) : !current ? (
-          <Text style={ws.mlp2_emptybody}>
-            No subjects set up yet. Finish setup in My Classes to see your lessons here.
-          </Text>
-        ) : pane === "plan" ? (
+        {pane === "plan" ? (
           <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness} />
         ) : plans === undefined ? (
           <Text style={ws.mlp2_loading}>Loading plans…</Text>
@@ -481,7 +520,7 @@ export default function MyLessons() {
                 : `There are no lesson plans prepared for ${pretty(sSlug)} · Class ${classNum(activeGrade)} yet.`}
           </Text>
         ) : (
-          <View style={ws.sc_list} key={tick}>
+          <View style={ws.sc_list}>
             {shown.map((p) => (
               <PlanCard key={p.filename} p={p} archived={effView === "archived"}
                 status={statusFor(p)} attached={isAttached(p)}
@@ -496,7 +535,7 @@ export default function MyLessons() {
           It sits clear of the bottom bar rather than under it. */}
       {toast ? (
         <View style={[ws.mlp2_toast, {
-          bottom: 78,
+          bottom: 56.85 + insets.bottom + 16,
           backgroundColor: toast.kind === "block" ? t.clay : t.ink,
           borderColor: toast.kind === "block" ? t.clay : t.line,
         }]} accessibilityLiveRegion="polite">
@@ -504,6 +543,30 @@ export default function MyLessons() {
         </View>
       ) : null}
     </View>
+  );
+}
+
+/* ───────── The constant graph rule ─────────
+ * The same 11px rule on every card whatever its state — a MATERIAL, not a code: because it never
+ * varies it carries no meaning, needs no legend, and cannot compete with the status colours.
+ * ⚠️ It belongs HERE because the web puts it on the `.sc-card` BASE rule (two repeating
+ * linear-gradients, globals.css ~2577), and My Lessons' document plane overrides only
+ * `background-color` — so these cards inherit the rule on the web and were the one place on the
+ * phone without it. Identical to My Classes' copy: RN has no repeating gradient, so it is an SVG
+ * <Pattern> — a true tile, not an approximation — with the line on the TOP and LEFT edge of each
+ * 11px cell, as the web's gradients are. The weight lives in ONE place, --card-grid.
+ * The pattern id is scoped to this file: two <Defs> sharing an id in one tree is undefined, and
+ * My Classes already owns "sc-grid". */
+function CardGrid({ color }) {
+  return (
+    <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+      <Defs>
+        <Pattern id="mlp-grid" width={11} height={11} patternUnits="userSpaceOnUse">
+          <Path d="M0 0.5 H11 M0.5 0 V11" stroke={color} strokeWidth={1} fill="none" />
+        </Pattern>
+      </Defs>
+      <Rect x="0" y="0" width="100%" height="100%" fill="url(#mlp-grid)" />
+    </Svg>
   );
 }
 
@@ -535,12 +598,15 @@ function PlanCard({ p, archived, status, attached, onOpen, onArchive, onRestore 
   return (
     <View style={[ws.sc_card, !archived && ws.mlp2_cardpad,
       { backgroundColor: fill, borderColor: edge }]}>
+      <CardGrid color={t.card_grid} />
       <View style={[ws.sc_spine, { backgroundColor: spine }]} />
       <Pressable onPress={onOpen} accessibilityRole="button"
         accessibilityLabel={`Open ${p.chapter_title}`}
         style={{ flex: 1, flexDirection: "row", alignItems: "center", columnGap: 13 }}>
         <Text style={ws.sc_tag}>{pad(p.chapter_number)}</Text>
         <View style={ws.sc_body}>
+          {/* Two lines, because `.sc-title` clamps to two in CSS (-webkit-line-clamp, globals.css
+              2614) — the JSX just doesn't say so. numberOfLines is RN's equivalent. */}
           <Text style={[ws.sc_title, archived && { color: t.ink_soft }]} numberOfLines={2}>
             {p.chapter_title}
           </Text>

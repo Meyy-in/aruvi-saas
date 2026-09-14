@@ -39,25 +39,49 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   const settle = useRef(null);
   const N = items.length;
   const loop = N > 1;
-  // The real index of the current value; -1 (not found) settles to 0, as the web's does.
+  // The real index of the current value. A value that is not in the list at all is corrected by
+  // the effect below, which tells the PARENT — it is never silently displayed as item 0.
   const selIdx = Math.max(0, items.findIndex((it) => String(it.id) === String(value)));
   const rendered = loop
     ? Array.from({ length: 3 * N }, (_, i) => ({ ...items[i % N], _k: i }))
     : items.map((it, i) => ({ ...it, _k: i }));
 
-  /* Park the box on the current value: in the MIDDLE copy when looping, so there is a full copy
-     to roll into in either direction from the very first touch. Runs on value/rowPx so a change
-     made from outside (the subject wheel resetting the class) moves the box with it. `animated:
-     false` — this is a position, not a gesture. */
+  /* If the value is not in the list at all, TELL THE PARENT rather than quietly showing item 0.
+     The web does this and it matters here: `subjectItems` is sorted alphabetically while the
+     screen's fallback subject is `subjects[0]` in profile order, so a silent correction would put
+     one subject in the box while the list below belonged to another. On `items` only — this is
+     about the list changing under the wheel, never about her turning it. */
+  useEffect(() => {
+    if (!items.length) return;
+    if (!items.some((it) => String(it.id) === String(value))) onChange(String(items[0].id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
+  /* Park the box on the current pick when the wheel mounts or THE LIST CHANGES — on `items`, and
+     deliberately not on the value.
+     ⚠️ It ran on the value first, which quietly broke the ▼: `stepCycle` commits the pick and
+     THEN animates, so the commit re-rendered, this effect fired within the frame, and its
+     `animated: false` landed on the same target and cancelled the roll. The arrow snapped on the
+     phone where it rolls on the web — and the animation was the whole reason the commit comes
+     first. It also hid a second fault: on Android a programmatic animated scroll does not
+     reliably fire `onMomentumScrollEnd`, so the recentring below would never have run; it only
+     appeared to work because this effect was reparking into the middle copy every time.
+     The middle copy is where it parks when looping, so there is a full copy to roll into in
+     either direction from the very first touch. */
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const y = (loop ? N + selIdx : selIdx) * rowPx;
+    const idx = Math.max(0, items.findIndex((it) => String(it.id) === String(value)));
+    const y = (loop ? N + idx : idx) * rowPx;
     // Defer a frame: on first mount the ScrollView has no content height yet and the offset is
     // silently dropped.
     const id = setTimeout(() => { try { el.scrollTo({ y, animated: false }); } catch {} }, 0);
     return () => clearTimeout(id);
-  }, [selIdx, rowPx, N, loop]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, rowPx]);
+
+  // The settle timer must not outlive the wheel — it calls onChange, and the parent may be gone.
+  useEffect(() => () => { if (settle.current) clearTimeout(settle.current); }, []);
 
   /* Whatever settles in the box becomes the pick. `onMomentumScrollEnd` fires after a flick;
      `onScrollEndDrag` covers the slow drag that never gains momentum — RN sends only one of the

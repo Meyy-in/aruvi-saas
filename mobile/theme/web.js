@@ -22,8 +22,19 @@ const F = {
 };
 const UP = "uppercase";
 
-export function webStyles(t) {
+export function webStyles(t, scheme = "light") {
   const cream = "#f3efe6";                 // --bar-ink / cream on pine (both themes)
+  /* A few of the web's colours are literal hex INSIDE a rule rather than custom properties on
+     :root, so `gen-tokens.py` never saw them and tokens.js has no name for them — and tokens.js
+     is generated and must not be hand-edited. They are resolved here instead, per theme, from
+     the rule that owns them. Each one cites its line in globals.css so a palette change has a
+     place to land.
+       peek wheel   .fr-wheel-shell.peek  + its dark override            (globals.css 4628, 4633)
+       year plan    --yp-card, scoped to .yp rather than :root           (globals.css 4686, 4687) */
+  const dk = scheme === "dark";
+  const wheelBg = dk ? "#1f2c26" : "#ffffff";
+  const wheelEdge = dk ? "#2f4139" : "#c7d9cf";
+  const ypCard = dk ? "#1f2c26" : "#ffffff";
   return {
     /* ── page + shell ── */
     body:            { fontFamily: F.body(400), fontSize: 17, lineHeight: 26.35, color: t.ink },
@@ -411,7 +422,7 @@ export function webStyles(t) {
     /* A single-option axis renders STATIC — but at the wheel's own footprint, always: rowPx 72
        plus the peek shell's 1px hairline top and bottom = 74. */
     mlp2_static:     { minHeight: 74, alignItems: "center", justifyContent: "center",
-                       paddingHorizontal: 14, borderWidth: 1, borderColor: "#c7d9cf", borderRadius: 12,
+                       paddingHorizontal: 14, borderWidth: 1, borderColor: wheelEdge, borderRadius: 12,
                        backgroundColor: t.tint_pine_2 },
     mlp2_static_t:   { fontFamily: F.body(600), fontSize: 17, lineHeight: 22, color: t.ink, textAlign: "center" },
     /* The status line is exhaustive and single-colour: "Completed 6A, 6C · Teaching now 6B". */
@@ -450,8 +461,8 @@ export function webStyles(t) {
     /* ── the peek RollWheel (.fr-wheel-shell.peek) ──
        One compact row showing ONLY the item in use, rolled by drag with a single cycling ▼.
        rowPx is 72 here (My Lessons passes it); the shell's hairline adds 1 top and bottom. */
-    rw_shell:        { height: 74, borderWidth: 1, borderColor: "#c7d9cf", borderRadius: 10,
-                       overflow: "hidden", backgroundColor: "#fff" },
+    rw_shell:        { height: 74, borderWidth: 1, borderColor: wheelEdge, borderRadius: 10,
+                       overflow: "hidden", backgroundColor: wheelBg },
     rw_row:          { height: 72, flexDirection: "row", alignItems: "center", paddingRight: 44 },
     rw_label:        { fontFamily: F.body(600), fontSize: 19, lineHeight: 24, color: t.ink },
     rw_cue:          { position: "absolute", right: 7, top: 0, bottom: 0, justifyContent: "center" },
@@ -466,7 +477,8 @@ export function webStyles(t) {
     yp:              { paddingTop: 4, paddingBottom: 10, paddingHorizontal: 10 },
     yp_loading:      { paddingVertical: 28, paddingHorizontal: 12, textAlign: "center",
                        fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink_soft },
-    yp_table:        { borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, paddingBottom: 12 },
+    yp_table:        { borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, paddingBottom: 12,
+                       backgroundColor: ypCard },
     yp_colhd:        { flexDirection: "row", alignItems: "flex-end", columnGap: 6, marginTop: 15,
                        paddingBottom: 7, borderBottomWidth: 1 },
     yp_c:            { fontFamily: F.mono(400), fontSize: 8.5, lineHeight: 10.6, letterSpacing: 0.26,
@@ -486,7 +498,7 @@ export function webStyles(t) {
     yp_planw:        { width: 68, alignItems: "flex-end" },
     yp_plan:         { fontFamily: F.display(600), fontSize: 19, lineHeight: 23, color: t.ink },
     yp_set:          { fontFamily: F.display(500), fontSize: 13, lineHeight: 17, color: t.ink_soft },
-    yp_dash:         { color: t.line, fontFamily: F.display(400) },
+    yp_dash:         { color: t.line, fontFamily: F.display(400), fontSize: 19, lineHeight: 23 },
     yp_pend:         { marginTop: 3, fontFamily: F.mono(400), fontSize: 8, lineHeight: 10,
                        letterSpacing: 0.48, textTransform: UP, color: t.ink_soft, opacity: 0.85 },
     yp_tot:          { flexDirection: "row", alignItems: "baseline", columnGap: 6, marginTop: 2,
@@ -501,6 +513,6 @@ export function webStyles(t) {
 }
 
 export function useWebStyles() {
-  const { t } = useTheme();
-  return useMemo(() => webStyles(t), [t]);
+  const { t, scheme } = useTheme();
+  return useMemo(() => webStyles(t, scheme), [t, scheme]);
 }
