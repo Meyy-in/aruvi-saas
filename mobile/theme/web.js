@@ -141,6 +141,36 @@ export function webStyles(t, scheme = "light") {
     ch_no:           { color: t.pine_d, fontFamily: F.body(500) },
     ch_go:           { fontFamily: F.body(400), fontSize: 19, lineHeight: 19, color: t.ink_soft },
 
+    /* ── the profile portal window (`.ap-grow`, globals.css 2761-2800) — Track D 5d ──
+       A SHORT window: four one-line rows, a footer and a ✕ is a lot for a 360px phone, so
+       everything here is deliberately tighter than the chapter picker it borrows its chrome from.
+       ⚠️ `.ap-row.ap-row-line` exists at (0,2,0) rather than (0,1,0) because the web once wrote
+       it BEFORE `.ap-row` in the file, tied on specificity, lost on source order, and kept
+       `flex-direction: column` — which put the name on one line and the "›" on the next, doubled
+       the window's height and pushed the ✕ off the top of a phone. On RN there is no cascade to
+       lose, so the row style below simply IS the line form. */
+    ap_grow_head:    { marginBottom: 10 },
+    ap_grow_list:    { rowGap: 6 },
+    ap_row_line:     { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                       columnGap: 10, paddingVertical: 11, paddingHorizontal: 14 },
+    /* Takes the slack so the value and the chevron pack together on the RIGHT. Without it
+       `space-between` strands a three-child row's value in the middle of the line, where it reads
+       as a second label rather than as this row's answer. */
+    ap_row_label:    { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 15, lineHeight: 18 },
+    /* The current value, CHECK mood only. Mono, smaller and soft, because the NAME is what she is
+       choosing between and the value is what she is checking — the row must still scan as a list
+       of things to open, not as a table. `numberOfLines={1}` stands in for `white-space: nowrap`:
+       a value that wrapped would recreate the two-line row the note above spent a bug fixing. */
+    ap_row_val:      { flexGrow: 0, flexShrink: 0, fontFamily: F.mono(400), fontSize: 11.5,
+                       letterSpacing: 0.23 },
+    /* The footer must NOT read as a fifth row: the rows above are spot edits with card chrome,
+       this is the panorama. A hairline-topped line of text, outside the list. */
+    ap_foot:         { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                       columnGap: 10, width: "100%", marginTop: 8,
+                       paddingTop: 10, paddingBottom: 0, paddingHorizontal: 2, borderTopWidth: 1 },
+    ap_foot_t:       { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 17.55 },
+    ap_foot_go:      { fontFamily: F.body(400), fontSize: 17, lineHeight: 17 },
+
     /* ── LessonView header (.lv-hd / .co-topbar / .lv-title) ── */
     lv_stick:        { paddingTop: 18, paddingBottom: 10, backgroundColor: t.paper },
     lv_hd:           { paddingBottom: 6, marginBottom: 10 },

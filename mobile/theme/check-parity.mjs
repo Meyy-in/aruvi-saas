@@ -273,8 +273,15 @@ for (const [key, decl] of keys) {
   const rnSizes = pick(/fontSize:\s*([\d.]+)/);
   const rnTracks = pick(/letterSpacing:\s*(-?[\d.]+)/);
   const upRe = /textTransform:\s*UP|textTransform:\s*"uppercase"/;
-  const declaresType = /fontSize|letterSpacing|fontFamily|textTransform/.test(decl);
-  const rnCase = declaresType ? upRe.test(decl) : [...kids, ...peers].some((d) => upRe.test(d));
+  const typeRe = /fontSize|letterSpacing|fontFamily|textTransform/;
+  /* ⚠️ THE SAME OWN → KIDS → PEERS CASCADE `pick()` USES, and it must STOP at the first pool that
+     declares type — it used to OR kids and peers together, which let a PEER overrule the key's own
+     children. `ap_foot` is the case that exposed it: it declares no type itself, its children
+     `ap_foot_t`/`ap_foot_go` are both lowercase and correct, and the peer `ap_kicker` is uppercase
+     — so the union said "the phone uppercases" and a correct port was reported wrong. A peer is
+     the LAST resort, consulted only when nothing closer has an answer. */
+  const casePool = [[decl], kids, peers].find((pool) => pool.some((d) => typeRe.test(d))) || [];
+  const rnCase = casePool.some((d) => upRe.test(d));
 
   // ── compare ──
   const cssSize = cssOf("font-size");

@@ -200,6 +200,19 @@ showing her mobile number on the bar after she had subscribed.
 - ✅ **1 (part) · F7 `mobile/lib/portal.js`** — origin route + the window to restore, with a subscription;
   the `lib/preparing` idiom. Not yet consumed — the window (item 2) is its first caller.
 
+- ✅ **2 · The ProfilePortal window** — `mobile/components/ProfilePortal.jsx`, mounted in
+  `(app)/_layout.jsx` BELOW the Stack and ABOVE the BottomNav, so the bar stays live behind it (a
+  window that took the whole nav away would be the one screen she could not leave — Ask Meyy's
+  September mistake on the web). Four rows, no subject row, no decline button, the footer outside the
+  list.
+  🔴 **`onAdd` IS STILL DARK.** Two of the four rows have screens (ppw, budget) and two do not
+  (section, class) until items 5 and 6. Opening the window now would offer four things to change,
+  half of which do nothing — the call the founder made twice already. One line lights it, and the
+  line is written in `_layout.jsx` beside the stub.
+  ⚠️ When it lights: the window never opens while she is lapsed (F5, 6a).
+  ⚠️ `subscribePortal` sits ABOVE the sign-in redirect — a hook may not follow a conditional
+  return (the "Rendered fewer hooks than expected" lesson of 2026-09-14).
+
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
    `subscribePortal`; the phone's `portalOriginRef` (app. 01 rows 77-78). **F3** `shared/setupCheck.js` — the
@@ -511,15 +524,14 @@ Consolidated from the six appendices (their numbering in brackets). The first fi
 be answered when the step is reached. **Answered questions stay in the table, struck through with their
 answer** — the reasoning is worth more than the row.
 
-**Due next:** Q4 (the section editor's stale "basket" sentence) and Q3 (manage-subjects), both on the screens
-immediately ahead; then Q9 with the check-mood window.
+**Due next:** Q9, with the check-mood window (item 10) — with the tour deferred, what raises "Are these your sections?" besides an added subject?
 
 | # | Blocks | Question |
 |---|---|---|
 | ~~Q1~~ | 5c | ✅ **ANSWERED 2026-09-15 — HOLD.** The budget screen was built and left unreachable until the numbers editor existed; both pencils lit together in `ff8cf0c1`. 5c folded into 5d. |
 | ~~Q2~~ | 5c | ✅ **ANSWERED 2026-09-15 — LEAVE BOTH, RECORDED.** They cannot disagree on the one shape now written; the divergence is written into `budget.js`'s header and revisited the day a legacy record turns up. |
-| Q3 | 5d | **Manage-subjects wheel**: no window sends `portalIntent="subject"` any more; the only live subject add is the accordion's "+ add a subject". Port manage-subjects, or add mode only? [02·2] |
-| Q4 | 5d | **Stale hint** "To remove the whole class, use the basket on the class." — that basket is gone on the web. Port verbatim or amend on both ("…use Class in the Add window")? [02·4] |
+| ~~Q3~~ | 5d | ✅ **ANSWERED 2026-09-15 — ADD MODE ONLY.** Port the pick-subjects wheel in add mode, matching the only door the web offers. Removing a subject stays in the Settings accordion (step 6); nothing on the phone the web cannot also do. |
+| ~~Q4~~ | 5d | ✅ **ANSWERED 2026-09-15 — AMEND ON BOTH.** Now "To remove the whole class, use Class in the Add window." Fixed on the web in the same commit as the port; the phone never carried the stale wording. |
 | Q5 | 5e | **Where the first-run gate lives**: `app/index.jsx` (before the shell, like the login redirect) or `(app)/_layout.jsx` (re-routes on a mid-session profile wipe — the web's behaviour)? [01·3] |
 | Q6 | 6a | **Paywall on the phone with no Subscribe**: mirror the web's kicker rule + server sentence + a single "Not now"; say anything about how to subscribe (support@meyy.in?) [01·1] |
 | Q7 | 6a | **Lapsed rules on the phone during the beta**: port now and let the server flag drive it (enforcement is off), or wait? [01·2] |
