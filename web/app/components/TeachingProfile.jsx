@@ -1261,13 +1261,16 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
       <div className="tp">
         <div className="kicker kicker-ochre">{sub.name} · Class {classNum(g.grade)} · sections</div>
         <h1 className="fr-q">Edit sections of Class {classNum(g.grade)}</h1>
-        {/* ★ THE LAST SENTENCE POINTED AT A CONTROL THAT NO LONGER EXISTS (founder, Q4,
-            2026-09-15). It said "use the basket on the class"; that basket was retired when
-            removing a class moved into the "+" window's Class row, and the hint was never
-            followed. A teacher reading it went looking for a bin that is not there — so it now
-            names where the control actually is. Amended on BOTH surfaces in the same commit
-            (CLAUDE.md §0); the phone's port carries the corrected wording, not the stale one. */}
-        <p className="fr-hint">Tick to keep or add a section, untick to remove one. A removed section loses its bookmark — your lessons stay in the library. To remove the whole class, use Class in the Add window.</p>
+        {/* ★ ONE SENTENCE, BECAUSE THE REST IS SAID WHEN IT MATTERS (founder, 2026-09-15: "the
+            warning when unticked about consequences comes when untick is done and saving is
+            attempted"). This hint used to carry three: what ticking does, what a removal costs,
+            and where to remove a whole class. The last was stale for weeks (it named a basket
+            retired when removing a class moved into the Add window, Q4) and the middle one warns
+            about a thing she has not done yet — it is read by every teacher who came to ADD a
+            section, and consequences stated in advance of an act are noise until they are not.
+            The removal confirm says them at the moment she is actually removing something, where
+            they are about her and not about the screen. */}
+        <p className="fr-hint">Tick to keep or add a section, untick to remove one.</p>
         {/* ★ REVERSED 2026-08-29 (founder, knowingly): clusters again — picked sections gather
             adjacent on top (6C + 6E side by side, 6F… below), accepting the recorded cost that
             a class holding A and R hides B…Q inside the cluster until R is unticked. */}

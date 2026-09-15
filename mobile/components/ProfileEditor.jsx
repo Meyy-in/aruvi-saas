@@ -426,10 +426,25 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      previous step to return to. Every footer "Cancel" and "← Back" is gone with them: each cost a
      whole row of a window whose height is the standing problem, and said nothing the two corners
      do not say better. */
+  const stepBack = step === "duration" ? () => { setSplitOpen(null); setStep("ppw"); } : undefined;
+
   return (
-    <Sheet visible scroll onClose={leave} kicker={kicker}
-      onBack={step === "duration" ? () => { setSplitOpen(null); setStep("ppw"); } : undefined}>
+    <Sheet visible scroll onClose={leave} onBack={stepBack}>
       <View>
+        {/* ★ THE EDITOR'S OWN HEADER, NOT THE WINDOW'S (founder, 2026-09-15: "render the colour of
+            'English · Class 3 · Sections' with the web app, and the distance between that title
+            and 'Edit sections of Class 3' the same as in the web app").
+            The window's `.ap-kicker` is OCHRE at .12em — right for a window whose title IS the
+            window. This screen is the web's `.tp`, whose kicker is `.kicker`: PINE, weight 500,
+            .18em. (`.kicker-ochre` rides along on the web and declares nothing anywhere, so pine
+            is what the browser paints — measured, not read.)
+            ⚠️ And they are FLUSH. On the web the kicker has no margins and `.fr-q` has
+            `margin: 0 0 6px`, so the gap between them is EXACTLY ZERO — measured on the running
+            page, kicker bottom 883, heading top 883. The window header's 14px margin plus
+            `.ap-title`'s 4px had opened a gap the web does not have.
+            The corner padding is the header's own, because the ✕ and ← are absolutely positioned
+            over this line. */}
+        <Text style={[ws.kicker, ws.tp_kicker_pad, stepBack && { paddingLeft: 34 }]}>{kicker}</Text>
 
         {step === "class" ? (
           <>
@@ -477,15 +492,11 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
         ) : step === "section" ? (
           <>
             <Text style={ws.fr_q}>Edit sections of Class {classNum(grade)}</Text>
-            {/* ★ THE LAST SENTENCE NAMES A CONTROL THAT EXISTS (founder, Q4, 2026-09-15). The web
-                said "use the basket on the class"; that basket was retired when removing a class
-                moved into the Add window, so a teacher reading it went looking for a bin that is
-                not there. Amended on BOTH surfaces in the same commit — the phone never carried
-                the stale wording. */}
+            {/* ★ ONE SENTENCE (founder, 2026-09-15): the consequences belong to the moment she
+                removes something, not to the screen she opened to ADD one. The removal confirm
+                says them where they are about her. */}
             <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
-              Tick to keep or add a section, untick to remove one. A removed section loses its
-              bookmark — your lessons stay in the library. To remove the whole class, use Class in
-              the Add window.
+              Tick to keep or add a section, untick to remove one.
             </Text>
             {picked ? (
               /* ★ CLUSTERED, knowingly (founder, 2026-08-29, reversing an earlier call): ticked

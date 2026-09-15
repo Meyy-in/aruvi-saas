@@ -1006,12 +1006,24 @@ export default function Home() {
      it is the whole profile by definition — and neither does the tour's check window, which is
      asking about a set-up she has exactly one of. */
   const [profilePortalScope, setProfilePortalScope] = useState(null); // { subject, grade } | null
+  /* ★ A SPOT EDIT IS A WINDOW OVER THE TAB SHE IS ON, NOT A PAGE INSTEAD OF IT (founder,
+     2026-09-15: "the 'What would you like to change' window appears against the hazy background
+     of My classes. But individual windows come up against blank background").
+     The first windowing pass wrapped the profile in `.ap-overlay` but still routed through
+     `editFlow = "profile"` — which renders the profile INSTEAD of the tab content, so the scrim
+     was dimming an empty page. There was nothing behind it to haze. `editFlow` now stays exactly
+     where she was and this renders BESIDE the main content, which is what the phone has done
+     since the same day.
+     ⚠️ It also retires `lessonsPaneIntentRef`: that ref existed only to put her back on the Year
+     Plan pane after this flow navigated her away from My Lessons. She is not navigated away any
+     more — the same mechanism, and the same deletion, as the phone's `lib/paneIntent`. */
+  const [profileWin, setProfileWin] = useState(false);
   const onProfilePortal = (kind) => {
     portalOriginRef.current = { home: editFlow, win: portalWin };
     setProfilePortalScope(portalWin && portalWin.reason === "added"
       ? { subject: portalWin.subject, grade: portalWin.grade } : null);
     setPortalWin(null);
-    setProfileAutoAdd(null); setProfilePortal(kind); setEditFlow("profile"); setTab("myplans"); setGenerateEntry(null);
+    setProfileAutoAdd(null); setProfilePortal(kind); setProfileWin(true);
   };
   /* ★ THE YEAR PLAN BUDGET PENCIL (founder, 2026-08-27) — the ONE control that had to move to
      where its number is used (administrative_architecture.md §5 Step 6, rule 1: "the annual
@@ -1042,11 +1054,14 @@ export default function Home() {
     setProfilePortalScope(subject && grade ? { subject, grade, exact: true } : null);
     setPortalWin(null);
     setProfileAutoAdd(null); setProfilePortal("budget");
-    setEditFlow("profile"); setTab("myplans"); setGenerateEntry(null);
+    setProfileWin(true);
   };
   const goPortalHome = () => {
     const o = portalOriginRef.current;
-    if (o && o.home === "lessonplans") goLessons(); else goClasses();
+    /* Nothing navigates: the edit was a window over the tab, so leaving it is closing it. The
+       `goLessons()/goClasses()` this used to do is exactly what made the background blank. */
+    setProfileWin(false);
+    setProfilePortal(null); setProfilePortalScope(null);
     // Restored on EVERY ending, save and cancel alike: TeachingProfile funnels both through the
     // same setScreen("view"), and a teacher who has just amended one item is exactly the person
     // most likely to want the next. Closing the window is her explicit act (✕ / "Not now").
@@ -1272,6 +1287,28 @@ export default function Home() {
               is wrong — so it wears its own quiet class, not `.tp-savefail`'s. Hidden
               inside Settings › Legal itself, where it would sit above the very
               document it points at. */}
+          {/* ★ THE SPOT-EDIT WINDOW, over whatever tab is rendered below (founder, 2026-09-15).
+              It sits OUTSIDE the editFlow ternary on purpose: `editFlow` is untouched by a portal
+              visit now, so the tab she was on is still mounted and still painted, and the scrim
+              has something to haze. That was the whole bug — the overlay was real, the page
+              behind it was not. */}
+          {profileWin && ready && (
+            <div className="ap-overlay tp-window" data-tour="profile-root"
+              onClick={(e) => { if (e.currentTarget === e.target) goPortalHome(); }}>
+              <div className="ap-modal tp-window-card" onClick={(e) => e.stopPropagation()}>
+                {/* The ✕ is the way out, from every step — the footer links inside the flow are
+                    the phone's `fr-link` equivalents and cost a row of a card whose height is the
+                    standing problem (founder, 2026-09-15). */}
+                <button className="ap-close" aria-label="Close" onClick={goPortalHome}>✕</button>
+                <TeachingProfile readiness={readiness} onChange={setReadiness}
+                  onBack={goPortalHome} lapsed={entLapsed} paidScopes={paidScopes}
+                  autoAddClassSubject={null} onConsumeAutoAdd={() => {}}
+                  portalIntent={profilePortal} onConsumePortal={() => setProfilePortal(null)}
+                  portalScope={profilePortalScope}
+                  onSubscribe={() => setSubscribeOpen(true)} />
+              </div>
+            </div>
+          )}
           {privacyNote && !(editFlow === "settings" && settingsView === "legal") && (
             <div className="pn-note" role="status">
               <span>Meyy&rsquo;s Privacy Notice has been updated (version {privacyNote.current_version}).</span>
@@ -1295,41 +1332,16 @@ export default function Home() {
                 onDismissPrepareError={onDismissPrepareError} />
             </div>
           ) : (editFlow === "profile" && ready) ? (
-            /* Teaching profile (via the settings gear) — view + conversational redo (the SAME
-             * first-run UI, answers pre-filled) + delete. The MyClasses drill-down is retired.
-             * Deleting clears pointers (lessons stay) and drops her STRAIGHT into the redo
-             * flow inside this same view — the shell stays open; `ready` is untouched. A
-             * signed-out return without rebuilding hits first run naturally (server profile
-             * is gone, so GET /readiness comes back empty). */
-            /* ★ A PORTAL VISIT IS A WINDOW; A SETTINGS VISIT IS A PAGE (founder, 2026-09-15:
-               "ADD opens a window but individual changes — sections/class/week — open full
-               screen both on web and expo. Suggest the changes also be contained in a window").
-               The two visits are different acts and now look it. Reached from the "+" window or
-               the Year Plan pencil she is making ONE spot edit, so it floats over the screen she
-               was on and "each item changes only itself" is true of the navigation as well as of
-               the record. Reached from Settings › Teaching profile she asked to SEE the whole
-               thing — that is the panorama and it keeps the page.
-               ⚠️ `profileViaSettings` is the discriminator and not `profilePortal`, which is
-               CONSUMED the moment TeachingProfile launches its screen and would flip this back to
-               a page mid-edit. */
-            <div className={profileViaSettings ? "editflow" : "ap-overlay tp-window"}
-              data-tour="profile-root"
-              onClick={profileViaSettings ? undefined
-                : (e) => { if (e.currentTarget === e.target) goPortalHome(); }}>
-            <div className={profileViaSettings ? "" : "ap-modal tp-window-card"}
-              onClick={profileViaSettings ? undefined : (e) => e.stopPropagation()}>
-              {/* Profile ONLY — the account/data/app rows live on the gear's Settings
-                  screen now (founder, 2026-08-24; AccountPanel dissolved into it). */}
+            /* Teaching profile via SETTINGS — the panorama. She asked to SEE the whole thing, so
+             * this one keeps the page. A spot edit from the "+" window or the Year Plan pencil is
+             * a different act and renders as a window below, over whatever tab she was on. */
+            <div className="editflow" data-tour="profile-root">
               <TeachingProfile readiness={readiness} onChange={setReadiness}
-                onBack={profileViaSettings ? null : goPortalHome} lapsed={entLapsed} paidScopes={paidScopes}
+                onBack={null} lapsed={entLapsed} paidScopes={paidScopes}
                 autoAddClassSubject={profileAutoAdd} onConsumeAutoAdd={() => setProfileAutoAdd(null)}
-                portalIntent={profilePortal} onConsumePortal={() => setProfilePortal(null)}
-                portalScope={profilePortalScope}
-                /* The add-a-subject chooser needs a way out when her subscription covers
-                   nothing she has not already added — the SAME SubscribeFlow the front door
-                   and Settings open, never a second one. */
+                portalIntent={null} onConsumePortal={() => setProfilePortal(null)}
+                portalScope={null}
                 onSubscribe={() => setSubscribeOpen(true)} />
-            </div>
             </div>
           ) : (editFlow === "settings" && ready) ? (
             <div className="editflow">

@@ -5321,3 +5321,11 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
    do" on a full page. In a window the card's own edge already does that, and 88px of air would
    push Save under the fold — so it comes down, not out. */
 .tp-window-card .tp-budget .fr-foot { padding-top: 28px; }
+/* The ✕ needs room, and the flow's own footer links do not: the corners do the navigating
+   (founder, 2026-09-15) — same rule as the phone's window. */
+.tp-window-card > .ap-close { top: 12px; right: 12px; }
+.tp-window-card .tp { padding-top: 2px; }
+/* Inside the window the ✕ is the way out, so the flow's footer "← Back" / "Cancel" links are
+   redundant — and each costs a row of a card whose height is the standing problem. They stay on
+   the full-page Settings visit, which has no ✕ of its own. */
+.tp-window-card .tp > .fr-link { display: none; }

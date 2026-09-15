@@ -675,8 +675,14 @@ export function webStyles(t, scheme = "light") {
        ⚠️ `.fr-q` is 27 here, NOT the 32 at line 3353 — that lives inside `@media (min-width:
        700px)` and the phone renders the narrow shape. Reading the desktop value off a bare grep
        is precisely the mistake the parity checker exists to catch. */
+    /* ⚠️ NO `marginTop`, AND THAT IS THE MEASURE. On the web `.kicker` carries no margins and
+       `.fr-q` is `margin: 0 0 6px`, so the two sit FLUSH — measured on the running page, the
+       kicker's bottom and the heading's top are the same pixel. Anything added here opens a gap
+       the web does not have. */
     fr_q:            { fontFamily: F.display(600), fontSize: 27, lineHeight: 31.86, letterSpacing: -0.4,
                        color: t.ink, marginBottom: 6 },
+    /* The editor's kicker clears the window's corner buttons, which are drawn over this line. */
+    tp_kicker_pad:   { paddingRight: 30 },
     tp_val_row:      { flexDirection: "row", alignItems: "center", columnGap: 16,
                        marginTop: 18, marginBottom: 12 },   // .tp-val-row + .tp-val-solo
     tp_val_btn:      { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5,

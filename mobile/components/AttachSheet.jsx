@@ -85,11 +85,19 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
               <Text style={[ws.ap_back_glyph, { color: t.ink_soft }]}>←</Text>
             </Pressable>
           ) : null}
-          <View style={[ws.ap_head, onBack && { paddingLeft: 34 }]}>
-            <Text style={ws.ap_kicker}>{kicker}</Text>
-            <Text style={ws.ap_title}>{title}</Text>
-            {sub ? <Text style={ws.ap_sub}>{sub}</Text> : null}
-          </View>
+          {/* ⚠️ SKIPPED ENTIRELY when a window brings its own heading. `.ap-head` is the WINDOW's
+              header — an ochre kicker over a 21px title — and it is right for a window whose
+              title is the window (the portal, the confirms). The profile editor is not one of
+              those: it carries the web's `.tp` header, a PINE kicker flush against a 27px
+              `.fr-q`, and rendering the window's header above it gave two headers, two kickers in
+              two different colours, and 14px of dead space between them. */}
+          {kicker || title || sub ? (
+            <View style={[ws.ap_head, onBack && { paddingLeft: 34 }]}>
+              {kicker ? <Text style={ws.ap_kicker}>{kicker}</Text> : null}
+              {title ? <Text style={ws.ap_title}>{title}</Text> : null}
+              {sub ? <Text style={ws.ap_sub}>{sub}</Text> : null}
+            </View>
+          ) : null}
           {body}
         </Pressable>
       </Pressable>

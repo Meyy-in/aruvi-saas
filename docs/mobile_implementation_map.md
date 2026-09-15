@@ -279,13 +279,27 @@ showing her mobile number on the bar after she had subscribed.
   standing problem. The budget step's 88px lift also drops to 28 inside a window: the card's own edge
   already separates "what I am being told" from "what I am about to do", and 108px pushed Save under
   the fold of a capped card.
-- 🔴 **BLANK BACKGROUND BEHIND A WEB EDIT — open.** Founder: the portal window hazes over My Classes
-  but the individual windows do not. On the PHONE they do (the editor renders in the layout, over the
-  Stack). On the WEB they cannot: `editFlow === "profile"` renders the profile INSTEAD of the tab
-  content, so the scrim dims an empty page. The fix is the phone's own architecture — keep `editFlow`
-  where it was and render the edit as an overlay beside the main content, which also retires
-  `lessonsPaneIntentRef` exactly as `lib/paneIntent` was retired on the phone. **Not attempted yet: it
-  restructures page.jsx's render tree and the web tab is signed out, so it cannot be verified.**
+- ✅ **BLANK BACKGROUND BEHIND A WEB EDIT — FIXED.** The first windowing pass wrapped the profile in
+  `.ap-overlay` but still routed through `editFlow = "profile"`, which renders the profile INSTEAD of
+  the tab content — so the scrim was dimming an empty page. There was nothing behind it to haze.
+  `editFlow` now stays where she was and the edit renders BESIDE the main content, off a `profileWin`
+  flag, which is the phone's architecture.
+  ⚠️ It also retires `lessonsPaneIntentRef` — the web's twin of `lib/paneIntent`, and deleted for the
+  same reason: she is not navigated away from My Lessons any more. Both surfaces lost that mechanism
+  on the same day.
+  ⚠️ A SETTINGS visit still keeps the full page: she asked to SEE the whole profile, which is the
+  panorama, not a spot edit. Walked on the web with the founder signed in: Add → Section opens over a
+  hazy My Classes, ✕ closes it and the portal window comes back.
+
+- ✅ **The section hint is ONE sentence** (founder, 2026-09-15). It carried three: what ticking does,
+  what a removal costs, and where to remove a whole class. The last was stale for weeks (Q4); the
+  middle warns about a thing she has not done, and is read by every teacher who came to ADD a section.
+  The removal confirm says it at the moment she is actually removing something. Both surfaces.
+- ✅ **The Expo kicker is the EDITOR's, not the window's.** `.ap-kicker` is ochre at .12em — right for
+  a window whose title IS the window. This screen is the web's `.tp`, whose kicker is `.kicker`: pine,
+  weight 500, .18em, and FLUSH against the heading (measured on the running page: kicker bottom and
+  heading top are the same pixel). `Sheet` now skips its header block entirely when a window brings
+  its own.
 
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
