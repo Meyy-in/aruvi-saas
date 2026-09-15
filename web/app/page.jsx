@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement } from "./lib/format";
+import { accountFirstName } from "./lib/account";
 import { verifiedWrite, readinessFingerprint } from "./lib/verify";
 import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache } from "./lib/sectionState";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
@@ -745,10 +746,11 @@ export default function Home() {
   useEffect(() => {
     if (!user) { setDisplayName(""); return; }
     fetch(`${API}/account`, withUser()).then((r) => (r.ok ? r.json() : null)).then((a) => {
-      const nm = a && (a.display_name || "").trim();
-      // FIRST name only, capitalised (founder, 2026-08-26) — bar and greeting both.
-      const first = nm && !/^\d+$/.test(nm) ? nm.split(/\s+/)[0] : "";
-      setDisplayName(first ? first.charAt(0).toUpperCase() + first.slice(1) : "");
+      /* FIRST name only, capitalised; a numeric display_name is the JIT default, not a name.
+         The rule moved to @aruvi/shared/account on 2026-09-15 so the phone's bar and greeting
+         decide it identically — the founder found them still showing her mobile number after she
+         had subscribed and given her name. One rule, two surfaces. */
+      setDisplayName(accountFirstName(a));
       /* Has the tour already had its one showing? (2026-08-26 — see tourOnOffer.)
          Never while it is on screen in THIS session: a mid-session re-read (a subscribe
          or a profile save bumps entSyncTick) would otherwise pull the nudge out from

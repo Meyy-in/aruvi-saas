@@ -23,6 +23,7 @@ import { clearLocalHistoryCache } from "./sectionHistory.js";
 import { clearBank } from "./ask-aruvi/bank.js";
 import { clearPlans, PLANS_CACHE_PREFIX } from "./plans.js";
 import { clearReadiness, READINESS_CACHE_PREFIX } from "./readiness.js";
+import { clearAccount, ACCOUNT_CACHE_PREFIX } from "./account.js";
 import { clearUser } from "./format.js";
 
 export const TEACHER_CACHE_PREFIXES = [
@@ -32,6 +33,7 @@ export const TEACHER_CACHE_PREFIXES = [
   "aruvi_ask_bank",
   PLANS_CACHE_PREFIX,            // the per-subject plan listing (plans.js) — carries HER flags
   READINESS_CACHE_PREFIX,        // her teaching profile (readiness.js) — subjects, classes, sections
+  ACCOUNT_CACHE_PREFIX,          // her account (account.js) — the NAME on the bar and in the greeting
 ];
 
 export function clearTeacherCaches(extraPrefixes = []) {
@@ -41,6 +43,8 @@ export function clearTeacherCaches(extraPrefixes = []) {
   clearBank();
   clearPlans();                  // the memory copy, which no prefix sweep can reach
   clearReadiness();              // likewise — her classes must not outlive her session
+  clearAccount();                // …and neither must her NAME: on a shared phone the next
+                                 // teacher to sign in must not be greeted as this one.
   clearUser();
   // belt and braces: anything the named clears missed, plus the app's own per-user keys
   n += removeByPrefix([...TEACHER_CACHE_PREFIXES, ...extraPrefixes]);

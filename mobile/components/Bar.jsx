@@ -13,12 +13,14 @@
  *
  * Sits under the status bar via the safe-area inset; there is no measured --nav-h here, native
  * layout does it. Measures live in theme/web.js under hdr_*. */
+import { useEffect, useState } from "react";
 import { View, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "./Text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MeyyMark from "./MeyyMark";
 import { getUser } from "@aruvi/shared/format";
+import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { endSession } from "../lib/session";
@@ -46,6 +48,25 @@ export default function Bar({ user = getUser(), onSettings = null }) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
+  /* ★ HER NAME, NOT HER PHONE NUMBER (founder, 2026-09-15: "since I have subscribed under
+     9000000003, the web app correctly shows my name (Kk) but Expo and my iPhone continue to show
+     the phone number on the top bar"). The web has read `/account` for this since 2026-08-26; the
+     phone never learned to ask, so it showed the id — which is a MOBILE NUMBER for every teacher
+     who has not subscribed. She subscribed, gave her name, and the phone went on calling her
+     9000000003.
+     ⚠️ SEEDED SYNCHRONOUSLY from the device copy, so the first paint already carries her name.
+     Showing the number for a beat and then correcting it reads worse than either on its own —
+     the bar is the one piece of chrome she never stops looking at.
+     The id remains the fallback, and `accountFirstName` is what decides: a numeric display_name
+     is the server's just-in-time default, not a name she gave us. */
+  const [name, setName] = useState(() => (user ? cachedFirstName() : ""));
+  useEffect(() => {
+    if (!user) { setName(""); return; }
+    let live = true;
+    fetchAccount().then((a) => { if (live) setName(accountFirstName(a)); }).catch(() => {});
+    return () => { live = false; };
+  }, [user]);
+
   return (
     <View style={{ backgroundColor: t.bar_fill, paddingTop: insets.top + 14, paddingBottom: 15 }}>
       <View style={ws.hdr}>
@@ -65,7 +86,7 @@ export default function Bar({ user = getUser(), onSettings = null }) {
               <Text style={ws.hdr_gear}>⚙</Text>
             </Pressable>
             <View style={ws.hdr_user_id}>
-              <Text style={ws.hdr_user_name} numberOfLines={1}>{user}</Text>
+              <Text style={ws.hdr_user_name} numberOfLines={1}>{name || user}</Text>
               <Pressable onPress={() => endSession(router)} hitSlop={8}
                 accessibilityRole="button" accessibilityLabel="Log out">
                 <Text style={ws.hdr_user_logout}>Log out</Text>

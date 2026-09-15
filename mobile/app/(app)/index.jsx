@@ -16,6 +16,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
+import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
@@ -307,8 +308,21 @@ function DashHead({ classes, plansBySG, user }) {
   const ws = useWebStyles();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  /* ★ FROM HER ACCOUNT, NOT FROM HER ID (founder, 2026-09-15 — the same report that put her name
+     back on the bar). This used to test the signed-in id for digits, which meant the greeting
+     could only ever be personal for a named DEV id: a teacher who subscribed and gave her name
+     still got a bare "Good evening!" because her id is a mobile number and always will be. The
+     name now comes from `/account` through the shared store, and `accountFirstName` keeps the
+     same rule the bar uses — a numeric display_name is the server's default, not a name.
+     Read synchronously so the greeting does not change under her a beat after it appears. */
+  const [fromAccount, setFromAccount] = useState(() => cachedFirstName());
+  useEffect(() => {
+    let live = true;
+    fetchAccount().then((a) => { if (live) setFromAccount(accountFirstName(a)); }).catch(() => {});
+    return () => { live = false; };
+  }, [user]);
   const rawId = (user || "").trim();
-  const firstName = /^\d+$/.test(rawId) ? "" : rawId;
+  const firstName = fromAccount || (/^\d+$/.test(rawId) ? "" : rawId);
   const anyBound = classes.some((c) => !!readLocalSection(c.sectionKey).chapter);
   const anyPlans = Object.values(plansBySG || {}).some((m) => Object.values(m || {}).some((p) => p.prepared));
 
