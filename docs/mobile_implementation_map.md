@@ -1,5 +1,11 @@
 # Track D implementation map — from step 5c to full migration
 
+> **How this document is maintained.** It is the live tracker, not a snapshot: §0 carries what has landed
+> and its commit, each step in §2 is marked DONE/IN PROGRESS as it goes, and §4's questions are struck
+> through with their answers rather than deleted. **Update it in the same commit as the work** — a plan
+> that has to be reconstructed afterwards is a plan nobody trusts. Where the build DIVERGED from what was
+> planned here, say so and say why: those notes are the most useful lines in the file.
+
 *Drawn 2026-09-15 against the repo as it stands on the Mac (HEAD `e8f91436`, plus the uncommitted step-5c
 files: `packages/shared/src/budget.js`, `packages/shared/test/budget.test.js`, `web/app/lib/budget.js`,
 and the 63-line trim of `TeachingProfile.jsx`). Companion to `docs/mobile_migration_plan.md` §2 Track D
@@ -28,24 +34,53 @@ owed) · **PARITY-CHECK OWED** (a web class with no `web.js` key yet).
 
 ## 0. Where we are
 
+*Kept current as work lands (founder, 2026-09-15: "keep updating the map about the progress so that it is
+tracked"). Every step below carries its commit; a step is only moved to DONE once it has been walked, and the
+walk says on WHICH surface — the two are not interchangeable (see the 2026-09-15 iOS entry).*
+
 **Committed and verified on the phone:** steps 1 (shared package), 2 (scaffold + Login/OTP), 3 (LessonView),
 4a (My Classes "+" binding), 4b (My Lessons library + Year Plan read), 5a (Prepare), 5b (proposed card +
 the wait moves to My Lessons), the bottom bar, the org-page-until-taught rule, the parity checker.
 
-**In flight (uncommitted, 2026-09-15):** step 5c — the annual budget arithmetic lifted into
-`@aruvi/shared/budget.js` (`budgetPeriods`, `normalizeBudget`, `clampPeriods`, `findScope`, `setGradeBudget`,
-`gradeBudgetRecord`; 4 tests), web re-export, TeachingProfile trimmed to call it. Nothing on the phone
-consumes it yet (`YearPlan.jsx` accepts `onEditBudget`; `lessons.jsx:602` never passes it).
+**Landed 2026-09-15 — foundations F1, F2, F4, F8 and the numbers editor.**
 
-**What the phone is today, in one sentence:** a teacher who already has a profile can teach (LessonView, full),
-track (My Classes), browse and prepare (My Lessons, Prepare, Year Plan read) — and cannot *become* a teacher
-(no first run), *change* what she teaches (Add is inert), *reach* Settings (gear is inert), *ask* Meyy (item is
-inert), or *export* anything.
+| | What | Commit | Walked on |
+|---|---|---|---|
+| — | Two crashes opening a lesson: a hook below an early return (web) and a const read from a dep array before it existed (phone) | `ed8fc93d` | both |
+| **F1** | `shared/readiness.saveReadiness()` — the one way a profile is written; the read-after-write doctrine and its three outcomes. **And the annual budget JOINED `readinessFingerprint`** — it was excluded as "derived", which stopped being true the day an editor changed only it, so a dropped year read back as verified | `7593264f` | 17 tests |
+| **F2** | `shared/ppw.js` (the weekly split, lifted from `wheels.jsx`) and `shared/profile.js` (the draft ⇄ record family, from `TeachingProfile.jsx`); `rekeyBudget` → `budget.js` | `1786523a` | web + 25 tests |
+| **F4** | `shared/account.js` — her NAME on the bar and in the greeting. Founder-reported: the phone was still calling her 9000000003 after she had subscribed and given her name | `eadaad65` | Expo + 10 tests |
+| **F8** | `PickWheel` + `shared/pick.js` (the clustering rule, shared so the phone cannot approximate it) | `ceb3d742` | 12 tests |
+| **5c/5d** | The numbers editor: `(app)/profile.jsx` with `budget` · `ppw` · `duration` intents, `PpwSplitCell`, `setGradeNumbers`, and **the Year Plan's budget pencil lit** | `ff8cf0c1` | Expo, end to end |
+| — | "Total periods" vanished on iOS — a wrapper View in a baseline row | `f2dda0c0` | iPhone (founder) |
+
+**★ 5c IS NOT A SEPARATE STEP ANY MORE.** Founder's answer to Q1 was HOLD: the budget screen's own
+sense-check pencil leads to the ppw wheel, so shipping it before the numbers editor would only have moved
+the dead end one level down. Both pencils lit together in `ff8cf0c1`.
+
+**Still owed on 5d** (the order below is §2's, minus what landed): **F7** `lib/portal.js` + **F3**
+`shared/setupCheck.js` · the ProfilePortal window · the two pick screens · the section editor (**Q4**) ·
+manage classes · add a subject (**Q3**) · the check-mood window (**Q9**).
+`SecNameCell` is still owed too — `PickWheel`'s trailing column carries it, but nothing renders one yet.
+
+**What the phone is today, in one sentence:** a teacher who already has a profile can teach (LessonView,
+full), track (My Classes), browse and prepare (My Lessons, Prepare, Year Plan), and now **amend her week and
+her year** (periods a week, period lengths and their split, the annual budget) — and still cannot *become* a
+teacher (no first run), *add or remove* what she teaches (Add is inert), *reach* Settings (gear is inert),
+*ask* Meyy (item is inert), or *export* anything.
 
 **The four inert doors** are the shape of the remaining work:
-`(app)/_layout.jsx:37-38` — `onAdd={() => {}}`, `onAsk={() => {}}`; `Bar.jsx:63-66` — gear `disabled={!onSettings}`
+`(app)/_layout.jsx` — `onAdd={() => {}}`, `onAsk={() => {}}`; `Bar.jsx` — gear `disabled={!onSettings}`
 and no screen passes one; `(app)/index.jsx:255` — "No classes yet — set up your teaching profile (first run
 comes in a later step)."
+
+**★ AND ONE THING THE TOOLING CANNOT CHECK, learnt the hard way on 2026-09-15.** The parity page puts two
+renderings side by side — but BOTH panes are react-native-web. A divergence between iOS and
+react-native-web is therefore invisible to it: it showed a perfect match of two wrong answers while
+"Total periods" was missing on the handset. Anything touching **baseline alignment, intrinsic sizing or
+text metrics** has only one authority, and it is the phone in the founder's hand. Budget a founder walk for
+those; do not report them as verified off the parity page. (MEMORY.md, same date, has the full account —
+it is the other face of "native tolerance is not correctness".)
 
 ---
 
@@ -58,14 +93,14 @@ node, and each unblocks several screens at once. Build them first.
 ```
 FOUNDATIONS                                        SCREENS THEY UNBLOCK
 ───────────────────────────────────────────────    ────────────────────────────────────────────
-F1  shared/readiness.js: saveReadiness()      ──►  5c budget editor · 5d profile portal · 5e FirstRun
-F2  shared/profile.js: wheels.jsx arithmetic  ──►  5d (ppw/duration/sections) · 5e (chapter step seeds)
+F1 ✅shared/readiness.js: saveReadiness()      ──►  5c budget editor · 5d profile portal · 5e FirstRun
+F2 ✅shared/profile.js + shared/ppw.js         ──►  5d (ppw/duration/sections) · 5e (chapter step seeds)
 F3  shared/setupCheck.js (ProfilePortal queue)──►  5d check-mood window · 6a shell
-F4  shared/account.js  (GET /account store)   ──►  6a bar name + greeting · 5e first name · Settings › Personal
+F4 ✅shared/account.js  (GET /account store)   ──►  6a bar name + greeting · 5e first name · Settings › Personal
 F5  shared/entitlement.js (poll + lapsed/trial/paidScopes) ─► 6a bar hiding · 5d scope filters · Settings › Subscription · My Lessons CTA
 F6  shared/year.js (GET /academic-year + cutover) ─► 6a cutover offer/result · prior-year folders (My Classes picker, My Lessons) · YearStamp
 F7  mobile/lib/portal.js (origin store, preparing.js idiom) ─► 5d every exit · Year Plan pencil round trip
-F8  mobile/components/PickWheel.jsx (+ PpwSplitCell, SecNameCell) ─► 5d sections/classes/subjects/durations · 5e (none — FirstRun uses RollWheel)
+F8 🟡PickWheel + PpwSplitCell done; SecNameCell owed ─► 5d sections/classes/subjects/durations · 5e (none — FirstRun uses RollWheel)
 F9  mobile/lib/download.js (expo-file-system + expo-sharing) ─► 7 Reports modal · Year Plan export · data exports · invoice PDF · delete-flow docx
 F10 (app)/_layout.jsx becomes a real shell (askOpen, portalWin, notices, Bar in the layout) ─► 6a · 6c Ask Meyy · every bar door
 F11 mobile/components/Dropdown replacement (sheet/picker) ─► Settings › Personal profile (Role/State) · Support
@@ -89,50 +124,76 @@ Each step: **entry** (what must already exist) · **build** (the line-level item
 keys to measure** · **exit** (the phone walk that signs it off) · **web owed** (changes the web must take at the
 same time — CLAUDE.md §0: every UI change is made on BOTH surfaces).
 
-### Step 5c — the budget editor and the Year Plan pencil  *(in flight)*
+### Step 5c — the budget editor and the Year Plan pencil  ✅ **DONE 2026-09-15** (`7593264f`, `ff8cf0c1`, `f2dda0c0`)
 
-**Entry:** `budget.js` (on disk, uncommitted). Nothing else.
+**★ FOLDED INTO 5d.** Q1 asked whether to ship the budget screen with a dead sense-check pencil as a named
+divergence, or hold until the ppw editor existed. **Founder: HOLD.** So the screen was built and left
+unreachable until 5d's numbers editor landed, and both pencils lit in the same commit. Shipping the outer
+one first would only have moved the dead end one level down — the thing 4b held the Year Plan pencil back
+for in the first place.
 
-**Build:**
-- **F1 `saveReadiness(subjects)`** in `packages/shared/src/readiness.js` — `POST /readiness {subjects,
-  cascade:true}` → `verifiedWrite` + `readinessFingerprint` (shared `verify.js:35,102`) → on ok/unverified
-  write-through to `mem` + device copy; on mismatch adopt the server copy and return `status:"mismatch"`.
-  App. 02 row 96; the web's inline block `TeachingProfile.jsx:372-379` becomes its second caller.
-- The **budget screen** (app. 02 rows 54-60): kicker `.kicker.kicker-ochre` "{subject} · Class {n} · annual
-  budget" · `h1.fr-q` "How many periods for the year?" · value row `.tp-val-row.tp-val-solo` (round **−**
-  "Fewer periods" · `input` min 1 "Annual period budget" · **+** "More periods" · "periods / year") ·
-  sense-check `.tp-weeks` "{weeks} weeks (@ {ppw} periods/week)" + pencil (see Q1) · `.tp-estimate-sub` "Meyy
-  recommends {rec} periods a year based on general norms for this class." / " (NCF norm: {ncf})" / "As per NCF,
-  this class requires {ncf} periods." · foot `.fr-foot` **Save** / **Cancel**. Value on open =
-  `normalizeBudget(stored, ppw, recTotal)`; saved ONLY as `{method:"periods", value}` via `setGradeBudget`.
-  Fetch `GET /subjects/{s}/{g}/ncf-periods` while the screen shows (row 11).
-- **Route** `mobile/app/(app)/profile.jsx` with params `{intent:"budget", subject, grade, exact:true}` — the
-  `exact` scope skips both pick screens (row 21 `portalGradeIdxs`).
-- **Year Plan pencil** (app. 05 E7): "Change your annual periods", aria "Change your annual period budget for
-  {subject}, Class {n}" on the totals row; `lessons.jsx:602` passes `onEditBudget`; return lands on the
-  **Year plan pane** (`paneIntent="plan"`, app. 05 C2 — a route param on the way back, the phone's
-  `lessonsPaneIntentRef`).
-- The mismatch banner "That change didn’t save — this is your teaching profile as it stands." + **Dismiss**
-  (app. 02 row 13; `tp_savefail` measures shared with app. 01 row 18).
+**Built, against the plan below:**
+- **F1 `saveReadiness(subjects)`** — as specified, plus a finding the spec could not have known: writing its
+  tests showed `readinessFingerprint` **excluded the annual budget**. That exclusion was sound while the
+  budget was only ever a by-product of the class run and stopped being sound the moment an editor changed
+  only it — a save that dropped her year read back as VERIFIED. Now included, with every artefact spelling
+  normalised (both index-key spellings, both spellings of "not set", numeric strings) and the map read
+  BEFORE the grades are sorted. ⚠️ **This makes every save on both surfaces stricter.**
+- **The budget screen** — all of it: kicker, `fr-q`, the value row, the weeks sense-check, the
+  recommendation lines, Save/Cancel, and the mismatch banner with its Dismiss.
+  ⚠️ The banner sits ABOVE the loading split: a mismatch clears `value` so the field can re-seed from the
+  server, so written inside the `value != null` branch — where it first was — it could never once appear.
+- **Route:** `(app)/profile.jsx` with `intent`, as the plan asked, so 5d's steps land beside it rather than
+  as four more routes each with its own save path, scope resolver and exit rule.
+- **Year Plan pencil** — lit, returning to the Year Plan pane.
+  ⚠️ The plan proposed "a route param on the way back". It is a module one-shot (`lib/paneIntent`) instead:
+  a param STAYS on the route, so an ordinary /lessons → /lesson → back would re-read it and re-steer her.
+  And it is consumed on FOCUS, not mount — /profile is PUSHED on top of My Lessons, so the return pops to a
+  screen still mounted and a mount-only read would steer nothing at all.
 
-**web.js:** `web.js:622-651` already carries `tp_val_row/tp_weeks/tp_estimate_sub/fr_q` (note the `.fr-q`
-27-vs-32 trap at `web.js:625-627`); add `kicker_ochre`, `tp_savefail`, `tp_savefail_btn`, `yp_budget_edit`.
+**Two corrections to the plan's `web.js` line, both from measuring rather than reading:**
+- **There is no `kicker_ochre` to add.** `.kicker-ochre` has NO rule anywhere in globals.css — four web
+  files render it and it computes as a plain pine `.kicker`. `ws.kicker` is the faithful port.
+- `.fr-cta` declares font-size 16 and border-radius 12 and **the browser applies neither**: the element is
+  `button.primary.fr-cta` and `button.primary` (0,1,1) beats `.fr-cta` (0,1,0) on SPECIFICITY, so the live
+  values are 12 and 3. The plan's note about the `.fr-q` 27-vs-32 media-query trap was right and was heeded.
+- The pencil's aria label matches the WEB verbatim ("…for {subject}"); the plan's row adds ", Class {n}",
+  which the web does not say. CLAUDE.md §4 — the web wins.
 
-**Exit:** My Lessons → Year plan → pencil → the budget screen opens on the stored value → − / + / type →
-Save → back on the Year plan pane with the table re-distributed (largestRemainder) → Cancel path → the
-profile record on Supabase carries `{method:"periods"}` → the web's Year Plan shows the same total.
+**Also fixed here:** the parity checker resolved `em` against whichever font-size came first across all worn
+sets rather than the winner for the SAME set, so it called a correct 0.96 wrong at 1.28 — the class of
+mistake it exists to catch. Pairing is now by index; diffing old against new showed exactly one line gone.
 
-**Web owed:** TeachingProfile's inline persist → `saveReadiness`; commit `budget.js` + tests.
-
-**Founder call before building:** Q1 (pencil inside the budget screen leads to the ppw wheel — ship without it
-until 5d, as a named divergence?) and Q2 (two budget readers).
-
-### Step 5d — the profile portal: Add, and the three portal doors
+### Step 5d — the profile portal: Add, and the three portal doors  🟡 **IN PROGRESS**
 
 **Entry:** 5c (F1). F5 for scope filters (can be stubbed as "unscoped" until 6a — the deployed API has
 enforcement off, so `paidScopes` is null for every teacher today).
 
-**Build (in this order — each sub-step is a shippable screen):**
+**Progress (2026-09-15).** Items **7** (F2) and **8** (the numbers editor) are DONE, out of order and
+deliberately: Q1's HOLD made the numbers editor the thing that unblocked 5c, so it was built first and the
+two pencils lit together. **F8** (`PickWheel`) came with it, since item 8's duration step is its first
+caller. **F4** (`shared/account.js`) was pulled forward out of 6a by a founder report — the phone was still
+showing her mobile number on the bar after she had subscribed.
+
+- ✅ **7 · F2** — `shared/ppw.js` + `shared/profile.js` + `rekeyBudget` → `budget.js`, 25 tests (`1786523a`).
+  The stake is not tidiness: the fingerprint compares what a teacher can change, so a phone that composed a
+  record differently would report every save as lost work. `profile.test.js` asserts draft → record is a
+  no-op under the fingerprint.
+- ✅ **8 · the numbers editor** — ppw step → duration step with the split column, saving together
+  (`ff8cf0c1`). ⚠️ The lengths and their split save TOGETHER, which is why ppw has only Continue: the size
+  of a week and its division are one answer. ⚠️ The last length cannot be unticked.
+- ✅ **4 (part) · `PickWheel` + `PpwSplitCell`** (`ceb3d742`, `ff8cf0c1`). Two-column mode, clustering via
+  the shared rule, the trailing column. **`SecNameCell` is still owed** — nothing renders one until the
+  section editor (item 5).
+  ⚠️ `PpwSplitCell`'s picker is a `Sheet`, not the web's position:fixed listbox. The web's reason for a
+  hand-built listbox (macOS draws a native select's popup and the palette cannot reach it) is a DOM reason;
+  on a phone the opposite constraint applies.
+  ⚠️ And the Sheet is MOUNTED/UNMOUNTED, not toggled — returned from `PickWheel`'s `trailing` callback, it
+  sits inside the wheel's ScrollView, so a pick rebuilds the surrounding subtree in the frame the Modal
+  starts its fade-out and the exit never completes. Other sheets in the app toggle `visible` and close
+  perfectly; this position is what differs.
+
+**Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
    `subscribePortal`; the phone's `portalOriginRef` (app. 01 rows 77-78). **F3** `shared/setupCheck.js` — the
    queue lifted verbatim from `ProfilePortal.jsx:135-184` (`setupKey`, `queueSetupCheck`, `takeSetupCheck`,
@@ -166,12 +227,12 @@ enforcement off, so `paidScopes` is null for every teacher today).
    from {subject}?" incl. " No class is left — {subject} goes with it." · adds applied WITHOUT the per-class
    run: `sections:["A"]`, `DEFAULT_DURATION`, ppw from `/ncf-periods` (`ppwFromAnnual`) or `DEFAULT_PPW`,
    `rekeyBudget` on removal (row 15).
-7. **F2** the arithmetic out of `wheels.jsx:434-483` into `packages/shared/src/profile.js` (row 89:
+7. ✅ **DONE** (`1786523a`) — **F2** the arithmetic out of `wheels.jsx:434-483` into `packages/shared/src/profile.js` (row 89:
    `DEFAULT_DURATION=40`, `DEFAULT_PPW=6`, `DURATION_CHOICES`, `PPW_CHOICES`, `ppwMapSum`, `lowestDuration`,
    `ppwAnchor`, `normPpw`, `setPpwSplit`, `setPpwTotal`) and the draft⇄record family out of
    `TeachingProfile.jsx` (rows 15-17: `gradeDraftFrom`, `finalizeSubject`, `secObj`, `cleanSecName`,
    `namesFromSections`, `secSummary`, `rekeyBudget`, `portalGradeIdxs`). Node tests for each.
-8. **The numbers editor** (rows 51-54): ppw step ("How many periods a week?" · "A number, not a timetable —
+8. ✅ **DONE** (`ff8cf0c1`) — **The numbers editor** (rows 51-54): ppw step ("How many periods a week?" · "A number, not a timetable —
    you’ll set the period lengths next." · `PpwTotalWheel` = RollWheel base `large`, 1…14, "period(s) a week")
    → duration step ("How long are the periods?" · single/multi hints · PickWheel 20…120 min with
    `PpwSplitCell`, last duration cannot be unticked · **Save**) → and the budget step's pencil now leads
@@ -239,6 +300,8 @@ Classes shows 9A → the profile on the web shows ppw/budget seeded from `/chapt
 run again → erase the account → first run again.
 
 ### Step 6a — the shell layer (what page.jsx keeps above the tab)
+
+*(**F4 `shared/account.js` already landed** — pulled forward on 2026-09-15 by a founder report that the bar still showed her mobile number after she had subscribed. `eadaad65`.)*
 
 **Entry:** none; every item here is independent of the screens and most are stores. Do it before Settings so
 Settings has state to read.
@@ -438,12 +501,16 @@ Real SMS (DLT) is the external long pole and is outside this map (Track B).
 ## 4. Founder decisions this map waits on
 
 Consolidated from the six appendices (their numbering in brackets). The first five block a step; the rest can
-be answered when the step is reached.
+be answered when the step is reached. **Answered questions stay in the table, struck through with their
+answer** — the reasoning is worth more than the row.
+
+**Due next:** Q4 (the section editor's stale "basket" sentence) and Q3 (manage-subjects), both on the screens
+immediately ahead; then Q9 with the check-mood window.
 
 | # | Blocks | Question |
 |---|---|---|
-| Q1 | 5c | **The sense-check pencil inside the budget screen** leads to the ppw wheel and then durations. Ship the budget screen without the pencil until 5d (named divergence), or hold 5c for the ppw editor? [02·5] |
-| Q2 | 5c | **Two budget readers**: `budgetPeriods` (profile) takes `periods_per_week` as given; `annualBudgetPeriods` (Year Plan, Prepare) derives it from grid cells ÷ sections first. They can disagree on a legacy weeks/days/auto record. Resolve now (Year Plan reads `budgetPeriods`) or wait for a real record? [02·6] |
+| ~~Q1~~ | 5c | ✅ **ANSWERED 2026-09-15 — HOLD.** The budget screen was built and left unreachable until the numbers editor existed; both pencils lit together in `ff8cf0c1`. 5c folded into 5d. |
+| ~~Q2~~ | 5c | ✅ **ANSWERED 2026-09-15 — LEAVE BOTH, RECORDED.** They cannot disagree on the one shape now written; the divergence is written into `budget.js`'s header and revisited the day a legacy record turns up. |
 | Q3 | 5d | **Manage-subjects wheel**: no window sends `portalIntent="subject"` any more; the only live subject add is the accordion's "+ add a subject". Port manage-subjects, or add mode only? [02·2] |
 | Q4 | 5d | **Stale hint** "To remove the whole class, use the basket on the class." — that basket is gone on the web. Port verbatim or amend on both ("…use Class in the Add window")? [02·4] |
 | Q5 | 5e | **Where the first-run gate lives**: `app/index.jsx` (before the shell, like the login redirect) or `(app)/_layout.jsx` (re-routes on a mid-session profile wipe — the web's behaviour)? [01·3] |
