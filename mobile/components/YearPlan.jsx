@@ -21,28 +21,44 @@
  * signal, meaningless to a teacher — its information survives only as its consequence, raw
  * periods).
  *
- * ⚠️ TWO CONTROLS FROM THE WEB'S TOTALS ROW ARE NOT PORTED YET, each for its own reason, named
- * here as CLAUDE.md §4 requires:
- *   · the budget PENCIL (`onEditBudget`) — it opens the teaching profile's budget step, and the
- *     profile portal is Track D step 5. A pencil that leads nowhere is worse than no pencil, and
- *     it is the same call step 4a made about the picker's "prepare a new one" footer. The prop is
- *     accepted and threaded so step 5 is a one-line wiring, not a re-port.
- *   · the WORD EXPORT — the web downloads a blob through an anchor with `download`, which has no
- *     counterpart here: saving a file on a phone is expo-file-system + expo-sharing, a native
- *     dependency and a founder decision about where a document lands (Files? the share sheet?).
- *     The server route is unchanged and waiting; this is a deliberate hold, not an oversight.
- * With both absent the totals row carries no controls at all, so `.yp-tot-l` is plain text here
- * and the export's status line (`.yp-export-msg`) has nothing to say and does not render.
+ * ★ THE BUDGET PENCIL IS LIVE (Track D step 5c, 2026-09-15). It was held back in 4b because it
+ * opened the teaching profile's budget step and there was no profile on the phone — "a pencil
+ * that leads nowhere is worse than no pencil", the same call step 4a made about the picker's
+ * "prepare a new one" footer. It now opens `app/(app)/budget.jsx`, which is that one step and
+ * only that step, and the round trip returns to THIS pane (`lib/paneIntent`).
+ * It sits in the LABEL cell, as on the web, so the two numeric columns stay aligned with the
+ * chapter rows above (founder, 2026-08-27: this is the row a teacher is actually reading when
+ * she judges her year, and the label is the last thing her eye passes before the figures).
+ *
+ * ⚠️ ONE CONTROL FROM THE WEB'S TOTALS ROW IS STILL NOT PORTED, named here as CLAUDE.md §4
+ * requires: the WORD EXPORT. The web downloads a blob through an anchor with `download`, which
+ * has no counterpart here — saving a file on a phone is expo-file-system + expo-sharing, a native
+ * dependency and a founder decision about where a document lands (Files? the share sheet?). The
+ * server route is unchanged and waiting; this is a deliberate hold, not an oversight. With it
+ * absent the export's status line (`.yp-export-msg`) has nothing to say and does not render.
  *
  * Measures live in theme/web.js under `yp_*` (§4 rule 2).
  */
 import { useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { View, Pressable } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
 import { annualBudgetPeriods, getJSON, largestRemainder, pad } from "@aruvi/shared/format";
 import { fetchPlans } from "@aruvi/shared/plans";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
+
+/* Pencil (edit) — the web's own glyph, path for path (YearPlan.jsx / TeachingProfile.jsx). It is
+   duplicated there rather than shared because a four-line SVG is not worth a module; the same
+   judgement holds here, and copying the PATH DATA rather than redrawing it is what keeps the two
+   surfaces the same mark. */
+const Pencil = ({ size = 13, color }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color}
+    strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M4 20h4L18.5 9.5a1.5 1.5 0 0 0 0-2.12l-1.88-1.88a1.5 1.5 0 0 0-2.12 0L4 16v4z" />
+    <Path d="M13.5 6.5l4 4" />
+  </Svg>
+);
 
 export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditBudget }) {
   const { t } = useTheme();
@@ -191,10 +207,26 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
           </View>
         ))}
 
-        {/* Totals. The web hangs the budget pencil and the export in this row's label cell —
-            both deliberately absent here (see the header), so the label is plain. */}
+        {/* Totals. The pencil rides in the label cell, as on the web; the export is the one
+            control still held back (see the header). */}
         <View style={[ws.yp_tot, { borderBottomColor: t.ink }]}>
-          <Text style={ws.yp_tot_l}>Total periods</Text>
+          <View style={ws.yp_tot_lrow}>
+            {/* ⚠️ NOT `flex: 0` (2026-09-15). `yp_tot_l` carries `flex: 1` for the case where it
+                IS the whole cell; inside this row the ROW owns that, so the label only needs to
+                size to its own words. `flex: 0` in Yoga is grow 0 / shrink 0 / basis 0 — and a
+                basis of ZERO collapsed the words to nothing, leaving a pencil floating beside two
+                numbers with no "Total periods" to explain them. `flexBasis: "auto"` is what
+                "size to content" actually says. */}
+            <Text style={[ws.yp_tot_l, { flexGrow: 0, flexShrink: 1, flexBasis: "auto" }]}
+              numberOfLines={1}>Total periods</Text>
+            {onEditBudget ? (
+              <Pressable onPress={onEditBudget} accessibilityRole="button" hitSlop={10}
+                accessibilityLabel={`Change your annual period budget for ${subjectName}`}
+                style={ws.yp_budget_edit}>
+                <Pencil color={t.pine_d} />
+              </Pressable>
+            ) : null}
+          </View>
           <Text style={[ws.yp_tot_n, ws.yp_c_sug]}>{sugTotal}</Text>
           <Text style={[ws.yp_tot_n, ws.yp_c_plan]}>{committedTotal}</Text>
         </View>

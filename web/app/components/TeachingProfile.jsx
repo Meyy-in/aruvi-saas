@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getJSON, pretty, ROMAN, stageOfGrade, projectReadiness, API, withUser,
          ESTIMATE_WEEKS, weeksFromAnnual, ppwFromAnnual } from "../lib/format";
+import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget } from "../lib/budget";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
 import { pushSectionState } from "../lib/sectionState";
 import { RollWheel, PickWheel, PpwTotalWheel, PpwSplitCell, normPpw, ppwMapSum, ppwAnchor,
@@ -40,7 +41,6 @@ import { RollWheel, PickWheel, PpwTotalWheel, PpwSplitCell, normPpw, ppwMapSum, 
  */
 
 const SECTION_LETTERS = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)); // A…Z
-const DAYS_IN_WEEK = 6;
 /* The My Classes "+" portal intents that resolve to ONE subject·class (ProfilePortal.jsx's rows).
    "subject" and "class" are not here: they are managed at the level ABOVE a class. The words are
    the teacher's own, and they are what the two pick screens say aloud. */
@@ -49,61 +49,14 @@ const GOAL_WORD = {
   class: "classes", section: "sections",
   ppw: "periods a week", budget: "annual period budget",
 };
-/* ★ ONE METHOD — THE ANNUAL PERIOD COUNT (founder, 2026-08-27). ────────────────────────────
- * There used to be four: "I know my teaching weeks" | "my period count" | "my working days" |
- * "estimate it". They were four ways to CONSTRUCT a number, and they existed because Aruvi
- * could not tell her what her year should be. The calibrated master plan ended that: Aruvi
- * knows (245 for social_sciences·ix). She is no longer building a budget from raw materials,
- * she is DISAGREEING with one — "I say 245, you say 215" — and that needs one input, not four.
- *
- * They also actively manufactured inconsistency. Three of the four multiplied by periods-a-week,
- * so a wrong ppw corrupted the money; and the founder's own worked example: at 7 a week, "200
- * periods" implies 28.6 teaching weeks, "170 working days" implies 24, "220" implies 31 — three
- * inputs describing one year with nothing reconciling them. Worse, `setMethod` REPLACED the
- * value with a fresh default instead of converting it, so a first-run teacher sitting on a
- * calibrated 245 who merely tapped "weeks" silently got 6 × 30 = 180 — the 19→14 defect of
- * 2026-08-21 (CLAUDE.md) reachable through a second door.
- *
- * Collapsing also removes a circular definition: with `weeks`/`days`/`auto` gone from the
- * WRITER, budget never derives from ppw, so ppw can be derived from the standard without the
- * two defining each other.
- *
- * ★ THE READER BELOW STILL UNDERSTANDS ALL FOUR, and must keep doing so. Teachers have saved
- * weeks/days/auto records; retiring the writer is safe, retiring the reader would silently move
- * their years. Nothing new is ever written in those shapes.
+/* ★ THE BUDGET ARITHMETIC MOVED TO `lib/budget` (Track D step 5c, 2026-09-15).
+ * `DAYS_IN_WEEK`, `budgetPeriods` (the reader, which still understands all four legacy shapes)
+ * and `normalizeBudget` (the one place a stored record becomes the editable period count) are
+ * now in @aruvi/shared, because the PHONE's budget editor must read the same record by the same
+ * arithmetic — CLAUDE.md §4, and the safest way to make that true of a number is to give both
+ * surfaces the same function. Nothing about their behaviour changed in the move; the full
+ * account of why there is one written method and four read ones lives in that file's header.
  */
-const budgetPeriods = (ppw, b) => {
-  if (!b) return null;
-  if (b.method === "weeks") return ppw * b.value;               // legacy record
-  if (b.method === "periods") return b.value;                   // the only shape written now
-  if (b.method === "days") return Math.round(ppw * b.value / DAYS_IN_WEEK);  // legacy
-  return b.value ? b.value : ppw * ESTIMATE_WEEKS;              // legacy "auto"
-};
-
-/* ★ THE ONE PLACE a stored budget becomes the editable period count. Whatever shape is on disk
-   — a legacy weeks/days/auto record, or nothing at all — the editor opens on the ANNUAL TOTAL
-   it evaluates to, and saves it back as `periods`. So a teacher who once answered in weeks
-   sees the same year she has always had, and it simply stops being expressed as a multiplier.
-   That is the conversion `setMethod` never did: it replaced the value with a fresh default,
-   which is how a calibrated 245 silently became 180.
-
-   With NO record at all, Aruvi's calibrated figure leads (`rec`); the ppw-based estimate is the
-   last resort, for a subject·class the master plan has no row for. */
-const normalizeBudget = (stored, ppw, rec) => {
-  /* ★ `{method:"auto", value:0}` IS "no budget set", not a budget of ppw × 30. That is the
-     record `finalizeSubject` writes for any class she has not answered for, and reading it as
-     a real figure is what kept the calibrated year from ever being consulted on that path —
-     every such class silently landed on 180 while Aruvi's own answer for it was 245.
-     `budgetPeriods` must keep resolving it to a number (Year Plan and the class cards have to
-     print something), so the distinction is drawn HERE, where the question is "has she
-     actually chosen?" rather than "what does this evaluate to?". */
-  const unset = !stored || (stored.method === "auto" && !stored.value);
-  const evaluated = unset ? null : budgetPeriods(ppw, stored);
-  const value = evaluated && evaluated > 0
-    ? evaluated
-    : (rec && rec > 0 ? rec : Math.max(1, ppw * ESTIMATE_WEEKS));
-  return { method: "periods", value };
-};
 
 const classNum = (g) => {
   const idx = ROMAN.indexOf((g || "").toLowerCase());

@@ -285,13 +285,27 @@ for (const [key, decl] of keys) {
       + `phone has ${[...new Set(rnSizes)].join(" or ")}   [${cssSize[0].sel}`
       + `${cssSize[0].media ? " @" + cssSize[0].media.replace(/^@/, "") : ""}]`);
   }
-  const cssTrack = cssOf("letter-spacing");
-  if (cssTrack.length && rnTracks.length) {
-    const ws = cssTrack.map((w) => emToPx(w.value, sizes[0] ?? rnSizes[0])).filter((n) => n != null);
-    if (ws.length && !ws.some((w) => rnTracks.some((r) => Math.abs(w - r) < 0.02))) {
-      mismatches.push(`${key}  letter-spacing: web says ${cssTrack[0].value} `
-        + `(= ${ws[0].toFixed(2)}px), phone has ${rnTracks[0]}`);
-    }
+  /* ⚠️ AN `em` IS RESOLVED AGAINST THE FONT-SIZE OF THE SAME WORN SET, never against `sizes[0]`
+     (2026-09-15). This was the checker's own version of the bug it exists to find: it took the
+     winning letter-spacing for each set but divided it by whichever font-size happened to come
+     first across ALL sets. `button.primary fr-cta` is the case that exposed it — `.fr-cta`
+     declares font-size 16 and loses it to `button.primary`'s 12 on SPECIFICITY, so .08em is
+     0.96px on screen and the checker was reporting 1.28 and calling a correct port wrong.
+     A tool that resolves a relative unit against a losing declaration is making exactly the
+     mistake it was built to catch, so the pairing is by INDEX and the sets stay aligned. */
+  const cssTrack = worn.map((set) => winner(rules, set, "letter-spacing"));
+  const setSizes = worn.map((set) => {
+    const w = winner(rules, set, "font-size");
+    return w ? num(w.value) : null;
+  });
+  const trackPairs = cssTrack
+    .map((w, i) => (w ? { w, px: emToPx(w.value, setSizes[i] ?? rnSizes[0]) } : null))
+    .filter((p) => p && p.px != null);
+  if (trackPairs.length && rnTracks.length
+      && !trackPairs.some((p) => rnTracks.some((r) => Math.abs(p.px - r) < 0.02))) {
+    const p0 = trackPairs[0];
+    mismatches.push(`${key}  letter-spacing: web says ${p0.w.value} `
+      + `(= ${p0.px.toFixed(2)}px), phone has ${rnTracks[0]}`);
   }
   const cssCase = cssOf("text-transform");
   if (cssCase.length && !cssCase.map((w) => /uppercase/.test(w.value)).some((u) => u === rnCase)) {

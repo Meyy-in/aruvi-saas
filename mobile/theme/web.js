@@ -618,6 +618,48 @@ export function webStyles(t, scheme = "light") {
     prep_brk_tot_v:  { fontFamily: F.mono(500), fontSize: 14, lineHeight: 17, color: t.pine_d },
     /* The CTA bar. `savebar-prep` is a 56px lift off the form above it. */
     prep_savebar:    { marginTop: 56, rowGap: 10 },
+
+    /* ── the annual-budget editor (`.tp.tp-budget`, globals.css 3028–3072) — Track D step 5c ──
+       The Year Plan pencil's destination. One figure, its sense-check, Aruvi's recommendation,
+       and a save that sits well clear of the reading.
+       ⚠️ `.fr-q` is 27 here, NOT the 32 at line 3353 — that lives inside `@media (min-width:
+       700px)` and the phone renders the narrow shape. Reading the desktop value off a bare grep
+       is precisely the mistake the parity checker exists to catch. */
+    fr_q:            { fontFamily: F.display(600), fontSize: 27, lineHeight: 31.86, letterSpacing: -0.4,
+                       color: t.ink, marginBottom: 6 },
+    tp_val_row:      { flexDirection: "row", alignItems: "center", columnGap: 16,
+                       marginTop: 18, marginBottom: 12 },   // .tp-val-row + .tp-val-solo
+    tp_val_btn:      { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5,
+                       alignItems: "center", justifyContent: "center" },
+    tp_val_btn_t:    { fontSize: 20, lineHeight: 20, color: t.pine_d },
+    tp_val_input:    { width: 84, textAlign: "center", fontFamily: F.display(600), fontSize: 22,
+                       color: t.ink, borderWidth: 1.5, borderRadius: 8,
+                       paddingVertical: 4, paddingHorizontal: 6 },
+    tp_val_unit:     { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.66, textTransform: UP,
+                       color: t.ink_soft },
+    /* The sense-check, in the small mono of a caption directly under the figure it describes —
+       "27 weeks (@ 8 periods/week)". A reading, not a sentence (founder, 2026-08-28). */
+    tp_weeks:        { fontFamily: F.mono(400), fontSize: 11.5, lineHeight: 16, letterSpacing: 0.46,
+                       color: t.ink_soft, marginTop: -2, marginBottom: 14 },
+    tp_estimate_sub: { fontFamily: F.mono(400), fontSize: 11, lineHeight: 16, letterSpacing: 0.44,
+                       color: t.ink_soft, marginBottom: 8 },
+    /* ★ SAVE SITS WELL CLEAR OF THE READING (founder, 2026-08-28): `.tp-budget .fr-foot` adds
+       88px to `.fr-foot`'s own 20 — the gap is what separates "what I am being told" from
+       "what I am about to do". */
+    fr_foot:         { alignItems: "center", rowGap: 12, paddingTop: 108 },
+    /* ⚠️ `.fr-cta` DECLARES font-size 16 AND border-radius 12, AND THE BROWSER APPLIES NEITHER.
+       The element is `<button class="primary fr-cta">`, and `button.primary` (0,1,1) beats
+       `.fr-cta` (0,1,0) on SPECIFICITY — not source order this time — so the live values are
+       12px and 3px, straight off `button.primary`. Measured on the running app, not read off the
+       rule that looks like the intent: getComputedStyle says 12px / 0.96px / weight 400 /
+       radius 3 / #f6f1e7 on pine. This is the `.ap-kicker` trap wearing a different hat, and I
+       had ported 16 and 12 before the checker asked which rule wins. */
+    fr_cta:          { width: "100%", minHeight: 52, borderRadius: 3,
+                       alignItems: "center", justifyContent: "center" },
+    fr_cta_t:        { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.96, textTransform: UP },
+    fr_cta_ink:      { color: "#f6f1e7" },   // button.primary's own foreground, not --paper
+    fr_link:         { paddingVertical: 6, paddingHorizontal: 4, marginTop: 14 },  // .tp .fr-link
+    fr_link_t:       { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.48, color: t.pine },
     /* ── the Prepare CTA (button.prepare-cta, globals.css 3371) ──
        "Every ordinary primary button is calm pine. The one action that actually spends tokens to
        build a plan gets a SINGULAR warm identity." The layer owns colour, weight, glow and ✦;
@@ -683,6 +725,13 @@ export function webStyles(t, scheme = "light") {
     yp_tot_l:        { flex: 1, minWidth: 0, fontFamily: F.mono(400), fontSize: 10, lineHeight: 13,
                        letterSpacing: 0.6, textTransform: UP, color: t.ink_soft },
     yp_tot_n:        { textAlign: "right", fontFamily: F.display(600), fontSize: 18, lineHeight: 22, color: t.ink },
+    /* The label cell becomes a ROW once it carries a control, so the two numeric columns stay
+       aligned with the chapter rows above — `.yp-tot` is a 3-column grid keyed to those. */
+    yp_tot_lrow:     { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center" },
+    /* `.yp-budget-edit` (globals.css 4752): a phone-sized tap target that does NOT open up the
+       line it sits in — 10px of vertical padding cancelled by -10px of margin. On RN that is
+       simply `hitSlop`, which is the same intent said properly, so the negative margins go. */
+    yp_budget_edit:  { marginLeft: 6, paddingHorizontal: 8, opacity: 0.8 },
     yp_note:         { marginTop: 16, marginBottom: 20, fontFamily: F.body(400, true), fontSize: 14,
                        lineHeight: 22.68, color: t.ink },
     yp_note_b:       { fontFamily: F.body(600), fontStyle: "normal" },

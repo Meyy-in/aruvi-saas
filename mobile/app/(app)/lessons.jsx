@@ -69,6 +69,7 @@ import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
 import { subscribePreparing, clearPreparing, clearPaywall } from "../../lib/preparing";
+import { stampPane, takePane } from "../../lib/paneIntent";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -135,9 +136,13 @@ export default function MyLessons() {
      the same Subject·Class scope, two lenses.
      ★ NOT persisted (founder, 2026-08-29): every ordinary revisit of My Lessons opens on "Your
      lessons" — a teacher who checked the Year Plan yesterday should not find the repository
-     hiding behind it today. The web's ONE exception is the budget pencil's round trip, and that
-     pencil is step 5 here, so there is nothing yet to except. */
-  const [pane, setPane] = useState("lessons");
+     hiding behind it today.
+     ★ THE ONE EXCEPTION IS THE BUDGET PENCIL'S ROUND TRIP (step 5c, 2026-09-15), exactly as on
+     the web. `takePane()` CONSUMES the stamp, so it steers this one arrival and no other — a
+     stamp that merely read would turn the exception back into the persistence that was retired.
+     Read in the initialiser, so the plan pane is on screen from the FIRST render rather than
+     appearing a frame after the card list. */
+  const [pane, setPane] = useState(() => takePane() || "lessons");
   const [toast, setToast] = useState(null);         // { kind: "ok" | "block", text } | null
   const [tick, setTick] = useState(0);              // bumped after a section-state sync → re-read
   const [prep, setPrep] = useState({ descriptor: null, paywall: "" });
@@ -289,8 +294,20 @@ export default function MyLessons() {
     return () => { live = false; sub.remove(); clearInterval(iv); };
   }, [sSlug, gSlug, taughtGradeObj]);
 
-  // Returning from a lesson: re-read the local section cache so the status lines are current.
-  useFocusEffect(useCallback(() => { busyRef.current = false; setTick((n) => n + 1); }, []));
+  /* Returning from a lesson: re-read the local section cache so the status lines are current.
+     ★ AND CONSUME THE PANE STAMP HERE TOO, which is the whole reason this is a FOCUS effect and
+     not a mount effect (2026-09-15). The budget pencil pushes /budget ON TOP of this screen, so
+     coming back POPS to a screen that is still mounted — the `useState` initialiser above never
+     runs a second time and a mount-only read would steer nothing at all. Focus fires on both
+     paths; the stamp is consumed by whichever gets there first, so neither double-applies.
+     It also means the system back gesture out of /budget lands on the Year Plan exactly as
+     Cancel does — the stamp is set on the way IN, not only on the way out. */
+  useFocusEffect(useCallback(() => {
+    busyRef.current = false;
+    setTick((n) => n + 1);
+    const want = takePane();
+    if (want) setPane(want);
+  }, []));
 
   const onSubject = (name) => {
     setActiveSubject(name); lsSet(LS_SUBJECT, name);
@@ -599,7 +616,14 @@ export default function MyLessons() {
         }} />}>
 
         {pane === "plan" ? (
-          <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness} />
+          <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness}
+            /* The pencil is bound to the pane's OWN subject·class — the DISPLAY name and Roman
+               class the profile record keys on, not the slugs YearPlan fetches with. The stamp
+               is what brings her back to this pane rather than to the card list. */
+            onEditBudget={() => {
+              stampPane("plan");
+              router.push({ pathname: "/budget", params: { subject: current.name, grade: activeGrade } });
+            }} />
         ) : plans === undefined ? (
           <Text style={ws.mlp2_loading}>Loading plans…</Text>
         ) : shown.length === 0 && !showProposedCard ? (
