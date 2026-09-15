@@ -18,7 +18,7 @@ sides, the strings verbatim, the endpoint, the shared helper, and the `theme/web
 
 | Appendix | Family | Rows | DONE | PARTIAL | MISSING | DEFERRED | Not ported |
 |---|---|---|---|---|---|---|---|
-| `mobile_implementation_map/01-shell.md` | page.jsx shell · layout · GuidedTour · ProfilePortal | 118 | 19 | 16 | 43 | 8 (tour) | 4 |
+| `mobile_implementation_map/01-shell.md` | page.jsx shell · layout · GuidedTour · ProfilePortal | 118 | 19 | 16 | 43 | 8 (tour — now SCHEDULED, step 8b) | 4 |
 | `mobile_implementation_map/02-profile.md` | TeachingProfile · wheels · shared budget | 97 | 14 | 5 | 70 | 3 | 3 |
 | `mobile_implementation_map/03-firstrun-login.md` | Login · PrivacyNotice · Agreement · FirstRun | 122 | 37 | 20 | 44 | 2 | 16 |
 | `mobile_implementation_map/04-settings-askmeyy.md` | Settings (7 subviews) · Ask Meyy · Dropdown | 120 | 12 | 10 | 91 | 1 | 3 |
@@ -26,8 +26,9 @@ sides, the strings verbatim, the endpoint, the shared helper, and the `theme/web
 | `mobile_implementation_map/06-lessonview.md` | LessonView · ChapterOrg · Assess · Bookmark · Notes | 140 | 100 | 20 | 4 | 1 | 1 |
 
 Status vocabulary (used identically in every appendix): **DONE** · **PARTIAL** · **MISSING** · **DEFERRED**
-(named in a component header or the plan, with its reason) · **NOT-PORTED-BY-DECISION** (SubscribeFlow, the
-tour, dead web code) · **WEB-ONLY-BY-NATURE** (keyboard, `window`, measured CSS vars — no phone counterpart is
+(named in a component header or the plan, with its reason) · **NOT-PORTED-BY-DECISION** (SubscribeFlow,
+dead web code — ⚠️ the TOUR rows still carry these two labels throughout app. 01 and app. 05; they were
+written while it was deferred and are a BUILD SPEC as of 2026-09-15, see step 8b) · **WEB-ONLY-BY-NATURE** (keyboard, `window`, measured CSS vars — no phone counterpart is
 owed) · **PARITY-CHECK OWED** (a web class with no `web.js` key yet).
 
 ---
@@ -72,8 +73,9 @@ the dead end one level down. Both pencils lit together in `ff8cf0c1`.
 
 **Still owed on 5d** (the order below is §2's, minus what landed): the **two pick screens** (for a teacher
 with more than one subject·class — until they exist a row on such a profile is honestly left on the window
-rather than guessing a scope) · **add a subject** (Q3: add mode only) · the **check-mood window** (**Q9**,
-the only question left). ✅ `onAdd` is LIVE since `9a1546ec` — all four rows lead somewhere.
+rather than guessing a scope) · **add a subject** (Q3: add mode only) · the **check-mood window** — whose
+ADDED-subject trigger ships here, its tour-end trigger arriving with the tour (Q9 dissolved 2026-09-15,
+founder un-deferred the tour; it is step 8b). **No founder question blocks 5d any more.** ✅ `onAdd` is LIVE since `9a1546ec` — all four rows lead somewhere.
 ⚠️ When F5 lands (6a), the window must NOT open while she is lapsed: the growth entry points hide on an
 expired subscription. That is the web's rule and the phone owes it; enforcement is off server-side for
 every teacher today, so it is a note to keep, not a gap to close now.
@@ -183,6 +185,9 @@ F8 🟡PickWheel + PpwSplitCell done; SecNameCell owed ─► 5d sections/classe
 F9  mobile/lib/download.js (expo-file-system + expo-sharing) ─► 7 Reports modal · Year Plan export · data exports · invoice PDF · delete-flow docx
 F10 (app)/_layout.jsx becomes a real shell (askOpen, portalWin, notices, Bar in the layout) ─► 6a · 6c Ask Meyy · every bar door
 F11 mobile/components/Dropdown replacement (sheet/picker) ─► Settings › Personal profile (Role/State) · Support
+F12 tour anchor REGISTRY (ref + measureInWindow, keyed by the web's own `data-tour` strings)
+                                               ─► 8b the guided tour (un-deferred 2026-09-15) — and NOTHING else,
+                                                  which is why it is last: no other screen is waiting on it
 ```
 
 Two ordering facts that decide the step sequence below:
@@ -646,6 +651,68 @@ in, so it precedes TestFlight.
 5. Mobile-only additions to name in headers or remove (rows 132-140): KeyboardAvoidingView on notes,
    error-screen copy and notes window below the bar (Q20), pine border on done cards.
 
+### Step 8b — the GUIDED TOUR  ★ **UN-DEFERRED 2026-09-15 (founder: "yes undefer the tour")**
+
+**It was never a product decision.** `docs/mobile_migration_assessment.md` §3 dropped it from the beta for
+one reason — it is "the most DOM-bound file" — and the founder has now reversed that. So the phone gets the
+web's twenty steps, and **Q9 dissolves rather than being answered**: the check-mood window keeps the web's
+own tour-end trigger and the phone owes no substitute and no named divergence.
+
+**Entry: THIS STEP IS A CAPSTONE, and that is a fact about its ANCHORS, not a preference.** §0's own rule —
+"a section-less tour would point the hand at nothing and render `section undefined`" — applies to every step,
+so the tour cannot be built before the things it tours. Audited against the phone as it stands
+(2026-09-15): **16 of the 20 steps have a live anchor today**; four do not.
+
+| Step | Anchor | On the phone today | Waits for |
+|---|---|---|---|
+| 1, 2 | `nav-classes`, `nav-lessons` | ✅ BottomNav | — |
+| 3, 6 | `lesson-first` | ✅ My Lessons cards (4b) | — |
+| 4 | `lesson-report` | ❌ `ReportButton` DEFERRED (app. 05 C30) | **step 7** (F9 downloads) |
+| 5 | `lesson-archive` | ✅ DONE (app. 05 C28) | — |
+| 7 | `preview-root` | ✅ LessonView (step 3) | — |
+| 8, 14 | `section-add` | ✅ My Classes "+" (4a) | — |
+| 9, 15 | `attach-pop` | ✅ `AttachSheet` | — |
+| 10 | `section-card-target` | ✅ | — |
+| 11 | `lesson-root` · `unit-tabs` | ✅ LessonView, full | — |
+| 12 | `phase-bookmark` | ✅ `PhaseBookmark` | — |
+| 13 | `mark-complete` | ✅ | — |
+| 16 | `grow-add` | ✅ LIVE since `9a1546ec` | — |
+| 17 | `settings-gear` | ❌ inert (`Bar.jsx disabled={!onSettings}`) | **step 6b** |
+| 18, 19 | `ask-aruvi`, `ask-aruvi-root` | ❌ inert (`onAsk={() => {}}`) | **step 6c** |
+| 20 | none (centred welcome) | ✅ | — |
+
+So it lands **after 6b, 6c and 7** and before the build that goes to testers — hence 8b, not a renumber.
+⚠️ Do NOT ship a partial tour that skips the four steps: they are the steps that introduce reports,
+Settings and Ask Meyy, which is precisely what a first-time teacher has no other way to discover.
+
+**Build.** Everything is already recorded in app. 01 rows 96-118 — all 20 steps' copy, anchors, placement
+and chrome — so this is transcription plus re-measurement, not a redesign. What has to be REBUILT rather
+than ported is the machinery, and it is the whole of the cost:
+1. **A target registry replaces the DOM query.** The web does `document.querySelector('[data-tour]')`; the
+   phone needs a context every anchor registers its ref with, measured on demand with `measureInWindow`.
+   One registry, keyed by the SAME `data-tour` strings the web uses, so the step table stays one table.
+2. **Measurement replaces the poll.** The web re-measures on a 200 ms interval plus resize plus a
+   capture-phase scroll listener (`GuidedTour.jsx:159-214`). On the phone, measure on step change, on
+   layout of the anchor, and on orientation — an interval is a battery cost with no payer.
+3. **The ring is not a `box-shadow`.** The web cuts its spotlight with a 9999px box-shadow. RN has no such
+   trick: draw the scrim as four Views around the ring's rect (or one `<Svg>` with an even-odd mask), which
+   also gives the hit-blocking for free. The 2px ochre ring, r12, 180 ms transitions are in row 116.
+4. **Scrolling.** `scrollTop` steps pin `.bodycontent` to 0 (row 118) — the phone has no such scroller, so
+   each route's own ScrollView ref is what gets pinned; `scrollIntoView({block:"center"})` becomes
+   `scrollTo` computed from the measured rect.
+5. **`finishTour`** — the single exit for Done AND Skip — closes Ask, clears the tour, session-dismisses,
+   goes to My Classes and raises the check window `{mode:"check", reason:"tour"}` (app. 01 rows 62, 74-75).
+   **That last clause is what closes Q9**, and `shared/setupCheck.js` (F3, `65c1bf1d`) already holds the queue.
+6. **The offer** (app. 01 rows 59-61): `tourEligible` (GET `/section-state` → ≤1 bound section and no
+   progress), `tourSpent` from `/account`'s `tour_offered_at` (F4 `shared/account.js` already fetches it),
+   POST `/account/tour-offered` once, and the "Let me show you around first" nudge on BOTH My Classes and
+   My Lessons. Copy verbatim in row 61.
+
+**web owed:** none — the web has had the tour since before this map.
+
+**Exit:** run all twenty on the handset, end to end, on a profile that qualifies (≤1 bound section, no
+progress) — and the twenty-first thing to check is that Done AND Skip both land on the check window.
+
 ### Step 9 — TestFlight / Play internal
 
 **Entry:** everything above that touches a native module (F9) forces a **development build** (EAS) — Expo Go
@@ -657,9 +724,9 @@ Real SMS (DLT) is the external long pole and is outside this map (Track B).
 
 ### Deferred beyond the beta (recorded, not scheduled)
 
-- **GuidedTour** — all 20 steps, anchors, copy, chrome and placement maths are recorded in app. 01 rows 96-118
-  for the eventual port (`measureInWindow` registry in place of `document.querySelector`). Until then: no
-  "Show me how" nudge, no post-tour "Are these your sections?" (its trigger is Q9).
+- ~~**GuidedTour**~~ — ★ **UN-DEFERRED 2026-09-15 (founder). It is now step 8b**, a capstone after 6b/6c/7
+  because four of its twenty steps anchor on doors the phone has not opened yet. Its rows (app. 01 96-118)
+  are a BUILD SPEC now, not a record. Q9 dissolved with it.
 - **SubscribeFlow / purchase** — beta on manual grants (assessment §5B). Eleven rows across app. 03 D and
   app. 04 D name exactly what stays out.
 - **Dead web code, never ported:** Readiness.jsx (app. 05 R1 — only importer `MyPlans.jsx:7`, unreachable since
@@ -701,7 +768,7 @@ Consolidated from the six appendices (their numbering in brackets). The first fi
 be answered when the step is reached. **Answered questions stay in the table, struck through with their
 answer** — the reasoning is worth more than the row.
 
-**Due next:** Q9, with the check-mood window (item 10) — with the tour deferred, what raises "Are these your sections?" besides an added subject?
+**Due next:** none blocking. Q9 dissolved 2026-09-15 when the tour was un-deferred; the next questions bind at 5e (Q5, Q21) and 6a (Q6, Q7, Q8).
 
 | # | Blocks | Question |
 |---|---|---|
@@ -713,7 +780,7 @@ answer** — the reasoning is worth more than the row.
 | Q6 | 6a | **Paywall on the phone with no Subscribe**: mirror the web's kicker rule + server sentence + a single "Not now"; say anything about how to subscribe (support@meyy.in?) [01·1] |
 | Q7 | 6a | **Lapsed rules on the phone during the beta**: port now and let the server flag drive it (enforcement is off), or wait? [01·2] |
 | Q8 | 6a | **`<Bar>` into the layout** (one bar, one shell; a fixed anchor for Ask/portal) — changes every route file; yes/no? [01·5] |
-| Q9 | 6a | **Check-mood window on the phone**: with the tour deferred, raise it on added-subject only, or find another trigger for "Are these your sections?" (e.g. first My Classes open after first run)? [02·1, 03·3] |
+| ~~Q9~~ | 6a | ✅ **DISSOLVED 2026-09-15 — THE TOUR IS UN-DEFERRED** (founder: "yes undefer the tour"). The question only existed because deferring the tour removed the web's tour-end trigger and left a brand-new teacher with no moment to check what Meyy guessed for her. With the tour ported (step 8b) the phone inherits that trigger unchanged: **no substitute, no named divergence.** The added-subject trigger is unaffected and ships with 5d; the tour-end one simply starts firing when 8b lands. |
 | Q10 | 6b | **Appearance control shape**: the web's cycling glyph (◐ → ☀ → ☾) 1:1, or keep the phone's Auto/Light/Dark segments as a named divergence? [04·1] |
 | Q11 | 6b | **Subscription & billing with no purchase screen**: nothing, or a sentence pointing at the website/support? (Also "Online payments open soon…" reads oddly with no button.) [04·3] |
 | Q12 | 6b | **Support's "add an email" link on trial** dead-ends on the web too (Personal profile hidden). Hide on trial, or open Personal profile for the email field alone? [04·2] |
