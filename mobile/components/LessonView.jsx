@@ -13,7 +13,7 @@
  * component never fetches. A unit = one period of lesson_plan.groups[].periods[].
  *
  * Named translations (the only deviations, per the rule): the frozen header is a View outside
- * the ScrollView instead of a measured `--nav-h` sticky; the bookmark is a PanResponder drag
+ * the ScrollView instead of a measured `--nav-h` sticky; the bookmark is press-then-place
  * (tap on the minutes also moves it — the phone's stand-in for the web's arrow keys); the
  * teacher-notes <details> is a Pressable that toggles. Everything else — order, labels, copy,
  * which field feeds which row — is the web's. */
@@ -126,6 +126,15 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
   const notesRest = notes ? notes.replace(POINTER, "") : "";
   const [notesOpen, setNotesOpen] = useState(true);   // <details open> on the web
   const [rows, setRows] = useState({});
+  /* ★ ARMED — she has pressed the bookmark and is choosing where it goes (founder, 2026-09-15).
+     Two things happen for as long as it lasts: every phase lights up as a target, and the screen
+     FREEZES (`bookmark.onLift`), so nothing slides under her while she picks. Pressing the arrow
+     again backs out and changes nothing. */
+  const [armed, setArmed] = useState(false);
+  /* Leaving the unit (or losing the bookmark) must not strand the scroller frozen. */
+  useEffect(() => () => { if (bookmark && bookmark.onLift) bookmark.onLift(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const setArm = (on) => { setArmed(on); if (bookmark && bookmark.onLift) bookmark.onLift(on); };
+  const place = (i) => { setArm(false); if (bookmark) bookmark.onMove(i); };
   const centres = useMemo(() => phases.map((_, i) => rows[i] ? rows[i].y + 13 + rows[i].timeH / 2 : null).filter((v) => v != null), [rows, phases.length]);
   return (
     <View>
@@ -145,32 +154,34 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
 
       {phases.length ? (
         <View style={ws.uv_phases}>
-          {/* ★ `onLift` FREEZES THE SCROLLER (founder, 2026-09-15). While the arrow is lifted the
-              phases must not slide under her — that relative motion is half of why dragging read
-              as confusing on the handset. `labelFor` gives the callout the phase's own minutes
-              and opening words, so the answer is legible with her thumb over the arrow. */}
           {bookmark ? (
             <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
-              onMove={bookmark.onMove} color={t.clay} onLift={bookmark.onLift}
-              labelFor={(i) => {
-                const ph = phases[i]; if (!ph) return "";
-                const mins = phaseMin(ph);
-                const words = String(ph.text || ph.label || "").split(/\s+/).slice(0, 5).join(" ");
-                return `${mins != null ? `${mins} min · ` : ""}${words}${words ? "…" : ""}`;
-              }} />
+              color={t.clay} armed={armed} onToggle={() => setArm(!armed)} />
           ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
             return (
-              <View key={i} style={[ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 }]}
+              /* ★ WHILE ARMED THE WHOLE ROW IS THE TARGET, and it says so (founder: "pressing
+                 arrow brings blue highlight"). A 26px glyph is a bad thing to aim at with a
+                 finger; a whole row is a good one, and the tint is what makes it look like one.
+                 ⚠️ ONLY while armed. A row that is always tappable would move the bookmark on a
+                 stray touch while she is reading the plan mid-lesson, which is the one moment
+                 this mark must not move by accident.
+                 The minutes cell stays tappable either way — it has been the quiet way to place
+                 the bookmark since the port, and it costs nothing to keep. */
+              <Pressable key={i} disabled={!bookmark || !armed} onPress={() => place(i)}
+                accessibilityRole={armed ? "button" : undefined}
+                accessibilityLabel={armed ? `Put the bookmark on phase ${i + 1}${mins != null ? `, ${mins} minutes` : ""}` : undefined}
+                style={({ pressed }) => [ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 },
+                  armed && ws.uv_phase_arm, armed && pressed && ws.uv_phase_arm_on]}
                 onLayout={(e) => { const { y } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { timeH: 18 }), y } })); }}>
-                <Pressable disabled={!bookmark} onPress={() => bookmark && bookmark.onMove(i)} style={ws.uv_ph_time}
+                <Pressable disabled={!bookmark} onPress={() => place(i)} style={ws.uv_ph_time}
                   onLayout={(e) => { const { height } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { y: 0 }), timeH: height } })); }}>
                   <Text style={ws.uv_ph_n}>{mins != null ? mins : (ph.label || "—")}</Text>
                   {mins != null ? <Text style={ws.uv_ph_u}>min</Text> : null}
                 </Pressable>
                 <Text style={ws.uv_ph_t}>{ph.text}</Text>
-              </View>
+              </Pressable>
             );
           })}
         </View>
@@ -197,11 +208,11 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
                        defaultTab = "lesson", bookmark, tail }) {
   const items = unitAssessItems(assessment, u);
   const [tab, setTab] = useState(defaultTab);
-  /* ⚠️ THE SCROLLER IS THE BOOKMARK'S PROBLEM, so the bookmark gets to stop it. On iOS a
-     UIScrollView will take a JS gesture the moment the finger moves vertically; the responder
-     now refuses to give it up, but refusing is not enough on its own — a scroller that is still
-     LIVE slides the phases under the arrow, and that relative motion is what read as the arrow
-     drifting. Disabled for the length of the hold, restored on release. */
+  /* ⚠️ THE SPINE FREEZES WHILE SHE IS CHOOSING (founder, 2026-09-15: "Important that when arrow
+     is pressed it must freeze the phase screen"). While the bookmark is armed the rows are
+     targets, and a target that slides away under the finger is worse than no target at all — it
+     is the relative motion that made the old drag read as confusing in the first place. Disabled
+     from the press on the arrow until she picks a phase or backs out. */
   const [locked, setLocked] = useState(false);
   const tabs = [["overview", "Overview"], ["material", "Material"], ["lesson", "Lesson"], ...(items.length ? [["assess", "Assess"]] : [])];
   return (

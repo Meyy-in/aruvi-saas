@@ -243,20 +243,15 @@ export function webStyles(t, scheme = "light") {
     uv_phases:       { marginTop: 2, position: "relative" },
     uv_phase:        { flexDirection: "row", gap: 10, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: t.line_soft },
     uv_ph_time:      { width: 34 },
-    /* ───── the bookmark's LIFT callout (phone-only, 2026-09-15) ─────
-       No web counterpart to key on: the web's bookmark is dragged with a pointer, which has no
-       body and hides nothing, so it needs no callout. It lives here anyway because that is where
-       type and colour come from, and a hand-rolled font name is how a screen drifts.
-       Pine-dark on paper ink, deliberately the SAME lockup as the window header's kicker-over-
-       title, so it reads as Meyy telling her something rather than as a tooltip. */
-    bkmk_callout:    { position: "absolute", left: 44, top: -2, backgroundColor: t.pine_d,
-                       borderRadius: 8, paddingVertical: 7, paddingHorizontal: 11, maxWidth: 220,
-                       shadowColor: "#1f2a24", shadowOpacity: 0.34, shadowRadius: 12,
-                       shadowOffset: { width: 0, height: 6 }, elevation: 8 },
-    bkmk_callout_k:  { fontFamily: F.mono(400), fontSize: 8.5, lineHeight: 12, letterSpacing: 1.19,
-                       textTransform: UP, color: t.bar_ink_soft },
-    bkmk_callout_t:  { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 17, color: t.bar_ink,
-                       marginTop: 1 },
+    /* ───── a phase row ARMED as a bookmark target (phone-only, 2026-09-15) ─────
+       No web counterpart: the web's bookmark is dragged with a pointer, which has no body and
+       hides nothing, so its rows never become targets. `tint_pine` is the app's own selection
+       tint — the one the section wheel already uses for a ticked row — so arming reads as "this
+       is selectable", in a colour the teacher has met before. The pressed state deepens it
+       rather than introducing a second hue. */
+    uv_phase_arm:    { backgroundColor: t.tint_pine, borderRadius: 6,
+                       marginHorizontal: -8, paddingHorizontal: 8 },
+    uv_phase_arm_on: { backgroundColor: t.tint_pine_2, borderColor: t.pine },
     uv_ph_n:         { fontFamily: F.mono(600), fontSize: 16, lineHeight: 17.6, color: t.pine },
     uv_ph_u:         { fontFamily: F.mono(400), fontSize: 9, lineHeight: 13.95, letterSpacing: 1.26, textTransform: UP, color: t.ink_soft, marginTop: 2 },
     uv_ph_t:         { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.54, color: t.ink, flex: 1 },
