@@ -193,6 +193,13 @@ showing her mobile number on the bar after she had subscribed.
   starts its fade-out and the exit never completes. Other sheets in the app toggle `visible` and close
   perfectly; this position is what differs.
 
+- ✅ **1 (part) · F3 `shared/setupCheck.js`** — the check-window queue lifted from `ProfilePortal.jsx`,
+  11 tests (`setupKey`, `queueSetupCheck`, `takeSetupCheck`, `pruneSetupCheck`, the 24 cap, the 1s delay).
+  Web re-exports it. ⚠️ Verified by tests and by parse only: the web tab's Supabase session had expired by
+  the time I went to walk it, and signing in is not mine to do. The change is a pure re-export.
+- ✅ **1 (part) · F7 `mobile/lib/portal.js`** — origin route + the window to restore, with a subscription;
+  the `lib/preparing` idiom. Not yet consumed — the window (item 2) is its first caller.
+
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
    `subscribePortal`; the phone's `portalOriginRef` (app. 01 rows 77-78). **F3** `shared/setupCheck.js` — the

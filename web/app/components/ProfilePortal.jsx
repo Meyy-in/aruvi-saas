@@ -1,5 +1,4 @@
 "use client";
-import { getUser, userKey } from "../lib/format";
 
 /* ───────── ProfilePortal — ONE window for "what did Aruvi assume, and what do I want to change?"
  * (founder, 2026-08-27) ───────────────────────────────────────────────────────────────────────
@@ -132,53 +131,13 @@ export default function ProfilePortal({ mode = "change", sub, values, onPick, on
  * subject carries exactly the same assumptions as a new subject does.
  * localStorage, not the server: it is a prompt, not a record — losing it costs one question.
  */
-const KEY = () => userKey("setup_check_pending");
-const read = () => {
-  if (typeof window === "undefined" || !getUser()) return [];
-  try { const v = JSON.parse(window.localStorage.getItem(KEY()) || "[]"); return Array.isArray(v) ? v : []; }
-  catch { return []; }
-};
-const write = (list) => {
-  if (typeof window === "undefined" || !getUser()) return;
-  try { window.localStorage.setItem(KEY(), JSON.stringify(list.slice(-24))); } catch {}
-};
-
-export const setupKey = (subjectName, grade) => `${subjectName}|${(grade || "").toUpperCase()}`;
-
-/** ★ How long My Lessons is left alone before the check window opens over it (founder,
- *  2026-08-28). The window used to arrive in the same tick the dropdown resolved the added
- *  subject·class, so the screen she had just asked for was covered before she saw it. A second
- *  is enough for the pane to paint and for the tap to feel finished; page.jsx holds the timer. */
-export const SETUP_CHECK_DELAY_MS = 1000;
-
-/** Queue subject·class keys she has just added, so their first use raises the check window. */
-export function queueSetupCheck(keys) {
-  const have = read();
-  const next = [...have, ...keys.filter((k) => !have.includes(k))];
-  if (next.length !== have.length) write(next);
-}
-
-/** Spend the key if it is queued — true means "ask her now". Idempotent: asked once, ever. */
-export function takeSetupCheck(key) {
-  const have = read();
-  if (!have.includes(key)) return false;
-  write(have.filter((k) => k !== key));
-  return true;
-}
-
-/* Drop anything queued that is no longer a subject·class she teaches (2026-08-27). A queued key
- * is only ever SPENT when My Lessons scopes to it, and My Lessons offers only classes in her
- * profile — so a key for something she does not teach can never be spent and would sit in the
- * queue forever. That is harmless on its own, but it makes the queue un-auditable, and during
- * live testing this store was once found holding seven keys for classes she already had plus two
- * for classes she has never taught, which no controlled repeat could reproduce. Whatever wrote
- * them, a queue that self-heals against the profile cannot carry them for long.
- * Deliberately NOT called on the baseline read: a transient shrink in readiness must not be read
- * as "she stopped teaching this". Costs at most one un-asked question, and this is a prompt, not
- * a record. */
-export function pruneSetupCheck(validKeys) {
-  const have = read();
-  if (!have.length) return;
-  const ok = have.filter((k) => validKeys.includes(k));
-  if (ok.length !== have.length) write(ok);
-}
+/* ★ THE QUEUE MOVED to @aruvi/shared/setupCheck (Track D 5d F3, 2026-09-15) so the phone's check
+ * window asks — and stops asking — by exactly the same rules. The reasoning above travelled with
+ * it; this re-export keeps every existing import in this repo working.
+ * ⚠️ Imported AND re-exported: `export … from` alone serves importers without binding the names
+ * in this module's own scope, and the component below calls `setupKey` (the PPW_CHOICES lesson,
+ * same day). */
+import {
+  setupKey, queueSetupCheck, takeSetupCheck, pruneSetupCheck, SETUP_CHECK_DELAY_MS,
+} from "../lib/setupCheck";
+export { setupKey, queueSetupCheck, takeSetupCheck, pruneSetupCheck, SETUP_CHECK_DELAY_MS };
