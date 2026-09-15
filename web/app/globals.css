@@ -4955,6 +4955,14 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 }
 .sc-card.sc-proposed::before { background: var(--clay); }
 .sc-card.sc-proposed:hover { border-color: var(--edge-clay); }
+/* ★ A WAITING SECTION CARD KEEPS ITS OWN FILL (founder, 2026-09-15 — the wait moved onto the
+   section card). `.sc-proposed` repaints to `--paper-2` because in My Lessons it marks a
+   DOCUMENT being built on the plain document plane. On My Classes the card is a CLASS, and its
+   fill is the status — so only the dashed edge and the clay spine carry "not yet" here, exactly
+   as the phone draws it. Both selectors are (0,2,0) and `.sc-proposed` sits LATER in this file,
+   so without this rule source order silently repaints the card (the `.ap-row-line` trap, fifth
+   sighting); (0,3,0) settles it rather than another ordering promise. */
+.sc-card.st-new.sc-proposed { background-color: var(--card-new); }
 .sc-prep { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
 .sc-prep-bar {
   --prep-ms: 5000ms;                  /* keep in step with PrepareLesson PREPARING_MS */

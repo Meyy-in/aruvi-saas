@@ -347,9 +347,12 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
         chapterTitle: (chosen && (chosen.chapter_title || chosen.title)) || `Chapter ${chapterNo}`,
         rows: matrix,
       };
-      // The shell answers TRUE only if it actually took the card. It declines on the
-      // section-attach path, which lands in My Classes and has nowhere to put one — and a
-      // silent decline would leave her staring at an unchanged form for five seconds.
+      /* The shell answers TRUE only if it actually took the card; on FALSE this screen falls
+         back to its own in-place wait, so a silent decline can never leave her staring at an
+         unchanged form for five seconds.
+         ⚠️ It used to decline the section-attach path ("nowhere to put one"). It no longer does
+         — that wait is drawn on the section card itself (founder, 2026-09-15) — so this fallback
+         is now reached only if the shell has no handler at all. */
       const taken = onPreparing ? onPreparing(descriptor) === true : false;
       if (!taken) setPreparing(descriptor);
       try {

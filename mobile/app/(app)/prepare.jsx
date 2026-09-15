@@ -60,11 +60,10 @@ import {
 } from "@aruvi/shared/format";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
-import { readLocalSection } from "@aruvi/shared/sectionState";
+import { readLocalSection, bindSectionChapter } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
 import Bar from "../../components/Bar";
-import { startPreparing, clearPreparing, failPreparing, paywallPreparing,
-         setPendingAttach } from "../../lib/preparing";
+import { startPreparing, clearPreparing, failPreparing, paywallPreparing } from "../../lib/preparing";
 import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
@@ -297,20 +296,28 @@ export default function Prepare() {
        here is invented and nothing is fetched to draw it. Then we LEAVE, in the same tick, and
        everything below resolves into the store from a closure this screen no longer owns. */
     const descriptor = {
+      /* `section`/`tag` ride along so My Classes knows WHICH CARD is waiting. Absent on an
+         ordinary prepare, which is what puts the card in My Lessons instead. */
+      section: fromSection ? String(section) : null,
+      sectionTag: tag ? String(tag) : "",
       subject, grade, chapterNo,
       chapterTitle: (chosen.chapter_title || chosen.title) || `Chapter ${chapterNo}`,
       rows: matrix,
     };
-    /* ★ THE SECTION-ATTACH PATH KEEPS THE IN-PLACE WAIT, and that is the WEB's own rule, not a
-       phone shortcut (page.jsx:578-586: "The section-attach path (prepareReturn) is deliberately
-       EXCLUDED: it lands in My Classes, not My Lessons, so there is nowhere to put this card").
-       The proposed card exists to sit exactly where the finished plan will appear. On this
-       journey the finished plan appears in a PICKER on My Classes, so a card in My Lessons would
-       be a promise pointing at the wrong screen. She waits here, and lands where she started. */
-    if (!fromSection) {
-      startPreparing(descriptor);
-      router.navigate("/lessons");
-    }
+    /* ★ ONE WAIT, ON THE CARD THE LESSON IS FOR (founder, 2026-09-15: "The result of 'prepare a
+       lesson plan' from section card should be consistent with what happens upon similar action
+       in My Lessons: it should show progress on the section card from which it was generated and
+       upon completion, settle in the section card with the new LP attached").
+       ⚠️ THIS OVERRULES THE WEB, and the web moved with it. page.jsx had EXCLUDED this path from
+       the 2026-08-06 rule — "it lands in My Classes, not My Lessons, so there is nowhere to put
+       this card" — which read the rule as being about My Lessons. It is not: it is about the
+       wait happening WHERE THE LESSON WILL APPEAR. Launched from a section card, the thing she
+       is waiting for appears on THAT CARD, so that is where the bar belongs. The premise was
+       wrong, not the rule.
+       So both surfaces now hand off immediately and go to My Classes; nobody waits on this
+       screen any more. */
+    startPreparing(descriptor);
+    router.navigate(fromSection ? "/" : "/lessons");
     try {
       const resp = await postJSON(`/genon/${subject}/${grade}/${chapterNo}/plan`, { rows: matrix });
       /* READ-AFTER-WRITE (area 2). The serve returned a filename, so Y is now knowable: "that
@@ -332,16 +339,12 @@ export default function Prepare() {
          same rule every other prepare path follows. Invalidate BEFORE clearing: My Lessons
          refetches on the clear, and it must not be served the copy that predates this plan. */
       invalidatePlans(`${subject}/${grade}`);
-      if (fromSection) {
-        /* Hand the section back across the route change and go to My Classes, which reopens the
-           picker listing the chapter she just built. NOT an auto-attach: the web reopens the
-           popup so she confirms, "instead of dumping the teacher into the lesson plan"
-           (page.jsx:66-67), and a plan that binds itself to a section she has not chosen again
-           is the kind of help nobody asked for. */
-        setPendingAttach({ section: String(section), tag: tag ? String(tag) : "",
-                           subject, grade, filename: resp.filename });
-        router.navigate("/");
-      }
+      /* ★ IT SETTLES ATTACHED (founder, same report). She opened the picker for THIS section and
+         asked for a chapter that does not exist yet; making her pick it again out of a list, on
+         a screen she is already standing on, is a question whose answer she has already given.
+         The binding is written BEFORE the card comes down, so the card never blinks through an
+         unattached state on its way to being attached. */
+      if (fromSection) bindSectionChapter(String(section), resp.filename);
       clearPreparing();
     } catch (e) {
       /* ── THE PAYWALL IS NOT AN ERROR (founder, 2026-08-24). A 402 (trial exhausted / out of
@@ -354,10 +357,9 @@ export default function Prepare() {
       /* She is in My Lessons watching the card, so the failure has to reach HER, not this
          screen — it goes back up the way it went down. The 402 pulls the card and raises the
          window there instead, because a paywall is not a failed build. */
-      /* On the section path she is still LOOKING at this screen, so the failure belongs here —
-         sending it to a card she was never shown would lose it entirely. */
-      if (fromSection) setError(msg);
-      else if (e && e.status === 402) paywallPreparing(msg);
+      /* She is watching the SECTION CARD now, exactly as the My Lessons path watches its own
+         card, so a failure goes back up the way it went down on both. */
+      if (e && e.status === 402) paywallPreparing(msg);
       else failPreparing(msg);
     } finally {
       setBusy(false);

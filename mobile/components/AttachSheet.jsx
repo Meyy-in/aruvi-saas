@@ -194,9 +194,10 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
           ⚠️ THE REASON IT WAITED WAS THE RETURN, NOT THE DESTINATION — this file said so — and
           the return is what shipped with it. A footer that prepares and then drops her on My
           Lessons, with the section she started from forgotten, is worse than no footer: she came
-          here to fill THAT slot. `onPrepareNew` carries the section across the route change
-          (lib/preparing's `pendingAttach`), and My Classes reopens this very picker when she
-          lands, now listing the chapter she just built. */}
+          here to fill THAT slot. `onPrepareNew` carries the SECTION into /prepare; the wait is
+          then drawn on that section's own card in My Classes, and the finished plan settles onto
+          it already attached (founder, 2026-09-15). She never picks from this list again for the
+          chapter she just asked to be built. */}
       {onPrepareNew ? (
         <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
           <Text style={ws.mlp_allocate_q}>Need a chapter you don&rsquo;t have yet?</Text>

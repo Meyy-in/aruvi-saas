@@ -9,11 +9,11 @@
  *
  * Plan status, theme and sign-out live at the foot for now; they move to Settings in step 6.
  * The section→lesson binding ("+") and the full My Lessons library are step 4. */
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, fetchEntitlement, subjectSlug } from "@aruvi/shared/format";
+import { getUser, fetchEntitlement, subjectSlug, pad } from "@aruvi/shared/format";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
@@ -23,7 +23,8 @@ import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
 import Bar from "../../components/Bar";
 import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
-import { takePendingAttach } from "../../lib/preparing";
+import { subscribePreparing, clearPreparing } from "../../lib/preparing";
+import ProposedCard from "../../components/ProposedCard";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
 import { type } from "../../theme/type";
@@ -174,36 +175,39 @@ export default function Home() {
   const [untrackFor, setUntrackFor] = useState(null);  // { c, sectionKey, plan }
   const bump = () => setTick((n) => n + 1);
 
-  /* ★ COMING BACK FROM "prepare a new one" (5d B17 + A9, 2026-09-15). The prepare screen handed
-     the section over through `lib/preparing`'s `pendingAttach` and navigated here. Re-read the
-     listing — her flags moved when the plan landed — and REOPEN THE PICKER on that section, now
-     carrying the chapter she just built.
-     ⚠️ It reopens rather than auto-attaches, which is the web's own choice (page.jsx:66-67:
-     "reopen that popup (now listing the new chapter) instead of dumping the teacher into the
-     lesson plan"). She asked for a chapter to exist; binding it to a section on her behalf is a
-     second decision she has not made.
-     ⚠️ `take`, not read: the handoff is spent here, or an ordinary later visit to My Classes
-     would pop a picker she never asked for. */
-  useFocusEffect(useCallback(() => {
-    const pend = takePendingAttach();
-    if (!pend) return;
-    const c = (st.classes || []).find((x) => x.sectionKey === pend.section);
-    if (!c) return;                       // the section went away while she was preparing
-    /* Her flags moved when the plan landed, so the listing must be re-read, not re-used — the
-       same invalidate-then-fetch the attach path below does, and for the same reason. The picker
-       opens immediately on the cached rows and fills in when the fetch lands; the new chapter is
-       what the fetch brings. */
-    const key = `${pend.subject}/${pend.grade}`;
-    invalidatePlans(key);
-    fetchPlans(key)
-      .then((rows) => setSt((prev) => ({
-        ...prev, plansBySG: { ...prev.plansBySG, [key]: indexPlans(rows) },
-      })))
-      .catch(() => {});
-    setAttachFor({ c, sectionKey: pend.section });
-    bump();
+  /* ★ THE LESSON BEING PREPARED FOR ONE OF THESE SECTIONS (founder, 2026-09-15). The wait
+     happens where the lesson will appear — that is the 2026-08-06 rule — and for a prepare
+     launched from a section card's "+", that is THIS SCREEN, on THAT CARD. The descriptor
+     carries the section, so at most one card is ever waiting.
+     ⚠️ A descriptor with NO section belongs to My Lessons and is ignored here, or the same wait
+     would be drawn twice in two places. */
+  const [prep, setPrep] = useState({ descriptor: null, paywall: "" });
+  useEffect(() => subscribePreparing(setPrep), []);
+  const preparing = prep.descriptor && prep.descriptor.section ? prep.descriptor : null;
+  /* The plan landed and `prepare.jsx` bound it before clearing, so the listing has moved on:
+     re-read it and re-render, which is what turns the waiting card into the attached one. */
+  /* The descriptor is GONE by the time we notice it went, so the key it named is kept here.
+     The edge is "was preparing, and is no longer" — the same shape My Lessons uses. */
+  const lastPrep = useRef(null);
+  if (preparing) lastPrep.current = `${preparing.subject}/${preparing.grade}`;
+  const wasPreparing = useRef(false);
+  useEffect(() => {
+    const now = !!preparing;
+    if (wasPreparing.current && !now) {
+      const key = lastPrep.current;
+      bump();                                  // the binding is written; redraw the card from it
+      if (key) {
+        invalidatePlans(key);
+        fetchPlans(key)
+          .then((rows) => setSt((prev) => ({
+            ...prev, plansBySG: { ...prev.plansBySG, [key]: indexPlans(rows) },
+          })))
+          .catch(() => {});
+      }
+    }
+    wasPreparing.current = now;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [st.classes]));
+  }, [preparing]);
 
   const attachChapter = (c, sectionKey, plan) => {
     bindSectionChapter(sectionKey, plan.filename);
@@ -291,6 +295,8 @@ export default function Home() {
             {st.classes.map((c) => (
               <ClassCard key={c.sectionKey} c={c}
                 plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`] || {}}
+                preparing={preparing && preparing.section === c.sectionKey ? preparing : null}
+                onDismissPreparing={clearPreparing}
                 onOpen={openAttached}
                 onAttach={() => setAttachFor({ c, sectionKey: c.sectionKey })}
                 onUntrack={(plan) => setUntrackFor({ c, sectionKey: c.sectionKey, plan })}
@@ -398,7 +404,7 @@ function DashHead({ classes, plansBySG, user }) {
  * on an empty or finished card, "−" to untrack (clay) while she is teaching. Measures in
  * theme/web.js under sc_*; the web's 11px graph rule is the one thing not ported (RN has no
  * repeating gradient) — the card keeps its fill, which is what carries the status anyway. */
-function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
+function ClassCard({ c, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack, onMoveOn }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const sec = readLocalSection(c.sectionKey);
@@ -425,6 +431,38 @@ function ClassCard({ c, plans, onOpen, onAttach, onUntrack, onMoveOn }) {
   /* No chapter bound — "Pick a chapter to begin". The card is NOT tappable-to-generate; the
      "+" opens the picker (founder, 2026-07-09: a freshly generated lesson lands in My Lessons
      and is never auto-named onto a section card). */
+  /* ★ THE LESSON THIS CARD IS WAITING FOR (founder, 2026-09-15). Prepared from this card's own
+     "+", so the wait belongs HERE — the 2026-08-06 rule is that the bar sits where the finished
+     thing will appear, and the finished thing appears on this card.
+     It is the SAME card, not a different kind of thing: same tag, same fill, same height. What
+     changes is the title line (the chapter she asked for, known and final — nothing is fetched to
+     draw it) and the last line, a progress bar where "Pick a chapter to begin" was. The dashed
+     edge is the one "not yet" signal, and it is STRUCTURE, never colour — `ProposedCard`'s rule,
+     stated once on each screen.
+     ⚠️ The "+" is GONE while it waits: opening the picker mid-prepare offers her a second
+     chapter for a slot that is about to be filled. */
+  if (preparing) {
+    return (
+      <View style={[ws.sc_card, ws.sc_proposed,
+        { backgroundColor: t.card_new, borderColor: t.card_new_edge }]}
+        accessibilityLiveRegion="polite">
+        <CardGrid color={t.card_grid} />
+        <View style={[ws.sc_spine, { backgroundColor: t.clay }]} />
+        <Tag />
+        <View style={ws.sc_body}>
+          <Text style={ws.sc_kicker}>{c.subjectName}</Text>
+          <Text style={ws.sc_title} numberOfLines={1}>
+            {preparing.chapterNo ? `Ch ${pad(preparing.chapterNo)}: ` : ""}{preparing.chapterTitle}
+          </Text>
+          {/* ★ THE SAME PROGRESS LINE MY LESSONS DRAWS, not a second one. `ProposedCard`'s
+              `bare` mode exists for exactly this — mark something busy in place — so the two
+              screens cannot drift in wording, timing, easing or the failed row. */}
+          <ProposedCard preparing={preparing} onDismiss={onDismissPreparing} bare />
+        </View>
+      </View>
+    );
+  }
+
   if (!plan) {
     return (
       <View style={[ws.sc_card, { backgroundColor: t.card_new, borderColor: t.card_new_edge }]}>

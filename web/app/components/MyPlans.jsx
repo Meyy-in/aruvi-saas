@@ -104,7 +104,7 @@ const SectionTag = ({ c, muted }) => (
   </div>
 );
 
-export default function MyPlans({ subject, grade, ready, readiness, onReady, onNavigate, onEnterGenerate, user, onSignOut, lapsed, pendingOpen, onConsumePending, pendingAttach, onConsumeAttach, onStartTour, tourActive, tourStep, onTourInfo, onOpenPortal, sectionCheck, yearInfo, onCutover, cutoverBusy, cutoverResult, onDismissCutoverResult, cutoverDismissed, onDismissCutover }) {
+export default function MyPlans({ subject, grade, ready, readiness, onReady, onNavigate, onEnterGenerate, user, onSignOut, lapsed, pendingOpen, onConsumePending, pendingAttach, onConsumeAttach, onStartTour, tourActive, tourStep, onTourInfo, onOpenPortal, sectionCheck, yearInfo, onCutover, cutoverBusy, cutoverResult, onDismissCutoverResult, cutoverDismissed, onDismissCutover, preparingCard, preparingSection, onDismissPreparing }) {
   const [openPlan, setOpenPlan] = useState(null);  // { view, sectionKey } for LessonView
   const [loading, setLoading] = useState(false);
   const [setupStarted, setSetupStarted] = useState(false); // 2a welcome → grid flow gate
@@ -1101,11 +1101,59 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
 
           // No chapter bound to this class yet → "pick a chapter to begin" (grey / not started).
           // The card is NOT tappable-to-generate anymore; the "+" opens the attach picker instead.
+          /* Is THIS card the one waiting? One card at most: the descriptor names a section tag
+             and `preparingSection` is set only for a prepare launched from a section's "+". */
+          const waiting = !!preparingCard && preparingSection === c.sectionTag
+            && preparingCard.subject === c.subjectSlug && preparingCard.grade === c.gradeSlug;
+          const prepTotal = waiting
+            ? (preparingCard.rows || []).reduce((a, r) => a + (Number(r.count) || 0), 0) : 0;
+
           if (!plan) {
             // The card stays EMPTY even after first-run generation (founder's call, 2026-07-09):
             // the freshly generated lesson lands ONLY in My Lessons and is never auto-named onto a
             // section card. The card just reads "Pick a chapter to begin" until she taps "+" and
             // attaches a lesson herself through the track-a-chapter picker.
+            /* ★ THE LESSON THIS CARD IS WAITING FOR (founder, 2026-09-15: "it should show
+               progress on the section card from which it was generated and upon completion,
+               settle in the section card with the new LP attached").
+               The 2026-08-06 rule is that the wait happens WHERE THE LESSON WILL APPEAR. For a
+               prepare launched from this card's own "+", that is HERE — so the bar sits on the
+               card, not on an otherwise-empty Generate screen. Same card, same height, same
+               fill; what changes is the title (the chapter she asked for — known and final,
+               nothing fetched to draw it) and the last line.
+               ⚠️ The "+" is GONE while it waits: offering her a second chapter for a slot that
+               is about to be filled is an invitation to a collision. */
+            if (waiting) {
+              return (
+                <div className="sc-card st-new sc-proposed" key={i} aria-live="polite">
+                  <SectionTag c={c} />
+                  <div className="sc-body">
+                    {banded ? null : <span className="sc-kicker">{pretty(c.subjectSlug)}</span>}
+                    <div className="sc-title">
+                      {preparingCard.chapterNo ? <b>Ch {pad(preparingCard.chapterNo)}: </b> : null}
+                      {preparingCard.chapterTitle}
+                    </div>
+                    {preparingCard.failed ? (
+                      <div className="sc-prep sc-prep-failed">
+                        <span className="sc-prep-note" title={preparingCard.message}>
+                          {preparingCard.message
+                            || "Couldn’t build the lesson plan right now. Try again in a moment."}
+                        </span>
+                        <button type="button" className="sc-prep-dismiss" onClick={onDismissPreparing}
+                          aria-label="Dismiss this failed lesson">Dismiss</button>
+                      </div>
+                    ) : (
+                      <div className="sc-prep">
+                        <div className="sc-prep-bar"><i /></div>
+                        <span className="sc-prep-note">
+                          Preparing your {prepTotal} {prepTotal === 1 ? "period" : "periods"} lesson plan…
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            }
             return (
               // On the tour's TARGET card, the "+" carries data-tour="section-add" — step 7's
               // spotlight + hand sit on it ("click the + sign of that section card").

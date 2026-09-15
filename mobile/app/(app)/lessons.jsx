@@ -145,7 +145,11 @@ export default function MyLessons() {
   const [tick, setTick] = useState(0);              // bumped after a section-state sync → re-read
   const [prep, setPrep] = useState({ descriptor: null, paywall: "" });
   useEffect(() => subscribePreparing(setPrep), []);
-  const preparing = prep.descriptor;
+  /* ⚠️ A DESCRIPTOR CARRYING A SECTION BELONGS TO MY CLASSES (founder, 2026-09-15). Prepared
+     from a section card's "+", the lesson appears on THAT CARD, so the wait is drawn there —
+     and drawing it here as well would put one wait in two places and steer these wheels for a
+     journey that never comes back to this screen. */
+  const preparing = prep.descriptor && !prep.descriptor.section ? prep.descriptor : null;
 
   /* ── FOLLOW THE LESSON BEING PREPARED INTO VIEW (the web's rule, 2026-08-06) ──
      This screen remembers its OWN subject·class across visits, which is right for browsing and

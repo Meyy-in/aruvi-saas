@@ -63,8 +63,9 @@ export default function Home() {
   const [profilePortal, setProfilePortal] = useState(null);  // "subject" | "class" | "section" — one-shot intent from My Classes' standing "+" portal
   const [pendingOpen, setPendingOpen] = useState(null);  // {subject,grade,sectionTag,filename} — deep-link from Track into My Week
   // Where a Prepare-a-lesson flow should RETURN once the chapter is prepared. Set when Prepare is
-  // launched from a section's attach popup; consumed by onPrepared to reopen that popup (now
-  // listing the new chapter) instead of dumping the teacher into the lesson plan.
+  // launched from a section's attach popup. ⚠️ This comment used to say it REOPENED that popup;
+  // it has AUTO-ATTACHED since long before (onPrepared → MyPlans' pendingAttach effect, which
+  // binds), and the stale sentence was corrected 2026-09-15.
   const [prepareReturn, setPrepareReturn] = useState(null);  // { subject, grade, sectionTag } | null
   const [pendingAttach, setPendingAttach] = useState(null);  // {subject,grade,sectionTag,filename} — reopen the attach popup in My Classes
   // How the Generate tab should open this time:
@@ -539,7 +540,7 @@ export default function Home() {
       setGenerateEntry({ mode: "pick", single });
     }
     // Launched from a section's attach popup → remember where to return once the chapter is
-    // prepared, so onPrepared can reopen that popup instead of opening the lesson plan.
+    // prepared, so the wait can be drawn on that card and the chapter auto-attached to it.
     setPrepareReturn(opts.returnSection && opts.subject && opts.grade
       ? { subject: opts.subject, grade: opts.grade, sectionTag: opts.returnSection } : null);
     setEditFlow(null);
@@ -575,20 +576,27 @@ export default function Home() {
   //   `preparingCard` lives HERE, above the tab, because PrepareLesson unmounts the instant
   // we navigate. The request itself keeps running inside that unmounted component's closure
   // and still calls onPrepared / onPrepareError, which is why nothing had to move server-side.
-  //   The section-attach path (prepareReturn) is deliberately EXCLUDED: it lands in My
-  // Classes, not My Lessons, so there is nowhere to put this card. It keeps the in-place
-  // wait, which PrepareLesson still implements as its fallback.
+  //   ★ AND THE SECTION-ATTACH PATH IS NO LONGER EXCLUDED (founder, 2026-09-15: "it should show
+  // progress on the section card from which it was generated and upon completion, settle in the
+  // section card with the new LP attached"). It WAS excluded, on the reasoning that it "lands in
+  // My Classes, not My Lessons, so there is nowhere to put this card" — which read the rule as
+  // being about My Lessons. It is not: the rule is that the wait happens WHERE THE LESSON WILL
+  // APPEAR, and for this journey that is the section card she launched it from. The premise was
+  // wrong, not the rule. `preparingSection` tells MyPlans which card is waiting, and nobody waits
+  // on an otherwise-empty Generate screen any more.
   const [preparingCard, setPreparingCard] = useState(null);
   // Returns TRUE only if the card was actually taken. PrepareLesson falls back to its own
   // in-place wait on false — without that handshake the attach path would show her nothing
   // at all for five seconds, which is worse than either screen.
   const onPreparing = (desc) => {
-    if (!desc || prepareReturn) return false;    // attach path keeps the in-place wait
+    if (!desc) return false;
     setGenerateEntry(null);
     setPreparingCard(desc);
     if (desc.subject) setSubject(desc.subject);
     if (desc.grade) setGrade(desc.grade);
-    setEditFlow("lessonplans"); setTab("myplans");
+    /* Launched from a section card → the wait belongs on MY CLASSES, on that card. Otherwise it
+       belongs in the My Lessons repository, where the finished plan will appear. */
+    setEditFlow(prepareReturn ? null : "lessonplans"); setTab("myplans");
     return true;
   };
   // The serve failed. Do NOT simply pull the card: she is watching it, and a card that
@@ -1378,6 +1386,9 @@ export default function Home() {
               user={displayName || user} onSignOut={onSignOut} lapsed={entLapsed}
               pendingOpen={pendingOpen} onConsumePending={() => setPendingOpen(null)}
               pendingAttach={pendingAttach} onConsumeAttach={() => setPendingAttach(null)}
+              preparingCard={preparingCard}
+              preparingSection={prepareReturn ? prepareReturn.sectionTag : null}
+              onDismissPreparing={() => setPreparingCard(null)}
               onStartTour={tourOnOffer ? startTour : undefined}
               tourActive={!!tour} tourStep={tour}
               onTourInfo={setTourInfo} onOpenPortal={() => setPortalWin({ mode: "change" })}
