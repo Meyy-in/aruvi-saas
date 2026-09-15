@@ -154,32 +154,59 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
 
       {phases.length ? (
         <View style={ws.uv_phases}>
+          {/* ★ THE MODE HAS TO SAY WHAT IT WANTS (founder, 2026-09-15: "the red button when
+              pressed highlights all of the phases and is not movable"). Pressing the arrow put
+              the spine into a state she could see but not read — so she went on trying to move
+              the arrow, which is the one thing it no longer does. One line, only while armed,
+              and it carries its own way out. */}
+          {armed ? (
+            <View style={ws.uv_arm_hint} accessibilityLiveRegion="polite">
+              <Text style={ws.uv_arm_hint_t}>Tap a phase to move the bookmark</Text>
+              <Pressable onPress={() => setArm(false)} hitSlop={10} accessibilityRole="button"
+                accessibilityLabel="Leave the bookmark where it is">
+                <Text style={ws.uv_arm_hint_x}>Cancel</Text>
+              </Pressable>
+            </View>
+          ) : null}
           {bookmark ? (
             <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
               color={t.clay} armed={armed} onToggle={() => setArm(!armed)} />
           ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
+            /* ★ ONLY THE PHASE IT IS ON LIGHTS UP (founder: "highlights all of the phases").
+               Tinting every row said "these are all targets", which is true and is also a wall of
+               colour — and it left the one fact she actually needs, WHERE THE BOOKMARK IS NOW,
+               with nothing to say it. Option A's sketch highlighted the row the arrow had moved
+               to, and that is the reading to keep: the highlight marks the answer, not the
+               question. Every row is still tappable while armed; only this one is coloured. */
+            const here = bookmark && i === Math.min(bookmark.phase, phases.length - 1);
             return (
-              /* ★ WHILE ARMED THE WHOLE ROW IS THE TARGET, and it says so (founder: "pressing
-                 arrow brings blue highlight"). A 26px glyph is a bad thing to aim at with a
-                 finger; a whole row is a good one, and the tint is what makes it look like one.
+              /* ★ WHILE ARMED THE WHOLE ROW IS THE TARGET. A 26px glyph is a bad thing to aim at
+                 with a finger; a whole row is a good one.
                  ⚠️ ONLY while armed. A row that is always tappable would move the bookmark on a
                  stray touch while she is reading the plan mid-lesson, which is the one moment
                  this mark must not move by accident.
-                 The minutes cell stays tappable either way — it has been the quiet way to place
-                 the bookmark since the port, and it costs nothing to keep. */
+                 ⚠️⚠️ AND THE MINUTES CELL IS NO LONGER A PRESSABLE OF ITS OWN (founder,
+                 2026-09-15: "the red button when pressed highlights all of the phases and is not
+                 movable"). It was, and that made this a BUTTON INSIDE A BUTTON — the exact thing
+                 this file warns about two screens down: react-native-web renders an
+                 accessibilityRole="button" Pressable as a real <button>, and a nested one warns
+                 and presses unreliably. So the row armed, lit up, and then would not take the
+                 tap. One Pressable per row now; the minutes cell is a plain View. The old
+                 tap-the-minutes path goes with it, and that is no loss — it was invisible, which
+                 is why the bookmark needed a visible mechanism in the first place. */
               <Pressable key={i} disabled={!bookmark || !armed} onPress={() => place(i)}
                 accessibilityRole={armed ? "button" : undefined}
                 accessibilityLabel={armed ? `Put the bookmark on phase ${i + 1}${mins != null ? `, ${mins} minutes` : ""}` : undefined}
                 style={({ pressed }) => [ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 },
-                  armed && ws.uv_phase_arm, armed && pressed && ws.uv_phase_arm_on]}
+                  armed && here && ws.uv_phase_arm, armed && pressed && ws.uv_phase_arm_on]}
                 onLayout={(e) => { const { y } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { timeH: 18 }), y } })); }}>
-                <Pressable disabled={!bookmark} onPress={() => place(i)} style={ws.uv_ph_time}
+                <View style={ws.uv_ph_time}
                   onLayout={(e) => { const { height } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { y: 0 }), timeH: height } })); }}>
                   <Text style={ws.uv_ph_n}>{mins != null ? mins : (ph.label || "—")}</Text>
                   {mins != null ? <Text style={ws.uv_ph_u}>min</Text> : null}
-                </Pressable>
+                </View>
                 <Text style={ws.uv_ph_t}>{ph.text}</Text>
               </Pressable>
             );

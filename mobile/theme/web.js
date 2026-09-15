@@ -257,6 +257,17 @@ export function webStyles(t, scheme = "light") {
        tint — the one the section wheel already uses for a ticked row — so arming reads as "this
        is selectable", in a colour the teacher has met before. The pressed state deepens it
        rather than introducing a second hue. */
+    /* The one line that says what to do while the bookmark is armed. It exists because the
+       founder pressed the arrow, saw the spine change, and reported it "not movable" — the app
+       had changed state without saying what the new state wanted from her. A mode nobody can
+       read is a mode nobody can use. */
+    uv_arm_hint:     { flexDirection: "row", alignItems: "center", columnGap: 6,
+                       paddingVertical: 8, paddingHorizontal: 8, marginBottom: 2,
+                       borderRadius: 6, backgroundColor: t.tint_pine },
+    uv_arm_hint_t:   { fontFamily: F.mono(500), fontSize: 10, lineHeight: 14, letterSpacing: 1.2,
+                       textTransform: UP, color: t.pine_d, flex: 1 },
+    uv_arm_hint_x:   { fontFamily: F.mono(500), fontSize: 10, lineHeight: 14, letterSpacing: 1.2,
+                       textTransform: UP, color: t.clay },
     uv_phase_arm:    { backgroundColor: t.tint_pine, borderRadius: 6,
                        marginHorizontal: -8, paddingHorizontal: 8 },
     /* ⚠️ Deepen the FILL only — a `borderColor` here would repaint the clay phase rule pine for
