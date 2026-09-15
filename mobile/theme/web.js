@@ -826,9 +826,11 @@ export function webStyles(t, scheme = "light") {
     yp_tot_l:        { flex: 1, minWidth: 0, fontFamily: F.mono(400), fontSize: 10, lineHeight: 13,
                        letterSpacing: 0.6, textTransform: UP, color: t.ink_soft },
     yp_tot_n:        { textAlign: "right", fontFamily: F.display(600), fontSize: 18, lineHeight: 22, color: t.ink },
-    /* The label cell becomes a ROW once it carries a control, so the two numeric columns stay
-       aligned with the chapter rows above — `.yp-tot` is a 3-column grid keyed to those. */
-    yp_tot_lrow:     { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center" },
+    /* ⚠️ THERE IS NO `yp_tot_lrow` ANY MORE, and there must not be one. Wrapping the label and
+       its pencil in a row seemed the obvious way to port the web's inline span — and it broke
+       the totals row on iOS, because `.yp-tot` aligns on the BASELINE and a wrapper View has no
+       text baseline to align on. See the long note in YearPlan.jsx: the label is a direct Text
+       and the pencil opts out with alignSelf. */
     /* `.yp-budget-edit` (globals.css 4752): a phone-sized tap target that does NOT open up the
        line it sits in — 10px of vertical padding cancelled by -10px of margin. On RN that is
        simply `hitSlop`, which is the same intent said properly, so the negative margins go. */

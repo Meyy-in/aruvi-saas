@@ -211,25 +211,34 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
         ))}
 
         {/* Totals. The pencil rides in the label cell, as on the web; the export is the one
-            control still held back (see the header). */}
+            control still held back (see the header).
+
+            ⚠️ EVERY CHILD OF THIS ROW IS A DIRECT CHILD, and the label is NOT wrapped (founder,
+            2026-09-15: "iPhone does not show 'Total periods' at the bottom of the Year Plan
+            table; Expo does"). `.yp-tot` is `align-items: baseline`, and on the web the pencil
+            rides INLINE inside the label's own span, so it sits on that text's baseline for free.
+            RN has no inline layout, so the first port wrapped the words and the pencil in a View
+            — and a View has no text baseline. react-native-web shrugged and laid it out; iOS
+            collapsed the cell and the words vanished, leaving a pencil beside two numbers with
+            nothing to explain them.
+            So the label stays a direct `<Text>` (baseline-able, like the two figures), the pencil
+            is a sibling that opts OUT of baseline with `alignSelf: "center"`, and a flexible
+            spacer stands in for the grid's `1fr` — which is what pushed the numbers right before.
+            ⚠️ And the label does not SHRINK. `yp_tot_l` carries `flex: 1` for the case where it is
+            the whole cell; here the spacer owns the stretch, so the words size to themselves.
+            `flex: 0` would be wrong too — in Yoga that is grow 0 / shrink 0 / basis ZERO, which
+            collapses it just as thoroughly (that was the bug before this one). */}
         <View style={[ws.yp_tot, { borderBottomColor: t.ink }]}>
-          <View style={ws.yp_tot_lrow}>
-            {/* ⚠️ NOT `flex: 0` (2026-09-15). `yp_tot_l` carries `flex: 1` for the case where it
-                IS the whole cell; inside this row the ROW owns that, so the label only needs to
-                size to its own words. `flex: 0` in Yoga is grow 0 / shrink 0 / basis 0 — and a
-                basis of ZERO collapsed the words to nothing, leaving a pencil floating beside two
-                numbers with no "Total periods" to explain them. `flexBasis: "auto"` is what
-                "size to content" actually says. */}
-            <Text style={[ws.yp_tot_l, { flexGrow: 0, flexShrink: 1, flexBasis: "auto" }]}
-              numberOfLines={1}>Total periods</Text>
-            {onEditBudget ? (
-              <Pressable onPress={onEditBudget} accessibilityRole="button" hitSlop={10}
-                accessibilityLabel={`Change your annual period budget for ${subjectName}`}
-                style={ws.yp_budget_edit}>
-                <Pencil color={t.pine_d} />
-              </Pressable>
-            ) : null}
-          </View>
+          <Text style={[ws.yp_tot_l, { flexGrow: 0, flexShrink: 0, flexBasis: "auto" }]}
+            numberOfLines={1}>Total periods</Text>
+          {onEditBudget ? (
+            <Pressable onPress={onEditBudget} accessibilityRole="button" hitSlop={10}
+              accessibilityLabel={`Change your annual period budget for ${subjectName}`}
+              style={[ws.yp_budget_edit, { alignSelf: "center" }]}>
+              <Pencil color={t.pine_d} />
+            </Pressable>
+          ) : null}
+          <View style={{ flex: 1 }} />
           <Text style={[ws.yp_tot_n, ws.yp_c_sug]}>{sugTotal}</Text>
           <Text style={[ws.yp_tot_n, ws.yp_c_plan]}>{committedTotal}</Text>
         </View>

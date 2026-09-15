@@ -6429,3 +6429,41 @@ had a different fault on the same screen. **When a founder reports one symptom o
 report is two reports until each is reproduced.** The parity page is what made that cheap: the Expo
 pane threw its own error, in its own file, at its own line, side by side with a web pane that by then
 was working.
+
+---
+
+## 2026-09-15 — One row, three ways to lose the words on it
+
+Founder: *"iPhone does not show 'Total periods' at the bottom of the table of Year plan. Expo does
+show it."* The Year Plan's totals row is four characters of layout, and I have now broken it three
+times in one day, each time differently, each time believing the previous fix had settled it.
+
+```
+.yp-tot { display: grid; grid-template-columns: 1fr 54px 68px; align-items: baseline; }
+```
+
+The label cell is `1fr`. On the web the pencil sits **inline inside the label's own span**, so it
+rides that text's baseline for free and nobody has to think about it.
+
+1. **`flex: 0`** to stop the label stretching. In Yoga that is grow 0 / shrink 0 / **basis 0** — the
+   words collapsed to nothing. Caught on the Expo web target.
+2. **`flexBasis: "auto"` inside a wrapper View.** Correct on web, and the words came back. But RN
+   has no inline layout, so putting the label and the pencil in a row meant the row's first child
+   was now a **View**, and a View has no text baseline. react-native-web shrugged and laid it out;
+   **iOS collapsed the cell.** Caught only by the founder, on the handset.
+3. The fix: the label is a **direct `<Text>`** again (baseline-able, like the two figures), the
+   pencil opts OUT of baseline with `alignSelf: "center"`, and a `flex: 1` spacer stands in for the
+   grid's `1fr`.
+
+★ **The lesson that is actually general: `alignItems: "baseline"` is a contract that every child is
+text.** The moment a port introduces a wrapper View into a baseline row — and porting inline
+content to RN almost always wants a wrapper — that contract is broken silently. Web forgives it;
+iOS does not.
+
+★ **AND THE PARITY PAGE CANNOT SEE THIS CLASS OF BUG.** Its whole value is that two renderings sit
+side by side — but both panes are react-native-web. The divergence here was iOS vs **everything I
+can look at**, so the parity page showed a perfect match of two wrong answers. The earlier note in
+this file says "native tolerance is not correctness — RN supplies sizes and events the DOM does
+not, and the phone is where we look first." This is the same coin's other face: **web tolerance is
+not correctness either**, and for anything touching baseline, intrinsic sizing or text metrics, the
+handset is the only authority. I could not have found this myself with the tools I have.
