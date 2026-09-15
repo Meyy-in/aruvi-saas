@@ -46,6 +46,28 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
                             align = "left", padLeft = 16, peek = false, clamp = 1, large = false }) {
   const ref = useRef(null);
   const settle = useRef(null);
+  /* ★ WHAT THIS WHEEL ITSELF LAST COMMITTED (2026-09-15). The parking effect below deliberately
+     does NOT run on `value` — doing so cancels the ▼'s own roll, which is the bug its comment
+     records. But that left the opposite hole: a value changed from OUTSIDE never moved the box,
+     so the wheel went on showing the old item while the screen showed the new one. This ref is
+     how the two cases are told apart — if `value` is what we just committed, the scroll is
+     already where it belongs; if it is anything else, somebody else set it and the box must
+     follow. */
+  const mine = useRef(null);
+  /* ★ A ROLL WE STARTED OURSELVES IS AUTHORITATIVE UNTIL IT ARRIVES (2026-09-15).
+     `onSettle` is wired to `onScroll` — it has to be, or the web target never commits a
+     trackpad scroll at all (the founder's 2026-09-14 report). But `onScroll` also fires all the
+     way through a PROGRAMMATIC `scrollTo({animated:true})`, and if those events stop arriving
+     before the glide finishes, the 120ms timer reads an offset that is still in flight and
+     rounds it to whichever row it happens to be nearest. Measured: a 72px wheel mid-roll at 172
+     was read as row 2 and committed the item it was travelling AWAY from — so the ▼ appeared to
+     do nothing, and, worse, quietly reverted the pick it had already made.
+     So: the target is recorded here before the glide starts, the settle ignores any offset while
+     one is outstanding, and a safety timer lands the wheel on that target if the glide is
+     interrupted. The pick itself was committed by `stepCycle`/`step` before the glide began — it
+     has never depended on the animation arriving. */
+  const pending = useRef(null);
+  const pendingTimer = useRef(null);
   const N = items.length;
   /* Continuous wheeling is a PEEK behaviour. The base wheel's list has ends and the ▲▼ pair
      respects them — the web's `stepScroll` clamps to [0, N-1] for exactly this reason. */
@@ -91,8 +113,41 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, rowPx]);
 
+  /* ★ FOLLOW A VALUE SET FROM OUTSIDE (founder, 2026-09-15: "on iPhone, when lesson generation
+     is initiated it defaults to pre-existing subject (English) list on My Lessons and remains
+     there. I have to toggle to second subject to see if the LP is there").
+     My Lessons STEERS these wheels when a prepare starts, so the proposed card is drawn in the
+     list she is looking at — that is the web's rule and the phone had the effect for it. What the
+     phone did not have was a wheel that would MOVE: the box stayed parked on English, and then
+     its own settle timer read that stale offset, rounded it to English and committed it BACK,
+     undoing the steer. The scope she had chosen was overwritten by the picture of the scope she
+     had left. Measured on the running app: rows are 72px and the scroller was resting at 172 —
+     between two rows, with the settle about to round it to the wrong one.
+     ⚠️ `animated: false`, deliberately. This is not her gesture and not the ▼'s roll; it is the
+     box catching up with a decision already made, and a 300ms glide would draw the eye to a
+     movement that means nothing. */
+  useEffect(() => {
+    if (mine.current === String(value)) return;   // our own commit — the scroll is already right
+    const el = ref.current;
+    if (!el || !N) return;
+    // Somebody else decided; whatever we were rolling towards is out of date.
+    pending.current = null;
+    if (pendingTimer.current) { clearTimeout(pendingTimer.current); pendingTimer.current = null; }
+    const idx = items.findIndex((it) => String(it.id) === String(value));
+    if (idx < 0) return;                          // not in the list; the effect above corrects it
+    const y = (loop ? N + idx : idx) * rowPx;
+    // Defer a frame for the same reason the mount effect does: a scroller that has not laid out
+    // yet silently drops the offset.
+    const id = setTimeout(() => { try { el.scrollTo({ y, animated: false }); } catch {} }, 0);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   // The settle timer must not outlive the wheel — it calls onChange, and the parent may be gone.
-  useEffect(() => () => { if (settle.current) clearTimeout(settle.current); }, []);
+  useEffect(() => () => {
+    if (settle.current) clearTimeout(settle.current);
+    if (pendingTimer.current) clearTimeout(pendingTimer.current);
+  }, []);
 
   /* Whatever settles in the box becomes the pick.
      ⚠️ AND `onScroll` IS THE ONE THAT MAKES IT WORK ON THE WEB TARGET (founder, 2026-09-14: "on
@@ -106,8 +161,35 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
      The 120ms timer is what makes `onScroll` safe on native too — it fires continuously during
      a flick and each event resets the timer, so the commit still happens once, when the wheel
      actually stops. */
+  /* Start a programmatic roll to `y` and hold it as the truth until the wheel gets there. */
+  const rollTo = (y) => {
+    const el = ref.current;
+    if (!el) return;
+    pending.current = y;
+    if (pendingTimer.current) clearTimeout(pendingTimer.current);
+    /* If the glide is interrupted — a re-render, a finger, a browser that drops the smooth
+       scroll — put the wheel on the row anyway. Without this the box can rest between two rows
+       for good, which is both wrong to look at and the state the settle used to misread. */
+    pendingTimer.current = setTimeout(() => {
+      pending.current = null;
+      const el2 = ref.current;
+      if (!el2) return;
+      try { el2.scrollTo({ y, animated: false }); } catch {}
+    }, 700);
+    try { el.scrollTo({ y, animated: true }); } catch {}
+  };
+
   const onSettle = (e) => {
     const y = e.nativeEvent.contentOffset.y;
+    /* ⚠️ NEVER COMMIT FROM AN OFFSET THAT IS STILL TRAVELLING. The pick for a programmatic roll
+       was made before it started; all that is left is to notice it has landed. */
+    if (pending.current != null) {
+      if (Math.abs(y - pending.current) <= 1) {
+        pending.current = null;
+        if (pendingTimer.current) { clearTimeout(pendingTimer.current); pendingTimer.current = null; }
+      }
+      return;
+    }
     if (settle.current) clearTimeout(settle.current);
     settle.current = setTimeout(() => {
       const el = ref.current;
@@ -115,15 +197,23 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
       const raw = Math.round(y / rowPx);
       if (loop) {
         const real = ((raw % N) + N) % N;
-        if (items[real]) onChange(String(items[real].id));
-        // Drifted out of the middle copy — hop back into it. The recentred row shows the
-        // identical item, so this is invisible and there is always more list to roll into.
-        if (raw < N || raw >= 2 * N) {
-          try { el.scrollTo({ y: (N + real) * rowPx, animated: false }); } catch {}
-        }
+        if (items[real]) { mine.current = String(items[real].id); onChange(String(items[real].id)); }
+        /* ★ ALWAYS LAND EXACTLY ON THE ROW — not only when the box has drifted out of the middle
+           copy (2026-09-15). The recentring hop was the only correction here, so a wheel resting
+           BETWEEN two rows inside the middle copy was left there: `snapToInterval` is native, and
+           react-native-web has to express it as CSS scroll-snap, which does not catch a
+           programmatic `scrollTo` that gets interrupted. Measured on the running app: 72px rows
+           resting at 172, which `Math.round` then reads as row 2 — so the wheel not only LOOKED
+           half-way, it committed the item it was half-way from.
+           The non-loop branch below has had this nudge since it was written, and for the same
+           reason; the loop branch simply never got it. On native the offset already matches and
+           this is a no-op, and the `> 1` guard is what stops scrollTo → onScroll → settle from
+           looping. */
+        const y2 = (N + real) * rowPx;
+        if (Math.abs(y - y2) > 1) { try { el.scrollTo({ y: y2, animated: false }); } catch {} }
       } else {
         const idx = Math.min(N - 1, Math.max(0, raw));
-        if (items[idx]) onChange(String(items[idx].id));
+        if (items[idx]) { mine.current = String(items[idx].id); onChange(String(items[idx].id)); }
         /* Land ON the row. `snapToInterval` is a native prop; react-native-web has to express it
            as CSS scroll-snap and may not, in which case the box comes to rest between two rows
            and the pick is ambiguous to the eye even though it committed correctly. Nudging it
@@ -142,12 +232,9 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   const stepCycle = () => {
     if (!N) return;
     const next = (selIdx + 1) % N;
+    mine.current = String(items[next].id);   // ours, so the follow effect leaves the roll alone
     onChange(String(items[next].id));
-    const el = ref.current;
-    if (!el) return;
-    try {
-      el.scrollTo({ y: (loop ? N + selIdx + 1 : next) * rowPx, animated: true });
-    } catch {}
+    rollTo((loop ? N + selIdx + 1 : next) * rowPx);
   };
 
   /* The base wheel's ▲▼: exactly one row, CLAMPED at both ends — the web's `stepScroll`. The
@@ -156,10 +243,9 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
     if (!N) return;
     const next = Math.min(N - 1, Math.max(0, selIdx + dir));
     if (next === selIdx) return;
+    mine.current = String(items[next].id);   // ours, so the follow effect leaves the roll alone
     onChange(String(items[next].id));
-    const el = ref.current;
-    if (!el) return;
-    try { el.scrollTo({ y: next * rowPx, animated: true }); } catch {}
+    rollTo(next * rowPx);
   };
 
   const ws = useWebStyles();
