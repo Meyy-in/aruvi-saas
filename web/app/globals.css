@@ -5341,7 +5341,19 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
    24px and the ← ends at 42px from the card edge, so 24px of indent clears it with 6px to
    spare. The heading below starts a line of its own and is left alone. */
 .tp-window-back .tp > .kicker { padding-left: 24px; }
-.tp-window-card .tp { padding-top: 2px; }
+/* ★ THE ✕ GETS ITS OWN ROW (founder, 2026-09-15: "the 'how many periods a week?' window of the
+   add button has its 'x' too close to top row. create an empty row above and place x at its
+   right end … or better, put 'periods/week' in the second row as it is in the expo").
+   Measured on the running page before changing anything: the ✕ occupies 13→43px from the card's
+   top edge and the kicker ran 29→45, so they OVERLAPPED BY 14px — the glyph sat on the kicker's
+   own line. It only ever looked survivable because this card is 560px wide and the kicker text
+   is short; the kicker's BOX already ran to 535 and the ✕ starts at 517, so a longer scope
+   ("Social Sciences · Class 10 · annual period budget") would have run underneath it.
+   20px is the whole of the fix: it puts the kicker's top at 48, clear of the ✕'s 43, which is
+   exactly the "empty row above with the ✕ at its right end" that was asked for.
+   ⚠️ It costs 20px of a card whose height is the standing problem, and that is the trade the
+   founder made knowingly. Do not ALSO add a margin to the kicker — one source of this gap. */
+.tp-window-card .tp { padding-top: 22px; }
 /* Inside the window the ✕ is the way out, so the flow's footer "← Back" / "Cancel" links are
    redundant — and each costs a row of a card whose height is the standing problem. They stay on
    the full-page Settings visit, which has no ✕ of its own.

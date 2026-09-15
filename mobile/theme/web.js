@@ -698,7 +698,11 @@ export function webStyles(t, scheme = "light") {
     fr_q:            { fontFamily: F.display(600), fontSize: 27, lineHeight: 31.86, letterSpacing: -0.4,
                        color: t.ink, marginBottom: 6 },
     /* The editor's kicker clears the window's corner buttons, which are drawn over this line. */
-    tp_kicker_pad:   { paddingRight: 30 },
+    /* `paddingRight` reserves the ✕'s column so a long scope can never run under it; `paddingTop`
+       gives the ✕ its OWN ROW (founder, 2026-09-15 — reported on the web, fixed on both, since a
+       window is one design). Measured: the ✕ occupies 13→43 from the card's top and the kicker
+       began at 23, overlapping it by 20px. 26 here puts the kicker at 48, clear of the ✕. */
+    tp_kicker_pad:   { paddingRight: 30, paddingTop: 26 },
     tp_val_row:      { flexDirection: "row", alignItems: "center", columnGap: 16,
                        marginTop: 18, marginBottom: 12 },   // .tp-val-row + .tp-val-solo
     tp_val_btn:      { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5,
