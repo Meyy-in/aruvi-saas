@@ -21,13 +21,13 @@ export default function AppLayout() {
   if (!getUser()) return <Redirect href="/login" />;
 
   /* ★ THE BUDGET EDITOR LIGHTS NOTHING, which is the web's own answer (page.jsx `activeNav`:
-     `editFlow === "profile" → "none"`). It is a profile screen — she is amending her teaching
+     `editFlow === "profile" → "none"`). It IS the profile screen — she is amending her teaching
      record, not standing in one of the four places — and it is reached only from the Year Plan
      and returns there. Lighting My Classes under her, which the bare `: "classes"` fallback
      would do, tells her she is somewhere she is not. "none" is not a case BottomNav enumerates;
      it simply matches no item, and the bar says "you are somewhere else" without pretending. */
   const active = pathname.startsWith("/lessons") ? "lessons"
-    : pathname.startsWith("/budget") ? "none" : "classes";
+    : pathname.startsWith("/profile") ? "none" : "classes";
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>

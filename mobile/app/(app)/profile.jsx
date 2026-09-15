@@ -1,7 +1,15 @@
-/* ───────── the annual period budget, edited (Track D step 5c, 2026-09-15) ─────────
+/* ───────── the teaching profile, one edit at a time (Track D step 5c/5d) ─────────
  *
- * The Year Plan's budget pencil, given somewhere to land. A port of the web's budget step —
- * `renderBudgetStep` in TeachingProfile.jsx, reached through `editNums` with `step: "budget"`.
+ * ★ ONE ROUTE, MANY INTENTS — the shape the web itself arrived at. `TeachingProfile.jsx` is
+ * 1,700 lines because it is a dozen screens under one roof, reached by `portalIntent`; every
+ * spot edit she can make (a class, a section, periods a week, the period lengths, the annual
+ * budget) is the SAME journey with a different destination. The phone takes that structure
+ * rather than a route per edit: `/profile?intent=budget&subject=…&grade=…` today, and 5d's
+ * `ppw`, `duration`, `section` and `class` intents land here beside it. A route per edit would
+ * have meant a save path, a scope resolver and an exit rule copied five times.
+ *
+ * Today it serves ONE intent, `budget` — a port of the web's budget step, `renderBudgetStep`
+ * reached through `editNums` with `step: "budget"`.
  *
  * ★ ONE INPUT, BECAUSE SHE IS DISAGREEING, NOT BUILDING (founder, 2026-08-27). There used to be
  * four ways to construct the figure — teaching weeks · period count · working days · estimate —
@@ -19,11 +27,14 @@
  * ★ AND SAVE SITS WELL CLEAR OF IT (same day): 88px of air above the footer, because the gap is
  * what separates "what I am being told" from "what I am about to do".
  *
- * ⚠️ ONE DIVERGENCE, named as CLAUDE.md §4 requires: the web's weeks line carries a PENCIL
- * through to the periods-a-week wheel — "if the weeks look wrong because the ppw is wrong, go
- * and fix that side". The phone has no periods-a-week editor yet; it arrives with the teaching
- * profile, which is a later step. So the line renders without it, rather than with a control
- * that leads nowhere. When the profile lands, that pencil is the first thing to restore here.
+ * ★ THE SENSE-CHECK PENCIL IS WHY THIS SCREEN IS NOT YET REACHABLE (founder, Q1, 2026-09-15).
+ * The web's weeks line carries a second pencil, through to periods-a-week and then durations —
+ * "if the weeks look wrong because the ppw is wrong, go and fix that side". Asked whether to
+ * ship the budget screen without it as a named divergence or hold until the ppw editor exists,
+ * the founder chose HOLD. So this screen is complete and the Year Plan's pencil stays dark
+ * (`lessons.jsx`), and both light together when 5d's numbers editor lands and the pencil below
+ * leads somewhere. A screen whose own control leads nowhere is the thing 4b held the outer
+ * pencil back for; shipping it one level down would only have moved the dead end.
  *
  * ★ SHE IS RETURNED TO THE PANE SHE CAME FROM, on save AND on cancel (`lib/paneIntent`). The
  * pencil is reached only from the Year Plan; a return that landed on the card list would make it
@@ -34,11 +45,10 @@ import { View, Pressable, TextInput, ScrollView, ActivityIndicator } from "react
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
-  API, classNum, getJSON, getUser, pretty, subjectSlug, weeksFromAnnual, withUser,
+  classNum, getJSON, getUser, pretty, subjectSlug, weeksFromAnnual,
 } from "@aruvi/shared/format";
 import { normalizeBudget, setGradeBudget, gradeBudgetRecord, clampPeriods } from "@aruvi/shared/budget";
-import { cachedReadiness, fetchReadiness, invalidateReadiness } from "@aruvi/shared/readiness";
-import { verifiedWrite, readinessFingerprint } from "@aruvi/shared/verify";
+import { cachedReadiness, fetchReadiness, saveReadiness } from "@aruvi/shared/readiness";
 import { stampPane } from "../../lib/paneIntent";
 import Bar from "../../components/Bar";
 import { useTheme } from "../../theme/ThemeContext";
@@ -46,11 +56,16 @@ import { useWebStyles } from "../../theme/web";
 
 const DEFAULT_PPW = 6;   // wheels.jsx; the phone has no ppw wheel yet, so it is only a fallback
 
-export default function BudgetScreen() {
+export default function ProfileScreen() {
   const { t } = useTheme();
   const ws = useWebStyles();
   const router = useRouter();
-  const { subject = "", grade = "" } = useLocalSearchParams();
+  /* `intent` is the destination; `subject`/`grade` the scope it acts on. The web resolves a
+     scope through two pick screens when it is ambiguous — the Year Plan's pencil is the
+     opposite case, "she is standing on Class 7's year plan", so it passes `exact` and both
+     pick screens are skipped (`portalGradeIdxs`, 5d row 21). Today `budget` is the only
+     intent, and an unrecognised one is treated as it. */
+  const { intent = "budget", subject = "", grade = "" } = useLocalSearchParams();
 
   /* Seeded synchronously from the device copy, like every other screen on this app: her profile
      is already in module memory, so the figure is on screen before any network is consulted. */
@@ -110,43 +125,26 @@ export default function BudgetScreen() {
 
   const leave = () => { stampPane("plan"); router.navigate("/lessons"); };
 
-  /* ── READ-AFTER-WRITE (founder doctrine, 2026-08-10; @aruvi/shared/verify) ──────────────
-     Y is the subjects array she just composed, so we know it UPFRONT; Y′ is GET /readiness.
-     Error IF AND ONLY IF Y′ ≠ Y. The POST throwing is not a criterion (a 200 can lie; a lost
-     response can hide a write that landed), and an unreachable server is NOT an error — it is a
-     state in which the check cannot be RUN, and presuming failure there would invent a fact.
-     Hence three outcomes, and only the middle one speaks. The web's `persist` is the same call
-     against the same endpoint; `cascade: true` rides along with it for the same reason. */
+  /* ── SAVE ────────────────────────────────────────────────────────────────────────────
+     The write itself is `saveReadiness` (@aruvi/shared/readiness), which owns the whole
+     read-after-write doctrine — the POST throwing is not failure, an unreachable server is not
+     failure, and only a verified MISMATCH is. Its three outcomes map onto exactly two things
+     this screen does: leave, or stay and say so.
+     ★ AND ON A MISMATCH SHE STAYS, LOOKING AT THE SERVER'S COPY. Sending her back to the Year
+     Plan with a banner would put the message on one screen and the wrong number on another;
+     the store has already adopted the server's array, so re-seeding the field from it is what
+     makes the banner's sentence literally true of what she is reading. */
   const save = () => {
     if (saving || value == null) return;
     const next = setGradeBudget(subjects, subject, grade, value);
     setSaving(true); setErr("");
-    const want = readinessFingerprint(next);
-    // Optimistic locally, so the Year Plan she returns to is already showing her new year.
-    setReadiness((r) => ({ ...(r || {}), subjects: next }));
-    invalidateReadiness();
-    verifiedWrite({
-      write: () => fetch(`${API}/readiness`, withUser({
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subjects: next, cascade: true }),
-      })).then((r) => { if (!r.ok) throw new Error(String(r.status)); }),
-      read: () => getJSON("/readiness").then((d) => (d && d.readiness) || d || {}),
-      expect: (y) => readinessFingerprint(y.subjects) === want,
-    }).then(({ status }) => {
+    saveReadiness(next).then(({ status, profile }) => {
       setSaving(false);
-      if (status === "mismatch") {
-        // Y′ is the truth. Keeping her edit on screen while telling her it failed would recreate
-        // the exact divergence this check exists to catch, so she stays HERE and the figure
-        // re-reads from the server rather than from what she typed.
-        invalidateReadiness();
-        fetchReadiness({ force: true }).then(setReadiness).catch(() => {});
-        setValue(null);
-        setErr("That didn’t save. Your year is shown as the server has it — try again.");
-        return;
-      }
-      leave();
-    }).catch(() => { setSaving(false); leave(); });   // unverified is silence, as on the web
+      setReadiness(profile);
+      if (status !== "mismatch") { leave(); return; }
+      setValue(null);                 // re-seeds from the adopted server copy
+      setErr("That change didn’t save — this is your teaching profile as it stands.");
+    }).catch(() => { setSaving(false); leave(); });
   };
 
   const step = (d) => setValue((v) => clampPeriods((Number(v) || 0) + d));
@@ -161,6 +159,25 @@ export default function BudgetScreen() {
         {/* No sub-hint (founder, 2026-08-27). It restated the heading in longer words, and the
             screen already answers it twice more below: the weeks reading, then Aruvi's figure. */}
         <Text style={ws.fr_q}>How many periods for the year?</Text>
+
+        {/* ★ THE BANNER SITS ABOVE THE FIGURE, AND OUTSIDE THE LOADING SPLIT. It is raised on a
+            mismatch, and a mismatch is exactly when `value` is cleared so the field can re-seed
+            from the server's copy — so written INSIDE the `value != null` branch it could never
+            once appear, which is how it was first written. A message about a value cannot live
+            in a subtree that only exists when the value does.
+            `role="alert"` on the web; `assertive` is its RN counterpart, so a teacher using a
+            screen reader hears that the number under her has changed rather than being left
+            with a figure she did not type. */}
+        {err ? (
+          <View style={[ws.tp_savefail, { borderColor: t.edge_clay, backgroundColor: t.paper_2 }]}
+            accessibilityLiveRegion="assertive">
+            <Text style={[ws.tp_savefail_t, { color: t.ink }]}>{err}</Text>
+            <Pressable onPress={() => setErr("")} accessibilityRole="button" hitSlop={8}
+              style={[ws.tp_savefail_btn, { borderBottomColor: t.edge_clay }]}>
+              <Text style={[ws.tp_savefail_bt, { color: t.clay }]}>Dismiss</Text>
+            </Pressable>
+          </View>
+        ) : null}
 
         {value == null ? (
           <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />
@@ -192,7 +209,6 @@ export default function BudgetScreen() {
               <Text style={ws.tp_weeks}>{weeks} weeks (@ {ppw} periods/week)</Text>
             ) : null}
             {recLine ? <Text style={ws.tp_estimate_sub}>{recLine}</Text> : null}
-            {err ? <Text style={[ws.tp_estimate_sub, { color: t.clay }]}>{err}</Text> : null}
 
             <View style={ws.fr_foot}>
               <Pressable onPress={save} disabled={saving} accessibilityRole="button"

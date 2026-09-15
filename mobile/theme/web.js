@@ -660,6 +660,25 @@ export function webStyles(t, scheme = "light") {
     fr_cta_ink:      { color: "#f6f1e7" },   // button.primary's own foreground, not --paper
     fr_link:         { paddingVertical: 6, paddingHorizontal: 4, marginTop: 14 },  // .tp .fr-link
     fr_link_t:       { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.48, color: t.pine },
+    /* ⚠️ THERE IS NO `kicker_ochre` KEY AND THERE SHOULD NOT BE (2026-09-15). Four web files
+       render `className="kicker kicker-ochre"` and globals.css declares `.kicker-ochre`
+       NOWHERE — the checker's `--dump .kicker-ochre` returns no rule at all, and
+       getComputedStyle on the live page gives the same pine as a bare `.kicker`. It is a dead
+       class name, so `ws.kicker` IS the faithful port and adding a second key would be porting
+       an intention the web never had. Recorded here because the name reads like a colour and
+       the next person will look for it. */
+    /* ── the save-failure banner (`.tp-savefail`, globals.css 4991) ──
+       Raised ONLY on a verified mismatch, where the server's copy is the truth and hers has
+       already been replaced on screen. It is a statement about what she is now looking at, not
+       an apology, which is why it is one line and a Dismiss rather than a retry. */
+    tp_savefail:     { flexDirection: "row", alignItems: "center", columnGap: 12,
+                       marginBottom: 12, paddingVertical: 9, paddingHorizontal: 12,
+                       borderWidth: 1, borderRadius: 8 },
+    tp_savefail_t:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15 },
+    tp_savefail_btn: { flexGrow: 0, flexShrink: 0, borderBottomWidth: 1,
+                       paddingTop: 2, paddingBottom: 1 },
+    tp_savefail_bt:  { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.66,
+                       textTransform: UP },
     /* ── the Prepare CTA (button.prepare-cta, globals.css 3371) ──
        "Every ordinary primary button is calm pine. The one action that actually spends tokens to
        build a plan gets a SINGULAR warm identity." The layer owns colour, weight, glow and ✦;

@@ -69,7 +69,9 @@ import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
 import { subscribePreparing, clearPreparing, clearPaywall } from "../../lib/preparing";
-import { stampPane, takePane } from "../../lib/paneIntent";
+/* `stampPane` returns here with the Year Plan pencil at the end of 5d (Q1); the stamp is
+   set on the way INTO the editor, so only `takePane` is needed while that door is shut. */
+import { takePane } from "../../lib/paneIntent";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -616,14 +618,16 @@ export default function MyLessons() {
         }} />}>
 
         {pane === "plan" ? (
-          <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness}
-            /* The pencil is bound to the pane's OWN subject·class — the DISPLAY name and Roman
-               class the profile record keys on, not the slugs YearPlan fetches with. The stamp
-               is what brings her back to this pane rather than to the card list. */
-            onEditBudget={() => {
-              stampPane("plan");
-              router.push({ pathname: "/budget", params: { subject: current.name, grade: activeGrade } });
-            }} />
+          /* ★ THE PENCIL STAYS DARK UNTIL THE PPW EDITOR EXISTS (founder, Q1, 2026-09-15).
+              The budget screen is built and the wiring below is one line — but the web's
+              sense-check line inside it carries a SECOND pencil, through to periods-a-week and
+              then durations, and the phone has no ppw editor until 5d's numbers editor lands.
+              Shipping the outer pencil first would put her on a screen whose own control leads
+              nowhere, which is the exact thing 4b held THIS pencil back for. So it is held one
+              step longer and lit at the end of 5d, when both ends of the round trip are real.
+              `YearPlan` still accepts `onEditBudget` and the screen still exists at
+              `(app)/profile.jsx?intent=budget`; only the door is shut. */
+          <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness} />
         ) : plans === undefined ? (
           <Text style={ws.mlp2_loading}>Loading plans…</Text>
         ) : shown.length === 0 && !showProposedCard ? (

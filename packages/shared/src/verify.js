@@ -59,9 +59,28 @@ export async function verifiedWrite({ write, read, expect }) {
  * Compares the FACTS a teacher can change on the profile screen, and nothing else:
  * per subject — its name; per grade — the grade, its section tags, its durations, its
  * periods-per-week. Order is normalised away because she cannot control it and it carries no
- * meaning. `budget` and the ppw split are deliberately EXCLUDED for now: they are derived or
- * optional, and a mismatch there would be a normalisation artefact rather than lost work —
- * exactly the false alarm that would teach her to ignore the real one.
+ * meaning.
+ *
+ * ★ THE ANNUAL BUDGET JOINED ON 2026-09-15, and for the same reason the section NAME joined on
+ * 2026-08-30: it became the only thing an edit changes. It was excluded while it was written
+ * solely as a by-product of the class run — "derived or optional, and a mismatch there would be
+ * a normalisation artefact rather than lost work". That is no longer true. The budget editor
+ * (Track D step 5c) touches the budget and NOTHING else, so with it outside the fingerprint a
+ * save that dropped her year read back as verified and the read-after-write check was silent
+ * about the one fact that edit existed to change. A check that cannot see the edit it is
+ * checking is not a check.
+ *   ⚠️ SO THE ARTEFACT RISK IS ANSWERED BY NORMALISING, NOT BY LOOKING AWAY. Three shapes of
+ *   noise exist and all three are collapsed below: the map is keyed by grade INDEX in either
+ *   spelling (0 and "0" are written by different code paths); "not set" has two spellings
+ *   (absent, and the `{method:"auto", value:0}` that `finalizeSubject` writes for a class she
+ *   never answered for); and the value arrives as a number or a numeric string. What survives
+ *   is her ANSWER, so a difference can only mean a different year.
+ *   ⚠️ AND IT IS READ BEFORE THE GRADES ARE SORTED. The budget map is keyed by the grade's
+ *   position in the record's OWN order, while this comparator sorts grades by name — so the
+ *   lookup happens inside the map, against the original index, and rides on the grade object
+ *   through the sort. Reading it after sorting would pair a teacher's Class X budget with her
+ *   Class IX, which is a fingerprint that fails at random on any multi-class subject.
+ * The ppw SPLIT stays out: it is genuinely derived from the total, which is already here.
  */
 /* ── areas 2–5: PREDICATES, not equalities ───────────────────────────────────────────
  * The profile is the only area where Y is a value she composed. Everywhere else she cannot
@@ -99,13 +118,24 @@ export function sectionStateMatches(states, sectionKey, want) {
   return true;
 }
 
+/* Her budget ANSWER for one grade, or "unset" — every spelling of the same fact collapsed. */
+function budgetToken(budgetMap, i) {
+  const b = (budgetMap || {})[i] ?? (budgetMap || {})[String(i)];
+  if (!b) return "unset";
+  const method = String(b.method || "");
+  const value = Number(b.value) || 0;
+  if (!method || (method === "auto" && !value)) return "unset";
+  return `${method}:${value}`;
+}
+
 export function readinessFingerprint(subjects) {
   return JSON.stringify(
     (subjects || [])
       .map((s) => ({
         name: String(s?.name || "").trim(),
         grades: (s?.grades || [])
-          .map((g) => ({
+          .map((g, i) => ({
+            budget: budgetToken(s?.budget, i),
             grade: String(g?.grade || "").toUpperCase(),
             /* Tag AND her own name for it (2026-08-30). The name had to join the fingerprint
                the day it became storable: a rename changes nothing else about the record, so

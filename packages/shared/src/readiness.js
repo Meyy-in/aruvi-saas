@@ -55,7 +55,8 @@
  * which is the exact defect My Classes' header already warns about.
  */
 
-import { getJSON, userKey } from "./format.js";
+import { API, getJSON, userKey, withUser } from "./format.js";
+import { verifiedWrite, readinessFingerprint } from "./verify.js";
 import { storage } from "./storage.js";
 
 /* Sign-out sweeps this prefix (signout.js). Keep the two in step. */
@@ -155,6 +156,64 @@ export function invalidateReadiness() {
 export function clearReadiness() {
   mem = null;
   inflight = null;
+}
+
+/* ───────── THE ONE WAY A PROFILE IS WRITTEN (F1, Track D step 5d, 2026-09-15) ─────────
+ *
+ * Every edit a teacher makes to her teaching record — a subject, a class, a section, its name,
+ * periods a week, the period lengths, the annual budget — ends here. The web has done this inline
+ * in `TeachingProfile.jsx` since 2026-08-10; the phone needs the same act from a dozen screens,
+ * and a write duplicated a dozen times is a write that will drift in one of them.
+ *
+ * ★ READ-AFTER-WRITE (founder doctrine, 2026-08-10; verify.js). X is the profile before this
+ * edit · A is this save · Y is `subjects`, which the CALLER just composed and which we therefore
+ * know upfront · Y′ is GET /readiness. Error IF AND ONLY IF Y′ ≠ Y.
+ *   ⚠️ The POST throwing is NOT a criterion. A 200 can lie, and a lost response can hide a write
+ *   that landed — so the request's own outcome is evidence about the network, not about her data.
+ *   ⚠️ And an unreachable server is NOT an error. It is a state in which the check cannot be RUN,
+ *   and reporting failure there would invent a fact about her profile. Hence THREE outcomes:
+ *     · "ok"          — Y′ === Y. The write is real. Silence.
+ *     · "unverified"  — the read could not be made. Also silence: we do not know, and saying so
+ *                       would be a guess dressed as a finding.
+ *     · "mismatch"    — Y′ ≠ Y, and Y′ IS THE TRUTH. The caller must adopt `actual` and say so.
+ *                       Leaving her edit on screen while telling her it failed would recreate the
+ *                       exact divergence this check exists to catch.
+ *
+ * `cascade: true` rides along because every destructive edit upstream is already behind its own
+ * scoped confirm; without it the server's 409 guard would ask a second time for the same act.
+ *
+ * ★ THE STORE IS WRITTEN THROUGH, NOT INVALIDATED, on ok and unverified. Invalidating would send
+ * the very next screen to the network for a profile we are holding in our hand, and on a phone
+ * that is a spinner in front of a teacher who just pressed Save. On MISMATCH the server's copy is
+ * adopted instead — the same write-through, with the other array.
+ */
+export async function saveReadiness(subjects) {
+  // Static imports: verify.js pulls in nothing from here, so there is no cycle to dodge and no
+  // reason to make a phone's first save wait on a dynamic module fetch.
+  const want = readinessFingerprint(subjects);
+
+  const adopt = (arr, ready) => {
+    const profile = { subjects: arr };
+    mem = { profile, ready: ready != null ? ready : (arr || []).length > 0, fresh: true };
+    persist(mem);
+    return profile;
+  };
+
+  const { status, actual } = await verifiedWrite({
+    write: () => fetch(`${API}/readiness`, withUser({
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subjects, cascade: true }),
+    })).then((r) => { if (!r.ok) throw new Error(String(r.status)); }),
+    read: () => getJSON("/readiness").then((d) => (d && d.readiness) || d || {}),
+    expect: (y) => readinessFingerprint(y && y.subjects) === want,
+  });
+
+  if (status === "mismatch") {
+    const server = (actual && actual.subjects) || [];
+    return { status, profile: adopt(server) };
+  }
+  return { status, profile: adopt(subjects) };
 }
 
 /* ───────── entitlement, kept off the critical path ─────────
