@@ -823,14 +823,24 @@ export function webStyles(t, scheme = "light") {
                        letterSpacing: 0.48, textTransform: UP, color: t.ink_soft, opacity: 0.85 },
     yp_tot:          { flexDirection: "row", alignItems: "baseline", columnGap: 6, marginTop: 2,
                        paddingTop: 12, paddingBottom: 10, borderBottomWidth: 2 },
-    yp_tot_l:        { flex: 1, minWidth: 0, fontFamily: F.mono(400), fontSize: 10, lineHeight: 13,
+    /* ⚠️ NO `flex` HERE, AND THAT IS THE FIX — confirmed on the handset (2026-09-15, third
+       attempt at this one row). It carried `flex: 1` because `.yp-tot`'s label cell is the web
+       grid's `1fr`. Fine while the label WAS the cell; once the pencil joined it, every way of
+       un-stretching it at the call site was worse than not stretching it here: `flex: 0` is
+       grow 0 / shrink 0 / basis ZERO in Yoga and collapsed the words, and `flexBasis: "auto"`
+       was the only flexBasis in the entire app — a string value reached for to fight a property
+       that should not have been on this style at all.
+       The `1fr` now belongs to an explicit spacer in YearPlan.jsx, so this is a plain label that
+       sizes to its own words on every platform, with no override and nothing to get wrong.
+       ⚠️ A `flex` on a style that is sometimes a whole cell and sometimes one item inside one is
+       a trap wherever it appears — the cell-ness belongs to the layout, not to the label. */
+    yp_tot_l:        { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13,
                        letterSpacing: 0.6, textTransform: UP, color: t.ink_soft },
     yp_tot_n:        { textAlign: "right", fontFamily: F.display(600), fontSize: 18, lineHeight: 22, color: t.ink },
-    /* ⚠️ THERE IS NO `yp_tot_lrow` ANY MORE, and there must not be one. Wrapping the label and
-       its pencil in a row seemed the obvious way to port the web's inline span — and it broke
-       the totals row on iOS, because `.yp-tot` aligns on the BASELINE and a wrapper View has no
-       text baseline to align on. See the long note in YearPlan.jsx: the label is a direct Text
-       and the pencil opts out with alignSelf. */
+    /* `yp_tot_lrow` is gone: the label and pencil are direct children of the row now, with an
+       explicit spacer for the grid's `1fr`. ⚠️ Removing that wrapper did NOT fix the iOS bug —
+       it was a plausible theory (a View has no text baseline, and this row aligns on one) that
+       the founder's next look disproved. The cause was `flex` on the label; see YearPlan.jsx. */
     /* `.yp-budget-edit` (globals.css 4752): a phone-sized tap target that does NOT open up the
        line it sits in — 10px of vertical padding cancelled by -10px of margin. On RN that is
        simply `hitSlop`, which is the same intent said properly, so the negative margins go. */
