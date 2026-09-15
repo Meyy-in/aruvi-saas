@@ -1301,7 +1301,23 @@ export default function Home() {
              * flow inside this same view — the shell stays open; `ready` is untouched. A
              * signed-out return without rebuilding hits first run naturally (server profile
              * is gone, so GET /readiness comes back empty). */
-            <div className="editflow" data-tour="profile-root">
+            /* ★ A PORTAL VISIT IS A WINDOW; A SETTINGS VISIT IS A PAGE (founder, 2026-09-15:
+               "ADD opens a window but individual changes — sections/class/week — open full
+               screen both on web and expo. Suggest the changes also be contained in a window").
+               The two visits are different acts and now look it. Reached from the "+" window or
+               the Year Plan pencil she is making ONE spot edit, so it floats over the screen she
+               was on and "each item changes only itself" is true of the navigation as well as of
+               the record. Reached from Settings › Teaching profile she asked to SEE the whole
+               thing — that is the panorama and it keeps the page.
+               ⚠️ `profileViaSettings` is the discriminator and not `profilePortal`, which is
+               CONSUMED the moment TeachingProfile launches its screen and would flip this back to
+               a page mid-edit. */
+            <div className={profileViaSettings ? "editflow" : "ap-overlay tp-window"}
+              data-tour="profile-root"
+              onClick={profileViaSettings ? undefined
+                : (e) => { if (e.currentTarget === e.target) goPortalHome(); }}>
+            <div className={profileViaSettings ? "" : "ap-modal tp-window-card"}
+              onClick={profileViaSettings ? undefined : (e) => e.stopPropagation()}>
               {/* Profile ONLY — the account/data/app rows live on the gear's Settings
                   screen now (founder, 2026-08-24; AccountPanel dissolved into it). */}
               <TeachingProfile readiness={readiness} onChange={setReadiness}
@@ -1313,6 +1329,7 @@ export default function Home() {
                    nothing she has not already added — the SAME SubscribeFlow the front door
                    and Settings open, never a second one. */
                 onSubscribe={() => setSubscribeOpen(true)} />
+            </div>
             </div>
           ) : (editFlow === "settings" && ready) ? (
             <div className="editflow">

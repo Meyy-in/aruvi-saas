@@ -8,7 +8,7 @@
  *
  * The web keeps this above the tab, in the shell. The phone's screens are ROUTES with nothing
  * above them, so this is a module-level store with a subscription — the same shape `lib/preparing`
- * and `lib/paneIntent` take, for the same reason.
+ * takes, for the same reason.
  *
  * ★ TWO THINGS ARE REMEMBERED, and they are not the same thing:
  *   · `originRoute` — the screen to return to. Set on the way IN, so a system back gesture lands
@@ -23,7 +23,7 @@
  * to a window she left behind ten minutes ago would be a ghost.
  */
 
-let state = { originRoute: null, win: null, scope: null };
+let state = { originRoute: null, win: null, scope: null, edit: null };
 const listeners = new Set();
 
 function emit() {
@@ -45,7 +45,30 @@ export function getPortal() { return { ...state }; }
    screen rather than from the window itself); `scope` narrows which subject·class the edit acts
    on — `{ subject, grade, exact }`, where `exact` means "she is standing on it, do not ask". */
 export function enterPortal({ originRoute, win = null, scope = null }) {
-  state = { originRoute: originRoute || null, win, scope };
+  state = { ...state, originRoute: originRoute || null, win, scope };
+  emit();
+}
+
+/* ★ AN EDIT IS A WINDOW OVER WHERE SHE IS, NOT A PLACE SHE GOES (founder, 2026-09-15: "ADD opens
+ * a window but individual changes open full screen — suggest the changes also be contained in a
+ * window"). `edit` is `{ intent, subject, grade }` and the layout renders the editor over
+ * whatever screen is underneath, so "each item changes only itself" is true of the NAVIGATION as
+ * well as of the record.
+ * ⚠️ One consequence worth naming: because she never leaves My Lessons, the Year Plan pencil no
+ * longer needs a pane round trip at all. `lib/paneIntent` existed only to put her back on a pane
+ * the editor had navigated her away from; it was DELETED in the same commit, which is the good
+ * kind of change — the mechanism went away rather than gaining a case. */
+export function openEdit(edit) {
+  state = { ...state, edit: edit || null, win: null };
+  emit();
+}
+
+/* Close the edit and restore the window she came from, if she came from one — on save AND on
+   cancel alike, because a teacher who has just amended one item is the person most likely to want
+   the next (founder, 2026-08-27). */
+export function closeEdit() {
+  const back = state.win;
+  state = { ...state, edit: null, win: back };
   emit();
 }
 
@@ -66,6 +89,6 @@ export function leavePortal() {
 
 /* An ordinary visit somewhere else — the round trip is over and there is nothing to return to. */
 export function clearPortal() {
-  state = { originRoute: null, win: null, scope: null };
+  state = { originRoute: null, win: null, scope: null, edit: null };
   emit();
 }

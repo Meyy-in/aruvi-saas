@@ -15,28 +15,28 @@
  * dimmed, figure in the row's own ink — so answered rows read as one column of figures beside the
  * anchor's, rather than as a heading with two kinds of control hanging off it.
  *
- * ⚠️ THE DIVERGENCE, named as CLAUDE.md §4 requires: the web opens a `position: fixed` listbox,
- * hand-built rather than a native `<select>` because on macOS the OS draws a select's popup and
- * ignores `option { background }` outright, so the warm-paper palette could never reach the open
- * menu. That reasoning is a DOM reasoning. On the phone the same constraint does not exist and
- * the opposite one does: a small floating menu pinned near a chip inside a scroller is exactly
- * what a phone should not do — it lands under a thumb, it fights the scroll, and it has nowhere
- * to flip to on a short screen. So the choices open in the app's own `Sheet`, which is where
- * every other phone-side choice in this app is made. The web's flip-above-when-tight logic, its
- * outside-press/Escape/scroll/resize closers and its fixed rect all go with it — a sheet needs
- * none of them.
+ * ⚠️ THE DIVERGENCE, named as CLAUDE.md §4 requires, and it changed once. The web opens a
+ * `position: fixed` listbox, hand-built rather than a native `<select>` because on macOS the OS
+ * draws a select's popup and ignores `option { background }`, so the warm-paper palette could
+ * never reach the open menu. That is a DOM reason and it does not travel.
+ *   The phone's first answer was the app's own `Sheet`. That was wrong for a reason only the
+ *   running screen showed: once the EDITOR itself became a window (founder, 2026-09-15), the
+ *   picker was a window on top of a window — two cards overlapping, two ✕s, the inner one
+ *   covering the very row she had just tapped.
+ *   So the cell no longer owns an overlay at all. It reports that it is the ACTIVE one, and the
+ *   duration step draws a strip of choices INLINE beneath the wheel. One tap to set, as the
+ *   listbox had; no second layer; and it costs the window about 40px, which is why `Sheet`
+ *   scrolls. A stepper was the other candidate and was rejected: at a 14-period week, setting 7
+ *   would have been seven taps where this is one.
  */
-import { useState } from "react";
-import { View, Pressable, ScrollView } from "react-native";
+import { Pressable } from "react-native";
 import { Text } from "./Text";
-import { Sheet } from "./AttachSheet";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
-export default function PpwSplitCell({ duration, selected, map, total, isAnchor, onSet, show }) {
+export default function PpwSplitCell({ duration, selected, map, isAnchor, onOpen, open, show }) {
   const { t } = useTheme();
   const ws = useWebStyles();
-  const [open, setOpen] = useState(false);
 
   // Nothing at all on an unticked row, or while only one length is in play: the column only earns
   // its space once a second length is ticked.
@@ -46,51 +46,18 @@ export default function PpwSplitCell({ duration, selected, map, total, isAnchor,
   if (isAnchor) return <Text style={[ws.ppw_num, { color: t.ink }]}>{v}</Text>;
 
   const answered = v > 0;
-  const choices = Array.from({ length: (Number(total) || 0) + 1 }, (_, i) => i);
-
   return (
-    <>
-      <Pressable onPress={() => setOpen(true)}
-        accessibilityRole="button"
-        accessibilityLabel={`Periods a week at ${duration} minutes: ${v}`}
-        accessibilityState={{ expanded: open }}
-        style={[ws.ppw_sel, answered
+    <Pressable onPress={() => onOpen(open ? null : duration)}
+      accessibilityRole="button"
+      accessibilityLabel={`Periods a week at ${duration} minutes: ${v}`}
+      accessibilityState={{ expanded: !!open }}
+      style={[ws.ppw_sel, open
+        ? { borderColor: t.pine_d, backgroundColor: t.tint_pine }
+        : answered
           ? { borderColor: "transparent", backgroundColor: "transparent" }
           : { borderColor: t.pine, backgroundColor: t.paper_2 }]}>
-        <Text style={[ws.ppw_sel_t, { color: answered ? t.ink : t.pine_d }]}>{v}</Text>
-        <Text style={[ws.ppw_caret, { color: t.pine, opacity: answered ? 0.4 : 1 }]}>▾</Text>
-      </Pressable>
-
-      {/* ⚠️ MOUNTED AND UNMOUNTED, NOT TOGGLED — and the reason is specific to where this sheet
-          lives. Handing `visible={open}` to the Modal left it on screen after a pick even though
-          this cell had already re-rendered with `open === false`: the console said so. The other
-          sheets in this app toggle the same prop and close perfectly (prepare.jsx's breakdown was
-          checked directly), so toggling is not broken in general. What is different HERE is that
-          this sheet is returned from PickWheel's `trailing` CALLBACK, deep inside the wheel's
-          ScrollView — so the pick re-creates the surrounding subtree in the very frame the Modal
-          begins its fade-out, and the exit never completes. Mounting conditionally, the idiom
-          `AttachSheet` has always used, sidesteps the race entirely.
-          The lesson, general: a Modal whose visibility flips in the same commit that rebuilds the
-          subtree around it cannot be relied on to finish leaving. */}
-      {open ? (
-      <Sheet visible onClose={() => setOpen(false)}
-        kicker={`${duration} min`} title="Periods a week at this length">
-        <ScrollView style={{ maxHeight: 320 }}>
-          {choices.map((n) => (
-            /* ⚠️ CLOSE FIRST, THEN SET. `onSet` lifts state into the duration screen, which
-               re-renders the whole wheel and hands this cell back through PickWheel's `trailing`
-               callback — and a close queued behind that update did not survive the round trip:
-               the sheet stayed open over the very figure she had just chosen. Closing first
-               commits this cell's own state before the parent's re-render is triggered. */
-            <Pressable key={n} onPress={() => { setOpen(false); onSet(duration, n); }}
-              accessibilityRole="button" accessibilityState={{ selected: n === v }}
-              style={[ws.ppw_opt, n === v && { backgroundColor: t.pine }]}>
-              <Text style={[ws.ppw_opt_t, { color: n === v ? t.paper_2 : t.ink }]}>{n}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </Sheet>
-      ) : null}
-    </>
+      <Text style={[ws.ppw_sel_t, { color: answered && !open ? t.ink : t.pine_d }]}>{v}</Text>
+      <Text style={[ws.ppw_caret, { color: t.pine, opacity: answered && !open ? 0.4 : 1 }]}>▾</Text>
+    </Pressable>
   );
 }

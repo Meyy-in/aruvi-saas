@@ -16,7 +16,8 @@ import { cachedReadiness } from "@aruvi/shared/readiness";
 import { useTheme } from "../../theme/ThemeContext";
 import BottomNav from "../../components/BottomNav";
 import ProfilePortal from "../../components/ProfilePortal";
-import { subscribePortal, setPortalWin, enterPortal } from "../../lib/portal";
+import ProfileEditor from "../../components/ProfileEditor";
+import { subscribePortal, setPortalWin, enterPortal, openEdit } from "../../lib/portal";
 
 export default function AppLayout() {
   const { t } = useTheme();
@@ -26,17 +27,16 @@ export default function AppLayout() {
      conditional return — the lesson `MyLessonPlans.jsx` taught this repo the hard way on
      2026-09-14 ("Rendered fewer hooks than expected"). */
   const [win, setWin] = useState(null);
-  useEffect(() => subscribePortal((p) => setWin(p.win)), []);
+  const [edit, setEdit] = useState(null);
+  useEffect(() => subscribePortal((p) => { setWin(p.win); setEdit(p.edit); }), []);
   if (!getUser()) return <Redirect href="/login" />;
 
-  /* ★ THE BUDGET EDITOR LIGHTS NOTHING, which is the web's own answer (page.jsx `activeNav`:
-     `editFlow === "profile" → "none"`). It IS the profile screen — she is amending her teaching
-     record, not standing in one of the four places — and it is reached only from the Year Plan
-     and returns there. Lighting My Classes under her, which the bare `: "classes"` fallback
-     would do, tells her she is somewhere she is not. "none" is not a case BottomNav enumerates;
-     it simply matches no item, and the bar says "you are somewhere else" without pretending. */
-  const active = pathname.startsWith("/lessons") ? "lessons"
-    : pathname.startsWith("/profile") ? "none" : "classes";
+  /* ⚠️ THERE IS NO `/profile` CASE ANY MORE, and there must not be one. The editor used to be a
+     route, and the bar lit NOTHING while she was on it — the web's own answer for a profile
+     screen. Now the editor is a window OVER a screen, so the bar should keep showing where she
+     actually is, which is where she was when she opened it. Re-adding a "none" case would blank
+     the bar for a window, which is the opposite of what that rule was for. */
+  const active = pathname.startsWith("/lessons") ? "lessons" : "classes";
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
@@ -68,11 +68,16 @@ export default function AppLayout() {
               ? { subject: subs[0].name, grade: subs[0].grades[0].grade } : null;
             if (!only) return;
             enterPortal({ originRoute: pathname, win, scope: { ...only, exact: true } });
-            setPortalWin(null);
-            router.push({ pathname: "/profile", params: { intent: kind, ...only } });
+            openEdit({ intent: kind, ...only });
           }}
           onOpenProfile={() => { /* the full accordion arrives with Settings, step 6 */ }} />
       ) : null}
+
+      {/* ★ AND THE EDIT ITSELF IS A WINDOW TOO, over whatever screen is underneath (founder,
+          2026-09-15). It sits BELOW the BottomNav for the same reason the portal does — the bar
+          stays live behind it, so she is never on a screen she cannot simply leave. Closing it
+          restores the portal window she opened it from, on save and on cancel alike. */}
+      {edit ? <ProfileEditor {...edit} /> : null}
 
       {/* My Lessons is live as of step 4b; the "+" portal is live as of 5d. Ask Meyy gets its
           screen in step 6 — until then that item renders (the bar must not change shape later)

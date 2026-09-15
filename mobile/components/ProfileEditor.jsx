@@ -1,12 +1,25 @@
 /* ───────── the teaching profile, one edit at a time (Track D step 5c/5d) ─────────
  *
- * ★ ONE ROUTE, MANY INTENTS — the shape the web itself arrived at. `TeachingProfile.jsx` is
+ * ★ IT IS A WINDOW, NOT A SCREEN (founder, 2026-09-15: "ADD opens a window but individual changes
+ * — sections/class/week — open full screen both on web and expo. Suggest the changes also be
+ * contained in a window"). The journey used to start in a window and then throw her onto a full
+ * page for what is meant to be ONE small change, which is a context switch the change does not
+ * deserve. Now the edit floats over whatever she was looking at, so "each item changes only
+ * itself" is true of the NAVIGATION as well as of the record.
+ *   ⚠️ And it deleted a whole mechanism rather than adding one: `lib/paneIntent` existed to put
+ *   her back on the Year Plan pane after the editor navigated her away from it. She is not
+ *   navigated away any more, so the round trip — and the one-shot stamp that made it work — is
+ *   simply gone.
+ *   ⚠️ The window must be able to hold a 260px wheel, which is what `Sheet`'s `scroll` prop and
+ *   its 82% cap are for. Before this the phone's window had NO height cap at all, because nothing
+ *   tall had ever been put in one.
+ *
+ * ★ ONE COMPONENT, MANY INTENTS — the shape the web itself arrived at. `TeachingProfile.jsx` is
  * 1,700 lines because it is a dozen screens under one roof, reached by `portalIntent`; every
  * spot edit she can make (a class, a section, periods a week, the period lengths, the annual
- * budget) is the SAME journey with a different destination. The phone takes that structure
- * rather than a route per edit: `/profile?intent=budget&subject=…&grade=…` today, and 5d's
- * `ppw`, `duration`, `section` and `class` intents land here beside it. A route per edit would
- * have meant a save path, a scope resolver and an exit rule copied five times.
+ * budget) is the SAME journey with a different destination. The phone takes that structure rather
+ * than a component per edit: a component per edit would have meant a save path, a scope resolver
+ * and an exit rule copied five times.
  *
  * It serves THREE steps today — `budget`, `ppw` and `duration` — the web's `editNums` screen
  * whole. `intent` picks the one she lands on; inside, they are one journey, because they are one
@@ -44,16 +57,15 @@
  * never has to be asked. The weekly total is INVARIANT under every duration change — naming a
  * second length tells us how her same week is split, not that she gained a class.
  *
- * ★ SHE IS RETURNED TO THE PANE SHE CAME FROM, on save AND on cancel (`lib/paneIntent`). The
- * pencil is reached only from the Year Plan; a return that landed on the card list would make it
- * a one-way door out of the pane it belongs to.
+ * ★ CLOSING RESTORES THE PORTAL WINDOW SHE CAME FROM, on save AND on cancel alike — "a teacher
+ * who has just amended one item is exactly the person most likely to want the next" (founder,
+ * 2026-08-27). Closing that window stays her own explicit act.
  */
 import { useEffect, useMemo, useState } from "react";
 import { View, Pressable, TextInput, ScrollView, ActivityIndicator } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { Text } from "../../components/Text";
+import { Text } from "./Text";
 import {
-  ROMAN, classNum, fetchSupportedGrades, getJSON, getUser, ppwFromAnnual, pretty, subjectSlug,
+  ROMAN, classNum, fetchSupportedGrades, getJSON, ppwFromAnnual, pretty, subjectSlug,
   weeksFromAnnual,
 } from "@aruvi/shared/format";
 import { normalizeBudget, setGradeBudget, gradeBudgetRecord, clampPeriods } from "@aruvi/shared/budget";
@@ -67,28 +79,24 @@ import {
 } from "@aruvi/shared/ppw";
 import { rekeyBudget } from "@aruvi/shared/budget";
 import { cachedReadiness, fetchReadiness, saveReadiness } from "@aruvi/shared/readiness";
-import { stampPane } from "../../lib/paneIntent";
-import Bar from "../../components/Bar";
-import { RollWheel } from "../../components/RollWheel";
-import PickWheel from "../../components/PickWheel";
-import PpwSplitCell from "../../components/PpwSplitCell";
-import SecNameCell from "../../components/SecNameCell";
-import { Sheet } from "../../components/AttachSheet";
-import { useTheme } from "../../theme/ThemeContext";
-import { useWebStyles } from "../../theme/web";
+import { closeEdit } from "../lib/portal";
+import { RollWheel } from "./RollWheel";
+import PickWheel from "./PickWheel";
+import PpwSplitCell from "./PpwSplitCell";
+import SecNameCell from "./SecNameCell";
+import { Sheet } from "./AttachSheet";
+import { useTheme } from "../theme/ThemeContext";
+import { useWebStyles } from "../theme/web";
 
 const SECTION_LETTERS = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)); // A…Z
 
-export default function ProfileScreen() {
+export default function ProfileEditor({ intent = "budget", subject = "", grade = "" }) {
   const { t } = useTheme();
   const ws = useWebStyles();
-  const router = useRouter();
-  /* `intent` is the destination; `subject`/`grade` the scope it acts on. The web resolves a
-     scope through two pick screens when it is ambiguous — the Year Plan's pencil is the
-     opposite case, "she is standing on Class 7's year plan", so it passes `exact` and both
-     pick screens are skipped (`portalGradeIdxs`, 5d row 21). Today `budget` is the only
-     intent, and an unrecognised one is treated as it. */
-  const { intent = "budget", subject = "", grade = "" } = useLocalSearchParams();
+  /* `intent` is the destination; `subject`/`grade` the scope it acts on. The web resolves a scope
+     through two pick screens when it is ambiguous — the Year Plan's pencil is the opposite case,
+     "she is standing on Class 7's year plan", so it passes `exact` and both pick screens are
+     skipped (`portalGradeIdxs`, 5d row 21). An unrecognised intent is treated as `budget`. */
 
   /* Seeded synchronously from the device copy, like every other screen on this app: her profile
      is already in module memory, so the figure is on screen before any network is consulted. */
@@ -133,6 +141,9 @@ export default function ProfileScreen() {
   const [pickedGrades, setPickedGrades] = useState(null);
   const [gradeOptions, setGradeOptions] = useState(null);   // null = still loading
   const [classConfirm, setClassConfirm] = useState(null);
+  /* Which length's split strip is showing, if any. Lifted OUT of the cell (2026-09-15): the cell
+     used to own a Sheet, and once the editor became a window that was a window over a window. */
+  const [splitOpen, setSplitOpen] = useState(null);
   useEffect(() => {
     if (picked || !gradeRec) return;
     setPicked((gradeRec.sections || []).map(secLetter));
@@ -195,7 +206,11 @@ export default function ProfileScreen() {
       + (ncfTotal != null && ncfTotal !== recTotal ? ` (NCF norm: ${ncfTotal})` : "")
     : ncfTotal != null ? `As per NCF, this class requires ${ncfTotal} periods.` : null;
 
-  const leave = () => { stampPane("plan"); router.navigate("/lessons"); };
+  /* ★ NOTHING NAVIGATES ANY MORE. The editor is a window over the screen she was already on, so
+     leaving it is closing it — and the portal window she opened it from comes back, on save and
+     on cancel alike. The Year Plan's pane round trip is gone with the navigation that made it
+     necessary: she never left the pane. */
+  const leave = () => closeEdit();
 
   /* ── SAVE ────────────────────────────────────────────────────────────────────────────
      The write itself is `saveReadiness` (@aruvi/shared/readiness), which owns the whole
@@ -395,15 +410,20 @@ export default function ProfileScreen() {
 
   const bump = (d) => setValue((v) => clampPeriods((Number(v) || 0) + d));
 
+  /* ★ THE KICKER IS THE WINDOW'S, NOT A HEADING INSIDE IT. `Sheet` already draws a kicker above
+     its title, so the screen's own `.kicker` line is handed up rather than repeated — a window
+     carrying "ENGLISH · CLASS 3 · SECTIONS" twice, once in its header and once under it, is the
+     kind of doubling that made the web's window too tall in the first place.
+     ⚠️ And NO `title` is passed: each step already opens with its own question ("How many periods
+     a week?", "Edit sections of Class 3"), which IS the title. Passing both would push the ✕ off
+     the top of a 360px phone, which is exactly what happened to the web's portal in August. */
+  const kicker = `${pretty(subject)} · Class ${classNum(grade)} · ${
+    step === "ppw" ? "periods / week" : step === "duration" ? "duration"
+      : step === "section" ? "sections" : step === "class" ? "classes" : "annual budget"}`;
+
   return (
-    <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar user={getUser()} />
-      <ScrollView contentContainerStyle={ws.main} keyboardShouldPersistTaps="handled">
-        <Text style={ws.kicker}>
-          {pretty(subject)} · Class {classNum(grade)} · {
-            step === "ppw" ? "periods / week" : step === "duration" ? "duration"
-              : step === "section" ? "sections" : step === "class" ? "classes" : "annual budget"}
-        </Text>
+    <Sheet visible scroll onClose={leave} kicker={kicker}>
+      <View>
 
         {step === "class" ? (
           <>
@@ -533,9 +553,29 @@ export default function ProfileScreen() {
                 trailingHeader={multi ? "Periods / week" : null}
                 summaryFor={multi ? (d) => `${d} min × ${splitMap[d] || 0}` : null}
                 trailing={(d, on) => (
-                  <PpwSplitCell duration={d} selected={on} map={splitMap} total={weekTotal}
-                    isAnchor={d === anchor} onSet={setSplit} show={multi} />
+                  <PpwSplitCell duration={d} selected={on} map={splitMap}
+                    isAnchor={d === anchor} show={multi}
+                    open={splitOpen === d} onOpen={setSplitOpen} />
                 )}>
+                {/* The chosen length's 0…total strip, inline under the wheel rather than in a
+                    second window. It names the length because by the time she reaches it the row
+                    she tapped may have scrolled out of sight. */}
+                {splitOpen != null ? (
+                  <View style={[ws.ppw_strip, { borderTopColor: t.line_soft }]}>
+                    <Text style={[ws.ppw_strip_k, { color: t.ink_soft }]}>{splitOpen} min</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}
+                      keyboardShouldPersistTaps="handled">
+                      {Array.from({ length: weekTotal + 1 }, (_, n) => n).map((n) => (
+                        <Pressable key={n} onPress={() => { setSplit(splitOpen, n); setSplitOpen(null); }}
+                          accessibilityRole="button" accessibilityState={{ selected: n === (splitMap[splitOpen] || 0) }}
+                          accessibilityLabel={`${n} periods a week at ${splitOpen} minutes`}
+                          style={[ws.ppw_opt, n === (splitMap[splitOpen] || 0) && { backgroundColor: t.pine }]}>
+                          <Text style={[ws.ppw_opt_t, { color: n === (splitMap[splitOpen] || 0) ? t.paper_2 : t.ink }]}>{n}</Text>
+                        </Pressable>
+                      ))}
+                    </ScrollView>
+                  </View>
+                ) : null}
                 {/* Step 2 of 2 — the lengths AND their split, so this is where it saves. */}
                 <Pressable onPress={saveNumbers} disabled={saving} accessibilityRole="button"
                   style={[ws.fr_cta, { backgroundColor: saving ? t.paper_sunk : t.pine }]}>
@@ -544,8 +584,8 @@ export default function ProfileScreen() {
                 </Pressable>
               </PickWheel>
             ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
-            <Pressable onPress={() => setStep("ppw")} accessibilityRole="button" hitSlop={8}
-              style={ws.fr_link}>
+            <Pressable onPress={() => { setSplitOpen(null); setStep("ppw"); }}
+              accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
               <Text style={ws.fr_link_t}>← Back</Text>
             </Pressable>
           </>
@@ -632,7 +672,7 @@ export default function ProfileScreen() {
         )}
         </>
         )}
-      </ScrollView>
+      </View>
 
       {/* ★ THE CONFIRM NAMES WHAT GOES, AND WHAT STAYS. "Remove 3B?" — and then, in the same
           breath, that her lessons stay in the library, because the fear this dialog answers is
@@ -695,6 +735,6 @@ export default function ProfileScreen() {
           </View>
         </Sheet>
       ) : null}
-    </View>
+    </Sheet>
   );
 }

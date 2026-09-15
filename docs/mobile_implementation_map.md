@@ -246,6 +246,32 @@ showing her mobile number on the bar after she had subscribed.
   PickWheel. iOS honours the state properly, so this is belt to that braces. **Anything relying on
   `accessibilityState` alone should be treated as unverified on the web target.**
 
+- ✅ **EVERY EDIT IS A WINDOW** (founder, 2026-09-15: *"ADD opens a window but individual changes —
+  sections/class/week — open full screen both on web and expo. Suggest the changes also be contained in
+  a window."*). The journey started in a window and then threw her onto a full page for one small
+  change. Now the editor floats over the screen she was on, so "each item changes only itself" is true
+  of the NAVIGATION as well as of the record.
+  · **Phone:** `(app)/profile.jsx` → `components/ProfileEditor.jsx`, rendered from the layout off
+    `portal.edit`. `Sheet` gained `scroll` (an 82% cap + inner scroller — the phone's window had NO
+    height cap before, because nothing tall had ever been put in one) and a `KeyboardAvoidingView`,
+    since a CENTRED modal is the worst case for a keyboard and both the section name and the budget
+    figure are typed.
+  · **Web:** a PORTAL visit renders `TeachingProfile` inside `.ap-overlay/.ap-modal`; a SETTINGS visit
+    keeps the page, because that one is the panorama. `profileViaSettings` is the discriminator, NOT
+    `profilePortal` — that flag is consumed the moment the screen launches and would flip the layout
+    back to a page mid-edit.
+  · ⚠️ **`lib/paneIntent` was DELETED, not adapted.** It existed only to put her back on the Year Plan
+    pane after the editor navigated her away; she is not navigated away now. The good kind of change —
+    a mechanism went away rather than gaining a case.
+  · ⚠️ **`PpwSplitCell` no longer owns an overlay.** Its picker was a `Sheet`, which became a window
+    over a window the moment the editor was one — two cards, two ✕s, the inner covering the row she
+    had just tapped. It now reports that it is active and the duration step draws the 0…total strip
+    INLINE under the wheel. A stepper was the other candidate and was rejected: at a 14-period week,
+    setting 7 would be seven taps where this is one.
+  🔴 **The web half is UNVERIFIED** — the web tab's Supabase session expired and signing in is not
+  mine to do. Walked end to end on Expo: budget over the Year Plan, ✎ → ppw → duration with the inline
+  strip, and the tall section wheel over My Classes, one modal throughout.
+
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
    `subscribePortal`; the phone's `portalOriginRef` (app. 01 rows 77-78). **F3** `shared/setupCheck.js` — the

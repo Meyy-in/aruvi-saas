@@ -120,6 +120,13 @@ export function webStyles(t, scheme = "light") {
     ap_modal:        { width: "100%", maxWidth: 460, borderRadius: 14, borderWidth: 1,
                        paddingTop: 22, paddingHorizontal: 22, paddingBottom: 18 },
     ap_confirm:      { maxWidth: 420 },
+    /* A window that must hold a tall edit: capped so it can never run off the screen, and its
+       body scrolls inside. The web's `.ap-modal` has been `max-height: min(82vh, 100%)` since
+       2026-08-27 — `maxHeight: "82%"` is the same ceiling in the units RN has, measured against
+       the window rather than a viewport unit that counts area behind the browser chrome. */
+    ap_modal_tall:   { maxHeight: "82%" },
+    ap_scrollbody:   { flexGrow: 0, flexShrink: 1 },
+    ap_scrollpad:    { paddingBottom: 4 },
     ap_close:        { position: "absolute", top: 12, right: 12, width: 30, height: 30, borderRadius: 15,
                        borderWidth: 1, alignItems: "center", justifyContent: "center" },
     ap_close_glyph:  { fontSize: 13, lineHeight: 15 },
@@ -787,6 +794,14 @@ export function webStyles(t, scheme = "light") {
                        paddingVertical: 5, paddingLeft: 12, paddingRight: 18 },
     ppw_sel_t:       { fontFamily: F.mono(400), fontSize: 16, textAlign: "center" },
     ppw_caret:       { position: "absolute", right: 8, fontSize: 10 },
+    /* The INLINE strip of choices under the wheel — the phone's answer to the web's fixed
+       listbox, once the editor itself became a window and a second overlay became untenable.
+       It names the length it is setting, because by the time she has scrolled to it the row she
+       tapped may be out of sight. */
+    ppw_strip:       { flexDirection: "row", alignItems: "center", columnGap: 8,
+                       marginTop: 8, paddingVertical: 6, paddingHorizontal: 2,
+                       borderTopWidth: 1 },
+    ppw_strip_k:     { fontFamily: F.mono(400), fontSize: 10, letterSpacing: 0.6, textTransform: UP },
     /* The open picker's rows (`.fr-ppw-opt`). */
     ppw_opt:         { borderRadius: 6, paddingVertical: 7, paddingHorizontal: 14, minWidth: 54,
                        alignItems: "center" },

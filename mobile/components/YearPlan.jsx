@@ -27,8 +27,8 @@
  * no pencil", the same call 4a made about the picker's "prepare a new one" footer — and again
  * when the budget screen shipped, because that screen's OWN sense-check pencil led nowhere until
  * the numbers editor existed (founder, Q1: hold). Both ends are real now. It opens
- * `app/(app)/profile.jsx?intent=budget`, and the round trip returns to THIS pane
- * (`lib/paneIntent`).
+ * a WINDOW over this pane (`openEdit`), so she does not leave the Year Plan at all — which is
+ * what retired the one-shot pane stamp the round trip used to need.
  * It sits in the LABEL cell, as on the web, so the two numeric columns stay aligned with the
  * chapter rows above (founder, 2026-08-27: this is the row a teacher is actually reading when
  * she judges her year, and the label is the last thing her eye passes before the figures).

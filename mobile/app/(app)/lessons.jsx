@@ -69,7 +69,7 @@ import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
 import { subscribePreparing, clearPreparing, clearPaywall } from "../../lib/preparing";
-import { stampPane, takePane } from "../../lib/paneIntent";
+import { openEdit } from "../../lib/portal";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -137,12 +137,10 @@ export default function MyLessons() {
      ★ NOT persisted (founder, 2026-08-29): every ordinary revisit of My Lessons opens on "Your
      lessons" — a teacher who checked the Year Plan yesterday should not find the repository
      hiding behind it today.
-     ★ THE ONE EXCEPTION IS THE BUDGET PENCIL'S ROUND TRIP (step 5c, 2026-09-15), exactly as on
-     the web. `takePane()` CONSUMES the stamp, so it steers this one arrival and no other — a
-     stamp that merely read would turn the exception back into the persistence that was retired.
-     Read in the initialiser, so the plan pane is on screen from the FIRST render rather than
-     appearing a frame after the card list. */
-  const [pane, setPane] = useState(() => takePane() || "lessons");
+     ★ AND THERE IS NO LONGER AN EXCEPTION. The budget pencil used to navigate away and need a
+     one-shot stamp to bring her back to this pane; since 2026-09-15 it opens a WINDOW over the
+     pane instead, so she never leaves it and the exception it needed is gone with it. */
+  const [pane, setPane] = useState("lessons");
   const [toast, setToast] = useState(null);         // { kind: "ok" | "block", text } | null
   const [tick, setTick] = useState(0);              // bumped after a section-state sync → re-read
   const [prep, setPrep] = useState({ descriptor: null, paywall: "" });
@@ -294,20 +292,8 @@ export default function MyLessons() {
     return () => { live = false; sub.remove(); clearInterval(iv); };
   }, [sSlug, gSlug, taughtGradeObj]);
 
-  /* Returning from a lesson: re-read the local section cache so the status lines are current.
-     ★ AND CONSUME THE PANE STAMP HERE TOO, which is the whole reason this is a FOCUS effect and
-     not a mount effect (2026-09-15). The budget pencil pushes /budget ON TOP of this screen, so
-     coming back POPS to a screen that is still mounted — the `useState` initialiser above never
-     runs a second time and a mount-only read would steer nothing at all. Focus fires on both
-     paths; the stamp is consumed by whichever gets there first, so neither double-applies.
-     It also means the system back gesture out of /budget lands on the Year Plan exactly as
-     Cancel does — the stamp is set on the way IN, not only on the way out. */
-  useFocusEffect(useCallback(() => {
-    busyRef.current = false;
-    setTick((n) => n + 1);
-    const want = takePane();
-    if (want) setPane(want);
-  }, []));
+  // Returning from a lesson: re-read the local section cache so the status lines are current.
+  useFocusEffect(useCallback(() => { busyRef.current = false; setTick((n) => n + 1); }, []));
 
   const onSubject = (name) => {
     setActiveSubject(name); lsSet(LS_SUBJECT, name);
@@ -616,23 +602,17 @@ export default function MyLessons() {
         }} />}>
 
         {pane === "plan" ? (
-          /* ★ THE PENCIL IS LIT (Q1 discharged, 2026-09-15). It was held back twice, each time
-             for the same reason and each time correctly: in 4b because it opened a profile the
-             phone did not have, and again on 2026-09-15 because the budget screen's OWN
-             sense-check pencil led nowhere without the numbers editor. Both ends of the round
-             trip are now real, so it opens.
-             Bound to the pane's own subject·class — the DISPLAY name and Roman class the profile
-             record keys on, not the slugs YearPlan fetches with. The stamp is what brings her
-             back to THIS pane rather than to the card list; it is set on the way IN, so the
-             system back gesture lands the same place Cancel does. */
+          /* ★ THE PENCIL OPENS A WINDOW OVER THIS PANE (founder, 2026-09-15). It was held back
+             twice and lit once it had somewhere to go; now it does not even take her away —
+             the editor floats over the Year Plan she is reading, which is what makes "each item
+             changes only itself" true of the navigation too.
+             ⚠️ AND THAT DELETED THE PANE ROUND TRIP. `stampPane("plan")` used to be set here so
+             the return would land back on this pane instead of the card list. She never leaves
+             the pane now, so there is nothing to stamp and nothing to consume. */
           <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness}
-            onEditBudget={() => {
-              stampPane("plan");
-              router.push({
-                pathname: "/profile",
-                params: { intent: "budget", subject: current.name, grade: activeGrade },
-              });
-            }} />
+            onEditBudget={() => openEdit({
+              intent: "budget", subject: current.name, grade: activeGrade,
+            })} />
         ) : plans === undefined ? (
           <Text style={ws.mlp2_loading}>Loading plans…</Text>
         ) : shown.length === 0 && !showProposedCard ? (
