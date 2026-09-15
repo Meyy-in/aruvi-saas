@@ -145,7 +145,20 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
 
       {phases.length ? (
         <View style={ws.uv_phases}>
-          {bookmark ? <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)} onMove={bookmark.onMove} color={t.clay} /> : null}
+          {/* ★ `onLift` FREEZES THE SCROLLER (founder, 2026-09-15). While the arrow is lifted the
+              phases must not slide under her — that relative motion is half of why dragging read
+              as confusing on the handset. `labelFor` gives the callout the phase's own minutes
+              and opening words, so the answer is legible with her thumb over the arrow. */}
+          {bookmark ? (
+            <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
+              onMove={bookmark.onMove} color={t.clay} onLift={bookmark.onLift}
+              labelFor={(i) => {
+                const ph = phases[i]; if (!ph) return "";
+                const mins = phaseMin(ph);
+                const words = String(ph.text || ph.label || "").split(/\s+/).slice(0, 5).join(" ");
+                return `${mins != null ? `${mins} min · ` : ""}${words}${words ? "…" : ""}`;
+              }} />
+          ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
             return (
@@ -184,6 +197,12 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
                        defaultTab = "lesson", bookmark, tail }) {
   const items = unitAssessItems(assessment, u);
   const [tab, setTab] = useState(defaultTab);
+  /* ⚠️ THE SCROLLER IS THE BOOKMARK'S PROBLEM, so the bookmark gets to stop it. On iOS a
+     UIScrollView will take a JS gesture the moment the finger moves vertically; the responder
+     now refuses to give it up, but refusing is not enough on its own — a scroller that is still
+     LIVE slides the phases under the arrow, and that relative motion is what read as the arrow
+     drifting. Disabled for the length of the hold, restored on release. */
+  const [locked, setLocked] = useState(false);
   const tabs = [["overview", "Overview"], ["material", "Material"], ["lesson", "Lesson"], ...(items.length ? [["assess", "Assess"]] : [])];
   return (
     <>
@@ -198,10 +217,13 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
           ))}
         </View>
       </View>
-      <ScrollView contentContainerStyle={s.body}>
+      <ScrollView contentContainerStyle={s.body} scrollEnabled={!locked}>
         {tab === "overview" ? <OverviewPanel ws={ws} u={u} chapterTitle={chapterTitle} /> : null}
         {tab === "material" ? <MaterialPanel ws={ws} t={t} u={u} /> : null}
-        {tab === "lesson" ? <LessonPanel ws={ws} t={t} u={u} bookmark={bookmark} footer={lessonFooter} /> : null}
+        {tab === "lesson" ? (
+          <LessonPanel ws={ws} t={t} u={u} footer={lessonFooter}
+            bookmark={bookmark ? { ...bookmark, onLift: setLocked } : null} />
+        ) : null}
         {tab === "assess" ? <AssessPanel ws={ws} t={t} items={items} assessment={assessment} /> : null}
         {tail}
       </ScrollView>
