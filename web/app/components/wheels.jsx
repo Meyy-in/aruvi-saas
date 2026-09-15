@@ -262,33 +262,14 @@ export function RollWheel({ items, value, onChange, ariaLabel, large, rowPx = WH
  * still there, one wheel-up away, and the list below resumes past her highest pick. See
  * clusterOrder for what that drops and how to get it back. Applies to every wheel — subjects, classes, sections, durations — because they all
  * come through here. Pass `cluster={false}` to opt out. */
-/* The clustering rule. Chosen options gather into ONE run, in natural (ascending) order, sitting
- * at the natural slot of the LOWEST chosen one — not at the top of the array. Whatever naturally
- * precedes that item stays above it, still reachable by wheeling up. Below the cluster, the list
- * resumes only AFTER the LATEST (highest) chosen one: the unchosen options she has already scrolled
- * past, between her lowest and highest pick, are dropped from the wheel (founder, 2026-07-26).
- * Picking runs upward in practice — 40 then 45, 6A then 6C — so the rows worth showing next are the
- * ones beyond her furthest pick, and carrying the skipped middle just pads the window.
- *
- *   20 25 30 35 40 45 50 55 60   ·  pick 50, then 30
- *   20 25 [30 50] 55 60          ·  cluster at 30's slot; 20/25 above; 35 40 45 dropped
- *          ▲ first visible row
- *
- * TRADE-OFF, deliberate: a middle value cannot be added while it is hidden — to reach 45 here she
- * unticks 50 and the middle reappears, since this is recomputed from `selected` every render and
- * nothing is remembered. Untick is therefore the escape hatch, not a dead end.
- *
- * Returns { ordered, start } — start is the row index the wheel should rest on. */
-export function clusterOrder(options, selected) {
-  const opts = options || [];
-  const sel = opts.filter((x) => (selected || []).includes(x));
-  if (!sel.length) return { ordered: opts, start: 0 };
-  const lowest = opts.indexOf(sel[0]);                       // natural slot of the lowest chosen
-  const highest = opts.indexOf(sel[sel.length - 1]);         // ...and of the latest/highest
-  const before = opts.filter((x, i) => i < lowest && !sel.includes(x));
-  const after = opts.filter((x, i) => i > highest && !sel.includes(x));
-  return { ordered: before.concat(sel, after), start: before.length };
-}
+/* The clustering rule MOVED to @aruvi/shared/pick (Track D 5d F8, 2026-09-15): it is the whole
+ * behaviour of this wheel — which rows show, in what order, where it rests — and the phone must
+ * run the same function rather than an approximation. Its full account lives there.
+ * ⚠️ Imported AND re-exported: `export … from` alone would serve importers of this file without
+ * binding the name in this module's scope, and PickWheel below calls it (the PPW_CHOICES lesson,
+ * same day). */
+import { clusterOrder } from "../lib/pick";
+export { clusterOrder };
 
 export function PickWheel({ options, selected, onToggle, labelFor, initialScrollTo, ariaLabel, children,
                             summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor,

@@ -679,6 +679,64 @@ export function webStyles(t, scheme = "light") {
                        paddingTop: 2, paddingBottom: 1 },
     tp_savefail_bt:  { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.66,
                        textTransform: UP },
+
+    /* ── the PICK WHEEL (`.fr-sec-*`, globals.css 3110-3260) — Track D 5d F8 ──
+       A fixed-height window of tick rows: as many picks as she likes, ticking independent of
+       scroll position (unlike RollWheel, where the resting row IS the answer). Four rows visible,
+       FIVE when a trailing column is in play — "the same 21 lengths to scroll, but each row now
+       carries a second control, so the window earns the extra height".
+       ⚠️ Border widths come from the CSS SOURCE, not from getComputedStyle: a 1.5px border reads
+       back as 1.25 and a 1px as 0.625 on this display, because sub-pixel borders are snapped to
+       the device grid. Face sizes, paddings and the 52px row all round-tripped exactly, so only
+       the hairlines needed reading off the stylesheet. */
+    pw_wrap:         { flexDirection: "row", alignItems: "flex-start", columnGap: 12,
+                       marginTop: 4, marginBottom: 20 },
+    pw_col:          { flex: 1, minWidth: 0 },
+    pw_wheel:        { width: "100%", height: 208, borderWidth: 1, borderRadius: 10 },
+    pw_wheel_trail:  { height: 260 },                    // .has-trail: five rows, not four
+    PW_ROW: 52,                                          // one row; 4 × 52 = 208, 5 × 52 = 260
+    /* A row inside the wheel loses the standalone option's radius and border and keeps only a
+       hairline under it — `.fr-sec-wheel .fr-sec-opt` overrides `.fr-sec-opt` wholesale. */
+    pw_opt:          { flexDirection: "row", alignItems: "center", columnGap: 12,
+                       height: 52, paddingVertical: 12, paddingHorizontal: 14, borderBottomWidth: 1 },
+    pw_optrow:       { flexDirection: "row", alignItems: "center", height: 52,
+                       paddingRight: 12, borderBottomWidth: 1 },
+    pw_opt_grow:     { flex: 1, minWidth: 0, height: "100%", borderBottomWidth: 0 },
+    pw_check:        { width: 20, height: 20, borderRadius: 6, borderWidth: 1.5,
+                       alignItems: "center", justifyContent: "center" },
+    pw_check_t:      { fontSize: 12 },
+    pw_label:        { fontFamily: F.body(400), fontSize: 15 },
+    /* The split column is a FIXED width so the heading, every control and the anchor's bare
+       number all centre on one axis — a column of figures, not a heading with two kinds of
+       control hanging off it. (`--ppw-col: 96px`.) */
+    PW_COL: 96,
+    pw_trail:        { width: 96, alignItems: "center", justifyContent: "center", minHeight: 28 },
+    pw_trail_rule:   { height: "100%", borderLeftWidth: 1 },   // .has-trail only
+    pw_colhead:      { flexDirection: "row", alignItems: "center",
+                       paddingRight: 12, paddingBottom: 6, paddingLeft: 14 },
+    pw_colhead_t:    { fontFamily: F.mono(400), fontSize: 9.5, letterSpacing: 0.475,
+                       textTransform: UP },
+    pw_colhead_lead: { flex: 1, minWidth: 0 },
+    pw_colhead_tail: { width: 96, textAlign: "center", alignSelf: "stretch",
+                       alignItems: "center", justifyContent: "center" },
+    /* The running "chosen so far" line — the wheel shows four rows, so this keeps the FULL
+       selection visible even when earlier picks have scrolled away, and is what catches a
+       forgotten stray tick from a previous batch. */
+    pw_summary:      { marginTop: 10, marginHorizontal: 2, fontFamily: F.body(400), fontSize: 13,
+                       lineHeight: 18.85 },
+    pw_summary_b:    { fontFamily: F.body(600) },
+    pw_summary_empty:{ fontFamily: F.body(400, true), opacity: 0.8 },
+    /* Bare arrows beside the wheel — no box, just the two glyphs, height-matched to the wheel. */
+    pw_arrows:       { height: 208, alignItems: "center", justifyContent: "center", rowGap: 22 },
+    pw_arrows_trail: { height: 260 },
+    pw_arrow_btn:    { minWidth: 40, minHeight: 40, paddingVertical: 6, paddingHorizontal: 8,
+                       alignItems: "center", justifyContent: "center", opacity: 0.85 },
+    pw_arrow_t:      { fontSize: 24, lineHeight: 24 },
+    /* The "customize" cell on a section wheel. Eight characters is the field's WHOLE width — no
+       scrolling inside it — so what she sees while typing is exactly what the card will show. */
+    secname:         { width: 82, maxWidth: "100%", fontFamily: F.mono(400), fontSize: 12.5,
+                       textAlign: "center", paddingVertical: 6, paddingHorizontal: 6,
+                       borderWidth: 1.5, borderRadius: 8 },
     /* ── the Prepare CTA (button.prepare-cta, globals.css 3371) ──
        "Every ordinary primary button is calm pine. The one action that actually spends tokens to
        build a plan gets a SINGULAR warm identity." The layer owns colour, weight, glow and ✦;
