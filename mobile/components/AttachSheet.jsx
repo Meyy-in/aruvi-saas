@@ -28,6 +28,7 @@ import { useMemo } from "react";
 import { View, Modal, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform }
   from "react-native";
 import { Text } from "./Text";
+import PrepareCta from "./PrepareCta";
 import { pretty, classNum, pad } from "@aruvi/shared/format";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -160,7 +161,9 @@ function ChapterRow({ plan, onPress }) {
   );
 }
 
-export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach, onClose }) {
+export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach, onClose,
+                              onPrepareNew }) {
+  const { t } = useTheme();
   const ws = useWebStyles();
   const list = useMemo(() => {
     if (!target || !plans) return [];
@@ -185,6 +188,22 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
           <ChapterRow key={p.filename} plan={p} onPress={() => onAttach(target.c, target.sectionKey, p)} />
         ))}
       </ScrollView>
+      {/* ★ "PREPARE A NEW ONE", LIVE AT LAST (founder, 2026-09-15: "My Class + allows generation
+          from there in web app but not yet in expo/Iphone"). The web's `.mlp-allocate` footer,
+          same two lines, same `prepare-cta`.
+          ⚠️ THE REASON IT WAITED WAS THE RETURN, NOT THE DESTINATION — this file said so — and
+          the return is what shipped with it. A footer that prepares and then drops her on My
+          Lessons, with the section she started from forgotten, is worse than no footer: she came
+          here to fill THAT slot. `onPrepareNew` carries the section across the route change
+          (lib/preparing's `pendingAttach`), and My Classes reopens this very picker when she
+          lands, now listing the chapter she just built. */}
+      {onPrepareNew ? (
+        <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
+          <Text style={ws.mlp_allocate_q}>Need a chapter you don&rsquo;t have yet?</Text>
+          <PrepareCta size="allocate" label="Prepare a new lesson →"
+            onPress={() => onPrepareNew(target)} />
+        </View>
+      ) : null}
     </Sheet>
   );
 }

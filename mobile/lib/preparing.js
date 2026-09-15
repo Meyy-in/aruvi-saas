@@ -36,6 +36,23 @@
  */
 
 let state = { descriptor: null, paywall: "" };
+
+/* ★ THE SECTION A PREPARE WAS LAUNCHED FOR (5d/B17 + A9, 2026-09-15).
+ * The "+" picker on a section card offers "prepare a new one". That journey LEAVES My Classes,
+ * builds a plan, and has to come back to the very slot she opened the picker for — and a route
+ * change is exactly where that intent gets lost. The web keeps it in `prepareReturn` /
+ * `pendingAttach` above the tab; the phone has nothing above its routes, so it keeps it here.
+ *
+ * ⚠️ IT IS A HANDOFF, NOT STATE: `takePendingAttach` reads it ONCE and clears. Left behind, it
+ * would reopen the picker on an ordinary later visit to My Classes, which reads as the app
+ * having a mind of its own.
+ * ⚠️ And it is deliberately NOT part of the preparing descriptor. This path never shows a
+ * proposed card (see prepare.jsx), so the two have different lifetimes: the descriptor lives
+ * while a card is on screen, this lives across a navigation.
+ */
+let pendingAttach = null;
+export function setPendingAttach(x) { pendingAttach = x || null; }
+export function takePendingAttach() { const x = pendingAttach; pendingAttach = null; return x; }
 const listeners = new Set();
 
 function emit() {

@@ -63,7 +63,8 @@ import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { readLocalSection } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
 import Bar from "../../components/Bar";
-import { startPreparing, clearPreparing, failPreparing, paywallPreparing } from "../../lib/preparing";
+import { startPreparing, clearPreparing, failPreparing, paywallPreparing,
+         setPendingAttach } from "../../lib/preparing";
 import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
@@ -78,7 +79,10 @@ export default function Prepare() {
   const { t } = useTheme();
   const ws = useWebStyles();
   const router = useRouter();
-  const { subject, grade } = useLocalSearchParams();
+  /* `section` / `tag` arrive only when this screen was opened from a section card's "+" picker
+     (AttachSheet's footer). They change the whole shape of the journey — see `fromSection`. */
+  const { subject, grade, section, tag } = useLocalSearchParams();
+  const fromSection = !!section;
 
   const [readiness, setReadiness] = useState(() => cachedReadiness());
   const [chapters, setChapters] = useState([]);
@@ -297,8 +301,16 @@ export default function Prepare() {
       chapterTitle: (chosen.chapter_title || chosen.title) || `Chapter ${chapterNo}`,
       rows: matrix,
     };
-    startPreparing(descriptor);
-    router.navigate("/lessons");
+    /* ★ THE SECTION-ATTACH PATH KEEPS THE IN-PLACE WAIT, and that is the WEB's own rule, not a
+       phone shortcut (page.jsx:578-586: "The section-attach path (prepareReturn) is deliberately
+       EXCLUDED: it lands in My Classes, not My Lessons, so there is nowhere to put this card").
+       The proposed card exists to sit exactly where the finished plan will appear. On this
+       journey the finished plan appears in a PICKER on My Classes, so a card in My Lessons would
+       be a promise pointing at the wrong screen. She waits here, and lands where she started. */
+    if (!fromSection) {
+      startPreparing(descriptor);
+      router.navigate("/lessons");
+    }
     try {
       const resp = await postJSON(`/genon/${subject}/${grade}/${chapterNo}/plan`, { rows: matrix });
       /* READ-AFTER-WRITE (area 2). The serve returned a filename, so Y is now knowable: "that
@@ -320,6 +332,16 @@ export default function Prepare() {
          same rule every other prepare path follows. Invalidate BEFORE clearing: My Lessons
          refetches on the clear, and it must not be served the copy that predates this plan. */
       invalidatePlans(`${subject}/${grade}`);
+      if (fromSection) {
+        /* Hand the section back across the route change and go to My Classes, which reopens the
+           picker listing the chapter she just built. NOT an auto-attach: the web reopens the
+           popup so she confirms, "instead of dumping the teacher into the lesson plan"
+           (page.jsx:66-67), and a plan that binds itself to a section she has not chosen again
+           is the kind of help nobody asked for. */
+        setPendingAttach({ section: String(section), tag: tag ? String(tag) : "",
+                           subject, grade, filename: resp.filename });
+        router.navigate("/");
+      }
       clearPreparing();
     } catch (e) {
       /* ── THE PAYWALL IS NOT AN ERROR (founder, 2026-08-24). A 402 (trial exhausted / out of
@@ -332,7 +354,10 @@ export default function Prepare() {
       /* She is in My Lessons watching the card, so the failure has to reach HER, not this
          screen — it goes back up the way it went down. The 402 pulls the card and raises the
          window there instead, because a paywall is not a failed build. */
-      if (e && e.status === 402) paywallPreparing(msg);
+      /* On the section path she is still LOOKING at this screen, so the failure belongs here —
+         sending it to a card she was never shown would lose it entirely. */
+      if (fromSection) setError(msg);
+      else if (e && e.status === 402) paywallPreparing(msg);
       else failPreparing(msg);
     } finally {
       setBusy(false);
@@ -367,7 +392,13 @@ export default function Prepare() {
               `navigate` so it returns to the screen already on the stack rather than pushing a
               second copy of it (the bar's own rule). The web was changed to match this the same
               day: it had been landing on My Classes. */}
-          <Pressable onPress={() => router.navigate("/lessons")} accessibilityRole="button" hitSlop={8}
+          {/* ⚠️ CANCEL RETURNS HER WHERE SHE CAME FROM. Launched from a section card's "+" picker
+              this screen is a DETOUR out of My Classes, and a back that lands on My Lessons
+              abandons her somewhere she did not ask to be — with the slot she opened the picker
+              to fill still empty and no sign of it. The same rule the profile portal follows:
+              every exit from a detour ends at the door it came in by. */}
+          <Pressable onPress={() => router.navigate(fromSection ? "/" : "/lessons")}
+            accessibilityRole="button" hitSlop={8}
             style={[ws.prep_back, { borderColor: t.pine }]}>
             <Text style={[ws.prep_back_t, { color: t.pine }]}>← back</Text>
           </Pressable>

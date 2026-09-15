@@ -23,6 +23,7 @@ import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
 import Bar from "../../components/Bar";
 import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
+import { takePendingAttach } from "../../lib/preparing";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
 import { type } from "../../theme/type";
@@ -173,6 +174,37 @@ export default function Home() {
   const [untrackFor, setUntrackFor] = useState(null);  // { c, sectionKey, plan }
   const bump = () => setTick((n) => n + 1);
 
+  /* ★ COMING BACK FROM "prepare a new one" (5d B17 + A9, 2026-09-15). The prepare screen handed
+     the section over through `lib/preparing`'s `pendingAttach` and navigated here. Re-read the
+     listing — her flags moved when the plan landed — and REOPEN THE PICKER on that section, now
+     carrying the chapter she just built.
+     ⚠️ It reopens rather than auto-attaches, which is the web's own choice (page.jsx:66-67:
+     "reopen that popup (now listing the new chapter) instead of dumping the teacher into the
+     lesson plan"). She asked for a chapter to exist; binding it to a section on her behalf is a
+     second decision she has not made.
+     ⚠️ `take`, not read: the handoff is spent here, or an ordinary later visit to My Classes
+     would pop a picker she never asked for. */
+  useFocusEffect(useCallback(() => {
+    const pend = takePendingAttach();
+    if (!pend) return;
+    const c = (st.classes || []).find((x) => x.sectionKey === pend.section);
+    if (!c) return;                       // the section went away while she was preparing
+    /* Her flags moved when the plan landed, so the listing must be re-read, not re-used — the
+       same invalidate-then-fetch the attach path below does, and for the same reason. The picker
+       opens immediately on the cached rows and fills in when the fetch lands; the new chapter is
+       what the fetch brings. */
+    const key = `${pend.subject}/${pend.grade}`;
+    invalidatePlans(key);
+    fetchPlans(key)
+      .then((rows) => setSt((prev) => ({
+        ...prev, plansBySG: { ...prev.plansBySG, [key]: indexPlans(rows) },
+      })))
+      .catch(() => {});
+    setAttachFor({ c, sectionKey: pend.section });
+    bump();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [st.classes]));
+
   const attachChapter = (c, sectionKey, plan) => {
     bindSectionChapter(sectionKey, plan.filename);
     setAttachFor(null);
@@ -288,6 +320,15 @@ export default function Home() {
       </ScrollView>
 
       <AttachSheet target={attachFor}
+        onPrepareNew={(tg) => {
+          /* Leave the picker for the Prepare screen, carrying the SECTION so the journey can come
+             back to the slot she opened it for. `push`, not `navigate`: this is a step in a
+             journey she will return from, not one of the four places. */
+          setAttachFor(null);
+          router.push({ pathname: "/prepare", params: {
+            subject: tg.c.subjectSlug, grade: tg.c.gradeSlug,
+            section: tg.sectionKey, tag: tg.c.sectionTag } });
+        }}
         plans={attachFor ? (st.plansBySG[`${attachFor.c.subjectSlug}/${attachFor.c.gradeSlug}`] || {}) : null}
         boundFile={attachFor ? readLocalSection(attachFor.sectionKey).chapter : null}
         alsoAttachable={attachFor ? boundFilesForGrade(attachFor.c.subjectSlug, attachFor.c.gradeSlug) : null}
