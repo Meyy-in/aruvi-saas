@@ -1016,6 +1016,12 @@ export default function Home() {
      Plan pane after this flow navigated her away from My Lessons. She is not navigated away any
      more — the same mechanism, and the same deletion, as the phone's `lib/paneIntent`. */
   const [profileWin, setProfileWin] = useState(false);
+  /* The window's ← corner, reported up by TeachingProfile (see its `winBack`). The window is
+     THIS file's — the ✕ has always been drawn here — so its second corner is too, and the flow
+     inside only says whether there is a previous step to go back to. Cleared by the effect's
+     own cleanup when the flow unmounts, and again on goPortalHome for the case where the
+     window closes without the child re-rendering first. */
+  const [winChrome, setWinChrome] = useState(null);
   const onProfilePortal = (kind) => {
     portalOriginRef.current = { home: editFlow, win: portalWin };
     setProfilePortalScope(portalWin && portalWin.reason === "added"
@@ -1058,7 +1064,7 @@ export default function Home() {
     const o = portalOriginRef.current;
     /* Nothing navigates: the edit was a window over the tab, so leaving it is closing it. The
        `goLessons()/goClasses()` this used to do is exactly what made the background blank. */
-    setProfileWin(false);
+    setProfileWin(false); setWinChrome(null);
     setProfilePortal(null); setProfilePortalScope(null);
     // Restored on EVERY ending, save and cancel alike: TeachingProfile funnels both through the
     // same setScreen("view"), and a teacher who has just amended one item is exactly the person
@@ -1293,16 +1299,26 @@ export default function Home() {
           {profileWin && ready && (
             <div className="ap-overlay tp-window" data-tour="profile-root"
               onClick={(e) => { if (e.currentTarget === e.target) goPortalHome(); }}>
-              <div className="ap-modal tp-window-card" onClick={(e) => e.stopPropagation()}>
+              <div className={`ap-modal tp-window-card${winChrome && winChrome.onBack ? " tp-window-back" : ""}`}
+                onClick={(e) => e.stopPropagation()}>
                 {/* The ✕ is the way out, from every step — the footer links inside the flow are
                     the phone's `fr-link` equivalents and cost a row of a card whose height is the
                     standing problem (founder, 2026-09-15). */}
+                {/* ★ ← ONLY WHERE A STEP HAS A PREVIOUS ONE (2026-09-15). The duration step is
+                    reached THROUGH periods-a-week, and since `2d7ac21d` hid the footer links in
+                    here its "← Back" went with them — leaving Save or abandon as the only two
+                    answers. The phone grew this corner in that same commit; the web is catching
+                    up. `winChrome.onBack` is null on every other step, so nothing is painted. */}
+                {winChrome && winChrome.onBack && (
+                  <button className="ap-back" aria-label="Back" onClick={winChrome.onBack}>←</button>
+                )}
                 <button className="ap-close" aria-label="Close" onClick={goPortalHome}>✕</button>
                 <TeachingProfile readiness={readiness} onChange={setReadiness}
                   onBack={goPortalHome} lapsed={entLapsed} paidScopes={paidScopes}
                   autoAddClassSubject={null} onConsumeAutoAdd={() => {}}
                   portalIntent={profilePortal} onConsumePortal={() => setProfilePortal(null)}
                   portalScope={profilePortalScope}
+                  onChrome={setWinChrome}
                   onSubscribe={() => setSubscribeOpen(true)} />
               </div>
             </div>

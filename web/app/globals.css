@@ -2698,6 +2698,17 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
   font-size: 13px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .ap-close:hover { color: var(--clay); border-color: var(--clay); }
+/* The window's SECOND corner — a ← where a step was reached through another (2026-09-15).
+   Geometrically the ✕ mirrored, because that is what the phone draws (`theme/web.js` ap_back:
+   top 12, left 12, 30×30, radius 15) and the two surfaces are one design. It never closes: the
+   ✕ is the way out, this is the way BACK, and a window that offers only "out" from a step
+   reached through another leaves Save as the sole way forward. */
+.ap-back {
+  position: absolute; top: 12px; left: 12px; width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--paper-2); color: var(--ink-soft);
+  font-size: 14px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.ap-back:hover { color: var(--clay); border-color: var(--clay); }
 /* Header (incl. the "Pick a chapter…" line) stays frozen; only .ap-list scrolls beneath it. */
 .ap-head { flex: none; margin-bottom: 14px; padding-right: 30px; }
 .ap-kicker { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ochre); }
@@ -5324,6 +5335,12 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 /* The ✕ needs room, and the flow's own footer links do not: the corners do the navigating
    (founder, 2026-09-15) — same rule as the phone's window. */
 .tp-window-card > .ap-close { top: 12px; right: 12px; }
+.tp-window-card > .ap-back { top: 12px; left: 12px; }
+/* The kicker is the only line that shares the corners' row, so it is the only line that moves
+   over for the ←, and ONLY on the step that has one (`.tp-window-back`). The card's padding is
+   24px and the ← ends at 42px from the card edge, so 24px of indent clears it with 6px to
+   spare. The heading below starts a line of its own and is left alone. */
+.tp-window-back .tp > .kicker { padding-left: 24px; }
 .tp-window-card .tp { padding-top: 2px; }
 /* Inside the window the ✕ is the way out, so the flow's footer "← Back" / "Cancel" links are
    redundant — and each costs a row of a card whose height is the standing problem. They stay on
@@ -5333,9 +5350,12 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
    version of this rule named only the DIRECT child, so every Cancel that lives inside the step's
    own `.fr-foot` beside its Continue — periods-a-week, the annual budget — went on rendering.
    The rule was always "the corners do the navigating"; the selector simply did not reach them.
-   ⚠️ AND `:not(.fr-center)` IS LOAD-BEARING, not tidiness. `fr-link fr-center` is what the
-   CONFIRM blocks use for their "Keep it" / "Keep them" — the way to say NO to a removal. A
-   blanket `.tp .fr-link` would hide those, leaving a warning with only its destructive answer
-   on it. The ✕ replaces a way OUT; it does not replace a way to decline. */
+   ⚠️ `:not(.fr-center)` IS A GUARD, and the walk on 2026-09-15 corrected what it guards against.
+   `fr-link fr-center` is what the CONFIRM blocks use for their "Keep it" / "Keep them" — the way
+   to say NO to a removal, and the ✕ replaces a way OUT, never a way to decline. But every such
+   button in TeachingProfile.jsx today sits in `.fr-modal-bg > .fr-modal` (the subjects, classes
+   and sections confirms, and the accordion's), so it is neither a direct child of `.tp` nor
+   inside an `.fr-foot` and NEITHER rule below can reach it. The exclusion is insurance for the
+   day a confirm is written inline — not the thing keeping today's four alive. */
 .tp-window-card .tp > .fr-link { display: none; }
 .tp-window-card .tp .fr-foot > .fr-link:not(.fr-center) { display: none; }

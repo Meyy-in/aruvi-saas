@@ -128,7 +128,7 @@ const Pencil = ({ size = 14 }) => (
  * "{subject}/{stage}"). */
 const stageOfRoman = stageOfGrade;   // lib/format is the web's ONE copy of the mapping
 
-export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe }) {
+export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome }) {
   // SINGLE SOURCE OF TRUTH: the profile lives in the parent's `readiness` prop. Derive the
   // canonical subjects[] straight from it — no mirrored local copy. That way an edit (which
   // routes through persist → onChange → setReadiness) re-renders THIS view and every other
@@ -288,6 +288,30 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
   useEffect(() => {
     if (fromPortal && screen === "view") onBack && onBack();
   }, [fromPortal, screen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ★ THE CORNERS DO THE NAVIGATING ON THE WEB TOO (2026-09-15, the phone's rule from
+     `2d7ac21d` finally paid on this surface).
+     That commit hid the flow's footer links inside the window — `.tp-window-card .tp >
+     .fr-link` — and the duration step's "← Back" is exactly such a direct child. So the ONE
+     step that is reached THROUGH another lost its only way back: inside the window her
+     choices became Save (a write she may not want) or ✕ (abandon the lot). The phone grew a
+     ← corner in the same commit; the web grew nothing, and nobody noticed because the walk
+     needed a dev server.
+     The window is page.jsx's, not this component's — the ✕ has always lived up there — so the
+     ← is REPORTED UP rather than rendered here, the same shape as the phone's `onChrome`.
+     ⚠️ `duration` ONLY. Every other step is entered from the portal's row list, and its way
+     back is the ✕ that returns her to that list. A ← on those would promise a previous step
+     that does not exist. */
+  const winBack = (screen === "editNums" && numCtx && numCtx.step === "duration")
+    ? () => setNumCtx((c) => ({ ...c, step: "ppw" }))
+    : null;
+  /* Reported on EVERY change of step or screen, and nulled on unmount: a stale ← left painted
+     over the budget step would step back into a wheel she never opened. */
+  useEffect(() => {
+    if (!onChrome) return undefined;
+    onChrome({ onBack: winBack });
+    return () => onChrome({ onBack: null });
+  }, [onChrome, screen, numCtx && numCtx.step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Set ONLY on a verified mismatch (never on a throw, never on an unreachable server).
   const [saveFailed, setSaveFailed] = useState(false);
@@ -1344,6 +1368,9 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
               Save
             </button>
           </PickWheel>
+          {/* The FULL-PAGE way back. Inside the window this is hidden by `.tp-window-card .tp >
+              .fr-link` and the ← CORNER carries it instead (see `winBack` above) — the two are
+              the same destination by two routes, which is why this one stays rather than moving. */}
           <button className="fr-link" onClick={() => setNumCtx((c) => ({ ...c, step: "ppw" }))}>← Back</button>
         </div>
       );

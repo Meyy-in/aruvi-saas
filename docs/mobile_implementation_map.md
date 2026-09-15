@@ -62,7 +62,8 @@ the wait moves to My Lessons), the bottom bar, the org-page-until-taught rule, t
 | — | The ✕ was untappable on the handset: the corners were painted BEFORE the ScrollView body, so a transparent scroller lay over them. Order, not `zIndex` (which needs `elevation` on Android). And `openEdit` was nulling the window `closeEdit` then tried to restore — `winBack` remembers it | `63adafaf` | iPhone (founder) |
 | — | **ONE Sheet, whose children swap** (founder: "when ✕ is used to click off, it goes back to my classes for a moment before showing 'what would you like to change?' — that time gap should not be there"). The portal and the editor each owned a Modal, so moving between them unmounted one and mounted another: two fades back to back with NO scrim in the gap, and the bare screen flashed through. The state was already batched — the flash was the Modals. `ProfilePortal` and `ProfileEditor` are now body-only; the layout owns the Sheet and the editor reports its ← up through `onChrome` | `dac26eb0` | Expo, end to end |
 | — | **What Meyy HAS and what she has BOUGHT are two different lists** (founder: "the web app only shows those classes that the teacher has subscribed for … but expo shows all classes"). `paidScopesOf` / `entLapsed` / `allowedStagesFor` lifted from `page.jsx` and `TeachingProfile.jsx` into `shared/format.js` (7 tests), and the phone's class wheel filters by them. 9000000003 was being offered Classes 6–9 she cannot buy from that screen; she now sees 3, 4, 5 and the subscription note, exactly as the web does | `dac26eb0` | Expo + 7 tests |
-| — | The web's windowed steps still drew a bottom **Cancel** beside their Continue (founder, twice: periods-a-week, then the annual budget). The 2026-09-15 rule was right and its SELECTOR was short — `.tp > .fr-link` reached only direct children. Widened to the step's own `.fr-foot`, with `:not(.fr-center)` so the confirm blocks keep their "Keep it" | `dac26eb0` | 🟡 web walk owed — no dev server up |
+| — | The web's windowed steps still drew a bottom **Cancel** beside their Continue (founder, twice: periods-a-week, then the annual budget). The 2026-09-15 rule was right and its SELECTOR was short — `.tp > .fr-link` reached only direct children. Widened to the step's own `.fr-foot`, with `:not(.fr-center)` so the confirm blocks keep their "Keep it" | `dac26eb0` | ✅ web, walked — see the row below |
+| — | **The web grew the window's ← corner** — the last piece of "the corners do the navigating", which the phone got in `2d7ac21d` and the web did not. Hiding the footer links in the window took the duration step's `← Back` with them, and duration is the ONE step reached THROUGH another: inside the window her only two answers became Save (a write she may not want) or ✕ (abandon the lot). `TeachingProfile` now reports `{ onBack }` up through `onChrome` exactly as `ProfileEditor` does on the phone, `page.jsx` draws the corner it already drew the ✕ in, and `.ap-back` is `.ap-close` mirrored — the phone's `theme/web.js` geometry to the pixel (top 12, left 12, 30×30). `.tp-window-back` indents the kicker on that step alone | *this commit* | web, walked end to end |
 
 **★ 5c IS NOT A SEPARATE STEP ANY MORE.** Founder's answer to Q1 was HOLD: the budget screen's own
 sense-check pencil leads to the ppw wheel, so shipping it before the numbers editor would only have moved
@@ -101,20 +102,34 @@ updated **in the same commit as the work**.
 - `git config user.name/email` may be unset in a fresh shell — the repo's own author is
   `kumarradhakrishnan2-hue <kumar.radhakrishnan2@gmail.com>`.
 
-**Owed before anything new:**
-1. **A walk of the web's two changes in `dac26eb0`** — the bottom Cancel gone from *How many periods a week?*
-   and *How many periods for the year?* inside the window (and the confirm blocks' "Keep it" still there),
-   and the class wheel still narrowing to her paid stages after the `allowedStagesFor` refactor. Both are
-   committed unwalked because no dev server was up.
-2. **Does the WEB flash between its portal window and a spot-edit window?** The phone's fix was Modal-shaped
-   and the web uses plain divs, so probably not — but §0 of CLAUDE.md says both surfaces, so look.
-3. The web's **duration step has no way back to the ppw step inside the window**: its `← Back` is a direct
-   child of `.tp` and has been hidden since `2d7ac21d`, and unlike the phone the web grew no ← corner. Decide
-   whether the web owes the corner or the link back.
+**All three items owed at the last hand-off are CLOSED (2026-09-15, second run — the dev server was up
+this time). What they turned out to be:**
+
+1. **The `dac26eb0` web walk — clean.** *How many periods a week?* shows CONTINUE alone and *How many
+   periods for the year?* shows SAVE alone; both keep the ✕. The class wheel offered 9000000003 exactly
+   **Class 3, 4, 5** and the subscription note — her paid preparatory stage, no 6–9 — so `allowedStagesFor`
+   reads the same on both surfaces.
+   ⚠️ **The confirm blocks were never at risk, and `:not(.fr-center)` is not what saves them.** Every
+   "Keep it" / "Keep them" / "Cancel" in this file lives in `.fr-modal-bg > .fr-modal` — the subjects
+   confirm, the classes confirm, the sections confirm and the accordion's — so it is neither a direct child
+   of `.tp` nor inside an `.fr-foot`, and NEITHER hide rule can reach it. That was settled by reading all
+   four sites rather than by triggering a removal on a live profile. `:not(.fr-center)` still earns its
+   keep as the guard for the day a confirm is written inline, but the note in `globals.css` overstates it.
+2. **The web does NOT flash between its two windows, and structurally cannot.** `.ap-overlay` and
+   `.ap-modal` carry no transition, animation or keyframe — the phone's flash was the two **RN `Modal`s**
+   and their fades, which is a thing the web never had. And `onProfilePortal` closes the portal and opens
+   the editor in ONE batched handler, so React commits both in a single render: there is no frame in which
+   neither is painted. Nothing to fix; the phone's `dac26eb0` fix has no web half.
+3. **The web owed the CORNER, not the link back — and now has it.** Settled by the phone's own precedent
+   rather than by a new decision: `2d7ac21d` already answered "corner or footer link?" with *corner*, and a
+   rule that lives on one surface is a rule the other does not have (CLAUDE.md §3). Un-hiding the footer
+   link would have re-bought the row of card height that commit was spending. See the §0 row.
 
 **Then, in order:** the two **pick screens** (subject and class, for a teacher with more than one — today a
 portal row on such a profile deliberately does nothing rather than guess) · **add a subject** (Q3 answered:
 add mode only) · the **check-mood window**, which needs **Q9**, the last unanswered founder question in §4.
+Nothing blocks the pick screens; **Q9 has been put to the founder ahead of its stage** so the check-mood
+window does not stall on it.
 
 **Two lessons this run is the evidence for, both already in MEMORY.md:**
 - *Web tolerance is not correctness either.* The parity page renders react-native-web in both panes, so it
