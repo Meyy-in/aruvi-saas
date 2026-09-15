@@ -44,6 +44,18 @@ import { clusterOrder } from "@aruvi/shared/pick";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
+/* ⚠️ THE TICKED STATE IS IN THE LABEL AS WELL AS IN `accessibilityState`, and it has to be
+ * (2026-09-15). `accessibilityState={{ checked }}` on a Pressable produces NO `aria-checked` at
+ * all on this react-native-web version — inspected on the running page, the row carries only
+ * aria-label, role, tabindex, class and style. So on the web target a screen reader announced
+ * "Class 3" whether or not it was ticked, which for a multi-select wheel is the one thing it
+ * needs to say. iOS maps the state properly, so this is belt to that braces rather than a
+ * replacement: `accessibilityState` stays for the platform that honours it.
+ * The web app words it as a listbox (`role="option"` + `aria-selected`) and appends "(selected)"
+ * in its own two-column branch; RN has no listbox role worth the name, so the checkbox role plus
+ * a stated label is the faithful reading of the same intent. */
+const a11yLabel = (label, on) => `${label}${on ? " (selected)" : ""}`;
+
 export default function PickWheel({
   options, selected, onToggle, labelFor, initialScrollTo, ariaLabel, children,
   summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor, cluster = true,
@@ -151,7 +163,7 @@ export default function PickWheel({
               return (
                 <Pressable key={String(o)} onPress={() => pick(o, on)}
                   accessibilityRole="checkbox" accessibilityState={{ checked: on }}
-                  accessibilityLabel={label}
+                  accessibilityLabel={a11yLabel(label, on)}
                   style={[ws.pw_opt, tint, hair]}>
                   <Check on={on} />
                   <Text style={[ws.pw_label, { color: t.ink }]} numberOfLines={1}>{label}</Text>
@@ -164,7 +176,7 @@ export default function PickWheel({
               <View key={String(o)} style={[ws.pw_optrow, tint, hair]}>
                 <Pressable onPress={() => pick(o, on)} style={[ws.pw_opt, ws.pw_opt_grow]}
                   accessibilityRole="checkbox" accessibilityState={{ checked: on }}
-                  accessibilityLabel={`${label}${on ? " (selected)" : ""}`}>
+                  accessibilityLabel={a11yLabel(label, on)}>
                   <Check on={on} />
                   <Text style={[ws.pw_label, { color: t.ink }]} numberOfLines={1}>{label}</Text>
                 </Pressable>

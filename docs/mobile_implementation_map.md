@@ -229,6 +229,23 @@ showing her mobile number on the bar after she had subscribed.
   remove 3C; Keep it dismisses and her record is untouched. **The remove itself is the founder's to
   press** — it clears real bookmarks.
 
+- ✅ **6 · Manage classes** — `/profile?intent=class`, and **`onAdd` IS NOW LIVE**: all four of the
+  window's rows lead somewhere.
+  ⚠️ Save is NOT disabled at zero classes, unlike the section wheel, and the difference is the point:
+  zero sections is not an act she can mean (it cascades the class away by a side door), zero classes
+  is — it removes the subject, and the confirm says exactly that before she presses it. The first
+  draft copied the section wheel's disable and made that path unreachable with its warning dead.
+  ⚠️ `rekeyBudget` runs before any write: remove Class VII from a teacher of VI·VII·VIII and VIII
+  slides from index 2 to 1, inheriting VII's year unless it does.
+  ⚠️ Scope: with the pick screens still owed (item 3), a row resolves its subject·class only when she
+  teaches exactly ONE — the web's own "straight in when only one is in play" rule. A teacher with more
+  is left on the window rather than sent somewhere guessed.
+- ★ **`accessibilityState` does not reach the DOM on this react-native-web version.** A ticked row
+  carried only aria-label/role/tabindex/class/style — so on the web target a screen reader announced
+  "Class 3" whether or not it was ticked. The ticked state is now stated in the LABEL too, for every
+  PickWheel. iOS honours the state properly, so this is belt to that braces. **Anything relying on
+  `accessibilityState` alone should be treated as unverified on the web target.**
+
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
    `subscribePortal`; the phone's `portalOriginRef` (app. 01 rows 77-78). **F3** `shared/setupCheck.js` — the

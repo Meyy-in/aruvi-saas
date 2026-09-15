@@ -53,7 +53,8 @@ import { View, Pressable, TextInput, ScrollView, ActivityIndicator } from "react
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
-  classNum, getJSON, getUser, pretty, subjectSlug, weeksFromAnnual,
+  ROMAN, classNum, fetchSupportedGrades, getJSON, getUser, ppwFromAnnual, pretty, subjectSlug,
+  weeksFromAnnual,
 } from "@aruvi/shared/format";
 import { normalizeBudget, setGradeBudget, gradeBudgetRecord, clampPeriods } from "@aruvi/shared/budget";
 import {
@@ -61,8 +62,10 @@ import {
 } from "@aruvi/shared/profile";
 import { clearSectionState } from "@aruvi/shared/sectionState";
 import {
-  DEFAULT_PPW, DURATION_CHOICES, PPW_CHOICES, lowestDuration, normPpw, ppwMapSum, setPpwSplit, setPpwTotal,
+  DEFAULT_DURATION, DEFAULT_PPW, DURATION_CHOICES, PPW_CHOICES, lowestDuration, normPpw,
+  ppwMapSum, setPpwSplit, setPpwTotal,
 } from "@aruvi/shared/ppw";
+import { rekeyBudget } from "@aruvi/shared/budget";
 import { cachedReadiness, fetchReadiness, saveReadiness } from "@aruvi/shared/readiness";
 import { stampPane } from "../../lib/paneIntent";
 import Bar from "../../components/Bar";
@@ -97,7 +100,7 @@ export default function ProfileScreen() {
   const [err, setErr] = useState("");
   /* Which of the three she is looking at. Seeded from the route and then owned here, because the
      pencil and ← Back move BETWEEN steps without leaving the screen — they are one answer. */
-  const [step, setStep] = useState(() => (["budget", "ppw", "duration", "section"].includes(String(intent))
+  const [step, setStep] = useState(() => (["budget", "ppw", "duration", "section", "class"].includes(String(intent))
     ? String(intent) : "budget"));
   /* The working copy of this class's weekly numbers. `gradeDraftFrom` is the web's own seeder, so
      the record she edits is shaped exactly as the web shapes it — which is what stops a phone save
@@ -107,6 +110,8 @@ export default function ProfileScreen() {
   useEffect(() => { fetchReadiness().then(setReadiness).catch(() => {}); }, []);
 
   const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
+  const subjectRec = useMemo(
+    () => subjects.find((x) => x.name === subject) || null, [subjects, subject]);
   const gradeRec = useMemo(() => {
     const sub = subjects.find((s) => s.name === subject);
     const want = String(grade || "").toLowerCase();
@@ -121,6 +126,13 @@ export default function ProfileScreen() {
   const [picked, setPicked] = useState(null);
   const [secNames, setSecNames] = useState({});
   const [secConfirm, setSecConfirm] = useState(null);
+  /* ── the class editor's working copy ──
+     Roman classes she has ticked, and the catalogue Meyy actually has content for. The catalogue
+     is fetched, not assumed: offering a class with no chapters behind it is a promise Meyy cannot
+     keep, and `fetchSupportedGrades` is the one authority both surfaces use. */
+  const [pickedGrades, setPickedGrades] = useState(null);
+  const [gradeOptions, setGradeOptions] = useState(null);   // null = still loading
+  const [classConfirm, setClassConfirm] = useState(null);
   useEffect(() => {
     if (picked || !gradeRec) return;
     setPicked((gradeRec.sections || []).map(secLetter));
@@ -222,6 +234,103 @@ export default function ProfileScreen() {
     }), () => { setDraft(null); setStep("ppw"); });
   };
 
+  /* ── CLASSES ─────────────────────────────────────────────────────────────────────────
+     Seeded once her record and the catalogue are both in. Every enrolled class is pre-ticked,
+     INCLUDING any the catalogue no longer lists: removals are read off `pickedGrades`, so a class
+     missing from the options must never be readable as an unticking. */
+  useEffect(() => {
+    if (step !== "class" || !subject) return;
+    let live = true;
+    fetchSupportedGrades(subject)
+      .then((g) => { if (live) setGradeOptions(g || []); })
+      .catch(() => { if (live) setGradeOptions([]); });
+    return () => { live = false; };
+  }, [step, subject]);
+  useEffect(() => {
+    if (pickedGrades || !subjectRec) return;
+    setPickedGrades((subjectRec.grades || []).map((g) => g.grade));
+  }, [subjectRec, pickedGrades]);
+
+  const haveGrades = (subjectRec && (subjectRec.grades || []).map((g) => g.grade)) || [];
+  /* Her enrolled classes always stay listed even if the catalogue dropped one — otherwise a class
+     she teaches would quietly vanish from a screen whose job is to show what she teaches. */
+  const classOptions = (gradeOptions || [])
+    .concat(haveGrades.filter((g) => !(gradeOptions || []).includes(g)))
+    .sort((a, b) => ROMAN.indexOf(a.toLowerCase()) - ROMAN.indexOf(b.toLowerCase()));
+
+  const requestClasses = () => {
+    if (!subjectRec || !pickedGrades) return;
+    const adds = pickedGrades.filter((g) => !haveGrades.includes(g));
+    const removes = haveGrades.filter((g) => !pickedGrades.includes(g));
+    if (!adds.length && !removes.length) { leave(); return; }
+    if (removes.length) setClassConfirm({ removes, adds });
+    else applyClasses([...(subjectRec.grades || [])], adds, []);
+  };
+
+  /* ★ AN ADDED CLASS ARRIVES SET UP, and this screen does not ask her about it. Section A, the
+     default period length, and — where Meyy has a calibrated year for that class — a real annual
+     budget with the periods-a-week derived from it. First run's own rule: do not stack
+     configuration on configuration. The hint says what it arrives as and points at the row that
+     changes it. */
+  const applyClasses = async (keep, adds, removes) => {
+    if (saving) return;
+    setSaving(true); setErr("");
+    const totals = await Promise.all(adds.map((roman) =>
+      getJSON(`/subjects/${subjectSlug(subject)}/${roman.toLowerCase()}/ncf-periods`)
+        .then((d) => (d && d.recommended_total_periods) || null)
+        .catch(() => null)));
+    setSaving(false);
+
+    const built = adds.map((roman, i) => {
+      const annual = totals[i];
+      const ppwFor = (annual && ppwFromAnnual(annual)) || DEFAULT_PPW;
+      return {
+        grade: roman,
+        sections: [{ tag: `${classNum(roman)}A`, sec: "A" }],
+        durations: [DEFAULT_DURATION],
+        ppw_by_duration: { [DEFAULT_DURATION]: ppwFor },
+        ppw_anchor: DEFAULT_DURATION,
+        periods_per_week: ppwFor,
+        _budget: annual ? { method: "periods", value: annual } : null,
+      };
+    });
+    const all = [...keep, ...built]
+      .sort((a, b) => ROMAN.indexOf(a.grade.toLowerCase()) - ROMAN.indexOf(b.grade.toLowerCase()));
+
+    const at = subjects.findIndex((x) => x.name === subject);
+    /* ⚠️ THE BUDGET MAP IS KEYED BY GRADE INDEX, so it is RE-KEYED against the new list before
+       anything is written — remove Class VII from a teacher of VI·VII·VIII and VIII slides from
+       index 2 to 1, inheriting VII's year unless this runs. */
+    let budget = rekeyBudget(subjectRec.grades, subjectRec.budget, all);
+    all.forEach((g, i) => { if (g._budget) budget = { ...budget, [i]: g._budget }; });
+    const grades = all.map(({ _budget, ...g }) => g);
+
+    const next = (grades.length
+      ? subjects.map((sub, si) => (si !== at ? sub : {
+          ...sub, grades,
+          budget,
+          grids: grades.map((g) => (g.sections || []).map(() => Array(6).fill(-1))),
+        }))
+      /* ★ HER LAST CLASS TAKEN AWAY TAKES THE SUBJECT WITH IT — which is why the confirm says so
+         in words before she presses it. A subject with no classes is not a subject she teaches. */
+      : subjects.filter((x) => x.name !== subject));
+
+    setClassConfirm(null);
+    commit(next, () => setPickedGrades(null));
+  };
+
+  const applyClassChanges = () => {
+    const { removes, adds } = classConfirm;
+    /* Removed classes lose their sections' bookmarks — and the push inside `clearSectionState`
+       is what stops them coming back on her next device. */
+    (subjectRec.grades || []).forEach((g) => {
+      if (!removes.includes(g.grade)) return;
+      (g.sections || []).forEach((x) =>
+        clearSectionState(subject, g.grade, x.tag || `${classNum(g.grade)}${secLetter(x)}`));
+    });
+    applyClasses((subjectRec.grades || []).filter((g) => !removes.includes(g.grade)), adds, removes);
+  };
+
   /* ── SECTIONS ────────────────────────────────────────────────────────────────────────
      ★ REMOVAL IS CONFIRMED, ADDITION IS NOT. Ticking a new section costs her nothing; unticking
      one takes a card and a bookmark away, and she may well have meant to tick a different row.
@@ -293,10 +402,55 @@ export default function ProfileScreen() {
         <Text style={ws.kicker}>
           {pretty(subject)} · Class {classNum(grade)} · {
             step === "ppw" ? "periods / week" : step === "duration" ? "duration"
-              : step === "section" ? "sections" : "annual budget"}
+              : step === "section" ? "sections" : step === "class" ? "classes" : "annual budget"}
         </Text>
 
-        {step === "section" ? (
+        {step === "class" ? (
+          <>
+            <Text style={ws.fr_q}>Which classes do you teach {pretty(subject)} to?</Text>
+            {/* Says what an added class ARRIVES as, because this screen does not ask — and points
+                at the row that changes it. */}
+            <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+              Tick a class to add it — untick one to remove it. A new class starts with Section A;
+              change that under Section.
+            </Text>
+            {gradeOptions === null || !pickedGrades ? (
+              <Text style={[ws.fr_hint, { color: t.ink_soft }]}>Loading classes…</Text>
+            ) : classOptions.length === 0 ? (
+              <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+                Every class Meyy offers for {pretty(subject)} is already in your profile.
+              </Text>
+            ) : (
+              /* ★ CLUSTERED, knowingly (founder, 2026-08-29): the picked classes gather adjacent
+                 on top, at the recorded cost that with VI and IX ticked, VII and VIII hide inside
+                 the cluster until IX is unticked. The SUBJECTS wheel keeps the older no-cluster
+                 rule — it is the site of the swallowed-Mathematics defect and was not part of
+                 that reversal. */
+              <PickWheel options={classOptions} selected={pickedGrades}
+                onToggle={(g) => setPickedGrades((a) => (a.includes(g) ? a.filter((x) => x !== g) : [...a, g]))}
+                ariaLabel={`Classes for ${pretty(subject)}`} labelFor={(g) => `Class ${classNum(g)}`}>
+                {/* "Save", not "Continue" (founder, 2026-08-27): the word states whether anything
+                    follows, and here nothing does — the tick applies and she is returned.
+                    ⚠️ NOT DISABLED AT ZERO, unlike the section screen, and the difference is the
+                    point. Zero SECTIONS is not an act she can mean — it cascades the class away by
+                    a side door. Zero CLASSES is an act she can mean: it removes the subject, and
+                    the confirm says exactly that in words before she presses it. Disabling here
+                    would make that path unreachable and its warning dead code — which is what the
+                    first draft of this screen did, copied from the section wheel above. The web
+                    says the same thing in one expression: `disabled={manageC ? false : …}`. */}
+                <Pressable onPress={requestClasses} disabled={saving}
+                  accessibilityRole="button" accessibilityState={{ disabled: saving }}
+                  style={[ws.fr_cta, { backgroundColor: saving ? t.paper_sunk : t.pine }]}>
+                  {saving ? <ActivityIndicator size="small" color={t.ink_soft} />
+                          : <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Save</Text>}
+                </Pressable>
+              </PickWheel>
+            )}
+            <Pressable onPress={leave} accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
+              <Text style={ws.fr_link_t}>← Back</Text>
+            </Pressable>
+          </>
+        ) : step === "section" ? (
           <>
             <Text style={ws.fr_q}>Edit sections of Class {classNum(grade)}</Text>
             {/* ★ THE LAST SENTENCE NAMES A CONTROL THAT EXISTS (founder, Q4, 2026-09-15). The web
@@ -484,6 +638,42 @@ export default function ProfileScreen() {
           breath, that her lessons stay in the library, because the fear this dialog answers is
           not "did I mean to untick" but "have I just thrown away my work". The keep-option is
           worded as a choice ("Keep it"), not as a cancel. */}
+      {classConfirm ? (() => {
+        const names = classConfirm.removes.map((r) => `Class ${classNum(r)}`).join(", ");
+        const tags = classConfirm.removes.map((roman) => {
+          const g = (subjectRec.grades || []).find((x) => x.grade === roman);
+          return g && (g.sections || []).length
+            ? g.sections.map((x) => x.tag || `${classNum(roman)}${secLetter(x)}`).join(", ")
+            : `Class ${classNum(roman)}`;
+        }).join(", ");
+        /* ★ AND IF IT TAKES THE WHOLE SUBJECT, SHE IS TOLD SO HERE — before she presses it, in
+           the same sentence as what else goes. A subject disappearing as a side effect of
+           removing a class would be the most surprising thing this screen could do. */
+        const allGone = classConfirm.removes.length === (subjectRec.grades || []).length
+          && !classConfirm.adds.length;
+        return (
+          <Sheet visible confirm onClose={() => setClassConfirm(null)}
+            kicker={pretty(subject)}
+            title={`Remove ${names} from ${pretty(subject)}?`}
+            sub={`${tags} — their cards and bookmarks — will be removed.${allGone ? ` No class is left — ${pretty(subject)} goes with it.` : ""} Your lessons stay in the library.`}>
+            <View style={ws.ap_actions}>
+              {/* "Keep them" re-ticks what she was about to remove, rather than abandoning the
+                  whole edit — the same rule the subjects confirm follows (founder, 2026-08-24). */}
+              <Pressable onPress={() => { setPickedGrades(haveGrades.concat(classConfirm.adds)); setClassConfirm(null); }}
+                accessibilityRole="button" style={[ws.ap_btn, { borderColor: t.line }]}>
+                <Text style={[ws.ap_btn_label, { color: t.ink }]}>
+                  Keep {classConfirm.removes.length === 1 ? "it" : "them"}
+                </Text>
+              </Pressable>
+              <Pressable onPress={applyClassChanges} accessibilityRole="button"
+                style={[ws.ap_btn, { borderColor: t.edge_clay, backgroundColor: t.paper_2 }]}>
+                <Text style={[ws.ap_btn_label, { color: t.clay }]}>Yes, remove {names}</Text>
+              </Pressable>
+            </View>
+          </Sheet>
+        );
+      })() : null}
+
       {secConfirm ? (
         <Sheet visible confirm onClose={() => setSecConfirm(null)}
           kicker={`${pretty(subject)} · Class ${classNum(grade)}`}

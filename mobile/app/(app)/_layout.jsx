@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Redirect, Stack, useRouter, usePathname } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
+import { cachedReadiness } from "@aruvi/shared/readiness";
 import { useTheme } from "../../theme/ThemeContext";
 import BottomNav from "../../components/BottomNav";
 import ProfilePortal from "../../components/ProfilePortal";
@@ -51,14 +52,24 @@ export default function AppLayout() {
         <ProfilePortal mode={win.mode} sub={win.sub} values={win.values}
           onClose={() => setPortalWin(null)}
           onPick={(kind) => {
-            /* Each row is a spot edit on ONE subject·class. The window does not resolve WHICH —
-               the pick screens do that (5d item 3) — so until they exist the two rows that can
-               act without a scope are wired and the other two say so. `enterPortal` remembers
-               where she stepped out from AND the window to restore, because a teacher who has
-               just amended one item is exactly the person most likely to want the next. */
-            enterPortal({ originRoute: pathname, win, scope: null });
+            /* Each row is a spot edit on ONE subject·class, and the window does not resolve
+               WHICH — the pick screens do that (5d item 3). Until they exist, the scope is
+               resolved the way the web resolves it when there is nothing to ask: if she teaches
+               exactly one subject·class, go straight in. That is `portalPickClass`'s own
+               "straight in when only ONE is in play" rule, not a shortcut.
+               ⚠️ A teacher with more than one is NOT sent somewhere arbitrary — she is left on
+               the window, which is honest, until item 3 lands. Picking her first subject for her
+               would be a guess about which class she meant.
+               `enterPortal` remembers where she stepped out from AND the window to restore,
+               because a teacher who has just amended one item is exactly the person most likely
+               to want the next. */
+            const subs = (cachedReadiness() || {}).subjects || [];
+            const only = subs.length === 1 && (subs[0].grades || []).length === 1
+              ? { subject: subs[0].name, grade: subs[0].grades[0].grade } : null;
+            if (!only) return;
+            enterPortal({ originRoute: pathname, win, scope: { ...only, exact: true } });
             setPortalWin(null);
-            router.push({ pathname: "/profile", params: { intent: kind } });
+            router.push({ pathname: "/profile", params: { intent: kind, ...only } });
           }}
           onOpenProfile={() => { /* the full accordion arrives with Settings, step 6 */ }} />
       ) : null}
@@ -79,18 +90,14 @@ export default function AppLayout() {
         active={active}
         onClasses={() => router.navigate("/")}
         onLessons={() => router.navigate("/lessons")}
-        /* ★ ADD STAYS DARK UNTIL ALL FOUR ROWS LEAD SOMEWHERE (2026-09-15). The window is built
-           and mounted above; two of its rows — Periods a week and Annual period budget — already
-           have their screens, and Section and Class do not until 5d items 5 and 6. Opening it now
-           would put a teacher in front of a list of four things to change, half of which do
-           nothing. That is the call the founder made twice already (4b's Year Plan pencil, and
-           Q1's HOLD on the budget screen), and it is the same call here.
-           One line when they land:  onAdd={() => setPortalWin({ mode: "change" })}
-           ⚠️ And when it lights: the window NEVER opens while she is lapsed — the growth entry
-           points hide on an expired subscription (the web's rule). That flag arrives with F5 in
-           6a; enforcement is off server-side for every teacher today, so this is a note to keep,
-           not a gap to close now. */
-        onAdd={() => {}}
+        /* ★ ADD IS LIVE (2026-09-15). It was held until all four of the window's rows led
+           somewhere — the call the founder made twice before, on 4b's Year Plan pencil and on
+           Q1's HOLD. Class was the last of the four.
+           ⚠️ WHEN F5 LANDS (6a): the window must NOT open while she is lapsed. The growth entry
+           points hide on an expired subscription — that is the web's rule and the phone owes it.
+           Enforcement is off server-side for every teacher today, so this is a note to keep, not
+           a gap to close now. */
+        onAdd={() => setPortalWin({ mode: "change" })}
         onAsk={() => {}}
       />
     </View>
