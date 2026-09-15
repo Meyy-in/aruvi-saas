@@ -6,7 +6,8 @@ import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget } from "../li
 import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections,
          secSummary, gradeDraftFrom, finalizeSubject } from "../lib/profile";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
-import { pushSectionState } from "../lib/sectionState";
+/* `pushSectionState` left with `clearSectionState`, which was its only caller here. */
+import { clearSectionState } from "../lib/sectionState";
 import { RollWheel, PickWheel, PpwTotalWheel, PpwSplitCell, normPpw, ppwMapSum, ppwAnchor,
          setPpwSplit, setPpwTotal, lowestDuration,
          DEFAULT_DURATION, DEFAULT_PPW, DURATION_CHOICES } from "./wheels";
@@ -119,16 +120,9 @@ const Pencil = ({ size = 14 }) => (
   </svg>
 );
 
-// clear the local teaching state (bookmark + chapter binding) of one removed section
-const clearSectionState = (subjName, gradeRoman, tag) => {
-  const key = `${subjectSlugOf(subjName)}_${(gradeRoman || "").toLowerCase()}_${tag}`;
-  try {
-    window.localStorage.removeItem(`lu_pointer_${key}`);
-    window.localStorage.removeItem(`current_chapter_${key}`);
-    window.localStorage.removeItem(`lu_done_${key}`);
-  } catch {}
-  pushSectionState(key);   // chapter gone → the server drops this section's row too
-};
+/* `clearSectionState` MOVED to @aruvi/shared/sectionState (Track D 5d, 2026-09-15): it reached
+ * into window.localStorage directly, which is exactly the seam the storage shim exists for, and
+ * the phone's section editor needs the identical removal. */
 
 /* Stage of a roman grade (client copy of grades.stage_for — the scope unit is
  * "{subject}/{stage}"). */

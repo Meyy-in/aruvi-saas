@@ -56,7 +56,10 @@ import {
   classNum, getJSON, getUser, pretty, subjectSlug, weeksFromAnnual,
 } from "@aruvi/shared/format";
 import { normalizeBudget, setGradeBudget, gradeBudgetRecord, clampPeriods } from "@aruvi/shared/budget";
-import { gradeDraftFrom, setGradeNumbers } from "@aruvi/shared/profile";
+import {
+  gradeDraftFrom, setGradeNumbers, secLetter, secObj, secSummary, namesFromSections,
+} from "@aruvi/shared/profile";
+import { clearSectionState } from "@aruvi/shared/sectionState";
 import {
   DEFAULT_PPW, DURATION_CHOICES, PPW_CHOICES, lowestDuration, normPpw, ppwMapSum, setPpwSplit, setPpwTotal,
 } from "@aruvi/shared/ppw";
@@ -66,8 +69,12 @@ import Bar from "../../components/Bar";
 import { RollWheel } from "../../components/RollWheel";
 import PickWheel from "../../components/PickWheel";
 import PpwSplitCell from "../../components/PpwSplitCell";
+import SecNameCell from "../../components/SecNameCell";
+import { Sheet } from "../../components/AttachSheet";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
+
+const SECTION_LETTERS = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)); // A…Z
 
 export default function ProfileScreen() {
   const { t } = useTheme();
@@ -90,7 +97,7 @@ export default function ProfileScreen() {
   const [err, setErr] = useState("");
   /* Which of the three she is looking at. Seeded from the route and then owned here, because the
      pencil and ← Back move BETWEEN steps without leaving the screen — they are one answer. */
-  const [step, setStep] = useState(() => (["budget", "ppw", "duration"].includes(String(intent))
+  const [step, setStep] = useState(() => (["budget", "ppw", "duration", "section"].includes(String(intent))
     ? String(intent) : "budget"));
   /* The working copy of this class's weekly numbers. `gradeDraftFrom` is the web's own seeder, so
      the record she edits is shaped exactly as the web shapes it — which is what stops a phone save
@@ -106,6 +113,19 @@ export default function ProfileScreen() {
     return (sub && (sub.grades || []).find((g) => (g.grade || "").toLowerCase() === want)) || null;
   }, [subjects, subject, grade]);
   useEffect(() => { if (!draft && gradeRec) setDraft(gradeDraftFrom(gradeRec)); }, [gradeRec, draft]);
+
+  /* ── the section editor's own working copy ──
+     Letters she has ticked, and her display names for them keyed by LETTER. Seeded from the record
+     once it arrives; `null` until then so the wheel does not open on an empty selection and then
+     jump. */
+  const [picked, setPicked] = useState(null);
+  const [secNames, setSecNames] = useState({});
+  const [secConfirm, setSecConfirm] = useState(null);
+  useEffect(() => {
+    if (picked || !gradeRec) return;
+    setPicked((gradeRec.sections || []).map(secLetter));
+    setSecNames(namesFromSections(gradeRec.sections));
+  }, [gradeRec, picked]);
 
   /* ── her week, as the two number steps see it ───────────────────────────────────────
      ⚠️ The anchor here is `lowestDuration`, NOT the stored `ppw_anchor`, and the web says why:
@@ -202,6 +222,46 @@ export default function ProfileScreen() {
     }), () => { setDraft(null); setStep("ppw"); });
   };
 
+  /* ── SECTIONS ────────────────────────────────────────────────────────────────────────
+     ★ REMOVAL IS CONFIRMED, ADDITION IS NOT. Ticking a new section costs her nothing; unticking
+     one takes a card and a bookmark away, and she may well have meant to tick a different row.
+     So Save asks only when something is being REMOVED, and names exactly what. */
+  const requestSections = () => {
+    if (!gradeRec || !picked || !picked.length) return;
+    const removed = (gradeRec.sections || []).map(secLetter).filter((x) => !picked.includes(x));
+    if (removed.length) setSecConfirm(removed.map((sec) => `${classNum(grade)}${sec}`));
+    else applySections();
+  };
+
+  const applySections = () => {
+    if (saving || !gradeRec || !picked) return;
+    const before = (gradeRec.sections || []).map(secLetter);
+    const after = [...picked].sort();
+    /* ⚠️ THE LOCAL TEACHING STATE OF A REMOVED SECTION GOES FIRST, and `clearSectionState` also
+       pushes, so the server drops that section's row too — without the push it would reappear on
+       her next device the moment state was pulled back down. Her LESSONS are untouched: a section
+       losing its bookmark is not a lesson being deleted, which is the promise the hint makes to
+       her in words and this code has to keep. */
+    before.filter((x) => !after.includes(x))
+      .forEach((sec) => clearSectionState(subject, grade, `${classNum(grade)}${sec}`));
+
+    const at = subjects.findIndex((x) => x.name === subject);
+    const want = String(grade || "").toLowerCase();
+    const next = subjects.map((sub, si) => (si !== at ? sub : {
+      ...sub,
+      grades: sub.grades.map((g) => ((g.grade || "").toLowerCase() !== want ? g : {
+        ...g, sections: after.map((sec) => secObj(g.grade, sec, secNames)),
+      })),
+      /* `grids` is shape-compat only, but its shape follows the section count, so it is rebuilt
+         here for the same reason `finalizeSubject` rebuilds it. */
+      grids: sub.grades.map((g) => ((g.grade || "").toLowerCase() !== want
+        ? (g.sections || []).map(() => Array(6).fill(-1))
+        : after.map(() => Array(6).fill(-1)))),
+    }));
+    setSecConfirm(null);
+    commit(next, () => { setPicked(null); setSecNames({}); });
+  };
+
   const setWeekTotal = (n) => setDraft((d) => {
     const next = setPpwTotal(d.durations, splitMap, anchor, n);
     return { ...d, ppw_by_duration: next, periods_per_week: ppwMapSum(next) };
@@ -232,10 +292,52 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={ws.main} keyboardShouldPersistTaps="handled">
         <Text style={ws.kicker}>
           {pretty(subject)} · Class {classNum(grade)} · {
-            step === "ppw" ? "periods / week" : step === "duration" ? "duration" : "annual budget"}
+            step === "ppw" ? "periods / week" : step === "duration" ? "duration"
+              : step === "section" ? "sections" : "annual budget"}
         </Text>
 
-        {step === "ppw" ? (
+        {step === "section" ? (
+          <>
+            <Text style={ws.fr_q}>Edit sections of Class {classNum(grade)}</Text>
+            {/* ★ THE LAST SENTENCE NAMES A CONTROL THAT EXISTS (founder, Q4, 2026-09-15). The web
+                said "use the basket on the class"; that basket was retired when removing a class
+                moved into the Add window, so a teacher reading it went looking for a bin that is
+                not there. Amended on BOTH surfaces in the same commit — the phone never carried
+                the stale wording. */}
+            <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+              Tick to keep or add a section, untick to remove one. A removed section loses its
+              bookmark — your lessons stay in the library. To remove the whole class, use Class in
+              the Add window.
+            </Text>
+            {picked ? (
+              /* ★ CLUSTERED, knowingly (founder, 2026-08-29, reversing an earlier call): ticked
+                 sections gather adjacent at the top, accepting the recorded cost that a class
+                 holding A and R hides B…Q inside the cluster until R is unticked. */
+              <PickWheel options={SECTION_LETTERS} selected={picked}
+                onToggle={(x) => setPicked((a) => (a.includes(x) ? a.filter((y) => y !== x) : [...a, x]))}
+                ariaLabel="Sections" labelFor={(x) => `${classNum(grade)}${x}`}
+                leadingHeader="Section" trailingHeader="customize"
+                summaryFor={(x) => secSummary(grade, x, secNames)}
+                trailing={(x, on) => (
+                  <SecNameCell on={on} tag={`${classNum(grade)}${x}`} value={secNames[x] || ""}
+                    onChange={(v) => setSecNames((m) => ({ ...m, [x]: v }))} />
+                )}>
+                {/* ⚠️ Save is disabled at ZERO sections. A class with no sections is not a smaller
+                    class — removing the last one cascades the whole class away on the web, and that
+                    is a different, more destructive act than the one this screen is for. */}
+                <Pressable onPress={requestSections} disabled={saving || !picked.length}
+                  accessibilityRole="button" accessibilityState={{ disabled: !picked.length }}
+                  style={[ws.fr_cta, { backgroundColor: (saving || !picked.length) ? t.paper_sunk : t.pine }]}>
+                  {saving ? <ActivityIndicator size="small" color={t.ink_soft} />
+                          : <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Save</Text>}
+                </Pressable>
+              </PickWheel>
+            ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
+            <Pressable onPress={leave} accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
+              <Text style={ws.fr_link_t}>← Back</Text>
+            </Pressable>
+          </>
+        ) : step === "ppw" ? (
           <>
             <Text style={ws.fr_q}>How many periods a week?</Text>
             <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
@@ -377,6 +479,32 @@ export default function ProfileScreen() {
         </>
         )}
       </ScrollView>
+
+      {/* ★ THE CONFIRM NAMES WHAT GOES, AND WHAT STAYS. "Remove 3B?" — and then, in the same
+          breath, that her lessons stay in the library, because the fear this dialog answers is
+          not "did I mean to untick" but "have I just thrown away my work". The keep-option is
+          worded as a choice ("Keep it"), not as a cancel. */}
+      {secConfirm ? (
+        <Sheet visible confirm onClose={() => setSecConfirm(null)}
+          kicker={`${pretty(subject)} · Class ${classNum(grade)}`}
+          title={`Remove ${secConfirm.join(", ")}?`}
+          sub={`${secConfirm.length === 1 ? "Its card and bookmark" : "Their cards and bookmarks"} will be removed. Your lessons stay in the library.`}>
+          <View style={ws.ap_actions}>
+            <Pressable onPress={() => setSecConfirm(null)} accessibilityRole="button"
+              style={[ws.ap_btn, { borderColor: t.line }]}>
+              <Text style={[ws.ap_btn_label, { color: t.ink }]}>
+                Keep {secConfirm.length === 1 ? "it" : "them"}
+              </Text>
+            </Pressable>
+            <Pressable onPress={applySections} accessibilityRole="button"
+              style={[ws.ap_btn, { borderColor: t.edge_clay, backgroundColor: t.paper_2 }]}>
+              <Text style={[ws.ap_btn_label, { color: t.clay }]}>
+                Yes, remove {secConfirm.join(", ")}
+              </Text>
+            </Pressable>
+          </View>
+        </Sheet>
+      ) : null}
     </View>
   );
 }

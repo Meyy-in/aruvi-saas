@@ -214,6 +214,37 @@ function syncSectionNow(sectionKey) {
  * protects the failure mode it was written for. Nothing on the server is touched; only this
  * device's optimistic copy, which the next reconcile would rebuild from server truth anyway.
  */
+/* ───────── a section REMOVED: forget what she was teaching in it ─────────
+ *
+ * Lifted from `TeachingProfile.jsx` (Track D step 5d, 2026-09-15) so the phone's section editor
+ * can do it too. The web's copy reached straight into `window.localStorage`, which is exactly the
+ * seam `storage` exists for.
+ *
+ * ★ THE LETTER IS THE KEY, AND HER OWN NAME FOR A SECTION IS NOT. `sec`/`tag` are what every
+ * bookmark, chapter binding and cache key in the product is built from; `name` ("Rose", "Blue") is
+ * a display label laid over the tag and nothing keys off it. That is the whole design — renaming a
+ * section can never orphan the work attached to it, and only a REMOVAL reaches this function.
+ *
+ * ★ AND `pushSectionState` IS PART OF THE REMOVAL, not a follow-up. The three local keys go, and
+ * the push tells the server the chapter is gone so it drops this section's row too. Without it the
+ * section would reappear on her next device the moment state was pulled back down.
+ *
+ * ⚠️ Her LESSONS are untouched, always. A section losing its bookmark is not a lesson being
+ * deleted — the library is hers whatever happens to the rooms she teaches in, which is the promise
+ * every screen that removes something repeats to her in words.
+ */
+export function clearSectionState(subjectName, gradeRoman, tag) {
+  const slug = (subjectName || "").toLowerCase().replace(/ /g, "_");
+  const key = `${slug}_${(gradeRoman || "").toLowerCase()}_${tag}`;
+  try {
+    storage.removeItem(`lu_pointer_${key}`);
+    storage.removeItem(`current_chapter_${key}`);
+    storage.removeItem(`lu_done_${key}`);
+  } catch { /* private mode or cleared data — the push below still speaks for the removal */ }
+  pushSectionState(key);
+  return key;
+}
+
 export function clearLocalSectionCache() {
   const prefixes = ["current_chapter_", "lu_pointer_", "lu_done_", "lu_bookmark_"];
   let removed = 0;

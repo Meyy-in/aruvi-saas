@@ -53,14 +53,17 @@ the wait moves to My Lessons), the bottom bar, the org-page-until-taught rule, t
 | **F8** | `PickWheel` + `shared/pick.js` (the clustering rule, shared so the phone cannot approximate it) | `ceb3d742` | 12 tests |
 | **5c/5d** | The numbers editor: `(app)/profile.jsx` with `budget` · `ppw` · `duration` intents, `PpwSplitCell`, `setGradeNumbers`, and **the Year Plan's budget pencil lit** | `ff8cf0c1` | Expo, end to end |
 | — | "Total periods" vanished on iOS — `flex: 1` on a label that had stopped being the whole cell. ⚠️ Two earlier explanations (a zero flex-basis; a wrapper View breaking baseline alignment) were confidently wrong; the handset settled it | `f2dda0c0`, `+1` | iPhone (founder) ✅ |
+| **F3·F7** | `shared/setupCheck.js` (the check-window queue, 11 tests) and `mobile/lib/portal.js` (origin route + the window to restore) | `65c1bf1d` | tests only — the web tab's session had expired; walk owed |
+| **5d·2** | The **ProfilePortal window**, mounted in the layout above the BottomNav. **Q3 and Q4 answered**; Q4's stale "basket on the class" hint fixed on the WEB too | `fe818c73` | 🔴 unreachable — `onAdd` dark by design |
 
 **★ 5c IS NOT A SEPARATE STEP ANY MORE.** Founder's answer to Q1 was HOLD: the budget screen's own
 sense-check pencil leads to the ppw wheel, so shipping it before the numbers editor would only have moved
 the dead end one level down. Both pencils lit together in `ff8cf0c1`.
 
-**Still owed on 5d** (the order below is §2's, minus what landed): **F7** `lib/portal.js` + **F3**
-`shared/setupCheck.js` · the ProfilePortal window · the two pick screens · the section editor (**Q4**) ·
-manage classes · add a subject (**Q3**) · the check-mood window (**Q9**).
+**Still owed on 5d** (the order below is §2's, minus what landed): the two pick screens · **the section
+editor (next)** · manage classes · add a subject · the check-mood window (**Q9**, the only question left).
+🔴 **`onAdd` stays dark until Section and Class have screens** — two of the window's four rows still lead
+nowhere, and a window half of whose rows do nothing is the thing 4b and Q1 both refused.
 `SecNameCell` is still owed too — `PickWheel`'s trailing column carries it, but nothing renders one yet.
 
 **What the phone is today, in one sentence:** a teacher who already has a profile can teach (LessonView,
@@ -212,6 +215,19 @@ showing her mobile number on the bar after she had subscribed.
   ⚠️ When it lights: the window never opens while she is lapsed (F5, 6a).
   ⚠️ `subscribePortal` sits ABOVE the sign-in redirect — a hook may not follow a conditional
   return (the "Rendered fewer hooks than expected" lesson of 2026-09-14).
+
+- ✅ **5 · The section editor** — `/profile?intent=section`, with `SecNameCell` (so F8 is complete).
+  Q4's amended hint ships on both surfaces. Removal is confirmed and addition is not: ticking costs her
+  nothing, unticking takes a card and a bookmark away. Save is disabled at zero sections — removing the
+  last one cascades the whole class away, which is a different and more destructive act than this screen
+  is for.
+  ⚠️ `clearSectionState` moved to `shared/sectionState.js` (it reached into `window.localStorage`
+  directly) and PUSHES as part of the removal — without that the section reappears on her next device
+  the moment state is pulled back down.
+  Walked on Expo: the wheel opens with 3A/3B/3C ticked and Aruvi/Kadal/Vanam in the customize column;
+  unticking 3C and saving raises "Remove 3C? … Your lessons stay in the library" with Keep it / Yes,
+  remove 3C; Keep it dismisses and her record is untouched. **The remove itself is the founder's to
+  press** — it clears real bookmarks.
 
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
