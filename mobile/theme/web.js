@@ -521,6 +521,10 @@ export function webStyles(t, scheme = "light") {
                        overflow: "hidden", backgroundColor: t.tint_pine_2 },
     rw_row_base:     { flexDirection: "row", alignItems: "center", columnGap: 12, paddingRight: 52 },
     rw_label_base:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 15, lineHeight: 19.2, color: t.ink },
+    /* `.fr-wheel-lg .fr-wheel-label { font-size: 17px }` — the whole of the web's `large`: one
+       notch bigger, for short lists (1…14 periods) where longer lists like chapter titles stay
+       at 15. */
+    rw_label_lg:     { fontSize: 17, lineHeight: 21.8 },
     /* The chapter number in its own square, inked pine when its row is the pick. */
     rw_chip:         { width: 30, height: 30, borderRadius: 8, alignItems: "center",
                        justifyContent: "center", backgroundColor: t.paper_sunk },
@@ -737,6 +741,26 @@ export function webStyles(t, scheme = "light") {
     secname:         { width: 82, maxWidth: "100%", fontFamily: F.mono(400), fontSize: 12.5,
                        textAlign: "center", paddingVertical: 6, paddingHorizontal: 6,
                        borderWidth: 1.5, borderRadius: 8 },
+
+    /* ── the numbers editor's two steps (`.fr-hint`, `.fr-ppw-*`) ── */
+    fr_hint:         { fontFamily: F.body(400), fontSize: 15, lineHeight: 22.5, marginBottom: 20 },
+    /* The ANCHOR cell: a derived, non-editable remainder — a bare number, NO label. The column
+       heading already says what it is, and the word "rest" only competed with the figure
+       (founder, 2026-07-26). */
+    ppw_num:         { fontFamily: F.mono(400), fontSize: 16, textAlign: "center" },
+    /* The chip is a form field only while it is still ASKING: at 0 it is a pine-bordered box with
+       the figure in pine-d; the moment she picks a number it settles INTO the row — surface and
+       edge go transparent and the figure takes the row's own ink — so answered rows read as one
+       column of figures beside the anchor's. */
+    ppw_sel:         { borderRadius: 8, borderWidth: 1.5, flexDirection: "row", alignItems: "center",
+                       justifyContent: "center", width: 62,
+                       paddingVertical: 5, paddingLeft: 12, paddingRight: 18 },
+    ppw_sel_t:       { fontFamily: F.mono(400), fontSize: 16, textAlign: "center" },
+    ppw_caret:       { position: "absolute", right: 8, fontSize: 10 },
+    /* The open picker's rows (`.fr-ppw-opt`). */
+    ppw_opt:         { borderRadius: 6, paddingVertical: 7, paddingHorizontal: 14, minWidth: 54,
+                       alignItems: "center" },
+    ppw_opt_t:       { fontFamily: F.mono(400), fontSize: 15 },
     /* ── the Prepare CTA (button.prepare-cta, globals.css 3371) ──
        "Every ordinary primary button is calm pine. The one action that actually spends tokens to
        build a plan gets a SINGULAR warm identity." The layer owns colour, weight, glow and ✦;

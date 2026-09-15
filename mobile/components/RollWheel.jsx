@@ -39,8 +39,11 @@ import { useWebStyles } from "../theme/web";
 
 export const WHEEL_ROW = 64;   // the web's WHEEL_ROW; My Lessons overrides it with 72
 
+/* `large` is the web's `.fr-wheel-lg`, which is one rule and one rule only: the label goes from
+   15 to 17. It is for SHORT lists — "7 periods a week" — where a longer list like a chapter title
+   stays at 15 and needs the room. */
 export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW,
-                            align = "left", padLeft = 16, peek = false, clamp = 1 }) {
+                            align = "left", padLeft = 16, peek = false, clamp = 1, large = false }) {
   const ref = useRef(null);
   const settle = useRef(null);
   const N = items.length;
@@ -181,7 +184,8 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
               {/* `adjustsFontSizeToFit` only makes sense on ONE line — it is the peek wheel's
                   stand-in for the web's measured auto-fit. A clamped multi-line label (the
                   Chapter wheel's two lines) keeps its size and wraps, as the web's does. */}
-              <Text style={peek ? ws.rw_label : ws.rw_label_base} numberOfLines={clamp}
+              <Text style={[peek ? ws.rw_label : ws.rw_label_base, !peek && large && ws.rw_label_lg]}
+                numberOfLines={clamp}
                 adjustsFontSizeToFit={clamp === 1} minimumFontScale={0.7}>
                 {it.label}
               </Text>

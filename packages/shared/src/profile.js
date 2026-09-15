@@ -14,6 +14,7 @@
  * way to be sure of that is one implementation.
  */
 import { classNum, stageOfGrade } from "./format.js";
+import { findScope } from "./budget.js";
 import { DEFAULT_DURATION, normPpw, ppwAnchor, ppwMapSum } from "./ppw.js";
 
 export const SEC_NAME_MAX = 8;
@@ -96,6 +97,34 @@ export const finalizeSubject = (d, { daysInWeek = 6 } = {}) => {
     budget,
   };
 };
+
+/* Write ONE class's weekly numbers back onto the profile — the numbers editor's save.
+ *
+ * ★ IT TOUCHES FOUR FIELDS AND NOTHING ELSE, which is the whole discipline of a spot edit. Her
+ * sections, her section names and her budget are other screens' answers; a save that helpfully
+ * "normalised" them would be one screen's defaults quietly overwriting another screen's work, and
+ * because the record round-trips through a fingerprint she would not even be told.
+ * ⚠️ The four are written TOGETHER because they are one fact: a split, its anchor and the total
+ * it sums to cannot be updated independently without a moment where the record contradicts
+ * itself. `normPpw`/`ppwAnchor`/`ppwMapSum` reconcile them here rather than at the call site, so
+ * every caller gets the same consistent shape.
+ */
+export function setGradeNumbers(subjects, subject, grade, { durations, ppw_by_duration, ppw_anchor }) {
+  const at = findScope(subjects, subject, grade);
+  if (!at) return subjects;
+  const durs = (durations && durations.length) ? [...durations] : [DEFAULT_DURATION];
+  const map = normPpw(durs, ppw_by_duration, null, ppw_anchor);
+  return subjects.map((s, i) => (i !== at.si ? s : {
+    ...s,
+    grades: s.grades.map((g, gi) => (gi !== at.gi ? g : {
+      ...g,
+      durations: durs,
+      ppw_by_duration: map,
+      ppw_anchor: ppwAnchor(durs, map, ppw_anchor),
+      periods_per_week: ppwMapSum(map),
+    })),
+  }));
+}
 
 /* Which class indices a scoped edit may act on.
  *

@@ -8,8 +8,9 @@
  * `ppw`, `duration`, `section` and `class` intents land here beside it. A route per edit would
  * have meant a save path, a scope resolver and an exit rule copied five times.
  *
- * Today it serves ONE intent, `budget` — a port of the web's budget step, `renderBudgetStep`
- * reached through `editNums` with `step: "budget"`.
+ * It serves THREE steps today — `budget`, `ppw` and `duration` — the web's `editNums` screen
+ * whole. `intent` picks the one she lands on; inside, they are one journey, because they are one
+ * teacher's answer looked at from three sides. 5d's `section` and `class` intents land here next.
  *
  * ★ ONE INPUT, BECAUSE SHE IS DISAGREEING, NOT BUILDING (founder, 2026-08-27). There used to be
  * four ways to construct the figure — teaching weeks · period count · working days · estimate —
@@ -27,14 +28,21 @@
  * ★ AND SAVE SITS WELL CLEAR OF IT (same day): 88px of air above the footer, because the gap is
  * what separates "what I am being told" from "what I am about to do".
  *
- * ★ THE SENSE-CHECK PENCIL IS WHY THIS SCREEN IS NOT YET REACHABLE (founder, Q1, 2026-09-15).
- * The web's weeks line carries a second pencil, through to periods-a-week and then durations —
- * "if the weeks look wrong because the ppw is wrong, go and fix that side". Asked whether to
- * ship the budget screen without it as a named divergence or hold until the ppw editor exists,
- * the founder chose HOLD. So this screen is complete and the Year Plan's pencil stays dark
- * (`lessons.jsx`), and both light together when 5d's numbers editor lands and the pencil below
- * leads somewhere. A screen whose own control leads nowhere is the thing 4b held the outer
- * pencil back for; shipping it one level down would only have moved the dead end.
+ * ★ THE SENSE-CHECK PENCIL NOW LEADS SOMEWHERE — Q1 CLOSED (founder, 2026-09-15). Asked whether
+ * to ship the budget screen with a dead pencil as a named divergence or hold until the ppw editor
+ * existed, the founder chose HOLD. This is that editor, so the pencil below the weeks line goes
+ * to `ppw` → `duration` and back, and the Year Plan's own pencil lights with it.
+ *
+ * ★ AND THE PENCIL STAYS INSIDE THIS EDITOR. She is one step from the wheel, and coming back
+ * lands her on the budget screen with her figure intact — the round trip is a detour within one
+ * answer, not a journey out of it.
+ *
+ * ★ THE WEEK IS ASKED BEFORE THE LENGTHS, AND THAT ORDER IS THE POINT (founder, 2026-07-26). She
+ * states the SIZE of her week once, unattached to any period length; the duration question then
+ * carries the split inline as a second column, so there is no third screen. Because the week is
+ * stated first, the anchor is simply the lowest length she ticks and "which length owns the week?"
+ * never has to be asked. The weekly total is INVARIANT under every duration change — naming a
+ * second length tells us how her same week is split, not that she gained a class.
  *
  * ★ SHE IS RETURNED TO THE PANE SHE CAME FROM, on save AND on cancel (`lib/paneIntent`). The
  * pencil is reached only from the Year Plan; a return that landed on the card list would make it
@@ -48,13 +56,18 @@ import {
   classNum, getJSON, getUser, pretty, subjectSlug, weeksFromAnnual,
 } from "@aruvi/shared/format";
 import { normalizeBudget, setGradeBudget, gradeBudgetRecord, clampPeriods } from "@aruvi/shared/budget";
+import { gradeDraftFrom, setGradeNumbers } from "@aruvi/shared/profile";
+import {
+  DEFAULT_PPW, DURATION_CHOICES, PPW_CHOICES, lowestDuration, normPpw, ppwMapSum, setPpwSplit, setPpwTotal,
+} from "@aruvi/shared/ppw";
 import { cachedReadiness, fetchReadiness, saveReadiness } from "@aruvi/shared/readiness";
 import { stampPane } from "../../lib/paneIntent";
 import Bar from "../../components/Bar";
+import { RollWheel } from "../../components/RollWheel";
+import PickWheel from "../../components/PickWheel";
+import PpwSplitCell from "../../components/PpwSplitCell";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
-
-const DEFAULT_PPW = 6;   // wheels.jsx; the phone has no ppw wheel yet, so it is only a fallback
 
 export default function ProfileScreen() {
   const { t } = useTheme();
@@ -75,6 +88,14 @@ export default function ProfileScreen() {
   const [value, setValue] = useState(null);         // null until the record is normalized
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
+  /* Which of the three she is looking at. Seeded from the route and then owned here, because the
+     pencil and ← Back move BETWEEN steps without leaving the screen — they are one answer. */
+  const [step, setStep] = useState(() => (["budget", "ppw", "duration"].includes(String(intent))
+    ? String(intent) : "budget"));
+  /* The working copy of this class's weekly numbers. `gradeDraftFrom` is the web's own seeder, so
+     the record she edits is shaped exactly as the web shapes it — which is what stops a phone save
+     reading back as a mismatch (see @aruvi/shared/profile). Null until her record arrives. */
+  const [draft, setDraft] = useState(null);
 
   useEffect(() => { fetchReadiness().then(setReadiness).catch(() => {}); }, []);
 
@@ -84,7 +105,26 @@ export default function ProfileScreen() {
     const want = String(grade || "").toLowerCase();
     return (sub && (sub.grades || []).find((g) => (g.grade || "").toLowerCase() === want)) || null;
   }, [subjects, subject, grade]);
-  const ppw = (gradeRec && gradeRec.periods_per_week) || DEFAULT_PPW;
+  useEffect(() => { if (!draft && gradeRec) setDraft(gradeDraftFrom(gradeRec)); }, [gradeRec, draft]);
+
+  /* ── her week, as the two number steps see it ───────────────────────────────────────
+     ⚠️ The anchor here is `lowestDuration`, NOT the stored `ppw_anchor`, and the web says why:
+     this screen is only ever reached THROUGH the weekly total, so she has just restated the size
+     of her week and the anchor is simply the shortest length she ticks. The stored-anchor
+     exception exists for editing lengths WITHOUT restating the total, and there is no longer a
+     door that does that. */
+  const durations = (draft && draft.durations) || [];
+  const anchor = durations.length ? lowestDuration(durations) : null;
+  const splitMap = useMemo(
+    () => (draft ? normPpw(durations, draft.ppw_by_duration, draft.periods_per_week, anchor) : {}),
+    [draft, durations, anchor]);
+  const weekTotal = ppwMapSum(splitMap);
+  const multi = durations.length > 1;
+
+  /* The budget step reads the week from the DRAFT, so a ppw change she has just made is already
+     reflected in the sense-check when the pencil brings her back — which is the entire reason the
+     pencil goes there and returns rather than leaving. */
+  const ppw = weekTotal || (gradeRec && gradeRec.periods_per_week) || DEFAULT_PPW;
 
   // Aruvi's own recommendation for this subject·class — the figure she is invited to disagree with.
   useEffect(() => {
@@ -134,28 +174,127 @@ export default function ProfileScreen() {
      Plan with a banner would put the message on one screen and the wrong number on another;
      the store has already adopted the server's array, so re-seeding the field from it is what
      makes the banner's sentence literally true of what she is reading. */
-  const save = () => {
-    if (saving || value == null) return;
-    const next = setGradeBudget(subjects, subject, grade, value);
+  const commit = (next, onMismatch) => {
     setSaving(true); setErr("");
     saveReadiness(next).then(({ status, profile }) => {
       setSaving(false);
       setReadiness(profile);
       if (status !== "mismatch") { leave(); return; }
-      setValue(null);                 // re-seeds from the adopted server copy
+      onMismatch();
       setErr("That change didn’t save — this is your teaching profile as it stands.");
     }).catch(() => { setSaving(false); leave(); });
   };
 
-  const step = (d) => setValue((v) => clampPeriods((Number(v) || 0) + d));
+  const save = () => {
+    if (saving || value == null) return;
+    commit(setGradeBudget(subjects, subject, grade, value),
+      () => setValue(null));        // re-seeds from the adopted server copy
+  };
+
+  /* ★ THE LENGTHS AND THEIR SPLIT SAVE TOGETHER, from the duration step — that is why there is no
+     Save on the periods-a-week step, only Continue. The size of a week and its division are ONE
+     answer, and a teacher who set 8 and walked away having never named a length would have left
+     the record saying something she was not asked. */
+  const saveNumbers = () => {
+    if (saving || !draft) return;
+    commit(setGradeNumbers(subjects, subject, grade, {
+      durations, ppw_by_duration: splitMap, ppw_anchor: anchor,
+    }), () => { setDraft(null); setStep("ppw"); });
+  };
+
+  const setWeekTotal = (n) => setDraft((d) => {
+    const next = setPpwTotal(d.durations, splitMap, anchor, n);
+    return { ...d, ppw_by_duration: next, periods_per_week: ppwMapSum(next) };
+  });
+  const setSplit = (d, v) => setDraft((prev) => {
+    const next = setPpwSplit(prev.durations, splitMap, anchor, d, v);
+    return { ...prev, ppw_by_duration: next, periods_per_week: ppwMapSum(next) };
+  });
+  /* ⚠️ THE LAST LENGTH CANNOT BE UNTICKED. A class with no period length is not a shorter answer,
+     it is an unanswerable record — every figure downstream (the mix line, the budget's weeks
+     reading, the serve's duration matrix) is derived from it. */
+  const toggleDuration = (d) => setDraft((prev) => {
+    const has = prev.durations.includes(d);
+    if (has && prev.durations.length === 1) return prev;
+    const durs = has ? prev.durations.filter((x) => x !== d)
+      : [...prev.durations, d].sort((a, b) => a - b);
+    const a2 = lowestDuration(durs);
+    const map = normPpw(durs, prev.ppw_by_duration, prev.periods_per_week, a2);
+    return { ...prev, durations: durs, ppw_by_duration: map, ppw_anchor: a2,
+             periods_per_week: ppwMapSum(map) };
+  });
+
+  const bump = (d) => setValue((v) => clampPeriods((Number(v) || 0) + d));
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Bar user={getUser()} />
       <ScrollView contentContainerStyle={ws.main} keyboardShouldPersistTaps="handled">
         <Text style={ws.kicker}>
-          {pretty(subject)} · Class {classNum(grade)} · annual budget
+          {pretty(subject)} · Class {classNum(grade)} · {
+            step === "ppw" ? "periods / week" : step === "duration" ? "duration" : "annual budget"}
         </Text>
+
+        {step === "ppw" ? (
+          <>
+            <Text style={ws.fr_q}>How many periods a week?</Text>
+            <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+              A number, not a timetable — you’ll set the period lengths next.
+            </Text>
+            {draft ? (
+              <RollWheel ariaLabel="Periods per week" large value={String(weekTotal || DEFAULT_PPW)}
+                onChange={(v) => setWeekTotal(Number(v))}
+                items={PPW_CHOICES.map((p) => ({
+                  id: String(p), chip: p, label: p === 1 ? "period a week" : "periods a week",
+                }))} />
+            ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
+            <View style={ws.fr_foot}>
+              {/* ALWAYS continues into the duration screen — that is where the lengths and their
+                  split are set, and it is the only way in now. No Save here: see saveNumbers. */}
+              <Pressable onPress={() => setStep("duration")} disabled={!draft}
+                accessibilityRole="button"
+                style={[ws.fr_cta, { backgroundColor: draft ? t.pine : t.paper_sunk }]}>
+                <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Continue</Text>
+              </Pressable>
+              <Pressable onPress={leave} accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
+                <Text style={ws.fr_link_t}>Cancel</Text>
+              </Pressable>
+            </View>
+          </>
+        ) : step === "duration" ? (
+          <>
+            <Text style={ws.fr_q}>How long are the periods?</Text>
+            <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+              {multi
+                ? `Split your ${weekTotal} periods between the lengths — ${anchor} min takes whatever is left over.`
+                : "If more than one duration, select multiple."}
+            </Text>
+            {draft ? (
+              <PickWheel options={DURATION_CHOICES} selected={durations} onToggle={toggleDuration}
+                ariaLabel="Period durations" labelFor={(d) => `${d} min`}
+                initialScrollTo={durations[0]}
+                leadingHeader={multi ? "Duration" : null}
+                trailingHeader={multi ? "Periods / week" : null}
+                summaryFor={multi ? (d) => `${d} min × ${splitMap[d] || 0}` : null}
+                trailing={(d, on) => (
+                  <PpwSplitCell duration={d} selected={on} map={splitMap} total={weekTotal}
+                    isAnchor={d === anchor} onSet={setSplit} show={multi} />
+                )}>
+                {/* Step 2 of 2 — the lengths AND their split, so this is where it saves. */}
+                <Pressable onPress={saveNumbers} disabled={saving} accessibilityRole="button"
+                  style={[ws.fr_cta, { backgroundColor: saving ? t.paper_sunk : t.pine }]}>
+                  {saving ? <ActivityIndicator size="small" color={t.ink_soft} />
+                          : <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Save</Text>}
+                </Pressable>
+              </PickWheel>
+            ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
+            <Pressable onPress={() => setStep("ppw")} accessibilityRole="button" hitSlop={8}
+              style={ws.fr_link}>
+              <Text style={ws.fr_link_t}>← Back</Text>
+            </Pressable>
+          </>
+        ) : (
+        <>
         {/* No sub-hint (founder, 2026-08-27). It restated the heading in longer words, and the
             screen already answers it twice more below: the weeks reading, then Aruvi's figure. */}
         <Text style={ws.fr_q}>How many periods for the year?</Text>
@@ -184,7 +323,7 @@ export default function ProfileScreen() {
         ) : (
           <>
             <View style={ws.tp_val_row}>
-              <Pressable onPress={() => step(-1)} hitSlop={6} accessibilityRole="button"
+              <Pressable onPress={() => bump(-1)} hitSlop={6} accessibilityRole="button"
                 accessibilityLabel="Fewer periods"
                 style={[ws.tp_val_btn, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
                 <Text style={ws.tp_val_btn_t}>−</Text>
@@ -196,7 +335,7 @@ export default function ProfileScreen() {
                 onBlur={() => setValue((v) => clampPeriods(v))}
                 accessibilityLabel="Annual period budget"
                 style={[ws.tp_val_input, { borderColor: t.line, backgroundColor: t.paper_2 }]} />
-              <Pressable onPress={() => step(1)} hitSlop={6} accessibilityRole="button"
+              <Pressable onPress={() => bump(1)} hitSlop={6} accessibilityRole="button"
                 accessibilityLabel="More periods"
                 style={[ws.tp_val_btn, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
                 <Text style={ws.tp_val_btn_t}>+</Text>
@@ -204,9 +343,20 @@ export default function ProfileScreen() {
               <Text style={ws.tp_val_unit}>periods / year</Text>
             </View>
 
-            {/* The sense-check, directly under the figure it reads. Advisory, never corrective. */}
+            {/* The sense-check, directly under the figure it reads. Advisory, never corrective.
+                ★ AND ITS PENCIL IS LIVE AS OF 5d (Q1). "If the weeks look wrong because the ppw
+                is wrong, the pencil goes and fixes that side" — it stays INSIDE this editor, so
+                coming back lands her here with her figure intact. Aruvi adjusts nothing on her
+                behalf; it only opens the other side of the arithmetic. */}
             {weeks && ppw > 0 ? (
-              <Text style={ws.tp_weeks}>{weeks} weeks (@ {ppw} periods/week)</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={ws.tp_weeks}>{weeks} weeks (@ {ppw} periods/week)</Text>
+                <Pressable onPress={() => setStep("ppw")} hitSlop={10} accessibilityRole="button"
+                  accessibilityLabel="Change periods a week for this class"
+                  style={ws.yp_budget_edit}>
+                  <Text style={{ color: t.pine_d, fontSize: 13 }}>✎</Text>
+                </Pressable>
+              </View>
             ) : null}
             {recLine ? <Text style={ws.tp_estimate_sub}>{recLine}</Text> : null}
 
@@ -223,6 +373,8 @@ export default function ProfileScreen() {
               </Pressable>
             </View>
           </>
+        )}
+        </>
         )}
       </ScrollView>
     </View>

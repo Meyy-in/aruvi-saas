@@ -21,11 +21,14 @@
  * signal, meaningless to a teacher — its information survives only as its consequence, raw
  * periods).
  *
- * ★ THE BUDGET PENCIL IS LIVE (Track D step 5c, 2026-09-15). It was held back in 4b because it
- * opened the teaching profile's budget step and there was no profile on the phone — "a pencil
- * that leads nowhere is worse than no pencil", the same call step 4a made about the picker's
- * "prepare a new one" footer. It now opens `app/(app)/budget.jsx`, which is that one step and
- * only that step, and the round trip returns to THIS pane (`lib/paneIntent`).
+ * ★ THE BUDGET PENCIL IS LIVE (Track D step 5d, 2026-09-15). It was held back TWICE, each time
+ * for the same reason and each time correctly: in 4b because it opened the teaching profile's
+ * budget step and there was no profile on the phone — "a pencil that leads nowhere is worse than
+ * no pencil", the same call 4a made about the picker's "prepare a new one" footer — and again
+ * when the budget screen shipped, because that screen's OWN sense-check pencil led nowhere until
+ * the numbers editor existed (founder, Q1: hold). Both ends are real now. It opens
+ * `app/(app)/profile.jsx?intent=budget`, and the round trip returns to THIS pane
+ * (`lib/paneIntent`).
  * It sits in the LABEL cell, as on the web, so the two numeric columns stay aligned with the
  * chapter rows above (founder, 2026-08-27: this is the row a teacher is actually reading when
  * she judges her year, and the label is the last thing her eye passes before the figures).

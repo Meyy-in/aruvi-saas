@@ -12,7 +12,7 @@ import assert from "node:assert/strict";
 import { setStorage } from "../src/storage.js";
 import {
   SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections, secSummary,
-  gradeDraftFrom, finalizeSubject, portalGradeIdxs,
+  gradeDraftFrom, finalizeSubject, portalGradeIdxs, setGradeNumbers,
 } from "../src/profile.js";
 import { rekeyBudget } from "../src/budget.js";
 import { readinessFingerprint } from "../src/verify.js";
@@ -124,4 +124,41 @@ test("★ portalGradeIdxs NEVER returns blank", () => {
   assert.deepEqual(portalGradeIdxs(GRADES, null), [0, 1, 2, 3]);
   assert.deepEqual(portalGradeIdxs(GRADES, { grade: "" }), [0, 1, 2, 3]);
   assert.deepEqual(portalGradeIdxs([], { grade: "VII", exact: true }), []);
+});
+
+/* ── the numbers editor's writer ───────────────────────────────────────────────────── */
+
+test("★ setGradeNumbers touches four fields and nothing else", () => {
+  const before = [{
+    name: "Science",
+    grades: [REC, { grade: "X", sections: [{ tag: "10A", sec: "A" }], durations: [40], periods_per_week: 6 }],
+    budget: { 0: { method: "periods", value: 215 }, 1: { method: "periods", value: 150 } },
+  }];
+  const after = setGradeNumbers(before, "Science", "IX",
+    { durations: [40, 60], ppw_by_duration: { 40: 7, 60: 3 }, ppw_anchor: 40 });
+  const g = after[0].grades[0];
+  assert.equal(g.periods_per_week, 10);
+  assert.deepEqual(g.ppw_by_duration, { 40: 7, 60: 3 });
+  // …and her OTHER answers are untouched
+  assert.deepEqual(g.sections, REC.sections, "sections belong to another screen");
+  assert.deepEqual(after[0].budget, before[0].budget, "so does the budget");
+  assert.deepEqual(after[0].grades[1], before[0].grades[1], "and so does her other class");
+  assert.deepEqual(before[0].grades[0], REC, "the input is never mutated");
+});
+
+test("setGradeNumbers reconciles the split, its anchor and the total as ONE fact", () => {
+  // A caller hands it a split for a length that is no longer ticked; the anchor absorbs it and
+  // the record cannot come out contradicting itself.
+  const before = [{ name: "Science", grades: [REC], budget: {} }];
+  const g = setGradeNumbers(before, "Science", "IX",
+    { durations: [40], ppw_by_duration: { 40: 5, 60: 3 }, ppw_anchor: 40 })[0].grades[0];
+  assert.deepEqual(g.durations, [40]);
+  assert.deepEqual(g.ppw_by_duration, { 40: 8 });
+  assert.equal(g.ppw_anchor, 40);
+  assert.equal(g.periods_per_week, 8, "the total is the sum of the map it ships with");
+});
+
+test("setGradeNumbers is a no-op off-scope", () => {
+  const p = [{ name: "Science", grades: [REC], budget: {} }];
+  assert.equal(setGradeNumbers(p, "Physics", "IX", { durations: [40] }), p);
 });
