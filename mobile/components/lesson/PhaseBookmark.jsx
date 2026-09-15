@@ -31,9 +31,25 @@ export default function PhaseBookmark({ centres, phase, onMove, color }) {
     Animated.spring(top, { toValue: y, useNativeDriver: false, bounciness: 4 }).start();
   }, [phase, centres, dragging]);
 
+  /* ★ THE DRAG HAS TO SURVIVE THE SCROLLER IT LIVES INSIDE (founder, 2026-09-15: "bookmark moves
+     in web app as well as expo but not in iphone").
+     `onPanResponderTerminationRequest` DEFAULTS TO TRUE — "yes, you may take this touch from me".
+     The bookmark sits in the phase spine inside a ScrollView, and on iOS that ScrollView is a
+     real UIScrollView: the moment the finger moves vertically it asks for the responder, the
+     default says yes, and the drag is over before it starts. react-native-web's ScrollView is a
+     DOM scroller that never asks, which is exactly why the web and the Expo web target both
+     looked fine and only the handset did not — the same shape as the ✕ that was painted under a
+     transparent scroller, and as the wheels that lost their drag to a Pressable.
+     So: claim the touch on the way DOWN (capture), and refuse to hand it back. The refusal is
+     the fix; the capture is what stops the scroller getting there first on a fast flick.
+     ⚠️ `onShouldBlockNativeResponder` is the Android half of the same sentence. */
   const pan = useRef(PanResponder.create({
     onStartShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponderCapture: () => true,
     onMoveShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponderCapture: () => true,
+    onPanResponderTerminationRequest: () => false,
+    onShouldBlockNativeResponder: () => true,
     onPanResponderGrant: () => { startTop.current = curTop.current; setDragging(true); },
     onPanResponderMove: (_, g) => {
       const c = centresRef.current; if (!c.length) return;
