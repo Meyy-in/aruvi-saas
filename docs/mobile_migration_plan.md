@@ -560,6 +560,48 @@ web's own `prep-wait` fallback and named it a divergence; this closes it.
   that visibly completes then lingers reads as stuck.
 - The in-place `prep-wait` card and its measures are deleted with it.
 
+**Step 5c — the Year Plan's budget pencil (2026-09-15).** The last of the three things 4b
+deferred; the proposed card and the prepare CTA came with 5b. It was held back for a good reason —
+it opened the teaching profile's budget step and there is no profile on the phone, and "a pencil
+that leads nowhere is worse than no pencil" (the same call 4a made about the picker's footer). It
+now opens `app/(app)/budget.jsx`, one screen that IS that step and only that step.
+- `packages/shared/src/budget.js` (NEW, 8 tests) — the arithmetic lifted out of
+  `TeachingProfile.jsx` so both surfaces read the same record by the same function:
+  `budgetPeriods` (the reader, still understanding all four legacy shapes), `normalizeBudget`
+  (the one place a stored record becomes the editable period count) and a writer,
+  `setGradeBudget`. The web imports them through `web/app/lib/budget.js`; behaviour unchanged.
+  The tests pin the conversion the old `setMethod` never did — a weeks record opens on the year
+  it evaluates to, which is the 245 → 180 defect of 2026-08-21.
+  ⚠️ `format.js` holds a SECOND reader, `annualBudgetPeriods`, deriving its weekly periods from
+  the grid rather than `periods_per_week`. On the one shape now written they cannot disagree;
+  recorded in the header rather than merged blind.
+- One figure, the weeks sense-check under it, Aruvi's recommendation, Save 88px clear of the
+  reading. Saves through the same `verifiedWrite` POST /readiness the web uses, same three
+  outcomes — a mismatch keeps her on the screen and re-reads from the SERVER rather than from
+  what she typed; unverified is silence.
+- `mobile/lib/paneIntent.js` (NEW) — My Lessons opens on "Your lessons" every ordinary visit;
+  this round trip is the one exception, as on the web. A module-level one-shot (the shape
+  `lib/preparing.js` took), CONSUMED on read so the exception cannot quietly become the
+  persistence that was retired. ⚠️ Consumed on FOCUS, not mount: /budget is PUSHED on top of My
+  Lessons, so the return POPS to a screen still mounted and a mount-only read steers nothing.
+- The bar lights NOTHING in the editor — the web's own answer for a profile screen
+  (`activeNav`: `editFlow === "profile" → "none"`). Lighting My Classes under her would say she
+  is somewhere she is not.
+- ⚠️ One divergence, named in the file: the web's weeks line carries a pencil through to the
+  periods-a-week wheel. No ppw editor exists on the phone until the profile lands, so the line
+  renders without it. That pencil is the first thing to restore when it does.
+- Two of my own measures were wrong and were caught mechanically: `.fr-cta` declares font-size
+  16 and border-radius 12 and the browser applies NEITHER — `button.primary` (0,1,1) beats
+  `.fr-cta` (0,1,0) on SPECIFICITY, so the live values are 12 and 3. And `flex: 0` on the totals
+  label collapsed "Total periods" to nothing (Yoga: grow 0 / shrink 0 / **basis 0**).
+- ★ AND THE CHECKER HAD THE SAME CLASS OF BUG IT EXISTS TO FIND: it resolved `em` against
+  whichever font-size came first across ALL worn sets rather than the winner for the SAME set,
+  so it reported a correct 0.96 as wrong at 1.28. Pairing is now by index. Diffing the old
+  against the new shows exactly one line gone — the false positive — and no true finding lost.
+- **Owed on the phone:** Year Plan → the pencil → change the figure → Save → back on the Year
+  Plan with the suggested column redistributed to the new budget. Cancel and the back gesture are
+  verified on the Expo web target; SAVE'S WRITE IS NOT YET EXERCISED.
+
 ★ **THE CHAPTER'S FRONT DOOR IS THE ORG PAGE UNTIL SHE HAS TAUGHT A UNIT (founder, 2026-09-14,
 BOTH SURFACES).** "First time when someone clicks a lesson plan from My Lessons as well as My
 Class, it should by default open in the org page. When they click on a specific spine or section,
