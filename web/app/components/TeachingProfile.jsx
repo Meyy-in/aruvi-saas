@@ -4,7 +4,8 @@ import { getJSON, pretty, ROMAN, stageOfGrade, projectReadiness, API, withUser,
          ESTIMATE_WEEKS, weeksFromAnnual, ppwFromAnnual, allowedStagesFor } from "../lib/format";
 import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget } from "../lib/budget";
 import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections,
-         secSummary, gradeDraftFrom, finalizeSubject } from "../lib/profile";
+         secSummary, gradeDraftFrom, finalizeSubject,
+         PER_CLASS_GOALS, GOAL_WORD, portalGradeIdxs as sharedGradeIdxs } from "../lib/profile";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
 /* `pushSectionState` left with `clearSectionState`, which was its only caller here. */
 import { clearSectionState } from "../lib/sectionState";
@@ -47,11 +48,9 @@ const SECTION_LETTERS = Array.from({ length: 26 }, (_, i) => String.fromCharCode
 /* The My Classes "+" portal intents that resolve to ONE subject·class (ProfilePortal.jsx's rows).
    "subject" and "class" are not here: they are managed at the level ABOVE a class. The words are
    the teacher's own, and they are what the two pick screens say aloud. */
-const PER_CLASS_GOALS = ["section", "ppw", "budget"];
-const GOAL_WORD = {
-  class: "classes", section: "sections",
-  ppw: "periods a week", budget: "annual period budget",
-};
+/* ★ `PER_CLASS_GOALS` / `GOAL_WORD` MOVED TO @aruvi/shared (2026-09-15, with the phone's pick
+   screens). Both surfaces render those screens now and the words are the teacher's own; one copy
+   is the only way two screens stay one screen. Imported above. */
 /* ★ THE BUDGET ARITHMETIC MOVED TO `lib/budget` (Track D step 5c, 2026-09-15).
  * `DAYS_IN_WEEK`, `budgetPeriods` (the reader, which still understands all four legacy shapes)
  * and `normalizeBudget` (the one place a stored record becomes the editable period count) are
@@ -302,16 +301,26 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
      ⚠️ `duration` ONLY. Every other step is entered from the portal's row list, and its way
      back is the ✕ that returns her to that list. A ← on those would promise a previous step
      that does not exist. */
+  /* ⚠️ THE CLASS PICK SCREEN OWES ONE TOO, and for the identical reason (2026-09-15, found while
+     porting these screens to the phone). "Which class?" is reached THROUGH "In which subject?",
+     and its footer "← Back" goes to the ACCORDION rather than to that question — and inside the
+     window that link is hidden anyway, so it had no way back at all.
+     ⚠️ ONLY WHEN THE SUBJECT SCREEN WAS ACTUALLY SHOWN. A teacher with one subject is routed
+     straight here (`portalPickClass(goal, 0)`), so a ← would walk her back into a screen she
+     never saw, listing the single subject she obviously meant. `canon.length > 1` is the same
+     test the intent effect used when it decided to skip it. */
   const winBack = (screen === "editNums" && numCtx && numCtx.step === "duration")
     ? () => setNumCtx((c) => ({ ...c, step: "ppw" }))
-    : null;
+    : (screen === "portalClass" && canon.length > 1)
+      ? () => setScreen("portalSubject")
+      : null;
   /* Reported on EVERY change of step or screen, and nulled on unmount: a stale ← left painted
      over the budget step would step back into a wheel she never opened. */
   useEffect(() => {
     if (!onChrome) return undefined;
     onChrome({ onBack: winBack });
     return () => onChrome({ onBack: null });
-  }, [onChrome, screen, numCtx && numCtx.step]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [onChrome, screen, numCtx && numCtx.step, canon.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Set ONLY on a verified mismatch (never on a throw, never on an unreachable server).
   const [saveFailed, setSaveFailed] = useState(false);
@@ -460,21 +469,17 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
      screen has already answered. Expressed as a narrower FILTER rather than a second routing
      branch, so the single-index case falls through portalPickClass's existing "straight in when
      only ONE class is in play" and the skip test cannot drift from the screen. */
+  /* ⚠️ THE BODY OF THIS LIVED HERE UNTIL 2026-09-15, AND IT SHOULD NOT HAVE. F2 lifted it to
+     `@aruvi/shared/profile` so the phone could filter classes by the same rule — and then left
+     this byte-identical copy running, which is the precise shape of drift CLAUDE.md §3 exists to
+     stop (the Year Plan 14-vs-19 defect is one surface's arithmetic quietly diverging). Found
+     when the phone's pick screens were built against the shared one.
+     The scope TEST — does this scope even name THIS subject? — stays here, because it is about
+     `canon`, which is the web's; the FILTER is the shared function's, and it has 6 node tests. */
   const portalGradeIdxs = (si) => {
     const sub = canon[si]; const grades = (sub && sub.grades) || [];
     const scoped = portalScope && portalScope.grade && sub && portalScope.subject === sub.name;
-    if (scoped && portalScope.exact) {
-      const want = String(portalScope.grade).toLowerCase();
-      const one = grades.map((g, gi) => (String(g.grade).toLowerCase() === want ? gi : -1))
-        .filter((i) => i >= 0);
-      if (one.length) return one;
-      // The named class is gone (removed since the pencil was drawn) — fall through to the
-      // stage filter below rather than opening on a class she no longer teaches.
-    }
-    const st = scoped ? stageOfRoman(portalScope.grade) : null;
-    if (!st) return grades.map((_, gi) => gi);
-    const hit = grades.map((g, gi) => (stageOfRoman(g.grade) === st ? gi : -1)).filter((i) => i >= 0);
-    return hit.length ? hit : grades.map((_, gi) => gi);
+    return sharedGradeIdxs(grades, scoped ? portalScope : null);
   };
   // Subject chosen → straight in when only ONE class is in play, else ask which class first.
   const portalPickClass = (goal, si) => {

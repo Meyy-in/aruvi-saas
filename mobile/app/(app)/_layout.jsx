@@ -17,7 +17,10 @@ import { useTheme } from "../../theme/ThemeContext";
 import BottomNav from "../../components/BottomNav";
 import ProfilePortal, { portalChrome } from "../../components/ProfilePortal";
 import ProfileEditor from "../../components/ProfileEditor";
-import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit } from "../../lib/portal";
+import ProfilePick from "../../components/ProfilePick";
+import { resolvePortalPick } from "@aruvi/shared/profile";
+import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit,
+         openPick, pickSubject, pickBackToSubject, closePick } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
 
 export default function AppLayout() {
@@ -29,10 +32,17 @@ export default function AppLayout() {
      2026-09-14 ("Rendered fewer hooks than expected"). */
   const [win, setWin] = useState(null);
   const [edit, setEdit] = useState(null);
+  /* The pick screens (5d item 3) — `{ goal, subject }`, the second field filled once she has
+     answered the first question. Held here with `win`/`edit` because all three are bodies of the
+     ONE Sheet this layout owns. */
+  const [pick, setPick] = useState(null);
+  const [scope, setScope] = useState(null);
   /* What the open edit needs from the window's chrome — today just its ← , which exists only on
      the duration step. Reported up by the editor, because the Sheet is owned here. */
   const [editChrome, setEditChrome] = useState(null);
-  useEffect(() => subscribePortal((p) => { setWin(p.win); setEdit(p.edit); }), []);
+  useEffect(() => subscribePortal((p) => {
+    setWin(p.win); setEdit(p.edit); setPick(p.pick); setScope(p.scope);
+  }), []);
   if (!getUser()) return <Redirect href="/login" />;
 
   /* ⚠️ THERE IS NO `/profile` CASE ANY MORE, and there must not be one. The editor used to be a
@@ -58,29 +68,56 @@ export default function AppLayout() {
           And it renders BELOW the Stack and ABOVE the BottomNav, so the bar stays live behind it —
           a window that took the app's whole navigation away would be the one screen she could not
           simply leave, which is the mistake Ask Meyy's scrim made on the web in September. */}
-      {(win || edit) ? (
-        <Sheet visible scroll={!!edit}
-          onClose={edit ? closeEdit : () => setPortalWin(null)}
-          onBack={edit ? (editChrome && editChrome.onBack) : undefined}
-          {...(edit ? {} : portalChrome(win.mode, win.sub))}>
+      {(win || edit || pick) ? (
+        <Sheet visible scroll={!!(edit || pick)}
+          onClose={edit ? closeEdit : pick ? closePick : () => setPortalWin(null)}
+          onBack={(edit || pick) ? (editChrome && editChrome.onBack) : undefined}
+          {...((edit || pick) ? {} : portalChrome(win.mode, win.sub))}>
           {edit ? (
             <ProfileEditor {...edit} onChrome={setEditChrome} />
+          ) : pick ? (
+            /* ★ THE PICK SCREENS (5d item 3). They carry their own `.tp` header exactly as the
+               editor does, so the Sheet draws no header of its own — `scroll` is on for the same
+               reason it is on for the editor: a teacher of six subjects is a taller card than a
+               four-row menu, and the 82% cap plus an inner scroller is what stops it running off
+               the screen. The ← is reported up through the same `onChrome` channel, so the
+               window has one back mechanism and not two. */
+            <ProfilePick {...pick} subjects={(cachedReadiness() || {}).subjects || []}
+              scope={scope} onChrome={setEditChrome}
+              onBackToSubject={pickBackToSubject}
+              onPickSubject={(name) => {
+                /* Subject answered — ask the SAME rule what is left to do. It decides the second
+                   skip too (one class in play → straight in), so the screen cannot be shown with
+                   a single row on it. */
+                const r = resolvePortalPick((cachedReadiness() || {}).subjects, pick.goal, scope, name);
+                if (!r) return;
+                if (r.open) openEdit({ intent: pick.goal, ...r.open });
+                else pickSubject(name);
+              }}
+              onPickClass={(grade) => openEdit({ intent: pick.goal, subject: pick.subject, grade })} />
           ) : (
             <ProfilePortal mode={win.mode} values={win.values}
               onPick={(kind) => {
-                /* Each row is a spot edit on ONE subject·class, and the window does not resolve
-                   WHICH — the pick screens do that (5d item 3). Until they exist, the scope is
-                   resolved the way the web resolves it when there is nothing to ask: if she
-                   teaches exactly one subject·class, go straight in. That is `portalPickClass`'s
-                   own "straight in when only ONE is in play" rule, not a shortcut.
-                   ⚠️ A teacher with more than one is NOT sent somewhere arbitrary — she is left
-                   on the window, which is honest, until item 3 lands. */
-                const subs = (cachedReadiness() || {}).subjects || [];
-                const only = subs.length === 1 && (subs[0].grades || []).length === 1
-                  ? { subject: subs[0].name, grade: subs[0].grades[0].grade } : null;
-                if (!only) return;
-                enterPortal({ originRoute: pathname, win, scope: { ...only, exact: true } });
-                openEdit({ intent: kind, ...only });
+                /* ★ EVERY ROW NOW LEADS SOMEWHERE FOR EVERY TEACHER (5d item 3, 2026-09-15).
+                   A row is a spot edit on ONE subject·class and the window does not resolve
+                   WHICH; the pick screens ask. Until they existed this handler simply RETURNED
+                   for a teacher with more than one subject·class — honest, and a dead end.
+                   The two skips below are the web's own and are not shortcuts: a question with
+                   one possible answer is not a question. */
+                enterPortal({ originRoute: pathname, win, scope: win.scope || null });
+                /* ⚠️ THE SCOPE IS THE WINDOW'S, NOT AN INVENTED `exact` ONE. Until item 3 this
+                   line stamped `{ ...only, exact: true }` — harmless while the only teacher who
+                   got anywhere was the one with a single subject·class, and wrong the moment the
+                   pick screens exist: `exact` means "she is standing on it, do not ask", which is
+                   true of the Year Plan pencil and false of a portal row. An added-subject window
+                   carries a STAGE scope and that is what must reach the class screen, or a
+                   teacher who just bought Science·Secondary would be offered the 6, 7, 8 she
+                   settled months ago. */
+                const r = resolvePortalPick((cachedReadiness() || {}).subjects, kind,
+                  win.scope || null);
+                if (!r) return;
+                if (r.open) openEdit({ intent: kind, ...r.open });
+                else openPick({ goal: kind, subject: r.ask === "class" ? r.subject : null });
               }}
               onOpenProfile={() => { /* the full accordion arrives with Settings, step 6 */ }} />
           )}

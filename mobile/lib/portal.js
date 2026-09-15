@@ -23,7 +23,7 @@
  * to a window she left behind ten minutes ago would be a ghost.
  */
 
-let state = { originRoute: null, win: null, scope: null, edit: null, winBack: null };
+let state = { originRoute: null, win: null, scope: null, edit: null, winBack: null, pick: null };
 const listeners = new Set();
 
 function emit() {
@@ -58,6 +58,42 @@ export function enterPortal({ originRoute, win = null, scope = null }) {
  * longer needs a pane round trip at all. `lib/paneIntent` existed only to put her back on a pane
  * the editor had navigated her away from; it was DELETED in the same commit, which is the good
  * kind of change — the mechanism went away rather than gaining a case. */
+/* ★ THE PICK SCREENS SIT BETWEEN THE WINDOW AND THE EDITOR (5d item 3, 2026-09-15).
+ * `pick` is `{ goal, subject }` — `subject` null while she is being asked WHICH SUBJECT, and set
+ * once she has answered and the question becomes WHICH CLASS. One field, two screens, because
+ * they are two steps of one question and the window's arrow walks back along them.
+ *
+ * It does NOT discard the window she came from. The portal is still the thing a close should
+ * restore her to, exactly as an edit restores it — so `winBack` is stamped here too, and by the
+ * same rule: closing is her explicit act, never a side effect of answering a question.
+ */
+export function openPick(pick) {
+  state = { ...state, pick: pick || null, winBack: state.win || state.winBack, win: null };
+  emit();
+}
+
+/* Answering "In which subject?" — the same pick, one field further on. */
+export function pickSubject(subject) {
+  if (!state.pick) return;
+  state = { ...state, pick: { ...state.pick, subject } };
+  emit();
+}
+
+/* The window's back arrow on the class screen: back to the subject question, not out of the
+   journey. */
+export function pickBackToSubject() {
+  if (!state.pick) return;
+  state = { ...state, pick: { ...state.pick, subject: null } };
+  emit();
+}
+
+/* Close the picks and restore the window she came from — the close button's job, and identical
+   to `closeEdit`'s, because to her they are the same act on the same window. */
+export function closePick() {
+  state = { ...state, pick: null, win: state.winBack || null, winBack: null };
+  emit();
+}
+
 export function openEdit(edit) {
   /* ⚠️ THE WINDOW SHE CAME FROM IS REMEMBERED, not just closed. `closeEdit` used to restore
      `state.win` — which this line had already set to null, so the portal never came back and a
@@ -66,7 +102,11 @@ export function openEdit(edit) {
      is exactly the person most likely to want the next"); this is that, on the phone.
      Null when she came from somewhere else — the Year Plan pencil opens no window first, so
      there is nothing to put back. */
-  state = { ...state, edit: edit || null, winBack: state.win, win: null };
+  /* ⚠️ `state.win || state.winBack`, NOT `state.win`. Reached through the PICK SCREENS `win` is
+     already null (openPick moved it to winBack), so reading `win` alone would overwrite the
+     remembered window with null — and the close button would drop her on the bare screen, which
+     is the very bug the paragraph above records, arriving through the door item 3 opened. */
+  state = { ...state, edit: edit || null, winBack: state.win || state.winBack, win: null, pick: null };
   emit();
 }
 

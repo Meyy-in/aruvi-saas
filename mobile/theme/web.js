@@ -129,6 +129,18 @@ export function webStyles(t, scheme = "light") {
        2026-08-27 — `maxHeight: "82%"` is the same ceiling in the units RN has, measured against
        the window rather than a viewport unit that counts area behind the browser chrome. */
     ap_modal_tall:   { maxHeight: "82%" },
+    /* ───── the two pick screens (`.tp-portal-*`, globals.css 3013-3023) ─────
+       A row is a NAVIGATION row, not a pick: display serif 15, paper-2 on a hairline, r12, with
+       the same "›" the portal's rows carry. No hover pair (`:hover` has no counterpart on a
+       phone — a technical limitation, CLAUDE.md §4) and no `cursor`. `justifyContent:
+       space-between` with the label first is what puts the chevron hard right. */
+    tp_portal_list:  { rowGap: 8, marginTop: 14, marginBottom: 18 },
+    tp_portal_row:   { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                       columnGap: 10, paddingVertical: 13, paddingHorizontal: 16,
+                       borderWidth: 1, borderRadius: 12 },
+    tp_portal_label: { flex: 1, minWidth: 0, fontFamily: F.display(500), fontSize: 15,
+                       lineHeight: 20, color: t.ink },
+    tp_portal_go:    { fontFamily: F.body(400), fontSize: 17, lineHeight: 20 },
     ap_scrollbody:   { flexGrow: 0, flexShrink: 1 },
     ap_scrollpad:    { paddingBottom: 4 },
     ap_close:        { position: "absolute", top: 12, right: 12, width: 30, height: 30, borderRadius: 15,

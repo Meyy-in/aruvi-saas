@@ -136,6 +136,28 @@ export function setGradeNumbers(subjects, subject, grade, { durations, ppw_by_du
  * through to the stage filter rather than opening her on a class she no longer teaches, and the
  * stage filter falls through to every class rather than to nothing.
  */
+/* ───────── what the two pick screens ask about ─────────
+ *
+ * Lifted from `web/app/components/TeachingProfile.jsx` (Track D step 5d item 3, 2026-09-15) with
+ * the pick screens themselves, for the reason `portalGradeIdxs` below was lifted: BOTH surfaces
+ * now render those screens, and the words are the teacher's own. A phone that said "period
+ * budget" where the web says "annual period budget" would be a divergence nobody chose, invisible
+ * until she read the two screens side by side.
+ *
+ * `PER_CLASS_GOALS` are the portal rows that resolve to ONE subject·class, and so are the only
+ * ones the pick screens serve. "class" is not among them and that is not an omission: classes are
+ * managed at the level ABOVE a class, so its row asks for a subject and then goes straight to the
+ * manage-classes wheel. "subject" is not among them either — neither window has a Subject row.
+ */
+export const PER_CLASS_GOALS = ["section", "ppw", "budget"];
+export const GOAL_WORD = {
+  class: "classes", section: "sections",
+  ppw: "periods a week", budget: "annual period budget",
+};
+/* The fallback is "sections" on both surfaces — an unrecognised goal is a bug, and naming the
+   commonest row is a better failure than a blank in the middle of a sentence. */
+export const goalWord = (goal) => GOAL_WORD[goal] || "sections";
+
 export const portalGradeIdxs = (grades, scope) => {
   const list = grades || [];
   const all = list.map((_, gi) => gi);
@@ -150,3 +172,54 @@ export const portalGradeIdxs = (grades, scope) => {
   const hit = all.filter((gi) => stageOfGrade(list[gi].grade) === st);
   return hit.length ? hit : all;
 };
+
+/* ───────── what a portal row should DO — the whole of the pick-screen rule ─────────
+ *
+ * Lifted out of the phone's `(app)/_layout.jsx` the day the pick screens were built (5d item 3,
+ * 2026-09-15), because it is a RULE and CLAUDE.md §3 says a rule lives in one place. It was
+ * spelled twice in that file within twenty lines — once when the portal row is tapped and again
+ * when the subject question is answered — and the two spellings have to agree or a screen is
+ * shown with one row in it, or skipped when two were owed.
+ *
+ * Takes her subjects, the row she tapped, the window's scope, and (on the second call) the
+ * subject she has already chosen. Returns exactly one of:
+ *   · `{ ask: "subject" }`         — more than one subject and she has not said which
+ *   · `{ ask: "class", subject }`  — subject known, more than one class in play
+ *   · `{ open: { subject, grade } }` — nothing left to ask; go straight to the editor
+ *   · `null`                       — nothing to act on (an empty profile, an unknown goal)
+ *
+ * ★ A QUESTION WITH ONE POSSIBLE ANSWER IS NOT A QUESTION. That is the whole of both skips, and
+ * it is why a teacher of one subject and one class has never seen either screen and must not
+ * start seeing them now.
+ * ★ THE CLASS ROW NEVER ASKS WHICH CLASS. Classes are managed at the level ABOVE a class, so
+ * "class" resolves a SUBJECT and then opens the manage-classes wheel for the whole set. Its
+ * `grade` is a seed for the record the editor reads, never a class it claims she is editing —
+ * which is why the editor's kicker for that step names no class.
+ */
+export function resolvePortalPick(subjects, goal, scope = null, chosenSubject = null) {
+  const subs = subjects || [];
+  if (!subs.length) return null;
+  const recOf = (name) => subs.find((s) => s && s.name === name) || null;
+
+  if (goal === "class") {
+    const name = chosenSubject || (subs.length === 1 ? subs[0].name : null);
+    if (!name) return { ask: "subject" };
+    const rec = recOf(name);
+    const g = ((rec && rec.grades) || [])[0];
+    return { open: { subject: name, grade: g ? g.grade : undefined } };
+  }
+
+  if (!PER_CLASS_GOALS.includes(goal)) return null;
+
+  const name = chosenSubject || (subs.length === 1 ? subs[0].name : null);
+  if (!name) return { ask: "subject" };
+  const rec = recOf(name);
+  const grades = (rec && rec.grades) || [];
+  /* The scope narrows only the subject it names. A stage scope from an added-subject window must
+     reach the class list — a teacher who has just bought Science·Secondary is asked about 9 and
+     10, never about the 6, 7, 8 she settled months ago. */
+  const sc = scope && scope.subject === name ? scope : null;
+  const idxs = portalGradeIdxs(grades, sc);
+  if (idxs.length === 1) return { open: { subject: name, grade: grades[idxs[0]].grade } };
+  return { ask: "class", subject: name };
+}

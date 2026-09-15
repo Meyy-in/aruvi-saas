@@ -435,9 +435,17 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      ⚠️ And NO `title` is passed: each step already opens with its own question ("How many periods
      a week?", "Edit sections of Class 3"), which IS the title. Passing both would push the ✕ off
      the top of a 360px phone, which is exactly what happened to the web's portal in August. */
-  const kicker = `${pretty(subject)} · Class ${classNum(grade)} · ${
-    step === "ppw" ? "periods / week" : step === "duration" ? "duration"
-      : step === "section" ? "sections" : step === "class" ? "classes" : "annual budget"}`;
+  /* ⚠️ THE CLASS STEP NAMES NO CLASS, and the web has always agreed (`${draft.name} · classes`,
+     TeachingProfile's `manageC` kicker). It is the one step that is ABOUT the whole set of
+     classes, so naming one of them is naming an arbitrary member of the thing being edited.
+     This read "English · Class 3 · classes" until 2026-09-15 and looked harmless only because
+     the sole teacher who could reach it had exactly one class — the pick screens (5d item 3) are
+     what let a Science teacher of 6, 7 and 8 arrive here and be told she is editing "Class 6". */
+  const kicker = step === "class"
+    ? `${pretty(subject)} · classes`
+    : `${pretty(subject)} · Class ${classNum(grade)} · ${
+      step === "ppw" ? "periods / week" : step === "duration" ? "duration"
+        : step === "section" ? "sections" : "annual budget"}`;
 
   /* ★ THE CORNERS DO THE NAVIGATION (founder, 2026-09-15). ✕ closes, from every step; ← appears
      only on `duration`, which is the one step reached THROUGH another and so the only one with a

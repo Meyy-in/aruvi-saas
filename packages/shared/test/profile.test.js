@@ -13,6 +13,7 @@ import { setStorage } from "../src/storage.js";
 import {
   SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections, secSummary,
   gradeDraftFrom, finalizeSubject, portalGradeIdxs, setGradeNumbers,
+  resolvePortalPick, goalWord, PER_CLASS_GOALS,
 } from "../src/profile.js";
 import { rekeyBudget } from "../src/budget.js";
 import { readinessFingerprint } from "../src/verify.js";
@@ -161,4 +162,76 @@ test("setGradeNumbers reconciles the split, its anchor and the total as ONE fact
 test("setGradeNumbers is a no-op off-scope", () => {
   const p = [{ name: "Science", grades: [REC], budget: {} }];
   assert.equal(setGradeNumbers(p, "Physics", "IX", { durations: [40] }), p);
+});
+
+
+/* ───────── resolvePortalPick — what a portal row should DO (5d item 3, 2026-09-15) ─────────
+   The rule the phone's pick screens route on. Two skips carry the whole design, and both say the
+   same thing: a question with one possible answer is not a question. */
+const PICK_SUBS = [
+  { name: "Science", grades: [{ grade: "VI" }, { grade: "VII" }, { grade: "IX" }] },
+  { name: "English", grades: [{ grade: "III" }] },
+];
+
+test("resolvePortalPick: more than one subject asks which subject", () => {
+  assert.deepEqual(resolvePortalPick(PICK_SUBS, "section"), { ask: "subject" });
+});
+
+test("resolvePortalPick: one subject skips that question and asks which class", () => {
+  assert.deepEqual(resolvePortalPick([PICK_SUBS[0]], "section"),
+    { ask: "class", subject: "Science" });
+});
+
+test("★ resolvePortalPick: one subject AND one class asks nothing at all", () => {
+  // The common teacher, and the behaviour that existed before the pick screens. She must not
+  // start meeting a screen the day they land.
+  assert.deepEqual(resolvePortalPick([PICK_SUBS[1]], "ppw"),
+    { open: { subject: "English", grade: "III" } });
+});
+
+test("resolvePortalPick: a STAGE scope narrows the class question to that stage", () => {
+  // Science·Secondary just bought: IX is the only secondary class she teaches, so there is
+  // nothing left to ask — and the settled VI/VII are never offered.
+  assert.deepEqual(
+    resolvePortalPick(PICK_SUBS, "budget", { subject: "Science", grade: "IX" }, "Science"),
+    { open: { subject: "Science", grade: "IX" } });
+});
+
+test("resolvePortalPick: an EXACT scope skips both screens (the Year Plan pencil)", () => {
+  assert.deepEqual(
+    resolvePortalPick(PICK_SUBS, "budget", { subject: "Science", grade: "VII", exact: true }, "Science"),
+    { open: { subject: "Science", grade: "VII" } });
+});
+
+test("★ resolvePortalPick: a scope naming ANOTHER subject does not narrow this one", () => {
+  // The scope narrows only the subject it names — otherwise an English scope would silently
+  // filter Science's classes by English's stage.
+  assert.deepEqual(
+    resolvePortalPick(PICK_SUBS, "section", { subject: "English", grade: "III" }, "Science"),
+    { ask: "class", subject: "Science" });
+});
+
+test("resolvePortalPick: the CLASS row resolves a subject and never asks which class", () => {
+  assert.deepEqual(resolvePortalPick(PICK_SUBS, "class"), { ask: "subject" });
+  // Chosen: straight to the manage-classes wheel for the whole set, whatever the scope says.
+  assert.deepEqual(
+    resolvePortalPick(PICK_SUBS, "class", { subject: "Science", grade: "IX" }, "Science"),
+    { open: { subject: "Science", grade: "VI" } });
+});
+
+test("resolvePortalPick: nothing to act on returns null, never a blank screen", () => {
+  assert.equal(resolvePortalPick([], "section"), null);
+  assert.equal(resolvePortalPick(null, "section"), null);
+  assert.equal(resolvePortalPick(PICK_SUBS, "subject"), null, "no window has a Subject row");
+  assert.equal(resolvePortalPick(PICK_SUBS, "nonsense"), null);
+});
+
+test("goalWord: the teacher's own words, one copy for both surfaces", () => {
+  assert.equal(goalWord("budget"), "annual period budget");
+  assert.equal(goalWord("ppw"), "periods a week");
+  assert.equal(goalWord("section"), "sections");
+  assert.equal(goalWord("class"), "classes");
+  // An unrecognised goal is a bug; naming the commonest row beats a blank mid-sentence.
+  assert.equal(goalWord("zzz"), "sections");
+  assert.deepEqual(PER_CLASS_GOALS, ["section", "ppw", "budget"]);
 });
