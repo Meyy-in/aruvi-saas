@@ -2,7 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import { getJSON, pretty, ROMAN, stageOfGrade, projectReadiness, API, withUser,
          ESTIMATE_WEEKS, weeksFromAnnual, ppwFromAnnual } from "../lib/format";
-import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget } from "../lib/budget";
+import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget } from "../lib/budget";
+import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections,
+         secSummary, gradeDraftFrom, finalizeSubject } from "../lib/profile";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
 import { pushSectionState } from "../lib/sectionState";
 import { RollWheel, PickWheel, PpwTotalWheel, PpwSplitCell, normPpw, ppwMapSum, ppwAnchor,
@@ -72,7 +74,6 @@ const classNum = (g) => {
 
 const subjectSlugOf = (name) => (name || "").toLowerCase().replace(/ /g, "_");
 const deepCopy = (x) => JSON.parse(JSON.stringify(x));
-const secLetter = (s) => (typeof s === "string" ? s : s.sec);
 const byRoman = (a, b) => ROMAN.indexOf(a.toLowerCase()) - ROMAN.indexOf(b.toLowerCase());
 
 /* ★ A SECTION MAY CARRY A NAME OF HER OWN (founder, 2026-08-30).
@@ -86,31 +87,6 @@ const byRoman = (a, b) => ROMAN.indexOf(a.toLowerCase()) - ROMAN.indexOf(b.toLow
  * 96px column on a 360px phone; a label that wraps is not a label. Blank = not customized, and
  * the field is simply ABSENT from the record then (never an empty string), so "has a name" is
  * one truthiness test everywhere. */
-const SEC_NAME_MAX = 8;
-const secName = (s) => (typeof s === "string" ? "" : String((s && s.name) || ""));
-/* Typed input → storable label. Collapses runs of whitespace and refuses a LEADING space (so
- * the caret can never sit past an invisible character) but keeps a trailing one while she is
- * still typing "Blue " + "House"; the trim happens at save, in `secObj`. */
-const cleanSecName = (v) => String(v == null ? "" : v).replace(/\s+/g, " ").replace(/^ /, "").slice(0, SEC_NAME_MAX);
-// canonical section record; `name` omitted entirely when she has not given one
-const secObj = (grade, sec, names) => {
-  const nm = cleanSecName((names || {})[sec]).trim();
-  const o = { tag: `${classNum(grade)}${sec}`, sec };
-  if (nm) o.name = nm;
-  return o;
-};
-// stored sections → the { letter: name } map the pick screens edit
-const namesFromSections = (list) => {
-  const out = {};
-  (list || []).forEach((x) => { const n = secName(x); if (n) out[secLetter(x)] = n; });
-  return out;
-};
-// how a section reads in the running "Chosen (n)" line: the tag, and her name for it if any
-const secSummary = (grade, s, names) => {
-  const nm = cleanSecName((names || {})[s]).trim();
-  return nm ? `${classNum(grade)}${s} (${nm})` : `${classNum(grade)}${s}`;
-};
-
 /* One "customize" cell — the box that opens on the row she ticks. Deliberately NOT autofocused:
  * PickWheel re-rests the wheel on every toggle (an animated scroll), and pulling focus into a
  * field inside that scroller mid-animation fights it and throws up the phone keyboard over the
@@ -152,36 +128,6 @@ const clearSectionState = (subjName, gradeRoman, tag) => {
     window.localStorage.removeItem(`lu_done_${key}`);
   } catch {}
   pushSectionState(key);   // chapter gone → the server drops this section's row too
-};
-
-// budget maps are keyed by grade INDEX — re-key whenever the grade list changes shape
-const rekeyBudget = (oldGrades, oldBudget, newGrades) => {
-  const byGrade = {};
-  (oldGrades || []).forEach((g, i) => {
-    const b = (oldBudget || {})[i] ?? (oldBudget || {})[String(i)];
-    if (b) byGrade[g.grade] = b;
-  });
-  const out = {};
-  newGrades.forEach((g, i) => { if (byGrade[g.grade]) out[i] = byGrade[g.grade]; });
-  return out;
-};
-
-// per-grade draft used inside the conversational screens: sections as plain letters
-const gradeDraftFrom = (rec) => {
-  const durations = (rec.durations && rec.durations.length) ? [...rec.durations] : [DEFAULT_DURATION];
-  const ppw_by_duration = normPpw(durations, rec.ppw_by_duration, rec.periods_per_week, rec.ppw_anchor);
-  return {
-    grade: rec.grade,
-    sections: (rec.sections || []).map(secLetter),
-    // her custom labels ride alongside the letters, keyed by letter — the draft edits this map
-    // and `secObj` folds it back into the record on save.
-    section_names: namesFromSections(rec.sections),
-    durations,
-    ppw_by_duration,
-    ppw_anchor: ppwAnchor(durations, ppw_by_duration, rec.ppw_anchor),
-    periods_per_week: ppwMapSum(ppw_by_duration),
-    budget: null,
-  };
 };
 
 /* Stage of a roman grade (client copy of grades.stage_for — the scope unit is
@@ -655,7 +601,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
         budget: annual ? { method: "periods", value: annual } : null,
       };
     })].sort((a, b) => byRoman(a.grade, b.grade));
-    finalizeSubject({ ...draft, grades: all });
+    saveSubject({ ...draft, grades: all });
     setScreen("view");
   };
   const onManageClassesContinue = () => {
@@ -678,7 +624,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     // Only ever reached from manage mode (classConfirm is set nowhere else), so adds are applied
     // with defaults here too — see applyManageClasses.
     if (adds.length) applyManageClasses(keep, adds);
-    else if (keep.length) { finalizeSubject({ ...draft, grades: keep }); setScreen("view"); }
+    else if (keep.length) { saveSubject({ ...draft, grades: keep }); setScreen("view"); }
     else {
       // last class taken away and nothing added — the subject goes with it (warned in the confirm)
       persist(deepCopy(canon).filter((s) => s.name !== draft.name));
@@ -785,25 +731,13 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
   };
 
   // finalize the draft into a canonical record and persist (upsert by name)
-  const finalizeSubject = (d) => {
-    const budget = {};
-    d.grades.forEach((g, i) => { budget[i] = g.budget || { method: "auto", value: 0 }; });
-    const rec = {
-      name: d.name,
-      grades: d.grades.map((g) => {
-        const ppwMap = normPpw(g.durations, g.ppw_by_duration, g.periods_per_week, g.ppw_anchor);
-        return {
-          grade: g.grade,
-          sections: g.sections.map((sec) => secObj(g.grade, sec, g.section_names)),
-          durations: [...g.durations],
-          ppw_by_duration: ppwMap,
-          ppw_anchor: ppwAnchor(g.durations, ppwMap, g.ppw_anchor),
-          periods_per_week: ppwMapSum(ppwMap),
-        };
-      }),
-      grids: d.grades.map((g) => g.sections.map(() => Array(DAYS_IN_WEEK).fill(-1))), // shape-compat only
-      budget,
-    };
+  /* Build the canonical record and SAVE it. The building half moved to @aruvi/shared/profile
+     (Track D 5d F2, 2026-09-15) so the phone emits byte-identical records — the fingerprint
+     compares what a teacher can change, so a record spelled differently on one surface would
+     read back as a mismatch and tell her work was lost that was merely spelled differently.
+     What stays here is the half that is this component's own: where the record goes. */
+  const saveSubject = (d) => {
+    const rec = finalizeSubject(d, { daysInWeek: DAYS_IN_WEEK });
     const idx = canon.findIndex((s) => s.name === rec.name);
     persist(idx >= 0 ? canon.map((s, i) => (i === idx ? rec : s)) : [...canon, rec]);
     setOpenSubject(rec.name);
@@ -811,7 +745,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
 
   const onClassDone = () => {
     if (pi + 1 < pendingIdxs.length) { setPi(pi + 1); setClassStep("sections"); return; }
-    finalizeSubject(draft);
+    saveSubject(draft);
     if (qi + 1 < queue.length) setScreen("subjectDone");  // checkpoint between added subjects
     else setScreen("view");
   };

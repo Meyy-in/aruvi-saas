@@ -102,6 +102,24 @@ export function setGradeBudget(subjects, subject, grade, periods) {
   }));
 }
 
+/* ⚠️ THE MAP IS KEYED BY GRADE INDEX, so it must be RE-KEYED whenever the grade list changes
+ * shape. Removing Class 7 from a teacher of 6·7·8 shifts 8 from index 2 to index 1 — and without
+ * this, index 1's budget (7's) would silently become Class 8's year. Re-keying goes through the
+ * GRADE NAME, which is the stable identity the index is only ever a position of.
+ * A grade with no stored budget stays absent rather than being written as a zero record: absent
+ * is "not set", and inventing a record for a class she never answered for is what put every such
+ * class on 180 instead of Aruvi's calibrated year. */
+export function rekeyBudget(oldGrades, oldBudget, newGrades) {
+  const byGrade = {};
+  (oldGrades || []).forEach((g, i) => {
+    const b = (oldBudget || {})[i] ?? (oldBudget || {})[String(i)];
+    if (b) byGrade[g.grade] = b;
+  });
+  const out = {};
+  (newGrades || []).forEach((g, i) => { if (byGrade[g.grade]) out[i] = byGrade[g.grade]; });
+  return out;
+}
+
 /* The stored record for one subject·class, in either key spelling. */
 export function gradeBudgetRecord(subjects, subject, grade) {
   const at = findScope(subjects, subject, grade);
