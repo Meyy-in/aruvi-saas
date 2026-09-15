@@ -241,7 +241,15 @@ export function webStyles(t, scheme = "light") {
 
     /* ── Lesson: the phase spine (.uv-phases / .uv-phase / .uv-ph-*) ── */
     uv_phases:       { marginTop: 2, position: "relative" },
-    uv_phase:        { flexDirection: "row", gap: 10, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: t.line_soft },
+    /* ⚠️ THE RULE BETWEEN PHASES IS CLAY, NOT A NEUTRAL HAIRLINE (founder, 2026-09-15: "the clay
+       thin separator line in web app for each phase is missing in expo/phone"). The web is
+       `.uv-phase + .uv-phase { border-top: 1px solid var(--clay) }` — the adjacent-sibling form,
+       so the rule falls only BETWEEN phases, never above the first or below the last. The phone
+       expresses the same geometry as a bottom border dropped on the last row (LessonView), which
+       renders identically; what had drifted was the COLOUR — `line_soft` is the app's quiet
+       hairline and this rule is not quiet. It is the one that says a phase has ended, and
+       globals.css calls it out by name as the weight the bottom nav's own edge matches. */
+    uv_phase:        { flexDirection: "row", gap: 10, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: t.clay },
     uv_ph_time:      { width: 34 },
     /* ───── a phase row ARMED as a bookmark target (phone-only, 2026-09-15) ─────
        No web counterpart: the web's bookmark is dragged with a pointer, which has no body and
@@ -251,7 +259,9 @@ export function webStyles(t, scheme = "light") {
        rather than introducing a second hue. */
     uv_phase_arm:    { backgroundColor: t.tint_pine, borderRadius: 6,
                        marginHorizontal: -8, paddingHorizontal: 8 },
-    uv_phase_arm_on: { backgroundColor: t.tint_pine_2, borderColor: t.pine },
+    /* ⚠️ Deepen the FILL only — a `borderColor` here would repaint the clay phase rule pine for
+       as long as the finger is down, and that rule means "a phase ended", not "you pressed". */
+    uv_phase_arm_on: { backgroundColor: t.tint_pine_2 },
     uv_ph_n:         { fontFamily: F.mono(600), fontSize: 16, lineHeight: 17.6, color: t.pine },
     uv_ph_u:         { fontFamily: F.mono(400), fontSize: 9, lineHeight: 13.95, letterSpacing: 1.26, textTransform: UP, color: t.ink_soft, marginTop: 2 },
     uv_ph_t:         { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.54, color: t.ink, flex: 1 },
