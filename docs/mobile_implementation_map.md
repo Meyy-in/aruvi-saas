@@ -272,6 +272,21 @@ showing her mobile number on the bar after she had subscribed.
   mine to do. Walked end to end on Expo: budget over the Year Plan, ✎ → ppw → duration with the inline
   strip, and the tall section wheel over My Classes, one modal throughout.
 
+- ✅ **THE CORNERS DO THE NAVIGATION** (founder, 2026-09-15: *"each of them should have 'x' on top
+  right to click off back to previous screen instead of back button saving height"*). ✕ closes from
+  every step; ← appears top-LEFT only on `duration`, the one step reached THROUGH another. Every
+  footer "Cancel" and "← Back" is gone — each cost a whole row of a window whose height is the
+  standing problem. The budget step's 88px lift also drops to 28 inside a window: the card's own edge
+  already separates "what I am being told" from "what I am about to do", and 108px pushed Save under
+  the fold of a capped card.
+- 🔴 **BLANK BACKGROUND BEHIND A WEB EDIT — open.** Founder: the portal window hazes over My Classes
+  but the individual windows do not. On the PHONE they do (the editor renders in the layout, over the
+  Stack). On the WEB they cannot: `editFlow === "profile"` renders the profile INSTEAD of the tab
+  content, so the scrim dims an empty page. The fix is the phone's own architecture — keep `editFlow`
+  where it was and render the edit as an overlay beside the main content, which also retires
+  `lessonsPaneIntentRef` exactly as `lib/paneIntent` was retired on the phone. **Not attempted yet: it
+  restructures page.jsx's render tree and the web tab is signed out, so it cannot be verified.**
+
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
    `subscribePortal`; the phone's `portalOriginRef` (app. 01 rows 77-78). **F3** `shared/setupCheck.js` — the

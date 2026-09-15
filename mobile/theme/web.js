@@ -130,6 +130,15 @@ export function webStyles(t, scheme = "light") {
     ap_close:        { position: "absolute", top: 12, right: 12, width: 30, height: 30, borderRadius: 15,
                        borderWidth: 1, alignItems: "center", justifyContent: "center" },
     ap_close_glyph:  { fontSize: 13, lineHeight: 15 },
+    /* ★ A STEP BACK BELONGS IN THE HEADER, NOT AT THE FOOT (founder, 2026-09-15: "each of them
+       should have 'x' on top right to click off back to previous screen instead of back button
+       saving height"). The ✕ closes; this mirrors it on the LEFT and appears only where there is
+       a previous STEP to return to — the duration step, which is reached through periods a week.
+       A footer link cost a whole row of a window whose height has been the standing problem, and
+       said nothing the two corners do not say better. */
+    ap_back:         { position: "absolute", top: 12, left: 12, width: 30, height: 30, borderRadius: 15,
+                       borderWidth: 1, alignItems: "center", justifyContent: "center" },
+    ap_back_glyph:   { fontSize: 14, lineHeight: 16 },
     ap_head:         { marginBottom: 14, paddingRight: 30 },
     ap_kicker:       { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 15, letterSpacing: 1.26,
                        textTransform: UP, color: t.ochre },
@@ -687,7 +696,13 @@ export function webStyles(t, scheme = "light") {
     /* ★ SAVE SITS WELL CLEAR OF THE READING (founder, 2026-08-28): `.tp-budget .fr-foot` adds
        88px to `.fr-foot`'s own 20 — the gap is what separates "what I am being told" from
        "what I am about to do". */
+    /* ★ 88px OF AIR ABOVE SAVE IS A FULL-PAGE MEASURE (founder, 2026-08-28: the gap separates
+       "what I am being told" from "what I am about to do"). In a WINDOW the card's own edge
+       already draws that line, and 108px of padding pushes the button under the fold of a
+       height-capped card — so the windowed variant keeps the separation and spends a third of the
+       height on it. The web's `.tp-window-card .fr-foot` makes the same trade. */
     fr_foot:         { alignItems: "center", rowGap: 12, paddingTop: 108 },
+    fr_foot_win:     { paddingTop: 28 },
     /* ⚠️ `.fr-cta` DECLARES font-size 16 AND border-radius 12, AND THE BROWSER APPLIES NEITHER.
        The element is `<button class="primary fr-cta">`, and `button.primary` (0,1,1) beats
        `.fr-cta` (0,1,0) on SPECIFICITY — not source order this time — so the live values are

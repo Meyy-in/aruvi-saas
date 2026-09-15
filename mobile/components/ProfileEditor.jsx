@@ -421,8 +421,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
     step === "ppw" ? "periods / week" : step === "duration" ? "duration"
       : step === "section" ? "sections" : step === "class" ? "classes" : "annual budget"}`;
 
+  /* ★ THE CORNERS DO THE NAVIGATION (founder, 2026-09-15). ✕ closes, from every step; ← appears
+     only on `duration`, which is the one step reached THROUGH another and so the only one with a
+     previous step to return to. Every footer "Cancel" and "← Back" is gone with them: each cost a
+     whole row of a window whose height is the standing problem, and said nothing the two corners
+     do not say better. */
   return (
-    <Sheet visible scroll onClose={leave} kicker={kicker}>
+    <Sheet visible scroll onClose={leave} kicker={kicker}
+      onBack={step === "duration" ? () => { setSplitOpen(null); setStep("ppw"); } : undefined}>
       <View>
 
         {step === "class" ? (
@@ -466,9 +472,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                 </Pressable>
               </PickWheel>
             )}
-            <Pressable onPress={leave} accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
-              <Text style={ws.fr_link_t}>← Back</Text>
-            </Pressable>
+
           </>
         ) : step === "section" ? (
           <>
@@ -507,9 +511,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                 </Pressable>
               </PickWheel>
             ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
-            <Pressable onPress={leave} accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
-              <Text style={ws.fr_link_t}>← Back</Text>
-            </Pressable>
+
           </>
         ) : step === "ppw" ? (
           <>
@@ -524,16 +526,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                   id: String(p), chip: p, label: p === 1 ? "period a week" : "periods a week",
                 }))} />
             ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
-            <View style={ws.fr_foot}>
+            <View style={[ws.fr_foot, ws.fr_foot_win]}>
               {/* ALWAYS continues into the duration screen — that is where the lengths and their
-                  split are set, and it is the only way in now. No Save here: see saveNumbers. */}
+                  split are set, and it is the only way in now. No Save here: see saveNumbers.
+                  No Cancel either: the ✕ is the way out, from every step. */}
               <Pressable onPress={() => setStep("duration")} disabled={!draft}
                 accessibilityRole="button"
                 style={[ws.fr_cta, { backgroundColor: draft ? t.pine : t.paper_sunk }]}>
                 <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Continue</Text>
-              </Pressable>
-              <Pressable onPress={leave} accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
-                <Text style={ws.fr_link_t}>Cancel</Text>
               </Pressable>
             </View>
           </>
@@ -584,10 +584,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                 </Pressable>
               </PickWheel>
             ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
-            <Pressable onPress={() => { setSplitOpen(null); setStep("ppw"); }}
-              accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
-              <Text style={ws.fr_link_t}>← Back</Text>
-            </Pressable>
+
           </>
         ) : (
         <>
@@ -656,16 +653,13 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             ) : null}
             {recLine ? <Text style={ws.tp_estimate_sub}>{recLine}</Text> : null}
 
-            <View style={ws.fr_foot}>
+            <View style={[ws.fr_foot, ws.fr_foot_win]}>
               <Pressable onPress={save} disabled={saving} accessibilityRole="button"
                 accessibilityState={{ disabled: saving }}
                 style={[ws.fr_cta, { backgroundColor: saving ? t.paper_sunk : t.pine }]}>
                 {saving
                   ? <ActivityIndicator size="small" color={t.ink_soft} />
                   : <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Save</Text>}
-              </Pressable>
-              <Pressable onPress={leave} accessibilityRole="button" hitSlop={8} style={ws.fr_link}>
-                <Text style={ws.fr_link_t}>Cancel</Text>
               </Pressable>
             </View>
           </>

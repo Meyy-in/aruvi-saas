@@ -52,7 +52,7 @@ import { useWebStyles } from "../theme/web";
  * sides. `KeyboardAvoidingView` lifts the card instead, with `padding` on iOS and `height` on
  * Android, which is the pair those two platforms actually want.
  */
-export function Sheet({ visible, onClose, kicker, title, sub, confirm, scroll = false, children }) {
+export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, scroll = false, children }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const body = scroll
@@ -77,7 +77,15 @@ export function Sheet({ visible, onClose, kicker, title, sub, confirm, scroll = 
             style={[ws.ap_close, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
             <Text style={[ws.ap_close_glyph, { color: t.ink_soft }]}>✕</Text>
           </Pressable>
-          <View style={ws.ap_head}>
+          {/* Only where there is a previous STEP to go back to. The ✕ always closes; this never
+              does — two corners, two different acts, neither costing a row of the card. */}
+          {onBack ? (
+            <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Back"
+              style={[ws.ap_back, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
+              <Text style={[ws.ap_back_glyph, { color: t.ink_soft }]}>←</Text>
+            </Pressable>
+          ) : null}
+          <View style={[ws.ap_head, onBack && { paddingLeft: 34 }]}>
             <Text style={ws.ap_kicker}>{kicker}</Text>
             <Text style={ws.ap_title}>{title}</Text>
             {sub ? <Text style={ws.ap_sub}>{sub}</Text> : null}
