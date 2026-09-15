@@ -69,10 +69,32 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
       {/* Tapping the ground closes, as the web's overlay onClick does; the card stops it. */}
       <KeyboardAvoidingView style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <Pressable style={ws.ap_overlay} onPress={onClose}>
-        <Pressable style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall,
-                           { backgroundColor: t.paper, borderColor: t.line }]}
-          onPress={() => {}}>
+      <View style={ws.ap_overlay}>
+        {/* ★ THE GROUND IS A SIBLING BEHIND THE CARD, NEVER ITS PARENT (founder, 2026-09-15:
+            "the 'How many periods a week' window of Add button does not allow wheeling up and
+            down the numbers. The arrow of course works").
+            It was a `Pressable` WRAPPING a `Pressable` card — the outer closing, the inner
+            swallowing the tap so it did not. That reads correctly and puts a press responder
+            directly above every scroller in the window, and on iOS a ScrollView inside a
+            Pressable loses the drag: the press claims the touch on start and the wheel never
+            sees the pan. The ARROWS kept working precisely because they are taps that commit
+            the pick themselves — which is what said the data was fine and the GESTURE was not.
+            ⚠️ It is not the ppw wheel's bug. Every wheel in the window had it — RollWheel and
+            PickWheel are nested identically — and the numbers step is simply where a thumb
+            tries to roll first. The class and section wheels had only ever been walked on Expo,
+            where react-native-web hands the DOM scroller the drag regardless.
+            So: the scrim is now an absolutely-positioned Pressable UNDER the card, and the card
+            is a plain View. Tapping off still closes (the scrim is what is hit), tapping the
+            card hits the card and nothing happens — the same two behaviours, with no responder
+            left in the wheel's ancestry. The no-op `onPress={() => {}}` goes with it; a press
+            handler that exists only to swallow a press is the smell that pointed here. */}
+        {/* Hidden from assistive tech on purpose: the ✕ is the labelled way out, and a
+            full-screen second "Close" control would be an enormous duplicate target. The web's
+            overlay carries no label either — it is a convenience for a pointer, not a control. */}
+        <Pressable style={ws.ap_ground} onPress={onClose} accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants" />
+        <View style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall,
+                      { backgroundColor: t.paper, borderColor: t.line }]}>
           {/* ⚠️ SKIPPED ENTIRELY when a window brings its own heading. `.ap-head` is the WINDOW's
               header — an ochre kicker over a 21px title — and it is right for a window whose
               title is the window (the portal, the confirms). The profile editor is not one of
@@ -109,8 +131,8 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
               <Text style={[ws.ap_back_glyph, { color: t.ink_soft }]}>←</Text>
             </Pressable>
           ) : null}
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
       </KeyboardAvoidingView>
     </Modal>
   );

@@ -115,7 +115,11 @@ export function webStyles(t, scheme = "light") {
     sc_round_glyph:  { fontSize: 20, lineHeight: 22 },
 
     /* ── the "+" track-a-chapter picker (.ap-*) and its chapter rows (.ch-*) ── */
-    ap_overlay:      { flex: 1, alignItems: "center", justifyContent: "center", padding: 20,
+    ap_overlay:      { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
+    /* The dimmed ground, absolutely filling the overlay BEHIND the card rather than wrapping it
+       — see AttachSheet.jsx's note. The colour lives here and not on `ap_overlay` because the
+       overlay is now only a layout box; the thing that is tappable is the thing that is dim. */
+    ap_ground:       { position: "absolute", top: 0, right: 0, bottom: 0, left: 0,
                        backgroundColor: "rgba(31,42,36,.42)" },
     ap_modal:        { width: "100%", maxWidth: 460, borderRadius: 14, borderWidth: 1,
                        paddingTop: 22, paddingHorizontal: 22, paddingBottom: 18 },
