@@ -60,9 +60,9 @@ the wait moves to My Lessons), the bottom bar, the org-page-until-taught rule, t
 | — | The window's CORNERS do the navigating: ✕ top-right, ← only where a step has one. Bottom back buttons gone, and the height they cost with them | `2d7ac21d` | Expo |
 | — | The section hint cut to one sentence (both surfaces); the Expo kicker's colour and its gap to the heading matched to the web | `522b377d` | web + Expo |
 | — | The ✕ was untappable on the handset: the corners were painted BEFORE the ScrollView body, so a transparent scroller lay over them. Order, not `zIndex` (which needs `elevation` on Android). And `openEdit` was nulling the window `closeEdit` then tried to restore — `winBack` remembers it | `63adafaf` | iPhone (founder) |
-| — | **ONE Sheet, whose children swap** (founder: "when ✕ is used to click off, it goes back to my classes for a moment before showing 'what would you like to change?' — that time gap should not be there"). The portal and the editor each owned a Modal, so moving between them unmounted one and mounted another: two fades back to back with NO scrim in the gap, and the bare screen flashed through. The state was already batched — the flash was the Modals. `ProfilePortal` and `ProfileEditor` are now body-only; the layout owns the Sheet and the editor reports its ← up through `onChrome` | *this commit* | Expo, end to end |
-| — | **What Meyy HAS and what she has BOUGHT are two different lists** (founder: "the web app only shows those classes that the teacher has subscribed for … but expo shows all classes"). `paidScopesOf` / `entLapsed` / `allowedStagesFor` lifted from `page.jsx` and `TeachingProfile.jsx` into `shared/format.js` (7 tests), and the phone's class wheel filters by them. 9000000003 was being offered Classes 6–9 she cannot buy from that screen; she now sees 3, 4, 5 and the subscription note, exactly as the web does | *this commit* | Expo + 7 tests |
-| — | The web's windowed steps still drew a bottom **Cancel** beside their Continue (founder, twice: periods-a-week, then the annual budget). The 2026-09-15 rule was right and its SELECTOR was short — `.tp > .fr-link` reached only direct children. Widened to the step's own `.fr-foot`, with `:not(.fr-center)` so the confirm blocks keep their "Keep it" | *this commit* | 🟡 web walk owed — no dev server up |
+| — | **ONE Sheet, whose children swap** (founder: "when ✕ is used to click off, it goes back to my classes for a moment before showing 'what would you like to change?' — that time gap should not be there"). The portal and the editor each owned a Modal, so moving between them unmounted one and mounted another: two fades back to back with NO scrim in the gap, and the bare screen flashed through. The state was already batched — the flash was the Modals. `ProfilePortal` and `ProfileEditor` are now body-only; the layout owns the Sheet and the editor reports its ← up through `onChrome` | `dac26eb0` | Expo, end to end |
+| — | **What Meyy HAS and what she has BOUGHT are two different lists** (founder: "the web app only shows those classes that the teacher has subscribed for … but expo shows all classes"). `paidScopesOf` / `entLapsed` / `allowedStagesFor` lifted from `page.jsx` and `TeachingProfile.jsx` into `shared/format.js` (7 tests), and the phone's class wheel filters by them. 9000000003 was being offered Classes 6–9 she cannot buy from that screen; she now sees 3, 4, 5 and the subscription note, exactly as the web does | `dac26eb0` | Expo + 7 tests |
+| — | The web's windowed steps still drew a bottom **Cancel** beside their Continue (founder, twice: periods-a-week, then the annual budget). The 2026-09-15 rule was right and its SELECTOR was short — `.tp > .fr-link` reached only direct children. Widened to the step's own `.fr-foot`, with `:not(.fr-center)` so the confirm blocks keep their "Keep it" | `dac26eb0` | 🟡 web walk owed — no dev server up |
 
 **★ 5c IS NOT A SEPARATE STEP ANY MORE.** Founder's answer to Q1 was HOLD: the budget screen's own
 sense-check pencil leads to the ppw wheel, so shipping it before the numbers editor would only have moved
@@ -75,6 +75,54 @@ the only question left). ✅ `onAdd` is LIVE since `9a1546ec` — all four rows 
 ⚠️ When F5 lands (6a), the window must NOT open while she is lapsed: the growth entry points hide on an
 expired subscription. That is the web's rule and the phone owes it; enforcement is off server-side for
 every teacher today, so it is a note to keep, not a gap to close now.
+
+### Picking this up in a new session
+
+*Written 2026-09-15 at the end of the window-and-scopes run, for whoever opens the next one. Read §0 above
+first; this is only what is NOT in the commits.*
+
+**Standing instruction from the founder:** *"Going by `mobile_implementation_map.md` and the
+`mobile_implementation_map/` appendix, proceed with implementation. Ask the founder's questions listed there
+whenever needed during the development as relevant to that stage of development."* And: keep this file
+updated **in the same commit as the work**.
+
+**Constraints that are not negotiable and are easy to forget:**
+- **`git push` is Kumar's.** This sandbox has no GitHub credentials and never will. Commit, then say how many
+  commits are ahead — `git log --oneline @{u}..HEAD`, never a guess. (He pushes promptly and often without
+  saying so: `dac26eb0` was on `origin/main` within minutes of being written.)
+- **Computer-use / Screen-Recording permission was declined and revoked.** Do not drive the Mac's UI. The
+  Chrome extension against `localhost:8081` is the way to walk the phone build; use `find` → `ref` clicks,
+  because raw pixel coordinates do not land reliably.
+- **Signing in is the founder's act, not ours**, and writing to his LIVE profile on Render needs his say-so.
+  A Class 4 was once added to his real account while testing; it had to be confessed and removed.
+- The dev servers run on the **Mac**, not in the agent's shell. `device_bash` edits DO reach the Mac's disk
+  (Metro picks them up), but `curl localhost:3000` from that shell reaches nothing. If the web needs walking,
+  ask him to start `npm run web`.
+- `git config user.name/email` may be unset in a fresh shell — the repo's own author is
+  `kumarradhakrishnan2-hue <kumar.radhakrishnan2@gmail.com>`.
+
+**Owed before anything new:**
+1. **A walk of the web's two changes in `dac26eb0`** — the bottom Cancel gone from *How many periods a week?*
+   and *How many periods for the year?* inside the window (and the confirm blocks' "Keep it" still there),
+   and the class wheel still narrowing to her paid stages after the `allowedStagesFor` refactor. Both are
+   committed unwalked because no dev server was up.
+2. **Does the WEB flash between its portal window and a spot-edit window?** The phone's fix was Modal-shaped
+   and the web uses plain divs, so probably not — but §0 of CLAUDE.md says both surfaces, so look.
+3. The web's **duration step has no way back to the ppw step inside the window**: its `← Back` is a direct
+   child of `.tp` and has been hidden since `2d7ac21d`, and unlike the phone the web grew no ← corner. Decide
+   whether the web owes the corner or the link back.
+
+**Then, in order:** the two **pick screens** (subject and class, for a teacher with more than one — today a
+portal row on such a profile deliberately does nothing rather than guess) · **add a subject** (Q3 answered:
+add mode only) · the **check-mood window**, which needs **Q9**, the last unanswered founder question in §4.
+
+**Two lessons this run is the evidence for, both already in MEMORY.md:**
+- *Web tolerance is not correctness either.* The parity page renders react-native-web in both panes, so it
+  cannot see an iOS-vs-web divergence. Anything touching baseline, intrinsic sizing or text metrics is only
+  settled by the handset in the founder's hand.
+- *A rule that lives in one surface's component is a rule the other surface does not have.* Both the class
+  scope filter and the ppw/budget arithmetic were found missing on the phone for exactly that reason.
+  When a fix is a RULE, lift it to `@aruvi/shared` and make both callers call it — CLAUDE.md §3.
 
 **What the phone is today, in one sentence:** a teacher who already has a profile can teach (LessonView,
 full), track (My Classes), browse and prepare (My Lessons, Prepare, Year Plan), and now **amend her week and
