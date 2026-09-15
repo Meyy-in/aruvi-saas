@@ -23,7 +23,7 @@
  * to a window she left behind ten minutes ago would be a ghost.
  */
 
-let state = { originRoute: null, win: null, scope: null, edit: null };
+let state = { originRoute: null, win: null, scope: null, edit: null, winBack: null };
 const listeners = new Set();
 
 function emit() {
@@ -59,7 +59,14 @@ export function enterPortal({ originRoute, win = null, scope = null }) {
  * the editor had navigated her away from; it was DELETED in the same commit, which is the good
  * kind of change — the mechanism went away rather than gaining a case. */
 export function openEdit(edit) {
-  state = { ...state, edit: edit || null, win: null };
+  /* ⚠️ THE WINDOW SHE CAME FROM IS REMEMBERED, not just closed. `closeEdit` used to restore
+     `state.win` — which this line had already set to null, so the portal never came back and a
+     teacher who amended one item was dropped onto the bare screen instead of the list she opened
+     it from. The web has restored it since 2026-08-27 ("a teacher who has just amended one item
+     is exactly the person most likely to want the next"); this is that, on the phone.
+     Null when she came from somewhere else — the Year Plan pencil opens no window first, so
+     there is nothing to put back. */
+  state = { ...state, edit: edit || null, winBack: state.win, win: null };
   emit();
 }
 
@@ -67,8 +74,7 @@ export function openEdit(edit) {
    cancel alike, because a teacher who has just amended one item is the person most likely to want
    the next (founder, 2026-08-27). */
 export function closeEdit() {
-  const back = state.win;
-  state = { ...state, edit: null, win: back };
+  state = { ...state, edit: null, win: state.winBack || null, winBack: null };
   emit();
 }
 
@@ -89,6 +95,6 @@ export function leavePortal() {
 
 /* An ordinary visit somewhere else — the round trip is over and there is nothing to return to. */
 export function clearPortal() {
-  state = { originRoute: null, win: null, scope: null, edit: null };
+  state = { originRoute: null, win: null, scope: null, edit: null, winBack: null };
   emit();
 }

@@ -73,18 +73,6 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
         <Pressable style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall,
                            { backgroundColor: t.paper, borderColor: t.line }]}
           onPress={() => {}}>
-          <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close"
-            style={[ws.ap_close, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
-            <Text style={[ws.ap_close_glyph, { color: t.ink_soft }]}>✕</Text>
-          </Pressable>
-          {/* Only where there is a previous STEP to go back to. The ✕ always closes; this never
-              does — two corners, two different acts, neither costing a row of the card. */}
-          {onBack ? (
-            <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Back"
-              style={[ws.ap_back, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
-              <Text style={[ws.ap_back_glyph, { color: t.ink_soft }]}>←</Text>
-            </Pressable>
-          ) : null}
           {/* ⚠️ SKIPPED ENTIRELY when a window brings its own heading. `.ap-head` is the WINDOW's
               header — an ochre kicker over a 21px title — and it is right for a window whose
               title is the window (the portal, the confirms). The profile editor is not one of
@@ -99,6 +87,28 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
             </View>
           ) : null}
           {body}
+          {/* ⚠️ THE CORNERS ARE RENDERED LAST, AND THAT IS NOT A STYLE CHOICE (founder,
+              2026-09-15: "the 'x' on the class/section/weeks/annual periods is not working when
+              trying to click off on expo/iphone").
+              They are absolutely positioned, so they LOOK right wherever they sit in the tree —
+              but paint and hit-testing follow sibling ORDER, and `body` is now a ScrollView that
+              fills the card. Written before it, the buttons were painted under a transparent
+              scroller: still visible, completely untappable. Nothing about the ✕ was wrong; it
+              was the thing in front of it that was new.
+              Order, not `zIndex`: zIndex needs `elevation` to mean anything on Android, and a
+              sibling that comes last needs neither. */}
+          <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close"
+            hitSlop={8} style={[ws.ap_close, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
+            <Text style={[ws.ap_close_glyph, { color: t.ink_soft }]}>✕</Text>
+          </Pressable>
+          {/* Only where there is a previous STEP to go back to. The ✕ always closes; this never
+              does — two corners, two different acts, neither costing a row of the card. */}
+          {onBack ? (
+            <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Back"
+              hitSlop={8} style={[ws.ap_back, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
+              <Text style={[ws.ap_back_glyph, { color: t.ink_soft }]}>←</Text>
+            </Pressable>
+          ) : null}
         </Pressable>
       </Pressable>
       </KeyboardAvoidingView>

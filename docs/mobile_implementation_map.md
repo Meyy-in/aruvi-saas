@@ -301,6 +301,19 @@ showing her mobile number on the bar after she had subscribed.
   heading top are the same pixel). `Sheet` now skips its header block entirely when a window brings
   its own.
 
+- ✅ **The ✕ was untappable on Expo/iPhone** (founder, 2026-09-15). Absolutely positioned, so it LOOKED
+  right wherever it sat in the tree — but paint and hit-testing follow sibling ORDER, and the card's
+  body became a ScrollView filling it when edits moved into windows. Written before that scroller, the
+  corner buttons were painted under a transparent sheet: visible, completely untappable. Nothing about
+  the ✕ was wrong; the thing in front of it was new. They now render LAST. Order, not `zIndex` —
+  zIndex needs `elevation` to mean anything on Android, a last sibling needs neither.
+- ✅ **And the portal window was not coming back** on close, found while fixing the above. `openEdit`
+  set `win: null` and `closeEdit` restored `state.win` — which was by then the null it had just
+  written, so a teacher who amended one item was dropped onto the bare screen instead of the list she
+  opened it from. The window she came from is now remembered (`winBack`). The web has restored it
+  since 2026-08-27: "a teacher who has just amended one item is exactly the person most likely to want
+  the next."
+
 **Still to build, in this order:**
 1. **F7 `mobile/lib/portal.js`** — `{originRoute, win:{mode, reason, subject, grade}, scope}` with
    `subscribePortal`; the phone's `portalOriginRef` (app. 01 rows 77-78). **F3** `shared/setupCheck.js` — the
