@@ -255,24 +255,10 @@ export function webStyles(t, scheme = "light") {
        No web counterpart: the web's bookmark is dragged with a pointer, which has no body and
        hides nothing, so its rows never become targets. `tint_pine` is the app's own selection
        tint — the one the section wheel already uses for a ticked row — so arming reads as "this
-       is selectable", in a colour the teacher has met before. The pressed state deepens it
-       rather than introducing a second hue. */
-    /* The one line that says what to do while the bookmark is armed. It exists because the
-       founder pressed the arrow, saw the spine change, and reported it "not movable" — the app
-       had changed state without saying what the new state wanted from her. A mode nobody can
-       read is a mode nobody can use. */
-    uv_arm_hint:     { flexDirection: "row", alignItems: "center", columnGap: 6,
-                       paddingVertical: 8, paddingHorizontal: 8, marginBottom: 2,
-                       borderRadius: 6, backgroundColor: t.tint_pine },
-    uv_arm_hint_t:   { fontFamily: F.mono(500), fontSize: 10, lineHeight: 14, letterSpacing: 1.2,
-                       textTransform: UP, color: t.pine_d, flex: 1 },
-    uv_arm_hint_x:   { fontFamily: F.mono(500), fontSize: 10, lineHeight: 14, letterSpacing: 1.2,
-                       textTransform: UP, color: t.clay },
+       is selectable", in a colour the teacher has met before. Exactly one row wears it at a
+       time — the phase the arrow is over — and only while her finger is down. */
     uv_phase_arm:    { backgroundColor: t.tint_pine, borderRadius: 6,
                        marginHorizontal: -8, paddingHorizontal: 8 },
-    /* ⚠️ Deepen the FILL only — a `borderColor` here would repaint the clay phase rule pine for
-       as long as the finger is down, and that rule means "a phase ended", not "you pressed". */
-    uv_phase_arm_on: { backgroundColor: t.tint_pine_2 },
     uv_ph_n:         { fontFamily: F.mono(600), fontSize: 16, lineHeight: 17.6, color: t.pine },
     uv_ph_u:         { fontFamily: F.mono(400), fontSize: 9, lineHeight: 13.95, letterSpacing: 1.26, textTransform: UP, color: t.ink_soft, marginTop: 2 },
     uv_ph_t:         { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.54, color: t.ink, flex: 1 },

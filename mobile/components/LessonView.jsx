@@ -126,15 +126,12 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
   const notesRest = notes ? notes.replace(POINTER, "") : "";
   const [notesOpen, setNotesOpen] = useState(true);   // <details open> on the web
   const [rows, setRows] = useState({});
-  /* ★ ARMED — she has pressed the bookmark and is choosing where it goes (founder, 2026-09-15).
-     Two things happen for as long as it lasts: every phase lights up as a target, and the screen
-     FREEZES (`bookmark.onLift`), so nothing slides under her while she picks. Pressing the arrow
-     again backs out and changes nothing. */
-  const [armed, setArmed] = useState(false);
-  /* Leaving the unit (or losing the bookmark) must not strand the scroller frozen. */
-  useEffect(() => () => { if (bookmark && bookmark.onLift) bookmark.onLift(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const setArm = (on) => { setArmed(on); if (bookmark && bookmark.onLift) bookmark.onLift(on); };
-  const place = (i) => { setArm(false); if (bookmark) bookmark.onMove(i); };
+  /* ★ HELD — her finger is on the bookmark (founder, 2026-09-15). For as long as it lasts the
+     spine FREEZES and the phase the arrow is over LIGHTS UP. The highlight is the feedback
+     channel: her thumb covers the arrow, so the answer has to be readable somewhere her hand is
+     not, and a whole row is the widest target on this screen. `over` follows the arrow live. */
+  const [held, setHeld] = useState(false);
+  const [over, setOver] = useState(0);
   const centres = useMemo(() => phases.map((_, i) => rows[i] ? rows[i].y + 13 + rows[i].timeH / 2 : null).filter((v) => v != null), [rows, phases.length]);
   return (
     <View>
@@ -154,53 +151,30 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
 
       {phases.length ? (
         <View style={ws.uv_phases}>
-          {/* ★ THE MODE HAS TO SAY WHAT IT WANTS (founder, 2026-09-15: "the red button when
-              pressed highlights all of the phases and is not movable"). Pressing the arrow put
-              the spine into a state she could see but not read — so she went on trying to move
-              the arrow, which is the one thing it no longer does. One line, only while armed,
-              and it carries its own way out. */}
-          {armed ? (
-            <View style={ws.uv_arm_hint} accessibilityLiveRegion="polite">
-              <Text style={ws.uv_arm_hint_t}>Tap a phase to move the bookmark</Text>
-              <Pressable onPress={() => setArm(false)} hitSlop={10} accessibilityRole="button"
-                accessibilityLabel="Leave the bookmark where it is">
-                <Text style={ws.uv_arm_hint_x}>Cancel</Text>
-              </Pressable>
-            </View>
-          ) : null}
+          {/* ⚠️ NO INSTRUCTION ROW. One was added when "not movable" was read as a
+              discoverability problem, and the founder struck it: "No need for that row that pops
+              up how to use in the top". He is right — with the frame and the highlight appearing
+              on touch-down, holding and sliding is the obvious next move, and a banner that
+              explains a gesture she is already performing is a banner that arrived too late. */}
           {bookmark ? (
             <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
-              color={t.clay} armed={armed} onToggle={() => setArm(!armed)} />
+              color={t.clay} onMove={bookmark.onMove} onOver={setOver}
+              onHold={(on) => { setHeld(on); if (bookmark.onLift) bookmark.onLift(on); }} />
           ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
-            /* ★ ONLY THE PHASE IT IS ON LIGHTS UP (founder: "highlights all of the phases").
-               Tinting every row said "these are all targets", which is true and is also a wall of
-               colour — and it left the one fact she actually needs, WHERE THE BOOKMARK IS NOW,
-               with nothing to say it. Option A's sketch highlighted the row the arrow had moved
-               to, and that is the reading to keep: the highlight marks the answer, not the
-               question. Every row is still tappable while armed; only this one is coloured. */
-            const here = bookmark && i === Math.min(bookmark.phase, phases.length - 1);
+            /* ★ EXACTLY ONE ROW LIGHTS UP, and only while she is holding the bookmark — the
+               one the arrow is currently over. It starts on the phase the bookmark is on and
+               FOLLOWS the arrow as she slides ("when the highlight also moves"), which is what
+               makes the answer readable with her thumb over the arrow. It goes when she lifts. */
+            const here = held && i === over;
             return (
-              /* ★ WHILE ARMED THE WHOLE ROW IS THE TARGET. A 26px glyph is a bad thing to aim at
-                 with a finger; a whole row is a good one.
-                 ⚠️ ONLY while armed. A row that is always tappable would move the bookmark on a
-                 stray touch while she is reading the plan mid-lesson, which is the one moment
-                 this mark must not move by accident.
-                 ⚠️⚠️ AND THE MINUTES CELL IS NO LONGER A PRESSABLE OF ITS OWN (founder,
-                 2026-09-15: "the red button when pressed highlights all of the phases and is not
-                 movable"). It was, and that made this a BUTTON INSIDE A BUTTON — the exact thing
-                 this file warns about two screens down: react-native-web renders an
-                 accessibilityRole="button" Pressable as a real <button>, and a nested one warns
-                 and presses unreliably. So the row armed, lit up, and then would not take the
-                 tap. One Pressable per row now; the minutes cell is a plain View. The old
-                 tap-the-minutes path goes with it, and that is no loss — it was invisible, which
-                 is why the bookmark needed a visible mechanism in the first place. */
-              <Pressable key={i} disabled={!bookmark || !armed} onPress={() => place(i)}
-                accessibilityRole={armed ? "button" : undefined}
-                accessibilityLabel={armed ? `Put the bookmark on phase ${i + 1}${mins != null ? `, ${mins} minutes` : ""}` : undefined}
-                style={({ pressed }) => [ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 },
-                  armed && here && ws.uv_phase_arm, armed && pressed && ws.uv_phase_arm_on]}
+              /* ⚠️ THE ROWS ARE NOT TOUCH TARGETS. They were briefly, when placing was a tap;
+                 the bookmark is dragged again now, so a tappable row would only be a way to move
+                 this mark by accident while she reads the plan mid-lesson — the one moment it
+                 must not move. They light up and nothing more. */
+              <View key={i} style={[ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 },
+                  here && ws.uv_phase_arm]}
                 onLayout={(e) => { const { y } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { timeH: 18 }), y } })); }}>
                 <View style={ws.uv_ph_time}
                   onLayout={(e) => { const { height } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { y: 0 }), timeH: height } })); }}>
@@ -208,7 +182,7 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
                   {mins != null ? <Text style={ws.uv_ph_u}>min</Text> : null}
                 </View>
                 <Text style={ws.uv_ph_t}>{ph.text}</Text>
-              </Pressable>
+              </View>
             );
           })}
         </View>
