@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { getJSON, pretty, ROMAN, stageOfGrade, projectReadiness, API, withUser,
-         ESTIMATE_WEEKS, weeksFromAnnual, ppwFromAnnual } from "../lib/format";
+         ESTIMATE_WEEKS, weeksFromAnnual, ppwFromAnnual, allowedStagesFor } from "../lib/format";
 import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget } from "../lib/budget";
 import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections,
          secSummary, gradeDraftFrom, finalizeSubject } from "../lib/profile";
@@ -988,11 +988,10 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     /* Same post-trial scope filter as the subjects wheel, at STAGE granularity: a paid
        SS·Middle teacher sees classes 6–8 only. Enrolled grades always stay listed
        (same silent-removal hazard). Trial and "*" scopes see everything. */
-    const scopedC = Array.isArray(paidScopes) && !paidScopes.includes("*");
-    const allowedStages = scopedC
-      ? new Set(paidScopes.filter((s) => s.split("/")[0] === subjectSlugOf(draft.name))
-          .map((s) => s.split("/")[1]))
-      : null;
+    /* ⚠️ The stage filter is the SHARED `allowedStagesFor` since 2026-09-15 — the phone was
+       offering every class Meyy has content for, because this rule lived only here. */
+    const allowedStages = allowedStagesFor(paidScopes, draft.name);
+    const scopedC = allowedStages !== null;
     /* ★ A SCOPED portal visit shows ONLY the newly-purchased STAGE's classes (founder,
        2026-08-27: "only classes relevant to the stage purchased should show — the previously
        existing stage classes are a settled matter"). A Science·Middle teacher who buys

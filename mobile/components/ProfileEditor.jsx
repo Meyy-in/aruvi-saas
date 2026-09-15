@@ -65,8 +65,8 @@ import { useEffect, useMemo, useState } from "react";
 import { View, Pressable, TextInput, ScrollView, ActivityIndicator } from "react-native";
 import { Text } from "./Text";
 import {
-  ROMAN, classNum, fetchSupportedGrades, getJSON, ppwFromAnnual, pretty, subjectSlug,
-  weeksFromAnnual,
+  ROMAN, allowedStagesFor, classNum, fetchEntitlement, fetchSupportedGrades, getJSON,
+  paidScopesOf, ppwFromAnnual, pretty, stageOfGrade, subjectSlug, weeksFromAnnual,
 } from "@aruvi/shared/format";
 import { normalizeBudget, setGradeBudget, gradeBudgetRecord, clampPeriods } from "@aruvi/shared/budget";
 import {
@@ -90,7 +90,7 @@ import { useWebStyles } from "../theme/web";
 
 const SECTION_LETTERS = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)); // A…Z
 
-export default function ProfileEditor({ intent = "budget", subject = "", grade = "" }) {
+export default function ProfileEditor({ intent = "budget", subject = "", grade = "", onChrome }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   /* `intent` is the destination; `subject`/`grade` the scope it acts on. The web resolves a scope
@@ -140,6 +140,9 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      keep, and `fetchSupportedGrades` is the one authority both surfaces use. */
   const [pickedGrades, setPickedGrades] = useState(null);
   const [gradeOptions, setGradeOptions] = useState(null);   // null = still loading
+  /* What her subscription covers, as subject-stage scopes. `null` is NO LIMIT — trial, unpaid,
+     a "*" grant, or enforcement off — never "nothing allowed". */
+  const [paidScopes, setPaidScopes] = useState(null);
   const [classConfirm, setClassConfirm] = useState(null);
   /* Which length's split strip is showing, if any. Lifted OUT of the cell (2026-09-15): the cell
      used to own a Sheet, and once the editor became a window that was a window over a window. */
@@ -259,6 +262,17 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
     fetchSupportedGrades(subject)
       .then((g) => { if (live) setGradeOptions(g || []); })
       .catch(() => { if (live) setGradeOptions([]); });
+    /* ★ WHAT MEYY HAS AND WHAT SHE HAS BOUGHT ARE TWO DIFFERENT LISTS (founder, 2026-09-15:
+       "the web app only shows those classes that the teacher has subscribed for … but expo
+       shows all classes"). The catalogue above says what Meyy could teach; the entitlement
+       says what she is entitled to be OFFERED. The web has filtered by the paid stages since
+       August and this screen had only the first half of the rule, so 9000000003 — English,
+       preparatory — was being offered Classes 6 through 10 she cannot buy from here.
+       Unreachable server → null → no limit, deliberately: a school network must never narrow
+       her own classes away. */
+    fetchEntitlement()
+      .then((e) => { if (live) setPaidScopes(paidScopesOf(e)); })
+      .catch(() => {});
     return () => { live = false; };
   }, [step, subject]);
   useEffect(() => {
@@ -267,10 +281,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   }, [subjectRec, pickedGrades]);
 
   const haveGrades = (subjectRec && (subjectRec.grades || []).map((g) => g.grade)) || [];
-  /* Her enrolled classes always stay listed even if the catalogue dropped one — otherwise a class
-     she teaches would quietly vanish from a screen whose job is to show what she teaches. */
+  const allowedStages = allowedStagesFor(paidScopes, subject);
+  /* Her enrolled classes always stay listed even if the catalogue dropped one, or the stage it
+     sits in is no longer paid for — otherwise a class she teaches would quietly vanish from a
+     screen whose job is to show what she teaches, and its absence would read to the save as an
+     unticking. `|| haveGrades.includes(g)` is that guarantee, and it is the web's own. */
   const classOptions = (gradeOptions || [])
     .concat(haveGrades.filter((g) => !(gradeOptions || []).includes(g)))
+    .filter((g) => !allowedStages || allowedStages.has(stageOfGrade(g)) || haveGrades.includes(g))
     .sort((a, b) => ROMAN.indexOf(a.toLowerCase()) - ROMAN.indexOf(b.toLowerCase()));
 
   const requestClasses = () => {
@@ -428,8 +446,15 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      do not say better. */
   const stepBack = step === "duration" ? () => { setSplitOpen(null); setStep("ppw"); } : undefined;
 
+  /* ⚠️ THE SHEET BELONGS TO THE LAYOUT, so the chrome this screen needs — its ← and the fact that
+     it has no window title of its own — is reported UP rather than rendered here (2026-09-15).
+     The editor and the portal used to own a Sheet each, which meant opening an edit unmounted one
+     Modal and mounted another: two fades back to back with the bare screen visible in between.
+     One window whose contents change has no gap to show. */
+  useEffect(() => { if (onChrome) onChrome({ onBack: stepBack }); }, [onChrome, step]);
+
   return (
-    <Sheet visible scroll onClose={leave} onBack={stepBack}>
+    <>
       <View>
         {/* ★ THE EDITOR'S OWN HEADER, NOT THE WINDOW'S (founder, 2026-09-15: "render the colour of
             'English · Class 3 · Sections' with the web app, and the distance between that title
@@ -487,7 +512,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                 </Pressable>
               </PickWheel>
             )}
-
+            {/* The web's `.trial-note`, word for word: it says why the list stops where it does,
+                so a missing Class 6 reads as a subscription boundary and not as a gap in Meyy. */}
+            {allowedStages ? (
+              <Text style={ws.trial_note}>
+                Your subscription covers what’s shown here. Another subject or stage is a
+                separate subscription.
+              </Text>
+            ) : null}
           </>
         ) : step === "section" ? (
           <>
@@ -740,6 +772,6 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
           </View>
         </Sheet>
       ) : null}
-    </Sheet>
+    </>
   );
 }

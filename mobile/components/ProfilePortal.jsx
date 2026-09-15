@@ -32,7 +32,6 @@
  */
 import { View, Pressable } from "react-native";
 import { Text } from "./Text";
-import { Sheet } from "./AttachSheet";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -47,19 +46,34 @@ export const PORTAL_ROWS = [
   { kind: "budget", label: "Annual period budget" },
 ];
 
-export default function ProfilePortal({ mode = "change", sub, values, onPick, onClose, onOpenProfile }) {
+/* ★ THE WINDOW'S OWN WORDS, so the LAYOUT can put them on the one Sheet both this and the editor
+ * share. Only the title and the sub-line differ between the two moods; the rows are identical,
+ * because the rows are the answer in both. */
+export function portalChrome(mode = "change", sub) {
+  const check = mode === "check";
+  return {
+    kicker: "Your teaching",
+    title: check ? "Would you like to check your set-up?" : "What would you like to change?",
+    sub: check
+      ? (sub || "Meyy started you off with its own suggested set-up. You can change any of it — or leave it and carry on teaching.")
+      : "Each item changes only itself — pick another for the next. Your lessons always stay in the library.",
+  };
+}
+
+/* ⚠️ RENDERS ITS BODY ONLY — the Sheet around it belongs to the layout (2026-09-15). This used to
+ * own its own Sheet, and the editor owned a second one, so opening an edit UNMOUNTED one Modal and
+ * MOUNTED another: two fade transitions back to back, with the bare screen showing in the gap
+ * between them. Founder: "when 'x' is used to click off, it goes back to my classes for a moment
+ * before showing 'what would you like to change?'". One window whose contents change has no gap
+ * to show. */
+export default function ProfilePortal({ mode = "change", values, onPick, onOpenProfile }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const check = mode === "check";
   const val = (kind) => (check && values && values[kind]) || null;
 
   return (
-    <Sheet visible onClose={onClose}
-      kicker="Your teaching"
-      title={check ? "Would you like to check your set-up?" : "What would you like to change?"}
-      sub={check
-        ? (sub || "Meyy started you off with its own suggested set-up. You can change any of it — or leave it and carry on teaching.")
-        : "Each item changes only itself — pick another for the next. Your lessons always stay in the library."}>
+    <>
       <View style={[ws.ap_list, ws.ap_grow_list]}>
         {PORTAL_ROWS.map((r) => (
           <Pressable key={r.kind} onPress={() => onPick && onPick(r.kind)}
@@ -86,6 +100,6 @@ export default function ProfilePortal({ mode = "change", sub, values, onPick, on
         <Text style={[ws.ap_foot_t, { color: t.pine }]}>Want to see your full teaching profile?</Text>
         <Text style={[ws.ap_foot_go, { color: t.ink_soft }]}>›</Text>
       </Pressable>
-    </Sheet>
+    </>
   );
 }

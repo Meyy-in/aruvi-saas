@@ -15,9 +15,10 @@ import { getUser } from "@aruvi/shared/format";
 import { cachedReadiness } from "@aruvi/shared/readiness";
 import { useTheme } from "../../theme/ThemeContext";
 import BottomNav from "../../components/BottomNav";
-import ProfilePortal from "../../components/ProfilePortal";
+import ProfilePortal, { portalChrome } from "../../components/ProfilePortal";
 import ProfileEditor from "../../components/ProfileEditor";
-import { subscribePortal, setPortalWin, enterPortal, openEdit } from "../../lib/portal";
+import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit } from "../../lib/portal";
+import { Sheet } from "../../components/AttachSheet";
 
 export default function AppLayout() {
   const { t } = useTheme();
@@ -28,6 +29,9 @@ export default function AppLayout() {
      2026-09-14 ("Rendered fewer hooks than expected"). */
   const [win, setWin] = useState(null);
   const [edit, setEdit] = useState(null);
+  /* What the open edit needs from the window's chrome — today just its ← , which exists only on
+     the duration step. Reported up by the editor, because the Sheet is owned here. */
+  const [editChrome, setEditChrome] = useState(null);
   useEffect(() => subscribePortal((p) => { setWin(p.win); setEdit(p.edit); }), []);
   if (!getUser()) return <Redirect href="/login" />;
 
@@ -41,43 +45,47 @@ export default function AppLayout() {
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.paper } }} />
-      {/* ★ THE PORTAL WINDOW LIVES IN THE LAYOUT, not in a screen (Track D 5d). On the web it
-          hangs off page.jsx, ABOVE the tab, because it must be reachable from anywhere and must
-          survive the screen underneath it changing. The phone's routes have nothing above them
-          except this layout, so this is where it goes — and it renders BELOW the Stack and ABOVE
-          the BottomNav, so the bar stays live behind it. A window that took the app's whole
-          navigation away would be the one screen she could not simply leave, which is the mistake
-          Ask Meyy's scrim made on the web in September. */}
-      {win ? (
-        <ProfilePortal mode={win.mode} sub={win.sub} values={win.values}
-          onClose={() => setPortalWin(null)}
-          onPick={(kind) => {
-            /* Each row is a spot edit on ONE subject·class, and the window does not resolve
-               WHICH — the pick screens do that (5d item 3). Until they exist, the scope is
-               resolved the way the web resolves it when there is nothing to ask: if she teaches
-               exactly one subject·class, go straight in. That is `portalPickClass`'s own
-               "straight in when only ONE is in play" rule, not a shortcut.
-               ⚠️ A teacher with more than one is NOT sent somewhere arbitrary — she is left on
-               the window, which is honest, until item 3 lands. Picking her first subject for her
-               would be a guess about which class she meant.
-               `enterPortal` remembers where she stepped out from AND the window to restore,
-               because a teacher who has just amended one item is exactly the person most likely
-               to want the next. */
-            const subs = (cachedReadiness() || {}).subjects || [];
-            const only = subs.length === 1 && (subs[0].grades || []).length === 1
-              ? { subject: subs[0].name, grade: subs[0].grades[0].grade } : null;
-            if (!only) return;
-            enterPortal({ originRoute: pathname, win, scope: { ...only, exact: true } });
-            openEdit({ intent: kind, ...only });
-          }}
-          onOpenProfile={() => { /* the full accordion arrives with Settings, step 6 */ }} />
+      {/* ★ ONE WINDOW, WHOSE CONTENTS CHANGE (founder, 2026-09-15: "when 'x' is used to click off,
+          it goes back to my classes for a moment before showing 'what would you like to change?'
+          — that time gap should not be there").
+          The portal and the editor each used to own a Sheet, so moving between them UNMOUNTED one
+          Modal and MOUNTED another: two fade transitions back to back, and in the gap between them
+          there was no scrim at all, so the bare screen flashed through. The state was already
+          batched — the flash was the Modals, not the data.
+          Now there is ONE Sheet. It stays mounted for the whole visit and only its children swap,
+          so there is no gap to show. It lives in the LAYOUT because on the web this hangs above
+          the tab: it must be reachable from anywhere and survive the screen underneath changing.
+          And it renders BELOW the Stack and ABOVE the BottomNav, so the bar stays live behind it —
+          a window that took the app's whole navigation away would be the one screen she could not
+          simply leave, which is the mistake Ask Meyy's scrim made on the web in September. */}
+      {(win || edit) ? (
+        <Sheet visible scroll={!!edit}
+          onClose={edit ? closeEdit : () => setPortalWin(null)}
+          onBack={edit ? (editChrome && editChrome.onBack) : undefined}
+          {...(edit ? {} : portalChrome(win.mode, win.sub))}>
+          {edit ? (
+            <ProfileEditor {...edit} onChrome={setEditChrome} />
+          ) : (
+            <ProfilePortal mode={win.mode} values={win.values}
+              onPick={(kind) => {
+                /* Each row is a spot edit on ONE subject·class, and the window does not resolve
+                   WHICH — the pick screens do that (5d item 3). Until they exist, the scope is
+                   resolved the way the web resolves it when there is nothing to ask: if she
+                   teaches exactly one subject·class, go straight in. That is `portalPickClass`'s
+                   own "straight in when only ONE is in play" rule, not a shortcut.
+                   ⚠️ A teacher with more than one is NOT sent somewhere arbitrary — she is left
+                   on the window, which is honest, until item 3 lands. */
+                const subs = (cachedReadiness() || {}).subjects || [];
+                const only = subs.length === 1 && (subs[0].grades || []).length === 1
+                  ? { subject: subs[0].name, grade: subs[0].grades[0].grade } : null;
+                if (!only) return;
+                enterPortal({ originRoute: pathname, win, scope: { ...only, exact: true } });
+                openEdit({ intent: kind, ...only });
+              }}
+              onOpenProfile={() => { /* the full accordion arrives with Settings, step 6 */ }} />
+          )}
+        </Sheet>
       ) : null}
-
-      {/* ★ AND THE EDIT ITSELF IS A WINDOW TOO, over whatever screen is underneath (founder,
-          2026-09-15). It sits BELOW the BottomNav for the same reason the portal does — the bar
-          stays live behind it, so she is never on a screen she cannot simply leave. Closing it
-          restores the portal window she opened it from, on save and on cancel alike. */}
-      {edit ? <ProfileEditor {...edit} /> : null}
 
       {/* My Lessons is live as of step 4b; the "+" portal is live as of 5d. Ask Meyy gets its
           screen in step 6 — until then that item renders (the bar must not change shape later)

@@ -272,6 +272,40 @@ export async function fetchEntitlement() {
   }
 }
 
+/* ───────── what her subscription actually covers ─────────
+ * THE BILLING UNIT IS subject·STAGE (stageOfGrade above), and the choosers must offer only
+ * what she has bought: post-trial, a paid teacher is shown the classes inside her paid
+ * stages and nothing else, with the upsell line below the wheel. `null` means NO LIMIT —
+ * trial, unpaid, a "*" grant, or enforcement off — and every caller must read null that way
+ * rather than as "nothing allowed".
+ *
+ * ⚠️ LIVE scopes, not every scope she has ever held (2026-08-26): each subject-stage carries
+ * its own expiry, so one may have run out while another runs on. The SERVER derives the list
+ * (`live_scopes`); the client compares no dates, the same rule as `lapsed`. `e.scopes` is the
+ * fallback for an older API.
+ *
+ * Lifted out of web/app/page.jsx on 2026-09-15 because the phone needed the same rule and the
+ * founder had just found it missing there: "the web app only shows those classes that the
+ * teacher has subscribed for … but expo shows all classes". CLAUDE.md §3 — everyone calls it,
+ * nobody re-implements it. */
+export function entLapsed(e) {
+  if (!e) return false;
+  return e.lapsed !== undefined ? !!e.lapsed : !!(e.enforced && e.status === "expired");
+}
+export function paidScopesOf(e) {
+  if (!e) return null;
+  return (e.enforced && !entLapsed(e) && (e.status === "active" || e.status === "grace"))
+    ? (Array.isArray(e.live_scopes) ? e.live_scopes : (e.scopes || []))
+    : null;
+}
+/* The stages she may be offered classes in, for ONE subject. null = no limit. */
+export function allowedStagesFor(paidScopes, subjectName) {
+  if (!Array.isArray(paidScopes) || paidScopes.includes("*")) return null;
+  const slug = subjectSlug(subjectName);
+  return new Set(paidScopes.filter((s) => String(s).split("/")[0] === slug)
+    .map((s) => String(s).split("/")[1]));
+}
+
 /* ───────── period apportionment — ONE method, defined once (2026-08-13) ─────────
  * Largest-remainder: split `total` whole periods across `weights`, giving every
  * remainder-ranked chapter one extra until the total is exactly used. This is the method

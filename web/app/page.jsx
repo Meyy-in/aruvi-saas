@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement } from "./lib/format";
+import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, entLapsed as lapsedOf } from "./lib/format";
 import { accountFirstName } from "./lib/account";
 import { verifiedWrite, readinessFingerprint } from "./lib/verify";
 import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache } from "./lib/sectionState";
@@ -854,11 +854,10 @@ export default function Home() {
     const sync = () => fetchEntitlement().then((e) => {
       if (!live || !e) return;
       /* `lapsed` comes from the SERVER (2026-08-26) — revoked OR run out by date, one
-         rule in one place. The status fallback keeps an older API honest. */
-      const isLapsed = e.lapsed !== undefined
-        ? !!e.lapsed
-        : !!(e.enforced && e.status === "expired");
-      setEntLapsed(isLapsed);
+         rule in one place. The status fallback keeps an older API honest. Both this and the
+         scopes below now read the SHARED derivation (lib/format → @aruvi/shared), because the
+         phone needs the same answer and had been going without it. */
+      setEntLapsed(lapsedOf(e));
       /* ★ TRIAL IS WHAT HER RECORD SAYS, NOT WHETHER THE GATE IS ON (2026-09-11 — the
          2026-08-26 rule for `active`, now applied to its other half). This used to require
          `e.enforced`, so on the deployed API (enforcement OFF for the beta, by design) no
@@ -866,8 +865,7 @@ export default function Home() {
          Personal profile showed to a trial account — found by the founder on 9000000003.
          Enforcement decides what is REFUSED; the status decides what is TRUE. */
       setEntTrial(e.status === "trial" || e.plan_id === "trial");
-      setPaidScopes((e.enforced && !isLapsed && (e.status === "active" || e.status === "grace"))
-        ? (Array.isArray(e.live_scopes) ? e.live_scopes : (e.scopes || [])) : null);
+      setPaidScopes(paidScopesOf(e));
     });
     sync();
     /* MID-SESSION REVOCATION lands fast (founder, 2026-08-24): re-check on focus /

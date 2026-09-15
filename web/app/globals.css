@@ -5327,5 +5327,15 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 .tp-window-card .tp { padding-top: 2px; }
 /* Inside the window the ✕ is the way out, so the flow's footer "← Back" / "Cancel" links are
    redundant — and each costs a row of a card whose height is the standing problem. They stay on
-   the full-page Settings visit, which has no ✕ of its own. */
+   the full-page Settings visit, which has no ✕ of its own.
+   ⚠️ BOTH PLACES A LINK CAN SIT (fixed 2026-09-15, founder: "in the 'how many periods a week?'
+   there is cancel button at bottom — remove it" … "same for annual period budget"). The first
+   version of this rule named only the DIRECT child, so every Cancel that lives inside the step's
+   own `.fr-foot` beside its Continue — periods-a-week, the annual budget — went on rendering.
+   The rule was always "the corners do the navigating"; the selector simply did not reach them.
+   ⚠️ AND `:not(.fr-center)` IS LOAD-BEARING, not tidiness. `fr-link fr-center` is what the
+   CONFIRM blocks use for their "Keep it" / "Keep them" — the way to say NO to a removal. A
+   blanket `.tp .fr-link` would hide those, leaving a warning with only its destructive answer
+   on it. The ✕ replaces a way OUT; it does not replace a way to decline. */
 .tp-window-card .tp > .fr-link { display: none; }
+.tp-window-card .tp .fr-foot > .fr-link:not(.fr-center) { display: none; }

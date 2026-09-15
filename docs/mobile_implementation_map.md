@@ -55,16 +55,26 @@ the wait moves to My Lessons), the bottom bar, the org-page-until-taught rule, t
 | — | "Total periods" vanished on iOS — `flex: 1` on a label that had stopped being the whole cell. ⚠️ Two earlier explanations (a zero flex-basis; a wrapper View breaking baseline alignment) were confidently wrong; the handset settled it | `f2dda0c0`, `+1` | iPhone (founder) ✅ |
 | **F3·F7** | `shared/setupCheck.js` (the check-window queue, 11 tests) and `mobile/lib/portal.js` (origin route + the window to restore) | `65c1bf1d` | tests only — the web tab's session had expired; walk owed |
 | **5d·2** | The **ProfilePortal window**, mounted in the layout above the BottomNav. **Q3 and Q4 answered**; Q4's stale "basket on the class" hint fixed on the WEB too | `fe818c73` | 🔴 unreachable — `onAdd` dark by design |
+| **5d·4** | **Manage classes** — the class wheel, its removal confirm, and the cascade. The fourth of the window's rows, so **ADD went live** in the same commit | `9a1546ec` | Expo |
+| — | **Every profile edit became a WINDOW, not a full screen, on BOTH surfaces** (founder: "the ADD opens a window but individual changes open full screen — suggest the changes also be contained in a window"). The web's spot edit renders BESIDE the tab content so the scrim has something to haze; the phone's `(app)/profile.jsx` route became `components/ProfileEditor.jsx`. `lib/paneIntent.js` was DELETED — the mechanism went away rather than gaining a case | `0e7227da` | web + Expo |
+| — | The window's CORNERS do the navigating: ✕ top-right, ← only where a step has one. Bottom back buttons gone, and the height they cost with them | `2d7ac21d` | Expo |
+| — | The section hint cut to one sentence (both surfaces); the Expo kicker's colour and its gap to the heading matched to the web | `522b377d` | web + Expo |
+| — | The ✕ was untappable on the handset: the corners were painted BEFORE the ScrollView body, so a transparent scroller lay over them. Order, not `zIndex` (which needs `elevation` on Android). And `openEdit` was nulling the window `closeEdit` then tried to restore — `winBack` remembers it | `63adafaf` | iPhone (founder) |
+| — | **ONE Sheet, whose children swap** (founder: "when ✕ is used to click off, it goes back to my classes for a moment before showing 'what would you like to change?' — that time gap should not be there"). The portal and the editor each owned a Modal, so moving between them unmounted one and mounted another: two fades back to back with NO scrim in the gap, and the bare screen flashed through. The state was already batched — the flash was the Modals. `ProfilePortal` and `ProfileEditor` are now body-only; the layout owns the Sheet and the editor reports its ← up through `onChrome` | *this commit* | Expo, end to end |
+| — | **What Meyy HAS and what she has BOUGHT are two different lists** (founder: "the web app only shows those classes that the teacher has subscribed for … but expo shows all classes"). `paidScopesOf` / `entLapsed` / `allowedStagesFor` lifted from `page.jsx` and `TeachingProfile.jsx` into `shared/format.js` (7 tests), and the phone's class wheel filters by them. 9000000003 was being offered Classes 6–9 she cannot buy from that screen; she now sees 3, 4, 5 and the subscription note, exactly as the web does | *this commit* | Expo + 7 tests |
+| — | The web's windowed steps still drew a bottom **Cancel** beside their Continue (founder, twice: periods-a-week, then the annual budget). The 2026-09-15 rule was right and its SELECTOR was short — `.tp > .fr-link` reached only direct children. Widened to the step's own `.fr-foot`, with `:not(.fr-center)` so the confirm blocks keep their "Keep it" | *this commit* | 🟡 web walk owed — no dev server up |
 
 **★ 5c IS NOT A SEPARATE STEP ANY MORE.** Founder's answer to Q1 was HOLD: the budget screen's own
 sense-check pencil leads to the ppw wheel, so shipping it before the numbers editor would only have moved
 the dead end one level down. Both pencils lit together in `ff8cf0c1`.
 
-**Still owed on 5d** (the order below is §2's, minus what landed): the two pick screens · **the section
-editor (next)** · manage classes · add a subject · the check-mood window (**Q9**, the only question left).
-🔴 **`onAdd` stays dark until Section and Class have screens** — two of the window's four rows still lead
-nowhere, and a window half of whose rows do nothing is the thing 4b and Q1 both refused.
-`SecNameCell` is still owed too — `PickWheel`'s trailing column carries it, but nothing renders one yet.
+**Still owed on 5d** (the order below is §2's, minus what landed): the **two pick screens** (for a teacher
+with more than one subject·class — until they exist a row on such a profile is honestly left on the window
+rather than guessing a scope) · **add a subject** (Q3: add mode only) · the **check-mood window** (**Q9**,
+the only question left). ✅ `onAdd` is LIVE since `9a1546ec` — all four rows lead somewhere.
+⚠️ When F5 lands (6a), the window must NOT open while she is lapsed: the growth entry points hide on an
+expired subscription. That is the web's rule and the phone owes it; enforcement is off server-side for
+every teacher today, so it is a note to keep, not a gap to close now.
 
 **What the phone is today, in one sentence:** a teacher who already has a profile can teach (LessonView,
 full), track (My Classes), browse and prepare (My Lessons, Prepare, Year Plan), and now **amend her week and
@@ -72,8 +82,8 @@ her year** (periods a week, period lengths and their split, the annual budget) �
 teacher (no first run), *add or remove* what she teaches (Add is inert), *reach* Settings (gear is inert),
 *ask* Meyy (item is inert), or *export* anything.
 
-**The four inert doors** are the shape of the remaining work:
-`(app)/_layout.jsx` — `onAdd={() => {}}`, `onAsk={() => {}}`; `Bar.jsx` — gear `disabled={!onSettings}`
+**The remaining inert doors** are the shape of the remaining work (ADD opened on 2026-09-15):
+`(app)/_layout.jsx` — `onAsk={() => {}}`; `Bar.jsx` — gear `disabled={!onSettings}`
 and no screen passes one; `(app)/index.jsx:255` — "No classes yet — set up your teaching profile (first run
 comes in a later step)."
 
@@ -100,7 +110,9 @@ F1 ✅shared/readiness.js: saveReadiness()      ──►  5c budget editor · 5
 F2 ✅shared/profile.js + shared/ppw.js         ──►  5d (ppw/duration/sections) · 5e (chapter step seeds)
 F3  shared/setupCheck.js (ProfilePortal queue)──►  5d check-mood window · 6a shell
 F4 ✅shared/account.js  (GET /account store)   ──►  6a bar name + greeting · 5e first name · Settings › Personal
-F5  shared/entitlement.js (poll + lapsed/trial/paidScopes) ─► 6a bar hiding · 5d scope filters · Settings › Subscription · My Lessons CTA
+F5 🟡shared/entitlement.js — the SCOPE half landed 2026-09-15 in shared/format.js
+     (paidScopesOf · entLapsed · allowedStagesFor); the POLL half (focus/visibility/interval) is owed
+                                               ─►  6a bar hiding · 5d scope filters ✅ · Settings › Subscription · My Lessons CTA
 F6  shared/year.js (GET /academic-year + cutover) ─► 6a cutover offer/result · prior-year folders (My Classes picker, My Lessons) · YearStamp
 F7  mobile/lib/portal.js (origin store, preparing.js idiom) ─► 5d every exit · Year Plan pencil round trip
 F8 🟡PickWheel + PpwSplitCell done; SecNameCell owed ─► 5d sections/classes/subjects/durations · 5e (none — FirstRun uses RollWheel)
