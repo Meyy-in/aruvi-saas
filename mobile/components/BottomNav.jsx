@@ -108,7 +108,10 @@ export default function BottomNav({ active = null, onClasses, onLessons, onAdd, 
           <Item Icon={AddIcon} label="Add" onPress={onAdd}
             hint="Add or change subjects, classes, or sections" />
         )}
-        <Item Icon={AskIcon} label="Ask Meyy" onPress={onAsk} />
+        {/* ★ IT LIGHTS LIKE A PLACE WHILE THE PANEL IS UP (6c) — `active === "ask"`, the web's
+            `askOpen ? "active" : ""`. And while it is lit the other three are not: the shell
+            computes `active` as "ask" first, so the bar never claims she is in two places. */}
+        <Item Icon={AskIcon} label="Ask Meyy" active={active === "ask"} onPress={onAsk} />
       </View>
     </View>
   );

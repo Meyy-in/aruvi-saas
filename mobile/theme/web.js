@@ -1489,6 +1489,76 @@ export function webStyles(t, scheme = "light") {
     yp_note:         { marginTop: 16, marginBottom: 20, fontFamily: F.body(400, true), fontSize: 14,
                        lineHeight: 22.68, color: t.ink },
     yp_note_b:       { fontFamily: F.body(600), fontStyle: "normal" },
+
+    /* ── Ask Meyy (`.aa-*`, AskAruvi.jsx's scoped + global styles) — 6c, measured 2026-09-16
+       in the 390px iframe on the running web (the bank is loaded there, so every state below
+       was measured against real rows, not an empty panel). ────────────────────────────────
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start.
+       ★ The scrim's box is NOT here and must not be: the web pins it with `top: var(--hdr-h)`
+       and `bottom: var(--bnav-h)`, two numbers it MEASURES at runtime. The phone measures its
+       own (the layout's chrome height, and `BNAV_H` + the safe-area inset), so the geometry
+       belongs to the component that has those numbers. What is here is the fill. */
+    aa_scrim:        { backgroundColor: "rgba(20,16,10,0.34)" },
+    /* `max-width: 720` and the 16px bottom radius are ≥721px rules — no phone reaches either,
+       so the panel is simply the full width of the scrim, in paper. */
+    aa_panel:        { flex: 1, overflow: "hidden" },
+
+    /* Title bar. 16/20/12 with a `--line` hairline under it. */
+    aa_top:          { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                       paddingTop: 16, paddingBottom: 12, paddingHorizontal: 20, borderBottomWidth: 1 },
+    aa_title_row:    { flexDirection: "row", alignItems: "center", columnGap: 10 },
+    aa_title:        { fontFamily: F.display(600), fontSize: 20, lineHeight: 31 },
+    /* The 26px pine disc the stream-and-dot mark sits in. ⚠️ Its dot is `#e8b4a0`, NOT the
+       bar's `#c0392b`: on pine, the red goes muddy and the clay one reads. */
+    aa_q:            { width: 26, height: 26, borderRadius: 13, alignItems: "center",
+                       justifyContent: "center" },
+    aa_close:        { fontSize: 17, lineHeight: 19, padding: 6 },
+
+    /* Search. `position: sticky` is the web's; on the phone the box is simply the row above
+       the scroller, which is what sticky resolves to here. */
+    aa_search:       { paddingTop: 12, paddingBottom: 10, paddingHorizontal: 20, borderBottomWidth: 1 },
+    /* 16px exactly, for the reason `sup_text` is: under 16 iOS zooms a focused field. */
+    aa_search_input: { borderWidth: 1, borderRadius: 10, paddingVertical: 11, paddingHorizontal: 14,
+                       fontFamily: F.body(400), fontSize: 16, lineHeight: 24.8 },
+    aa_count:        { fontFamily: F.mono(400), fontSize: 11, lineHeight: 17.05, letterSpacing: 0.44,
+                       textTransform: UP, marginTop: 9, marginBottom: 1, marginHorizontal: 2 },
+
+    /* The scroll region. NO top padding — the web's own note: a band above the stuck category
+       header is where a scrolling question flashes into view before sliding under it. */
+    aa_body:         { paddingHorizontal: 20, paddingBottom: 40 },
+    aa_results:      { paddingTop: 6 },
+
+    /* Categories. */
+    aa_cat:          { borderBottomWidth: 1 },
+    aa_cat_head:     { flexDirection: "row", alignItems: "center", columnGap: 12,
+                       paddingVertical: 15, paddingHorizontal: 2 },
+    /* ONE marker, not five: the rail keeps its 4px of gutter on every row so the titles stay
+       aligned, and paints only on the marked category. `alignSelf: stretch` is the web's. */
+    aa_cat_bar:      { width: 4, minHeight: 30, borderRadius: 3, alignSelf: "stretch" },
+    aa_cat_text:     { flex: 1, minWidth: 0 },
+    aa_cat_title:    { fontFamily: F.display(600), fontSize: 16.5, lineHeight: 20 },
+    aa_cat_desc:     { fontFamily: F.body(400), fontSize: 13, lineHeight: 17.55, marginTop: 2 },
+    aa_cat_meta:     { flexDirection: "row", alignItems: "center", columnGap: 10 },
+    aa_cat_n:        { fontFamily: F.mono(400), fontSize: 12, lineHeight: 16, minWidth: 20,
+                       textAlign: "right" },
+    aa_cat_list:     { paddingTop: 2, paddingBottom: 10 },
+
+    /* An answer row — the same object in both modes. */
+    aa_item:         { borderTopWidth: 1 },
+    aa_item_q:       { flexDirection: "row", alignItems: "flex-start", columnGap: 10,
+                       paddingVertical: 13, paddingHorizontal: 2 },
+    aa_item_plus:    { width: 14, fontFamily: F.mono(400), fontSize: 14, lineHeight: 19.6, marginTop: 1 },
+    aa_item_qtext:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 15.5, lineHeight: 21.7 },
+    aa_item_tag:     { fontFamily: F.mono(400), fontSize: 9, lineHeight: 12.6, letterSpacing: 0.72,
+                       textTransform: UP, borderWidth: 1, borderRadius: 20,
+                       paddingVertical: 2, paddingHorizontal: 7, marginTop: 1, overflow: "hidden" },
+    /* `white-space: pre-wrap` on the web; RN's Text keeps the newlines for free. */
+    aa_item_a:       { fontFamily: F.body(400), fontSize: 15, lineHeight: 24,
+                       paddingLeft: 24, paddingRight: 2, paddingBottom: 15 },
+
+    /* The one state with no answers. Quiet prose, not an error — see the component. */
+    aa_empty:        { paddingVertical: 34, paddingHorizontal: 22, maxWidth: 420 },
+    aa_empty_p:      { fontFamily: F.body(400), fontSize: 15, lineHeight: 24, marginBottom: 10 },
   };
 }
 

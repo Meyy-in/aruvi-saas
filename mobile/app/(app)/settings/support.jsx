@@ -51,6 +51,7 @@ import Dropdown from "../../../components/Dropdown";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
 import { type } from "../../../theme/type";
+import { openAsk } from "../../../lib/ask";
 
 /* Only ever a fallback for a server that sends no list — the categories are the API's
    (`mail_templates.SUPPORT_CATEGORIES`) and the stored `category_label` is what the founder
@@ -207,8 +208,12 @@ export default function Support() {
         Most questions about how Meyy works are answered straight away by Ask Meyy. For anything
         else, write to us below.
       </Text>
-      <Pressable disabled accessibilityLabel="Ask Meyy"
-        style={[ws.set_bigcard, { backgroundColor: t.card_bg, borderColor: t.line, opacity: 0.5 }]}>
+      {/* ✅ LIVE AS OF 6c (F3). It rendered dark and inert while the panel did not exist — the
+          Settings idiom for an unbuilt destination. It opens the panel OVER this screen, which is
+          what makes it a deflection rather than a detour: she can read an answer and come straight
+          back to the half-written message underneath. */}
+      <Pressable onPress={openAsk} accessibilityRole="button" accessibilityLabel="Ask Meyy"
+        style={[ws.set_bigcard, { backgroundColor: t.card_bg, borderColor: t.line }]}>
         <View style={{ flexGrow: 0, flexShrink: 0 }}><AskMark color={t.pine} /></View>
         <View style={ws.set_bigtext}>
           <Text style={[ws.set_biglab, { color: t.ink }]}>Ask Meyy</Text>

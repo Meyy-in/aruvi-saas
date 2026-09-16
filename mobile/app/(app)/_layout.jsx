@@ -33,6 +33,8 @@ import {
 import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit, editBackToPick,
          openPick, pickSubject, pickBackToSubject, closePick, clearPortal } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
+import AskMeyy from "../../components/AskMeyy";
+import { closeAsk, subscribeAsk, toggleAsk } from "../../lib/ask";
 
 export default function AppLayout() {
   const { t } = useTheme();
@@ -104,6 +106,24 @@ export default function AppLayout() {
      a refused session must not be papered over with a stored subscription. */
   const [ent, setEnt] = useState(() => entitlementState());
   useEffect(() => subscribeEntitlement(setEnt), []);
+
+  /* ── ASK MEYY (6c) ─────────────────────────────────────────────────────────────────────
+     The web's `askOpen`, which lives in `page.jsx` because everything that opens the panel is a
+     child of it. Here the bar is in the shell and the two cards that also open it (Settings ›
+     Help, Support › Ask Meyy) are ROUTES inside the Stack, with nothing above them to thread a
+     prop through — so the flag is a module store (`lib/ask`) and this subscribes to it.
+     `barH` is the phone's `--hdr-h`, and the web says in as many words what that is: "the brand
+     row's underside (AskAruvi's scrim hangs off this)" (page.jsx:301). So the panel starts under
+     the BRAND BAR and covers everything below it — the Settings bar and any notice included,
+     exactly as the web's scrim covers its tab row.
+     ⚠️ AND THAT IS NOT A DETAIL. Left under the Settings bar, the panel put TWO ✕ on the screen
+     at once — one saying "Support", one saying "Ask Meyy" — and the top one would have closed the
+     screen UNDERNEATH, leaving the help hanging over a screen it was never opened from. Measured
+     rather than taken from `BAR_CONTENT_H`, because the bar's height includes a safe-area inset
+     that differs by handset. */
+  const [askOpen, setAskOpen] = useState(false);
+  useEffect(() => subscribeAsk(setAskOpen), []);
+  const [barH, setBarH] = useState(0);
   useEffect(() => {
     let live = true;
     let iv = null;
@@ -237,7 +257,11 @@ export default function AppLayout() {
   const inSettings = pathname.startsWith("/settings");
   /* Settings lights NOTHING — the bar stays up (founder, 2026-09-14: a screen that takes the
      app's nav away leaves exactly one way out of itself) but claims none of its four places. */
-  const active = inSettings ? null
+  /* ★ WHILE ASK MEYY IS OPEN IT CARRIES THE CLAY AND NOTHING ELSE DOES — the web's
+     `activeNav === "classes" && !askOpen`. The bar answers "where are you", and while the panel
+     is up she is in the panel; two lit items would be the bar disagreeing with itself. */
+  const active = askOpen ? "ask"
+    : inSettings ? null
     : pathname.startsWith("/lessons") ? "lessons" : "classes";
 
   /* ★ THE LINE AND THE VALUES ARE COMPUTED AT RENDER, NOT FROZEN INTO THE WINDOW. She opens a row,
@@ -272,7 +296,11 @@ export default function AppLayout() {
           there is no stack to keep it for you.
           ⚠️ Shell-LESS screens keep their own: login, the privacy notice and first run live
           OUTSIDE `(app)` by design (§0, Q23), and first run's carries `gear={false}`. */}
-      <Bar onSettings={() => router.push("/settings")} />
+      {/* The onLayout is Ask Meyy's `--hdr-h` — see `barH` above. It wraps the BRAND BAR and
+          nothing else, because that is what the web measures. */}
+      <View onLayout={(e) => setBarH(e.nativeEvent.layout.height)}>
+        <Bar onSettings={() => router.push("/settings")} />
+      </View>
       {/* ★ THE FROZEN SETTINGS BAR (app. 04 rows A3-A5) sits in the slot the web's tab row
           occupies, below the brand bar, with NO hairline under it (founder). It is drawn HERE
           rather than by each Settings screen for the reason the brand bar is: one shell, and a
@@ -390,9 +418,16 @@ export default function AppLayout() {
         </Sheet>
       ) : null}
 
-      {/* My Lessons is live as of step 4b; the "+" portal is live as of 5d. Ask Meyy gets its
-          screen in step 6 — until then that item renders (the bar must not change shape later)
-          and does nothing.
+      {/* ★ ASK MEYY (6c) — ABOVE THE STACK, BELOW THE BAR. That ordering is the whole design: the
+          nav stays live behind the panel, so the one screen a teacher opens when she is stuck is
+          not also the one screen she cannot leave. It is the founder's 2026-09-13 call on the
+          web's scrim, ported as a placement rather than as a z-index.
+          ⚠️ It is held until `barH` has been reported. For one frame after mount the height is 0
+          and the panel would start at the top of the window, over the brand bar — one frame of a
+          panel jumping down the screen, for nothing. */}
+      {askOpen && barH > 0 ? <AskMeyy top={barH} onClose={closeAsk} /> : null}
+
+      {/* My Lessons is live as of step 4b; the "+" portal is live as of 5d; Ask Meyy as of 6c.
 
           ⚠️ `navigate`, NEVER `push` (founder-reported delay, 2026-09-14). These four are PLACES,
           not steps in a journey: pushing put a SECOND copy of My Classes on the stack every time
@@ -410,16 +445,22 @@ export default function AppLayout() {
            "+" window is about a profile and there is nothing to change before there is one. */
         showClasses={!ent.lapsed}
         showAdd={ready && !ent.lapsed}
-        onClasses={() => router.navigate("/")}
-        onLessons={() => router.navigate("/lessons")}
+        /* ⚠️ THE THREE DESTINATIONS CLOSE THE PANEL AND GO — the web's `setAskOpen(false)` on
+           each of them. Ask Meyy is help ABOUT the app; leaving it up over a screen she has just
+           navigated to would be the panel outliving the question that opened it. */
+        onClasses={() => { closeAsk(); router.navigate("/"); }}
+        onLessons={() => { closeAsk(); router.navigate("/lessons"); }}
         /* ★ ADD IS LIVE (2026-09-15). It was held until all four of the window's rows led
            somewhere — the call the founder made twice before, on 4b's Year Plan pencil and on
            Q1's HOLD. Class was the last of the four.
            ✅ F5 LANDED (6a, 2026-09-16): the window no longer opens while she is lapsed — the
            item is not in the bar (`showAdd` above), the Sheet does not render, and anything
            open is closed. Enforcement is still off server-side, so this is dormant, not dead. */
-        onAdd={() => setPortalWin({ mode: "change" })}
-        onAsk={() => {}}
+        onAdd={() => { closeAsk(); setPortalWin({ mode: "change" }); }}
+        /* ★ TOGGLE, not open (the web's `setAskOpen((v) => !v)`). Ask Meyy is the one item in the
+           bar that is a PANEL and not a place, so the item that raised it is also how she puts it
+           away — the ✕ is a second door, not the only one. */
+        onAsk={toggleAsk}
       />
     </View>
   );

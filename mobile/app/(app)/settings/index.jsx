@@ -36,6 +36,7 @@ import Checkbox from "../../../components/Checkbox";
 import ThemeToggle from "../../../components/ThemeToggle";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
+import { openAsk } from "../../../lib/ask";
 
 /* One card. `onPress` absent → the destination is not built yet: dimmed and inert, never hidden,
  * because the LIST is the founder's structure. */
@@ -204,7 +205,10 @@ export default function SettingsHome() {
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
       <BigCard label="Teaching profile"
         sub="Subjects, classes, sections and periods you teach" />
-      <BigCard label="Help" sub="Ask Meyy guide" />
+      {/* ✅ LIVE AS OF 6c. `openAsk`, not a route: Ask Meyy is a panel over the shell, so it opens
+          OVER Settings with the bar still live — the web's own behaviour (B3). Nothing is pushed,
+          so the ✕ she closes it with leaves her exactly here. */}
+      <BigCard label="Help" sub="Ask Meyy guide" onPress={openAsk} />
       <BigCard label="Support" sub="Write to us — we reply by email"
         onPress={() => router.push("/settings/support")} />
       <BigCard label="Subscription & billing" sub="Plan, billing & usage"
