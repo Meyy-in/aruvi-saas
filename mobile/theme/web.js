@@ -935,6 +935,34 @@ export function webStyles(t, scheme = "light") {
        Raised ONLY on a verified mismatch, where the server's copy is the truth and hers has
        already been replaced on screen. It is a statement about what she is now looking at, not
        an apology, which is why it is one line and a Dismiss rather than a retry. */
+    /* ── the academic-year cutover (`.dash-nudge`/`.yr-nudge`/`.yr-done`, globals.css 3420-3427,
+       4248-4269) — 6a F6, measured 2026-09-16 ──────────────────────────────────────────────
+       A tint-pine card with a 1.5px pine border, and a 3px left rule that says WHICH card it is:
+       ochre for the offer (a decision is open), pine for the result (it is closed). The web
+       carries a box-shadow; RN needs elevation/shadow* and the app draws no other shadowed card,
+       so it is omitted — the border and the fill are what make it a card here.
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    dash_nudge:      { position: "relative", borderWidth: 1.5, borderRadius: 14,
+                       paddingTop: 15, paddingHorizontal: 17, paddingBottom: 14,
+                       marginTop: 20, marginBottom: 6, marginHorizontal: 18 },
+    dash_nudge_title:{ fontFamily: F.display(500), fontSize: 17, lineHeight: 22.1 },
+    dash_nudge_sub:  { fontFamily: F.body(400), fontSize: 13, lineHeight: 18.85, marginTop: 3 },
+    /* ⚠️ A FACE AND NOTHING ELSE. A nested Text that also names a size stops inheriting the
+       block it sits in, so the bold year would grow mid-sentence — the `lgl_b` lesson. */
+    dash_nudge_sub_b:{ fontFamily: F.body(600) },
+    yr_x:            { position: "absolute", top: 6, right: 8, paddingVertical: 8,
+                       paddingHorizontal: 10 },
+    yr_x_glyph:      { fontFamily: F.body(400), fontSize: 14, lineHeight: 14 },
+    /* Keeps a long year label clear of the ✕ — the web's `.yr-nudge .dash-nudge-title`. */
+    yr_title_pad:    { paddingRight: 30 },
+    yr_nudge_row:    { flexDirection: "row", alignItems: "center", flexWrap: "wrap",
+                       columnGap: 12, rowGap: 8, marginTop: 12 },
+    yr_nudge_go:     { paddingVertical: 9, paddingHorizontal: 16, borderRadius: 6 },
+    yr_nudge_go_t:   { fontFamily: F.mono(400), fontSize: 11.5, letterSpacing: 0.575,
+                       textTransform: UP },
+    /* The quiet twin: a real control, weighted so it never competes with the primary one. */
+    yr_nudge_later:  { paddingVertical: 9, paddingHorizontal: 14, borderRadius: 6 },
+
     /* ── the shell's "notice updated" bar (`.pn-note`, globals.css 5296-5306) — 6a F10 ──
        Measured 2026-09-16. Quiet by design: nothing is WRONG, so it is paper rather than the
        save-failed bars' clay edge, and it carries a 3px pine rule down its left instead. The

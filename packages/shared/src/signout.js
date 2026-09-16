@@ -26,6 +26,7 @@ import { clearPlans, PLANS_CACHE_PREFIX } from "./plans.js";
 import { clearReadiness, READINESS_CACHE_PREFIX } from "./readiness.js";
 import { clearAccount, ACCOUNT_CACHE_PREFIX } from "./account.js";
 import { clearEntitlement, ENTITLEMENT_CACHE_PREFIX } from "./entitlement.js";
+import { clearYear } from "./year.js";
 import { clearUser } from "./format.js";
 
 export const TEACHER_CACHE_PREFIXES = [
@@ -50,6 +51,10 @@ export function clearTeacherCaches(extraPrefixes = []) {
                                  // teacher to sign in must not be greeted as this one.
   clearEntitlement();            // …nor her SUBSCRIPTION: a lapsed teacher's stored entitlement
                                  // would paint the next teacher's first frame without My Classes.
+  clearYear();                   // …nor her cutover DISMISSAL. Memory only (nothing is stored),
+                                 // and the store keys itself to the teacher besides — but a
+                                 // module that keeps running across a sign-out is exactly how
+                                 // the web handed one teacher's dismissal to the next.
   clearUser();
   // belt and braces: anything the named clears missed, plus the app's own per-user keys
   n += removeByPrefix([...TEACHER_CACHE_PREFIXES, ...extraPrefixes]);

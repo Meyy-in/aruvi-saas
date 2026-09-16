@@ -16,6 +16,7 @@ import { pullSectionState, setSectionMismatchHandler } from "@aruvi/shared/secti
 import { refreshBank } from "@aruvi/shared/ask-aruvi/bank";
 import { cachedReadiness, cachedReady, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { entitlementState, subscribeEntitlement, syncEntitlement } from "@aruvi/shared/entitlement";
+import { fetchYear } from "@aruvi/shared/year";
 import { endSession } from "../../lib/session";
 import { useTheme } from "../../theme/ThemeContext";
 import Bar from "../../components/Bar";
@@ -106,7 +107,15 @@ export default function AppLayout() {
   useEffect(() => {
     let live = true;
     let iv = null;
-    const sync = () => { if (live) syncEntitlement({ onUnauthorized: () => endSession(router) }); };
+    /* ⚠️ THE YEAR RIDES THE SAME CADENCE, and that is not laziness — it is the web's own
+       pairing: both are server-decided facts that can turn while she is looking at the screen,
+       and both are re-read on focus there. It also means the plan store learns the current year
+       (`notePlansYear`, inside `fetchYear`) wherever she lands, not only on My Classes. */
+    const sync = () => {
+      if (!live) return;
+      syncEntitlement({ onUnauthorized: () => endSession(router) });
+      fetchYear();
+    };
     const start = () => { sync(); if (!iv) iv = setInterval(sync, 20000); };
     const stop = () => { if (iv) { clearInterval(iv); iv = null; } };
     start();

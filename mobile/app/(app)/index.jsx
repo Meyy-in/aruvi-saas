@@ -15,6 +15,10 @@ import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, subjectSlug, classNum, pad } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
+import { cutoverOffered, dismissCutover, dismissCutoverResult, fetchYear, runCutover,
+         subscribeYear } from "@aruvi/shared/year";
+import { markGenerated } from "../../lib/firstRun";
+import { CutoverOffer, CutoverDone } from "../../components/YearNudge";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
@@ -97,6 +101,17 @@ export default function Home() {
      thing on this screen that reads it, and it is about to move to Settings (6b). */
   const [ent, setEnt] = useState(() => entitlementState().ent);
   useEffect(() => subscribeEntitlement((e) => setEnt(e.ent)), []);
+
+  /* ── THE ACADEMIC-YEAR CUTOVER (6a F6) ──────────────────────────────────────────────────
+     The offer and its result sit at the TOP of this screen, above the greeting, because from
+     the cutover date onwards this is the first thing she is being asked. `@aruvi/shared/year`
+     holds every rule about when and what it clears; this screen only draws and dispatches.
+     ⚠️ RE-READ ON FOCUS, not only on mount. `navigate` does not remount this screen, and a
+     teacher who leaves the app open across midnight on 1 June should be offered it without
+     relaunching — the same reason the web listens on `visibilitychange`. */
+  const [year, setYear] = useState(null);
+  useEffect(() => subscribeYear(setYear), []);
+  useFocusEffect(useCallback(() => { fetchYear(); }, []));
   const [tick, setTick] = useState(0);   // re-read local section state after returning from a lesson
 
   /* ★ ENDING THE SESSION IS ONE ACT, AND A 401 IS ONE OF ITS DOORS (2026-09-13).
@@ -336,6 +351,19 @@ export default function Home() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
+      {/* ★ THE CUTOVER COMES BEFORE THE GREETING. From the cutover date onwards it is the first
+          thing this screen has to say, and a greeting above it would read as the app changing
+          the subject. `markGenerated()` on the way out: she has just emptied her current year ON
+          PURPOSE, so the activation gate must never mistake her for a teacher who has never
+          generated and send her to first run. */}
+      {year && cutoverOffered() ? (
+        <CutoverOffer info={year.info} busy={year.busy}
+          onStart={() => runCutover({ onDone: markGenerated })}
+          onDismiss={dismissCutover} />
+      ) : null}
+      {year && year.result ? (
+        <CutoverDone result={year.result} onDismiss={dismissCutoverResult} />
+      ) : null}
       {/* ★ THE GREETING (the web's .dash-hd). It is sticky on the web — pinned under the bar at
           the top of the one scroll region — so here it sits ABOVE the scroller, which is the
           same thing without a sticky. The "My classes" mono label that used to open this screen
