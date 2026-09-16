@@ -12,6 +12,7 @@
  *   section_history_ + owner section chapter ledger (sectionHistory.js)
  *   chapter_notes_           the notes editor's optimistic cache (LessonView / web page.jsx)
  *   aruvi_ask_bank(_etag)    the Ask Meyy bank (ask-aruvi/bank.js)
+ *   aruvi_entitlement_       her subscription (entitlement.js) — what the shell hides on a lapse
  *   aruvi_plans_            the per-subject·class plan listing, with her prepared flags (plans.js)
  *   sb-…-auth-token          supabase-js's own session, when the app gave it the same storage
  *
@@ -24,6 +25,7 @@ import { clearBank } from "./ask-aruvi/bank.js";
 import { clearPlans, PLANS_CACHE_PREFIX } from "./plans.js";
 import { clearReadiness, READINESS_CACHE_PREFIX } from "./readiness.js";
 import { clearAccount, ACCOUNT_CACHE_PREFIX } from "./account.js";
+import { clearEntitlement, ENTITLEMENT_CACHE_PREFIX } from "./entitlement.js";
 import { clearUser } from "./format.js";
 
 export const TEACHER_CACHE_PREFIXES = [
@@ -34,6 +36,7 @@ export const TEACHER_CACHE_PREFIXES = [
   PLANS_CACHE_PREFIX,            // the per-subject plan listing (plans.js) — carries HER flags
   READINESS_CACHE_PREFIX,        // her teaching profile (readiness.js) — subjects, classes, sections
   ACCOUNT_CACHE_PREFIX,          // her account (account.js) — the NAME on the bar and in the greeting
+  ENTITLEMENT_CACHE_PREFIX,      // her subscription (entitlement.js) — what the shell hides on a lapse
 ];
 
 export function clearTeacherCaches(extraPrefixes = []) {
@@ -45,6 +48,8 @@ export function clearTeacherCaches(extraPrefixes = []) {
   clearReadiness();              // likewise — her classes must not outlive her session
   clearAccount();                // …and neither must her NAME: on a shared phone the next
                                  // teacher to sign in must not be greeted as this one.
+  clearEntitlement();            // …nor her SUBSCRIPTION: a lapsed teacher's stored entitlement
+                                 // would paint the next teacher's first frame without My Classes.
   clearUser();
   // belt and braces: anything the named clears missed, plus the app's own per-user keys
   n += removeByPrefix([...TEACHER_CACHE_PREFIXES, ...extraPrefixes]);

@@ -55,10 +55,11 @@ import { View, ScrollView, Pressable, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
-  annualBudgetPeriods, classNum, fetchEntitlement, getJSON, largestRemainder, pad,
+  annualBudgetPeriods, classNum, getJSON, largestRemainder, pad,
   postJSON, pretty,
 } from "@aruvi/shared/format";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
+import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { readLocalSection, bindSectionChapter } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
@@ -91,7 +92,7 @@ export default function Prepare() {
   const [canonMinutes, setCanonMinutes] = useState({});
   const [canonPeriods, setCanonPeriods] = useState({});
   const [syllabusW, setSyllabusW] = useState(null);
-  const [trialInfo, setTrialInfo] = useState(null);
+  const [trialInfo, setTrialInfo] = useState(() => entitlementState().ent);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [showInfo, setShowInfo] = useState(false);
@@ -102,7 +103,9 @@ export default function Prepare() {
      re-entry even if a press slips past the disabled button. */
   const inFlight = useRef(false);
 
-  useEffect(() => { fetchEntitlement().then(setTrialInfo); }, []);
+  /* The free-chapter counter reads the shell's store rather than asking again (6a F5). This
+     screen is pushed and popped several times in a sitting; the shell polls throughout. */
+  useEffect(() => subscribeEntitlement((e) => setTrialInfo(e.ent)), []);
   useEffect(() => { fetchReadiness().then(setReadiness).catch(() => {}); }, []);
 
   /* Chapters (+ effort weight), her plan listing, and which chapters have a certified canonical.

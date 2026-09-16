@@ -290,6 +290,25 @@ export async function fetchEntitlement() {
   }
 }
 
+/* ───────── which WALL she hit (2026-08-24 on the web; lifted 2026-09-16 for the phone) ─────────
+ * A 402 is not an error, and the server's sentence is written FOR HER — it travels to both
+ * surfaces unchanged. What the client chooses is the HEADING above it, and it chooses it by
+ * reading the sentence, because the sentence is the only thing that knows which of the three
+ * walls this is: the trial running out · a subject she has not bought · a subscription that has
+ * ended. There is no separate code on the 402 to switch on, and inventing one would put the same
+ * fact in two places.
+ *
+ * ★ LIFTED BECAUSE THE PHONE WAS SHOWING THE WRONG ONE. It hardcoded "Your free chapters are used
+ * up" over every 402, so a teacher blocked for a DIFFERENT SUBJECT was told she had used up
+ * chapters she had not touched (app. 01 row 47; founder's Q6 answer, 2026-09-16: "mimic web").
+ * CLAUDE.md §3 — one rule, one place, both callers calling it. */
+export function paywallKicker(message) {
+  const m = String(message || "");
+  if (/free trial/i.test(m)) return "Free trial ends";
+  if (/different subject/i.test(m)) return "Separate subscription";
+  return "Subscription ended";
+}
+
 /* ───────── what her subscription actually covers ─────────
  * THE BILLING UNIT IS subject·STAGE (stageOfGrade above), and the choosers must offer only
  * what she has bought: post-trial, a paid teacher is shown the classes inside her paid

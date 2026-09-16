@@ -13,7 +13,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, fetchEntitlement, subjectSlug, classNum, pad } from "@aruvi/shared/format";
+import { getUser, subjectSlug, classNum, pad } from "@aruvi/shared/format";
+import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
@@ -91,7 +92,11 @@ export default function Home() {
   const ws = useWebStyles();
   const router = useRouter();
   const user = getUser();
-  const [st, setSt] = useState({ loading: true, err: "", classes: [], plansBySG: {}, ent: null });
+  const [st, setSt] = useState({ loading: true, err: "", classes: [], plansBySG: {} });
+  /* Her subscription, from the shell's store — the foot card's status line is the only
+     thing on this screen that reads it, and it is about to move to Settings (6b). */
+  const [ent, setEnt] = useState(() => entitlementState().ent);
+  useEffect(() => subscribeEntitlement((e) => setEnt(e.ent)), []);
   const [tick, setTick] = useState(0);   // re-read local section state after returning from a lesson
 
   /* ★ ENDING THE SESSION IS ONE ACT, AND A 401 IS ONE OF ITS DOORS (2026-09-13).
@@ -142,8 +147,10 @@ export default function Home() {
       setSt((prev) => ({ ...prev, loading: false, err: "", classes, plansBySG }));
     }
 
-    // ── behind the paint: the status line, on its own, blocking nothing ──
-    fetchEntitlement().then((ent) => { if (ent) setSt((prev) => ({ ...prev, ent })); });
+    /* ⚠️ THE STATUS LINE NO LONGER ASKS FOR ITSELF (6a F5, 2026-09-16). It used to fire its own
+       `/entitlement` on every mount of this screen — and this screen remounts on every crossing
+       — while the shell above it is already polling the same endpoint every 20 seconds. One
+       copy, one cadence: the subscription below reads it. */
 
     // ── behind the paint: the profile, then what depends on it ──
     let readiness = null;
@@ -370,7 +377,7 @@ export default function Home() {
                 them; what is left here is the trial counter and the appearance choice, both of
                 which belong in Settings at step 6. */}
             <Text style={[type.small, { color: t.ink_soft }]}>
-              {st.ent ? `${dash(st.ent.status)}${st.ent.enforced ? ` · ${dash(st.ent.trial_chapters_used)} of ${dash(st.ent.trial_chapter_cap)} trial chapters used` : ""}` : ""}
+              {ent ? `${dash(ent.status)}${ent.enforced ? ` · ${dash(ent.trial_chapters_used)} of ${dash(ent.trial_chapter_cap)} trial chapters used` : ""}` : ""}
             </Text>
             <View style={s.segs}>
               {[["system", "Auto"], ["light", "Light"], ["dark", "Dark"]].map(([v, label]) => (

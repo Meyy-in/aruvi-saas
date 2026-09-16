@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, entLapsed as lapsedOf } from "./lib/format";
+import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, paywallKicker, entLapsed as lapsedOf } from "./lib/format";
 import { accountFirstName } from "./lib/account";
 import { verifiedWrite, readinessFingerprint } from "./lib/verify";
 import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache } from "./lib/sectionState";
@@ -1466,11 +1466,10 @@ export default function Home() {
             {/* Kicker matches WHICH wall she hit (founder, 2026-08-24): the server's
                 sentence is the source of truth, so the heading is read off it —
                 trial exhaustion · lapsed/revoked subscription · out-of-scope subject. */}
-            <div className="kicker kicker-soft">{
-              /free trial/i.test(paywall) ? "Free trial ends"
-                : /different subject/i.test(paywall) ? "Separate subscription"
-                : "Subscription ended"
-            }</div>
+            {/* ⚠️ THE RULE MOVED TO `@aruvi/shared/format` ON 2026-09-16 and this now calls it.
+                It was spelled here alone, so the phone shipped without it and hardcoded a title
+                that is wrong for two of the three walls. CLAUDE.md §3. */}
+            <div className="kicker kicker-soft">{paywallKicker(paywall)}</div>
             <div className="paywall-msg">{paywall}</div>
             <button className="paywall-subscribe"
               onClick={() => { setPaywall(null); setSubscribeOpen(true); }}>

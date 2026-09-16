@@ -7,7 +7,7 @@
  * that null means NO LIMIT, and that a class she already teaches is never filtered away. */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { paidScopesOf, entLapsed, allowedStagesFor, stageOfGrade } from "../src/format.js";
+import { paidScopesOf, entLapsed, allowedStagesFor, stageOfGrade, paywallKicker } from "../src/format.js";
 
 test("paidScopesOf: a paid, live teacher gets her live scopes", () => {
   assert.deepEqual(
@@ -69,4 +69,24 @@ test("the founder's case: English · preparatory offers 3, 4 and 5 — and keeps
      Without this the chooser would drop it, and the save reads removals off what is NOT
      ticked — so a subscription lapse would silently delete a class she still teaches. */
   assert.deepEqual(offered(["VIII"]), ["III", "IV", "V", "VIII"]);
+});
+
+/* ───────── which WALL she hit (lifted from page.jsx 2026-09-16 for the phone) ─────────
+ * The phone hardcoded "Your free chapters are used up" over all three, so two of them lied.
+ * These pin the two that were wrong, and the fallback that catches the rest. */
+test("paywallKicker: the trial wall", () => {
+  assert.equal(paywallKicker("Your free trial has ended."), "Free trial ends");
+  assert.equal(paywallKicker("FREE TRIAL used up"), "Free trial ends", "case-insensitive");
+});
+
+test("★ paywallKicker: a subject she has not bought is NOT 'free chapters used up'", () => {
+  assert.equal(
+    paywallKicker("Mathematics is a different subject and needs its own subscription."),
+    "Separate subscription");
+});
+
+test("paywallKicker: everything else reads as the subscription ending", () => {
+  assert.equal(paywallKicker("Your subscription has expired."), "Subscription ended");
+  assert.equal(paywallKicker(""), "Subscription ended", "…including nothing at all");
+  assert.equal(paywallKicker(null), "Subscription ended");
 });

@@ -244,6 +244,26 @@ export function webStyles(t, scheme = "light") {
     ap_actions:      { flexDirection: "row", justifyContent: "flex-end", columnGap: 10, marginTop: 2 },
     ap_btn:          { borderRadius: 7, borderWidth: 1, paddingVertical: 9, paddingHorizontal: 15 },
     ap_btn_label:    { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.55, textTransform: UP },
+    /* ── the paywall window (`.paywall-card/-msg/-subscribe/-later`, globals.css 3987-4000) ──
+       Measured 2026-09-16 from the web's own rules. The phone's Sheet supplies the card and the
+       ✕; these are the CONTENTS, and the shape is what parity means here: the web's card is
+       CENTRED, where every other window in this app is left-aligned. That is not an accident of
+       CSS — a paywall is one statement and one choice, not a form, so the eye is given a column
+       rather than a margin to run down. The Sheet's own header is skipped entirely (pass no
+       kicker/title/sub) because it would left-align the kicker above a centred body.
+       ⚠️ NEW KEYS, so `useWebStyles`' useMemo cannot see them until a real app start — Fast
+       Refresh will render this window unstyled. Reload before judging it. */
+    paywall_body:    { alignItems: "center", rowGap: 4 },
+    paywall_msg:     { fontFamily: F.body(400), fontSize: 15, lineHeight: 23.25, color: t.ink,
+                       marginTop: 8, textAlign: "center" },
+    paywall_sub:     { borderRadius: 5, paddingVertical: 10, paddingHorizontal: 26, marginTop: 16 },
+    paywall_sub_t:   { fontFamily: F.mono(700), fontSize: 13, letterSpacing: 0.78, textTransform: UP },
+    paywall_later:   { fontFamily: F.body(400, true), fontSize: 12.5, color: t.ink_soft, marginTop: 10,
+                       paddingVertical: 4, paddingHorizontal: 8 },
+    /* The "not yet" note Subscribe raises until 6b's billing view exists (founder's Q6 answer). */
+    paywall_soon:    { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink_soft,
+                       marginTop: 8, textAlign: "center" },
+
     ch_meta:         { flexDirection: "row", alignItems: "center", justifyContent: "space-between", columnGap: 10 },
     ch_name:         { fontFamily: F.body(400), fontSize: 15, lineHeight: 19.2, color: t.ink, flex: 1, minWidth: 0 },
     ch_no:           { color: t.pine_d, fontFamily: F.body(500) },

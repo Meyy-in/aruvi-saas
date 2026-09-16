@@ -9,10 +9,12 @@
  * the class cards, a lesson opened from them — reads as My Classes; Settings lights neither
  * and hides the bar entirely (its screen arrives in step 6). */
 import { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import { AppState, View } from "react-native";
 import { Redirect, Stack, useRouter, usePathname } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
 import { cachedReadiness, cachedReady, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
+import { entitlementState, subscribeEntitlement, syncEntitlement } from "@aruvi/shared/entitlement";
+import { endSession } from "../../lib/session";
 import { useTheme } from "../../theme/ThemeContext";
 import Bar from "../../components/Bar";
 import BottomNav from "../../components/BottomNav";
@@ -25,7 +27,7 @@ import {
   pruneSetupCheck, queueSetupCheck, setupCheckSub, setupCheckValues, setupKey,
 } from "@aruvi/shared/setupCheck";
 import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit, editBackToPick,
-         openPick, pickSubject, pickBackToSubject, closePick } from "../../lib/portal";
+         openPick, pickSubject, pickBackToSubject, closePick, clearPortal } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
 
 export default function AppLayout() {
@@ -81,6 +83,51 @@ export default function AppLayout() {
     if (added.length) queueSetupCheck(added);
     pruneSetupCheck(keys);        // self-heal: nothing she does not teach stays queued
   }, [readiness]);
+
+  /* ── HER SUBSCRIPTION, AND WHAT IT HIDES (6a F5; founder's Q7 answer, 2026-09-16) ──────
+     ★ "Port now and let the server flag drive it." Enforcement is OFF on Render, so no teacher
+     is lapsed today and every consequence below is dormant. That is the point: the alternative
+     was a phone that quietly disagrees with the web for however long the beta runs, and a list
+     of consequences to remember on the day the flag is flipped.
+
+     ★ POLLED, WHERE READINESS IS CACHED (entitlement.js says why at length). A subscription can
+     be revoked in a terminal while she is looking at the screen — the founder does exactly this
+     and switches back to the phone to watch. So: on mount, whenever the app returns to the
+     foreground, and every 20 seconds while it is there, which is the web's own cadence.
+     ⚠️ The timer runs only while ACTIVE. A phone in a pocket polling every 20 seconds is a
+     battery complaint, and a backgrounded app has no screen that could be lying.
+     ⚠️ A 401 signs her out through the ONE door (`lib/session`), as every other fetch here does;
+     a refused session must not be papered over with a stored subscription. */
+  const [ent, setEnt] = useState(() => entitlementState());
+  useEffect(() => subscribeEntitlement(setEnt), []);
+  useEffect(() => {
+    let live = true;
+    let iv = null;
+    const sync = () => { if (live) syncEntitlement({ onUnauthorized: () => endSession(router) }); };
+    const start = () => { sync(); if (!iv) iv = setInterval(sync, 20000); };
+    const stop = () => { if (iv) { clearInterval(iv); iv = null; } };
+    start();
+    const sub = AppState.addEventListener("change", (st) => (st === "active" ? start() : stop()));
+    return () => { live = false; stop(); sub.remove(); };
+  }, []);
+
+  /* ★ LAPSED = THE READING ROOM (founder, 2026-08-24; app. 01 rows 54-55). Her lessons stay
+     hers — she can open them, read them, export them — but nothing that GROWS the account is
+     offered: My Classes and Add leave the bar, the "+" window will not open, the prepare CTA
+     goes, and the profile is read-only. Renewal is offered in Settings, never pushed at her
+     from the screen she was working on.
+     ⚠️ A REVOKE LANDS MID-SESSION, so this is not only a first-paint rule: she may be STANDING
+     on My Classes when the poll comes back, and a bar item disappearing under a screen that is
+     still showing is worse than either. `navigate`, not `push` — she is being moved, not taken
+     somewhere she can come back from.
+     ⚠️ And anything already OPEN closes with it: a profile window she opened a second before
+     the revoke would otherwise stay up, editable, over a shell that has just decided she may
+     not edit. */
+  useEffect(() => {
+    if (!ent.lapsed) return;
+    clearPortal();
+    if (!pathname.startsWith("/lessons")) router.navigate("/lessons");
+  }, [ent.lapsed, pathname]);
 
   /* ── THE ACTIVATION GATE (app. 01 rows 14-15; founder's Q5 answer, 2026-09-16) ──────────
      ★ IT LIVES IN THE LAYOUT, NOT IN `index.jsx`, and that is the whole of the choice. Decided
@@ -174,7 +221,9 @@ export default function AppLayout() {
           And it renders BELOW the Stack and ABOVE the BottomNav, so the bar stays live behind it —
           a window that took the app's whole navigation away would be the one screen she could not
           simply leave, which is the mistake Ask Meyy's scrim made on the web in September. */}
-      {(win || edit || pick) ? (
+      {/* ⚠️ `!ent.lapsed` is the web's `page.jsx:1438` — the portal simply does not render for a
+          lapsed teacher. The effect above closes what is open; this is what keeps it shut. */}
+      {(win || edit || pick) && !ent.lapsed ? (
         <Sheet visible scroll={!!(edit || pick)}
           onClose={edit ? closeEdit : pick ? closePick : () => setPortalWin(null)}
           /* ★ THE ← IS THE JOURNEY'S, NOT ONLY THE SCREEN'S (founder, 2026-09-16: "can we have
@@ -258,15 +307,20 @@ export default function AppLayout() {
           first mount cheap; this is what stops most of the mounts happening. */}
       <BottomNav
         active={active}
+        /* ✅ WIRED 2026-09-16 (6a F5, Q7). These two props have existed since the nav was
+           ported and nothing ever passed them, so the phone's bar offered a lapsed teacher
+           two doors the web had already closed. `showAdd` takes `ready` as well, because the
+           "+" window is about a profile and there is nothing to change before there is one. */
+        showClasses={!ent.lapsed}
+        showAdd={ready && !ent.lapsed}
         onClasses={() => router.navigate("/")}
         onLessons={() => router.navigate("/lessons")}
         /* ★ ADD IS LIVE (2026-09-15). It was held until all four of the window's rows led
            somewhere — the call the founder made twice before, on 4b's Year Plan pencil and on
            Q1's HOLD. Class was the last of the four.
-           ⚠️ WHEN F5 LANDS (6a): the window must NOT open while she is lapsed. The growth entry
-           points hide on an expired subscription — that is the web's rule and the phone owes it.
-           Enforcement is off server-side for every teacher today, so this is a note to keep, not
-           a gap to close now. */
+           ✅ F5 LANDED (6a, 2026-09-16): the window no longer opens while she is lapsed — the
+           item is not in the bar (`showAdd` above), the Sheet does not render, and anything
+           open is closed. Enforcement is still off server-side, so this is dormant, not dead. */
         onAdd={() => setPortalWin({ mode: "change" })}
         onAsk={() => {}}
       />

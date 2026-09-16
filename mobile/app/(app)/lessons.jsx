@@ -54,11 +54,12 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
-  API, classNum, getJSON, pad, pretty, subjectSlug, userKey, withUser,
+  API, classNum, getJSON, pad, paywallKicker, pretty, subjectSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
+import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { pullSectionState, readLocalSection } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsArchived } from "@aruvi/shared/verify";
 import { endSession as endSessionShared } from "../../lib/session";
@@ -505,6 +506,16 @@ export default function MyLessons() {
     .map((g) => ({ id: g, label: `${classNum(g)}` })), [grades]);
 
   const insets = useSafeAreaInsets();
+  /* Lapsed hides the two things on this screen that GROW the account: the prepare CTA and
+     the Year Plan's budget pencil. Reading, opening and exporting are untouched — that is
+     the whole of what "the reading room" means (app. 05 C17). The shell polls; this screen
+     only listens, so a revoke that lands while she is reading takes the CTA away here too. */
+  const [ent, setEnt] = useState(() => entitlementState());
+  /* The paywall's second body. Reset on the way out, never on the way in, so the window
+     cannot reopen already showing the note. */
+  const [paySoon, setPaySoon] = useState(false);
+  const closePaywall = useCallback(() => { setPaySoon(false); clearPaywall(); }, []);
+  useEffect(() => subscribeEntitlement(setEnt), []);
 
   /* The frozen header is drawn ONLY when there are wheels to put in it. The web returns before
      rendering anything at all in these two states, and a switch with two empty wheel boxes above
@@ -632,7 +643,10 @@ export default function MyLessons() {
              the return would land back on this pane instead of the card list. She never leaves
              the pane now, so there is nothing to stamp and nothing to consume. */
           <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness}
-            onEditBudget={() => openEdit({
+            /* ⚠️ THE PROFILE IS READ-ONLY WHEN SHE IS LAPSED (6a F5). Passing no handler is how
+               the pencil goes dark — the same idiom the gear uses; YearPlan draws it only when
+               it has somewhere to send her. */
+            onEditBudget={ent.lapsed ? null : () => openEdit({
               intent: "budget", subject: current.name, grade: activeGrade,
             })} />
         ) : plans === undefined ? (
@@ -666,10 +680,10 @@ export default function MyLessons() {
         {/* ── "Need a chapter you don't have yet?" ──
             ⚠️ LAPSED HIDES IT ENTIRELY (§2.5 as amended, founder 2026-08-24): My Lessons becomes
             the reading room — open, export, print — and renewal is offered in Settings, never
-            pushed here. The phone does not read entitlement on this screen yet, so the bar shows
-            for everyone for now; when Settings lands (step 6) this takes the same `lapsed` flag
-            the web's does. Only in the lessons pane, and never over the archive. */}
-        {!loadErr && current && pane === "lessons" && effView !== "archived" && plans !== undefined ? (
+            pushed here. ✅ It now takes the same `lapsed` flag the web's does (6a F5, 2026-09-16);
+            the note that stood here said it would when Settings landed, and it turned out to need
+            only the store. Only in the lessons pane, and never over the archive. */}
+        {!loadErr && current && !ent.lapsed && pane === "lessons" && effView !== "archived" && plans !== undefined ? (
           <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
             <Text style={ws.mlp_allocate_q}>Need a chapter you don’t have yet?</Text>
             <PrepareCta size="allocate" label="Prepare a new lesson →"
@@ -682,14 +696,43 @@ export default function MyLessons() {
           subscription — must never render as a failed card or an inline card message: the card
           comes DOWN and a window carries the sentence instead. The server's own wording travels
           up unchanged, because it is written FOR HER. It lands here rather than on the prepare
-          screen because by the time a 402 arrives that screen is gone. */}
-      <Sheet visible={!!prep.paywall} onClose={clearPaywall} confirm
-        kicker={`${pretty(sSlug)} · Class ${classNum(activeGrade)}`}
-        title="Your free chapters are used up" sub={prep.paywall}>
-        <View style={ws.ap_actions}>
-          <Pressable onPress={clearPaywall} accessibilityRole="button"
-            style={[ws.ap_btn, { borderColor: t.line }]}>
-            <Text style={[ws.ap_btn_label, { color: t.ink_soft }]}>Close</Text>
+          screen because by the time a 402 arrives that screen is gone.
+
+          ★ AND IT IS THE WEB'S WINDOW NOW (founder's Q6 answer, 2026-09-16: "mimic web to add
+          'Not Now' button + Subscribe button"). Two things were wrong with what stood here.
+          ⓵ THE TITLE WAS A LIE FOR TWO OF THE THREE WALLS. "Your free chapters are used up" was
+          hardcoded over every 402, so a teacher blocked because she had reached a subject she
+          has not bought — or because her subscription ended — was told she had spent chapters
+          she never touched. The heading is now read off the server's sentence, which is the only
+          thing that knows which wall this is, by the SHARED `paywallKicker` the web also calls.
+          ⓶ ONE "Close" IS NOT THE WEB'S SHAPE. ★ The shape is the thing being preserved, not the
+          wiring: a teacher who learns this window today must not meet a differently-shaped one
+          the week Subscribe starts working. So both buttons are here from the start, and
+          Subscribe says plainly that the page is being built — which is true, and is more than
+          an email address would tell her.
+          ⚠️ ONE SHEET, WHOSE CHILDREN SWAP (the `dac26eb0` lesson). The "in development" note is
+          a second BODY, never a second Modal: two Modals fading over each other leave a frame
+          with no scrim in it, and the bare screen flashes through.
+          ⚠️ No subject·class kicker any more. The web has never had one, and the server's
+          sentence names the subject itself in the case where it matters. */}
+      <Sheet visible={!!prep.paywall} onClose={closePaywall} confirm>
+        <View style={ws.paywall_body}>
+          <Text style={ws.kicker}>{paywallKicker(prep.paywall)}</Text>
+          {paySoon ? (
+            <Text style={ws.paywall_soon}>
+              The subscription page is still in development. It will open from Settings.
+            </Text>
+          ) : (
+            <>
+              <Text style={ws.paywall_msg}>{prep.paywall}</Text>
+              <Pressable onPress={() => setPaySoon(true)} accessibilityRole="button"
+                style={[ws.paywall_sub, { backgroundColor: t.pine }]}>
+                <Text style={[ws.paywall_sub_t, { color: t.paper }]}>Subscribe</Text>
+              </Pressable>
+            </>
+          )}
+          <Pressable onPress={closePaywall} accessibilityRole="button" hitSlop={6}>
+            <Text style={ws.paywall_later}>{paySoon ? "Close" : "Not now"}</Text>
           </Pressable>
         </View>
       </Sheet>

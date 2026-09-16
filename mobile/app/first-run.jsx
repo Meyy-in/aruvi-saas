@@ -25,7 +25,7 @@ import { View, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "../components/Text";
 import {
-  ROMAN, classNum, fetchEntitlement, getJSON, getUser, gradeUp, markPrepared, postJSON,
+  ROMAN, classNum, fetchEntitlement, getJSON, getUser, gradeUp, markPrepared, paidScopesOf, postJSON,
   ppwFromAnnual, pretty, stageOfGrade,
 } from "@aruvi/shared/format";
 import { DEFAULT_DURATION, DEFAULT_PPW, DURATION_CHOICES, lowestDuration, normPpw, ppwMapSum }
@@ -195,9 +195,14 @@ export default function FirstRun() {
   /* ★ SUBSCRIBED-ENTRY SCOPE FILTER (founder, 2026-08-24). A teacher who arrives already PAID is
      offered only what she bought — the subject wheel filtered to her scopes' subjects, the class
      wheel to their STAGES. Trial and "*" grants see everything: breadth in trial is deliberate. */
-  const frPaidScopes = (trialInfo && trialInfo.enforced
-    && (trialInfo.status === "active" || trialInfo.status === "grace")
-    && !((trialInfo.scopes) || []).includes("*")) ? trialInfo.scopes : null;
+  /* ⚠️ THIS WAS A THIRD SPELLING OF `paidScopesOf`, AND IT HAD DRIFTED (found 6a F5,
+     2026-09-16). It read `scopes` where the rule reads `live_scopes` — every scope she has
+     ever held, rather than the ones still live — so a teacher arriving with one expired
+     subject-stage and one running would have been offered both on her very first screen. It
+     also missed the `lapsed` half. One rule, one place: CLAUDE.md §3.
+     `paidScopesOf` returns null for "*" of its own accord (null = NO LIMIT), which is what the
+     explicit `includes("*")` here was reaching for. */
+  const frPaidScopes = paidScopesOf(trialInfo);
   const visibleSubjects = frPaidScopes
     ? subjects.filter((s) => frPaidScopes.some((sc) => sc.split("/")[0] === s))
     : subjects;
