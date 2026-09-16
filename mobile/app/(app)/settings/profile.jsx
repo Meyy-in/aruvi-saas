@@ -11,27 +11,34 @@
  * where the web counted classes would not look broken on either surface — it would simply tell
  * her two different things about one account, with no way to know which was right.
  *
- * ★ READ-ONLY, BY SCOPE (founder, 2026-09-16). The web's header also carries a pencil that opens
- * edit mode: per-subject dustbins and "+ add a subject". Neither is here yet, because both lead
- * into families the phone has not built — the subjects wheel, the classes wheel and the per-class
- * run — and the dustbin without the "+" is the exact shape the web tried on 2026-08-27 and
- * retired the same week: "a control that promises editing and delivers only deletion is a trap".
- * So the phone offers the reading and not the half. Everything a teacher can CHANGE is already
- * reachable from the bar's "+" — class, section, periods a week, annual budget.
- * ⚠️ WITH ONE GAP, AND IT IS A REAL ONE: the "+" portal has no Subject row, so on the phone there
- * is today NO door to add a subject at all. On the web that dead end is what stranded account
- * 1000000002 — she removed her way down to one subject and found the way back gone, with
- * entitlement for four more sitting unused. Recorded in the map under §H; it wants the subjects
- * wheel, not a button here.
+ * ★ "+ ADD A SUBJECT" IS HERE, AND IT IS NOT BEHIND A PENCIL (founder, 2026-09-16: "the edit
+ * button to add subject is missing in expo"). On the web this row appears only inside edit mode,
+ * because there the pencil reveals TWO things and removal is the other one. The phone has no
+ * removal yet, so a toggle would hide the one door behind a control with nothing else to offer —
+ * and hiding the only way to add a subject is precisely the dead end being fixed. The web keeps
+ * its toggle because it has a second reason to; this screen does not, so the row simply shows.
+ * ⚠️ IT MATTERS MORE HERE THAN ON THE WEB, because the phone's "+" portal carries four rows —
+ * Class · Section · Periods a week · Annual budget — and deliberately no Subject row. Until this
+ * landed, a teacher holding entitlement for a subject she had not set up could not set it up on
+ * the phone at all: the same dead end that stranded account 1000000002 on the web, arrived at
+ * from the other side.
+ *
+ * ★ REMOVAL IS STILL NOT HERE, and that is the deliberate half. The web's dustbin takes a
+ * subject's classes, sections, bookmarks and chapter bindings with it behind two confirms; it
+ * ships when it ships, with its cascade tested. Adding without removing is a control that
+ * promises adding and delivers adding — the shape the web retired on 2026-08-27 was the OTHER
+ * way round ("a control that promises editing and delivers only deletion is a trap").
  *
  * ★ NO HEADING. The frozen Settings bar reads "⚙ Teaching profile" — the web deleted its own
  * `h1` when that bar landed, and the phone never ports one back in (components/SettingsBar.jsx).
  */
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { classCard, profileStats, subjectPpw } from "@aruvi/shared/profile";
+import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
+import { openEdit } from "../../../lib/portal";
 import { Text } from "../../../components/Text";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
@@ -92,6 +99,24 @@ function ClassCard({ cc, first }) {
   );
 }
 
+/* The empty slot at the foot of the list. It opens the ONE Sheet the shell owns, on the subject
+   step — the same window every other profile edit uses, so adding a subject is not a different
+   kind of journey from changing a section. */
+function AddSubjectRow() {
+  const { t } = useTheme();
+  const ws = useWebStyles();
+  return (
+    <Pressable onPress={() => openEdit({ intent: "subject" })}
+      accessibilityRole="button" accessibilityLabel="Add a subject"
+      style={[ws.tp_sub, { backgroundColor: t.paper_2, borderColor: t.line,
+                           borderStyle: "dashed" }]}>
+      <View style={ws.tp_sub_hd}>
+        <Text style={[ws.tp_sub_name, { color: t.pine }]}>+ add a subject</Text>
+      </View>
+    </Pressable>
+  );
+}
+
 export default function TeachingProfileScreen() {
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -118,13 +143,25 @@ export default function TeachingProfileScreen() {
      stats block restated at four times the length. */
   const [openSubject, setOpenSubject] = useState(null);
 
+  /* ★ LAPSED MAKES THE PROFILE READ-ONLY (§2.5 as amended; the server refuses the write anyway).
+     She keeps seeing what she teaches — that is the reading room — but the one control that would
+     GROW the account goes, exactly as My Classes and the bar's "+" already do for her. */
+  const [ent, setEnt] = useState(() => entitlementState());
+  useEffect(() => subscribeEntitlement(setEnt), []);
+  const canAdd = !ent.lapsed;
+
   return (
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
       {subjects.length === 0 ? (
         /* The web adds "— add a subject to begin", which is true there because its next line is
            the row that does it. Here there is no such row (see the header), so the sentence stops
            where the phone can actually deliver. */
-        <Text style={[ws.tp_empty, { color: t.ink_soft }]}>No profile yet.</Text>
+        <>
+          <Text style={[ws.tp_empty, { color: t.ink_soft, marginBottom: 14 }]}>
+            No profile yet — add a subject to begin.
+          </Text>
+          {canAdd ? <AddSubjectRow /> : null}
+        </>
       ) : (
         <>
           <View style={ws.tp_stats}>
@@ -172,6 +209,14 @@ export default function TeachingProfileScreen() {
                 </View>
               );
             })}
+            {/* ★ AN EMPTY SUBJECT ROW, NOT A BUTTON (founder, 2026-08-30). A green pill said
+                "here is a control"; the row says "here is where the next subject goes" — the same
+                card, the same padding, the same display serif as every subject above it, so the
+                list reads as a list with one slot still open. Two departures, both saying
+                not-yet-a-subject: a DASHED edge (structure, never colour) and pine ink, because
+                this is the one row here that ACTS rather than opens. No periods a week and no
+                caret: it has neither. */}
+            {canAdd ? <AddSubjectRow /> : null}
           </View>
         </>
       )}

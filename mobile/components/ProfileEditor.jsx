@@ -79,7 +79,8 @@ import {
 } from "@aruvi/shared/ppw";
 import { rekeyBudget } from "@aruvi/shared/budget";
 import { cachedReadiness, fetchReadiness, saveReadiness } from "@aruvi/shared/readiness";
-import { closeEdit } from "../lib/portal";
+import { closeEdit, openEdit } from "../lib/portal";
+import { useRouter } from "expo-router";
 import { RollWheel } from "./RollWheel";
 import PickWheel from "./PickWheel";
 import PpwSplitCell from "./PpwSplitCell";
@@ -94,6 +95,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                                        hasBack = false }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const router = useRouter();
   /* `intent` is the destination; `subject`/`grade` the scope it acts on. The web resolves a scope
      through two pick screens when it is ambiguous — the Year Plan's pencil is the opposite case,
      "she is standing on Class 7's year plan", so it passes `exact` and both pick screens are
@@ -109,7 +111,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   const [err, setErr] = useState("");
   /* Which of the three she is looking at. Seeded from the route and then owned here, because the
      pencil and ← Back move BETWEEN steps without leaving the screen — they are one answer. */
-  const [step, setStep] = useState(() => (["budget", "ppw", "duration", "section", "class"].includes(String(intent))
+  const [step, setStep] = useState(() => (["budget", "ppw", "duration", "section", "class", "subject"].includes(String(intent))
     ? String(intent) : "budget"));
   /* The working copy of this class's weekly numbers. `gradeDraftFrom` is the web's own seeder, so
      the record she edits is shaped exactly as the web shapes it — which is what stops a phone save
@@ -117,6 +119,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   const [draft, setDraft] = useState(null);
 
   useEffect(() => { fetchReadiness().then(setReadiness).catch(() => {}); }, []);
+  useEffect(() => {
+    if (step !== "subject") return;
+    let live = true;
+    getJSON("/subjects")
+      .then((d) => { if (live) setCatalogue(((d && d.subjects) || []).map(pretty)); })
+      .catch(() => { if (live) setCatalogue([]); });
+    return () => { live = false; };
+  }, [step]);
 
   const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
   const subjectRec = useMemo(
@@ -141,6 +151,12 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      keep, and `fetchSupportedGrades` is the one authority both surfaces use. */
   const [pickedGrades, setPickedGrades] = useState(null);
   const [gradeOptions, setGradeOptions] = useState(null);   // null = still loading
+  /* ── the SUBJECT step's working copy (6d, 2026-09-16) ──
+     Every subject Meyy offers, as display names, and the one she has ticked. The catalogue is
+     fetched rather than assumed for the same reason the class list is: offering a subject with
+     no content behind it is a promise Meyy cannot keep. `null` = still loading. */
+  const [catalogue, setCatalogue] = useState(null);
+  const [pickedSubject, setPickedSubject] = useState([]);
   /* What her subscription covers, as subject-stage scopes. `null` is NO LIMIT — trial, unpaid,
      a "*" grant, or enforcement off — never "nothing allowed". */
   const [paidScopes, setPaidScopes] = useState(null);
@@ -257,6 +273,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      Seeded once her record and the catalogue are both in. Every enrolled class is pre-ticked,
      INCLUDING any the catalogue no longer lists: removals are read off `pickedGrades`, so a class
      missing from the options must never be readable as an unticking. */
+  /* The entitlement is wanted on the SUBJECT step too, where it decides which subjects are
+     offered at all — so it is fetched there as well as here. */
+  useEffect(() => {
+    if (step !== "subject") return;
+    let live = true;
+    fetchEntitlement().then((e) => { if (live) setPaidScopes(paidScopesOf(e)); }).catch(() => {});
+    return () => { live = false; };
+  }, [step]);
   useEffect(() => {
     if (step !== "class" || !subject) return;
     let live = true;
@@ -276,10 +300,16 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
       .catch(() => {});
     return () => { live = false; };
   }, [step, subject]);
+  /* ⚠️ `!subjectRec` USED TO MEAN "her record has not arrived yet" and now also means "she does
+     not teach this subject at all" — a subject reached through the add step (6d). The two need
+     opposite answers: wait in the first case, start from an EMPTY tick list in the second, or the
+     class wheel sits on "Loading classes…" forever for the one journey that most needs it. The
+     readiness store having resolved is what tells them apart. */
   useEffect(() => {
-    if (pickedGrades || !subjectRec) return;
-    setPickedGrades((subjectRec.grades || []).map((g) => g.grade));
-  }, [subjectRec, pickedGrades]);
+    if (pickedGrades) return;
+    if (subjectRec) { setPickedGrades((subjectRec.grades || []).map((g) => g.grade)); return; }
+    if (readiness) setPickedGrades([]);
+  }, [subjectRec, pickedGrades, readiness]);
 
   const haveGrades = (subjectRec && (subjectRec.grades || []).map((g) => g.grade)) || [];
   const allowedStages = allowedStagesFor(paidScopes, subject);
@@ -292,13 +322,34 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
     .filter((g) => !allowedStages || allowedStages.has(stageOfGrade(g)) || haveGrades.includes(g))
     .sort((a, b) => ROMAN.indexOf(a.toLowerCase()) - ROMAN.indexOf(b.toLowerCase()));
 
+  /* ★ THE SAME TWO LISTS AS THE CLASS WHEEL, one level up: what Meyy HAS, and what she is
+     entitled to be offered. `scoped` is false on a trial or a "*" grant — and on an unreachable
+     server, deliberately, because a school network must never narrow her own subjects away.
+     Already-enrolled subjects are excluded outright: this is the ADD door, and a list that
+     offered her English again would be offering her nothing. */
+  const subjEnrolled = subjects.map((x) => x.name);
+  const subjScoped = Array.isArray(paidScopes) && !paidScopes.includes("*");
+  const subjectOptions = (catalogue || [])
+    .filter((n) => !subjEnrolled.includes(n))
+    .filter((n) => !subjScoped || paidScopes.some((sc) => String(sc).split("/")[0] === subjectSlug(n)));
+
+  /* Her subject chosen, the journey continues into the class wheel — through `openEdit`, which
+     is how every other step change that alters the SCOPE travels on this app. Re-opening the one
+     Sheet with a new subject is what lets the whole class screen below work unchanged, rather
+     than teaching this component to hold a subject that its 700 lines of scope resolution assume
+     came in as a prop. */
+  const goToClasses = () => {
+    if (!pickedSubject.length) return;
+    openEdit({ intent: "class", subject: pickedSubject[0] });
+  };
+
   const requestClasses = () => {
-    if (!subjectRec || !pickedGrades) return;
+    if (!pickedGrades) return;
     const adds = pickedGrades.filter((g) => !haveGrades.includes(g));
     const removes = haveGrades.filter((g) => !pickedGrades.includes(g));
     if (!adds.length && !removes.length) { leave(); return; }
     if (removes.length) setClassConfirm({ removes, adds });
-    else applyClasses([...(subjectRec.grades || [])], adds, []);
+    else applyClasses([...((subjectRec && subjectRec.grades) || [])], adds, []);
   };
 
   /* ★ AN ADDED CLASS ARRIVES SET UP, and this screen does not ask her about it. Section A, the
@@ -331,19 +382,34 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
     const all = [...keep, ...built]
       .sort((a, b) => ROMAN.indexOf(a.grade.toLowerCase()) - ROMAN.indexOf(b.grade.toLowerCase()));
 
+    /* ★ A SUBJECT SHE DOES NOT YET TEACH IS AN APPEND, NOT AN EDIT (6d, 2026-09-16). Everything
+       above is identical either way — a ticked class arrives set up whether it joins a subject or
+       starts one — so the only difference is that there is no record to fold into. Without this
+       `at` is −1, the map below matches nothing, and Save wrote NOTHING: she would tick her
+       classes, press it, and land back on a profile that had not changed. */
     const at = subjects.findIndex((x) => x.name === subject);
     /* ⚠️ THE BUDGET MAP IS KEYED BY GRADE INDEX, so it is RE-KEYED against the new list before
        anything is written — remove Class VII from a teacher of VI·VII·VIII and VIII slides from
-       index 2 to 1, inheriting VII's year unless this runs. */
-    let budget = rekeyBudget(subjectRec.grades, subjectRec.budget, all);
+       index 2 to 1, inheriting VII's year unless this runs. A new subject has nothing to re-key
+       from, hence the empty pair. */
+    let budget = rekeyBudget((subjectRec && subjectRec.grades) || [],
+                             (subjectRec && subjectRec.budget) || {}, all);
     all.forEach((g, i) => { if (g._budget) budget = { ...budget, [i]: g._budget }; });
     const grades = all.map(({ _budget, ...g }) => g);
 
-    const next = (grades.length
+    const gridsOf = (gs) => gs.map((g) => (g.sections || []).map(() => Array(6).fill(-1)));
+    const next = (at === -1
+      /* Appended, not inserted by name: nothing in the record or on the accordion is sorted
+         alphabetically, and inventing an order here would reshuffle a profile she never asked to
+         have reshuffled. No classes ticked → nothing to write. */
+      ? (grades.length
+          ? [...subjects, { name: subject, grades, budget, grids: gridsOf(grades) }]
+          : subjects)
+      : grades.length
       ? subjects.map((sub, si) => (si !== at ? sub : {
           ...sub, grades,
           budget,
-          grids: grades.map((g) => (g.sections || []).map(() => Array(6).fill(-1))),
+          grids: gridsOf(grades),
         }))
       /* ★ HER LAST CLASS TAKEN AWAY TAKES THE SUBJECT WITH IT — which is why the confirm says so
          in words before she presses it. A subject with no classes is not a subject she teaches. */
@@ -442,7 +508,9 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      This read "English · Class 3 · classes" until 2026-09-15 and looked harmless only because
      the sole teacher who could reach it had exactly one class — the pick screens (5d item 3) are
      what let a Science teacher of 6, 7 and 8 arrive here and be told she is editing "Class 6". */
-  const kicker = step === "class"
+  const kicker = step === "subject"
+    ? "Teaching profile · add a subject"
+    : step === "class"
     ? `${pretty(subject)} · classes`
     : `${pretty(subject)} · Class ${classNum(grade)} · ${
       step === "ppw" ? "periods / week" : step === "duration" ? "duration"
@@ -482,7 +550,68 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             (the layout's `hasBack`, for an editor reached through a pick screen). */}
         <Text style={[ws.kicker, ws.tp_kicker_pad, (stepBack || hasBack) && { paddingLeft: 34 }]}>{kicker}</Text>
 
-        {step === "class" ? (
+        {step === "subject" ? (
+          <>
+            <Text style={ws.fr_q}>What else do you teach?</Text>
+            <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+              Pick a subject to add. You’ll choose its classes next.
+            </Text>
+            {catalogue === null ? (
+              <Text style={[ws.fr_hint, { color: t.ink_soft }]}>Loading subjects…</Text>
+            ) : subjectOptions.length === 0 ? (
+              /* ★ AN EMPTY CHOOSER MEANS TWO DIFFERENT THINGS, AND ONLY ONE IS A DEAD END
+                 (founder, 2026-08-30). UNSCOPED — trial, or a "*" grant — it really is "you
+                 already teach everything Meyy offers", and there is nothing to do. SCOPED, it
+                 means her SUBSCRIPTION covers no subject she has not already added, which is not
+                 a fact about Meyy's catalogue and must not be reported as one: the honest answer
+                 names the limit and offers the way past it. That is the web's rule, and the
+                 phone can finally keep it — the checkout is `/subscribe`, built in 6b.
+                 ⚠️ CLOSE THE WINDOW FIRST. The wizard is a route and this is a Modal over the
+                 shell; pushing underneath an open Sheet leaves the scrim sitting on top of the
+                 screen she was sent to, which is the flash the ONE-window rule was written to
+                 stop (layout, 2026-09-15). */
+              <>
+                <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+                  {subjScoped
+                    ? "Your subscription covers the subjects you already teach. Another subject is a separate subscription."
+                    : "Every subject Meyy offers is already in your profile."}
+                </Text>
+                {subjScoped ? (
+                  <Pressable onPress={() => { closeEdit(); router.push("/subscribe"); }}
+                    accessibilityRole="button"
+                    style={[ws.fr_cta, { backgroundColor: t.pine, marginTop: 14 }]}>
+                    <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Add a subject to my subscription</Text>
+                  </Pressable>
+                ) : null}
+              </>
+            ) : (
+              /* ⚠️ NEVER CLUSTERED, unlike the class wheel. Clustering hides unchosen options
+                 between the lowest and highest pick, and on this list that swallowed Mathematics
+                 for a teacher of English · Science · Social Sciences · The World Around Us — the
+                 one subject the screen existed to offer. The 2026-08-29 reversal was about the
+                 CLASS wheel and deliberately did not reach this one. */
+              <PickWheel options={subjectOptions} selected={pickedSubject}
+                onToggle={(n) => setPickedSubject((a) => (a.includes(n) ? [] : [n]))}
+                cluster={false} ariaLabel="Subjects to add">
+                {/* "Continue", not "Save": something DOES follow — her classes — and the word is
+                    what says so (founder, 2026-08-27). */}
+                <Pressable onPress={goToClasses} disabled={!pickedSubject.length}
+                  accessibilityRole="button" accessibilityState={{ disabled: !pickedSubject.length }}
+                  style={[ws.fr_cta, { backgroundColor: pickedSubject.length ? t.pine : t.paper_sunk }]}>
+                  <Text style={[ws.fr_cta_t, pickedSubject.length ? ws.fr_cta_ink : { color: t.ink_soft }]}>
+                    Continue
+                  </Text>
+                </Pressable>
+              </PickWheel>
+            )}
+            {subjScoped && subjectOptions.length > 0 ? (
+              <Text style={ws.trial_note}>
+                Your subscription covers what’s shown here. Another subject or stage is a
+                separate subscription.
+              </Text>
+            ) : null}
+          </>
+        ) : step === "class" ? (
           <>
             <Text style={ws.fr_q}>Which classes do you teach {pretty(subject)} to?</Text>
             {/* Says what an added class ARRIVES as, because this screen does not ask — and points
