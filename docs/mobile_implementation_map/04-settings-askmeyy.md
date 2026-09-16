@@ -199,7 +199,7 @@ line refs for shared logic point at `packages/shared/src/**`, which is what both
 | I6 | Autofocus rule: focus only if `autoFocus` prop AND `matchMedia(min-width:601px)`; page passes `autoFocus={tour == null}` | 24–35; page.jsx:1448 | WEB-ONLY-BY-NATURE ✅ NAMED | AskMeyy.jsx header | | Every width here is a phone width, so the web's own rule resolves to "never" (the founder's step-2 finding: a focused field is half the screen). Named in the component header, as agreed. |
 | I7 | Result count `.aa-count` (mono 11px uppercase): "No matches — try fewer or different words" or "{n} result"/"{n} results" | 118–124, 229–230 | DONE | AskMeyy.jsx | | Walked 2026-09-16: "period" → 40 RESULTS, the same count the web gives; "zzqqxx" → NO MATCHES — TRY FEWER OR DIFFERENT WORDS. |
 | I8 | Bank load: `useState(() => loadBank())` (sync from storage); if null → `refreshBank()` once | 45–51 | DONE | AskMeyy.jsx `kb` | shared storage shim | `loadBank` is synchronous — the panel never waits on the network. |
-| I9 | No-bank state `.aa-empty`: "Ask Meyy needs to download its answers once before it can work offline." / "Open it again when you next have a connection, and it will be ready from then on." (quiet prose, not an error, no spinner) | 129–136, 210–212 | DONE (UNWALKED) | AskMeyy.jsx `!kb` branch | web.js `aa_empty` | ⚠️ **This is what a phone pointed at RENDER shows today**, and it is not a code fault: `GET /ask-aruvi` 503s there (`ask_aruvi_bank_bytes()` raises `FileNotFoundError` on the deploy), so `refreshBank()` brings back nothing and there is no stored bank to fall back on. Unwalked because the local API serves the bank. See "Still open". |
+| I9 | No-bank state `.aa-empty`: "Ask Meyy needs to download its answers once before it can work offline." / "Open it again when you next have a connection, and it will be ready from then on." (quiet prose, not an error, no spinner) | 129–136, 210–212 | DONE (UNWALKED) | AskMeyy.jsx `!kb` branch | web.js `aa_empty` | Unwalked, and **harder to reach than the earlier note here claimed**: a device with nothing stored sends no `If-None-Match`, so it gets a clean 200 from Render and the panel fills — verified 2026-09-16 by clearing the stored bank on the running app and watching all 118 pairs arrive. This state is genuinely only the first session that lost signal, as designed. See "The 503 on Render". |
 | I10 | Bank shape: `{ categories:[{id, title, description, tag, accent}], pairs:[{id, category, question, answer, keywords[]}] }`; `catMap` by id, `byCat` grouping | 53–74 | — (data) | — | GET `/ask-aruvi` (behind `X-Aruvi-User`) | `accent` per category resolves against `--sec-a…d` / `--ss-plum` (globals.css:1010–1014 comment: "cat_e's :root --ss-plum"); phone must map the JSON accent value → `t.sec_a…d / t.ss_plum` — the exact accent string format in the JSON needs confirming (open Q5). |
 | I11 | Browse mode: five `<section.aa-cat>` with `style={{--accent}}`; header button `.aa-cat-head` (sticky top 0 within `.aa-body`, paper fill, `aria-expanded`): `.aa-cat-bar` 4px rail (painted only on `markedCat`), `.aa-cat-title` (display 16.5px 600), `.aa-cat-desc` (body 13px ink-soft), `.aa-cat-n` count (mono 12px accent), chevron `⌄` rotates when open; tap → toggle `openCat`, set `markedCat`, clear `openPair` | 145–180, 238–258 | DONE | AskMeyy.jsx `renderSectionHeader` | tokens `sec_*`, `ss_plum` | ONE moving marker, not five — walked (the rail hopped to cat_c and painted ochre). `SectionList` + `stickySectionHeadersEnabled`, switched OFF while searching where there is no header to freeze; the paper fill is what rows pass UNDER. ⚠️ The chevron is **drawn (SVG), not typed**: `⌄` (U+2304) has no glyph in the app's faces on iOS and would draw tofu — the `⚙` lesson of 2026-09-16 over again — and a path rotates cleanly besides. |
 | I12 | Open category list `.aa-cat-list` of `Answer` rows | 171–177 | DONE | AskMeyy.jsx (section data + `lead`) | I14 | `.aa-cat-list`'s 2px top padding rides on the FIRST ROW (`lead`), not on the sticky header it must not travel with; its 10px bottom and the category's own hairline are the section FOOTER, which is what puts the divider under an open list as well as under a collapsed header. |
@@ -209,7 +209,7 @@ line refs for shared logic point at `packages/shared/src/**`, which is what both
 | I16 | Escape closes; body scroll locked while open | 77–83 | WEB-ONLY-BY-NATURE ✅ + the phone's own answer | AskMeyy.jsx `BackHandler` | | Android's hardware back closes the panel. Without it, back would pop the ROUTE underneath while the panel stayed up over whatever arrived — the help outliving the screen it was opened from. The scroll lock needs no port: the panel covers the scroller. |
 | I17 | `.aa-body` scroll region, padding `0 20px 40px`, `-webkit-overflow-scrolling: touch` | 234–235 | DONE | AskMeyy.jsx `contentContainerStyle` | web.js `aa_body` | NO top padding, and deliberately: a band above the stuck header is where a scrolling question flashes into view before sliding under it. |
 | I18 | Search algorithm: `tokenize` (a-z0-9 words ≥2 chars, accent strip, light stemming ies/es/s), weights keyword 3 / question 2 / answer 1, prefix hit for tokens ≥3, sort matched → score → index; index memoised on the pair object (`__idx`) | askAruviSearch.js:19–89 | DONE | shared | | Runs on device; no LLM. `normalize` must stay identical to the server-side indexer. |
-| I19 | `refreshBank()`: GET `/ask-aruvi` with `If-None-Match: {etag}` only when a stored bank exists; 304 → stored; non-OK/empty → stored; OK → `store(kb, ETag)`; never throws | bank.js:63–84 | DONE | shared | `fetch` on RN honours ETag headers | |
+| I19 | `refreshBank()`: GET `/ask-aruvi` with `If-None-Match: {etag}` only when a stored bank exists; 304 → stored; non-OK/empty → stored; OK → `store(kb, ETag)`; never throws | bank.js:63–84 | DONE ✅ + the unchanged marker | shared; `packages/shared/test/askBank.test.js` (6 tests) | `fetch` on RN honours ETag headers | **`{"unchanged": true}` → stored** is now the normal answer (see "The 503 on Render"); the 304 branch is kept for a direct server or a fixed edge. The marker is checked BEFORE the `pairs` shape test, which would also reject it — but silently, and a marker read as "the server sent something useless" is indistinguishable from a corrupt bank. |
 | I20 | `primeBank()` at sign-in (`onEnter`) | page.jsx:632–638 | DONE | login.jsx:76 | | |
 | I21 | `refreshBank()` on every signed-in app load (`useEffect([user])`) | page.jsx:111–114 | DONE | `_layout.jsx` (6a F10 ⓷) | | An ETag request, so an unchanged bank costs a 304 and nothing else. |
 | I22 | `clearBank()` at sign-out (via `clearTeacherCaches`) and on erase | page.jsx:658–675, 650–656 | DONE | session.js → shared/signout.js | | |
@@ -263,20 +263,44 @@ What this family unlocks:
 - The privacy-note bar (A8) and the erasure exit (A12) — both are shell-level behaviours that only make sense once Settings › Legal and Delete my account exist.
 - Support from a lesson ("this plan looks wrong", the web's own "next natural step") can reuse the same `SupportForm` with a richer `context`.
 
-## Still open (deploy-side, not code)
+## The 503 on Render — diagnosed and fixed (2026-09-16)
 
-**`GET /ask-aruvi` returns 503 from Render.** `api/main.py:1856-1860` catches `FileNotFoundError` from
-`data.ask_aruvi_bank_bytes()` and answers "The Ask Meyy question bank is not installed on this server."
-Every code-side cause has been eliminated: `data/cloud/content/ask_aruvi/qa_knowledge_base.json` is
-git-tracked and present on `origin/main`, it is not in `.dockerignore`, the Dockerfile copies it
-(`COPY data/cloud/content/ data/cloud/content/`), `ASK_ARUVI_BANK = "ask_aruvi/qa_knowledge_base.json"`,
-`_st()` is `LocalStorage(DATA_DIR)`, and the boot log reports `content: /app/data/cloud/content`. Sibling
-content under the same root (`legal/`, `chapters/`) serves fine. **Next check: the commit SHA of Render's
-LIVE deploy** (Dashboard → meyy-api → Events) against the SHA that added the file.
+**It was never a missing file, and the earlier entry here said it was.** The bank is installed on Render
+and always was. Recorded in full because the wrong diagnosis survived two sessions and cost a morning.
 
-Until it is fixed, the phone and the web both show the I9 empty state for any teacher who has no stored
-bank — which is every teacher whose device has not met a server that served one. Locally the bank is
-served and Ask Meyy is complete; nothing in 6c waits on this.
+**What it actually is: Render's edge turns our empty `304 Not Modified` into a `503`.** Measured on the
+live service:
+
+| Request | Answer |
+|---|---|
+| `GET /ask-aruvi`, signed in, **no** `If-None-Match` | **200**, all 118 pairs |
+| the same URL and account a minute later, **with** `If-None-Match` | **503** |
+| `GET /ask-aruvi`, **not** signed in, **with** `If-None-Match` | **401** (so the header reaches us) |
+| the identical route code run locally (FastAPI 0.128.8 / Starlette 0.52.1, same CORS middleware) | textbook **304** — no body, no content-length, ETag + Cache-Control present |
+
+Our end is correct; the empty 304 is what does not survive the trip. The tell was that **exactly two
+routes in the whole API take `If-None-Match` — `/ask-aruvi` and `/plans/{subject}/{grade}` — and exactly
+those two 503'd** while every other call on the same page load returned 200. Content was never the
+problem: `/subjects/{s}/{g}/chapters` and `/legal/privacy/status` read the same tree and answer in ~65ms.
+
+**Why nobody saw it.** Both clients swallow a failed check by design — offline must never blank the help
+screen — so the symptoms were invisible: Ask Meyy went on answering from the stored bank and My Lessons
+went on listing. The real damage was silent. ⓵ The bank could never REFRESH: edit an answer and no
+existing device would ever see it. ⓶ `plans.js` only marks a copy `fresh` when the server has actually
+spoken, so the listing was re-requested on **every mount** for the whole session.
+
+**The fix (this commit): never emit a 304 — say it in a 200.** `{"unchanged": true}`, eighteen bytes,
+an ordinary response, and it gets through. The saving is untouched: the client still uploads a
+32-character fingerprint and still avoids the full body. Both routes keep ACCEPTING `If-None-Match`, so
+no client had to change to benefit and a fix at Render needs no coordination. Old clients are safe by
+construction — both check the shape of what came back (`Array.isArray(kb.pairs)`, `d.plans`) before
+believing it, so the marker reads to them as "nothing useful" and they keep the stored copy, which is
+the same outcome a 304 gave them.
+
+Guarded by `tests/test_ask_aruvi_kb.py::test_unchanged_is_never_a_304` (no `status_code=304` anywhere in
+`api/main.py`, and both ETag routes must answer with the marker) and by the client tests named in I19.
+⚠️ **Still worth a ticket to Render**: an upstream 304 becoming a 503 will bite every conditional request
+this product ever makes, and the workaround above is ours, not theirs.
 
 ## Open questions for the founder
 

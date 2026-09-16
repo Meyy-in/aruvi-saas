@@ -23,11 +23,24 @@ setStorage({
 let calls = 0;
 let plans = [{ filename: "ch_01.json", prepared: false }];
 let etag = '"v1"';
+/* How the server says "you already have it". `marker` is what it actually sends since
+   2026-09-16 — a 200 carrying `{unchanged:true}` — because Render's edge turns an empty 304
+   into a 503 before it reaches the device (api/main.py, above `get_plans`). `notmodified` is
+   the standard shape, kept in the tests because a direct server, or a fixed edge, still sends
+   it and the client must go on understanding both. */
+let unchangedAs = "marker";
 globalThis.fetch = async (url, opts) => {
   calls += 1;
   const inm = (opts && opts.headers && opts.headers["If-None-Match"]) || "";
   if (inm && inm === etag) {
-    return { status: 304, ok: false, headers: { get: () => etag } };
+    if (unchangedAs === "notmodified") {
+      return { status: 304, ok: false, headers: { get: () => etag } };
+    }
+    return {
+      status: 200, ok: true,
+      headers: { get: (h) => (h === "ETag" ? etag : null) },
+      json: async () => ({ unchanged: true }),
+    };
   }
   return {
     status: 200, ok: true,
@@ -37,7 +50,7 @@ globalThis.fetch = async (url, opts) => {
 };
 
 function reset() {
-  clearPlans(); box.clear(); calls = 0; etag = '"v1"';
+  clearPlans(); box.clear(); calls = 0; etag = '"v1"'; unchangedAs = "marker";
   plans = [{ filename: "ch_01.json", prepared: false }];
   setUser("9000000001");
 }
@@ -66,11 +79,39 @@ test("the device copy is readable synchronously, before any fetch", async () => 
 
 test("a stored copy is revalidated with If-None-Match and kept on 304", async () => {
   reset();
+  unchangedAs = "notmodified";
   await fetchPlans("english/iii");
   clearPlans();
   const got = await fetchPlans("english/iii");     // sends the etag, server says 304
   assert.equal(calls, 2);
   assert.deepEqual(got, plans);
+});
+
+/* ★ THE SHAPE THE SERVER ACTUALLY SENDS (2026-09-16). Same contract as the 304 above, said in
+   a 200 — and the listing must come back IDENTICAL, not empty. An `unchanged` body read as a
+   normal payload yields `d.plans === undefined` → `[]`, which every screen would render as
+   "this teacher has no lessons at all". That is the failure this test is here to catch. */
+test("a 200 + {unchanged} keeps the stored listing, and does not empty it", async () => {
+  reset();
+  await fetchPlans("english/iii");
+  clearPlans();
+  const got = await fetchPlans("english/iii");
+  assert.equal(calls, 2);
+  assert.deepEqual(got, plans);
+  assert.ok(got.length, "an unchanged marker must never resolve to an empty listing");
+});
+
+/* And the check must actually SETTLE. Before the fix the server answered 503, the catch handed
+   back the stored copy without marking it fresh, and every mount asked again — the listing was
+   re-requested for the whole session while looking perfectly correct on screen. */
+test("an unchanged answer marks the copy fresh, so the session stops asking", async () => {
+  reset();
+  await fetchPlans("english/iii");
+  clearPlans();
+  await fetchPlans("english/iii");                 // etag sent, server says unchanged
+  await fetchPlans("english/iii");
+  await fetchPlans("english/iii");
+  assert.equal(calls, 2);
 });
 
 test("invalidate forces the next read back to the server", async () => {

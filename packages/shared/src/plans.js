@@ -22,8 +22,14 @@
  *      way the Ask Meyy bank is (ask-aruvi/bank.js, which this file follows deliberately):
  *      `cachedPlans` is SYNCHRONOUS and may be read during render, so a returning teacher sees
  *      her chapters before the network is consulted at all. The ETag is stored beside it and
- *      sent back as If-None-Match, so the freshness check costs a few hundred bytes once the
- *      server answers 304.
+ *      sent back as If-None-Match — a 32-character fingerprint, never the listing — so the
+ *      freshness check costs a few hundred bytes once the server answers `{"unchanged": true}`.
+ *
+ * ⚠️ THAT ANSWER IS A 200, NOT A 304 (2026-09-16). Render's edge turns our empty 304 into a 503
+ *      before it reaches the device, so this check failed for every teacher who already held a
+ *      copy — and failed INVISIBLY: the catch below returned the stored listing, so My Lessons
+ *      looked right, while `fresh` was never set and the listing was therefore re-requested on
+ *      every single mount. The 304 branch is kept as well; see api/main.py, above `get_plans`.
  *
  * ★ THE COPY IS PER TEACHER, AND MUST BE. The response is not a pure library listing: each row
  * carries HER `prepared` / `archived` / `prepared_source_year` flags. So every key is stamped
@@ -130,6 +136,15 @@ export function fetchPlans(key, { force = false } = {}) {
       }
       if (!r.ok) throw new Error(`${r.status}`);
       const d = await r.json();
+      // "You already have it." Unreachable without a stored copy — the ETag is only offered
+      // above when we hold the body it belongs to — but if it ever happens, THROW rather than
+      // return an empty listing: the catch has nothing to fall back on, so it rejects, and the
+      // next mount asks again without a tag and gets the real thing. An empty array here would
+      // read to every screen as "this teacher has no lessons".
+      if (d && d.unchanged) {
+        if (stored && stored.plans) { stored.fresh = true; return stored.plans; }
+        throw new Error("unchanged-without-copy");
+      }
       const next = {
         plans: (d && d.plans) || [],
         etag: r.headers.get("ETag") || "",

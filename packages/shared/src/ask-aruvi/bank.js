@@ -17,9 +17,18 @@
  *      written to localStorage, and every read after that is local and synchronous.
  *
  * ★ THE ETAG IS WHAT MAKES THE FRESHNESS CHECK FREE. We store the server's ETag beside the
- * bank and send it back as If-None-Match. On a normal app load the server answers 304 with
- * no body — a few hundred bytes — and we keep what we have. The ~90KB download happens only
- * in the month the answers actually change. So: a check every load, a download almost never.
+ * bank and send it back as If-None-Match — a 32-character fingerprint, never the bank itself.
+ * On a normal app load the server answers `{"unchanged": true}` and we keep what we have. The
+ * ~90KB download happens only in the month the answers actually change. So: a check every
+ * load, a download almost never.
+ *
+ * ⚠️ "UNCHANGED" ARRIVES AS A 200, NOT A 304, and that is a deliberate server decision made on
+ * 2026-09-16: Render's edge turns our empty 304 into a 503 before it reaches the device, so
+ * the freshness check failed for every teacher who already held a copy. Nothing LOOKED broken —
+ * the catch below kept the stored bank and the help screen went on answering — but the bank
+ * could never refresh, so an edited answer would never have reached a phone again. See the
+ * block above `get_plans` in api/main.py for the measurement. The 304 branch below is kept
+ * anyway: it costs one comparison and it is what a direct server, or a fixed edge, will send.
  *
  * ★ FAILURE IS ALWAYS SILENT AND ALWAYS FALLS BACK TO THE STORED COPY. Offline, a dead
  * server, a 401 — none of them may blank the help screen. The only state with no answers is
@@ -78,6 +87,11 @@ export async function refreshBank() {
     if (r.status === 304) return stored;
     if (!r.ok) return stored;
     const kb = await r.json();
+    // The server's "you already have it". Checked BEFORE the shape test below, which would
+    // also reject it — but silently, and for the wrong reason: a marker read as "the server
+    // sent something useless" is indistinguishable from a corrupt bank, and the day that
+    // distinction matters is the day someone is debugging this at a school.
+    if (kb && kb.unchanged) return stored;
     if (!kb || !Array.isArray(kb.pairs) || !kb.pairs.length) return stored;
     store(kb, r.headers.get("ETag") || "");
     return kb;

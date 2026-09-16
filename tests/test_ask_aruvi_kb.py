@@ -176,7 +176,16 @@ def test_the_route_and_the_client_agree():
     reader in api/data.py, and a client that fetches THAT path."""
     main = (REPO_ROOT / "api" / "main.py").read_text()
     dat = (REPO_ROOT / "api" / "data.py").read_text()
-    bank_js = (REPO_ROOT / "web" / "app" / "ask-aruvi" / "bank.js").read_text()
+    # ⚠️ THE CLIENT MOVED (Track D step 1, 2026-09-11) and this test did not follow it until
+    # 2026-09-16: web/app/ask-aruvi/bank.js is now a two-line re-export and the real reader is
+    # in packages/shared, which BOTH surfaces run. Asserting against the shim passed for a
+    # fortnight while testing nothing, then failed outright once the shim stopped naming the
+    # path. Check the shared file, and check that the web still points at it.
+    bank_js = (REPO_ROOT / "packages" / "shared" / "src" / "ask-aruvi" / "bank.js").read_text()
+    web_shim = (REPO_ROOT / "web" / "app" / "ask-aruvi" / "bank.js").read_text()
+    assert "@aruvi/shared/ask-aruvi/bank" in web_shim, (
+        "web/app/ask-aruvi/bank.js no longer re-exports the shared reader — the two surfaces "
+        "would drift, which is the whole point of packages/shared.")
     assert '@app.get("/ask-aruvi")' in main, "GET /ask-aruvi is missing from api/main.py"
     assert "_current_identity" in main.split('@app.get("/ask-aruvi")')[1][:600], (
         "GET /ask-aruvi must depend on _current_identity — without it the bank is public "
@@ -185,8 +194,39 @@ def test_the_route_and_the_client_agree():
     assert '"/ask-aruvi"' in bank_js, "bank.js does not fetch /ask-aruvi"
     assert "If-None-Match" in bank_js, (
         "bank.js must send If-None-Match — without it every app load re-downloads ~90KB "
-        "instead of getting a 304.")
+        "instead of an eighteen-byte 'unchanged'.")
     print("  ok  route is identity-gated, reader exists, client fetches it with an ETag")
+
+
+def test_unchanged_is_never_a_304():
+    """The freshness check must not answer 304 — on Render it does not survive the edge.
+
+    Measured on the live service, 2026-09-16: the same URL with the same account answers 200
+    WITHOUT If-None-Match and 503 WITH it, while an unauthenticated request carrying the header
+    gets a normal 401 (so the header reaches us; it is the reply that does not get back). The
+    identical route code run locally returns a textbook 304. Our end is correct and the empty
+    304 is what Render's edge mangles.
+
+    ★ THIS TEST EXISTS BECAUSE THE BUG IS INVISIBLE. Both clients swallow a failed check and
+    keep their stored copy, so restoring the 304 breaks nothing anyone can SEE: Ask Meyy goes
+    on answering, My Lessons goes on listing — and the bank silently stops updating, so an
+    edited answer never reaches a phone again. Nothing else in the product would notice.
+    """
+    main = (REPO_ROOT / "api" / "main.py").read_text()
+    assert "status_code=304" not in main, (
+        "api/main.py answers 304 somewhere. Render's edge turns an empty 304 into a 503 and "
+        "both freshness checks fail silently — say 'unchanged' in a 200 instead. See the note "
+        "above get_plans.")
+    for route in ('@app.get("/plans/{subject}/{grade}")', '@app.get("/ask-aruvi")'):
+        # The route's own body: from its decorator to the next one. A fixed character window
+        # would silently stop testing the day a route grows past it — /plans already has.
+        after = main.split(route)[1]
+        body = after.split("\n@app.")[0]
+        assert "if_none_match" in body, "%s no longer runs a freshness check" % route
+        assert "UNCHANGED" in body, (
+            "%s takes an ETag but never answers with the unchanged marker — a check that can "
+            "only ever return the full body is a check that costs and saves nothing." % route)
+    print("  ok  the freshness checks answer 200 + unchanged, never 304")
 
 
 def test_teacher_words_reach_their_pair():

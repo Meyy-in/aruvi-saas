@@ -993,6 +993,41 @@ def _total_units(sub, subject: str, grade: str, p: Dict[str, Any]) -> Optional[i
     return n
 
 
+# ── "NOTHING HAS CHANGED", AND WHY IT IS NOT A 304 (2026-09-16) ────────────────────────
+# Two routes in this API run a freshness check — this one and GET /ask-aruvi. The client keeps
+# the body on the device, sends its fingerprint back as If-None-Match, and most days the answer
+# is "you already have it". The HTTP way to say that is 304 Not Modified, with no body.
+#
+# ★ RENDER'S EDGE TURNS OUR 304 INTO A 503. Measured on the live service, 2026-09-16: the same
+# URL with the same account answers 200 WITHOUT the header and 503 WITH it, while an
+# unauthenticated request carrying the header gets a normal 401 — so the header reaches us
+# intact and it is the REPLY that does not get back. The same route code, run locally on this
+# FastAPI and Starlette with the same CORS middleware, returns a textbook 304 (no body, no
+# content-length, ETag and Cache-Control present). Our end is correct; the empty 304 is what
+# does not survive the trip.
+#
+# ★ WHAT THAT COST, BEFORE THIS. Both checks failed for every device that already held a copy —
+# which is every returning teacher. Both clients swallow the failure and keep what they have, so
+# nothing looked broken: Ask Meyy still answered and My Lessons still listed. But the bank could
+# never REFRESH — edit an answer and no existing phone would ever see it — and this listing
+# re-requested on every mount, because the client only marks a copy fresh when the server has
+# actually spoken.
+#
+# ★ SO WE SAY IT IN A 200 INSTEAD. `{"unchanged": true}` is eighteen bytes and an ordinary
+# response, and it gets through. The saving is untouched: the phone still uploads a 32-character
+# fingerprint and still avoids the full body. We keep ACCEPTING If-None-Match, so no client has
+# to change to benefit and a future fix at Render needs no coordination — we simply never EMIT a
+# 304 again.
+# ⚠️ OLD CLIENTS ARE SAFE by construction: both check the shape of what came back before
+# believing it (`Array.isArray(kb.pairs)`, `d.plans`), so an unchanged marker reads to them as
+# "nothing useful" and they keep the stored copy — the same outcome a 304 gave them.
+# ⚠️ THE MARKER IS NOT A PAYLOAD. Anything that ever needs to ride along with "unchanged" must
+# go in the ETag or in a new field the clients opt into — a client that has not been taught the
+# new field would drop it silently, which is exactly the trap this comment exists to name.
+UNCHANGED = {"unchanged": True}
+UNCHANGED_BYTES = b'{"unchanged":true}'
+
+
 @app.get("/plans/{subject}/{grade}")
 def get_plans(subject: str, grade: str, response: Response,
               year_id: Optional[str] = None,
@@ -1093,13 +1128,18 @@ def get_plans(subject: str, grade: str, response: Response,
                "current_lp_year": config.LP_YEAR}
     # ★ AN ETAG, SO THE FRESHNESS CHECK IS NEARLY FREE (2026-09-14). The client keeps this
     # listing on the device (packages/shared/src/plans.js) and sends the tag back; a listing
-    # that has not moved — which is most of them, most days — answers 304 with no body. The
-    # tag is over the WHOLE payload, flags included, so an attach or a prepare made on another
-    # device still changes it. Per-teacher by construction, hence no shared cache header.
+    # that has not moved — which is most of them, most days — answers with the unchanged marker
+    # and no body. The tag is over the WHOLE payload, flags included, so an attach or a prepare
+    # made on another device still changes it. Per-teacher by construction, hence no shared
+    # cache header.
+    # ⚠️ The marker is a 200, NOT a 304 — see the block above `get_plans` for the measurement
+    # that forced that, and do not "tidy" it back into a 304 without re-testing against Render.
     body = json.dumps(payload, sort_keys=True, default=str)
     etag = '"%s"' % hashlib.sha256(body.encode("utf-8")).hexdigest()[:32]
     if if_none_match and if_none_match.strip() == etag:
-        return Response(status_code=304, headers={"ETag": etag, "Cache-Control": "no-cache"})
+        response.headers["ETag"] = etag
+        response.headers["Cache-Control"] = "no-cache"
+        return UNCHANGED
     response.headers["ETag"] = etag
     response.headers["Cache-Control"] = "no-cache"
     return payload
@@ -1845,9 +1885,14 @@ def get_ask_aruvi(response: Response,
     ★ AND IT MUST STILL WORK OFFLINE. Ask Aruvi is the HELP screen — it is needed exactly
     when the network is poor, on a school Android. So the client fetches this ONCE after
     sign-in and keeps it in localStorage, reading the stored copy thereafter; see
-    AskAruvi.jsx. The ETag below is what makes that cheap: the browser sends
-    If-None-Match on each app load and normally gets a 304 with no body, so a teacher
+    AskAruvi.jsx. The ETag below is what makes that cheap: the client sends If-None-Match
+    on each app load and normally gets an eighteen-byte "unchanged" back, so a teacher
     pays for the ~90KB only in the month the answers actually change.
+
+    ⚠️ THAT ANSWER IS A 200, NOT A 304, and the reason is measured rather than stylistic —
+    see the block above `get_plans`. Restoring the 304 here breaks the freshness check on
+    Render while leaving every symptom invisible: the panel keeps working from the stored
+    bank, and the bank silently stops updating.
 
     Not gated on entitlement, ever — the same reasoning as data rights and support
     (§2.5): a teacher whose subscription is the broken thing must still be able to read
@@ -1860,7 +1905,8 @@ def get_ask_aruvi(response: Response,
                             detail="The Ask Meyy question bank is not installed on this server.")
     etag = '"%s"' % hashlib.sha256(raw).hexdigest()[:32]
     if if_none_match and if_none_match.strip() == etag:
-        return Response(status_code=304, headers={"ETag": etag, "Cache-Control": "no-cache"})
+        return Response(content=UNCHANGED_BYTES, media_type="application/json",
+                        headers={"ETag": etag, "Cache-Control": "no-cache"})
     return Response(content=raw, media_type="application/json",
                     headers={"ETag": etag, "Cache-Control": "no-cache"})
 
