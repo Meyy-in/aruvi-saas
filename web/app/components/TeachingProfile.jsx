@@ -5,6 +5,7 @@ import { getJSON, pretty, ROMAN, stageOfGrade, projectReadiness, API, withUser,
 import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget } from "../lib/budget";
 import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections,
          secSummary, gradeDraftFrom, finalizeSubject,
+         secCount, gradePpw, subjectPpw, profileStats, classCard,
          PER_CLASS_GOALS, GOAL_WORD, portalGradeIdxs as sharedGradeIdxs } from "../lib/profile";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
 /* `pushSectionState` left with `clearSectionState`, which was its only caller here. */
@@ -1442,19 +1443,14 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
    * A class always carries ≥1 section (removing the last one cascades the class away, see
    * `removeSection`), so `.length` is the multiplier; the `|| 1` covers only a legacy record
    * that has no sections array at all, where the old behaviour is the safest reading. */
-  const secCount = (g) => (g.sections || []).length || 1;
-  const gradePpw = (g) => (g.periods_per_week || 0) * secCount(g);
-
-  // headline totals across the whole profile
-  const stats = (() => {
-    const classSet = new Set(); const secSet = new Set(); let ppw = 0;
-    canon.forEach((s) => (s.grades || []).forEach((g) => {
-      classSet.add(classNum(g.grade));
-      (g.sections || []).forEach((x) => secSet.add(`${classNum(g.grade)}${secLetter(x)}`));
-      ppw += gradePpw(g);
-    }));
-    return { subjects: canon.length, classes: classSet.size, sections: secSet.size, ppw };
-  })();
+  /* ★ `secCount` / `gradePpw` / `profileStats` / `classCard` MOVED TO @aruvi/shared/profile
+   * (Track D step 6d, 2026-09-16), and the comment above them moved with them. They were four
+   * lines of arithmetic, which is exactly why they were worth moving before the phone drew this
+   * screen: "41 periods a week" is a claim about a teacher's working life, and a phone that
+   * counted sections where this counted classes would not look broken on either surface — it
+   * would just tell her two different things about one account, with no way to know which was
+   * right. The imports are above; nothing about the numbers changed. */
+  const stats = profileStats(canon);
 
   return (
     <div className="tp" ref={rootRef}>
@@ -1522,7 +1518,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
       {canon.map((s, si) => {
         const open = s.name === openSubject;
         // per SECTION, like the headline stat — see `gradePpw` above.
-        const subPpw = (s.grades || []).reduce((a, g) => a + gradePpw(g), 0);
+        const subPpw = subjectPpw(s);
         return (
           <div className={`tp-sub ${open ? "open" : ""}`} key={s.name}>
             <div className="tp-sub-hd" onClick={() => setOpenSubject(open ? null : s.name)}>
@@ -1555,50 +1551,28 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             </div>
 
             {open && (s.grades || []).map((g, gi) => {
-              const ppw = g.periods_per_week;
-              const b = (s.budget || {})[gi] ?? (s.budget || {})[String(gi)];
-              const total = ppw && b ? budgetPeriods(ppw, b) : null;
-              const durs = g.durations || [];
-              const pmap = g.ppw_by_duration || {};
-              /* Periods/week is stated as the SPLIT itself — "7 × 50 min, 1 × 60 min" — not as a
-               * bare total with the lengths parked in a separate column (founder, 2026-07-26).
-               * The number on its own never answered the question a teacher actually asks of this
-               * card ("what does my week look like?"), and the Duration column was only ever the
-               * other half of this one sentence. Dropping that column is what buys the room. A
-               * single-length class reads the same way ("8 × 45 min"), so there is one format. */
-              const perWeek = durs.length
-                ? durs.map((d) => `${pmap[d] ?? pmap[String(d)] ?? 0} × ${d} min`).join(", ")
-                : null;
+              /* ★ EVERY VALUE ON THIS CARD COMES FROM ONE SHARED FUNCTION (Track D step 6d,
+                 2026-09-16). The budget's index-vs-string key, the "per section" split, the
+                 named-chip rule and the two em-dashes were all computed inline here; the phone
+                 draws the same card, so they are now `classCard` in @aruvi/shared/profile and
+                 this reads them. The strings and the rules are unchanged — see that file for
+                 the reasoning that used to live in this block. */
+              const cc = classCard(s, gi);
               return (
                 <div className="tp-classcard" key={g.grade}>
                   <div className="tp-cc-hd">
                     <span className="tp-cc-left">
-                      <span className="tp-cc-name">Class {classNum(g.grade)}</span>
+                      <span className="tp-cc-name">{cc.className}</span>
                     </span>
                     <div className="tp-cc-right">
                       <span className="tp-cc-seclbl">Sections</span>
                       <div className="tp-chips">
-                        {(g.sections || []).map((x) => {
-                          const sec = secLetter(x);
-                          const nm = secName(x);
-                          const tag = `${classNum(g.grade)}${sec}`;
-                          /* ★ A NAMED SECTION SHOWS HER NAME AND NOTHING ELSE (founder,
-                             2026-08-30) — REVERSING the "tag first, name appended" rule of
-                             earlier the same day. That rule argued the profile is where she
-                             audits her set-up, so the key belongs in front. The founder's
-                             correction: the CLASS is already stated, in display serif, at the
-                             top of this very card — so the "6" in "6A · Rose" is the third time
-                             the same fact appears on one card, and it pushes her own word to
-                             third place behind it. The letter is not lost: it is in `title`,
-                             which is also what the screen reader announces, and every chip
-                             without a name still reads as the plain tag. */
-                          return (
-                            <span className={`tp-chip${nm ? " named" : ""}`} key={sec}
-                              title={`Section ${tag}`}>
-                              {nm || tag}
-                            </span>
-                          );
-                        })}
+                        {cc.chips.map((c) => (
+                          <span className={`tp-chip${c.named ? " named" : ""}`} key={c.sec}
+                            title={`Section ${c.tag}`}>
+                            {c.label}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -1609,12 +1583,12 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
                           reading "8 × 45 min" makes the 24 up there look like a mistake. */}
                       <div className="tp-cc-col-l">Periods / week per section
                       </div>
-                      <div className="tp-cc-col-v">{perWeek || (ppw ? `${ppw} a week` : "—")}</div>
+                      <div className="tp-cc-col-v">{cc.perWeek}</div>
                     </div>
                     <div className="tp-cc-col">
                       <div className="tp-cc-col-l">Annual budget
                       </div>
-                      <div className="tp-cc-col-v">{total ? `${total} periods` : "—"}</div>
+                      <div className="tp-cc-col-v">{cc.annual}</div>
                     </div>
                   </div>
                 </div>

@@ -14,7 +14,7 @@
  * way to be sure of that is one implementation.
  */
 import { classNum, stageOfGrade } from "./format.js";
-import { findScope } from "./budget.js";
+import { budgetPeriods, findScope } from "./budget.js";
 import { DEFAULT_DURATION, normPpw, ppwAnchor, ppwMapSum } from "./ppw.js";
 
 export const SEC_NAME_MAX = 8;
@@ -223,3 +223,87 @@ export function resolvePortalPick(subjects, goal, scope = null, chosenSubject = 
   if (idxs.length === 1) return { open: { subject: name, grade: grades[idxs[0]].grade } };
   return { ask: "class", subject: name };
 }
+
+
+/* ───────── what the ACCORDION shows (Track D step 6d, 2026-09-16) ─────────
+ *
+ * Settings › Teaching profile is a READ of the record above: four headline tiles, one row per
+ * subject, one card per class. None of it is stored — every number is derived from `readiness`
+ * every time it is drawn, which is the only way a profile screen cannot go stale.
+ *
+ * ★ THEY ARE HERE RATHER THAN IN EITHER SCREEN because the two surfaces must agree about what a
+ * teacher teaches. "41 periods a week" is an arithmetic claim about her working life; a phone
+ * that counted sections where the web counted classes would not look broken on either screen —
+ * it would simply tell her two different things about the same account, and she would have no
+ * way to know which was right. That is the failure mode this package exists to prevent.
+ */
+
+/* A class with no sections recorded still teaches ONE. The fallback is load-bearing: an
+   older record (or one mid-edit) can carry an empty list, and counting it as zero would
+   silently zero the periods-a-week for that class in the headline. */
+export const secCount = (g) => ((g && g.sections) || []).length || 1;
+
+/* ★ PERIODS A WEEK IS PER SECTION, MULTIPLIED UP. `periods_per_week` on the record is what ONE
+   section meets for; a teacher with three sections of Class 3 stands in front of three of them.
+   The headline tile and the subject row both state the multiplied figure, and the class card
+   states the per-section split — which is why the card's label says "per section" out loud. */
+export const gradePpw = (g) => ((g && g.periods_per_week) || 0) * secCount(g);
+export const subjectPpw = (s) => (((s && s.grades) || []).reduce((a, g) => a + gradePpw(g), 0));
+
+/* The four headline tiles. Classes and sections are counted as SETS across subjects: a teacher
+   who takes Class 6 for both Science and Maths stands in one Class 6, and a profile that told
+   her she had two would be counting her timetable rather than her school. */
+export function profileStats(subjects) {
+  const canon = subjects || [];
+  const classSet = new Set();
+  const secSet = new Set();
+  let ppw = 0;
+  canon.forEach((s) => ((s.grades) || []).forEach((g) => {
+    classSet.add(classNum(g.grade));
+    (g.sections || []).forEach((x) => secSet.add(`${classNum(g.grade)}${secLetter(x)}`));
+    ppw += gradePpw(g);
+  }));
+  return { subjects: canon.length, classes: classSet.size, sections: secSet.size, ppw };
+}
+
+/* One class card, fully resolved: its name, its section chips, and the two value lines.
+ *
+ * ⚠️ THE BUDGET IS KEYED BY GRADE INDEX, not by grade, and the key may be a number or a string
+ * depending on which surface last wrote it — hence the double lookup. Getting this wrong shows
+ * as "—" on a class that has a budget, which reads as "you never set one".
+ *
+ * ★ A NAMED SECTION CARRIES HER WORD ALONE (founder, 2026-08-30). The class is already stated,
+ * in display serif, at the top of the same card, so "6" in "6A · Rose" would be the third time
+ * that fact appeared on one card — and it pushes her own name to third place behind it. The
+ * letter is not lost: `tag` is what the screen reader announces. */
+export function classCard(s, gi) {
+  const g = ((s && s.grades) || [])[gi];
+  if (!g) return null;
+  const n = classNum(g.grade);
+  const ppw = g.periods_per_week;
+  const b = (s.budget || {})[gi] ?? (s.budget || {})[String(gi)];
+  const total = ppw && b ? budgetPeriods(ppw, b) : null;
+  const durs = g.durations || [];
+  const pmap = g.ppw_by_duration || {};
+  /* Periods a week is stated as the SPLIT itself — "7 × 50 min, 1 × 60 min" — never as a bare
+     total with the lengths parked in another column (founder, 2026-07-26): the number alone
+     never answered the question a teacher actually asks of this card, "what does my week look
+     like?". A single-length class reads the same way, so there is one format, not two. */
+  const perWeek = durs.length
+    ? durs.map((d) => `${pmap[d] ?? pmap[String(d)] ?? 0} × ${d} min`).join(", ")
+    : null;
+  return {
+    grade: g.grade,
+    className: `Class ${n}`,
+    chips: (g.sections || []).map((x) => {
+      const sec = secLetter(x);
+      const nm = secName(x);
+      return { sec, tag: `${n}${sec}`, label: nm || `${n}${sec}`, named: !!nm };
+    }),
+    perWeek: perWeek || (ppw ? `${ppw} a week` : "—"),
+    annual: total ? `${total} periods` : "—",
+  };
+}
+
+/* Every card of a subject, in record order. */
+export const classCards = (s) => (((s && s.grades) || []).map((_g, gi) => classCard(s, gi)));

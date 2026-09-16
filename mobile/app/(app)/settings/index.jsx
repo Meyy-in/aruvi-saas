@@ -203,8 +203,11 @@ export default function SettingsHome() {
 
   return (
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
+      {/* ✅ LIVE AS OF 6d — the accordion, read-only. What she can CHANGE is the bar's "+";
+          this is where she reads what she has told Meyy she teaches. */}
       <BigCard label="Teaching profile"
-        sub="Subjects, classes, sections and periods you teach" />
+        sub="Subjects, classes, sections and periods you teach"
+        onPress={() => router.push("/settings/profile")} />
       {/* ✅ LIVE AS OF 6c. `openAsk`, not a route: Ask Meyy is a panel over the shell, so it opens
           OVER Settings with the bar still live — the web's own behaviour (B3). Nothing is pushed,
           so the ✕ she closes it with leaves her exactly here. */}

@@ -1559,6 +1559,69 @@ export function webStyles(t, scheme = "light") {
     /* The one state with no answers. Quiet prose, not an error — see the component. */
     aa_empty:        { paddingVertical: 34, paddingHorizontal: 22, maxWidth: 420 },
     aa_empty_p:      { fontFamily: F.body(400), fontSize: 15, lineHeight: 24, marginBottom: 10 },
+
+    /* ── Settings › Teaching profile — the accordion (`.tp-*`) — 6d, measured 2026-09-16 in a
+       390px iframe on the running web. ⚠️ THE IFRAME HAD TO BE 394px WIDE to leave 390 of
+       content after the scrollbar, because this screen has real ≤400px rules: `.tp-stats` gap
+       6 not 7, `.tp-stat` padding 10/7 not 11/9, `.tp-stat-n` 19 not 21, `.tp-stat-l` 8 not
+       8.5 — and `.tp-cc-cols` collapses from two columns to ONE. Measuring at 402 would have
+       transcribed the desktop card and stacked nothing. ────────────────────────────────
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    tp_title:        { fontFamily: F.display(600), fontSize: 18, lineHeight: 20.7, marginTop: 3 },
+    tp_empty:        { fontFamily: F.body(400, true), fontSize: 14, lineHeight: 21 },
+
+    /* The four headline tiles. A fixed 4-up grid on the web; on RN a row of four equal flex
+       cells with the same 6px gutter, which is the same thing said in Yoga. */
+    tp_stats:        { flexDirection: "row", columnGap: 6, marginTop: 10 },
+    tp_stat:         { flex: 1, minWidth: 0, rowGap: 2, borderWidth: 1, borderRadius: 12,
+                       paddingVertical: 10, paddingHorizontal: 7 },
+    tp_stat_n:       { fontFamily: F.display(600), fontSize: 19, lineHeight: 19 },
+    tp_stat_l:       { fontFamily: F.mono(400), fontSize: 8, lineHeight: 9.6, letterSpacing: 0.24,
+                       textTransform: UP },
+
+    /* A subject row. `tp_sub_open` is the whole of the open state's card — a green edge — and
+       `tp_sub_hd_open` its header: the tinted band, the top-only radius, and the 17px left pad
+       that makes room for the clay spine. */
+    tp_sub:          { borderWidth: 1, borderRadius: 12, marginBottom: 10, overflow: "hidden" },
+    tp_sub_hd:       { flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+                       columnGap: 10, paddingVertical: 13, paddingHorizontal: 14 },
+    tp_sub_hd_open:  { paddingLeft: 17, borderBottomWidth: 1 },
+    tp_sub_left:     { flexDirection: "row", alignItems: "center", columnGap: 8, flex: 1, minWidth: 0 },
+    tp_sub_name:     { fontFamily: F.display(600), fontSize: 17, lineHeight: 26.35 },
+    tp_sub_side:     { flexDirection: "row", alignItems: "center", columnGap: 10 },
+    tp_sub_ppw:      { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 0.42 },
+    /* ★ THE SPINE IS A VIEW, NOT A ::before. 3px wide, inset 13 top and bottom, rounded on its
+       right edge only — the one place the open row says "this is the header of what follows"
+       rather than "this is one more card in the stack". */
+    tp_spine:        { position: "absolute", left: 0, top: 13, bottom: 13, width: 3,
+                       borderTopRightRadius: 3, borderBottomRightRadius: 3 },
+    tp_caret:        { fontSize: 15, lineHeight: 15 },
+
+    /* A class card inside the open subject. */
+    tp_classcard:    { paddingTop: 12, paddingBottom: 16, paddingHorizontal: 14, borderTopWidth: 1 },
+    tp_cc_hd:        { flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+                       columnGap: 10, marginBottom: 10 },
+    tp_cc_name:      { fontFamily: F.display(500), fontSize: 15, lineHeight: 23.25 },
+    tp_cc_right:     { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", columnGap: 8,
+                       rowGap: 8, flexWrap: "wrap", justifyContent: "flex-end" },
+    tp_cc_seclbl:    { fontFamily: F.mono(400), fontSize: 9.5, lineHeight: 14.725, letterSpacing: 0.475,
+                       textTransform: UP },
+    tp_chips:        { flexDirection: "row", flexWrap: "wrap", alignItems: "center",
+                       columnGap: 6, rowGap: 6 },
+    /* Radius 999 on the web; RN wants a number it can round to, and 999 on a 27px pill is the
+       same circle. `overflow: hidden` is what makes a Text carry the pill on Android. */
+    tp_chip:         { borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10, overflow: "hidden",
+                       fontFamily: F.mono(400), fontSize: 11, lineHeight: 19.375 },
+    /* Her own word is a WORD, not a code, so a named chip drops the mono face and its tracking
+       with it — and keeps the pine pill, so a row of named and unnamed chips still reads as one
+       set. */
+    tp_chip_named:   { fontFamily: F.body(400), fontSize: 12.5, letterSpacing: 0 },
+    /* ONE column at phone width (the ≤400px rule), so the split may run to two lines without
+       being squeezed. */
+    tp_cc_cols:      { rowGap: 8 },
+    tp_cc_col_l:     { fontFamily: F.mono(400), fontSize: 9.5, lineHeight: 14.725, letterSpacing: 0.38,
+                       textTransform: UP },
+    tp_cc_col_v:     { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 20.925, marginTop: 3 },
   };
 }
 
