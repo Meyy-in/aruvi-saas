@@ -35,7 +35,7 @@
  * stop. It now calls the rule like everyone else.
  */
 
-import { fetchEntitlement as getEntitlement, entLapsed, paidScopesOf, userKey } from "./format.js";
+import { fetchEntitlement as getEntitlement, entLapsed, paidScopesOf, getUser, userKey } from "./format.js";
 import { invalidateAccount } from "./account.js";
 import { storage } from "./storage.js";
 
@@ -112,21 +112,30 @@ export function entitlementState() {
  * rejects, because every caller of this is a cadence (a mount, a foreground, a timer) and a
  * failed poll is not an event any screen should handle.
  *
- * ⚠️ A 401 is the server REFUSING this session. It is NOT swallowed into "no change": the caller
- * signs her out on it, exactly as the readiness store's does, and a stored subscription must
- * never stand in for a refused identity. `onUnauthorized` is how that reaches the app without
- * this file importing a router. */
-export function syncEntitlement({ onUnauthorized } = {}) {
+ * ★ AND A 401 HERE DOES NOT END HER SESSION — deliberately, and against the first draft of this
+ * file, which took the readiness store's rule ("a refused identity is never papered over with a
+ * cached one") and applied it to a HEARTBEAT. Those are not the same thing. The readiness store
+ * is read by a screen that is waiting to draw, so a refusal there is an answer to something she
+ * asked for; this runs every twenty seconds whether or not she is doing anything, and a session
+ * that can end while she reads a lesson — because one background request came back 401 during a
+ * token refresh — is a worse bug than any it could prevent. ⚠️ The web agrees and always has:
+ * `page.jsx`'s entitlement sync sets its three flags and signs nobody out. The screens' OWN
+ * fetches (My Classes, My Lessons) still end the session on a 401, and that is the right place
+ * for it — a refusal she is waiting on. */
+export function syncEntitlement() {
+  /* ★ NOTHING HAPPENS WITHOUT A TEACHER, and this was FOUND THE HARD WAY (2026-09-16). The poll
+     runs on a 20-second interval owned by the shell, and a sign-out does not stop the tick that
+     is already in flight — so one more `/entitlement` went out with no identity, came back, and
+     was PERSISTED under `aruvi_entitlement__`: a key with an empty user on the end, sitting in
+     storage after the sweep that was supposed to have emptied it. Harmless on its own; exactly
+     the shape of thing that hands the next teacher on a shared phone someone else's answer.
+     ⚠️ The guard belongs HERE rather than at the caller, because there are two callers already
+     (mount and the timer) and a third will forget. */
+  if (!getUser()) return Promise.resolve(entitlementState());
   if (inflight) return inflight;
   const p = (async () => {
     const before = hydrate();
-    let e;
-    try {
-      e = await getEntitlement();          // format.js swallows everything into null…
-    } catch (err) {                        // …but a future transport may not, so both are handled
-      if (String(err && err.message) === "401" && onUnauthorized) onUnauthorized();
-      return entitlementState();
-    }
+    const e = await getEntitlement();      // format.js swallows every failure into null
     /* null is "unreachable", not "no subscription" — keep what we hold. A dropped connection
        must never hide My Classes. */
     if (e == null) return entitlementState();

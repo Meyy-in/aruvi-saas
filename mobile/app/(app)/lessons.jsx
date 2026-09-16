@@ -183,7 +183,7 @@ export default function MyLessons() {
   // True while a lesson is open over this screen — read by the section sync below.
   const busyRef = useRef(false);
 
-  const endSession = useCallback(() => endSessionShared(router), [router]);
+  const endSession = useCallback(() => endSessionShared(router, "my lessons: 401"), [router]);
 
   const loadReadiness = useCallback(async ({ force = false } = {}) => {
     try {

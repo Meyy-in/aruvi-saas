@@ -935,6 +935,60 @@ export function webStyles(t, scheme = "light") {
        Raised ONLY on a verified mismatch, where the server's copy is the truth and hers has
        already been replaced on screen. It is a statement about what she is now looking at, not
        an apology, which is why it is one line and a Dismiss rather than a retry. */
+    /* ── SETTINGS (`.set-*`, `.acct-*`, globals.css 4347-4425, 5143-5146) — 6b, measured
+       2026-09-16 ────────────────────────────────────────────────────────────────────────
+       ★ SUBVIEWS HAVE NO HEADING — THE BAR NAMES THEM (founder, 2026-09-03: "why should the
+       word Settings take so much real estate"). So there is no `set_title` here: the frozen
+       bar carries "⚙ Support", "⚙ Subscription & billing", and the per-screen heading the web
+       deleted is not ported back in.
+       ⚠️ `.setwrap` is max-width 560 on the web; on a phone the column is the screen, so it is
+       the page's own 18px gutter instead.
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    set_bar:         { flexDirection: "row", alignItems: "center",
+                       justifyContent: "space-between", columnGap: 12,
+                       paddingHorizontal: 18 },
+    set_bar_title:   { flexDirection: "row", alignItems: "center", columnGap: 9,
+                       flexShrink: 1, minWidth: 0, paddingVertical: 10, paddingLeft: 4 },
+    set_bar_gear:    { fontFamily: F.body(400), fontSize: 20, lineHeight: 24 },
+    /* One line, clipped before it can push the ✕ off a 360px bar — "Subscription & billing"
+       is the longest label there is. `numberOfLines={1}` is the phone's text-overflow. */
+    set_bar_lab:     { fontFamily: F.display(600), fontSize: 19, lineHeight: 24, flexShrink: 1 },
+    set_bar_x:       { paddingVertical: 10, paddingHorizontal: 6 },
+    set_bar_x_glyph: { fontFamily: F.body(400), fontSize: 15, lineHeight: 15 },
+
+    /* The big cards: a plain card fill distinct from the paper page, title over small text,
+       chevron. COMPACT on purpose (founder, 2026-08-24) — tight padding and gaps so the whole
+       list fits one phone screen without scrolling. */
+    set_bigcard:     { flexDirection: "row", alignItems: "center", columnGap: 10,
+                       paddingVertical: 9, paddingHorizontal: 14, marginBottom: 7,
+                       borderWidth: 1, borderRadius: 10 },
+    set_bigtext:     { flex: 1, minWidth: 0, rowGap: 1 },
+    set_biglab:      { fontFamily: F.display(600), fontSize: 14.5, lineHeight: 19 },
+    set_bigsub:      { fontFamily: F.body(400), fontSize: 11, lineHeight: 15.4 },
+    set_chev:        { fontFamily: F.body(400), fontSize: 19, lineHeight: 19 },
+    set_group_tail:  { marginTop: 14 },
+
+    /* The Account group — the only caption that survives, because it sits over the
+       destructive row. */
+    set_group:       { marginBottom: 18 },
+    set_cap:         { fontFamily: F.mono(400), fontSize: 10, letterSpacing: 0.9,
+                       textTransform: UP, marginBottom: 6 },
+    set_card:        { borderWidth: 1, borderRadius: 12, overflow: "hidden" },
+    set_row:         { flexDirection: "row", alignItems: "center", columnGap: 10,
+                       paddingVertical: 9, paddingHorizontal: 14, borderBottomWidth: 1 },
+    set_lab:         { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13, lineHeight: 19 },
+    set_hint:        { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 19.375,
+                       marginVertical: 12 },
+
+    /* The typed-confirm block for account deletion. */
+    acct_del_row:    { flexDirection: "row", alignItems: "center", columnGap: 8, rowGap: 8,
+                       flexWrap: "wrap" },
+    acct_del_input:  { borderWidth: 1, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 10,
+                       fontFamily: F.mono(400), fontSize: 12, width: 110 },
+    acct_del_go:     { borderRadius: 5, paddingVertical: 8, paddingHorizontal: 14 },
+    acct_del_go_t:   { fontFamily: F.mono(400), fontSize: 11.5 },
+    acct_fail:       { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 18, marginTop: 10 },
+
     /* ── the academic-year cutover (`.dash-nudge`/`.yr-nudge`/`.yr-done`, globals.css 3420-3427,
        4248-4269) — 6a F6, measured 2026-09-16 ──────────────────────────────────────────────
        A tint-pine card with a 1.5px pine border, and a 3px left rule that says WHICH card it is:

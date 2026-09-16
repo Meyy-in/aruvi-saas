@@ -14,7 +14,6 @@ import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshCont
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, subjectSlug, classNum, pad } from "@aruvi/shared/format";
-import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { cutoverOffered, dismissCutover, dismissCutoverResult, fetchYear, runCutover,
          subscribeYear } from "@aruvi/shared/year";
 import { markGenerated } from "../../lib/firstRun";
@@ -51,7 +50,6 @@ const unitsDone = (sectionKey) => {
 
 const gradeSlug = (g) => (g || "").toLowerCase();
 const classNo = (g) => (g || "").replace(/grade/i, "").trim().toUpperCase();
-const dash = (v) => (v == null || v === "" ? "—" : String(v));
 
 /* readiness → one entry per subject·grade·section */
 function classesFrom(readiness) {
@@ -92,15 +90,11 @@ function bandsOf(classes) {
 }
 
 export default function Home() {
-  const { t, pref, setPref } = useTheme();
+  const { t } = useTheme();
   const ws = useWebStyles();
   const router = useRouter();
   const user = getUser();
   const [st, setSt] = useState({ loading: true, err: "", classes: [], plansBySG: {} });
-  /* Her subscription, from the shell's store — the foot card's status line is the only
-     thing on this screen that reads it, and it is about to move to Settings (6b). */
-  const [ent, setEnt] = useState(() => entitlementState().ent);
-  useEffect(() => subscribeEntitlement((e) => setEnt(e.ent)), []);
 
   /* ── THE ACADEMIC-YEAR CUTOVER (6a F6) ──────────────────────────────────────────────────
      The offer and its result sit at the TOP of this screen, above the greeting, because from
@@ -123,7 +117,7 @@ export default function Home() {
      a real account deletion. The pieces were all here; nothing called them.
      Note it is only a 401 — an unreachable server is NOT a refusal and must never sign her
      out mid-lesson on a school network (the existing "couldn't reach Meyy" path). */
-  const endSession = useCallback(() => endSessionShared(router), [router]);
+  const endSession = useCallback(() => endSessionShared(router, "my classes: 401"), [router]);
 
   /* Index a plan listing by filename — the shape the cards read. */
   const indexPlans = (rows) => {
@@ -398,24 +392,13 @@ export default function Home() {
           )
         )}
 
-        {/* foot — moves to Settings in step 6 */}
-        {!st.loading && (
-          <View style={[s.footcard, { borderTopColor: t.line }]}>
-            {/* Identity and Log out moved to the bar (2026-09-13), where the web has always had
-                them; what is left here is the trial counter and the appearance choice, both of
-                which belong in Settings at step 6. */}
-            <Text style={[type.small, { color: t.ink_soft }]}>
-              {ent ? `${dash(ent.status)}${ent.enforced ? ` · ${dash(ent.trial_chapters_used)} of ${dash(ent.trial_chapter_cap)} trial chapters used` : ""}` : ""}
-            </Text>
-            <View style={s.segs}>
-              {[["system", "Auto"], ["light", "Light"], ["dark", "Dark"]].map(([v, label]) => (
-                <Pressable key={v} onPress={() => setPref(v)} style={[s.seg, { borderColor: t.edge, backgroundColor: pref === v ? t.tint_pine : t.paper_2 }]}>
-                  <Text style={[type.small, { color: pref === v ? t.pine : t.ink }]}>{label}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        )}
+        {/* ★ THE FOOT CARD IS GONE (6b·B, 2026-09-16), and both halves went where they were
+            always going. Identity and Log out had already moved to the bar in 2026-09-13; the
+            APPEARANCE choice is now the Appearance card in Settings — founder's Q10 answer took
+            the web's cycling glyph, so the interim Auto/Light/Dark segments were DELETED here
+            rather than moved, segments and all. The trial counter goes with them: the web has
+            never shown it on My Classes, and its home is Subscription & billing. What is left
+            is a screen that is only her classes, which is what this screen is for. */}
       </ScrollView>
 
       <AttachSheet target={attachFor}
@@ -649,7 +632,4 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
 
 const s = StyleSheet.create({
   loading: { flexDirection: "row", alignItems: "center", marginTop: 20 },
-  footcard: { marginTop: 30, paddingTop: 18, borderTopWidth: StyleSheet.hairlineWidth },
-  segs: { flexDirection: "row", gap: 8, marginTop: 12 },
-  seg: { flex: 1, borderWidth: 1, borderRadius: 8, paddingVertical: 9, alignItems: "center" },
 });

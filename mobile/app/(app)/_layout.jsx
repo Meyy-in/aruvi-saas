@@ -17,10 +17,10 @@ import { refreshBank } from "@aruvi/shared/ask-aruvi/bank";
 import { cachedReadiness, cachedReady, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { entitlementState, subscribeEntitlement, syncEntitlement } from "@aruvi/shared/entitlement";
 import { fetchYear } from "@aruvi/shared/year";
-import { endSession } from "../../lib/session";
 import { useTheme } from "../../theme/ThemeContext";
 import Bar from "../../components/Bar";
 import BottomNav from "../../components/BottomNav";
+import SettingsBar, { settingsLabel } from "../../components/SettingsBar";
 import { SectionFailedBar, PrivacyNoteBar } from "../../components/Notices";
 import ProfilePortal, { portalChrome, SetupCheckSub } from "../../components/ProfilePortal";
 import ProfileEditor from "../../components/ProfileEditor";
@@ -113,7 +113,10 @@ export default function AppLayout() {
        (`notePlansYear`, inside `fetchYear`) wherever she lands, not only on My Classes. */
     const sync = () => {
       if (!live) return;
-      syncEntitlement({ onUnauthorized: () => endSession(router) });
+      /* ⚠️ NO sign-out handler here. A 20-second heartbeat must not be able to end her session —
+         see the note in `shared/entitlement`. The screens' own fetches still do, on a refusal
+         she is actually waiting for. */
+      syncEntitlement();
       fetchYear();
     };
     const start = () => { sync(); if (!iv) iv = setInterval(sync, 20000); };
@@ -230,7 +233,10 @@ export default function AppLayout() {
      screen. Now the editor is a window OVER a screen, so the bar should keep showing where she
      actually is, which is where she was when she opened it. Re-adding a "none" case would blank
      the bar for a window, which is the opposite of what that rule was for. */
-  const active = pathname.startsWith("/settings") ? null
+  const inSettings = pathname.startsWith("/settings");
+  /* Settings lights NOTHING — the bar stays up (founder, 2026-09-14: a screen that takes the
+     app's nav away leaves exactly one way out of itself) but claims none of its four places. */
+  const active = inSettings ? null
     : pathname.startsWith("/lessons") ? "lessons" : "classes";
 
   /* ★ THE LINE AND THE VALUES ARE COMPUTED AT RENDER, NOT FROZEN INTO THE WINDOW. She opens a row,
@@ -258,12 +264,25 @@ export default function AppLayout() {
           mismatch, a bumped privacy notice) belong to the APP, not to whichever screen happens to
           be showing; so does the gear, and so will Ask Meyy's panel. Threading each of those
           through four route files is how they end up disagreeing.
-          ⚠️ The gear is still INERT. It lights the moment `/settings` exists (6b) — a gear that
-          navigates nowhere is worse than one that is visibly not yet live, and the bar's own
-          `disabled={!onSettings}` already says which it is.
+          ✅ **THE GEAR IS LIT** (6b·A, 2026-09-16) — `/settings` exists now. ⚠️ `push`, NOT
+          `navigate`: the four bar items are PLACES and returning to one must not stack a second
+          copy, but Settings is a JOURNEY she comes back from, and the stack is what remembers
+          where she was. That is also what row A2's `settingsOriginRef` buys on the web, where
+          there is no stack to keep it for you.
           ⚠️ Shell-LESS screens keep their own: login, the privacy notice and first run live
           OUTSIDE `(app)` by design (§0, Q23), and first run's carries `gear={false}`. */}
-      <Bar />
+      <Bar onSettings={() => router.push("/settings")} />
+      {/* ★ THE FROZEN SETTINGS BAR (app. 04 rows A3-A5) sits in the slot the web's tab row
+          occupies, below the brand bar, with NO hairline under it (founder). It is drawn HERE
+          rather than by each Settings screen for the reason the brand bar is: one shell, and a
+          label derived from the route cannot disagree with the route.
+          ⚠️ Its ✕ is `router.back()` on every level. On the web, closing a subview has to
+          restore an origin held in a ref; the phone's subviews are PUSHED screens, so the stack
+          already remembers — and closing home leaves Settings for wherever she came from, which
+          is the same call. */}
+      {inSettings ? (
+        <SettingsBar label={settingsLabel(pathname)} onClose={() => router.back()} />
+      ) : null}
       {/* The notices ride between the bar and the screen — see components/Notices.jsx for why
           they are pinned here rather than at the top of a scroller. */}
       <View style={{ paddingTop: (sectionFailed || privacyNote) ? 14 : 0 }}>

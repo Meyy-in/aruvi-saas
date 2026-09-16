@@ -18,7 +18,15 @@ import { clearTeacherCaches } from "@aruvi/shared/signout";
 /* The web's own extra prefixes, kept in step with page.jsx's onSignOut. */
 const EXTRA = ["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"];
 
-export async function endSession(router) {
+/* ★ EVERY CALLER NAMES ITSELF, and that is not decoration (2026-09-16). A teacher was found
+ * signed out mid-session with no way to tell which of the six doors had done it: the bar's Log
+ * out, Settings' row, or one of four 401 branches, all landing on the same screen with the same
+ * empty storage behind them. `reason` costs one argument and turns "she got logged out" into a
+ * line that says which code path decided that, which is the difference between a bug you can fix
+ * and one you can only re-observe.
+ * ⚠️ It is a `warn`, not a `log`: ending a session is never routine. */
+export async function endSession(router, reason = "unknown") {
+  console.warn(`[meyy] session ended — ${reason}`);
   await signOutAuth();
   clearTeacherCaches(EXTRA);
   router.replace("/login");

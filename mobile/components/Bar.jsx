@@ -99,7 +99,7 @@ export default function Bar({ user = getUser(), onSettings = null, gear = true }
             ) : null}
             <View style={ws.hdr_user_id}>
               <Text style={ws.hdr_user_name} numberOfLines={1}>{name || user}</Text>
-              <Pressable onPress={() => endSession(router)} hitSlop={8}
+              <Pressable onPress={() => endSession(router, "bar: Log out")} hitSlop={8}
                 accessibilityRole="button" accessibilityLabel="Log out">
                 <Text style={ws.hdr_user_logout}>Log out</Text>
               </Pressable>

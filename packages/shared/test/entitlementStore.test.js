@@ -171,3 +171,15 @@ test("subscribers are told, and are told immediately on subscribing", async () =
   await syncEntitlement();
   assert.deepEqual(seen, [false, true], "and stops when it unsubscribes");
 });
+
+test("★ nothing happens without a teacher — no request, and nothing written", async () => {
+  reset();
+  clearUser();
+  const before = entCalls;
+  const st = await syncEntitlement();
+  assert.equal(entCalls, before, "a poll with no identity must not go out at all");
+  assert.equal(st.lapsed, false);
+  assert.equal(Array.from(box.keys()).some((k) => k.startsWith(ENTITLEMENT_CACHE_PREFIX)), false,
+    "…and must never persist under an empty-user key, which is what was found in storage after " +
+    "a sign-out on 2026-09-16");
+});
