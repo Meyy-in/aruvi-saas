@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { API, withUser, fetchEntitlement, getJSON, pretty, idInUse, errDetail,
-         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN } from "../lib/format";
+         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN,
+         fmtValidity, scopeRows, subsFromEntitlement } from "../lib/format";
 import ThemeToggle from "./ThemeToggle";
 import Agreement from "./Agreement";
 import PrivacyNotice from "./PrivacyNotice";
@@ -489,27 +490,14 @@ function SupportForm({ onOpenProfile, onAsk }) {
   );
 }
 
-/* Subscribed details as ledger rows (founder, 2026-08-24): Subject · Stage · Class ·
- * Validity, one row each. Classes derive from the stage (the billing unit is
- * subject-STAGE, so the class list is a fact of the stage, not a choice). */
-const STAGE_CLASSES = { preparatory: "3, 4 & 5", middle: "6, 7 & 8",
-                        secondary: "9 (10 coming soon)" };
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-/* Only ever a FALLBACK for an older API that sends no `live_scopes` — the server is the
-   authority on what has expired (it also honours ARUVI_TODAY, which a browser cannot). */
-const todayISO = () => new Date().toISOString().slice(0, 10);
-const fmtValidity = (iso) => {
-  const s = String(iso || "").slice(0, 10);
-  const [y, m, d] = s.split("-").map(Number);
-  if (!y || !m || !d) return s;
-  return `${String(d).padStart(2, "0")}-${MONTHS[m - 1]}-${String(y).slice(-2)}`;
-};
-const scopeRows = (scope) => {
-  if (scope === "*") return { subject: "All subjects", stage: "All stages", classes: "3 to 10" };
-  const [subj, stage] = String(scope).split("/");
-  return { subject: pretty(subj), stage: pretty(stage), classes: STAGE_CLASSES[stage] || "—" };
-};
+/* ★ `STAGE_CLASSES`, `fmtValidity`, `scopeRows` and the subscription SORT moved to
+ * `@aruvi/shared/format` on 2026-09-16 (Track D 6b·D), because the phone grew a Subscription &
+ * billing screen and would otherwise have retyped all four. CLAUDE.md §3 — one function, both
+ * surfaces. The reasoning that used to live here (the billing unit is subject-STAGE, so the
+ * class list is a fact of the stage; latest expiry first because every term is one year; ties
+ * keep cart order) travelled with them.
+ * ⚠️ `todayISO` went too: it was only ever the fallback for an API that sends no
+ * `live_scopes`, and that fallback is now inside `subsFromEntitlement`. */
 
 /* `view` is LIFTED to page.jsx (founder 2026-08-24: the frozen Settings bar's back
  * button is hierarchical — subview → home → origin — so the shell must know which
@@ -750,16 +738,8 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
        (which reports false when the gate is off), so dev mode never shows "Ended". */
     const active = ent && !lapsed && ent.plan_id !== "trial"
       && (ent.status === "active" || ent.status === "grace");
-    // One record per subscription, latest expiry first — see the block below.
-    const subs = !ent ? [] : (ent.scopes || []).map((scope, i) => {
-      const until = (ent.scope_valid_until || {})[scope] || ent.valid_until || "";
-      const liveList = ent.live_scopes;
-      return {
-        scope, until, i,
-        live: Array.isArray(liveList) ? liveList.includes(scope)
-                                      : !(until && until < todayISO()),
-      };
-    }).sort((a, b) => (b.until || "").localeCompare(a.until || "") || a.i - b.i);
+    // One record per subscription, latest expiry first — the rule is shared with the phone.
+    const subs = subsFromEntitlement(ent);
     return (
       <div className="setwrap">
         {back}

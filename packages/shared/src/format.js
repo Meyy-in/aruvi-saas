@@ -355,6 +355,56 @@ export function paidScopesOf(e) {
     ? (Array.isArray(e.live_scopes) ? e.live_scopes : (e.scopes || []))
     : null;
 }
+/* ── What a SUBSCRIPTION looks like on screen (lifted from web/Settings.jsx, 2026-09-16) ──
+ * Lifted for Track D 6b·D, where the phone grew a Subscription & billing screen and would
+ * otherwise have retyped all three. CLAUDE.md §3 — everyone calls it, nobody re-implements it.
+ *
+ * ★ `STAGE_CLASSES` is CONTENT, not a lookup of convenience. The billing unit is teacher ×
+ * subject-STAGE, so the class list is a fact OF the stage rather than a choice — and
+ * "9 (10 coming soon)" is a promise to a paying teacher. The day class 10 opens it must change
+ * in ONE place, or one surface goes on promising it after the other has delivered. */
+export const STAGE_CLASSES = { preparatory: "3, 4 & 5", middle: "6, 7 & 8",
+                               secondary: "9 (10 coming soon)" };
+const VALIDITY_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/* "2027-03-31" → "31-Mar-27". Returns the input unchanged when it is not a date, because a
+ * validity she cannot read is still better than a blank where a date should be. */
+export const fmtValidity = (iso) => {
+  const s = String(iso || "").slice(0, 10);
+  const [y, m, d] = s.split("-").map(Number);
+  if (!y || !m || !d) return s;
+  return `${String(d).padStart(2, "0")}-${VALIDITY_MONTHS[m - 1]}-${String(y).slice(-2)}`;
+};
+/* One scope ("science/middle", or "*") as the three ledger rows that describe it. */
+export const scopeRows = (scope) => {
+  if (scope === "*") return { subject: "All subjects", stage: "All stages", classes: "3 to 10" };
+  const [subj, stage] = String(scope).split("/");
+  return { subject: pretty(subj), stage: pretty(stage), classes: STAGE_CLASSES[stage] || "\u2014" };
+};
+/* One record per subscription, LATEST EXPIRY FIRST.
+ *
+ * ★ Every term is exactly one year, so the latest expiry IS the latest purchase and a renewal
+ * correctly returns to the top. (If terms ever differ, this needs a real purchase date to sort
+ * on — which is the reason this is one function and not two copies.) Ties — the ordinary case
+ * of several bought in one checkout — keep CART ORDER, the order she chose them in.
+ * ★ `live` comes from the server's `live_scopes`; the date comparison is only the fallback for
+ * an older API, and the server is the authority because it honours ARUVI_TODAY, which no client
+ * can. An EXPIRED subscription is still returned: she owned it, and its row is the explanation
+ * for anything she can no longer prepare there. */
+export function subsFromEntitlement(e) {
+  if (!e) return [];
+  const today = new Date().toISOString().slice(0, 10);
+  return (e.scopes || []).map((scope, i) => {
+    const until = (e.scope_valid_until || {})[scope] || e.valid_until || "";
+    const liveList = e.live_scopes;
+    return {
+      scope, until, i,
+      live: Array.isArray(liveList) ? liveList.includes(scope)
+                                    : !(until && until < today),
+    };
+  }).sort((a, b) => (b.until || "").localeCompare(a.until || "") || a.i - b.i);
+}
+
 /* The stages she may be offered classes in, for ONE subject. null = no limit. */
 export function allowedStagesFor(paidScopes, subjectName) {
   if (!Array.isArray(paidScopes) || paidScopes.includes("*")) return null;

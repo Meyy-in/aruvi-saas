@@ -116,7 +116,7 @@ export default function PersonalProfile() {
       </Field>
 
       {/* Her mobile is the account identifier and is not editable here. */}
-      <View style={[ws.acct_row, { borderBottomColor: t.line_soft }]}>
+      <View style={[ws.acct_row, { borderBottomColor: t.line_soft, marginTop: 18 }]}>
         <Text style={[ws.acct_k, { color: t.ink_soft }]}>Mobile</Text>
         <Text style={[ws.acct_v, { color: t.ink }]}>{acct.phone || "—"}</Text>
       </View>

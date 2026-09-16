@@ -21,7 +21,7 @@ sides, the strings verbatim, the endpoint, the shared helper, and the `theme/web
 | `mobile_implementation_map/01-shell.md` | page.jsx shell · layout · GuidedTour · ProfilePortal | 118 | 19 | 16 | 43 | 8 (tour — now SCHEDULED, step 8b) | 4 |
 | `mobile_implementation_map/02-profile.md` | TeachingProfile · wheels · shared budget | 97 | 14 | 5 | 70 | 3 | 3 |
 | `mobile_implementation_map/03-firstrun-login.md` | Login · PrivacyNotice · Agreement · FirstRun | 122 | 37 | 20 | 44 | 2 | 16 |
-| `mobile_implementation_map/04-settings-askmeyy.md` | Settings (7 subviews) · Ask Meyy · Dropdown | 120 | 23 | 11 | 73 | 1 | 3 |
+| `mobile_implementation_map/04-settings-askmeyy.md` | Settings (7 subviews) · Ask Meyy · Dropdown | 120 | 30 | 12 | 67 | 1 | 3 |
 | `mobile_implementation_map/05-lists-prepare.md` | My Classes · My Lessons · Prepare · Year Plan | 125 | 66 | 15 | 10 | 18 | 10 |
 | `mobile_implementation_map/06-lessonview.md` | LessonView · ChapterOrg · Assess · Bookmark · Notes | 140 | 100 | 20 | 4 | 1 | 1 |
 
@@ -335,8 +335,9 @@ almost nothing left**: only Q14 (6c) and Q18-Q20 (step 8) are still open.
 | `36b51295` | **F11 the dropdown, and Personal profile.** ROLES/STATES/EMAIL_OK lifted to shared. |
 
 **Where §2 picks up: 6b, in this order** — ~~**F** (Support)~~ ✅ **DONE 2026-09-16**, walked to a live
-**MEY-S-753** → **D + SubscribeFlow** → **E** (Your data & export, via F9) → **H** (About's delete flow, the
-typed "erase", the receipt). Then 6c (Ask Meyy, Q14), step 7, step 8, and **8b the tour**.
+**MEY-S-753** → ~~**D** (the view)~~ ✅ **DONE 2026-09-16** → **SubscribeFlow** (D6/D7's two dark buttons) →
+**E** (Your data & export, via F9) → **H** (About's delete flow, the typed "erase", the receipt).
+Then 6c (Ask Meyy, Q14), step 7, step 8, and **8b the tour**.
 
 **★ THE ONE THING THAT IS STILL UNEXPLAINED.** Walking Settings, the founder's session ended with no
 sign-out action: storage was swept, so `endSession` ran, and nothing says which of the six doors called it.
@@ -824,10 +825,19 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
 - **C. Personal profile** (C1-C13; hidden on trial): name, email (`EMAIL_TAKEN` via `idInUse`), Role/State via
   F11, school, `POST /account`, marketing email `/account/marketing-email`. ROLES/STATES lifted out of
   SubscribeFlow into shared.
-- **D. Subscription & billing** (D1-D9): status, scopes, `GET /invoices`, `GET /invoices/{number}`
-  → `Meyy-invoice-{number}.pdf` via F9. ★ **Q11 ANSWERED: "Subscribe" / "Add subjects & stages" are
-  PORTED after all** — `SubscribeFlow` comes with them and really buys through the server's dev
-  stub. ⚠️ Every walk of this writes real scopes to a real account.
+- **D. Subscription & billing** (D1-D9)  ✅ **THE VIEW IS DONE 2026-09-16** —
+  `app/(app)/settings/subscription.jsx`, and the Settings home's card is lit. Status card, one card
+  per subscription latest-expiry-first, ledger rows, and the invoice PDF through F9 (walked live:
+  `GET /invoices/MEY/2026-27/7866` → 200 from Render). ★ **`STAGE_CLASSES`, `fmtValidity`,
+  `scopeRows` and the subscription SORT were LIFTED to `@aruvi/shared/format` and the web now
+  delegates** (12 node tests) — §3's rule, and this is the screen where a drift means telling a
+  paying teacher two different things. ⚠️ **Subscribe / Add subjects & stages are DRAWN BUT DARK**
+  until SubscribeFlow lands — Q11 un-deferred it, so that is a gap and not a decision. ⚠️ Every
+  walk of SubscribeFlow writes real scopes to a real account.
+  ⚠️ **WEB OWED, found by the port:** when a teacher is `active` the status card matches none of
+  its three branches and renders EMPTY — a sliver above her subscriptions that reads as something
+  still loading. The phone matches it rather than diverging silently; consider not rendering the
+  card at all in that case.
 - **E. Your data & export** (E1-E4; hidden on trial): `GET /data-rights/export?format=docx|pdf` →
   `aruvi-your-data.{docx|pdf}` via F9 (**Q15: the share sheet**).
 - **F. Support** (F1-F14; never hidden)  ✅ **DONE 2026-09-16** — `app/(app)/settings/support.jsx`,
@@ -851,7 +861,8 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   receipt card; the delete-flow Word export via F9; both exits sign out (`onErased`, app. 01 row 23).
 - **F11 Dropdown** (J1-J8): three live Settings uses; a `Sheet`-based picker styled to `.dd-btn` / `.dd-pop`.
 
-**web.js:** `set_*`, `acct_*`, `lgl_*`, `dd_*`, `ob_email_view/addr` and now `sup_*` are measured;
+**web.js:** `set_*`, `acct_*`, `lgl_*`, `dd_*`, `ob_email_view/addr`, `sup_*` and (6b·D)
+`set_plan`/`set_pill`/`set_sub_card`/`set_inv_dl`/`set_subscribe` are measured;
 `ob_field`/`login_field` remain unported on BOTH Settings forms — Personal profile and Support use the
 phone's `type.label` (mono 12) where the web's `.login-field > span` is 9.5px, and two Settings forms
 disagreeing about their label type would be worse than either matching the web alone. ⚠️ **`set_plan_txt`
@@ -1043,6 +1054,12 @@ Real SMS (DLT) is the external long pole and is outside this map (Track B).
   Fixed in `settings/support.jsx` and `settings/personal.jsx`. ⚠️ **`app/(app)/prepare.jsx:391` is the
   same shape** (a `ScrollView` with a `TextInput` at 450 and content below) and is UNFIXED — it belongs to a
   walked family and was not reported, so it is recorded rather than changed. Check it on the handset.
+- **★ A BAKED-IN MARGIN OR PADDING IN A `web.js` TYPE KEY IS A BUG WAITING FOR ITS SECOND CALLER**
+  (2026-09-16, twice in one day). `set_plan_txt` carried About Meyy's card inset and a font size
+  matching no rule in globals.css; `acct_row` carried Personal profile's ONE row's 18px margin, and
+  a subscription card stacks FIVE of them — a ledger became a list. A key is the CSS rule and
+  nothing else; spacing that belongs to one screen goes at that screen's call site (`set_card_inset`
+  is the pattern). When a second screen adopts a key, re-read the rule before trusting the key.
 - **One function, both surfaces.** Any arithmetic the phone needs that lives in a web JSX file is lifted to
   `packages/shared` first, with a node test, and the web re-imports it (`budget.js` is the template;
   `wheels.jsx:434-483` is next). The 2026-08-21 Year Plan defect (14 vs 19) is the reason.

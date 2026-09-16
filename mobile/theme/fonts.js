@@ -22,4 +22,9 @@ const cut = (base, w, italic) => {
 };
 export const display = (w = 400, italic = false) => cut("Fraunces", w, italic);
 export const body = (w = 400, italic = false) => cut("Newsreader", w, italic);
-export const mono = (w = 400) => (w >= 600 ? "IBMPlexMono_600SemiBold" : w >= 500 ? "IBMPlexMono_500Medium" : "IBMPlexMono_400Regular");
+/* ⚠️ 700 REACHES THE BOLD CUT (2026-09-16). `IBMPlexMono_700Bold` has been imported and in
+   FONT_MAP since this file was written, but the ladder stopped at 600, so every `mono(700)`
+   silently rendered semibold — a bundled face nothing could ask for. The Subscribe button is
+   the web’s first 700 in mono and is what found it. */
+export const mono = (w = 400) => (w >= 700 ? "IBMPlexMono_700Bold"
+  : w >= 600 ? "IBMPlexMono_600SemiBold" : w >= 500 ? "IBMPlexMono_500Medium" : "IBMPlexMono_400Regular");

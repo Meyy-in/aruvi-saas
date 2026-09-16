@@ -976,8 +976,12 @@ export function webStyles(t, scheme = "light") {
     /* ── Personal profile's two non-field rows (`.acct-row` 4224-4228, `.ob-email-view`
        4158-4171) — measured 2026-09-16. Everything else on that screen uses the app's own
        `Field`/`Input` family rather than a second measured one. */
+    /* ⚠️ NO `marginTop` (corrected 2026-09-16). `.acct-row` is `padding: 7px 0` and nothing
+       else — the 18px lived here for Personal profile's ONE Mobile row, and it belongs at that
+       call site. A subscription card stacks FIVE of these, where a baked-in margin turns a
+       ledger into a list. */
     acct_row:        { flexDirection: "row", alignItems: "baseline", columnGap: 12,
-                       paddingVertical: 7, borderBottomWidth: 1, marginTop: 18 },
+                       paddingVertical: 7, borderBottomWidth: 1 },
     acct_k:          { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 18.225,
                        letterSpacing: 0.735, textTransform: UP, width: 92 },
     acct_v:          { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13.5,
@@ -1100,6 +1104,32 @@ export function webStyles(t, scheme = "light") {
                        marginTop: 8 },
     ob_err:          { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 19.375,
                        marginTop: 8 },
+
+    /* ── Settings › Subscription & billing (`.set-plan`/`.set-pill`/`.set-sub-card`, globals.css
+       3994-3996, 4187, 4426-4444) — 6b·D, measured 2026-09-16 in the 390px iframe ──────────
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    /* The pill row. It carries its OWN inset, which is why `set_card_pad`'s zero horizontal
+       padding is not a problem here — and why the sub-card variant below has to give it back. */
+    set_plan:        { flexDirection: "row", alignItems: "center", columnGap: 10,
+                       flexWrap: "wrap", paddingVertical: 12, paddingHorizontal: 14 },
+    /* Inside a subscription card the pill sits ON the card's own ledger grid, so its padding
+       collapses to a 6px gap before the first row (`.set-sub-card .set-plan`). */
+    set_plan_sub:    { paddingVertical: 0, paddingHorizontal: 0, paddingBottom: 6 },
+    set_pill:        { borderWidth: 1, borderRadius: 12, paddingVertical: 3,
+                       paddingHorizontal: 9, alignSelf: "flex-start" },
+    set_pill_t:      { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5,
+                       letterSpacing: 0.6, textTransform: UP },
+    set_sub_card:    { marginTop: 10 },
+    /* Mono because it is a reference she may have to read out or type. */
+    set_inv_dl:      { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.24 },
+    /* `.paywall-subscribe.set-subscribe`. ⚠️ `alignSelf`, not a full-width block: the web's
+       rule says `display: block` but a BUTTON still shrinks to its content (measured 129px at
+       390), and a full-bleed pine slab would read as the screen's primary action, which on a
+       page of ledger cards it is not. */
+    set_subscribe:   { alignSelf: "flex-start", borderRadius: 5, paddingVertical: 10,
+                       paddingHorizontal: 26, marginTop: 12, marginBottom: 4 },
+    set_subscribe_t: { fontFamily: F.mono(700), fontSize: 13, letterSpacing: 0.78,
+                       textTransform: UP },
 
     /* The typed-confirm block for account deletion. */
     acct_del_row:    { flexDirection: "row", alignItems: "center", columnGap: 8, rowGap: 8,
