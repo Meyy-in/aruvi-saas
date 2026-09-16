@@ -146,8 +146,10 @@ export default function SettingsHome() {
       ) : null}
       {mktNote ? <Text style={[ws.set_hint, { color: t.ink_soft }]}>{mktNote}</Text> : null}
 
-      <BigCard label="Legal" sub="User agreement & privacy notice" />
-      <BigCard label="About Meyy" sub="Version info" />
+      <BigCard label="Legal" sub="User agreement & privacy notice"
+        onPress={() => router.push("/settings/legal")} />
+      <BigCard label="About Meyy" sub="Version info"
+        onPress={() => router.push("/settings/about")} />
 
       {/* Account: her data, her session, her account — the three rows that are about the
           ACCOUNT rather than the teaching (founder, 2026-09-11: "data & export can go to

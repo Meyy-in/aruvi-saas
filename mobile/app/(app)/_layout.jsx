@@ -150,9 +150,10 @@ export default function AppLayout() {
   /* ⓶ THE PRIVACY NOTICE WAS UPDATED — asked ONCE PER SIGN-IN, not on a cadence. A notice
      changes a few times a year, and this bar is not the place for a version race with a founder
      mid-publish. An old server without the route shows nothing: it never invents an update.
-     ⚠️ "Read it" goes to `/privacy` for now — the standalone screen, which loads with or without
-     an identity. At 6b this becomes Settings › Legal on the notice, which is the web's own
-     destination; the stamp and its two contexts do not change. */
+     ✅ "Read it" goes to **Settings › Legal, on the notice** (6b·G, 2026-09-16) — the web's own
+     destination. It used to go to `/privacy`, the pre-sign-in screen, which was honest while
+     Settings did not exist and is now the wrong door: it has no way back into the app but the
+     system gesture, and it cannot show her the agreement she may want to read next to it. */
   const [privacyNote, setPrivacyNote] = useState(null);
   useEffect(() => {
     let live = true;
@@ -287,14 +288,21 @@ export default function AppLayout() {
           they are pinned here rather than at the top of a scroller. */}
       <View style={{ paddingTop: (sectionFailed || privacyNote) ? 14 : 0 }}>
         <SectionFailedBar message={sectionFailed} onDismiss={() => setSectionFailed("")} />
-        {/* ⚠️ NO "hide it inside Legal" CASE, and none is owed. The web needs one because its
-            notice is a VIEW inside the same shell, so the bar would otherwise announce a
-            document over the document. `/privacy` is a route OUTSIDE `(app)`, so this layout is
-            not even mounted while she reads — and "Read it" stamps the version seen on the way
-            out, which is what takes the bar down for good. */}
+        {/* ⚠️ AND NOW THE "hide it inside Legal" CASE IS OWED AFTER ALL. While the destination
+            was `/privacy` — a route outside `(app)` — this layout was not even mounted while she
+            read, so there was nothing to hide. Settings › Legal is INSIDE the shell, so without
+            this the bar would announce the document over the document, which is the web's own
+            reason for its `settingsView === "legal"` guard. Both actions stamp the version seen
+            besides, so in practice it is already down; this is for the teacher who arrives at
+            Legal by the gear while the bar is still up. */}
+        {!pathname.startsWith("/settings/legal") ? (
         <PrivacyNoteBar version={privacyNote && privacyNote.current_version}
-          onRead={() => { stampPrivacySeen("updated_note_read"); router.push("/privacy"); }}
+          onRead={() => {
+            stampPrivacySeen("updated_note_read");
+            router.push({ pathname: "/settings/legal", params: { doc: "privacy" } });
+          }}
           onDismiss={() => stampPrivacySeen("updated_note_dismissed")} />
+        ) : null}
       </View>
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.paper } }} />
       {/* ★ ONE WINDOW, WHOSE CONTENTS CHANGE (founder, 2026-09-15: "when 'x' is used to click off,

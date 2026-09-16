@@ -116,6 +116,42 @@ export function webStyles(t, scheme = "light") {
     lgl_th:          { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, letterSpacing: 0.8,
                        textTransform: UP, color: t.pine_d, marginBottom: 2 },
     lgl_td_t:        { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, color: t.ink },
+    /* ── Settings › Legal (6b·G) — the two-document switch, and READ mode's own pieces
+       (`.lgl-switch*` 5252-5259, `.lgl-accepted` 5083-5087, `.lgl-hint` 5079, `.lgl-intro`
+       5088-5089, `.lgl-acks` 5102-5112, `.lgl-agreement` 5123). Measured 2026-09-16.
+       ★ The unselected pill is `ink`, NOT `ink_soft` (founder, 2026-09-04: "grey is too light")
+       — it carries the OTHER document's name, and a name must be readable, not a hint.
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    lgl_switch:      { flexDirection: "row", columnGap: 6, marginBottom: 14 },
+    lgl_switch_btn:  { borderWidth: 1, borderRadius: 999, paddingVertical: 6,
+                       paddingHorizontal: 12 },
+    lgl_switch_t:    { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.66,
+                       textTransform: UP },
+    /* READ mode leads with the fact she came for: did I accept this, and when. */
+    lgl_accepted:    { borderRadius: 10, paddingVertical: 10, paddingHorizontal: 12,
+                       marginBottom: 16 },
+    lgl_accepted_t:  { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.8 },
+    lgl_tick:        { fontFamily: F.body(600) },
+    lgl_stale:       { fontFamily: F.body(400, true) },
+    lgl_hint:        { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.8,
+                       marginBottom: 14 },
+    lgl_intro:       { marginBottom: 4 },
+    lgl_acks:        { marginTop: 14 },
+    lgl_ack:         { borderWidth: 1, borderRadius: 12, paddingVertical: 14,
+                       paddingHorizontal: 15, marginBottom: 12 },
+    lgl_ack_head:    { flexDirection: "row", alignItems: "baseline", columnGap: 10,
+                       marginBottom: 8 },
+    lgl_ack_n:       { fontFamily: F.mono(400), fontSize: 12, lineHeight: 19.575 },
+    lgl_ack_title:   { flex: 1, minWidth: 0, fontFamily: F.display(600), fontSize: 14.5,
+                       lineHeight: 19.575 },
+    lgl_agreement:   { marginTop: 20, paddingTop: 16, borderTopWidth: 1 },
+    /* The pinned band's heading — `.ob-title`, 21px display. ⚠️ The web computes it at weight
+       700 and the bundled Fraunces stops at 600; the semibold cut is the heaviest we ship. */
+    ob_title:        { fontFamily: F.display(600), fontSize: 21, lineHeight: 27.3 },
+    /* About Meyy's one card. */
+    set_plan_txt:    { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.8,
+                       paddingVertical: 10, paddingHorizontal: 14 },
+
     lgl_version:     { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 16.8, letterSpacing: 0.42,
                        color: t.ink_soft, marginTop: 16 },
     lgl_fail:        { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 21.6, color: t.danger },
