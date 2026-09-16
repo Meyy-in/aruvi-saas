@@ -139,5 +139,7 @@ export default function ProfilePortal({ mode = "change", sub, values, onPick, on
  * same day). */
 import {
   setupKey, queueSetupCheck, takeSetupCheck, pruneSetupCheck, SETUP_CHECK_DELAY_MS,
+  setupCheckSub, setupCheckValues,
 } from "../lib/setupCheck";
-export { setupKey, queueSetupCheck, takeSetupCheck, pruneSetupCheck, SETUP_CHECK_DELAY_MS };
+export { setupKey, queueSetupCheck, takeSetupCheck, pruneSetupCheck, SETUP_CHECK_DELAY_MS,
+         setupCheckSub, setupCheckValues };

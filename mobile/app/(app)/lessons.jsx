@@ -69,7 +69,7 @@ import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
 import { subscribePreparing, clearPreparing, clearPaywall } from "../../lib/preparing";
-import { openEdit } from "../../lib/portal";
+import { cancelLessonsScope, noteLessonsScope, openEdit } from "../../lib/portal";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -225,6 +225,26 @@ export default function MyLessons() {
       setActiveGrade(g0); lsSet(LS_CLASS, g0);
     }
   }, [subjects, activeSubject, activeGrade, LS_SUBJECT, LS_CLASS]);
+
+  /* ★ REPORT THE SETTLED SCOPE UP (founder, 2026-08-27; ported 2026-09-16) — the second moment of
+     the "check your set-up?" window. A subscriber who has just added a subject or a class meets
+     the same three assumptions Meyy made for her first class (a section, a periods-a-week, a
+     year's total), so she is asked the same question about the new one — the first time she
+     actually OPENS it here, not at the moment she added it (that would be one configuration screen
+     stacked on the one she is standing on; §0's benefit-first rule).
+     ⚠️ DELIBERATELY BELOW the validation effect above, so this only ever reports a subject·class
+     she genuinely teaches — a stale remembered class is snapped back before it is announced.
+     `noteLessonsScope` ignores every pair that was not queued, so firing on each wheel turn costs
+     one storage read and nothing else; the window, the beat and the spending of the key are its
+     business, not this screen's (lib/portal.js). */
+  useEffect(() => {
+    if (!activeSubject || !activeGrade) return;
+    const s = subjects.find((x) => x.name === activeSubject);
+    if (!s || !(s.grades || []).some((g) => g.grade === activeGrade)) return;
+    noteLessonsScope(activeSubject, activeGrade);
+  }, [subjects, activeSubject, activeGrade]);
+  // Leaving the screen cancels a question that was about to be asked over it.
+  useEffect(() => cancelLessonsScope, []);
 
   const current = subjects.find((s) => s.name === activeSubject) || subjects[0] || null;
   const grades = useMemo(() => (current && current.grades) || [], [current]);

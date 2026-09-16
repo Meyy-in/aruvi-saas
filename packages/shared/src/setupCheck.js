@@ -13,7 +13,9 @@
  * may depend on a key being present.
  */
 
-import { getUser, userKey } from "./format.js";
+import {
+  annualBudgetPeriods, classNum, getUser, pretty, stageOfGrade, subjectSlug, userKey,
+} from "./format.js";
 import { storage } from "./storage.js";
 
 /* ⚠️ The web's key is `setup_check_pending` (no trailing underscore) and signout.js sweeps the
@@ -72,4 +74,89 @@ export function pruneSetupCheck(validKeys) {
   if (!have.length) return;
   const ok = have.filter((k) => (validKeys || []).includes(k));
   if (ok.length !== have.length) write(ok);
+}
+
+/* ───────── WHAT THE CHECK WINDOW SAYS, AND WHAT IT SHOWS (app. 01 rows 75-76) ─────────
+ *
+ * Both were computed inline in `page.jsx` until the phone needed them too (Track D step 5d
+ * item 10, 2026-09-16). They are pure functions of her profile and the window's descriptor, and
+ * CLAUDE.md §3's rule applies: a second copy of "which value is safe to show" is a second place
+ * for the window to start lying about her record.
+ *
+ * ★ THEY RETURN DATA, NOT A SENTENCE. The web bolds the subject with <b> and the phone with a
+ * nested <Text>; giving each surface a rendered string would mean one of them loses the emphasis
+ * or re-parses markup. So the shape of the line is decided here, once, and each surface renders
+ * the same two or three parts its own way.
+ */
+
+/** The sub-line's PARTS — the one thing that differs between the window's two moments.
+ *  · added → { reason:"added", subject, stage }   (stage already prettified)
+ *  · tour  → { reason:"tour", count, tag }        (tag only when exactly one section exists)
+ *  Null when this is not a check window.
+ *
+ *  It names what Meyy ASSUMED, because that is the whole reason to ask: she never chose a
+ *  section, a periods-a-week or a year's total, and she cannot check what she does not know was
+ *  set. ⚠️ "with 0 sections" is never a sentence worth showing — a profile that has moved under
+ *  us falls back to naming the assumption without counting it (count 0). */
+export function setupCheckSub(readiness, win) {
+  if (!win || win.mode !== "check") return null;
+  /* ★ The added-a-subject line is SHORT, and it names the STAGE (founder, 2026-08-27). It named
+     the CLASS once, which was the wrong unit: what she added is a subject-STAGE — the billing
+     unit, and the scope this window's rows are filtered to — and a class is one of three inside
+     it. The Class row exists precisely so she can say which ones she teaches. */
+  if (win.reason === "added") {
+    return { reason: "added", subject: win.subject || "", stage: pretty(stageOfGrade(win.grade)) };
+  }
+  // The tour ending keeps the fuller line: nothing there was ever her choice, so it says so.
+  const tags = [];
+  ((readiness && readiness.subjects) || []).forEach((s) => (s.grades || []).forEach((g) =>
+    tags.push(...(((g && g.sections) || []).map((x) => x && x.tag).filter(Boolean)))));
+  return { reason: "tour", count: tags.length, tag: tags.length === 1 ? tags[0] : null };
+}
+
+/** The four rows' current values, or null when there is nothing safe to say.
+ *
+ *  ★ CHECK MOOD ONLY (founder, 2026-08-27: "values only for first time including when new
+ *  subject stage added, not during 'what would you like to change' rounds"). The "+" window is
+ *  unscoped by nature — it is the whole profile — so a teacher with three subjects would see
+ *  "6, 7, 8" against Class, which is noise on a row she is using to navigate. In check mood the
+ *  scope is always known: the tour ending is her single set-up, and the added-a-subject window is
+ *  filtered to one subject·stage.
+ *
+ *  ★ A MISSING VALUE RENDERS NOTHING — never a dash, a zero or a guess. A window asking whether
+ *  Meyy got her set-up right must not itself invent an answer about her record (the Support
+ *  screen's `metaErr` lesson). Hence one shared figure reads as fact and several classes
+ *  disagreeing is not a value to show at all. */
+export function setupCheckValues(readiness, win) {
+  if (!win || win.mode !== "check") return null;
+  const subs = (readiness && readiness.subjects) || [];
+  const scoped = win.reason === "added" && win.subject
+    ? subs.filter((s) => s.name === win.subject) : subs;
+  const stage = win.reason === "added" && win.grade ? stageOfGrade(win.grade) : null;
+  const grades = [];
+  scoped.forEach((s) => (s.grades || []).forEach((g) => {
+    if (!stage || stageOfGrade(g.grade) === stage) grades.push({ s, g });
+  }));
+  if (!grades.length) return null;
+
+  const list = (xs) => (xs.length > 3 ? `${xs.slice(0, 3).join(", ")}…` : xs.join(", "));
+  const uniq = (xs) => [...new Set(xs.filter((x) => x != null && x !== ""))];
+
+  const classes = uniq(grades.map(({ g }) => classNum(g.grade)));
+  const sections = uniq(grades.flatMap(({ g }) => ((g && g.sections) || []).map((x) => x && x.tag)));
+  const ppws = uniq(grades.map(({ g }) => g.periods_per_week));
+  /* Read through `annualBudgetPeriods` — the SAME function Year Plan displays from — rather than
+     off `subject.budget[gi]` directly. That record holds a method (periods | weeks | days) and is
+     absent entirely while the budget is still the auto estimate, so a direct read would show
+     nothing for most teachers and a raw week count for some. Two screens quoting different annual
+     totals for one class is worse than a window that stays quiet. */
+  const budgets = uniq(grades.map(({ s, g }) =>
+    annualBudgetPeriods(readiness, subjectSlug(s.name), (g.grade || "").toLowerCase())));
+
+  return {
+    class: classes.length ? list(classes) : null,
+    section: sections.length ? list(sections) : null,
+    ppw: ppws.length === 1 ? `${ppws[0]} a week` : null,
+    budget: budgets.length === 1 ? `${budgets[0]} periods` : null,
+  };
 }

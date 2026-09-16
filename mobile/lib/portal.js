@@ -23,6 +23,8 @@
  * to a window she left behind ten minutes ago would be a ghost.
  */
 
+import { SETUP_CHECK_DELAY_MS, setupKey, takeSetupCheck } from "@aruvi/shared/setupCheck";
+
 let state = { originRoute: null, win: null, scope: null, edit: null, winBack: null, pick: null };
 const listeners = new Set();
 
@@ -132,6 +134,45 @@ export function leavePortal() {
   emit();
   return { originRoute, win };
 }
+
+/* ───────── "she has just added something" — the check window's second moment (item 10) ─────────
+ *
+ * The web's `onLessonsScope` (page.jsx), moved into this store because on the phone My Lessons is
+ * a ROUTE with nothing above it: the screen reports the subject·class it has settled on, and the
+ * decision to ask — and the window itself — belong here, where the window lives.
+ *
+ * ★ ASKED AT FIRST USE, NOT AT THE MOMENT SHE ADDS IT. Meyy makes the same three assumptions for
+ * an added subject as it made for her first one (a section, a periods-a-week, a year's total), so
+ * she deserves the same question about it — but asked when she opens the thing, not stacked on top
+ * of the screen where she added it (§0's benefit-first rule).
+ *
+ * ★ AND IT WAITS A BEAT (founder, 2026-08-28). Opening in the same tick the wheels resolve would
+ * land the window ON TOP of the selection she just made — she would never see the screen she asked
+ * for before being asked a question about it. The timer is superseded by a later scope change (a
+ * teacher spinning the wheels queues ONE window, not five) and re-checks at FIRE time, because a
+ * second's worth of taps can open a window in between.
+ *
+ * ⚠️ `takeSetupCheck` SPENDS the key, so it is called once, outside any React updater — an updater
+ * can run twice and would spend the key on the render React then throws away.
+ * ⚠️ When the tour lands (8b) this needs the web's other guard: never over the tour. */
+let scopeTimer = null;
+export function noteLessonsScope(subjectName, grade) {
+  if (!subjectName || !grade) return;
+  if (state.win || state.edit || state.pick) return;
+  if (!takeSetupCheck(setupKey(subjectName, grade))) return;
+  clearTimeout(scopeTimer);
+  scopeTimer = setTimeout(() => {
+    scopeTimer = null;
+    if (state.win || state.edit || state.pick) return;
+    /* The scope is the subject and the STAGE its class sits in — never `exact`. She may teach
+       three classes in the stage she just bought, and the Class row exists so she can say which. */
+    setPortalWin({ mode: "check", reason: "added", subject: subjectName, grade,
+                   scope: { subject: subjectName, grade } });
+  }, SETUP_CHECK_DELAY_MS);
+}
+
+/* Leaving My Lessons cancels a question that was about to be asked over it. */
+export function cancelLessonsScope() { clearTimeout(scopeTimer); scopeTimer = null; }
 
 /* An ordinary visit somewhere else — the round trip is over and there is nothing to return to. */
 export function clearPortal() {

@@ -69,6 +69,26 @@ let inflight = null;
 
 const storeKey = () => userKey(READINESS_CACHE_PREFIX);
 
+/* ───────── who is watching the profile (Track D step 5d item 10, 2026-09-16) ─────────
+ * The check window's queue is fed by DIFFING her profile against the last one seen, and the web
+ * can do that in a `useEffect` because `readiness` is page-level state there. On the phone the
+ * profile is this module, so a screen that wants to know it CHANGED has to be told. Same shape as
+ * `lib/preparing` and `lib/portal` on the app side, for the same reason.
+ * ⚠️ Best-effort, like everything around it: a listener that throws must not break a save. */
+const listeners = new Set();
+function emit() {
+  const profile = mem ? mem.profile : null;
+  listeners.forEach((fn) => { try { fn(profile); } catch {} });
+}
+
+/* Fires IMMEDIATELY with the profile in hand (or null), so a subscriber mounting mid-session sees
+ * the current one rather than waiting for the next write. Returns an unsubscribe. */
+export function subscribeReadiness(fn) {
+  listeners.add(fn);
+  try { fn(mem ? mem.profile : null); } catch {}
+  return () => listeners.delete(fn);
+}
+
 /* Lift the device copy into memory the first time it is asked for. */
 function hydrate() {
   if (mem) return mem;
@@ -127,6 +147,7 @@ export function fetchReadiness({ force = false } = {}) {
       };
       mem = next;
       persist(next);
+      emit();
       return next.profile;
     } catch (e) {
       /* ⚠️ A 401 is the server REFUSING this session, not a network failure — the caller signs
@@ -196,6 +217,7 @@ export async function saveReadiness(subjects) {
     const profile = { subjects: arr };
     mem = { profile, ready: ready != null ? ready : (arr || []).length > 0, fresh: true };
     persist(mem);
+    emit();
     return profile;
   };
 

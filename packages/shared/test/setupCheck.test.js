@@ -98,3 +98,76 @@ test("nothing is queued or read without a signed-in teacher", () => {
   assert.equal(takeSetupCheck(k), true);
   clearUser();
 });
+
+/* ───────── the window's WORDS and its VALUES (app. 01 rows 75-76, lifted 2026-09-16) ─────────
+ *
+ * These were computed inline in the web's page.jsx until the phone needed them. They decide what a
+ * window whose whole question is "did Meyy get your set-up right?" says about her record — so the
+ * rules that matter most here are the ones about staying QUIET: a value nothing can vouch for
+ * renders nothing at all, never a dash, a zero or a guess.
+ */
+import { setupCheckSub, setupCheckValues } from "../src/setupCheck.js";
+
+const profile = {
+  subjects: [
+    { name: "English",
+      grades: [{ grade: "III", periods_per_week: 6,
+                 sections: [{ tag: "3A", sec: "A" }, { tag: "3B", sec: "B" }] }],
+      budget: { 0: { method: "periods", value: 210 } },
+      grids: [[[], []]] },
+    { name: "Mathematics",
+      grades: [
+        { grade: "V", periods_per_week: 8, sections: [{ tag: "5A", sec: "A" }] },
+        { grade: "IV", periods_per_week: 5, sections: [{ tag: "4A", sec: "A" }] },
+      ],
+      budget: { 0: { method: "periods", value: 245 }, 1: { method: "periods", value: 200 } },
+      grids: [[[]], [[]]] },
+  ],
+};
+
+test("no sub-line and no values outside check mood — the '+' window is unscoped by nature", () => {
+  const win = { mode: "change" };
+  assert.equal(setupCheckSub(profile, win), null);
+  assert.equal(setupCheckValues(profile, win), null);
+});
+
+test("★ the added line names the SUBJECT and the STAGE, not the class", () => {
+  const parts = setupCheckSub(profile, { mode: "check", reason: "added", subject: "Mathematics", grade: "V" });
+  assert.deepEqual(parts, { reason: "added", subject: "Mathematics", stage: "Preparatory" });
+});
+
+test("the tour line counts sections, and never says 'with 0 sections'", () => {
+  assert.deepEqual(setupCheckSub(profile, { mode: "check", reason: "tour" }),
+    { reason: "tour", count: 4, tag: null });
+  const one = { subjects: [{ name: "English", grades: [{ grade: "III", sections: [{ tag: "3A" }] }] }] };
+  assert.deepEqual(setupCheckSub(one, { mode: "check", reason: "tour" }),
+    { reason: "tour", count: 1, tag: "3A" }, "one section is named, not counted");
+  assert.deepEqual(setupCheckSub({ subjects: [] }, { mode: "check", reason: "tour" }),
+    { reason: "tour", count: 0, tag: null }, "a profile that moved under us names no count");
+});
+
+test("★ the added window is scoped to ONE subject·stage — the classes she settled months ago stay out", () => {
+  const v = setupCheckValues(profile, { mode: "check", reason: "added", subject: "Mathematics", grade: "V" });
+  assert.equal(v.class, "5, 4", "V and IV are both preparatory, so both are in scope");
+  assert.equal(v.section, "5A, 4A");
+  assert.equal(v.ppw, null, "8 and 5 disagree — several classes disagreeing is not a value to show");
+  assert.equal(v.budget, null);
+  const eng = setupCheckValues(profile, { mode: "check", reason: "added", subject: "English", grade: "III" });
+  assert.equal(eng.class, "3");
+  assert.equal(eng.section, "3A, 3B");
+  assert.equal(eng.ppw, "6 a week", "one shared figure reads as fact");
+  assert.equal(eng.budget, "210 periods");
+});
+
+test("a list of more than three is elided, never wrapped onto a second line", () => {
+  const many = { subjects: [{ name: "Science",
+    grades: ["VI", "VII", "VIII", "IX"].map((g) => ({ grade: g, periods_per_week: 6, sections: [] })) }] };
+  const v = setupCheckValues(many, { mode: "check", reason: "tour" });
+  assert.equal(v.class, "6, 7, 8…");
+  assert.equal(v.section, null, "no sections yet → the row says nothing at all");
+});
+
+test("a scope naming a subject she no longer teaches shows nothing rather than guessing", () => {
+  assert.equal(
+    setupCheckValues(profile, { mode: "check", reason: "added", subject: "Science", grade: "IX" }), null);
+});

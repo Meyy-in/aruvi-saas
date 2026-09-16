@@ -175,6 +175,11 @@ export function webStyles(t, scheme = "light") {
                        textTransform: UP, color: t.ochre },
     ap_title:        { fontFamily: F.display(500), fontSize: 21, lineHeight: 26, color: t.ink, marginTop: 4 },
     ap_sub:          { fontFamily: F.body(400), fontSize: 13, lineHeight: 19, color: t.ink_soft, marginTop: 3 },
+    /* The `<b>` inside `.ap-sub` — the subject and the stage in the check window's line. A nested
+       Text, because RN picks a face by NAME: `fontWeight: "600"` on a bundled static cut does
+       nothing, so the emphasis has to be the semibold family itself. Colour and metrics are
+       inherited from `ap_sub`, so only the face is stated here. */
+    ap_sub_b:        { fontFamily: F.body(600) },
     ap_list:         { rowGap: 8, marginBottom: 4 },
     ap_row:          { rowGap: 6, paddingVertical: 11, paddingHorizontal: 14, borderRadius: 10,
                        borderWidth: 1, borderColor: t.line_soft, backgroundColor: t.paper_2 },

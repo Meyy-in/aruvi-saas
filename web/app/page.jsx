@@ -16,7 +16,7 @@ import TeachingProfile from "./components/TeachingProfile";
 import Settings from "./components/Settings";
 import MyLessonPlans from "./components/MyLessonPlans";
 import GuidedTour from "./components/GuidedTour";
-import ProfilePortal, { queueSetupCheck, takeSetupCheck, pruneSetupCheck, setupKey, SETUP_CHECK_DELAY_MS } from "./components/ProfilePortal";
+import ProfilePortal, { queueSetupCheck, takeSetupCheck, pruneSetupCheck, setupKey, SETUP_CHECK_DELAY_MS, setupCheckSub as setupCheckSubParts, setupCheckValues as setupCheckValuesOf } from "./components/ProfilePortal";
 // ThemeToggle moved into Settings (App › Appearance) — no longer on the shell's bar.
 import AskAruvi from "./ask-aruvi/AskAruvi";
 import { primeBank, clearBank, refreshBank } from "./ask-aruvi/bank";
@@ -1110,100 +1110,39 @@ export default function Home() {
   if (!ready || firstGenNeeded) return <FirstRun user={user} onComplete={onFirstRunComplete}
                        onPrepared={onPrepared} onPrepareError={onPrepareError} onSignOut={onSignOut} />;
 
-  /* The check window's sub-line — the ONE thing that differs between its two moments. It names
-     what Aruvi ASSUMED, because that is the whole reason to ask: she never chose a section, a
-     periods-per-week or a year's total, and she cannot check what she does not know was set. */
+  /* The check window's sub-line and its row VALUES — both now computed in
+     `@aruvi/shared/setupCheck`, so the phone's window says the same things by the same rules
+     (Track D step 5d item 10, 2026-09-16). What stayed here is the RENDERING, because the two
+     surfaces emphasise differently: the web bolds with `<b>`, a phone by naming a semibold face.
+     ⚠️ The helpers were lifted out of this file byte for byte — do not reintroduce a local copy of
+     either rule. This is the `portalGradeIdxs` lesson (CLAUDE.md §3): the day the two disagree,
+     one window is quietly inventing an answer about her record.
+
+     The line names what Aruvi ASSUMED, because that is the whole reason to ask: she never chose a
+     section, a periods-per-week or a year's total, and she cannot check what she does not know was
+     set. The values exist because four bare nouns cannot be CHECKED — she had to open every row to
+     discover what Aruvi had chosen, four round trips to answer one glance-sized question — and a
+     missing one renders NOTHING rather than a dash, a zero or a guess. */
   const setupCheckSub = (() => {
-    if (!portalWin || portalWin.mode !== "check") return null;
-    const subs = (readiness && readiness.subjects) || [];
-    /* ★ The added-a-subject line is SHORT, and it names the STAGE (founder, 2026-08-27). It first
-       explained that Aruvi had started this class the way it started her first — a sentence and a
-       half of reasoning above a list that already says what can be amended. Then it named the
-       CLASS, which was the wrong unit: what she added is a subject-STAGE (that is the billing
-       unit, and it is the scope this window's rows are filtered to), and the class is one of
-       three inside it — the Class row exists precisely so she can say which ones she teaches. */
-    if (portalWin.reason === "added") {
+    const parts = setupCheckSubParts(readiness, portalWin);
+    if (!parts) return null;
+    if (parts.reason === "added") {
       return (
-        <>You&rsquo;ve added <b>{portalWin.subject}</b>. <b>{pretty(stageOfGrade(portalWin.grade))} stage</b>.
+        <>You&rsquo;ve added <b>{parts.subject}</b>. <b>{parts.stage} stage</b>.
           Amend any of these items below.</>
       );
     }
-    // The tour ending keeps its fuller line: nothing here was ever her choice, so it says so.
-    // "with 0 sections" is never a sentence worth showing — if the profile has moved under us,
-    // fall back to naming the assumption without counting it.
-    const tags = [];
-    subs.forEach((s) => (s.grades || []).forEach((g) =>
-      tags.push(...(((g && g.sections) || []).map((x) => x.tag)))));
-    const phrase = !tags.length ? <>its own suggested set-up</>
-      : tags.length === 1
-        ? <>Section <b>{tags[0]}</b> and its own suggested periods for the year</>
-        : <><b>{tags.length} sections</b> and its own suggested periods for the year</>;
+    const phrase = !parts.count ? <>its own suggested set-up</>
+      : parts.count === 1
+        ? <>Section <b>{parts.tag}</b> and its own suggested periods for the year</>
+        : <><b>{parts.count} sections</b> and its own suggested periods for the year</>;
     return (
       <>Meyy started you off with {phrase}. You can change any of it — or leave it and
         carry on teaching.</>
     );
   })();
 
-  /* ★ THE CHECK WINDOW SHOWS ITS CURRENT VALUES (founder, 2026-08-27: "values only for first
-     time including when new subject stage added, not during 'what would you like to change'
-     rounds").
-
-     Why this was missing and why it matters: the window's own title is "Would you like to check
-     your set-up?" — and four bare nouns cannot be checked. She had to open each row to discover
-     what Aruvi had chosen, which is four round trips to answer one glance-sized question.
-
-     ★ NOT a sub-line. The rows deliberately carry no explanatory second line (ProfilePortal's
-     ROWS note: five of them turned a glanceable list into a page and pushed the last row below
-     the fold at 360px). A VALUE is different — it is short, and it sits right-aligned on the
-     SAME line, before the chevron. Zero added height, so that decision stands untouched.
-
-     ★ CHECK MOOD ONLY. The "+" window is unscoped by nature — it is the whole profile — so a
-     teacher with three subjects would see "6, 7, 8" or a blank against Class, which is noise on
-     a row she is using to navigate. In check mood the scope is always known: the tour ending is
-     her single set-up, and the added-a-subject window is filtered to one subject·stage.
-
-     Returns null when there is nothing safe to say — a missing value renders NOTHING rather than
-     a guess or a zero. A window asking whether Aruvi got her set-up right must not itself invent
-     an answer about her record (the Support screen's `metaErr` lesson, 2026-08-27). */
-  const setupCheckValues = (() => {
-    if (!portalWin || portalWin.mode !== "check") return null;
-    const subs = (readiness && readiness.subjects) || [];
-    // Scope: the added-a-subject window names its subject·stage; the tour ending is whatever
-    // single set-up she has. Narrow to one subject when we can, else use the whole profile —
-    // which at the tour ending IS one subject.
-    const scoped = portalWin.reason === "added" && portalWin.subject
-      ? subs.filter((s) => s.name === portalWin.subject) : subs;
-    const stage = portalWin.reason === "added" && portalWin.grade
-      ? stageOfGrade(portalWin.grade) : null;
-    const grades = [];
-    scoped.forEach((s) => (s.grades || []).forEach((g, gi) => {
-      if (!stage || stageOfGrade(g.grade) === stage) grades.push({ s, g, gi });
-    }));
-    if (!grades.length) return null;
-
-    const list = (xs) => (xs.length > 3 ? `${xs.slice(0, 3).join(", ")}…` : xs.join(", "));
-    const uniq = (xs) => [...new Set(xs.filter((x) => x != null && x !== ""))];
-
-    const classes = uniq(grades.map(({ g }) => classNum(g.grade)));
-    const sections = uniq(grades.flatMap(({ g }) => ((g && g.sections) || []).map((x) => x.tag)));
-    const ppws = uniq(grades.map(({ g }) => g.periods_per_week));
-    /* Read through annualBudgetPeriods — the SAME function Year Plan displays from — rather than
-       off `subject.budget[gi]` directly. That record holds a method (periods | weeks | days) and
-       is absent entirely when the budget is still the auto estimate, so a direct read would show
-       nothing for most teachers and a raw week-count for some. Two screens quoting different
-       annual totals for one class is worse than a window that stays quiet. */
-    const budgets = uniq(grades.map(({ s, g }) =>
-      annualBudgetPeriods(readiness, (s.name || "").toLowerCase().replace(/ /g, "_"),
-                          (g.grade || "").toLowerCase())));
-
-    return {
-      class: classes.length ? list(classes) : null,
-      section: sections.length ? list(sections) : null,
-      // One shared figure reads as fact; several classes disagreeing is not a value to show.
-      ppw: ppws.length === 1 ? `${ppws[0]} a week` : null,
-      budget: budgets.length === 1 ? `${budgets[0]} periods` : null,
-    };
-  })();
+  const setupCheckValues = setupCheckValuesOf(readiness, portalWin);
 
   return (
     <>

@@ -60,6 +60,35 @@ export function portalChrome(mode = "change", sub) {
   };
 }
 
+/* ★ THE CHECK WINDOW'S SUB-LINE, RENDERED (app. 01 row 75, 2026-09-16). The PARTS come from
+ * `setupCheckSub` in @aruvi/shared — the rule about what the line says is one rule, and the web
+ * runs the same one — and only the emphasis is drawn here, because the web bolds with `<b>` and a
+ * phone bolds by naming a different FACE. Returns null when there is nothing to say, which lets
+ * `portalChrome`'s own default stand (it is this component's zero-sections sentence, word for
+ * word).
+ *
+ * It names what Meyy ASSUMED, because that is the whole reason to ask: she never chose a section,
+ * a periods-a-week or a year's total, and she cannot check what she does not know was set. */
+export function SetupCheckSub({ parts }) {
+  const ws = useWebStyles();
+  if (!parts) return null;
+  const B = ({ children }) => <Text style={ws.ap_sub_b}>{children}</Text>;
+  if (parts.reason === "added") {
+    return (
+      <>You’ve added <B>{parts.subject}</B>. <B>{parts.stage} stage</B>. Amend any of these items below.</>
+    );
+  }
+  /* ⚠️ "with 0 sections" is never a sentence worth showing — a profile that has moved under us
+     names the assumption without counting it. */
+  const phrase = !parts.count ? <>its own suggested set-up</>
+    : parts.count === 1
+      ? <>Section <B>{parts.tag}</B> and its own suggested periods for the year</>
+      : <><B>{parts.count} sections</B> and its own suggested periods for the year</>;
+  return (
+    <>Meyy started you off with {phrase}. You can change any of it — or leave it and carry on teaching.</>
+  );
+}
+
 /* ⚠️ RENDERS ITS BODY ONLY — the Sheet around it belongs to the layout (2026-09-15). This used to
  * own its own Sheet, and the editor owned a second one, so opening an edit UNMOUNTED one Modal and
  * MOUNTED another: two fade transitions back to back, with the bare screen showing in the gap

@@ -8,17 +8,20 @@
  * web's `activeNav` exactly: My Lessons only when the repository is open; everything else —
  * the class cards, a lesson opened from them — reads as My Classes; Settings lights neither
  * and hides the bar entirely (its screen arrives in step 6). */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Redirect, Stack, useRouter, usePathname } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
-import { cachedReadiness } from "@aruvi/shared/readiness";
+import { cachedReadiness, cachedReady, subscribeReadiness } from "@aruvi/shared/readiness";
 import { useTheme } from "../../theme/ThemeContext";
 import BottomNav from "../../components/BottomNav";
-import ProfilePortal, { portalChrome } from "../../components/ProfilePortal";
+import ProfilePortal, { portalChrome, SetupCheckSub } from "../../components/ProfilePortal";
 import ProfileEditor from "../../components/ProfileEditor";
 import ProfilePick from "../../components/ProfilePick";
 import { resolvePortalPick } from "@aruvi/shared/profile";
+import {
+  pruneSetupCheck, queueSetupCheck, setupCheckSub, setupCheckValues, setupKey,
+} from "@aruvi/shared/setupCheck";
 import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit,
          openPick, pickSubject, pickBackToSubject, closePick } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
@@ -43,6 +46,37 @@ export default function AppLayout() {
   useEffect(() => subscribePortal((p) => {
     setWin(p.win); setEdit(p.edit); setPick(p.pick); setScope(p.scope);
   }), []);
+
+  /* ── the check window's queue: every add, watched in ONE place (app. 01 row 72) ──────────
+     A subject·class KEY that appears in her profile where it was not before IS an add, whichever
+     door it came through — the portal's class screen, a subscribe flow that widens her scope, a
+     change she made on the web. Watching the profile rather than each add path is what makes that
+     true; wiring the doors one by one is how a door gets missed.
+     ★ THE FIRST PROFILE SEEDS THE BASELINE AND QUEUES NOTHING: a teacher signing in with twelve
+     classes must not be handed twelve pending questions, and a brand-new teacher's first subject
+     belongs to the tour's own prompt, not to this one.
+     ⚠️ Keyed by USER — a sign-out leaves the baseline behind, and the next teacher on this device
+     must never have the previous one's profile diffed against hers.
+     ⚠️ The phone needs a SUBSCRIPTION where the web needs none: `readiness` is page state there
+     and a module store here, so nothing re-renders on a write unless the store says so. */
+  const [readiness, setReadiness] = useState(() => cachedReadiness());
+  useEffect(() => subscribeReadiness(setReadiness), []);
+  const setupKeysRef = useRef({ user: null, keys: null });
+  useEffect(() => {
+    const who = getUser();
+    if (setupKeysRef.current.user !== who) setupKeysRef.current = { user: who, keys: null };
+    if (!readiness || !cachedReady()) return;
+    const keys = [];
+    (readiness.subjects || []).forEach((s) =>
+      (s.grades || []).forEach((g) => keys.push(setupKey(s.name, g.grade))));
+    const prev = setupKeysRef.current.keys;
+    setupKeysRef.current = { user: who, keys };
+    if (!prev) return;                                   // baseline only
+    const added = keys.filter((k) => !prev.includes(k));
+    if (added.length) queueSetupCheck(added);
+    pruneSetupCheck(keys);        // self-heal: nothing she does not teach stays queued
+  }, [readiness]);
+
   if (!getUser()) return <Redirect href="/login" />;
 
   /* ⚠️ THERE IS NO `/profile` CASE ANY MORE, and there must not be one. The editor used to be a
@@ -51,6 +85,15 @@ export default function AppLayout() {
      actually is, which is where she was when she opened it. Re-adding a "none" case would blank
      the bar for a window, which is the opposite of what that rule was for. */
   const active = pathname.startsWith("/lessons") ? "lessons" : "classes";
+
+  /* ★ THE LINE AND THE VALUES ARE COMPUTED AT RENDER, NOT FROZEN INTO THE WINDOW. She opens a row,
+     changes her periods a week and the window comes back — and it must come back saying SEVEN.
+     A descriptor stamped when the window opened would show her the figure she has just replaced,
+     which on a window whose entire question is "did Meyy get this right?" is the worst possible
+     answer. `saveReadiness` writes through to the store before `closeEdit` restores the window, so
+     the value on screen is the value on record. */
+  const checkSub = win && win.mode === "check"
+    ? <SetupCheckSub parts={setupCheckSub(readiness, win)} /> : undefined;
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
@@ -72,7 +115,7 @@ export default function AppLayout() {
         <Sheet visible scroll={!!(edit || pick)}
           onClose={edit ? closeEdit : pick ? closePick : () => setPortalWin(null)}
           onBack={(edit || pick) ? (editChrome && editChrome.onBack) : undefined}
-          {...((edit || pick) ? {} : portalChrome(win.mode, win.sub))}>
+          {...((edit || pick) ? {} : portalChrome(win.mode, checkSub))}>
           {edit ? (
             <ProfileEditor {...edit} onChrome={setEditChrome} />
           ) : pick ? (
@@ -96,7 +139,7 @@ export default function AppLayout() {
               }}
               onPickClass={(grade) => openEdit({ intent: pick.goal, subject: pick.subject, grade })} />
           ) : (
-            <ProfilePortal mode={win.mode} values={win.values}
+            <ProfilePortal mode={win.mode} values={setupCheckValues(readiness, win)}
               onPick={(kind) => {
                 /* ★ EVERY ROW NOW LEADS SOMEWHERE FOR EVERY TEACHER (5d item 3, 2026-09-15).
                    A row is a spot edit on ONE subject·class and the window does not resolve

@@ -16,7 +16,7 @@ import { setStorage, storage } from "../src/storage.js";
 import { setUser, clearUser } from "../src/format.js";
 import {
   cachedReadiness, cachedReady, fetchReadiness, invalidateReadiness, clearReadiness,
-  READINESS_CACHE_PREFIX,
+  subscribeReadiness, READINESS_CACHE_PREFIX,
 } from "../src/readiness.js";
 
 /* A storage that survives between the sub-tests, standing in for localStorage / MMKV. */
@@ -139,4 +139,32 @@ test("a mangled device entry is treated as nothing stored, never as a profile", 
   box.set([...box.keys()][0] || `${READINESS_CACHE_PREFIX}x`, "{ not json");
   assert.doesNotThrow(() => cachedReadiness());
   assert.equal(cachedReadiness(), null);
+});
+
+/* ───────── watching the profile (Track D step 5d item 10, 2026-09-16) ─────────
+ * The check window's queue is fed by DIFFING her profile against the last one seen. The web does
+ * that in a `useEffect` because `readiness` is page state there; on the phone it is this module,
+ * so nothing re-renders on a write unless the store says so. Two rules: a subscriber mounting
+ * mid-session sees the profile in hand at once, and a write-through tells everyone. */
+test("★ subscribeReadiness fires immediately, and again on a write-through", async () => {
+  reset();
+  const seen = [];
+  const off = subscribeReadiness((p) => seen.push(p));
+  assert.equal(seen.length, 1, "a screen mounting mid-session is told at once");
+  assert.equal(seen[0], null, "…even when that is 'nothing yet'");
+  await fetchReadiness();
+  assert.equal(seen.length, 2);
+  assert.deepEqual(seen[1], profile, "the profile that landed, not a signal to go and fetch it");
+  off();
+  invalidateReadiness();
+  await fetchReadiness();
+  assert.equal(seen.length, 2, "an unsubscribed listener is never called again");
+});
+
+test("a listener that throws cannot break the store it is watching", async () => {
+  reset();
+  const off = subscribeReadiness(() => { throw new Error("a screen mid-unmount"); });
+  await assert.doesNotReject(() => fetchReadiness());
+  assert.deepEqual(cachedReadiness(), profile);
+  off();
 });
