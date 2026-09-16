@@ -37,10 +37,21 @@ export function Field({ label, children }) {
   );
 }
 
+/* ★ A LOCKED FIELD LOOKS LOCKED (founder, 2026-09-16: "when mobile is entered and OTP is being
+ * asked, grey the mobile box — an empty fill gives the impression it can be changed"). The number
+ * locks once the code is in flight, and on the returning path where it came from her account —
+ * but it kept the light FIELD background, which is this app's "type here" surface, so the lock
+ * was real and invisible and the box invited a tap that did nothing. Sunk paper and soft ink
+ * instead: nothing is added, the affordance is simply withdrawn. Applied HERE rather than at the
+ * two call sites, so every read-only field in the app says the same thing. */
 export function Input({ style, ...props }) {
   const { t } = useTheme();
+  const locked = props.editable === false;
   return <TextInput placeholderTextColor={t.ink_soft}
-    style={[type.body, s.input, { backgroundColor: t.field_bg, borderColor: t.edge, color: t.ink }, style]} {...props} />;
+    style={[type.body, s.input,
+      { backgroundColor: locked ? t.paper_sunk : t.field_bg, borderColor: t.edge,
+        color: locked ? t.ink_soft : t.ink },
+      style]} {...props} />;
 }
 
 export function Quiet({ children, style }) {
