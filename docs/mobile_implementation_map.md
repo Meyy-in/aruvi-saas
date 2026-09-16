@@ -925,7 +925,7 @@ Consolidated from the six appendices (their numbering in brackets). The first fi
 be answered when the step is reached. **Answered questions stay in the table, struck through with their
 answer** — the reasoning is worth more than the row.
 
-**Due next:** none blocking. **Q6, Q7 and Q8 were answered on 2026-09-16** as 6a opened; the next questions bind at 6b (Q10, Q11, Q12, Q13) and 6c (Q14).
+**Due next:** none blocking. **Q6, Q7, Q8 and Q17 were answered on 2026-09-16** as 6a opened; the next questions bind at 6b (Q10, Q11, Q12, Q13) and 6c (Q14).
 
 | # | Blocks | Question |
 |---|---|---|
@@ -947,7 +947,7 @@ answer** — the reasoning is worth more than the row.
 | Q14 | 6c | **Bank `accent` values**: confirm the five stored strings, or add a token NAME field to the bank so neither surface parses CSS. [04·5] |
 | Q15 | 7 | **Where a downloaded document lands**: share sheet (Files / WhatsApp / mail) or silent save to Files? Both Reports and Year Plan wait on this. [05·1] |
 | Q16 | 7 | **Prepare-from-a-card wait**: keep the web's in-place wait, or land on My Classes with the chapter bound after the 5 s beat? [05·2] |
-| Q17 | 7 | **Cutover offer dismissal cadence** on a phone that is rarely "signed in again": per launch, per day, or never persisted as the web? [05·4] |
+| ~~Q17~~ | 6a·F6 | ✅ **ANSWERED 2026-09-16 — ONCE PER LAUNCH, THE WEB'S RULE.** Dismissing hides the cutover offer until the app is restarted; nothing is persisted. Offered per-day and once-then-never as phone-shaped alternatives and the founder took the web's: ★ **no divergence without a reason, and "a phone is rarely signed out" is a reason to keep asking, not to stop.** A cutover missed is a year of lessons filed under the wrong year, and the offer is the only door to it until Settings grows one. So she meets it each morning until she acts — which is what an undone decision with a deadline should do. |
 | Q18 | 8 | **Speak** only focuses the text area on both surfaces (the web never used the Web Speech API). Intended, or add a real recogniser as a phone capability? [06·1] |
 | Q19 | 8 | **Assess accent green `#0f6e56`** (distinct from `--pine` on the web) — add a token, or let the phone's pine stand? [06·5] |
 | Q20 | 8 | **Chapter Notes placement** (phone: below the bar; web: centred) and the phone-only error-screen copy — which surface follows which? [06·2, 06·3] |
