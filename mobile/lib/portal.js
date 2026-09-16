@@ -138,6 +138,13 @@ export function closeEdit() {
   emit();
 }
 
+/* Raise a CHECK window, unless she is already looking at one — or at an edit, or a question.
+   A window that lands on top of something she opened herself is the 2026-08-28 defect. */
+export function raisePortalCheck(win) {
+  if (state.win || state.edit || state.pick) return;
+  setPortalWin(win);
+}
+
 /* The window itself, opened or closed without an edit in flight. */
 export function setPortalWin(win) {
   state = { ...state, win: win || null };

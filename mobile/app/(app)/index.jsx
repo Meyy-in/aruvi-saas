@@ -24,6 +24,9 @@ import Bar from "../../components/Bar";
 import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
 import { subscribePreparing, clearPreparing } from "../../lib/preparing";
+import { raisePortalCheck } from "../../lib/portal";
+import { takeFirstRunCheck } from "../../lib/firstRun";
+import { SETUP_CHECK_DELAY_MS } from "@aruvi/shared/setupCheck";
 import ProposedCard from "../../components/ProposedCard";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -182,6 +185,24 @@ export default function Home() {
 
   useEffect(() => { load(); }, [load]);
   useFocusEffect(useCallback(() => { setTick((n) => n + 1); }, []));
+
+  /* ★ THE CHECK WINDOW AFTER FIRST RUN (founder, 2026-09-16, having walked it: "the window that
+     pops up after first run did not pop up … since the tour is not built in expo it should have
+     come immediately when My Classes is chosen after first run").
+     On the web this is raised by the tour's own ending. The phone has no tour until 8b, so nothing
+     raised it and a brand-new teacher was never shown what Meyy had ASSUMED for her — a section,
+     a periods a week, a year's total — which is the whole reason the window exists.
+     First run leaves the one-shot; this spends it. On FOCUS rather than on mount, because she
+     lands on My Lessons and arrives here by tapping the bar, which does not remount this screen.
+     ⚠️ The same one-second beat the added-a-subject window waits: she has just arrived to see her
+     first card, and a window in the same frame covers the thing she came for.
+     ⚠️ At 8b this becomes a SECOND trigger beside the tour's — retire one (see lib/firstRun). */
+  useFocusEffect(useCallback(() => {
+    if (!takeFirstRunCheck()) return undefined;
+    const id = setTimeout(() => raisePortalCheck({ mode: "check", reason: "tour" }),
+                          SETUP_CHECK_DELAY_MS);
+    return () => clearTimeout(id);
+  }, []));
 
 
   const openAttached = (c, plan) => router.push({ pathname: "/lesson",

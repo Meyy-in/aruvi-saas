@@ -36,7 +36,7 @@ import { bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import Bar from "../components/Bar";
 import PrepareCta from "../components/PrepareCta";
 import { RollWheel } from "../components/RollWheel";
-import { markGenerated } from "../lib/firstRun";
+import { markGenerated, queueFirstRunCheck } from "../lib/firstRun";
 import { startPreparing, failPreparing, paywallPreparing, clearPreparing } from "../lib/preparing";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -275,6 +275,10 @@ export default function FirstRun() {
        serve is still in flight, and the honest answer "nothing prepared yet" would bounce her back
        to the welcome screen seconds after her first success). */
     markGenerated();
+    /* And she is owed the "did Meyy get your set-up right?" question — Meyy chose a section, a
+       periods a week and a year's total on her behalf, and this is the first moment she can judge
+       them. My Classes raises it; see lib/firstRun. */
+    queueFirstRunCheck();
     /* The store takes her profile NOW — the shell's gate and My Lessons' wheels both read it in
        the next tick — and the verified write runs behind, adopting the SERVER's copy on mismatch
        (@aruvi/shared/readiness). */

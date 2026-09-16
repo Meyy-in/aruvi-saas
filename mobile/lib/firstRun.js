@@ -24,7 +24,8 @@
  * truthfully, the new year is empty — and a ten-year veteran met the guided first run. Last
  * year's folder answers the question the heuristic is actually asking.
  */
-import { getJSON, getUser } from "@aruvi/shared/format";
+import { getJSON, getUser, userKey } from "@aruvi/shared/format";
+import { storage } from "@aruvi/shared/storage";
 
 let latch = { user: null, ever: false };
 
@@ -62,4 +63,38 @@ export async function firstGenNeeded() {
   const bound = Object.values((s && s.states) || {}).some((st) => st && st.chapter);
   if (prepared || bound || veteran) latch = { user: u, ever: true };
   return !prepared && !bound && !veteran;
+}
+
+
+/* ───────── "are these your sections?" after first run (founder, 2026-09-16) ─────────
+ *
+ * On the web this window is raised by `finishTour` — the tour's own ending, Done and Skip alike.
+ * The phone has no tour until step 8b, so nothing raised it at all: a teacher finished first run,
+ * met her first card, and was never shown what Meyy had ASSUMED for her (a section, a periods a
+ * week, a year's total) — which is the entire reason the window exists. Founder, having walked it:
+ * "the window that pops up after first run did not pop up … since the tour is not built in expo it
+ * should have come immediately when My Classes is chosen after first run."
+ *
+ * So first run leaves a one-shot flag and My Classes spends it. Stored rather than held in memory
+ * because she lands on My LESSONS — her lesson is the promise — and may well close the app before
+ * she ever taps My Classes; a flag that died with the session would lose the question for good.
+ *
+ * ⚠️ WHEN THE TOUR LANDS (8b) THIS BECOMES A SECOND TRIGGER. The tour's own ending is the web's,
+ * and two of them would ask her twice. Retire this one there, or gate it on the tour being
+ * unavailable — do not leave both firing.
+ */
+const CHECK_KEY = () => userKey("first_run_check_pending");
+
+/** First run just finished: owe her the check window the next time she opens My Classes. */
+export function queueFirstRunCheck() {
+  try { storage.setItem(CHECK_KEY(), "1"); } catch {}
+}
+
+/** True once, ever — spending the flag as it answers, like `takeSetupCheck`. */
+export function takeFirstRunCheck() {
+  try {
+    if (!getUser() || !storage.getItem(CHECK_KEY())) return false;
+    storage.removeItem(CHECK_KEY());
+    return true;
+  } catch { return false; }
 }
