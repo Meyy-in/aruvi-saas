@@ -935,6 +935,22 @@ export function webStyles(t, scheme = "light") {
        Raised ONLY on a verified mismatch, where the server's copy is the truth and hers has
        already been replaced on screen. It is a statement about what she is now looking at, not
        an apology, which is why it is one line and a Dismiss rather than a retry. */
+    /* ── the shell's "notice updated" bar (`.pn-note`, globals.css 5296-5306) — 6a F10 ──
+       Measured 2026-09-16. Quiet by design: nothing is WRONG, so it is paper rather than the
+       save-failed bars' clay edge, and it carries a 3px pine rule down its left instead. The
+       web's note says it "sits where the save-failed bars sit and yields to them", which on the
+       phone is the notices slot in `(app)/_layout.jsx` — pinned under the bar rather than at the
+       top of a scroller, because here every screen owns its own.
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    pn_note:         { flexDirection: "row", alignItems: "center", columnGap: 12, flexWrap: "wrap",
+                       rowGap: 6, marginHorizontal: 18, marginBottom: 12, paddingVertical: 9,
+                       paddingHorizontal: 12, borderWidth: 1, borderLeftWidth: 3, borderRadius: 8 },
+    pn_note_t:       { flexGrow: 1, flexShrink: 1, minWidth: 160, fontFamily: F.body(400),
+                       fontSize: 13, lineHeight: 20.15 },
+    pn_note_acts:    { flexGrow: 0, flexShrink: 0, flexDirection: "row", columnGap: 14 },
+    pn_note_btn:     { borderBottomWidth: 1, paddingTop: 2, paddingBottom: 1 },
+    pn_note_bt:      { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.66, textTransform: UP },
+
     tp_savefail:     { flexDirection: "row", alignItems: "center", columnGap: 12,
                        marginBottom: 12, paddingVertical: 9, paddingHorizontal: 12,
                        borderWidth: 1, borderRadius: 8 },

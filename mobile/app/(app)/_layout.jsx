@@ -11,13 +11,16 @@
 import { useEffect, useRef, useState } from "react";
 import { AppState, View } from "react-native";
 import { Redirect, Stack, useRouter, usePathname } from "expo-router";
-import { getUser } from "@aruvi/shared/format";
+import { getJSON, getUser, postJSON } from "@aruvi/shared/format";
+import { pullSectionState, setSectionMismatchHandler } from "@aruvi/shared/sectionState";
+import { refreshBank } from "@aruvi/shared/ask-aruvi/bank";
 import { cachedReadiness, cachedReady, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { entitlementState, subscribeEntitlement, syncEntitlement } from "@aruvi/shared/entitlement";
 import { endSession } from "../../lib/session";
 import { useTheme } from "../../theme/ThemeContext";
 import Bar from "../../components/Bar";
 import BottomNav from "../../components/BottomNav";
+import { SectionFailedBar, PrivacyNoteBar } from "../../components/Notices";
 import ProfilePortal, { portalChrome, SetupCheckSub } from "../../components/ProfilePortal";
 import ProfileEditor from "../../components/ProfileEditor";
 import ProfilePick from "../../components/ProfilePick";
@@ -110,6 +113,51 @@ export default function AppLayout() {
     const sub = AppState.addEventListener("change", (st) => (st === "active" ? start() : stop()));
     return () => { live = false; stop(); sub.remove(); };
   }, []);
+
+  /* ── THE NOTICES SLOT (6a F10; app. 01 rows 43, 44, 24) ────────────────────────────────
+     What the APP has to say, as opposed to what a screen has. `components/Notices.jsx` carries
+     the reasoning for each; what lives here is the state, because each is true of the whole
+     shell and there must be exactly one of it.
+
+     ⓵ A VERIFIED SECTION MISMATCH. `pushSectionState` reads the server back and calls this only
+     when it DISAGREES — never on a throw, never when unreachable, because those are "we cannot
+     tell" and not "it failed". ★ The phone had never installed the handler, so a disagreement
+     about the chapter she just attached, or the unit she just completed, was SILENT here while
+     the web said one sentence about it. Re-pull first so the cards show the truth, THEN speak —
+     a caption for a corrected screen, not a floating alert about one that still lies. */
+  const [sectionFailed, setSectionFailed] = useState("");
+  useEffect(() => {
+    setSectionMismatchHandler((sectionKey) => {
+      pullSectionState([sectionKey]).finally(() => {
+        setSectionFailed("That didn’t save — your classes are as Meyy has them.");
+      });
+    });
+    return () => setSectionMismatchHandler(null);
+  }, []);
+
+  /* ⓶ THE PRIVACY NOTICE WAS UPDATED — asked ONCE PER SIGN-IN, not on a cadence. A notice
+     changes a few times a year, and this bar is not the place for a version race with a founder
+     mid-publish. An old server without the route shows nothing: it never invents an update.
+     ⚠️ "Read it" goes to `/privacy` for now — the standalone screen, which loads with or without
+     an identity. At 6b this becomes Settings › Legal on the notice, which is the web's own
+     destination; the stamp and its two contexts do not change. */
+  const [privacyNote, setPrivacyNote] = useState(null);
+  useEffect(() => {
+    let live = true;
+    getJSON("/legal/privacy/status")
+      .then((d) => { if (live && d && d.updated) setPrivacyNote(d); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, []);
+  const stampPrivacySeen = (context) => {
+    setPrivacyNote(null);
+    postJSON("/legal/privacy/seen", { context }).catch(() => {});
+  };
+
+  /* ⓷ The Ask Meyy bank, refreshed on every signed-in load (row 24). It is an ETag request, so
+     an unchanged bank costs a 304 and nothing else. Sign-in primes it; this is what keeps a
+     teacher who has not signed out in a fortnight from reading a fortnight-old bank. */
+  useEffect(() => { refreshBank().catch(() => {}); }, []);
 
   /* ★ LAPSED = THE READING ROOM (founder, 2026-08-24; app. 01 rows 54-55). Her lessons stay
      hers — she can open them, read them, export them — but nothing that GROWS the account is
@@ -207,6 +255,19 @@ export default function AppLayout() {
           ⚠️ Shell-LESS screens keep their own: login, the privacy notice and first run live
           OUTSIDE `(app)` by design (§0, Q23), and first run's carries `gear={false}`. */}
       <Bar />
+      {/* The notices ride between the bar and the screen — see components/Notices.jsx for why
+          they are pinned here rather than at the top of a scroller. */}
+      <View style={{ paddingTop: (sectionFailed || privacyNote) ? 14 : 0 }}>
+        <SectionFailedBar message={sectionFailed} onDismiss={() => setSectionFailed("")} />
+        {/* ⚠️ NO "hide it inside Legal" CASE, and none is owed. The web needs one because its
+            notice is a VIEW inside the same shell, so the bar would otherwise announce a
+            document over the document. `/privacy` is a route OUTSIDE `(app)`, so this layout is
+            not even mounted while she reads — and "Read it" stamps the version seen on the way
+            out, which is what takes the bar down for good. */}
+        <PrivacyNoteBar version={privacyNote && privacyNote.current_version}
+          onRead={() => { stampPrivacySeen("updated_note_read"); router.push("/privacy"); }}
+          onDismiss={() => stampPrivacySeen("updated_note_dismissed")} />
+      </View>
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.paper } }} />
       {/* ★ ONE WINDOW, WHOSE CONTENTS CHANGE (founder, 2026-09-15: "when 'x' is used to click off,
           it goes back to my classes for a moment before showing 'what would you like to change?'
