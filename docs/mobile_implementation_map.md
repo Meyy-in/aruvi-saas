@@ -1067,6 +1067,20 @@ Real SMS (DLT) is the external long pole and is outside this map (Track B).
   a subscription card stacks FIVE of them — a ledger became a list. A key is the CSS rule and
   nothing else; spacing that belongs to one screen goes at that screen's call site (`set_card_inset`
   is the pattern). When a second screen adopts a key, re-read the rule before trusting the key.
+- **★ WHERE THE WEB USES A NATIVE CONTROL, THE PHONE MUST COPY WHAT THE OS DRAWS — MEASURED, NOT
+  GUESSED** (founder, 2026-09-16, after putting the two screens side by side: "render the expo in
+  line with web app"). The web's Marketing-emails tick is an `<input type="checkbox">`, so its
+  **#ffffff** fill and **#767676** border come from the operating system and appear in no
+  stylesheet of ours; the phone drew its own square with a transparent interior and the same
+  control read as two different objects. Reproduce the WEIGHT with palette tokens rather than
+  importing the OS greys — `field_bg` (the white every other input uses) and `ink_soft` (5.43 on
+  white, against the native border's 4.54) — so the surfaces match without a neutral grey
+  entering a warm palette. ⚠️ **Still owed on the same pattern:** Legal's five agreement ticks
+  (`.lgl-check input`) and the delete flow's confirm box (`.acct-final-check input`), both native
+  on the web and both unbuilt on the phone. Measure them before drawing them.
+  ⚠️ And the lesson underneath: "filled" meant the WEB's box was filled, not that the phone's was
+  ticked. Four round trips went into the data before a side-by-side picture settled it in one —
+  ask for the comparison early.
 - **★ A CHARACTER THAT HAS AN EMOJI FORM WILL BE AN EMOJI ON iOS** (founder screenshot,
   2026-09-16). `⚙` in the two bars rendered Apple's metallic 3D gear on the handset while the web
   drew a flat glyph in `--ink-soft` — and `color` was doing nothing either, because an emoji

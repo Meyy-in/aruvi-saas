@@ -157,18 +157,26 @@ export default function SettingsHome() {
               {/* The web draws a 22px NATIVE checkbox with `accent-color: pine`. RN has no
                   checkbox, so this is the app's own square — same size, same colour, same two
                   states.
-                  ★ AND OFF MEANS NO FILL AT ALL (founder, 2026-09-16: "inside the box render it
-                  with no fill"). It never had one; what made it READ as filled was the border.
-                  `--line` sits at **1.19** against the card it is drawn on, and the founder's own
-                  card work of 2026-08-30 settled that anything under ~1.3 "is not an edge" — so
-                  a pale square outlined at 1.19 stops reading as an empty box and starts reading
-                  as a tinted patch. `--edge` is 1.60 here and costs nothing else, which is the
-                  same cheap win that note describes. The inside stays transparent, explicitly. */}
+                  ★ UNCHECKED IS WHITE WITH A FIRM EDGE, BECAUSE THAT IS WHAT THE WEB SHOWS
+                  (founder, 2026-09-16, after putting the two side by side: "render the expo in
+                  line with web app"). Measured off that comparison: the web's box is **#ffffff**
+                  inside with a **#767676** border — neither is a Meyy token, because neither is
+                  ours to choose. It is a native `<input type="checkbox">` and the OS draws both.
+                  The phone drew its own square with a TRANSPARENT interior, so the card's beige
+                  showed through and the same control read as two different objects on the two
+                  surfaces.
+                  ⚠️ The tokens are the app's, not the OS's greys: `field_bg` is the white every
+                  other input on the phone already uses, and `ink_soft` (#6b6a63, 5.43 on white)
+                  is the warm near-equivalent of that #767676 (4.54) — so it matches the web's
+                  WEIGHT without importing a neutral grey into a warm palette.
+                  ⚠️ This supersedes the `--edge` border of an hour earlier, which was the right
+                  fix for the wrong diagnosis: `--line` at 1.19 on the card really was too weak to
+                  read as an edge, but the actual complaint was the missing fill. */}
               <View style={{ width: 22, height: 22, borderRadius: 4, borderWidth: 1.5,
                              alignItems: "center", justifyContent: "center",
                              opacity: mktBusy ? 0.6 : 1,
-                             borderColor: marketing ? t.pine : t.edge,
-                             backgroundColor: marketing ? t.pine : "transparent" }}>
+                             borderColor: marketing ? t.pine : t.ink_soft,
+                             backgroundColor: marketing ? t.pine : t.field_bg }}>
                 {marketing ? <Text style={{ color: t.paper, fontSize: 13, lineHeight: 15 }}>✓</Text> : null}
               </View>
             </Pressable>
