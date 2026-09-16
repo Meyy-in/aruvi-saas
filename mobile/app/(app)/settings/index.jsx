@@ -176,7 +176,8 @@ export default function SettingsHome() {
       <View style={[ws.set_group, ws.set_group_tail]}>
         <Text style={[ws.set_cap, { color: t.ink_soft }]}>Account</Text>
         <View style={[ws.set_card, { borderColor: t.line, backgroundColor: t.card_bg }]}>
-          {!onTrial ? <Row label="Your data & export" /> : null}
+          {!onTrial ? <Row label="Your data & export"
+            onPress={() => router.push("/settings/data")} /> : null}
           <Row label="Log out" onPress={() => endSession(router, "settings: Log out")} />
           <Row label="Delete my account…" danger last />
         </View>

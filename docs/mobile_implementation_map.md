@@ -864,8 +864,12 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   `.set-first` sits earlier in globals.css at equal specificity and source order would silently
   hand the +10px back (the `.ap-row-line` trap, fifth sighting). Verified by computing both
   classes in a 390px iframe: `.set-sub-card` alone 10px, with `.set-first` −14px.
-- **E. Your data & export** (E1-E4; hidden on trial): `GET /data-rights/export?format=docx|pdf` →
-  `aruvi-your-data.{docx|pdf}` via F9 (**Q15: the share sheet**).
+- **E. Your data & export** (E1-E4; hidden on trial)  ✅ **DONE 2026-09-16** —
+  `app/(app)/settings/data.jsx`, and the Account row is lit. Walked live: `GET
+  /data-rights/export?format=docx` → 200 through F9's share sheet. ⚠️ The ROUTE stays open on
+  trial, as on the web — §2.5 is a promise about the routes, not about which cards Settings
+  shows. `lib/dataRights.js` carries E4's `didDownload` between this screen and H's final
+  window, session-scoped and never a gate.
 - **F. Support** (F1-F14; never hidden)  ✅ **DONE 2026-09-16** — `app/(app)/settings/support.jsx`,
   and the Settings home's Support card is lit. The form is the web's mail shape (To · Subject · message)
   over F11's Sheet dropdown; `context.screen` is **`"settings/support (app)"`** (Q13 — the phone names its

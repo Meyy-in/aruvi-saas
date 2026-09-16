@@ -142,10 +142,10 @@ line refs for shared logic point at `packages/shared/src/**`, which is what both
 
 | # | Feature / UI element | Web ref | Mobile status | Mobile ref | Depends on | Notes / native answer |
 |---|---|---|---|---|---|---|
-| E1 | Hint `.set-hint.set-first`: "Everything you've created — your profile, notes and teaching progress — in one document." | 869–870 | MISSING | — | | |
-| E2 | `.set-card` with two `.set-row`s: "Download as Word" / "Preparing…" → `download("docx")`; "Download as PDF" / "Preparing…" → `download("pdf")`; both disabled while any `busy` | 871–880 | MISSING | — | GET `/data-rights/export?format=docx\|pdf` → blob → `aruvi-your-data.{fmt}`; expo-file-system + expo-sharing | Download sites #2 and #3. Route is ungated (§2.5) even though the card is trial-hidden. |
-| E3 | `failMsg` "Couldn't prepare your download right now. Try again in a moment." | 646, 881 | MISSING | — | | |
-| E4 | `didDownload` set true after a successful export (only to word the final delete question) | 643 | MISSING | — | H5 | |
+| E1 | Hint `.set-hint.set-first`: "Everything you've created — your profile, notes and teaching progress — in one document." | 869–870 | DONE | data.jsx:56-58 | | |
+| E2 | `.set-card` with two `.set-row`s: "Download as Word" / "Preparing…" → `download("docx")`; "Download as PDF" / "Preparing…" → `download("pdf")`; both disabled while any `busy` | 871–880 | DONE | data.jsx:40-51, 59-62 | GET `/data-rights/export?format=docx\|pdf` → blob → `aruvi-your-data.{fmt}`; expo-file-system + expo-sharing | Download sites #2 and #3. Route is ungated (§2.5) even though the card is trial-hidden. ✅ WALKED LIVE 2026-09-16: the row shows "Preparing…" and `GET /data-rights/export?format=docx` → **200** from Render, through F9. ⚠️ BOTH rows disable while EITHER is preparing — two exports in flight would race for the same share sheet. |
+| E3 | `failMsg` "Couldn't prepare your download right now. Try again in a moment." | 646, 881 | DONE | data.jsx:63-65 | | |
+| E4 | `didDownload` set true after a successful export (only to word the final delete question) | 643 | DONE | lib/dataRights.js | H5 | ★ A MODULE, not component state: on the web both screens are one component, on the phone they are two routes. SESSION-SCOPED on purpose — it exists only to word the final delete question honestly, and "you downloaded it at some point in the past" is a claim it cannot support. Never the gate; the delete flow's own tick is. |
 
 ### F. Support subview (`view === "support"`, `SupportForm`, Settings.jsx:285–491) — never hidden on trial
 
