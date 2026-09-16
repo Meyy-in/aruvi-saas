@@ -18,10 +18,11 @@ import { dateWords } from "@aruvi/shared/legalmd";
 import Bar from "../components/Bar";
 import Markdown from "../components/Markdown";
 import { useTheme } from "../theme/ThemeContext";
-import { type } from "../theme/type";
+import { useWebStyles } from "../theme/web";
 
 export default function Privacy() {
   const { t } = useTheme();
+  const ws = useWebStyles();
   const router = useRouter();
   const [state, setState] = useState(null);
   const [failed, setFailed] = useState("");
@@ -43,23 +44,25 @@ export default function Privacy() {
       {/* The pinned head: the way out, then the title. */}
       <View style={[s.head, { borderBottomColor: t.line }]}>
         <Pressable onPress={() => router.back()} accessibilityRole="button" hitSlop={8}>
-          <Text style={[type.body, { color: t.pine }]}>← Back</Text>
+          {/* `.fr-link.lgl-back`: the house link in mono, with its padding removed and 6px
+              under it — the web's own framed placement. */}
+          <Text style={[ws.fr_link_t, { marginBottom: 6 }]}>← Back</Text>
         </Pressable>
-        <Text style={[type.title, { color: t.ink, marginTop: 8 }]}>{doc.title || "Privacy Notice"}</Text>
+        <Text style={[ws.lgl_title, { marginTop: 8 }]}>{doc.title || "Privacy Notice"}</Text>
       </View>
       <ScrollView contentContainerStyle={s.body}>
         {/* The web's own words in both states — a spinner says "something is happening", which is
             not the same as saying WHAT (the phone drew one and said nothing). */}
         {failed ? (
-          <Text accessibilityRole="alert" style={[type.body, { color: t.ink_soft }]}>{failed}</Text>
+          <Text accessibilityRole="alert" style={ws.lgl_fail}>{failed}</Text>
         ) : !state ? (
-          <Text style={[type.body, { color: t.ink_soft }]}>Loading the privacy notice…</Text>
+          <Text style={ws.fr_loading}>Loading the privacy notice…</Text>
         ) : (
           <>
             <Markdown md={doc.body || ""} />
             {/* The version line in full: which version, when it was published, in what language,
                 and where to find it again. The phone printed the number alone. */}
-            <Text style={[type.small, { color: t.ink_soft, marginTop: 24 }]}>
+            <Text style={ws.lgl_version}>
               Version {doc.version}
               {doc.published ? ` · ${dateWords(doc.published)}` : ""}
               {" · "}{doc.language === "en" ? "English" : doc.language}

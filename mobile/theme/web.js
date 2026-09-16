@@ -84,6 +84,42 @@ export function webStyles(t, scheme = "light") {
                        textTransform: UP, color: t.ink_soft },
     bnav_rule:       { width: 22, height: 2.5, borderRadius: 2, marginTop: 1, backgroundColor: "transparent" },
 
+    /* ── the legal documents (.lgl-*) — measured 2026-09-16, 390×844, light ─────────────
+       Founder: "privacy notice of expo/iphone to match font of web app". The phone's legal
+       screens were the one family still drawing from `theme/type`, whose `body` is 17px — the
+       whole notice rendered a third larger than the web's 13px prose, and a bold run inside a
+       paragraph jumped to 17 with it, because `type.bodyStrong` states a SIZE as well as a face.
+       ⚠️ So `lgl_b`/`lgl_i` carry a FACE AND NOTHING ELSE. A nested Text that names a size stops
+       inheriting the paragraph it sits in, which is what made emphasis grow mid-sentence.
+       ⚠️ `.ob-title` computes at weight 700 and the bundled Fraunces stops at 600 — the semibold
+       cut is the heaviest we ship. */
+    lgl_title:       { fontFamily: F.display(600), fontSize: 18, lineHeight: 27.9, color: t.ink,
+                       marginBottom: 2 },                       // .lgl-frame .lgl-head .ob-title
+    lgl_h2:          { fontFamily: F.display(600), fontSize: 15.5, lineHeight: 24.025, color: t.ink,
+                       marginTop: 20, marginBottom: 8 },
+    lgl_h3:          { fontFamily: F.mono(400), fontSize: 11, lineHeight: 17.05, letterSpacing: 0.88,
+                       textTransform: UP, color: t.ink_soft, marginTop: 16, marginBottom: 6 },
+    lgl_p:           { fontFamily: F.body(400), fontSize: 13, lineHeight: 22.1, color: t.ink,
+                       marginBottom: 10 },
+    lgl_b:           { fontFamily: F.body(600) },
+    lgl_i:           { fontFamily: F.body(400, true) },
+    lgl_ul:          { marginBottom: 12, paddingLeft: 18 },
+    lgl_li:          { fontFamily: F.body(400), fontSize: 13, lineHeight: 22.1, color: t.ink,
+                       marginBottom: 6 },
+    lgl_hr:          { borderTopWidth: 1, marginTop: 18, marginBottom: 18 },   // colour: t.line
+    /* Tables STACK below 600 on the web, each row a card with its column heading above every
+       cell — the phone's only rule, and now the same measures. */
+    lgl_tablewrap:   { marginTop: 6, marginBottom: 14 },
+    lgl_tr:          { borderWidth: 1, borderRadius: 10, paddingTop: 8, paddingRight: 12,
+                       paddingBottom: 6, paddingLeft: 12, marginBottom: 8 },  // bg card_bg, border line
+    lgl_td:          { paddingTop: 4, paddingBottom: 8 },
+    lgl_th:          { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, letterSpacing: 0.8,
+                       textTransform: UP, color: t.pine_d, marginBottom: 2 },
+    lgl_td_t:        { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, color: t.ink },
+    lgl_version:     { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 16.8, letterSpacing: 0.42,
+                       color: t.ink_soft, marginTop: 16 },
+    lgl_fail:        { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 21.6, color: t.danger },
+
     /* ── the front door (.ob-* · .login-* · .fr-secure) — measured 2026-09-16, 390×844, light ──
        The login and OTP screens predate `web.js` and still draw their primitives from
        `components/ui.jsx`; these are the keys the 5e parity pass needed, measured off the running
