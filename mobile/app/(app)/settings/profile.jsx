@@ -12,22 +12,25 @@
  * her two different things about one account, with no way to know which was right.
  *
  * ★ "+ ADD A SUBJECT" IS HERE, AND IT IS NOT BEHIND A PENCIL (founder, 2026-09-16: "the edit
- * button to add subject is missing in expo"). On the web this row appears only inside edit mode,
- * because there the pencil reveals TWO things and removal is the other one. The phone has no
- * removal yet, so a toggle would hide the one door behind a control with nothing else to offer —
- * and hiding the only way to add a subject is precisely the dead end being fixed. The web keeps
- * its toggle because it has a second reason to; this screen does not, so the row simply shows.
+ * button to add subject is missing in expo"). It appeared on the web only inside edit mode,
+ * because there the pencil revealed TWO things and removal was the other; the phone has no
+ * removal, so a toggle would have hidden its one door behind a control with nothing else to
+ * offer. ✅ **AND THE WEB FOLLOWED THE SAME DAY** ("remove the pencil in web app and let us think
+ * of better way to delete subject") — its pencil is gone, its add row simply shows, and the two
+ * surfaces now agree. The web keeps `applyRemoveSubject` and its two-step confirm in place,
+ * unreachable, because the cascade is the expensive part; the trigger is what was removed.
  * ⚠️ IT MATTERS MORE HERE THAN ON THE WEB, because the phone's "+" portal carries four rows —
  * Class · Section · Periods a week · Annual budget — and deliberately no Subject row. Until this
  * landed, a teacher holding entitlement for a subject she had not set up could not set it up on
  * the phone at all: the same dead end that stranded account 1000000002 on the web, arrived at
  * from the other side.
  *
- * ★ REMOVAL IS STILL NOT HERE, and that is the deliberate half. The web's dustbin takes a
- * subject's classes, sections, bookmarks and chapter bindings with it behind two confirms; it
- * ships when it ships, with its cascade tested. Adding without removing is a control that
- * promises adding and delivers adding — the shape the web retired on 2026-08-27 was the OTHER
- * way round ("a control that promises editing and delivers only deletion is a trap").
+ * ★ REMOVING A SUBJECT IS BEING REDESIGNED, on both surfaces (founder, 2026-09-16). It is the
+ * most destructive act in the profile — classes, sections, bookmarks and chapter bindings go with
+ * it — and it is getting a control of its own rather than a corner of a toggle that also meant
+ * "add". ⚠️ Until it arrives there IS still one door on this app, and it is not a gap: unticking
+ * a subject's LAST class removes the subject, and the confirm says so in those words
+ * ("No class is left — English goes with it"). "+" → Class → untick all.
  *
  * ★ NO HEADING. The frozen Settings bar reads "⚙ Teaching profile" — the web deleted its own
  * `h1` when that bar landed, and the phone never ports one back in (components/SettingsBar.jsx).
@@ -39,6 +42,7 @@ import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shar
 import { classCard, profileStats, subjectPpw } from "@aruvi/shared/profile";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { openEdit } from "../../../lib/portal";
+import { primeSubjectCatalogue } from "../../../components/ProfileEditor";
 import { Text } from "../../../components/Text";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
@@ -132,6 +136,11 @@ export default function TeachingProfileScreen() {
     let live = true;
     const off = subscribeReadiness((r) => { if (live) setReadiness(r); });
     fetchReadiness().catch(() => {});      // unreachable server → the device copy stands
+    /* ★ WARM THE SUBJECT CATALOGUE WHILE SHE READS. She is looking at the list the add row sits
+       under, which is both the moment she is most likely to be about to tap it and the moment the
+       network is least in her way — so the window opens on an answer rather than on "Loading
+       subjects…" being replaced a quarter of a second later. Fire and forget; once per launch. */
+    primeSubjectCatalogue();
     return () => { live = false; off(); };
   }, []));
 
@@ -156,9 +165,12 @@ export default function TeachingProfileScreen() {
         /* The web adds "— add a subject to begin", which is true there because its next line is
            the row that does it. Here there is no such row (see the header), so the sentence stops
            where the phone can actually deliver. */
+        /* ⚠️ The invitation only holds while there is something to accept it with. A LAPSED
+           teacher gets no add row, so "add a subject to begin" would point at nothing — the
+           profile is a reading room for her, and it should say so by not asking. */
         <>
           <Text style={[ws.tp_empty, { color: t.ink_soft, marginBottom: 14 }]}>
-            No profile yet — add a subject to begin.
+            {canAdd ? "No profile yet — add a subject to begin." : "No profile yet."}
           </Text>
           {canAdd ? <AddSubjectRow /> : null}
         </>

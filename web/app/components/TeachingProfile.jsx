@@ -104,6 +104,10 @@ function SecNameCell({ on, tag, value, onChange }) {
 }
 
 // red dustbin (stroke inherits color — .tp-bin sets the red)
+/* ⚠️ UNREFERENCED SINCE 2026-09-16, and kept on purpose with `applyRemoveSubject` and the
+   two-step confirm — the subject dustbin is being redesigned, not dropped. See the note on the
+   retired `editing` state. If removal ends up somewhere that does not want this glyph, delete it
+   then; an icon left lying about is how a retired pattern gets reused by accident. */
 const Bin = () => (
   <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
     strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -139,7 +143,18 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
 
   /* view state */
   const [openSubject, setOpenSubject] = useState(null);  // accordion: name of the ONE open subject
-  const [editing, setEditing] = useState(false);         // master edit toggle
+  /* ★ THE MASTER EDIT TOGGLE IS GONE (founder, 2026-09-16: "remove the pencil in web app and let
+     us think of better way to delete subject"). It revealed two things — the per-subject dustbin
+     and "+ add a subject" — and the phone, which has no removal, could not copy it without
+     hiding its ONLY door to adding a subject behind a control with nothing else to offer. So the
+     add row simply shows, on both surfaces, and removal is being redesigned rather than tucked
+     behind a pencil that has to justify itself twice.
+     ⚠️ WHAT IS DELIBERATELY STILL HERE: `applyRemoveSubject` and the two-step `removeSubject`
+     confirm below. Nothing sets `removeSubject` any more, so both are unreachable — kept because
+     the CASCADE is the expensive part and the risky part (every section of every class loses its
+     bookmark and its chapter binding, through `clearSectionState`, before the record is written),
+     and re-deriving it from memory when the new control arrives is how that gets it wrong. The
+     trigger is what was removed, not the act. */
   const [confirm, setConfirm] = useState(null);          // { kind:"subject"|"grade"|"section", si, gi?, sec? }
 
   /* flow state (conversational screens) */
@@ -215,7 +230,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     setTop();
     window.addEventListener("resize", setTop);
     return () => window.removeEventListener("resize", setTop);
-  }, [canon, editing]);
+  }, [canon]);
 
   useEffect(() => {
     getJSON("/subjects").then((d) => setCatalogue((d.subjects || []).map(pretty))).catch(() => setCatalogue([]));
@@ -514,7 +529,6 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     });
     persist(next);
     setRemoveSubject(null);
-    setEditing(false);          // the one act edit mode exists for is done
   };
   const applySubjectChanges = () => {
     const { removes, adds } = subConfirm;
@@ -1476,33 +1490,19 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             <h1 className="lvl-title">Your teaching profile</h1>
             <div className="tp-hd-spacer" aria-hidden="true"></div>
           </div>
-          {/* ★ THE TOGGLE IS A PENCIL AGAIN, BECAUSE IT NOW DOES BOTH (founder, 2026-08-30).
-              On 2026-08-27 it became a dustbin, on the reasoning that "a control that promises
-              editing and delivers only deletion is a trap" — removal really was all it did,
-              because the "+" portal had taken every other pencil and adding a subject was
-              assumed to be a purchase and therefore not a profile act at all.
-              That assumption was wrong for the teacher who ALREADY HOLDS the subscription: she
-              deleted her way down to one subject and then found no way back, with entitlement
-              for the others sitting unused (account 1000000002, live). Edit mode now reveals
-              the per-subject dustbins AND "+ add a subject" below them, so the pencil is
-              truthful — it opens editing, and editing means both directions.
-              `!lapsed`: an expired subscription makes the profile READ-ONLY — she keeps seeing
-              what she taught, but this hides (§2.5 as amended; the server refuses writes
-              regardless). */}
-          {canon.length > 0 && !lapsed && (
-            editing ? (
-              <button className="tp-edit-toggle on" onClick={() => setEditing(false)} aria-label="Done">Done</button>
-            ) : (
-              <button className="tp-edit-pencil" onClick={() => setEditing(true)}
-                aria-label="Edit your subjects" title="Add or remove subjects">
-                <Pencil size={15} />
-              </button>
-            )
-          )}
+          {/* The pencil stood here until 2026-09-16 — see the note on `editing` above for why it
+              went and what went with it. Nothing replaces it: the add row below shows on its own,
+              and this header is now a title. */}
         </div>
 
         {canon.length === 0 && (
-          <p className="tp-empty">No profile yet — add a subject to begin.</p>
+          /* ⚠️ The invitation only holds while there is something to accept it with. A LAPSED
+             teacher gets no add row (below), so "add a subject to begin" would be a sentence
+             pointing at nothing — the profile is a reading room for her, and it should say so
+             by not asking. */
+          <p className="tp-empty">
+            {lapsed ? "No profile yet." : "No profile yet — add a subject to begin."}
+          </p>
         )}
 
         {canon.length > 0 && (
@@ -1536,13 +1536,11 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
                     destructive thing a teacher can do here — it takes her classes, sections,
                     bookmarks and chapter bindings with it. Hence the DOUBLE confirmation in
                     `subConfirm`: the first states what goes, the second asks her to mean it. */}
-                {editing && open && (
-                  <button className="tp-icon-btn tp-icon-danger" aria-label={`Remove ${s.name}`}
-                    title={`Remove ${s.name} from your teaching profile`}
-                    onClick={(e) => { e.stopPropagation(); setRemoveSubject({ si, name: s.name, step: 1 }); }}>
-                    <Bin />
-                  </button>
-                )}
+                {/* The dustbin stood here. Removing a subject is the most destructive act in the
+                    profile — it takes her classes, sections, bookmarks and chapter bindings with
+                    it — and it is being given a control of its own rather than a corner of a
+                    toggle that also meant "add". The confirm copy and the cascade it runs are
+                    still below, waiting for it. */}
               </span>
               <span className="tp-sub-side">
                 <span className="tp-sub-ppw">{subPpw} periods / week</span>
@@ -1612,7 +1610,12 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
           the fix for 1000000002, who removed her way down to one subject and found the door
           gone, with entitlement for four more sitting unused. The chooser it opens is already
           scoped to what she has paid for, so nothing here needs to know about billing. */}
-      {(canon.length === 0 || (editing && !lapsed)) && (
+      {/* ★ IT SIMPLY SHOWS NOW (founder, 2026-09-16). It used to appear on an empty profile or
+          inside edit mode; with the pencil gone the second half has nothing to hang on, and the
+          first was only ever "when it is the ONLY way in" — which, without the toggle, is always.
+          `!lapsed` is the one gate kept: an expired subscription makes the profile read-only, and
+          the server refuses the write regardless (§2.5 as amended). */}
+      {!lapsed && (
         <div className="tp-sub tp-sub-add">
           <div className="tp-sub-hd" role="button" tabIndex={0}
             onClick={startAddSubject}

@@ -80,6 +80,7 @@ import {
 import { rekeyBudget } from "@aruvi/shared/budget";
 import { cachedReadiness, fetchReadiness, saveReadiness } from "@aruvi/shared/readiness";
 import { closeEdit, openEdit } from "../lib/portal";
+import { entitlementState } from "@aruvi/shared/entitlement";
 import { useRouter } from "expo-router";
 import { RollWheel } from "./RollWheel";
 import PickWheel from "./PickWheel";
@@ -90,6 +91,31 @@ import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
 const SECTION_LETTERS = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)); // A…Z
+
+/* ───────── the subject catalogue, warmed before it is wanted ─────────
+ *
+ * ★ "LOADING SUBJECTS…" IS ITSELF A FLASH (founder, 2026-09-16, on the handset: the window still
+ * showed something for "a very short fraction of time"). Holding the chooser until the answer is
+ * known removed the WRONG answer; it did not remove the WAIT, and a caption that appears and is
+ * replaced a quarter of a second later reads as a stumble even when everything is correct.
+ *
+ * `GET /subjects` is the same five names for every teacher and changes when the founder ships a
+ * subject, so it is fetched ONCE per launch and kept here. The Teaching profile screen primes it
+ * on focus — she is looking at the list the add row sits under, which is the moment she is most
+ * likely to be about to tap it and the moment the network is least in her way. By the time the
+ * window opens there is usually nothing to wait for.
+ * ⚠️ A failure caches NOTHING, so the next open tries again: a school network that dropped one
+ * request must not leave the chooser permanently empty. */
+let CATALOGUE = null;
+let CATALOGUE_IN = null;
+export function primeSubjectCatalogue() {
+  if (CATALOGUE || CATALOGUE_IN) return CATALOGUE_IN || Promise.resolve(CATALOGUE);
+  CATALOGUE_IN = getJSON("/subjects")
+    .then((d) => { CATALOGUE = ((d && d.subjects) || []).map(pretty); return CATALOGUE; })
+    .catch(() => null)
+    .finally(() => { CATALOGUE_IN = null; });
+  return CATALOGUE_IN;
+}
 
 export default function ProfileEditor({ intent = "budget", subject = "", grade = "", onChrome,
                                        hasBack = false }) {
@@ -119,14 +145,6 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   const [draft, setDraft] = useState(null);
 
   useEffect(() => { fetchReadiness().then(setReadiness).catch(() => {}); }, []);
-  useEffect(() => {
-    if (step !== "subject") return;
-    let live = true;
-    getJSON("/subjects")
-      .then((d) => { if (live) setCatalogue(((d && d.subjects) || []).map(pretty)); })
-      .catch(() => { if (live) setCatalogue([]); });
-    return () => { live = false; };
-  }, [step]);
 
   const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
   const subjectRec = useMemo(
@@ -155,11 +173,35 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      Every subject Meyy offers, as display names, and the one she has ticked. The catalogue is
      fetched rather than assumed for the same reason the class list is: offering a subject with
      no content behind it is a promise Meyy cannot keep. `null` = still loading. */
-  const [catalogue, setCatalogue] = useState(null);
+  const [catalogue, setCatalogue] = useState(() => CATALOGUE);
   const [pickedSubject, setPickedSubject] = useState([]);
+  /* ⚠️ DECLARED AFTER the state it reads, and that is not a style point: hoisting this effect up
+     beside the other mounts threw "Cannot access 'catalogue' before initialization" on the first
+     render — a `const` in the temporal dead zone, which React surfaces as a hard error screen
+     rather than a warning. */
+  useEffect(() => {
+    if (step !== "subject" || catalogue) return;
+    let live = true;
+    primeSubjectCatalogue().then((c) => { if (live) setCatalogue(c || []); });
+    return () => { live = false; };
+  }, [step, catalogue]);
   /* What her subscription covers, as subject-stage scopes. `null` is NO LIMIT — trial, unpaid,
      a "*" grant, or enforcement off — never "nothing allowed". */
-  const [paidScopes, setPaidScopes] = useState(null);
+  const [paidScopes, setPaidScopes] = useState(() => entitlementState().paidScopes);
+  /* ★ `paidScopes === null` MEANS TWO THINGS, AND THAT AMBIGUITY IS A BUG ON ITS OWN (founder,
+     2026-09-16, on the handset: "when pressing add a subject, it pops up 'what else you teach'
+     momentarily"). It means NO LIMIT — trial, a "*" grant, an unreachable server — and it also
+     means NOT ASKED YET. Rendering on the first reading shows her the unfiltered list for as long
+     as the round trip takes, and the entitlement then snatches it away. She saw the question, and
+     the answer she got was the opposite one.
+     This flag separates the two. Hold the chooser until it is true; `null` after that is the
+     honest "no limit". Same shape as the About-you flash of this morning: paint only what the
+     gate has already decided. */
+  /* ★ AND IT STARTS TRUE WHENEVER THE STORE ALREADY HOLDS AN ENTITLEMENT, which on this app is
+     almost always: the shell polls it on mount, on every foreground and every 20 seconds
+     (`(app)/_layout.jsx`). So there is normally no round trip to wait for at all — the flag
+     exists for the first seconds of a cold launch, not for the common case. */
+  const [scopesLoaded, setScopesLoaded] = useState(() => !!entitlementState().ent);
   const [classConfirm, setClassConfirm] = useState(null);
   /* Which length's split strip is showing, if any. Lifted OUT of the cell (2026-09-15): the cell
      used to own a Sheet, and once the editor became a window that was a window over a window. */
@@ -278,7 +320,11 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   useEffect(() => {
     if (step !== "subject") return;
     let live = true;
-    fetchEntitlement().then((e) => { if (live) setPaidScopes(paidScopesOf(e)); }).catch(() => {});
+    fetchEntitlement()
+      .then((e) => { if (live) setPaidScopes(paidScopesOf(e)); })
+      /* An unreachable server resolves to "no limit" — a school network must never narrow her own
+         subjects away — but it must RESOLVE, or the screen waits for ever. */
+      .finally(() => { if (live) setScopesLoaded(true); });
     return () => { live = false; };
   }, [step]);
   useEffect(() => {
@@ -297,7 +343,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
        her own classes away. */
     fetchEntitlement()
       .then((e) => { if (live) setPaidScopes(paidScopesOf(e)); })
-      .catch(() => {});
+      .finally(() => { if (live) setScopesLoaded(true); });
     return () => { live = false; };
   }, [step, subject]);
   /* ⚠️ `!subjectRec` USED TO MEAN "her record has not arrived yet" and now also means "she does
@@ -556,7 +602,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
               Pick a subject to add. You’ll choose its classes next.
             </Text>
-            {catalogue === null ? (
+            {catalogue === null || !scopesLoaded ? (
               <Text style={[ws.fr_hint, { color: t.ink_soft }]}>Loading subjects…</Text>
             ) : subjectOptions.length === 0 ? (
               /* ★ AN EMPTY CHOOSER MEANS TWO DIFFERENT THINGS, AND ONLY ONE IS A DEAD END
@@ -620,7 +666,11 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
               Tick a class to add it — untick one to remove it. A new class starts with Section A;
               change that under Section.
             </Text>
-            {gradeOptions === null || !pickedGrades ? (
+            {/* ⚠️ `scopesLoaded` here for the same reason it is on the subject step: without it
+                the wheel paints every class Meyy has, and the entitlement then removes the ones
+                she has not bought — a flash of the wrong answer on the screen whose whole job is
+                to state what she may be offered. */}
+            {gradeOptions === null || !pickedGrades || !scopesLoaded ? (
               <Text style={[ws.fr_hint, { color: t.ink_soft }]}>Loading classes…</Text>
             ) : classOptions.length === 0 ? (
               <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
