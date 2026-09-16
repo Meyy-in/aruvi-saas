@@ -154,12 +154,20 @@ export default function SettingsHome() {
               disabled={mktBusy} hitSlop={10} accessibilityRole="switch"
               accessibilityState={{ checked: marketing, disabled: mktBusy }}
               accessibilityLabel="Send me occasional emails about new subjects and features">
-              {/* The web draws a 22px native checkbox in pine. RN has no checkbox, so this is
-                  the app's own square — same size, same colour, same two states. */}
+              {/* The web draws a 22px NATIVE checkbox with `accent-color: pine`. RN has no
+                  checkbox, so this is the app's own square — same size, same colour, same two
+                  states.
+                  ★ AND OFF MEANS NO FILL AT ALL (founder, 2026-09-16: "inside the box render it
+                  with no fill"). It never had one; what made it READ as filled was the border.
+                  `--line` sits at **1.19** against the card it is drawn on, and the founder's own
+                  card work of 2026-08-30 settled that anything under ~1.3 "is not an edge" — so
+                  a pale square outlined at 1.19 stops reading as an empty box and starts reading
+                  as a tinted patch. `--edge` is 1.60 here and costs nothing else, which is the
+                  same cheap win that note describes. The inside stays transparent, explicitly. */}
               <View style={{ width: 22, height: 22, borderRadius: 4, borderWidth: 1.5,
                              alignItems: "center", justifyContent: "center",
                              opacity: mktBusy ? 0.6 : 1,
-                             borderColor: marketing ? t.pine : t.line,
+                             borderColor: marketing ? t.pine : t.edge,
                              backgroundColor: marketing ? t.pine : "transparent" }}>
                 {marketing ? <Text style={{ color: t.paper, fontSize: 13, lineHeight: 15 }}>✓</Text> : null}
               </View>
