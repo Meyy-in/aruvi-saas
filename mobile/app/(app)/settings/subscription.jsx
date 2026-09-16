@@ -29,6 +29,7 @@
  */
 import { useEffect, useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 import { Text } from "../../../components/Text";
 import { getJSON, fmtValidity, scopeRows, subsFromEntitlement } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
@@ -65,6 +66,7 @@ function LedgerRow({ k, v, tone }) {
 export default function Subscription() {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const router = useRouter();
 
   const [st, setSt] = useState(() => entitlementState());
   useEffect(() => subscribeEntitlement(setSt), []);
@@ -177,18 +179,21 @@ export default function Subscription() {
         );
       }) : null}
 
-      {/* ⚠️ DARK UNTIL SubscribeFlow LANDS. Both buttons open the same wizard the paywall and the
-          front door open; it is the next thing built in 6b. */}
+      {/* ✅ LIT 2026-09-16. Both open the SAME wizard the paywall and the front door open — and it
+          really buys: `POST /onboarding/checkout` is a server-side dev stub that activates
+          through the ManualBillingProvider. */}
       {(onTrial || lapsed) ? (
-        <Pressable disabled accessibilityLabel="Subscribe"
-          style={[ws.set_subscribe, { backgroundColor: t.pine, opacity: 0.5 }]}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Subscribe"
+          onPress={() => router.push("/subscribe")}
+          style={[ws.set_subscribe, { backgroundColor: t.pine }]}>
           <Text style={[ws.set_subscribe_t, { color: t.paper }]}>Subscribe</Text>
         </Pressable>
       ) : null}
       {active && !onTrial ? (
         <>
-          <Pressable disabled accessibilityLabel="Add subjects and stages"
-            style={[ws.set_subscribe, { backgroundColor: t.pine, opacity: 0.5 }]}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Add subjects and stages"
+            onPress={() => router.push("/subscribe")}
+            style={[ws.set_subscribe, { backgroundColor: t.pine }]}>
             <Text style={[ws.set_subscribe_t, { color: t.paper }]}>Add subjects &amp; stages</Text>
           </Pressable>
           <Text style={[ws.set_hint, { color: t.ink_soft }]}>

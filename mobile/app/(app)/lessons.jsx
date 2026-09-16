@@ -513,8 +513,7 @@ export default function MyLessons() {
   const [ent, setEnt] = useState(() => entitlementState());
   /* The paywall's second body. Reset on the way out, never on the way in, so the window
      cannot reopen already showing the note. */
-  const [paySoon, setPaySoon] = useState(false);
-  const closePaywall = useCallback(() => { setPaySoon(false); clearPaywall(); }, []);
+  const closePaywall = useCallback(() => { clearPaywall(); }, []);
   useEffect(() => subscribeEntitlement(setEnt), []);
 
   /* The frozen header is drawn ONLY when there are wheels to put in it. The web returns before
@@ -718,21 +717,19 @@ export default function MyLessons() {
       <Sheet visible={!!prep.paywall} onClose={closePaywall} confirm>
         <View style={ws.paywall_body}>
           <Text style={ws.kicker}>{paywallKicker(prep.paywall)}</Text>
-          {paySoon ? (
-            <Text style={ws.paywall_soon}>
-              The subscription page is still in development. It will open from Settings.
-            </Text>
-          ) : (
-            <>
-              <Text style={ws.paywall_msg}>{prep.paywall}</Text>
-              <Pressable onPress={() => setPaySoon(true)} accessibilityRole="button"
-                style={[ws.paywall_sub, { backgroundColor: t.pine }]}>
-                <Text style={[ws.paywall_sub_t, { color: t.paper }]}>Subscribe</Text>
-              </Pressable>
-            </>
-          )}
+          {/* ✅ SUBSCRIBE REALLY OPENS THE WIZARD NOW (2026-09-16). It used to swap the body
+              for "the subscription page is still in development" — honest while nothing
+              existed, and the wrong thing to keep the day it did. The window's SHAPE is
+              unchanged, which was the whole point of building both buttons before either
+              worked: a teacher who learnt this window last month meets the same one. */}
+          <Text style={ws.paywall_msg}>{prep.paywall}</Text>
+          <Pressable onPress={() => { closePaywall(); router.push("/subscribe"); }}
+            accessibilityRole="button"
+            style={[ws.paywall_sub, { backgroundColor: t.pine }]}>
+            <Text style={[ws.paywall_sub_t, { color: t.paper }]}>Subscribe</Text>
+          </Pressable>
           <Pressable onPress={closePaywall} accessibilityRole="button" hitSlop={6}>
-            <Text style={ws.paywall_later}>{paySoon ? "Close" : "Not now"}</Text>
+            <Text style={ws.paywall_later}>Not now</Text>
           </Pressable>
         </View>
       </Sheet>

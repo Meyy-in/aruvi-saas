@@ -335,7 +335,7 @@ almost nothing left**: only Q14 (6c) and Q18-Q20 (step 8) are still open.
 | `36b51295` | **F11 the dropdown, and Personal profile.** ROLES/STATES/EMAIL_OK lifted to shared. |
 
 **Where §2 picks up: 6b, in this order** — ~~**F** (Support)~~ ✅ **DONE 2026-09-16**, walked to a live
-**MEY-S-753** → ~~**D** (the view)~~ ✅ **DONE 2026-09-16** → **SubscribeFlow** (D6/D7's two dark buttons) →
+**MEY-S-753** → ~~**D** (the view)~~ ✅ → ~~**SubscribeFlow**~~ ✅ **both DONE 2026-09-16** →
 **E** (Your data & export, via F9) → **H** (About's delete flow, the typed "erase", the receipt).
 Then 6c (Ask Meyy, Q14), step 7, step 8, and **8b the tour**.
 
@@ -831,9 +831,19 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   `GET /invoices/MEY/2026-27/7866` → 200 from Render). ★ **`STAGE_CLASSES`, `fmtValidity`,
   `scopeRows` and the subscription SORT were LIFTED to `@aruvi/shared/format` and the web now
   delegates** (12 node tests) — §3's rule, and this is the screen where a drift means telling a
-  paying teacher two different things. ⚠️ **Subscribe / Add subjects & stages are DRAWN BUT DARK**
-  until SubscribeFlow lands — Q11 un-deferred it, so that is a gap and not a decision. ⚠️ Every
-  walk of SubscribeFlow writes real scopes to a real account.
+  paying teacher two different things. ✅ **SubscribeFlow LANDED 2026-09-16** —
+  `app/(app)/subscribe.jsx`, the IN-APP door (Settings' two buttons and the paywall's Subscribe,
+  which stopped saying "still in development"). Four screens: About you (skipped on a known
+  profile) · Agreement (forwards itself when the current version is signed) · Subjects · Pay.
+  ⚠️ **The trial fork is deliberately absent and must stay absent** — it belongs to the FRONT
+  DOOR, and offering a trial to a teacher whose trial has ended is an offer Meyy cannot honour.
+  The front door arrives with Login's own subscribe path, still owed. ⚠️ Every walk of this
+  writes real scopes to a real account. **Walked to the Pay screen 2026-09-16** — the cart
+  skipped correctly, the owned-scope guard showed "Preparatory · you have this", Science·Middle
+  totalled ₹500 and Pay rendered; the checkout itself is UNWALKED by choice.
+  ★ **Found by the walk:** `Dropdown` rendered a disabled option's label and then let her tap it
+  — worse than not saying it, since `cartScopes` de-dupes a duplicate pair and she would have
+  seen two rows and been charged for one. It honours `disabled` now.
   ★ **THE EMPTY SLIVER IS GONE ON BOTH SURFACES** (founder, 2026-09-16: "in both web and phone
   active subscriptions must not show that sliver"). The status card has three things it can say
   and an ACTIVE teacher matches none of them, so it rendered as an empty bordered strip above her

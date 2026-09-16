@@ -59,13 +59,23 @@ export default function Dropdown({ value, onChange, options = [], placeholder = 
             {options.map((o) => {
               const v = valOf(o);
               const on = v === value;
+              /* ★ AN OPTION CAN BE DEAD, and it must actually be dead (2026-09-16, found while
+                 walking the subscribe cart). The web disables a subject·stage she already holds
+                 or has added in another row, and the label says WHICH — "· you have this" /
+                 "· already added". The phone rendered that label and then let her tap it, which
+                 is worse than not saying it: the row would accept a pair `cartScopes` de-dupes,
+                 so she would see two rows and be charged for one. */
+              const dead = !!(o && typeof o === "object" && o.disabled);
               return (
-                <Pressable key={String(v)} accessibilityRole="button"
-                  accessibilityState={{ selected: on }}
-                  onPress={() => { onChange && onChange(v); setOpen(false); }}
-                  style={[ws.dd_opt, on && { backgroundColor: t.tint_pine }]}>
+                <Pressable key={String(v)} accessibilityRole="button" disabled={dead}
+                  accessibilityState={{ selected: on, disabled: dead }}
+                  onPress={dead ? undefined
+                                : () => { onChange && onChange(v); setOpen(false); }}
+                  style={[ws.dd_opt, on && { backgroundColor: t.tint_pine },
+                          dead && { opacity: 0.45 }]}>
                   <Text style={[ws.dd_opt_t, on && ws.dd_opt_on,
-                                { color: on ? t.pine : t.ink }]}>{labOf(o)}</Text>
+                                { color: dead ? t.ink_soft : on ? t.pine : t.ink }]}>
+                    {labOf(o)}</Text>
                 </Pressable>
               );
             })}
