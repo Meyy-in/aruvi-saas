@@ -13,7 +13,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, fetchEntitlement, subjectSlug, pad } from "@aruvi/shared/format";
+import { getUser, fetchEntitlement, subjectSlug, classNum, pad } from "@aruvi/shared/format";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
@@ -61,6 +61,27 @@ function classesFrom(readiness) {
     });
   });
   return out;
+}
+
+/* ★ SUBJECT BANDS — but ONLY for a teacher who teaches more than one (the web's rule, founder
+   2026-08-30: "teachers compartmentalize subjects"). A flat list made her read the subject off
+   every card to find the three that belong together; a single-subject teacher — the common case —
+   renders none of this and sees exactly the list she saw before.
+   NOTHING MOVES. `classesFrom` already walks subjects → grades → sections in profile order, so
+   same-subject cards are ALREADY adjacent; this only inserts headings into an order that was
+   always there. Built by ADJACENCY rather than by a map keyed on the subject, which is what
+   guarantees that: a map would silently reorder if the underlying walk ever changed, where
+   adjacency can only ever mis-SPLIT, which is visible. Ported verbatim from MyPlans.jsx:865-871
+   (appendix 05 B11) — the phone's `sectionKey` stands in for the web's positional `i`, because
+   nothing here addresses a card by index. */
+function bandsOf(classes) {
+  const bands = [];
+  classes.forEach((c) => {
+    const last = bands[bands.length - 1];
+    if (last && last.subject === c.subjectName) last.items.push(c);
+    else bands.push({ subject: c.subjectName, slug: c.subjectSlug, items: [c] });
+  });
+  return bands;
 }
 
 export default function Home() {
@@ -271,6 +292,21 @@ export default function Home() {
     return set;
   };
 
+  const bands = bandsOf(st.classes);
+  /* ONE card, rendered the same whether or not it sits inside a subject band. The only thing
+     the band changes is the KICKER: with the subject named above the group, repeating it on
+     every card is the same word three times on one screen (the web's own note, MyPlans.jsx). */
+  const card = (c, banded) => (
+    <ClassCard key={c.sectionKey} c={c} banded={banded}
+      plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`] || {}}
+      preparing={preparing && preparing.section === c.sectionKey ? preparing : null}
+      onDismissPreparing={clearPreparing}
+      onOpen={openAttached}
+      onAttach={() => setAttachFor({ c, sectionKey: c.sectionKey })}
+      onUntrack={(plan) => setUntrackFor({ c, sectionKey: c.sectionKey, plan })}
+      onMoveOn={(plan) => moveOnFromCompleted(c, c.sectionKey, plan)} />
+  );
+
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Bar user={user} />
@@ -291,18 +327,21 @@ export default function Home() {
         ) : st.classes.length === 0 ? (
           <Text style={[type.body, { color: t.ink_soft, marginTop: 14 }]}>No classes yet — set up your teaching profile (first run comes in a later step).</Text>
         ) : (
-          <View style={ws.sc_list} key={tick}>
-            {st.classes.map((c) => (
-              <ClassCard key={c.sectionKey} c={c}
-                plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`] || {}}
-                preparing={preparing && preparing.section === c.sectionKey ? preparing : null}
-                onDismissPreparing={clearPreparing}
-                onOpen={openAttached}
-                onAttach={() => setAttachFor({ c, sectionKey: c.sectionKey })}
-                onUntrack={(plan) => setUntrackFor({ c, sectionKey: c.sectionKey, plan })}
-                onMoveOn={(plan) => moveOnFromCompleted(c, c.sectionKey, plan)} />
-            ))}
-          </View>
+          /* Banded (>1 subject) or the plain list she has always had. The CARD itself is one
+             renderer either way — `card` — so the two paths can never drift apart. */
+          bands.length > 1 ? (
+            <View style={ws.sc_bands} key={tick}>
+              {bands.map((b, bi) => (
+                <View key={b.slug} style={bi ? ws.sc_band_gap : null}>
+                  {/* The subject, said ONCE per band. */}
+                  <Text style={ws.sc_band_hd}>{b.subject}</Text>
+                  <View style={ws.sc_band_list}>{b.items.map((c) => card(c, true))}</View>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View style={ws.sc_list} key={tick}>{st.classes.map((c) => card(c, false))}</View>
+          )
         )}
 
         {/* foot — moves to Settings in step 6 */}
@@ -404,16 +443,21 @@ function DashHead({ classes, plansBySG, user }) {
  * on an empty or finished card, "−" to untrack (clay) while she is teaching. Measures in
  * theme/web.js under sc_*; the web's 11px graph rule is the one thing not ported (RN has no
  * repeating gradient) — the card keeps its fill, which is what carries the status anyway. */
-function ClassCard({ c, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack, onMoveOn }) {
+function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack, onMoveOn }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const sec = readLocalSection(c.sectionKey);
   const plan = sec.chapter ? plans[sec.chapter] : null;
   const hist = hasHistory(c.sectionKey);
-  // sec.tag already carries the class number ("9A"); her own name for the section, when she gave
-  // one, sits in fine print beneath it — the web's .sc-tag-name.
-  const tag = c.sectionTag;
+  /* ★ THE CORNER OF THE CARD, THE WEB'S RULE (founder, 2026-08-30 — reported against the phone
+     on 2026-09-16). Un-named it is the tag she has always seen, "6A". NAMED, THE LETTER GIVES
+     WAY TO HER WORD: the class number stands alone with her name in fine print beneath it. A
+     teacher who calls that room "Rose" scans this list for "Rose", and "6A · Rose" — which is
+     what the phone was drawing — makes her read two labels to find one card. The letter is not
+     lost: it is the key everything is filed under, and the teaching profile still shows it.
+     DISPLAY ONLY — `c.sectionTag` remains the key behind every binding, pointer and bookmark. */
   const name = c.sectionName;
+  const tag = name ? String(classNum(c.grade)) : c.sectionTag;
 
   const Round = ({ glyph, color, label, onPress }) => (
     <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} hitSlop={6}
@@ -450,7 +494,7 @@ function ClassCard({ c, plans, preparing, onDismissPreparing, onOpen, onAttach, 
         <View style={[ws.sc_spine, { backgroundColor: t.clay }]} />
         <Tag />
         <View style={ws.sc_body}>
-          <Text style={ws.sc_kicker}>{c.subjectName}</Text>
+          {banded ? null : <Text style={ws.sc_kicker}>{c.subjectName}</Text>}
           <Text style={ws.sc_title} numberOfLines={1}>
             {preparing.chapterNo ? `Ch ${pad(preparing.chapterNo)}: ` : ""}{preparing.chapterTitle}
           </Text>
@@ -470,7 +514,9 @@ function ClassCard({ c, plans, preparing, onDismissPreparing, onOpen, onAttach, 
         <View style={[ws.sc_spine, { backgroundColor: t.edge }]} />
         <Tag muted />
         <View style={ws.sc_body}>
-          <Text style={ws.sc_kicker}>{c.subjectName}</Text>
+          {/* No kicker at all inside a band: the subject is the heading above, and this card
+              has no chapter to name, so an empty line is all that would be left. */}
+          {banded ? null : <Text style={ws.sc_kicker}>{c.subjectName}</Text>}
           <Text style={[ws.sc_title, ws.sc_title_muted]}>Pick a chapter to begin</Text>
         </View>
         <View style={ws.sc_right}>
@@ -504,13 +550,19 @@ function ClassCard({ c, plans, preparing, onDismissPreparing, onOpen, onAttach, 
       <CardGrid color={t.card_grid} />
       <View style={[ws.sc_spine, { backgroundColor: spine }]} />
       <Pressable onPress={() => onOpen(c, plan)} accessibilityRole="button"
-        accessibilityLabel={`Open ${plan.chapter_title} for ${tag}`}
+        accessibilityLabel={`Open ${plan.chapter_title} for ${c.sectionTag}`}
         style={{ flex: 1, flexDirection: "row", alignItems: "center", columnGap: 13 }}>
       <Tag />
       <View style={ws.sc_body}>
-        <Text style={ws.sc_kicker}>
-          {c.subjectName}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}
-        </Text>
+        {/* Banded: the subject is overhead, so the kicker is just the chapter — and nothing
+            at all when the plan carries no chapter number. */}
+        {banded
+          ? (plan.chapter_number ? <Text style={ws.sc_kicker}>{`Ch ${plan.chapter_number}`}</Text> : null)
+          : (
+            <Text style={ws.sc_kicker}>
+              {c.subjectName}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}
+            </Text>
+          )}
         <Text style={ws.sc_title} numberOfLines={2}>{plan.chapter_title}</Text>
         {total ? (
           <View style={ws.sc_rail} accessibilityLabel={

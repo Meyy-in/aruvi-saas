@@ -75,6 +75,7 @@ the wait moves to My Lessons), the bottom bar, the org-page-until-taught rule, t
 | — | **THE ✕ GOT ITS OWN ROW, on both surfaces** (founder: "the 'how many periods a week?' window of the add button has its 'x' too close to top row. create an empty row above and place x at its right end … or better, put 'periods/week' in the second row as it is in the expo"). Measured on both running pages BEFORE changing anything, because the eye said Expo was fine and the numbers said otherwise: the ✕ occupies 13→43px from the card's top on each, and the kicker began at 29 on the web and 23 on Expo — **overlapping by 14px and 20px respectively**. So this was never a web-only defect and "as it is in the expo" was not a shape to copy; the phone only LOOKED better because `tp_kicker_pad` reserves 30px on the right, so its text can never run under the glyph even when its box does. Fixed at the one place each: `.tp-window-card .tp` padding-top 2 → 22, and `tp_kicker_pad` gains `paddingTop: 26`. Now a 6px gap on the web, the same on the phone. ⚠️ Costs 20-ish px of a card whose height is the standing problem — the trade was made knowingly, and there must be exactly ONE source of this gap (do not also margin the kicker) | *this commit* | web + Expo, measured |
 | **5d·3** | **THE TWO PICK SCREENS** — "In which subject?" and "Which class?" (`components/ProfilePick.jsx`), the third body of the layout's one Sheet. Until now a portal row on a profile with more than one subject·class did NOTHING — deliberate and honest, and a dead end. The routing rule is `resolvePortalPick` in `@aruvi/shared` (9 tests) rather than JSX: it was spelled twice in the layout within twenty lines, and the two spellings have to agree or a screen shows with one row on it, or is skipped when two were owed. Both skips are the web's own — *a question with one possible answer is not a question* — so a one-subject-one-class teacher meets neither screen, exactly as before. ⚠️ Three things this turned up: **(a)** `portalGradeIdxs` had been lifted to shared by F2 and the web was STILL running a byte-identical copy — the precise drift CLAUDE.md §3 exists to stop; the web now delegates. **(b)** the portal row stamped an invented `exact: true` scope, which means "she is standing on it, do not ask" — true of the Year Plan pencil, false of a portal row, and wrong the moment a pick screen exists; it now carries the window's own scope. **(c)** the phone's manage-classes kicker read "English · Class 3 · classes", naming an arbitrary member of the set being edited — the web has always said `{subject} · classes`, and only a one-class teacher could reach it before | *this commit* | 🟡 Expo web: Kk (one subject, one class) skips both screens and the kicker now reads "ENGLISH · CLASSES" — **the pick screens themselves are UNWALKED**, see below |
 | — | **The web grew the window's ← corner** — the last piece of "the corners do the navigating", which the phone got in `2d7ac21d` and the web did not. Hiding the footer links in the window took the duration step's `← Back` with them, and duration is the ONE step reached THROUGH another: inside the window her only two answers became Save (a write she may not want) or ✕ (abandon the lot). `TeachingProfile` now reports `{ onBack }` up through `onChrome` exactly as `ProfileEditor` does on the phone, `page.jsx` draws the corner it already drew the ✕ in, and `.ap-back` is `.ap-close` mirrored — the phone's `theme/web.js` geometry to the pixel (top 12, left 12, 30×30). `.tp-window-back` indents the kicker on that step alone | *this commit* | web, walked end to end |
+| — | **MY CLASSES NOW BANDS BY SUBJECT ON THE PHONE, AND A NAMED SECTION READS THE WEB'S WAY** (founder, 2026-09-16: "the expo/iphone My classes shows all subjects in one list … also, the naming of sections is like 3A, 3B with nick name. When nick name is there only class 3 with nick name below"). Two rows of appendix 05, one of which the inventory never had. **(a) The bands** (B11, MISSING since the map was drawn, newly visible the day he began teaching two subjects): `ENGLISH` / `MATHEMATICS` mono kickers under a ledger hairline, and banded cards drop the subject from the kicker — "Ch 1", or NO kicker at all on an unattached card, because the subject is overhead and an empty line is all that would be left. Built by **adjacency**, the web's own choice: `classesFrom` already walks subjects → grades → sections in profile order, so nothing MOVES — a keyed map would silently reorder if that walk ever changed, where adjacency can only mis-SPLIT, which is visible. ONE card renderer serves both paths. **(b) The tag** (B11a, a row this inventory never had — the gap is why it was live): the phone had ported the nickname LINE in step 4 but not the rule above it, so a named section read "3A" over "Aruvi" where the web reads "3" over "Aruvi". ★ **The letter gives way to her word** — a teacher who calls that room "Aruvi" scans the list for "Aruvi", and two labels to find one card is exactly what the web's 2026-08-30 change removed. Display only: `sectionTag` is still the key behind every binding, pointer, bookmark and `sectionKey`. ⚠️ `sc_bands`/`sc_band_gap`/`sc_band_hd`/`sc_band_list` are NEW keys in `web.js`, so `useWebStyles`' `useMemo` cannot see them until a real app start — walked after a full reload for exactly that reason | *this commit* | 🟡 Expo web (both bands drawn, kickers correct, "3 / Aruvi" corner, no console errors) — **iPhone confirm owed** |
 
 **★ 5c IS NOT A SEPARATE STEP ANY MORE.** Founder's answer to Q1 was HOLD: the budget screen's own
 sense-check pencil leads to the ppw wheel, so shipping it before the numbers editor would only have moved
@@ -127,11 +128,9 @@ correctly skipped every time and has never been drawn. Owed with it: the ← bet
 the stage-scope narrowing of the class list. Add a second class to either subject and the whole path
 opens up.
 
-⚠️ **AND THE PHONE DOES NOT BAND BY SUBJECT.** Now that he teaches two, the web's My Classes shows
-`ENGLISH` and `MATHEMATICS` headings over their cards and the phone shows one flat list with the subject
-repeated on every card. **Not a regression** — appendix 05 B11, MISSING since the map was drawn — but it
-is newly VISIBLE on his own account, so expect it to be reported as a bug. `sc_bands` / `sc_band` /
-`sc_band_hd` are not in `web.js` yet.
+~~⚠️ **AND THE PHONE DOES NOT BAND BY SUBJECT.**~~ **CLOSED 2026-09-16** — reported as predicted, and
+fixed in the same pass as the section tag (see the last row of the table above; appendix 05 B11 + B11a).
+`sc_bands` / `sc_band_gap` / `sc_band_hd` / `sc_band_list` are in `web.js` now.
 
 **All three items owed at the last hand-off are CLOSED (2026-09-15, second run — the dev server was up
 this time). What they turned out to be:**
@@ -236,9 +235,9 @@ somewhere her hand is not, and freeze the surface for the length of the touch. �
 feels wrong on a phone, ask what she cannot SEE before you ask what she should DO differently.**
 
 **Still true from the previous hand-off and not superseded by any of this:** the "Which class?" screen is
-still undrawn (his profile has one class per subject), the phone still does not band My Classes by subject
-(appendix 05 B11 — newly visible on his own account, expect it reported as a bug), and the inert doors are
-still Ask Meyy, the Settings gear, and first run.
+still undrawn (his profile has one class per subject), and the inert doors are still Ask Meyy, the Settings
+gear, and first run. (The subject bands that stood here were reported and CLOSED on 2026-09-16, with the
+named-section tag alongside them.)
 
 **Where §2 picks back up — the walk is done, so this is now the live front.** Step 5d is the only step
 open, and three things close it: the **"Which class?" screen** (built, never DRAWN — his profile has one
@@ -707,14 +706,14 @@ dependency → the first development-build milestone (Expo Go may not carry it).
 - **Section history** (A6, B19-B20): `pullSectionHistory` in the reconcile; the `.sc-hist` glyph; the popup
   "Section history" · "Where each chapter stands for this section." (`hasHistory` is computed at
   `index.jsx:351` and never rendered).
-- **Subject bands** (B11) when > 1 subject: `.sc-bands > .sc-band > .sc-band-hd`.
+- ~~**Subject bands** (B11) when > 1 subject~~ — DONE 2026-09-16, with B11a (the named-section tag).
 - **Small guards** the phone silently lost: `undefined`-vs-`{}` listing state → false "Pick a chapter to
   begin" / "No other lessons prepared" flash on a cold cache (B14, B21, B22 — `index.jsx:115,136`,
   `AttachSheet.jsx:89-95`); AppState + 20 s re-pull with the modal-open hold (A4/A5); `bindingsKnown` (A7);
   verify-mismatch in `prepare.jsx:308-316` must `failPreparing` on the card, not `setError` on a popped
   screen (D9 — the ARV-D-087 shape).
 
-**web.js:** `sc_hist`, `sc_bands`/`sc_band_hd`, `ch_row`/`ch_pill` (3 states)/`ch_rail`, `ap_prior*`,
+**web.js:** `sc_hist`, `ch_row`/`ch_pill` (3 states)/`ch_rail`, `ap_prior*`,
 `ap_loading`, `mlp_prior*`, `rpt_*`, `sc_report`, `yp_export_btn/msg`, `yp_empty`.
 
 ### Step 8 — LessonView residuals and the parity debt

@@ -84,6 +84,21 @@ export function webStyles(t, scheme = "light") {
                        textTransform: UP, color: t.ink_soft },
     bnav_rule:       { width: 22, height: 2.5, borderRadius: 2, marginTop: 1, backgroundColor: "transparent" },
 
+    /* ── subject bands (.sc-bands / .sc-band / .sc-band-hd) — the web's 2026-08-30 grouping ──
+       Only a teacher with MORE THAN ONE subject sees any of this; a one-subject list keeps the
+       plain `sc_list` and renders none of it. The subject is a STRUCTURAL label, so it takes the
+       house's mono uppercase kicker under a ledger hairline rather than a display-serif heading
+       that would compete with the chapter titles below it, and it carries pine_d rather than
+       ink_soft because it is the spine of the list, not a caption on it (globals.css 2545-2551).
+       The band owns the outer margin so the inner list can sit tight under its own heading —
+       hence `sc_band_list`, which replaces `sc_list`'s 4px top with the web's 7. */
+    sc_bands:        { marginTop: 4, marginBottom: 22 },
+    sc_band_gap:     { marginTop: 20 },   // .sc-band + .sc-band — every band but the first
+    sc_band_hd:      { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, letterSpacing: 1.4,
+                       textTransform: UP, color: t.pine_d, paddingBottom: 5,
+                       borderBottomWidth: 1, borderBottomColor: t.line },
+    sc_band_list:    { rowGap: 9, marginTop: 7 },
+
     /* ── section card (.sc-card + children) — measured 2026-09-13, 390×844, light ──
        Three states carry the teaching status in the FILL (founder 2026-08-30): st-new sand,
        st-going green, st-done clay, each with its own edge; the 4px left spine repeats it.
