@@ -704,7 +704,20 @@ test account loses two bar items and lands on My Lessons; the cutover offer appe
 **Web owed:** page.jsx adopts the shared readiness/account/entitlement/year stores (today it fetches each
 inline — app. 01 row 11 notes the readiness store is phone-only).
 
-### Step 6b — Settings (seven subviews)
+### Step 6b — Settings (seven subviews)  🟡 **OPENED 2026-09-16 — and it GREW**
+
+> ★ **Read this before the build list below, which was drawn before the answers.** Two of
+> 2026-09-16's founder decisions changed 6b's size, not just its details:
+> - **Q11 un-defers `SubscribeFlow`** (683 lines on the web) and lets the phone really buy —
+>   `POST /onboarding/checkout` is a server-side DEV STUB that activates through the
+>   ManualBillingProvider, so this is a real purchase against a real account, not a mock.
+>   D is therefore no longer a read-only view.
+> - **Q15 pulls F9 forward** out of step 7: the share sheet is how a document leaves the phone,
+>   and D, E and H all wait on it.
+>
+> **Dependency order for the build**, which is not the appendix's JSX order: **F9** (exports) →
+> **F11** (Dropdown, needed by C and by SubscribeFlow's four pickers) → **A** (the stack, the
+> frozen bar, the gear finally lit) → **B** (home) → C · F · G → D + SubscribeFlow → E · H.
 
 **Entry:** 6a (F4, F5, F10, the notices), F9 for the two exports and the invoice PDF, F11 Dropdown
 replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
@@ -714,20 +727,23 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   with labels Settings · Personal profile · Subscription & billing · Your data & export · Support · About Meyy
   · Legal · Teaching profile; `settingsClose` = `router.back()` except the erased branch (→ `endSession`);
   bottom bar STAYS up (commit d87c7d99; fix BottomNav.jsx's stale header comment).
-- **B. HOME list** (B1-B18) in the founder's frequency order, incl. Appearance (Q10: cycling glyph
-  ◐ → ☀ → ☾ vs the phone's interim segmented control at `index.jsx:278-284`, which is deleted here), plan
+- **B. HOME list** (B1-B18) in the founder's frequency order, incl. Appearance (**Q10 answered: the
+  cycling glyph ◐ → ☀ → ☾, 1:1** — the phone's interim segmented control at `index.jsx:278-284` is
+  DELETED here, not moved; the state goes in `accessibilityLabel` because a phone has no hover to
+  carry the web's `title`), plan
   status (the counter is NOT gated on `enforced` — web rule 2026-09-11), Ask Meyy row, Sign out.
 - **C. Personal profile** (C1-C13; hidden on trial): name, email (`EMAIL_TAKEN` via `idInUse`), Role/State via
   F11, school, `POST /account`, marketing email `/account/marketing-email`. ROLES/STATES lifted out of
   SubscribeFlow into shared.
-- **D. Subscription & billing** (D1-D9): read-only status, scopes, `GET /invoices`, `GET /invoices/{number}`
-  → `Meyy-invoice-{number}.pdf` via F9; "Subscribe" / "Add subjects & stages" NOT-PORTED — what shows instead
-  is Q11.
+- **D. Subscription & billing** (D1-D9): status, scopes, `GET /invoices`, `GET /invoices/{number}`
+  → `Meyy-invoice-{number}.pdf` via F9. ★ **Q11 ANSWERED: "Subscribe" / "Add subjects & stages" are
+  PORTED after all** — `SubscribeFlow` comes with them and really buys through the server's dev
+  stub. ⚠️ Every walk of this writes real scopes to a real account.
 - **E. Your data & export** (E1-E4; hidden on trial): `GET /data-rights/export?format=docx|pdf` →
-  `aruvi-your-data.{docx|pdf}` via F9.
-- **F. Support** (F1-F14; never hidden): form, `POST /support` with `context.screen` (Q13),
-  "Message sent" + the MEY-S reference, `GET /support` history, the "add an email" link (Q12 — it
-  dead-ends on trial on the web too).
+  `aruvi-your-data.{docx|pdf}` via F9 (**Q15: the share sheet**).
+- **F. Support** (F1-F14; never hidden): form, `POST /support` with `context.screen` (**Q13: plus an
+  `(app)` marker**), "Message sent" + the MEY-S reference, `GET /support` history, the "add an email"
+  link (**Q12: HIDDEN on trial** — the web still dead-ends there and owes the same fix).
 - **G. Legal** (G1-G5): pinned pill band Agreement | Privacy; Agreement READ mode over `Markdown.jsx`
   ("Legal Agreement with User" · "✓ Accepted on {date} · version {v}" · intro + five `.lgl-ack` blocks ·
   version line) from `GET /legal/consent`; PrivacyNotice with the full version line and `?version=`.
@@ -928,7 +944,7 @@ Consolidated from the six appendices (their numbering in brackets). The first fi
 be answered when the step is reached. **Answered questions stay in the table, struck through with their
 answer** — the reasoning is worth more than the row.
 
-**Due next:** none blocking. **Q6, Q7, Q8 and Q17 were answered on 2026-09-16** as 6a opened; the next questions bind at 6b (Q10, Q11, Q12, Q13) and 6c (Q14).
+**Due next:** none blocking. **Q6, Q7, Q8, Q17 and then Q10, Q11, Q12, Q13, Q15 were all answered on 2026-09-16**, as 6a closed and 6b opened. The only questions left are **Q14** (6c, the bank's accent values), **Q16** (dissolved in practice — the web answered it), and **Q18-Q20** (step 8). ★ **Q11's answer un-defers SubscribeFlow and Q15's pulls F9 forward**, so 6b is materially bigger than this map drew it.
 
 | # | Blocks | Question |
 |---|---|---|
@@ -943,12 +959,12 @@ answer** — the reasoning is worth more than the row.
 | ~~Q9~~ | 6a | ⚠️ **AMENDED 2026-09-16 — the phone needed the trigger BEFORE the tour.** The answer below left first run's own check window with nothing to raise it until 8b, and the founder met exactly that on his first walk: the window never came. My Classes now raises it from a one-shot first run leaves; when the tour lands, one of the two triggers must go. Original answer: ✅ **DISSOLVED 2026-09-15 — THE TOUR IS UN-DEFERRED** (founder: "yes undefer the tour"). The question only existed because deferring the tour removed the web's tour-end trigger and left a brand-new teacher with no moment to check what Meyy guessed for her. With the tour ported (step 8b) the phone inherits that trigger unchanged: **no substitute, no named divergence.** The added-subject trigger is unaffected and ships with 5d; the tour-end one simply starts firing when 8b lands. |
 | ~~Q23~~ | 5e | ✅ **ANSWERED 2026-09-16 — HIDE IT.** The phone's bar drew an inert ⚙ wherever a user existed, including on first run, where the web has no gear at all (Phase 1 is shell-less). `Bar` takes `gear={false}`; identity and Log out stay, as they do on the web. [03·4] |
 | ~~Q24~~ | 5e | ✅ **TAKEN AS RECOMMENDED 2026-09-16.** A 402 on first run raises the paywall window rather than rendering a failed card — prepare.jsx's rule, which the web's own first run lacks. A paywall is not a failed build. [03·5] |
-| Q10 | 6b | **Appearance control shape**: the web's cycling glyph (◐ → ☀ → ☾) 1:1, or keep the phone's Auto/Light/Dark segments as a named divergence? [04·1] |
-| Q11 | 6b | **Subscription & billing with no purchase screen**: nothing, or a sentence pointing at the website/support? (Also "Online payments open soon…" reads oddly with no button.) [04·3] |
-| Q12 | 6b | **Support's "add an email" link on trial** dead-ends on the web too (Personal profile hidden). Hide on trial, or open Personal profile for the email field alone? [04·2] |
-| Q13 | 6b | **Support `context.screen`**: same string as the web, or an "(app)" marker so tickets say which surface? [04·4] |
+| ~~Q10~~ | 6b | ✅ **ANSWERED 2026-09-16 — THE GLYPH, 1:1.** The founder took parity over the phone's existing segmented control, which 6b therefore DELETES from the foot of My Classes rather than moving. ⚠️ The recommendation had been the segments, on the grounds that a cycling glyph states itself through a `title` tooltip and **a phone has no hover** — so port the glyph with that gap closed rather than reproduced: the state belongs in `accessibilityLabel` ("Theme: Auto (follows your phone)" / "Light" / "Dark", the web's own strings), and the three-way cycle must be discoverable by tapping, not by reading. If it turns out opaque on the handset, the answer is a label beside the glyph, not a return to segments. |
+| ~~Q11~~ | 6b | ✅ **ANSWERED 2026-09-16 — PORT THE PURCHASE SCREEN AND LET IT BUY.** Founder: *"replicate web app allowing a dummy purchase of subscription allowing us to test it out — actual payment connection comes in later."* ★ **THIS UN-DEFERS SubscribeFlow**, which this map has carried as NOT-PORTED-BY-DECISION throughout (the second such reversal, after the tour). It is not a mock: `POST /onboarding/checkout` is already a **DEV STUB on the server** — its own docstring says so — activating the subscription directly through the ManualBillingProvider because no gateway exists, and the web's UI is explicit that the preview activates instantly rather than faking a payment screen. So the phone ports the real flow and really buys. ⚠️ **SCOPE**: SubscribeFlow is 683 lines — cart, the account fields with their double-blind email, the agreement ticks — and it needs **F11 Dropdown** first. ⚠️ **IT WRITES TO A LIVE ACCOUNT.** A walk of this adds real scopes to whoever is signed in; the founder's own standing rule (writing to his live Render profile needs his say-so) applies to every test of it. ⚠️ And it supersedes Q6's placeholder: the paywall's Subscribe stops saying "in development" and opens this. |
+| ~~Q12~~ | 6b | ✅ **ANSWERED 2026-09-16 — HIDE IT ON TRIAL.** A link that goes nowhere is worse than no link: Support still works, and she is simply not offered a door that is bolted. ⚠️ The web still dead-ends here; this is a phone-side fix of a shared defect, so the web owes the same change (recorded, not done). |
+| ~~Q13~~ | 6b | ✅ **ANSWERED 2026-09-16 — MARK THE SURFACE.** The web's string plus an `(app)` marker, so a ticket reads `settings/support (app)`. During a beta whose whole point is that the two surfaces differ, which surface a report came from is the first thing worth knowing. |
 | Q14 | 6c | **Bank `accent` values**: confirm the five stored strings, or add a token NAME field to the bank so neither surface parses CSS. [04·5] |
-| Q15 | 7 | **Where a downloaded document lands**: share sheet (Files / WhatsApp / mail) or silent save to Files? Both Reports and Year Plan wait on this. [05·1] |
+| ~~Q15~~ | 6b·F9 | ✅ **ANSWERED 2026-09-16 — THE SHARE SHEET.** Written to app storage, then the OS sheet opens (Files · WhatsApp · Mail · AirDrop). ★ It matches what a teacher actually DOES with a year plan or an invoice — send it to a head of department, mail it to herself — and the sheet is its own receipt that something was produced, where a silent save invites "where did it go?". **Pulled forward from step 7 into 6b**, because Subscription & billing, Your data & export and the delete flow all wait on F9. |
 | Q16 | 7 | **Prepare-from-a-card wait**: keep the web's in-place wait, or land on My Classes with the chapter bound after the 5 s beat? [05·2] |
 | ~~Q17~~ | 6a·F6 | ✅ **ANSWERED 2026-09-16 — ONCE PER LAUNCH, THE WEB'S RULE.** Dismissing hides the cutover offer until the app is restarted; nothing is persisted. Offered per-day and once-then-never as phone-shaped alternatives and the founder took the web's: ★ **no divergence without a reason, and "a phone is rarely signed out" is a reason to keep asking, not to stop.** A cutover missed is a year of lessons filed under the wrong year, and the offer is the only door to it until Settings grows one. So she meets it each morning until she acts — which is what an undone decision with a deadline should do. |
 | Q18 | 8 | **Speak** only focuses the text area on both surfaces (the web never used the Web Speech API). Intended, or add a real recogniser as a phone capability? [06·1] |
