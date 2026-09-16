@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { View, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
-import { API, getJSON, idInUse, setUser } from "@aruvi/shared/format";
+import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, authHeaders } from "@aruvi/shared/auth";
 import { primeBank } from "@aruvi/shared/ask-aruvi/bank";
 import { storage } from "@aruvi/shared/storage";
@@ -23,19 +23,34 @@ import Bar from "../components/Bar";
 import OtpBoxes from "../components/OtpBoxes";
 import { Button, Link, Field, Input, Quiet, ErrorLine } from "../components/ui";
 import { useTheme } from "../theme/ThemeContext";
+import { useWebStyles } from "../theme/web";
 import { type } from "../theme/type";
 
 const SEEN_KEY = "aruvi_device_seen";
-const MOBILE_TAKEN = "This mobile number already has a Meyy sign in. Tap Sign in below.";
 
-const Benefits = ({ t }) => (
-  <View>
-    <Text style={[type.headline, { color: t.ink }]}>Plan engaging, NCF-aligned lessons in seconds.</Text>
-    <Text style={[type.small, { color: t.ink_soft, marginTop: 10 }]}>
-      ✓ Lesson plan in seconds, not hours   ✓ NCF / NCERT aligned   ✓ Assessment built in   ✓ Every section's status at one glance
-    </Text>
-  </View>
-);
+/* ★ `MOBILE_TAKEN` now comes from @aruvi/shared/format (2026-09-16, Q21b). This file used to
+ * declare its own — "…already has a Meyy sign in. Tap Sign in below." — and the web's own comment
+ * had already rejected exactly that: she is standing at the CREATE door, where the instruction is
+ * to create, and whoever typed the number is not owed the news that it holds an account. */
+
+/* The web's `.ob-headline` + `.ob-benefits`, ticks and all. The ticks are their own spans on the
+ * web (`.ob-tick`, pine, bold) — here they are nested Texts for the same reason the check window's
+ * bold is: RN picks a face by name. The web separates the four with `&ensp;`, which is one em-half
+ * space; three plain spaces was the phone's stand-in and is kept, since RN has no `&ensp;`. */
+const Benefits = () => {
+  const { t } = useTheme();
+  const ws = useWebStyles();
+  const Tick = () => <Text style={ws.ob_tick}>✓</Text>;
+  return (
+    <View>
+      <Text style={ws.ob_headline}>Plan engaging, NCF-aligned lessons in seconds.</Text>
+      <Text style={ws.ob_benefits}>
+        <Tick /> Lesson plan in seconds, not hours   <Tick /> NCF / NCERT aligned   <Tick /> Assessment
+        built in   <Tick /> Every section’s status at one glance
+      </Text>
+    </View>
+  );
+};
 
 /* Module-level on purpose: a frame defined inside Login would be a NEW component type on
  * every render, remounting its subtree and blurring the input on each keystroke. */
@@ -52,6 +67,7 @@ function Wrap({ children, foot }) {
 
 export default function Login() {
   const { t } = useTheme();
+  const ws = useWebStyles();
   const router = useRouter();
   const live = authEnabled();
   const otpLen = live ? OTP_LEN : 4;
@@ -137,7 +153,7 @@ export default function Login() {
         <Button title="Create sign in →" onPress={() => { setFlow("create"); setOtpSent(false); setScreen("otp"); }} />
         <Link title="Already have an ID? Sign in" onPress={() => setScreen("signin")} style={s.footLink} />
       </>}>
-        <Benefits t={t} />
+        <Benefits />
         <Text style={[type.h2, { color: t.ink, marginTop: 26 }]}>Choose what works for you</Text>
         <View style={[s.plan, { backgroundColor: t.tint_pine, borderColor: t.pine }]}>
           <Text style={[type.bodyStrong, { color: t.ink }]}>Free to try</Text>
@@ -156,6 +172,12 @@ export default function Login() {
         <Field label="Enter your mobile number">
           <View style={s.mobileRow}>
             <Text style={[type.body, { color: t.ink_soft, marginRight: 10 }]}>+91</Text>
+            {/* ★ ONCE THE CODE IS IN FLIGHT, THE NUMBER IS FIXED (founder, 2026-09-16, Q21a). The
+                phone has done this since it was built and the divergence was never named; it is
+                now the rule on BOTH surfaces. The OTP was sent TO this number, so a field she can
+                still edit under the boxes is a field that lies about where the code went. "← Back"
+                is the way to change it, and that re-sends. `flow === "return"` locks it for the
+                other reason: there the number came from her account, not from her. */}
             <Input style={{ flex: 1 }} keyboardType="number-pad" inputMode="numeric" maxLength={10} value={mobile}
               editable={flow !== "return" && !otpSent} placeholder="Enter mobile number" textContentType="telephoneNumber"
               onChangeText={(v) => { setMobile(v.replace(/\D/g, "")); setMobErr(""); }} />
@@ -187,7 +209,7 @@ export default function Login() {
                 <Text style={{ color: t.pine, textDecorationLine: "underline" }}
                   onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>Resend</Text>
               </Quiet>
-            ) : <Quiet>Preview build: enter 0000.</Quiet>}
+            ) : <Quiet>Preview build: enter <Text style={type.bodyStrong}>0000</Text>.</Quiet>}
             <ErrorLine>{otpErr}</ErrorLine>
             <Button title={otpBusy ? "Verifying…" : "Verify & continue →"} disabled={otp.length !== otpLen} busy={otpBusy} style={{ marginTop: 22 }} onPress={verifyOtp} />
           </>
@@ -200,16 +222,34 @@ export default function Login() {
   const trimmed = id.trim();
   const signinOk = /^\d{10}$/.test(trimmed) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
   return (
-    <Wrap foot={<Link title="New to Meyy? Get started" onPress={() => setScreen("choose")} />}>
-      <Benefits t={t} />
-      <Field label="Sign in with your mobile or email">
-        <Input value={id} onChangeText={(v) => { setId(v); setSigninErr(""); }} placeholder="Mobile number or email"
+    <Wrap foot={<Link title="New to Meyy? Get started →" onPress={() => setScreen("choose")} />}>
+      <Benefits />
+      {/* The web's `.ob-rule` — the hairline that separates what Meyy IS from the act of signing
+          in. Without it the benefits and the field read as one block. */}
+      <View style={[ws.ob_rule, { borderTopColor: t.line }]} />
+      {/* ★ THE QUESTION WAS MISSING (app. 03 rows 28-29, restored 2026-09-16). The phone went
+          straight to the field, so a screen the web opens by ASKING something ("Sign in · Who's
+          planning today?") arrived as a bare input — product copy dropped in the port, not a
+          divergence anyone chose. The field's own label and placeholder are the web's too; the
+          phone had rewritten both. */}
+      <Text style={ws.login_kicker}>Sign in</Text>
+      <Text style={ws.login_q}>Who’s planning today?</Text>
+      <Field label="Mobile number or email">
+        <Input value={id} onChangeText={(v) => { setId(v); setSigninErr(""); }}
+          placeholder="98xxxxxxxx or you@example.com"
           keyboardType="email-address" autoCapitalize="none" autoCorrect={false} textContentType="username"
           returnKeyType="go" onSubmitEditing={submitSignin} />
       </Field>
-      {live ? <Quiet>We'll send a one-time password to the mobile on the account.</Quiet> : null}
+      {/* ⚠️ A phone-only line stood here — "We'll send a one-time password to the mobile on the
+          account." — with no counterpart on the web and no founder note. Dropped in the same pass
+          (the phone matches the web by default); the trust line below is what the web puts in this
+          slot. If it is wanted, it belongs on BOTH surfaces. */}
       <ErrorLine>{signinErr}</ErrorLine>
-      <Button title="Sign in →" disabled={!signinOk} busy={signinBusy} style={{ marginTop: 22 }} onPress={submitSignin} />
+      <Button title="Enter →" disabled={!signinOk} busy={signinBusy} style={{ marginTop: 22 }} onPress={submitSignin} />
+      {/* ★ THE NOTICE IS LINKED FROM BOTH DOORS, not just the OTP screen (the web's DPDP reasoning,
+          Login.jsx:75-80): it is given at or before collection, and this screen collects. */}
+      <Text style={[ws.fr_secure, { marginTop: 14 }]}>🛡 Your data is private and secure ·{" "}
+        <Text style={ws.lgl_link} onPress={() => router.push("/privacy")}>Privacy Notice</Text></Text>
     </Wrap>
   );
 }

@@ -84,6 +84,26 @@ export function webStyles(t, scheme = "light") {
                        textTransform: UP, color: t.ink_soft },
     bnav_rule:       { width: 22, height: 2.5, borderRadius: 2, marginTop: 1, backgroundColor: "transparent" },
 
+    /* ── the front door (.ob-* · .login-* · .fr-secure) — measured 2026-09-16, 390×844, light ──
+       The login and OTP screens predate `web.js` and still draw their primitives from
+       `components/ui.jsx`; these are the keys the 5e parity pass needed, measured off the running
+       web at 390 (an iframe at that width, because the extension could not resize the window and
+       the ≤600px rules are the ones that matter).
+       ⚠️ `.ob-headline` computes at weight 700 and `.ob-tick` at 700; the bundled Fraunces and
+       Newsreader cuts stop at 600, so both take the semibold face — the heaviest we ship. */
+    ob_headline:     { fontFamily: F.display(600), fontSize: 24, lineHeight: 30, color: t.ink,
+                       marginTop: 4, marginBottom: 14 },
+    ob_benefits:     { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 22.5, color: t.ink },
+    ob_tick:         { fontFamily: F.body(600), fontSize: 12.5, color: t.pine },
+    ob_rule:         { borderTopWidth: 1, marginTop: 18, marginBottom: 14 },   // colour: t.line
+    login_kicker:    { fontFamily: F.mono(500), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 1.89,
+                       textTransform: UP, color: t.pine, marginBottom: 8 },
+    login_q:         { fontFamily: F.display(600), fontSize: 23, lineHeight: 26.45, color: t.ink,
+                       marginBottom: 10 },
+    fr_secure:       { fontFamily: F.body(400), fontSize: 12, lineHeight: 18.6, color: t.ink_soft },
+    lgl_link:        { fontFamily: F.body(400), fontSize: 12, lineHeight: 18.6, color: t.pine,
+                       textDecorationLine: "underline" },
+
     /* ── subject bands (.sc-bands / .sc-band / .sc-band-hd) — the web's 2026-08-30 grouping ──
        Only a teacher with MORE THAN ONE subject sees any of this; a one-subject list keeps the
        plain `sc_list` and renders none of it. The subject is a STRUCTURAL label, so it takes the

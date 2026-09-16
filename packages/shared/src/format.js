@@ -136,6 +136,24 @@ export async function postJSON(path, body) {
   return r.json();
 }
 
+/* ───────── the two refusals the CREATE door can give (lifted 2026-09-16) ─────────
+ * Both surfaces now import these; the phone had re-declared the mobile one in its own words.
+ * ⚠️ A client-side copy exists only because the early check (`/onboarding/known`) has no sentence
+ * of its own to return — the SERVER's text stays the authority on the Pay path. If one is
+ * reworded, reword both: `api/main.py _guard_email_not_taken`.
+ */
+export const EMAIL_TAKEN =
+  "This email is already in use by another Meyy account. Use a different address.";
+/* ★ Founder, 2026-08-26, re-confirmed 2026-09-16 (Q21b): this screen CREATES a sign-in, so its
+ * refusal stays inside that job — "use a different number". An earlier cut sent her to the sign-in
+ * door with a link, and the phone had shipped exactly that wording ("…Tap Sign in below."). It is
+ * wrong for two reasons: she is standing at the CREATE door and the instruction there is to create;
+ * and whoever typed the number is told that this number holds an account, which is not theirs to
+ * learn. */
+export const MOBILE_TAKEN =
+  "This mobile number is already in use. Create using a different number.";
+
+
 /* ── "ALREADY IN USE" — one answer for the front door and the profile alike ──
  * Mobile and email are both CREDENTIALS (A5, 2026-08-26): a second account may never take
  * one that is already held. `/onboarding/known` answers for either shape and deliberately

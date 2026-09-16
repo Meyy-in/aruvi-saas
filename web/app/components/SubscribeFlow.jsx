@@ -7,18 +7,14 @@ import Dropdown from "./Dropdown";
 import MeyyMark from "./MeyyMark";
 import { dateWords as consentDateWords } from "../lib/legalmd";
 
-/* The "already in use" sentence, said the same way wherever a credential clashes
- * (founder, 2026-08-26). Deliberately the SAME words the server's 409 carries — this
- * client-side copy exists only because the early check (/onboarding/known) has no
- * sentence of its own to return; the server's text stays the authority on the Pay path.
- * If one is reworded, reword both: api/main.py `_guard_email_not_taken`. */
-export const EMAIL_TAKEN =
-  "This email is already in use by another Meyy account. Use a different address.";
-/* Founder, 2026-08-26: this screen CREATES a sign-in, so its refusal stays inside that
- * job — "use a different number". The first cut sent her to the sign-in door with a
- * link; she is standing at the create door, and the instruction there is to create. */
-export const MOBILE_TAKEN =
-  "This mobile number is already in use. Create using a different number.";
+/* ★ THE TWO "already in use" SENTENCES MOVED to @aruvi/shared/format (2026-09-16), so the phone stops re-declaring
+ * the mobile one in its own words (Q21b). The reasoning travelled with them; this re-export keeps
+ * every existing import in this repo working. */
+/* ⚠️ Imported AND re-exported: `export … from` alone serves importers without binding the names
+ * in this module's own scope, and the email path below calls EMAIL_TAKEN (the PPW_CHOICES /
+ * setupKey lesson, third sighting). */
+import { EMAIL_TAKEN, MOBILE_TAKEN } from "../lib/format";
+export { EMAIL_TAKEN, MOBILE_TAKEN };
 
 /* ── The subscribe wizard: About you → Agreement → Subjects & stages → Pay ──
  *

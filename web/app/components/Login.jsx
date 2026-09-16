@@ -219,8 +219,15 @@ export default function Login({ onEnter }) {
             <span>Enter your mobile number</span>
             <div className="ob-mobile-row">
               <span className="ob-cc">+91</span>
+              {/* ★ ONCE THE CODE IS IN FLIGHT, THE NUMBER IS FIXED (founder, 2026-09-16, Q21a —
+                  the phone had done this since it was built and the divergence was unnamed).
+                  The OTP was sent TO this number, so a field she can still edit under the boxes
+                  is a field that lies about where the code went — and the verify call would be
+                  checking a code against a number that no longer matches what she is reading.
+                  "Back" is the way to change it, which re-sends. `flow === "return"` locks it for
+                  the other reason: there the number came from her account, not from her. */}
               <input type="tel" inputMode="numeric" maxLength={10} value={mobile}
-                readOnly={flow === "return"}
+                readOnly={flow === "return" || otpSent}
                 onChange={(e) => { setMobile(e.target.value.replace(/\D/g, "")); setMobErr(""); }}
                 placeholder="Enter mobile number" />
             </div>
