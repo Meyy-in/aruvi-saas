@@ -94,13 +94,23 @@ export default function SettingsHome() {
   const saveMarketing = (next) => {
     const before = marketing;
     setMarketing(next); setMktBusy(true); setMktNote("");
-    postJSON("/account/marketing-email", { marketing_email: next })
+    /* ⚠️ `enabled`, NOT `marketing_email` — the API's body is `MarketingPref {enabled: bool}`
+       (api/main.py:2102) and the web has always sent that. The first port read the field name
+       off the GET /account RESPONSE, where it IS `marketing_email`, and the two are simply not
+       the same shape. Reported live on the handset, 2026-09-16: FastAPI rejected every tick
+       with a 422. */
+    postJSON("/account/marketing-email", { enabled: next })
       .then(() => setMktNote(next
         ? "Saved — you’ll hear from us occasionally."
         : "Saved — no more marketing emails."))
       .catch((e) => {
         setMarketing(before);
-        setMktNote(String((e && e.message) || "") || "Couldn’t save that just now — try again.");
+        /* ★ `e.detail`, never `e.message`. `postJSON` puts the SERVER's sentence in `detail`
+           for a 4xx and leaves it empty otherwise, while `message` falls back to the bare
+           status code — which is how a teacher came to be shown the word "422". A status code
+           is not a sentence. ⚠️ A 422's own detail is a LIST of validation errors, not a
+           string, so `detail` is empty there too and the fallback is what she reads. */
+        setMktNote((e && e.detail) || "Couldn’t save that just now — try again.");
       })
       .finally(() => setMktBusy(false));
   };

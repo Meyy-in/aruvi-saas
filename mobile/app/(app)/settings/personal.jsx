@@ -84,7 +84,7 @@ export default function PersonalProfile() {
       .catch((e) => {
         /* The SERVER'S OWN SENTENCE on a 4xx: a 409 here means the address belongs to another
            account, and "try again" is advice that can never work for it. */
-        setNote(String((e && e.message) || "") || "Couldn’t save right now — try again.");
+        setNote((e && e.detail) || "Couldn’t save right now — try again.");
       })
       .finally(() => setBusy(false));
   };
