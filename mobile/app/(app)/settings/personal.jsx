@@ -104,8 +104,11 @@ export default function PersonalProfile() {
   if (!acct) return <Text style={[ws.fr_loading, { padding: 18 }]}>Loading…</Text>;
 
   return (
+    /* Same keyboard rule as Support (2026-09-16): without this the trailing Save sits below a
+       scroll range the keyboard does not extend, so it cannot be reached while a field is
+       focused. Not reported here — fixed because it is the identical shape. */
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 6 }]}
-      keyboardShouldPersistTaps="handled">
+      keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* No heading — the Settings bar names this screen. Labels ABOVE the boxes (founder,
           2026-08-26: placeholder-only left fields ambiguous once filled). */}
       <Field label="Your name">

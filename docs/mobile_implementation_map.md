@@ -839,7 +839,9 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   owes both fixes.** `GET /support`'s `requests` stays unread by decision (the history list was struck on
   the web on 2026-09-04: an email channel's record lives in her inbox, and a list that omits half of it
   reads as "they lost it"). **Walked** on Expo web at 625 and at 360×800 (Send's bottom edge at 615px,
-  inside the fold) and sent live against Render — **MEY-S-753**, case stored, screen correct. ⚠️ **But
+  inside the fold — but see the KEYBOARD rule in §3: on the handset the keyboard buried Send until
+  `automaticallyAdjustKeyboardInsets` landed, which no width check can catch) and sent live against
+  Render — **MEY-S-753**, case stored, screen correct. ⚠️ **But
   NO MAIL WENT** — see the file-outbox trap below; the screen's "a copy is on its way" was the API's
   claim, not a verified delivery. Not walked: the >3,500 counter and the error line.
 - **G. Legal** (G1-G5): pinned pill band Agreement | Privacy; Agreement READ mode over `Markdown.jsx`
@@ -1030,6 +1032,17 @@ Real SMS (DLT) is the external long pole and is outside this map (Track B).
   instead of a shell) or a phone capability (share sheet, OTP autofill, AppState refresh) — and each is named
   in the component header. Anything else in the "Open questions" lists is a product change and waits for the
   founder.
+- **★ A SCROLLER WHOSE LAST CONTROL IS A CTA NEEDS `automaticallyAdjustKeyboardInsets`** (founder, on the
+  handset, 2026-09-16: Support's "Send message" was hidden while the message box had the cursor). The button
+  was not merely COVERED — it was **unreachable**: `ws.main` ends the content at 72px of bottom padding, and
+  raising the keyboard does not extend the scroll range, so no amount of dragging brings it above the
+  keyboard. This is a phone-only failure the web cannot have and the Expo WEB target cannot show, so it
+  survives every parity pass and only appears on a handset. ⚠️ Not the `KeyboardAvoidingView` the three
+  MODAL sites use (login, AttachSheet, ChapterOrg) — those lift a card that has nowhere to scroll; a screen
+  inside the Stack under two bars is where a KAV needs a `keyboardVerticalOffset` and starts guessing.
+  Fixed in `settings/support.jsx` and `settings/personal.jsx`. ⚠️ **`app/(app)/prepare.jsx:391` is the
+  same shape** (a `ScrollView` with a `TextInput` at 450 and content below) and is UNFIXED — it belongs to a
+  walked family and was not reported, so it is recorded rather than changed. Check it on the handset.
 - **One function, both surfaces.** Any arithmetic the phone needs that lives in a web JSX file is lifted to
   `packages/shared` first, with a node test, and the web re-imports it (`budget.js` is the template;
   `wheels.jsx:434-483` is next). The 2026-08-21 Year Plan defect (14 vs 19) is the reason.

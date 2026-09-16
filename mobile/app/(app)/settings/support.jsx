@@ -189,8 +189,19 @@ export default function Support() {
   }
 
   return (
+    /* ★ THE KEYBOARD MUST NOT BURY SEND (founder, 2026-09-16, on the handset: "when the cursor
+       is in the message box, it hides the 'Send message' button"). And it was not merely
+       COVERED — it was unreachable: the content ends at `ws.main`'s 72px bottom padding, so
+       raising the keyboard does not extend the scrollable range and no amount of dragging
+       brings the button above it. `automaticallyAdjustKeyboardInsets` is the precise answer:
+       iOS insets the scroll view by the keyboard's height, so the last control scrolls into
+       view like any other content. ⚠️ NOT the `KeyboardAvoidingView` the three modal sites use
+       (login, AttachSheet, ChapterOrg) — those LIFT a card that has nowhere to scroll; here the
+       screen is already a scroller inside a Stack under two bars, which is where a KAV needs a
+       `keyboardVerticalOffset` and starts guessing. If this ever stops working on a future SDK,
+       the KAV wrap is the fallback, not the first choice. */
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}
-      keyboardShouldPersistTaps="handled">
+      keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* 1 · the fast door first */}
       <Text style={[ws.set_hint, { color: t.ink_soft, marginTop: 0 }]}>
         Most questions about how Meyy works are answered straight away by Ask Meyy. For anything
