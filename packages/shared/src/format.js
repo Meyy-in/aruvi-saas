@@ -91,6 +91,17 @@ export function withUser(opts = {}) {
   const t = getAccessToken();
   if (t) headers["Authorization"] = `Bearer ${t}`;
   if (user) headers["X-Aruvi-User"] = user;
+  /* ★ NEVER SERVE ONE TEACHER A STORED ANSWER (2026-09-16). Every response from this API is
+     about ONE teacher and can change the moment she or the founder changes it, and the API sends
+     no `Cache-Control` at all — its only headers are content-type and content-length. A browser
+     treats that as "do not reuse"; iOS's NSURLSession is far more willing to reuse an unmarked
+     GET, so the phone can go on showing a figure the server has already changed. A plain REQUEST
+     header is the portable lever: React Native's fetch is XHR underneath and IGNORES the `cache`
+     option, but it sends headers like any other. Costs no extra round trip — `Authorization`
+     already forces a CORS preflight on the web, so the preflight was happening anyway.
+     ⚠️ `no-cache` (revalidate), not `no-store`: a 304 must stay cheap, which is what
+     `/ask-aruvi`'s ETag depends on. The server says `no-store` for the rest; see api/main.py. */
+  headers["Cache-Control"] = "no-cache";
   return { ...opts, headers };
 }
 

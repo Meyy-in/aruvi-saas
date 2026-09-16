@@ -16,6 +16,7 @@
  */
 import { View, Pressable } from "react-native";
 import { Text } from "./Text";
+import GearIcon from "./GearIcon";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -42,7 +43,7 @@ export default function SettingsBar({ label, onClose }) {
   return (
     <View style={ws.set_bar}>
       <View style={ws.set_bar_title}>
-        <Text style={[ws.set_bar_gear, { color: t.ink_soft }]}>⚙</Text>
+        <GearIcon color={t.ink_soft} size={20} />
         <Text style={[ws.set_bar_lab, { color: t.ink }]} numberOfLines={1}>{label}</Text>
       </View>
       <Pressable onPress={onClose} accessibilityRole="button"

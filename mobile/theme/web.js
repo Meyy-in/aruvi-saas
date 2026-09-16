@@ -50,6 +50,9 @@ export function webStyles(t, scheme = "light") {
     hdr_brand:       { flexDirection: "column" },
     hdr_user:        { flexDirection: "row", alignItems: "center", columnGap: 14, marginLeft: "auto" },
     hdr_gear:        { fontSize: 18, lineHeight: 22, padding: 4, color: t.bar_ink_soft },
+    /* The gear is an SVG on this surface (components/GearIcon.jsx — iOS renders ⚙ as a
+       colour emoji), so what is left of `.hdr-gear` here is its 4px hit padding. */
+    hdr_gear_pad:    { padding: 4 },
     hdr_user_id:     { flexDirection: "column", alignItems: "flex-end", rowGap: 2 },
     hdr_user_name:   { fontFamily: F.mono(400), fontSize: 11, lineHeight: 17.05, letterSpacing: 0.33, color: t.bar_ink },
     hdr_user_logout: { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13, letterSpacing: 0.6,

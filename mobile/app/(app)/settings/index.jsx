@@ -21,9 +21,9 @@
  * with no handler renders at half strength and does not respond, which is the gear's own idiom
  * from before it was lit.
  */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { Text } from "../../../components/Text";
 import { getJSON, postJSON } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
@@ -82,12 +82,21 @@ export default function SettingsHome() {
   const [marketing, setMarketing] = useState(null);
   const [mktBusy, setMktBusy] = useState(false);
   const [mktNote, setMktNote] = useState("");
-  useEffect(() => {
+  /* ★ ON FOCUS, NOT ONLY ON MOUNT (founder, 2026-09-16, on the handset: the Marketing emails box
+     showed ticked when the account says it is not). A `useEffect([])` reads ONCE — and this
+     screen is never unmounted while she is inside Settings, because the subviews are PUSHED on
+     top of it. So every value on this list is whatever it was when she first arrived: change
+     something in a subview, or on the web, or from a terminal, come back, and the list is still
+     telling her the old answer. My Classes and My Lessons have used `useFocusEffect` for exactly
+     this since step 4; the Settings home never got it, and the web has no equivalent bug because
+     its `syncTick` re-runs the same read. */
+  const loadAccount = useCallback(() => {
     let live = true;
     getJSON("/account").then((a) => { if (live && a) setMarketing(!!a.marketing_email); })
       .catch(() => {});
     return () => { live = false; };
   }, []);
+  useFocusEffect(loadAccount);
 
   /* Optimistic, with a rollback: the tick is the answer, so it moves at once and goes back if
      the server refuses. Saved ON TAP — there is no Save button on a switch. */

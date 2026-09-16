@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MeyyMark from "./MeyyMark";
 import { getUser } from "@aruvi/shared/format";
 import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
+import GearIcon from "./GearIcon";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { endSession } from "../lib/session";
@@ -94,7 +95,7 @@ export default function Bar({ user = getUser(), onSettings = null, gear = true }
             {gear ? (
               <Pressable onPress={onSettings || undefined} disabled={!onSettings} hitSlop={8}
                 accessibilityRole="button" accessibilityLabel="Settings">
-                <Text style={ws.hdr_gear}>⚙</Text>
+                <View style={ws.hdr_gear_pad}><GearIcon color={t.bar_ink_soft} size={18} /></View>
               </Pressable>
             ) : null}
             <View style={ws.hdr_user_id}>

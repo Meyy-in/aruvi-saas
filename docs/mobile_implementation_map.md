@@ -1067,6 +1067,21 @@ Real SMS (DLT) is the external long pole and is outside this map (Track B).
   a subscription card stacks FIVE of them — a ledger became a list. A key is the CSS rule and
   nothing else; spacing that belongs to one screen goes at that screen's call site (`set_card_inset`
   is the pattern). When a second screen adopts a key, re-read the rule before trusting the key.
+- **★ A CHARACTER THAT HAS AN EMOJI FORM WILL BE AN EMOJI ON iOS** (founder screenshot,
+  2026-09-16). `⚙` in the two bars rendered Apple's metallic 3D gear on the handset while the web
+  drew a flat glyph in `--ink-soft` — and `color` was doing nothing either, because an emoji
+  ignores it. Proven off the screenshot's pixels: ~2,000 colours and a 38-point channel spread in
+  the gear, against 222 colours and a spread of 9 in the word beside it. The answer is to DRAW it
+  (`components/GearIcon.jsx`, the bottom nav's idiom), not a variation selector — U+FE0E works
+  only where a text glyph exists in an installed font, so it fails differently per device.
+  ⚠️ Audit any remaining glyph with an emoji form (✓ ✗ ✔ ➕ ⭐ ⚠ ◀ ▶) before trusting it on a
+  handset; a plain arrow, chevron or ✕ is safe. The web keeps the character — a named divergence.
+- **★ A SCREEN THAT IS NEVER UNMOUNTED READS ITS DATA ONCE.** Settings' subviews are PUSHED on top
+  of the home list, so `useEffect([])` there meant every value on that list was whatever it was
+  when she first arrived — change it in a subview, on the web, or from a terminal, come back, and
+  the list still tells her the old answer. `useFocusEffect` is the app's own idiom for this (My
+  Classes and My Lessons since step 4) and the web has no equivalent bug because its `syncTick`
+  re-runs the read. Check it on any screen you can return to without remounting.
 - **One function, both surfaces.** Any arithmetic the phone needs that lives in a web JSX file is lifted to
   `packages/shared` first, with a node test, and the web re-imports it (`budget.js` is the template;
   `wheels.jsx:434-483` is next). The 2026-08-21 Year Plan defect (14 vs 19) is the reason.
