@@ -26,8 +26,19 @@ const EXTRA = ["setup_check_pending_", "mylessons_subject_", "mylessons_class_",
  * and one you can only re-observe.
  * ⚠️ It is a `warn`, not a `log`: ending a session is never routine. */
 export async function endSession(router, reason = "unknown") {
+  await clearSession(reason);
+  router.replace("/login");
+}
+
+/* ★ THE SAME ACT WITHOUT THE NAVIGATION (6b·H, 2026-09-16). An ERASURE has to clear the device
+ * the moment the receipt arrives — the account no longer exists — but the farewell must stay on
+ * screen to be read, so this half cannot move her. The web learnt it live on 2026-09-13: its
+ * farewell was the only thing between a deleted account and the shell, and the Settings bar's ✕
+ * sat directly above it knowing nothing, so closing that way returned her to a fully-rendered My
+ * Classes for an account the server had already destroyed. The receipt is the moment of death;
+ * "Done" is only the way out of the room. */
+export async function clearSession(reason = "unknown") {
   console.warn(`[meyy] session ended — ${reason}`);
   await signOutAuth();
   clearTeacherCaches(EXTRA);
-  router.replace("/login");
 }

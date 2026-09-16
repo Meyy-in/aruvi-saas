@@ -1219,6 +1219,38 @@ export function webStyles(t, scheme = "light") {
     lgl_box_t:       { fontFamily: F.mono(400), fontSize: 12, lineHeight: 18.6 },
     lgl_box_on_t:    { fontSize: 14, lineHeight: 21.7 },
 
+    /* ── The delete flow (`.acct-*`, globals.css 4239-4346) — 6b·H, measured 2026-09-16 ────
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    acct_del:        { marginTop: 14, borderWidth: 1, borderRadius: 8,
+                       paddingVertical: 12, paddingHorizontal: 14 },
+    acct_del_warn:   { fontFamily: F.body(400), fontSize: 13, lineHeight: 19.5,
+                       marginBottom: 10 },
+    acct_del_cancel: { padding: 6 },
+    acct_del_cancel_t: { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 19.375 },
+    acct_final_t:    { fontFamily: F.display(500), fontSize: 19, lineHeight: 23.75,
+                       marginTop: 4, marginBottom: 10 },
+    acct_final_p:    { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15,
+                       marginBottom: 14 },
+    /* Quieter than the warning above it — a nudge to save something, not another statement
+       of what is about to be destroyed. */
+    acct_final_inv:  { fontSize: 12.5, lineHeight: 19.375 },
+    acct_final_dl:   { width: "100%", alignItems: "center", paddingVertical: 9,
+                       paddingHorizontal: 12, marginBottom: 14, borderWidth: 1,
+                       borderRadius: 6 },
+    acct_final_dl_t: { fontFamily: F.mono(400), fontSize: 11.5, lineHeight: 17.825,
+                       letterSpacing: 0.46 },
+    acct_final_check:{ flexDirection: "row", columnGap: 9, alignItems: "flex-start",
+                       padding: 10, borderWidth: 1, borderRadius: 6 },
+    acct_final_check_t: { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13,
+                          lineHeight: 18.85 },
+    acct_final_note: { fontFamily: F.body(400, true), fontSize: 11.5, lineHeight: 17.825,
+                       marginTop: 8, marginBottom: 14 },
+    acct_final_row:  { flexDirection: "row", columnGap: 8, rowGap: 8, flexWrap: "wrap",
+                       alignItems: "center" },
+    acct_farewell:   { fontFamily: F.body(400), fontSize: 14, lineHeight: 21.7,
+                       marginTop: 10, marginBottom: 16 },
+    acct_bye:        { maxWidth: 200 },
+
     /* The typed-confirm block for account deletion. */
     acct_del_row:    { flexDirection: "row", alignItems: "center", columnGap: 8, rowGap: 8,
                        flexWrap: "wrap" },

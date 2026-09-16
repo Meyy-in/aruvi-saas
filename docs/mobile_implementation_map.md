@@ -887,8 +887,17 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
 - **G. Legal** (G1-G5): pinned pill band Agreement | Privacy; Agreement READ mode over `Markdown.jsx`
   ("Legal Agreement with User" · "✓ Accepted on {date} · version {v}" · intro + five `.lgl-ack` blocks ·
   version line) from `GET /legal/consent`; PrivacyNotice with the full version line and `?version=`.
-- **H. About, farewell, delete** (H1-H6): typed "erase" → "Last step" modal → `POST /data-rights/erase` →
-  receipt card; the delete-flow Word export via F9; both exits sign out (`onErased`, app. 01 row 23).
+- **H. About, farewell, delete** (H1-H6)  ✅ **DONE 2026-09-16** — two gates and a receipt, on the
+  Settings HOME list rather than a route of its own, because the receipt REPLACES the whole
+  screen and a pushed route would leave the list underneath it for an account the server has
+  already destroyed. ★ `lib/session.js` gained **`clearSession()`** — `endSession()` without the
+  navigation — so the device is cleared the moment the receipt arrives while the farewell stays
+  on screen to be read (the web's 2026-09-13 lesson, ported before it could be re-learnt).
+  **Walked to the last window**; ⚠️ **the erase POST and the farewell are UNWALKED and must stay
+  so until there is a disposable account** — reaching them destroys the one being tested.
+  ★ **6b IS NOW COMPLETE** (A-H). What is still owed in this family: the FRONT DOOR's subscribe
+  path (Login's, with the Trial/Subscribe fork), and 6c's Ask Meyy — which is blocked on
+  `GET /ask-aruvi` returning **503** from Render, a deploy gap rather than a code one.
 - **F11 Dropdown** (J1-J8): three live Settings uses; a `Sheet`-based picker styled to `.dd-btn` / `.dd-pop`.
 
 **web.js:** `set_*`, `acct_*`, `lgl_*`, `dd_*`, `ob_email_view/addr`, `sup_*` and (6b·D)

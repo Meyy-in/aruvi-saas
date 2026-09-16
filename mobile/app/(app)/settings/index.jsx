@@ -25,9 +25,13 @@ import { useCallback, useEffect, useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Text } from "../../../components/Text";
-import { getJSON, postJSON } from "@aruvi/shared/format";
+import { API, getJSON, postJSON, withUser } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
-import { endSession } from "../../../lib/session";
+import { clearSession, endSession } from "../../../lib/session";
+import { downloadDocument, dataExport } from "../../../lib/download";
+import { hasDownloaded, markDownloaded } from "../../../lib/dataRights";
+import { Sheet } from "../../../components/AttachSheet";
+import { Button, Input } from "../../../components/ui";
 import Checkbox from "../../../components/Checkbox";
 import ThemeToggle from "../../../components/ThemeToggle";
 import { useTheme } from "../../../theme/ThemeContext";
@@ -83,6 +87,61 @@ export default function SettingsHome() {
   const [marketing, setMarketing] = useState(null);
   const [mktBusy, setMktBusy] = useState(false);
   const [mktNote, setMktNote] = useState("");
+
+  /* ── The delete flow (6b·H) — two gates and a receipt ───────────────────────────────────
+     ★ TWO GATES, SAYING DIFFERENT THINGS. Typing "erase" states INTENT; the last window states
+     that she HAS HER DATA. Deletion is irreversible and the export is the only copy she can
+     keep, so the download stops being a suggestion and becomes a question she must answer — and
+     her answer is recorded server-side, in a log that outlives the erasure.
+     ★ IT LIVES ON THIS LIST, not on a route of its own, because the RECEIPT replaces the whole
+     screen. A pushed route would leave the Settings list underneath it, for an account the
+     server has already destroyed. */
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [finalOpen, setFinalOpen] = useState(false);
+  const [downloadConfirmed, setDownloadConfirmed] = useState(false);
+  const [busy, setBusy] = useState("");            // "docx" | "erase" | ""
+  const [failMsg, setFailMsg] = useState("");
+  const [receipt, setReceipt] = useState(null);
+
+  /* Download site #4. ⚠️ WORKS ON TRIAL, unlike the Your-data card — this is the one export a
+     trial teacher keeps, and G3's whole promise is that she has it before anything is
+     destroyed. */
+  const downloadFirst = () => {
+    setBusy("docx"); setFailMsg("");
+    downloadDocument(dataExport("docx"))
+      .then(() => markDownloaded())
+      .catch(() => setFailMsg(
+        "Couldn’t prepare your download right now. Try again in a moment."))
+      .finally(() => setBusy(""));
+  };
+
+  const erase = async () => {
+    if (confirmText.trim().toLowerCase() !== "erase") return;
+    if (!downloadConfirmed) { setFinalOpen(true); return; }
+    setBusy("erase"); setFailMsg("");
+    try {
+      const r = await fetch(`${API}/data-rights/erase`, withUser({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: "erase", downloaded_confirmed: true }),
+      }));
+      if (!r.ok) throw new Error(String(r.status));
+      const got = await r.json();
+      setFinalOpen(false);
+      setReceipt(got);
+      /* ★ THE SESSION ENDS HERE, NOT AT "DONE" (the web found this live on 2026-09-13). The
+         account is gone the moment the receipt arrives, so the device is cleared now and the
+         farewell simply stays on screen to be read. Leaving it until Done meant every other
+         exit — the bar's ✕, the bottom nav — led back into a fully-rendered app for an account
+         that no longer existed. `clearSession` is `endSession` without the navigation. */
+      clearSession("settings: account erased");
+    } catch {
+      setFailMsg("Couldn’t delete the account right now. Nothing was removed — try again.");
+    } finally {
+      setBusy("");
+    }
+  };
   /* ★ ON FOCUS, NOT ONLY ON MOUNT (founder, 2026-09-16, on the handset: the Marketing emails box
      showed ticked when the account says it is not). A `useEffect([])` reads ONCE — and this
      screen is never unmounted while she is inside Settings, because the subviews are PUSHED on
@@ -124,6 +183,22 @@ export default function SettingsHome() {
       })
       .finally(() => setMktBusy(false));
   };
+
+  /* The farewell replaces everything. No bar item, no list — there is nothing left to go back
+     to, and "Done" is the only control on screen. */
+  if (receipt) {
+    return (
+      <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
+        <Text style={[ws.acct_farewell, { color: t.ink }]}>
+          Your account and all your data have been deleted.
+          {Array.isArray(receipt.kept) && receipt.kept.length > 0
+            ? " Backup copies are purged within 30 days." : ""}
+        </Text>
+        <Button title="Done" style={ws.acct_bye}
+          onPress={() => router.replace("/login")} />
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
@@ -179,9 +254,98 @@ export default function SettingsHome() {
           {!onTrial ? <Row label="Your data & export"
             onPress={() => router.push("/settings/data")} /> : null}
           <Row label="Log out" onPress={() => endSession(router, "settings: Log out")} />
-          <Row label="Delete my account…" danger last />
+          <Row label="Delete my account…" danger last
+            onPress={() => { setConfirmOpen(true); setConfirmText(""); }} />
         </View>
       </View>
+
+      {/* Gate 1 — intent, typed. Inline under the card, framed in danger, as on the web. */}
+      {confirmOpen ? (
+        <View style={[ws.acct_del, { borderColor: t.danger }]}>
+          <Text style={[ws.acct_del_warn, { color: t.ink }]}>
+            This permanently deletes your account and all your data — it cannot be recovered
+            afterwards. Type <Text style={ws.lgl_b}>erase</Text> to continue; we’ll ask you to
+            confirm you have your data before anything is deleted.
+          </Text>
+          <View style={ws.acct_del_row}>
+            <Input value={confirmText} onChangeText={setConfirmText} autoFocus
+              autoCapitalize="none" autoCorrect={false} placeholder={'Type "erase"'}
+              style={[ws.acct_del_input, { color: t.ink }]} />
+            <Pressable
+              disabled={busy === "erase" || confirmText.trim().toLowerCase() !== "erase"}
+              onPress={erase} accessibilityRole="button"
+              style={[ws.acct_del_go, { backgroundColor: t.danger,
+                                        opacity: confirmText.trim().toLowerCase() === "erase"
+                                          ? 1 : 0.45 }]}>
+              <Text style={[ws.acct_del_go_t, { color: t.paper }]}>Continue →</Text>
+            </Pressable>
+            <Pressable onPress={() => { setConfirmOpen(false); setConfirmText(""); }}
+              accessibilityRole="button" style={ws.acct_del_cancel}>
+              <Text style={[ws.acct_del_cancel_t, { color: t.ink_soft }]}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
+
+      {failMsg ? (
+        <Text accessibilityRole="alert" style={[ws.acct_fail, { color: t.danger }]}>{failMsg}</Text>
+      ) : null}
+
+      {/* Gate 2 — "do you have your data?", as a window, because it is the last thing between
+          her and an irreversible act and nothing else should be reachable behind it. */}
+      {finalOpen ? (
+        <Sheet visible scroll onClose={() => { setFinalOpen(false); setDownloadConfirmed(false); }}
+          kicker="Last step" title="Have you downloaded your Meyy data?">
+          <Text style={[ws.acct_final_p, { color: t.ink_soft }]}>
+            Everything — your lesson plans, your teaching profile, your chapter notes and your
+            progress — is deleted permanently and cannot be recovered. The download is the only
+            copy you can keep.
+          </Text>
+          {/* Invoices are the one thing deletion does NOT destroy — they are tax records with a
+              statutory retention. But she loses the ACCOUNT that reaches them, so the honest
+              thing is to tell her to save them now. */}
+          <Text style={[ws.acct_final_p, ws.acct_final_inv, { color: t.ink_soft }]}>
+            Your invoices are kept as tax records, but you will no longer be able to download
+            them here — save any you need from Subscription & billing first.
+          </Text>
+          {!hasDownloaded() ? (
+            <Pressable onPress={busy ? undefined : downloadFirst} disabled={!!busy}
+              accessibilityRole="button"
+              style={[ws.acct_final_dl, { borderColor: t.pine, opacity: busy ? 0.5 : 1 }]}>
+              <Text style={[ws.acct_final_dl_t, { color: t.pine }]}>
+                {busy === "docx" ? "Preparing…" : "Download my data first (Word)"}</Text>
+            </Pressable>
+          ) : null}
+          <Pressable onPress={() => setDownloadConfirmed((v) => !v)}
+            accessibilityRole="checkbox" accessibilityState={{ checked: downloadConfirmed }}
+            style={[ws.acct_final_check, { borderColor: t.line, backgroundColor: t.field_bg }]}>
+            {/* Clay, not pine — the web's `accent-color: var(--clay)` on this one input: it is
+                a confirmation attached to a destructive act, not an ordinary preference. */}
+            <Checkbox checked={downloadConfirmed} tone="clay" />
+            <Text style={[ws.acct_final_check_t, { color: t.ink }]}>
+              I confirm I have downloaded my Meyy data.</Text>
+          </Pressable>
+          <Text style={[ws.acct_final_note, { color: t.ink_soft }]}>
+            Your confirmation is recorded against your account.
+          </Text>
+          {failMsg ? (
+            <Text accessibilityRole="alert" style={[ws.acct_fail, { color: t.danger }]}>{failMsg}</Text>
+          ) : null}
+          <View style={ws.acct_final_row}>
+            <Pressable disabled={!downloadConfirmed || busy === "erase"} onPress={erase}
+              accessibilityRole="button"
+              style={[ws.acct_del_go, { backgroundColor: t.danger,
+                                        opacity: downloadConfirmed ? 1 : 0.45 }]}>
+              <Text style={[ws.acct_del_go_t, { color: t.paper }]}>
+                {busy === "erase" ? "Deleting…" : "Delete forever"}</Text>
+            </Pressable>
+            <Pressable onPress={() => { setFinalOpen(false); setDownloadConfirmed(false); }}
+              accessibilityRole="button" style={ws.acct_del_cancel}>
+              <Text style={[ws.acct_del_cancel_t, { color: t.ink_soft }]}>Cancel</Text>
+            </Pressable>
+          </View>
+        </Sheet>
+      ) : null}
     </ScrollView>
   );
 }

@@ -17,8 +17,10 @@
  * the agreement's five acknowledgement ticks, its final tick, its optional marketing tick — and
  * the delete flow's "I confirm I have downloaded my data" when that lands.
  *
- * `tone="soft"` is the web's `.lgl-check-opt input { accent-color: var(--ink-soft) }` — the
- * OPTIONAL tick is drawn quieter than the required ones, on purpose.
+ * `tone` is the web's per-input `accent-color`, which really does differ by site and says
+ * something each time: `soft` for `.lgl-check-opt` (the OPTIONAL tick, drawn quieter than the
+ * required ones) and `clay` for `.acct-final-check` (a confirmation attached to a destructive
+ * act, not an ordinary preference). Default pine.
  */
 import { View } from "react-native";
 import { Text } from "./Text";
@@ -26,7 +28,7 @@ import { useTheme } from "../theme/ThemeContext";
 
 export default function Checkbox({ checked, size = 22, tone = "pine", busy = false }) {
   const { t } = useTheme();
-  const on = tone === "soft" ? t.ink_soft : t.pine;
+  const on = tone === "soft" ? t.ink_soft : tone === "clay" ? t.clay : t.pine;
   return (
     <View style={{ width: size, height: size, borderRadius: 4, borderWidth: 1.5,
                    alignItems: "center", justifyContent: "center",
