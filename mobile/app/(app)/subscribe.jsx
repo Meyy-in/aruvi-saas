@@ -36,7 +36,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { Text, TextInput } from "../../components/Text";
-import { API, getJSON, postJSON, withUser, pretty, stageOfGrade, idInUse,
+import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
          ROLES, STATES, EMAIL_OK, EMAIL_TAKEN } from "@aruvi/shared/format";
 import { dateWords } from "@aruvi/shared/legalmd";
 import { invalidateEntitlement } from "@aruvi/shared/entitlement";
@@ -94,7 +94,16 @@ export default function Subscribe() {
   const ws = useWebStyles();
   const router = useRouter();
 
-  const [screen, setScreen] = useState("about");     // about | agreement | cart | pay
+  /* ★ NULL UNTIL WE KNOW WHICH SCREEN THIS IS (founder, 2026-09-16: "pressing 'add subjects &
+     stages' momentarily pops up profile (tell us something about you) page and then the
+     subscription page"). It used to start at "about" and be MOVED by the /account answer, so
+     every subscriber adding a subject met a personal-details form for one frame — a form she
+     had never asked for and which then vanished, which reads as a glitch and, worse, as though
+     Meyy had forgotten her. The entry screen is a DECISION, and a decision cannot be painted
+     before it is made. The shell's activation gate holds on bare paper for exactly this reason. */
+  const [screen, setScreen] = useState(null);       // null | about | agreement | cart | pay
+  /* null = the account has not answered yet; true = her details are complete. */
+  const [profileKnown, setProfileKnown] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [email2, setEmail2] = useState("");
@@ -141,13 +150,23 @@ export default function Subscribe() {
       if (a.state) setStateName(a.state);
       if (a.city) setCity(a.city);
       if (a.school_name) setSchool(a.school_name);
-      if (looksReal && a.email && a.role && a.state) {
-        setScreen("agreement");
-        setSkippedAbout(true);
-      }
-    }).catch(() => {});
+      setProfileKnown(!!(looksReal && a.email && a.role && a.state));
+    }).catch(() => { if (live) setProfileKnown(false); });
     return () => { live = false; };
   }, []);
+
+  /* ── Where she starts, decided once both answers are in ──────────────────────────────
+     Waiting for the CONSENT answer too is what keeps the second flash away: a known profile
+     goes to the agreement, which forwards itself to the cart, so deciding on the account alone
+     would paint the agreement for a frame instead of the profile. One decision, one paint. */
+  useEffect(() => {
+    if (screen !== null || profileKnown === null || consent === null) return;
+    if (!profileKnown) { setScreen("about"); return; }
+    /* Remember that About-you was SKIPPED: Back should undo what she did, and what she did was
+       open the chooser — not walk into a details form she was never shown. */
+    setSkippedAbout(true);
+    setScreen(consent.accepted ? "cart" : "agreement");
+  }, [screen, profileKnown, consent]);
 
   /* Ask once. A failure leaves consent at a NOT-accepted shape rather than null: if we cannot
      tell whether she has signed, the honest move is to show her the agreement, not to wave her
@@ -177,17 +196,9 @@ export default function Subscribe() {
       setOwned(d && d.status === "trial" ? [] : live.filter((s) => s !== "*"));
       setTrialChapters(d && d.status === "trial" ? (d.trial_chapters || []) : []);
     }).catch(() => {});
-    getJSON("/subjects").then(async (d) => {
-      const map = {};
-      for (const s of d.subjects || []) {
-        try {
-          const g = await getJSON(`/subjects/${s}/grades`);
-          const stages = Array.from(new Set((g.grades || []).map(stageOfGrade)));
-          map[s] = ["preparatory", "middle", "secondary"].filter((st) => stages.includes(st));
-        } catch {}
-      }
-      setStageMap(map);
-    }).catch(() => setStageMap({}));
+    /* ONE shared call, and it fans the per-subject requests out in PARALLEL — see
+       `subjectStageMap`. The serial version was six round trips to Render. */
+    subjectStageMap().then(setStageMap).catch(() => setStageMap({}));
   }, [screen, stageMap]);
 
   const cartScopes = useMemo(() => Array.from(new Set(
@@ -240,7 +251,11 @@ export default function Subscribe() {
       });
   };
 
-  /* ── 2 · About you ───────────────────────────────────────────────────────── */
+  /* Hold on bare paper while the entry screen is being decided — no words and no spinner: it
+     is one round trip, and a message that flashes is the thing being removed. */
+  if (screen === null) return <View style={{ flex: 1, backgroundColor: t.paper }} />;
+
+  /* ── 2 · About you ───────────────────────────────────────────── */
   if (screen === "about") {
     const ready = name.trim() && emailStage === "ok" && role && stateName;
     return (

@@ -87,3 +87,43 @@ test("no entitlement is no rows, never a throw", () => {
   assert.deepEqual(subsFromEntitlement(null), []);
   assert.deepEqual(subsFromEntitlement({}), []);
 });
+
+/* `subjectStageMap` — the cart's chooser data, and the reason it is here: it was a `for await`
+ * loop in web/SubscribeFlow.jsx, which is imperceptible against a dev API and six round trips
+ * against a deployed one. The phone found it, because the phone is the only surface that talks
+ * to production. */
+test("every subject's grades are fetched in parallel, not in series", async () => {
+  const { subjectStageMap } = await import("../src/format.js");
+  let open = 0, peak = 0;
+  globalThis.fetch = async (url) => {
+    const path = String(url);
+    if (path.endsWith("/subjects")) {
+      return { ok: true, status: 200, json: async () => ({ subjects: ["a", "b", "c", "d"] }) };
+    }
+    open += 1; peak = Math.max(peak, open);
+    await new Promise((r) => setTimeout(r, 15));
+    open -= 1;
+    return { ok: true, status: 200, json: async () => ({ grades: ["vi", "vii", "ix"] }) };
+  };
+  const map = await subjectStageMap();
+  /* Serial would peak at 1. Anything above it proves they overlap. */
+  assert.ok(peak > 1, `expected overlapping requests, peaked at ${peak}`);
+  assert.deepEqual(Object.keys(map).sort(), ["a", "b", "c", "d"]);
+  assert.deepEqual(map.a, ["middle", "secondary"]);
+});
+
+test("a subject whose grades fail is omitted, never listed empty", async () => {
+  const { subjectStageMap } = await import("../src/format.js");
+  globalThis.fetch = async (url) => {
+    const path = String(url);
+    if (path.endsWith("/subjects")) {
+      return { ok: true, status: 200, json: async () => ({ subjects: ["good", "bad"] }) };
+    }
+    if (path.includes("/bad/")) return { ok: false, status: 500, json: async () => ({}) };
+    return { ok: true, status: 200, json: async () => ({ grades: ["iii"] }) };
+  };
+  const map = await subjectStageMap();
+  /* An entry with no stages is a subject she can pick and find nothing behind. */
+  assert.deepEqual(Object.keys(map), ["good"]);
+  assert.deepEqual(map.good, ["preparatory"]);
+});

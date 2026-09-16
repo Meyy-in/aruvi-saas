@@ -1115,6 +1115,23 @@ Real SMS (DLT) is the external long pole and is outside this map (Track B).
   the list still tells her the old answer. `useFocusEffect` is the app's own idiom for this (My
   Classes and My Lessons since step 4) and the web has no equivalent bug because its `syncTick`
   re-runs the read. Check it on any screen you can return to without remounting.
+- **★ A LOOP OF AWAITED FETCHES IS INVISIBLE IN DEV AND SLOW IN PRODUCTION** (founder, on the
+  handset, 2026-09-16: "expo shows a little more delay showing 'loading subjects' … something
+  that does not happen on web app"). It was not the phone's code — both surfaces ran the same
+  `for await` loop, one `/subjects` then one `/subjects/{s}/grades` per subject. Against the dev
+  API on localhost that is imperceptible; against Render it is six round trips end to end.
+  `Promise.all` makes it two. ⚠️ **The phone is the only surface here that talks to production**,
+  so it is the only one that will ever notice — which makes "it's fine on the web" evidence of
+  nothing. Lifted to `shared/format.js` as `subjectStageMap`, parallel, with two node tests (one
+  asserts the requests OVERLAP, which a serial loop cannot).
+- **★ AN ENTRY SCREEN IS A DECISION, AND A DECISION CANNOT BE PAINTED BEFORE IT IS MADE** (founder,
+  2026-09-16: "pressing 'add subjects & stages' momentarily pops up profile … and then the
+  subscription page"). SubscribeFlow started at `"about"` and was MOVED by the `/account` answer,
+  so every subscriber adding a subject met a personal-details form for one frame — one she never
+  asked for, which then vanished. Both surfaces now hold on the bare frame until `/account` AND
+  `/legal/consent/status` have both answered, then paint the real screen once. ⚠️ Waiting for the
+  CONSENT answer too is what removes the SECOND flash: a known profile lands on the agreement,
+  which forwards itself to the cart, so deciding on the account alone swaps one flash for another.
 - **One function, both surfaces.** Any arithmetic the phone needs that lives in a web JSX file is lifted to
   `packages/shared` first, with a node test, and the web re-imports it (`budget.js` is the template;
   `wheels.jsx:434-483` is next). The 2026-08-21 Year Plan defect (14 vs 19) is the reason.

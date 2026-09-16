@@ -366,6 +366,34 @@ export function paidScopesOf(e) {
     ? (Array.isArray(e.live_scopes) ? e.live_scopes : (e.scopes || []))
     : null;
 }
+/* The cart's subject → stages map, in ONE round of requests (lifted from web/SubscribeFlow.jsx,
+ * 2026-09-16).
+ *
+ * ★ PARALLEL, NOT A `for await` LOOP (founder, on the handset: "expo shows a little more delay
+ * showing 'loading subjects' … something that does not happen on web app"). It was not the
+ * phone's code — it was the DISTANCE. Both surfaces ran the same serial loop, one `/subjects`
+ * followed by one `/subjects/{s}/grades` per subject; against a dev API on localhost that is
+ * imperceptible, and against Render it is six round trips end to end. `Promise.all` makes it two.
+ * ⚠️ The lesson generalises: a loop of awaited fetches is invisible in dev and slow in
+ * production, and the phone is the only surface that ever talks to production here.
+ *
+ * A subject whose grades cannot be fetched is OMITTED rather than listed empty — an entry with no
+ * stages is a subject she can pick and then find nothing behind. */
+const CART_STAGES = ["preparatory", "middle", "secondary"];
+export async function subjectStageMap() {
+  const d = await getJSON("/subjects");
+  const pairs = await Promise.all((d.subjects || []).map(async (s) => {
+    try {
+      const g = await getJSON(`/subjects/${s}/grades`);
+      const stages = new Set((g.grades || []).map(stageOfGrade));
+      return [s, CART_STAGES.filter((st) => stages.has(st))];
+    } catch { return null; }
+  }));
+  const map = {};
+  pairs.forEach((pair) => { if (pair) map[pair[0]] = pair[1]; });
+  return map;
+}
+
 /* ── What a SUBSCRIPTION looks like on screen (lifted from web/Settings.jsx, 2026-09-16) ──
  * Lifted for Track D 6b·D, where the phone grew a Subscription & billing screen and would
  * otherwise have retyped all three. CLAUDE.md §3 — everyone calls it, nobody re-implements it.

@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { authHeaders } from "../lib/auth";
-import { API, getJSON, pretty, stageOfGrade, idInUse, errDetail } from "../lib/format";
+import { API, getJSON, pretty, idInUse, errDetail,
+         subjectStageMap } from "../lib/format";
 import Agreement from "./Agreement";
 import Dropdown from "./Dropdown";
 import MeyyMark from "./MeyyMark";
@@ -62,7 +63,6 @@ export { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES };
  * choices and not a step in the rail. It fires on MOUNT, once per session
  * (`offeredRef`), and the modal renders on every screen it can still be open over. */
 
-const STAGE_OF = stageOfGrade;   // lib/format is the web's ONE copy of the mapping
 /* Secondary says Class 9 only for now — the Class 10 books are not out yet
  * (founder, 2026-08-25). */
 const STAGE_CLASSES = { preparatory: "Class 3, 4 & 5", middle: "Class 6, 7 & 8",
@@ -110,7 +110,14 @@ const DefaultBar = () => (
 
 export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone, onCancel,
                                         onTrial = null }) {
-  const [screen, setScreen] = useState("about");    // about | agreement | cart | pay
+  /* ★ NULL UNTIL WE KNOW WHICH SCREEN THIS IS (founder, 2026-09-16: "pressing 'add subjects &
+     stages' momentarily pops up profile (tell us something about you) page and then the
+     subscription page"). It started at "about" and was MOVED by the /account answer, so every
+     subscriber adding a subject met a personal-details form for one frame — a form she never
+     asked for, which then vanished. The entry screen is a DECISION and cannot be painted before
+     it is made. */
+  const [screen, setScreen] = useState(null);      // null | about | agreement | cart | pay
+  const [profileKnown, setProfileKnown] = useState(null);
   const [offerTrial, setOfferTrial] = useState(false);  // the front-door Trial/Subscribe ask
   const offeredRef = useRef(false);                     // …asked once per session, not per screen
   const [name, setName] = useState("");
@@ -178,20 +185,9 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         if (a.state) setStateName(a.state);
         if (a.city) setCity(a.city);
         if (a.school_name) setSchool(a.school_name);
-        if (looksReal && a.email && a.role && a.state) {
-          /* Skips About-you, NOT the agreement: the landing is the Agreement step, which
-             forwards itself to the cart when the current version is already accepted
-             (see the effect below). One door, one rule. */
-          setScreen("agreement");
-          /* ★ Remember that About-you was SKIPPED (founder, 2026-08-26). The cart's
-             Back used to walk to the previous STEP unconditionally, so a subscriber
-             adding a subject was taken into a personal-details form she had never been
-             shown — from Settings, that reads as "Back took me to Personal profile".
-             Back should undo what she did, and what she did was open the chooser. */
-          setSkippedAbout(true);
-        }
+        setProfileKnown(!!(looksReal && a.email && a.role && a.state));
       })
-      .catch(() => {});
+      .catch(() => { if (live) setProfileKnown(false); });
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
@@ -212,9 +208,23 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
     return () => { live = false; };
   }, [userId]);
 
-  /* The Agreement step forwards itself when there is nothing to sign. Written as an
-     effect rather than a branch at every entrance because there are two entrances (the
-     About-you Continue and the known-profile skip) and a third would forget. */
+  /* ── Where she starts, decided once BOTH answers are in ───────────────────────────
+     Waiting for the CONSENT answer too is what keeps the second flash away: a known profile
+     lands on the agreement, which forwards itself to the cart, so deciding on the account alone
+     would paint the agreement for a frame instead of the profile. One decision, one paint.
+     ★ About-you is SKIPPED, not the agreement — and `skippedAbout` is why the cart's Back then
+     leaves the wizard: Back should undo what she did, and what she did was open the chooser, not
+     walk into a details form she was never shown (founder, 2026-08-26). */
+  useEffect(() => {
+    if (screen !== null || profileKnown === null || consent === null) return;
+    if (!profileKnown) { setScreen("about"); return; }
+    setSkippedAbout(true);
+    setScreen(consent.accepted ? "cart" : "agreement");
+  }, [screen, profileKnown, consent]);
+
+  /* The Agreement step still forwards itself for the OTHER entrance — About-you's Continue on a
+     profile that turns out to have a current signature. Written as an effect rather than a
+     branch at each entrance because a third entrance would forget. */
   useEffect(() => {
     if (screen === "agreement" && consent && consent.accepted) setScreen("cart");
   }, [screen, consent]);
@@ -241,17 +251,11 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
       // Only a teacher still ON the trial has trial artifacts left to lose.
       setTrialChapters(d && d.status === "trial" ? (d.trial_chapters || []) : []);
     }).catch(() => {});
-    getJSON("/subjects").then(async (d) => {
-      const map = {};
-      for (const s of d.subjects || []) {
-        try {
-          const g = await getJSON(`/subjects/${s}/grades`);
-          const stages = Array.from(new Set((g.grades || []).map(STAGE_OF)));
-          map[s] = ["preparatory", "middle", "secondary"].filter((st) => stages.includes(st));
-        } catch {}
-      }
-      setStageMap(map);
-    }).catch(() => setStageMap({}));
+    /* ★ Moved to `@aruvi/shared/format` on 2026-09-16 and made PARALLEL there. It was a
+       `for await` loop — one request per subject, in series — which is imperceptible against a
+       dev API on localhost and six round trips against a deployed one. The phone found it,
+       because the phone is the only surface here that talks to production. */
+    subjectStageMap().then(setStageMap).catch(() => setStageMap({}));
   }, [screen, stageMap]);
 
   const cartScopes = useMemo(() => Array.from(new Set(
@@ -377,6 +381,12 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
       </div>
     </div>
   ) : null;
+
+  /* Hold on the bare frame while the entry screen is being decided — no words and no spinner:
+     it is one round trip, and a message that flashes is the thing being removed. */
+  if (screen === null) {
+    return <div className="ob-wrap">{chrome}<div className="ob-body" /></div>;
+  }
 
   if (screen === "about") {
     return (
