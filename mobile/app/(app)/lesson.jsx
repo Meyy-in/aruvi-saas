@@ -10,7 +10,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { getJSON } from "@aruvi/shared/format";
 import { pullSectionState } from "@aruvi/shared/sectionState";
 import LessonView from "../../components/LessonView";
-import Bar from "../../components/Bar";
 import { Button } from "../../components/ui";
 import { useTheme } from "../../theme/ThemeContext";
 import { type } from "../../theme/type";
@@ -40,7 +39,6 @@ export default function Lesson() {
   if (state.loading) {
     return (
       <View style={{ flex: 1, backgroundColor: t.paper }}>
-        <Bar />
         <View style={st.center}><ActivityIndicator color={t.pine} /><Text style={[type.small, { color: t.ink_soft, marginTop: 10 }]}>Opening the lesson…</Text></View>
       </View>
     );
@@ -48,7 +46,6 @@ export default function Lesson() {
   if (state.err || !state.data) {
     return (
       <View style={{ flex: 1, backgroundColor: t.paper }}>
-        <Bar />
         <View style={st.center}>
           <Text style={[type.body, { color: t.ink, textAlign: "center" }]}>{state.err || "Nothing to show."}</Text>
           <Button kind="link" title="‹ Back" onPress={() => router.back()} style={{ marginTop: 16 }} />

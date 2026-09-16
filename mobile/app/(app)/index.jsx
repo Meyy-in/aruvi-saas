@@ -20,7 +20,6 @@ import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/a
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
-import Bar from "../../components/Bar";
 import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
 import { subscribePreparing, clearPreparing } from "../../lib/preparing";
@@ -330,7 +329,6 @@ export default function Home() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar user={user} />
       {/* ★ THE GREETING (the web's .dash-hd). It is sticky on the web — pinned under the bar at
           the top of the one scroll region — so here it sits ABOVE the scroller, which is the
           same thing without a sticky. The "My classes" mono label that used to open this screen

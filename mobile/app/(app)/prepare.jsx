@@ -55,14 +55,13 @@ import { View, ScrollView, Pressable, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
-  annualBudgetPeriods, classNum, fetchEntitlement, getJSON, getUser, largestRemainder, pad,
+  annualBudgetPeriods, classNum, fetchEntitlement, getJSON, largestRemainder, pad,
   postJSON, pretty,
 } from "@aruvi/shared/format";
 import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { readLocalSection, bindSectionChapter } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
-import Bar from "../../components/Bar";
 import { startPreparing, clearPreparing, failPreparing, paywallPreparing } from "../../lib/preparing";
 import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
@@ -386,7 +385,6 @@ export default function Prepare() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar user={getUser()} />
       <ScrollView contentContainerStyle={ws.main} keyboardShouldPersistTaps="handled">
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", columnGap: 16 }}>
           <Text style={[ws.prep_h2, { flex: 1, minWidth: 0 }]}>Prepare a lesson plan</Text>

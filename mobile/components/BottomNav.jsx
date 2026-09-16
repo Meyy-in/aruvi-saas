@@ -24,6 +24,13 @@ import { Text } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
+/* The bar's own height ABOVE the safe-area inset — `.bnav`'s 56.85, measured 2026-09-13 at
+   390×844 and recorded in theme/web.js's bnav comment. Published for the same reason
+   `BAR_CONTENT_H` is: anything that must sit CLEAR of the nav (the My Lessons toast, and in 6a
+   the Ask panel) had to carry a copy of the number, and a copy is a thing that goes stale on
+   the day the nav is re-measured and nobody re-measures the toast. */
+export const BNAV_H = 56.85;
+
 /* The web's four glyphs, same viewBox and same stroke weight (1.9, round caps/joins). */
 const ICON = { width: 22, height: 22, viewBox: "0 0 24 24", fill: "none", strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
 

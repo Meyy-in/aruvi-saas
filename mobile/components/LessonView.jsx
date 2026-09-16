@@ -292,7 +292,7 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
 
   if (!total) {
     return (
-      <View style={{ flex: 1, backgroundColor: t.paper }}><Bar />
+      <View style={{ flex: 1, backgroundColor: t.paper }}>
         <View style={{ padding: 18 }}>
           <Pressable onPress={onExit} style={{ alignSelf: "flex-start" }}><Text style={ws.back_tr}>← back</Text></Pressable>
           <Text style={[ws.empty, { marginTop: 14 }]}>This plan has no units.</Text>
@@ -303,7 +303,7 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
 
   if (showOrg) {
     return (
-      <View style={{ flex: 1, backgroundColor: t.paper }}><Bar />
+      <View style={{ flex: 1, backgroundColor: t.paper }}>
         <ChapterOrg lp={lp} units={units} pointer={tracking ? cur : null} doneAll={tracking && doneFlag}
           onOpenUnit={(n) => { setPreviewAt(n); setShowOrg(false); }} onBack={onExit} />
       </View>
@@ -352,7 +352,6 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar />
       {/* ★ ALWAYS THE LESSON TAB (founder, 2026-09-14). The web's `useUnitTabsParts` and
           `PreviewUnit` both DEFAULT to "lesson", and page.jsx passes it explicitly too, so a unit
           opens on the teaching spine whether she is tracking or previewing. This opened a preview

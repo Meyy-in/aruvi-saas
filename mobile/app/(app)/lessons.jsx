@@ -54,7 +54,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
-  API, classNum, getJSON, getUser, pad, pretty, subjectSlug, userKey, withUser,
+  API, classNum, getJSON, pad, pretty, subjectSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
@@ -62,7 +62,7 @@ import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
 import { pullSectionState, readLocalSection } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsArchived } from "@aruvi/shared/verify";
 import { endSession as endSessionShared } from "../../lib/session";
-import Bar from "../../components/Bar";
+import { BNAV_H } from "../../components/BottomNav";
 import CardGrid from "../../components/CardGrid";
 import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
@@ -511,7 +511,6 @@ export default function MyLessons() {
      "No subjects set up yet" is worse than the sentence alone. */
   const bare = (msg, style) => (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar user={getUser()} />
       <View style={ws.main}><Text style={style}>{msg}</Text></View>
     </View>
   );
@@ -524,7 +523,6 @@ export default function MyLessons() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar user={getUser()} />
       {/* ★ THE HEADER STARTS A ROW DOWN FROM THE BAR (founder, 2026-09-14). The switch was
           sitting almost ON the bar: `.mlp2-frozen`'s own 6px is all it has, and on the web that
           6px is measured from the top of `main`, which already opens with 26px of page padding
@@ -700,7 +698,7 @@ export default function MyLessons() {
           It sits clear of the bottom bar rather than under it. */}
       {toast ? (
         <View style={[ws.mlp2_toast, {
-          bottom: 56.85 + insets.bottom + 16,
+          bottom: BNAV_H + insets.bottom + 16,
           backgroundColor: toast.kind === "block" ? t.clay : t.ink,
           borderColor: toast.kind === "block" ? t.clay : t.line,
         }]} accessibilityLiveRegion="polite">

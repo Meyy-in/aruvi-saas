@@ -33,8 +33,13 @@ export const BAR_CONTENT_H = 64;
 /* ⚠️ `user` DEFAULTS TO THE SIGNED-IN ID, and does not have to be passed (founder, 2026-09-14:
    "when in iphone/expo I open a lesson plan from My Class or My Lessons, the login and wheel on
    top right bar disappears").
-   The whole right-hand block — gear, identity, Log out — is gated on `user`, and FIVE call sites
-   rendered `<Bar />` with nothing: both branches of the lesson route and all three of LessonView.
+   The whole right-hand block — gear, identity, Log out — is gated on `user`, and FIVE of the
+   ELEVEN call sites there were then rendered `<Bar />` with nothing: both branches of the lesson
+   route and all three of LessonView.
+   ★ THAT WAS THE PATCH; the cure came with Q8 on 2026-09-16 — the signed-in shell
+   (`(app)/_layout.jsx`) now draws the ONE bar and no route inside it draws any. The default
+   below still earns its keep for the three shell-LESS screens (login, privacy, first run), which
+   are outside `(app)` and pass either nothing or an explicit `user`.
    So the bar lost half itself on exactly the screen a teacher spends her lesson in, where the web
    (one shell, one topbar) never changes at all. Requiring every screen to hand the bar the
    session was the bug: it is the same value everywhere, and the only question a screen ever has

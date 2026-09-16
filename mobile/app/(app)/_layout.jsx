@@ -14,6 +14,7 @@ import { Redirect, Stack, useRouter, usePathname } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
 import { cachedReadiness, cachedReady, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { useTheme } from "../../theme/ThemeContext";
+import Bar from "../../components/Bar";
 import BottomNav from "../../components/BottomNav";
 import ProfilePortal, { portalChrome, SetupCheckSub } from "../../components/ProfilePortal";
 import ProfileEditor from "../../components/ProfileEditor";
@@ -125,7 +126,8 @@ export default function AppLayout() {
      screen. Now the editor is a window OVER a screen, so the bar should keep showing where she
      actually is, which is where she was when she opened it. Re-adding a "none" case would blank
      the bar for a window, which is the opposite of what that rule was for. */
-  const active = pathname.startsWith("/lessons") ? "lessons" : "classes";
+  const active = pathname.startsWith("/settings") ? null
+    : pathname.startsWith("/lessons") ? "lessons" : "classes";
 
   /* ★ THE LINE AND THE VALUES ARE COMPUTED AT RENDER, NOT FROZEN INTO THE WINDOW. She opens a row,
      changes her periods a week and the window comes back — and it must come back saying SEVEN.
@@ -138,6 +140,26 @@ export default function AppLayout() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
+      {/* ★ ONE BAR, IN THE SHELL (founder Q8, answered 2026-09-16: "yes agreed").
+          Until now every route drew its own: My Classes one, My Lessons THREE (one per branch),
+          Prepare one, the lesson route two and LessonView three more — eleven copies of a strip
+          that never changes. The web has never had more than one; `.topbar` is written once in
+          page.jsx and the view beneath it swaps.
+          ★ THE BUG CLASS THIS CLOSES is a screen FORGETTING. On 2026-09-14 the founder reported
+          "when I open a lesson plan from My Class or My Lessons, the login and wheel on top right
+          bar disappears" — five of those eleven call sites passed no `user`, so the bar shed its
+          own right-hand half on the screen a teacher spends her lesson in. That was patched by
+          giving `user` a default; this removes the thing that can be got wrong.
+          ★ AND IT IS THE ANCHOR THE REST OF 6a NEEDS. The notices (save-failed, a section
+          mismatch, a bumped privacy notice) belong to the APP, not to whichever screen happens to
+          be showing; so does the gear, and so will Ask Meyy's panel. Threading each of those
+          through four route files is how they end up disagreeing.
+          ⚠️ The gear is still INERT. It lights the moment `/settings` exists (6b) — a gear that
+          navigates nowhere is worse than one that is visibly not yet live, and the bar's own
+          `disabled={!onSettings}` already says which it is.
+          ⚠️ Shell-LESS screens keep their own: login, the privacy notice and first run live
+          OUTSIDE `(app)` by design (§0, Q23), and first run's carries `gear={false}`. */}
+      <Bar />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.paper } }} />
       {/* ★ ONE WINDOW, WHOSE CONTENTS CHANGE (founder, 2026-09-15: "when 'x' is used to click off,
           it goes back to my classes for a moment before showing 'what would you like to change?'
