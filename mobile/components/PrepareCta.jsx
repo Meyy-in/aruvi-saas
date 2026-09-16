@@ -54,7 +54,8 @@ export default function PrepareCta({ label, onPress, disabled = false, busy = fa
   const [box, setBox] = useState(null);
   const off = disabled || busy;
   // Each context keeps its own size; the identity below is shared. (The web's own division.)
-  const boxStyle = size === "allocate" ? ws.pcta_box_allocate : ws.pcta_box_primary;
+  const boxStyle = size === "allocate" ? ws.pcta_box_allocate
+    : size === "fr" ? ws.pcta_box_fr : ws.pcta_box_primary;
   const lbl = size === "allocate" ? ws.pcta_t_allocate : ws.pcta_t_primary;
 
   return (

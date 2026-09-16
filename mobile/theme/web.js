@@ -747,6 +747,73 @@ export function webStyles(t, scheme = "light") {
        ⚠️ `.fr-q` is 27 here, NOT the 32 at line 3353 — that lives inside `@media (min-width:
        700px)` and the phone renders the narrow shape. Reading the desktop value off a bare grep
        is precisely the mistake the parity checker exists to catch. */
+    /* ── first run (.fr-prog · .fr-welcome-* · .fr-trial-* · .fr-default-*) ──────────────
+       Measured 2026-09-16 off the running web at 390 — by injecting first run's own markup into
+       the live page, since the screen itself cannot be reached on a profile that already exists.
+       Colours resolve to tokens, so dark follows for free. */
+    fr_prog:         { flexDirection: "row", alignItems: "center", columnGap: 4, paddingBottom: 22 },
+    fr_prog_step:    { flex: 1, alignItems: "center", rowGap: 6, position: "relative" },
+    /* `.fr-prog-step::before` — the connector, absolutely positioned across the gap to the step
+       BEFORE this one (left: -50%, width: 100%), under the dots (the dot carries z-index 1).
+       Never on the first step. */
+    fr_prog_line:    { position: "absolute", top: 13, height: 2 },
+    fr_prog_dot:     { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5,
+                       alignItems: "center", justifyContent: "center", zIndex: 1 },
+    fr_prog_dot_t:   { fontFamily: F.mono(600), fontSize: 12, lineHeight: 18.6 },
+    fr_prog_label:   { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 0.84,
+                       textTransform: UP, color: t.ink_soft },
+    fr_prog_label_on:{ color: t.pine_d },
+    fr_welcome_title:{ fontFamily: F.display(600), fontSize: 30, lineHeight: 34.5, color: t.ink,
+                       marginTop: 8, marginBottom: 10 },
+    fr_welcome_rule: { width: 34, height: 3, borderRadius: 2, alignSelf: "center",
+                       marginTop: 14, marginBottom: 18 },              // fill: t.pine
+    fr_welcome_h2:   { fontFamily: F.display(600), fontSize: 22, lineHeight: 34.1, color: t.ink,
+                       marginTop: 56, marginBottom: 6 },
+    fr_welcome_sub:  { fontFamily: F.body(400), fontSize: 16, lineHeight: 24.8, color: t.ink_soft,
+                       marginBottom: 8 },
+    fr_trial_card:   { borderWidth: 1, borderRadius: 14, paddingVertical: 20, paddingHorizontal: 18,
+                       alignItems: "center" },                          // bg: t.card_bg, border: t.line
+    fr_trial_tick:   { width: 44, height: 44, borderRadius: 22, alignItems: "center",
+                       justifyContent: "center", marginBottom: 10 },    // bg: t.tint_pine
+    fr_trial_tick_t: { fontSize: 18, lineHeight: 22, color: t.pine },
+    fr_trial_h:      { fontFamily: F.display(600), fontSize: 17, lineHeight: 26, color: t.ink,
+                       marginTop: 14, marginBottom: 6, textAlign: "center" },
+    fr_trial_p:      { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 20.925, color: t.ink,
+                       textAlign: "center" },
+    fr_loading:      { fontFamily: F.body(400, true), fontSize: 17, lineHeight: 26.35, color: t.ink_soft,
+                       paddingVertical: 8, paddingHorizontal: 2 },
+    /* The section STATED, not asked — a footnote to the class choice under a hairline, never a
+       second question (founder, 2026-08-21). */
+    fr_sec_note:     { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink_soft,
+                       marginTop: 24, paddingTop: 18, borderTopWidth: 1 },
+    fr_sec_note_b:   { fontFamily: F.body(600), color: t.ink },
+    fr_defaults:     { rowGap: 12, marginTop: 4 },
+    fr_default:      { rowGap: 6, padding: 14, borderRadius: 12, borderWidth: 1 },
+    fr_default_edit: { rowGap: 6, paddingTop: 14, paddingBottom: 0, paddingHorizontal: 0,
+                       borderWidth: 0, backgroundColor: "transparent" },
+    fr_default_krow: { flexDirection: "row", alignItems: "baseline",
+                       justifyContent: "space-between", columnGap: 10 },
+    fr_default_kick: { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, letterSpacing: 1,
+                       textTransform: UP, color: t.ink_soft },
+    fr_default_row:  { flexDirection: "row", alignItems: "center",
+                       justifyContent: "space-between", columnGap: 10 },
+    fr_default_val:  { fontFamily: F.display(400), fontSize: 18, lineHeight: 24, color: t.ink },
+    fr_default_val_muted: { color: t.ink_soft },
+    /* ⚠️ The web sets this ITALIC and no italic IBM Plex Mono cut is bundled — RN picks a face by
+       name, so italic here would either do nothing or be synthesised badly. The upright mono
+       stands, and it is the one named divergence on this screen. */
+    fr_tag_rec:      { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 15.5, letterSpacing: 0.525,
+                       color: t.pine },
+    fr_change_btn:   { borderWidth: 1, borderRadius: 20, paddingVertical: 5, paddingHorizontal: 12 },
+    fr_change_btn_t: { fontFamily: F.mono(400), fontSize: 11, lineHeight: 15, letterSpacing: 0.66,
+                       textTransform: UP, color: t.pine_d },
+    fr_done_btn:     { alignSelf: "flex-end", borderRadius: 20, paddingVertical: 6, paddingHorizontal: 14,
+                       marginTop: 10 },                                 // bg: t.pine
+    fr_done_btn_t:   { fontFamily: F.mono(400), fontSize: 11, lineHeight: 15, letterSpacing: 0.66,
+                       textTransform: UP, color: "#fdfaf4" },
+    fr_bud_warn:     { fontFamily: F.mono(400), fontSize: 11, lineHeight: 16, letterSpacing: 0.44,
+                       color: t.clay, marginBottom: 8 },
+
     /* ⚠️ NO `marginTop`, AND THAT IS THE MEASURE. On the web `.kicker` carries no margins and
        `.fr-q` is `margin: 0 0 6px`, so the two sit FLUSH — measured on the running page, the
        kicker's bottom and the heading's top are the same pixel. Anything added here opens a gap
@@ -912,6 +979,10 @@ export function webStyles(t, scheme = "light") {
     pcta_box_primary:  { borderRadius: 3, paddingVertical: 11, paddingHorizontal: 22,
                          alignItems: "center", justifyContent: "center" },
     pcta_box_allocate: { borderRadius: 6, minHeight: 44, paddingHorizontal: 14,
+                         alignItems: "center", justifyContent: "center" },
+    /* FIRST RUN's CTA wears BOTH `.fr-cta` (full width, 52 tall, radius 3 — see the specificity
+       note there) and `.prepare-cta` (the identity). Same paint, the footer's geometry. */
+    pcta_box_fr:       { borderRadius: 3, width: "100%", minHeight: 52,
                          alignItems: "center", justifyContent: "center" },
     pcta_t_primary:    { fontFamily: F.mono(600), fontSize: 12, lineHeight: 15, letterSpacing: 0.96,
                          textTransform: UP },

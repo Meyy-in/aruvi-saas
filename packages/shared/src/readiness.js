@@ -208,18 +208,27 @@ export function clearReadiness() {
  * that is a spinner in front of a teacher who just pressed Save. On MISMATCH the server's copy is
  * adopted instead — the same write-through, with the other array.
  */
+/* ★ TAKE THIS PROFILE AS THE TRUTH, NOW — the optimistic half of a write (2026-09-16).
+ * `saveReadiness` adopts when the round trip resolves, which is right for an edit: she is looking
+ * at the screen and nothing depends on the store in the meantime. ACTIVATION is different. First
+ * run composes her first profile and then LEAVES, in the same tick, for a shell whose gate asks
+ * "does she have a profile?" and whose My Lessons reads her subjects to scope its wheels — so a
+ * store that is still empty for the length of a round trip bounces her back to the welcome screen
+ * she just finished. The web has no such gap because `setReadiness` is a state call; this is that
+ * call. The verified write still runs behind it and still adopts the SERVER's copy on a mismatch.
+ */
+export function adoptReadiness(subjects, ready) {
+  const profile = { subjects: subjects || [] };
+  mem = { profile, ready: ready != null ? ready : (subjects || []).length > 0, fresh: true };
+  persist(mem);
+  emit();
+  return profile;
+}
+
 export async function saveReadiness(subjects) {
   // Static imports: verify.js pulls in nothing from here, so there is no cycle to dodge and no
   // reason to make a phone's first save wait on a dynamic module fetch.
   const want = readinessFingerprint(subjects);
-
-  const adopt = (arr, ready) => {
-    const profile = { subjects: arr };
-    mem = { profile, ready: ready != null ? ready : (arr || []).length > 0, fresh: true };
-    persist(mem);
-    emit();
-    return profile;
-  };
 
   const { status, actual } = await verifiedWrite({
     write: () => fetch(`${API}/readiness`, withUser({
@@ -233,9 +242,9 @@ export async function saveReadiness(subjects) {
 
   if (status === "mismatch") {
     const server = (actual && actual.subjects) || [];
-    return { status, profile: adopt(server) };
+    return { status, profile: adoptReadiness(server) };
   }
-  return { status, profile: adopt(subjects) };
+  return { status, profile: adoptReadiness(subjects) };
 }
 
 /* ───────── entitlement, kept off the critical path ─────────

@@ -42,7 +42,12 @@ export const BAR_CONTENT_H = 64;
    The prop stays as an override, and login/privacy keep passing nothing: `getUser()` is null
    before sign-in, so those screens still render the bare lockup, correctly and without a
    special case. */
-export default function Bar({ user = getUser(), onSettings = null }) {
+/* `gear: false` is FIRST RUN, and only first run (founder, 2026-09-16). Phase 1 is shell-less by
+ * design (§0) — the web's first-run bar carries the brand and her identity and NO gear, because
+ * there is no shell to open settings into. The phone drew one anyway, inert, wherever a user
+ * existed: a control that does nothing, on the one screen a teacher meets before she has learnt
+ * anything. Identity and Log out stay — the web shows both there. */
+export default function Bar({ user = getUser(), onSettings = null, gear = true }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const insets = useSafeAreaInsets();
@@ -81,10 +86,12 @@ export default function Bar({ user = getUser(), onSettings = null }) {
             {/* The gear's destination is Settings, which arrives in Track D step 6. It is mounted
                 now so the bar stops changing shape under a teacher who has already learnt it —
                 the same reasoning as the bottom nav's inert items. */}
-            <Pressable onPress={onSettings || undefined} disabled={!onSettings} hitSlop={8}
-              accessibilityRole="button" accessibilityLabel="Settings">
-              <Text style={ws.hdr_gear}>⚙</Text>
-            </Pressable>
+            {gear ? (
+              <Pressable onPress={onSettings || undefined} disabled={!onSettings} hitSlop={8}
+                accessibilityRole="button" accessibilityLabel="Settings">
+                <Text style={ws.hdr_gear}>⚙</Text>
+              </Pressable>
+            ) : null}
             <View style={ws.hdr_user_id}>
               <Text style={ws.hdr_user_name} numberOfLines={1}>{name || user}</Text>
               <Pressable onPress={() => endSession(router)} hitSlop={8}

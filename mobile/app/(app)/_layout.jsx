@@ -12,13 +12,14 @@ import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Redirect, Stack, useRouter, usePathname } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
-import { cachedReadiness, cachedReady, subscribeReadiness } from "@aruvi/shared/readiness";
+import { cachedReadiness, cachedReady, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { useTheme } from "../../theme/ThemeContext";
 import BottomNav from "../../components/BottomNav";
 import ProfilePortal, { portalChrome, SetupCheckSub } from "../../components/ProfilePortal";
 import ProfileEditor from "../../components/ProfileEditor";
 import ProfilePick from "../../components/ProfilePick";
 import { resolvePortalPick } from "@aruvi/shared/profile";
+import { firstGenNeeded, hasActivated } from "../../lib/firstRun";
 import {
   pruneSetupCheck, queueSetupCheck, setupCheckSub, setupCheckValues, setupKey,
 } from "@aruvi/shared/setupCheck";
@@ -77,7 +78,44 @@ export default function AppLayout() {
     pruneSetupCheck(keys);        // self-heal: nothing she does not teach stays queued
   }, [readiness]);
 
+  /* ── THE ACTIVATION GATE (app. 01 rows 14-15; founder's Q5 answer, 2026-09-16) ──────────
+     ★ IT LIVES IN THE LAYOUT, NOT IN `index.jsx`, and that is the whole of the choice. Decided
+     once on the way in, a profile WIPED mid-session (an erase from Settings, a reset on the web)
+     would leave her sitting in a shell with nothing behind it until she relaunched. Here the
+     question is re-asked whenever her profile changes, which is the web's own behaviour — its
+     gate is an expression in `page.jsx`'s render, re-evaluated whenever `ready` flips.
+
+     ★ PAINT FIRST, THEN CHECK, as everywhere else on this app: a DEVICE COPY with subjects is
+     proof enough to open the shell, so a returning teacher sees no gate at all. Only a phone with
+     nothing stored waits for `/readiness`, and it waits on a bare paper screen rather than
+     flashing My Classes at someone who is about to be sent to the welcome screen.
+
+     ⚠️ `hasActivated()` is what stops the BOUNCE. Finishing first run writes her profile through
+     the store, but the serve it fired is still in flight, so the second half of the question
+     ("has she ever generated?") would truthfully answer no and send her straight back to the
+     welcome screen seconds after her first success. Once this session has watched her do it, the
+     answer can never revert. */
+  const [resolved, setResolved] = useState(() => cachedReady());
+  const [needFirstGen, setNeedFirstGen] = useState(false);
+  useEffect(() => {
+    let live = true;
+    fetchReadiness().then(() => { if (live) setResolved(true); })
+      .catch(() => { if (live) setResolved(true); });   // unreachable server → never gate her
+    return () => { live = false; };
+  }, []);
+  const ready = !!(readiness && (readiness.subjects || []).length);
+  useEffect(() => {
+    if (!ready || hasActivated()) { setNeedFirstGen(false); return; }
+    let live = true;
+    firstGenNeeded().then((need) => { if (live) setNeedFirstGen(need); }).catch(() => {});
+    return () => { live = false; };
+  }, [ready]);
+
   if (!getUser()) return <Redirect href="/login" />;
+  if (!hasActivated() && ((resolved && !ready) || needFirstGen)) return <Redirect href="/first-run" />;
+  // Nothing stored and /readiness still in flight: hold on paper rather than flash a shell she
+  // may not be entitled to see.
+  if (!resolved && !ready) return <View style={{ flex: 1, backgroundColor: t.paper }} />;
 
   /* ⚠️ THERE IS NO `/profile` CASE ANY MORE, and there must not be one. The editor used to be a
      route, and the bar lit NOTHING while she was on it — the web's own answer for a profile
