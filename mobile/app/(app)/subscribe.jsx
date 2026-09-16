@@ -116,7 +116,17 @@ export default function Subscribe() {
   const [payErr, setPayErr] = useState("");
   const acctRef = useRef(null);
 
-  const leave = () => router.back();
+  /* ★ A FINISHED PURCHASE MUST LAND SOMEWHERE, however she arrived (found walking the
+     checkout, 2026-09-16: reached by a deep link the stack had nothing behind it, the POST
+     returned 200 and `router.back()` threw "The action 'GO_BACK' was not handled" — so the
+     money moved and the screen did not). From Settings there is always a stack; from a
+     notification, a deep link or a cold start there may not be, and that is exactly when it
+     matters most. Subscription & billing is the honest destination either way: it is where
+     what she just bought now appears. */
+  const leave = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace("/settings/subscription");
+  };
 
   useEffect(() => {
     let live = true;
@@ -210,7 +220,7 @@ export default function Subscribe() {
            both are read by screens she lands on next. */
         invalidateEntitlement();
         invalidateAccount();
-        router.back();
+        leave();
       })
       .catch((e) => {
         const detail = (e && e.detail)

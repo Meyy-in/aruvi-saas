@@ -838,9 +838,18 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   ⚠️ **The trial fork is deliberately absent and must stay absent** — it belongs to the FRONT
   DOOR, and offering a trial to a teacher whose trial has ended is an offer Meyy cannot honour.
   The front door arrives with Login's own subscribe path, still owed. ⚠️ Every walk of this
-  writes real scopes to a real account. **Walked to the Pay screen 2026-09-16** — the cart
-  skipped correctly, the owned-scope guard showed "Preparatory · you have this", Science·Middle
-  totalled ₹500 and Pay rendered; the checkout itself is UNWALKED by choice.
+  writes real scopes to a real account. ✅ **WALKED END TO END 2026-09-16, WITH A REAL PURCHASE** (founder's
+  go-ahead): the cart skipped correctly, the owned-scope guard showed "Preparatory · you have
+  this", Science·Middle totalled ₹500, `POST /onboarding/checkout` returned 200, the scope landed,
+  invoice **MEY/2026-27/7867** was issued, the ledger re-sorted it to the top by expiry (the
+  shared rule doing its job), and the confirmation mail arrived in the founder's inbox — the
+  first subscription mail to actually send since the SMTP secrets were filled.
+  ★ **And the purchase found its own bug.** Reached by a DEEP LINK the stack had nothing behind
+  it, so the 200 came back and `router.back()` threw `GO_BACK was not handled` — the money moved
+  and the screen did not. `leave()` now falls back to `replace("/settings/subscription")`, which
+  is the honest destination anyway: it is where what she just bought appears. From Settings there
+  is always a stack; from a deep link, a notification or a cold start there may not be, and that
+  is exactly when it matters most.
   ★ **Found by the walk:** `Dropdown` rendered a disabled option's label and then let her tap it
   — worse than not saying it, since `cartScopes` de-dupes a duplicate pair and she would have
   seen two rows and been charged for one. It honours `disabled` now.
