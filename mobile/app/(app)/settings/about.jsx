@@ -13,7 +13,7 @@ export default function About() {
   return (
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
       <View style={[ws.set_card, { borderColor: t.line, backgroundColor: t.card_bg }]}>
-        <Text style={[ws.set_plan_txt, { color: t.ink }]}>
+        <Text style={[ws.set_card_inset, ws.set_plan_txt, { color: t.ink }]}>
           Meyy · Lesson Studio — preview build.{"\n"}NCF 2023 aligned.
         </Text>
       </View>

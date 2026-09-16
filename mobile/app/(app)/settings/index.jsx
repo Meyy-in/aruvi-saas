@@ -110,7 +110,8 @@ export default function SettingsHome() {
       <BigCard label="Teaching profile"
         sub="Subjects, classes, sections and periods you teach" />
       <BigCard label="Help" sub="Ask Meyy guide" />
-      <BigCard label="Support" sub="Write to us — we reply by email" />
+      <BigCard label="Support" sub="Write to us — we reply by email"
+        onPress={() => router.push("/settings/support")} />
       <BigCard label="Subscription & billing" sub="Plan, billing & usage" />
       {!onTrial ? (
         <BigCard label="Personal profile"

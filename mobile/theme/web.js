@@ -148,9 +148,11 @@ export function webStyles(t, scheme = "light") {
     /* The pinned band's heading — `.ob-title`, 21px display. ⚠️ The web computes it at weight
        700 and the bundled Fraunces stops at 600; the semibold cut is the heaviest we ship. */
     ob_title:        { fontFamily: F.display(600), fontSize: 21, lineHeight: 27.3 },
-    /* About Meyy's one card. */
-    set_plan_txt:    { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.8,
-                       paddingVertical: 10, paddingHorizontal: 14 },
+    /* `.set-plan-txt` — About Meyy's one card, and the Support confirmation's paragraph.
+       ⚠️ CORRECTED 2026-09-16: it read 13/20.8, which is 13×1.6 and matches no rule in
+       globals.css. The rule is `font-size: 12.5px; line-height: 1.45` and has NO padding — the
+       card's inset is About's own and now lives in `set_card_inset`. One key, one rule. */
+    set_plan_txt:    { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 18.125 },
 
     lgl_version:     { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 16.8, letterSpacing: 0.42,
                        color: t.ink_soft, marginTop: 16 },
@@ -1053,6 +1055,51 @@ export function webStyles(t, scheme = "light") {
     set_lab:         { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13, lineHeight: 19 },
     set_hint:        { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 19.375,
                        marginVertical: 12 },
+    /* `.set-card-pad` — 4px 0, and the 0 is not an omission: the web's Support card lets its
+       fields run FLUSH to the card's own border (measured 2026-09-16: every child of
+       `.set-card.set-card-pad` sits at the card's own x, at its full width). The card is a
+       plane, not a frame with an inset. */
+    set_card_pad:    { paddingVertical: 4 },
+    /* About Meyy's card holds a bare PARAGRAPH rather than field boxes, and a line of prose
+       flush against a border reads as a bug on a phone — so that inset is the phone's, and it
+       lives here rather than baked into the type key it used to sit inside. */
+    set_card_inset:  { paddingVertical: 10, paddingHorizontal: 14 },
+    /* The ONE heading that survives in Settings — "Message sent", which is a STATE and not the
+       name of a screen (the bar names screens). `.set-title` 24px/1.55, h1's own .67em margins. */
+    set_title:       { fontFamily: F.display(600), fontSize: 24, lineHeight: 37.2,
+                       marginVertical: 16 },
+
+    /* ── Settings › Support (`.sup-*`, globals.css 4455-4532) — 6b·F, measured 2026-09-16 in a
+       390px iframe on the running web, which is what puts the ≤600px rules in force (the
+       extension reports a window resize it does not perform; `.set-first` reading -14 rather
+       than -22 is the proof the media query bit). ──────────────────────────────
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    /* The To line: kicker and address on ONE row, baseline-aligned — a VALUE, deliberately not
+       a field, so no plane and no border invites a tap on an address she cannot change. One
+       line's worth of space below it, not the 20px field gap. */
+    sup_to_row:      { flexDirection: "row", alignItems: "baseline", columnGap: 10,
+                       marginTop: 2, marginBottom: 14 },
+    /* --ink-soft, the same as the To kicker beside it (founder): a value in the label's own
+       colour reads as fixed, where full ink reads as something typed. */
+    sup_to:          { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 14,
+                       lineHeight: 18.2 },
+    /* 16px exactly — iOS zooms a focused field under 16px, and a teacher typing a bug report
+       should not have the layout jump under her. Four lines, not seven (founder, 2026-09-03):
+       with To and Subject above it, a 7-row box pushed Send under the fold at 360×800. */
+    sup_text:        { minHeight: 80, height: 104, borderWidth: 1, borderRadius: 3,
+                       paddingVertical: 10, paddingHorizontal: 12,
+                       fontFamily: F.body(400), fontSize: 16, lineHeight: 24.8 },
+    sup_refcap:      { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5,
+                       letterSpacing: 0.8, textTransform: UP },
+    /* Mono at ledger scale — the same face the invoice number uses, because it is the same kind
+       of object: a number she may have to read out. */
+    sup_ref:         { fontFamily: F.mono(400), fontSize: 19, lineHeight: 29.45,
+                       letterSpacing: 0.76, paddingTop: 4, paddingBottom: 10 },
+    /* The quiet and error lines under a field (`.ob-quiet` / `.ob-err`). */
+    ob_quiet:        { fontFamily: F.body(400), fontSize: 11.5, lineHeight: 17.825,
+                       marginTop: 8 },
+    ob_err:          { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 19.375,
+                       marginTop: 8 },
 
     /* The typed-confirm block for account deletion. */
     acct_del_row:    { flexDirection: "row", alignItems: "center", columnGap: 8, rowGap: 8,

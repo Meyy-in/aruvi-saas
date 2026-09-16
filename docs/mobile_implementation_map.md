@@ -21,7 +21,7 @@ sides, the strings verbatim, the endpoint, the shared helper, and the `theme/web
 | `mobile_implementation_map/01-shell.md` | page.jsx shell · layout · GuidedTour · ProfilePortal | 118 | 19 | 16 | 43 | 8 (tour — now SCHEDULED, step 8b) | 4 |
 | `mobile_implementation_map/02-profile.md` | TeachingProfile · wheels · shared budget | 97 | 14 | 5 | 70 | 3 | 3 |
 | `mobile_implementation_map/03-firstrun-login.md` | Login · PrivacyNotice · Agreement · FirstRun | 122 | 37 | 20 | 44 | 2 | 16 |
-| `mobile_implementation_map/04-settings-askmeyy.md` | Settings (7 subviews) · Ask Meyy · Dropdown | 120 | 12 | 10 | 91 | 1 | 3 |
+| `mobile_implementation_map/04-settings-askmeyy.md` | Settings (7 subviews) · Ask Meyy · Dropdown | 120 | 23 | 11 | 73 | 1 | 3 |
 | `mobile_implementation_map/05-lists-prepare.md` | My Classes · My Lessons · Prepare · Year Plan | 125 | 66 | 15 | 10 | 18 | 10 |
 | `mobile_implementation_map/06-lessonview.md` | LessonView · ChapterOrg · Assess · Bookmark · Notes | 140 | 100 | 20 | 4 | 1 | 1 |
 
@@ -334,10 +334,9 @@ almost nothing left**: only Q14 (6c) and Q18-Q20 (step 8) are still open.
 | `6511fc9d` | **Settings › Legal and About.** |
 | `36b51295` | **F11 the dropdown, and Personal profile.** ROLES/STATES/EMAIL_OK lifted to shared. |
 
-**Where §2 picks up: 6b, in this order** — **F** (Support: the form, `POST /support` with Q13's `(app)`
-marker, the MEY-S reference, `GET /support` history, the add-an-email link **hidden on trial** per Q12) →
-**D + SubscribeFlow** → **E** (Your data & export, via F9) → **H** (About's delete flow, the typed "erase",
-the receipt). Then 6c (Ask Meyy, Q14), step 7, step 8, and **8b the tour**.
+**Where §2 picks up: 6b, in this order** — ~~**F** (Support)~~ ✅ **DONE 2026-09-16**, walked to a live
+**MEY-S-753** → **D + SubscribeFlow** → **E** (Your data & export, via F9) → **H** (About's delete flow, the
+typed "erase", the receipt). Then 6c (Ask Meyy, Q14), step 7, step 8, and **8b the tour**.
 
 **★ THE ONE THING THAT IS STILL UNEXPLAINED.** Walking Settings, the founder's session ended with no
 sign-out action: storage was swept, so `endSession` ran, and nothing says which of the six doors called it.
@@ -357,8 +356,9 @@ occurrence names its own caller. **If it recurs, read the console first.**
 - **Personal profile's Save**, and every dropdown commit — they write to the founder's LIVE Render profile.
 - **The paywall window** — provoking a 402 spends a trial chapter on a real account.
 
-**⚠️ SETTINGS HOME LOOKS HALF-FINISHED ON PURPOSE.** Teaching profile, Help, Support and Subscription &
-billing are drawn but DIM and inert, because their screens arrive later in 6b. The card list is the
+**⚠️ SETTINGS HOME LOOKS HALF-FINISHED ON PURPOSE.** Teaching profile, Help and Subscription & billing
+are drawn but DIM and inert, because their screens arrive later in 6b (Support was lit on 2026-09-16).
+The same idiom is inside Support itself: its **Ask Meyy card is dim and inert until 6c**. The card list is the
 founder's own structure and shipping half of it would teach her a shape that then changes under her — but
 it does read as broken at a glance, and the founder has been told. If he would rather they were hidden
 until they work, that is a one-line change in `settings/index.jsx`.
@@ -785,9 +785,9 @@ inline — app. 01 row 11 notes the readiness store is phone-only).
 > - **Q15 pulls F9 forward** out of step 7: the share sheet is how a document leaves the phone,
 >   and D, E and H all wait on it.
 >
-> **Dependency order for the build**, which is not the appendix's JSX order: **F9** (exports) →
-> **F11** (Dropdown, needed by C and by SubscribeFlow's four pickers) → **A** (the stack, the
-> frozen bar, the gear finally lit) → **B** (home) → C · F · G → D + SubscribeFlow → E · H.
+> **Dependency order for the build**, which is not the appendix's JSX order: ~~**F9** (exports)~~ →
+> ~~**F11** (Dropdown)~~ → ~~**A** (the stack, the frozen bar, the gear finally lit)~~ → ~~**B** (home)~~ →
+> ~~C~~ · ~~F~~ · ~~G~~ → **D + SubscribeFlow** → **E** · **H**. Done through F as of 2026-09-16.
 
 **Entry:** 6a (F4, F5, F10, the notices), F9 for the two exports and the invoice PDF, F11 Dropdown
 replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
@@ -811,9 +811,17 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   stub. ⚠️ Every walk of this writes real scopes to a real account.
 - **E. Your data & export** (E1-E4; hidden on trial): `GET /data-rights/export?format=docx|pdf` →
   `aruvi-your-data.{docx|pdf}` via F9 (**Q15: the share sheet**).
-- **F. Support** (F1-F14; never hidden): form, `POST /support` with `context.screen` (**Q13: plus an
-  `(app)` marker**), "Message sent" + the MEY-S reference, `GET /support` history, the "add an email"
-  link (**Q12: HIDDEN on trial** — the web still dead-ends there and owes the same fix).
+- **F. Support** (F1-F14; never hidden)  ✅ **DONE 2026-09-16** — `app/(app)/settings/support.jsx`,
+  and the Settings home's Support card is lit. The form is the web's mail shape (To · Subject · message)
+  over F11's Sheet dropdown; `context.screen` is **`"settings/support (app)"`** (Q13 — the phone names its
+  own screen, and the founder's copy reads `screen: settings/support (app)`); the "add an email" link is
+  **hidden on trial** (Q12), and ★ **the no-email LINE drops its "under Personal profile" clause on trial
+  for the same reason** — it named the same hidden card. ⚠️ **The web still dead-ends in BOTH places and
+  owes both fixes.** `GET /support`'s `requests` stays unread by decision (the history list was struck on
+  the web on 2026-09-04: an email channel's record lives in her inbox, and a list that omits half of it
+  reads as "they lost it"). **Walked** on Expo web at 625 and at 360×800 (Send's bottom edge at 615px,
+  inside the fold) and sent live against Render — **MEY-S-753**. Not walked: the >3,500 counter and the
+  error line.
 - **G. Legal** (G1-G5): pinned pill band Agreement | Privacy; Agreement READ mode over `Markdown.jsx`
   ("Legal Agreement with User" · "✓ Accepted on {date} · version {v}" · intro + five `.lgl-ack` blocks ·
   version line) from `GET /legal/consent`; PrivacyNotice with the full version line and `?version=`.
@@ -821,8 +829,15 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   receipt card; the delete-flow Word export via F9; both exits sign out (`onErased`, app. 01 row 23).
 - **F11 Dropdown** (J1-J8): three live Settings uses; a `Sheet`-based picker styled to `.dd-btn` / `.dd-pop`.
 
-**web.js:** the whole family is unmeasured — `set_*`, `acct_*`, `sup_*`, `lgl_*`, `dd_*`, `ob_field`,
-`login_field`, `ob_email_view/addr` (list in app. 04 dependency notes; mind the ≤600 overrides).
+**web.js:** `set_*`, `acct_*`, `lgl_*`, `dd_*`, `ob_email_view/addr` and now `sup_*` are measured;
+`ob_field`/`login_field` remain unported on BOTH Settings forms — Personal profile and Support use the
+phone's `type.label` (mono 12) where the web's `.login-field > span` is 9.5px, and two Settings forms
+disagreeing about their label type would be worse than either matching the web alone. ⚠️ **`set_plan_txt`
+was CORRECTED 2026-09-16**: it read 13/20.8, which is 13×1.6 and matches no rule in globals.css — the rule
+is 12.5px/1.45 with no padding. About Meyy's card inset moved out of the type key into `set_card_inset`.
+**Measure in a 390px IFRAME on the running web**: the extension reports a window resize it does not
+perform (Chrome's minimum window is ~500px wide), and `.set-first` reading -14 rather than -22 is the proof
+the ≤600px rules actually bit.
 
 **Exit:** gear → every row opens and ✕ returns one level → Support ticket lands with the next MEY-S number →
 theme cycles and survives sign-out → export shares a docx → invoice PDF opens → delete flow signs out on the
