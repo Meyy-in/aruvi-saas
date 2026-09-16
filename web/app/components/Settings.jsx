@@ -1,13 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { API, withUser, fetchEntitlement, getJSON, pretty, idInUse, errDetail } from "../lib/format";
+import { API, withUser, fetchEntitlement, getJSON, pretty, idInUse, errDetail,
+         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN } from "../lib/format";
 import ThemeToggle from "./ThemeToggle";
-import { ROLES, STATES, EMAIL_TAKEN } from "./SubscribeFlow";
 import Agreement from "./Agreement";
 import PrivacyNotice from "./PrivacyNotice";
 import Dropdown from "./Dropdown";
 
-const EMAIL_OK = (e) => /^\S+@\S+\.\S+$/.test((e || "").trim());
 const maskEmail = (e) => {
   const [u, d] = String(e).split("@");
   if (!d) return "•••";

@@ -114,7 +114,8 @@ export default function SettingsHome() {
       <BigCard label="Subscription & billing" sub="Plan, billing & usage" />
       {!onTrial ? (
         <BigCard label="Personal profile"
-          sub="Your name, email, role and school details" />
+          sub="Your name, email, role and school details"
+          onPress={() => router.push("/settings/personal")} />
       ) : null}
 
       {/* ★ APPEARANCE AND MARKETING EMAILS WEAR THE SAME CARD as everything else, with the

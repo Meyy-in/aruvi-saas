@@ -971,6 +971,44 @@ export function webStyles(t, scheme = "light") {
        Raised ONLY on a verified mismatch, where the server's copy is the truth and hers has
        already been replaced on screen. It is a statement about what she is now looking at, not
        an apology, which is why it is one line and a Dismiss rather than a retry. */
+    /* ── Personal profile's two non-field rows (`.acct-row` 4224-4228, `.ob-email-view`
+       4158-4171) — measured 2026-09-16. Everything else on that screen uses the app's own
+       `Field`/`Input` family rather than a second measured one. */
+    acct_row:        { flexDirection: "row", alignItems: "baseline", columnGap: 12,
+                       paddingVertical: 7, borderBottomWidth: 1, marginTop: 18 },
+    acct_k:          { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 18.225,
+                       letterSpacing: 0.735, textTransform: UP, width: 92 },
+    acct_v:          { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13.5,
+                       lineHeight: 18.225 },
+    ob_email_view:   { flexDirection: "row", alignItems: "center",
+                       justifyContent: "space-between", columnGap: 10, borderWidth: 1,
+                       borderRadius: 7, paddingVertical: 11, paddingHorizontal: 12 },
+    /* ★ THE PROFILE SHOWS THE WHOLE ADDRESS (2026-08-27) — the type STEPS DOWN as the address
+       grows and never truncates, because a half-shown email is worse than a small one. The web's
+       `emailFit` thresholds, here as sizes rather than class names. */
+    ob_email_addr:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 14, lineHeight: 18.9 },
+
+    /* ── F11, the dropdown (`.dd-*`, globals.css 312-352) — measured 2026-09-16 ──────────
+       ★ THE WEB BUILT THIS TO ESCAPE macOS. A native `<select>`'s popup is an NSMenu that
+       follows the OS appearance and reads none of the page's CSS, so a light app on a dark Mac
+       opened a black list — "there is no CSS fix", and `Dropdown.jsx` is the listbox that
+       replaces it. ★ **None of that reasoning applies to a phone**, where the native picker is
+       a wheel or a sheet and is themed by the OS correctly. What carries over is the SKIN and
+       the API; what does not is the machinery — arrows, Home/End, `aria-activedescendant`,
+       flip-above-when-tight, and closing on a page scroll are all answers to a pointer and a
+       keyboard. The phone gets a Sheet: a list you tap.
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    dd_btn:          { flexDirection: "row", alignItems: "center", columnGap: 8, width: "100%",
+                       borderWidth: 1, borderRadius: 7, paddingVertical: 11, paddingHorizontal: 12 },
+    dd_lab:          { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 14, lineHeight: 18.2 },
+    dd_chev:         { fontFamily: F.body(400), fontSize: 12, lineHeight: 14 },
+    dd_opt:          { width: "100%", paddingVertical: 11, paddingHorizontal: 10, borderRadius: 6 },
+    dd_opt_t:        { fontFamily: F.body(400), fontSize: 14, lineHeight: 18.9 },
+    /* `on` is the CURRENT VALUE — pine and semibold. The web also has an `active` state for the
+       keyboard cursor, and the two must not look alike there because both can show at once;
+       a finger has no cursor, so only `on` is ported. */
+    dd_opt_on:       { fontFamily: F.body(600) },
+
     /* ── SETTINGS (`.set-*`, `.acct-*`, globals.css 4347-4425, 5143-5146) — 6b, measured
        2026-09-16 ────────────────────────────────────────────────────────────────────────
        ★ SUBVIEWS HAVE NO HEADING — THE BAR NAMES THEM (founder, 2026-09-03: "why should the

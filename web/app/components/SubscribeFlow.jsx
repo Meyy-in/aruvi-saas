@@ -13,8 +13,12 @@ import { dateWords as consentDateWords } from "../lib/legalmd";
 /* ⚠️ Imported AND re-exported: `export … from` alone serves importers without binding the names
  * in this module's own scope, and the email path below calls EMAIL_TAKEN (the PPW_CHOICES /
  * setupKey lesson, third sighting). */
-import { EMAIL_TAKEN, MOBILE_TAKEN } from "../lib/format";
-export { EMAIL_TAKEN, MOBILE_TAKEN };
+import { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK } from "../lib/format";
+/* ⚠️ ROLES/STATES/EMAIL_OK moved to @aruvi/shared/format on 2026-09-16 — the phone's
+   Personal profile needed them and could otherwise only RETYPE them. Re-exported so
+   this module's own call sites (and Settings', which imports them from here) are
+   unchanged. CLAUDE.md §3. */
+export { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES };
 
 /* ── The subscribe wizard: About you → Agreement → Subjects & stages → Pay ──
  *
@@ -58,11 +62,6 @@ export { EMAIL_TAKEN, MOBILE_TAKEN };
  * choices and not a step in the rail. It fires on MOUNT, once per session
  * (`offeredRef`), and the modal renders on every screen it can still be open over. */
 
-export const ROLES = ["Teacher", "Academic coordinator", "Head of school", "Other"];
-export const STATES = ["Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa",
-  "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
-  "Madhya Pradesh", "Maharashtra", "Odisha", "Punjab", "Rajasthan", "Tamil Nadu",
-  "Telangana", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Other"];
 const STAGE_OF = stageOfGrade;   // lib/format is the web's ONE copy of the mapping
 /* Secondary says Class 9 only for now — the Class 10 books are not out yet
  * (founder, 2026-08-25). */
@@ -72,7 +71,6 @@ const scopeLabel = (scope) => {
   const [s, st] = String(scope).split("/");
   return `${pretty(s)} · ${pretty(st)}`;
 };
-const EMAIL_OK = (e) => /^\S+@\S+\.\S+$/.test((e || "").trim());
 const maskEmail = (e) => {
   const [u, d] = String(e).split("@");
   if (!d) return "•••";

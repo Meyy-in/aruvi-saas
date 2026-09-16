@@ -142,6 +142,26 @@ export async function postJSON(path, body) {
  * of its own to return — the SERVER's text stays the authority on the Pay path. If one is
  * reworded, reword both: `api/main.py _guard_email_not_taken`.
  */
+/* ───────── the account form's fixed choices (lifted from SubscribeFlow 2026-09-16) ─────────
+ * ROLES and STATES were declared inside `web/app/components/SubscribeFlow.jsx`, which meant the
+ * phone's Personal profile could only have them by RETYPING them — and a list of Indian states
+ * retyped once is a list that disagrees with itself the first time one is added. They are now
+ * one array, imported by both surfaces (CLAUDE.md §3), and SubscribeFlow re-exports them so its
+ * own call sites are untouched.
+ * ⚠️ "Other" is LAST in both and is not sorted with the rest — it is an escape hatch, not a
+ * state. */
+export const ROLES = ["Teacher", "Academic coordinator", "Head of school", "Other"];
+export const STATES = ["Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa",
+  "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
+  "Madhya Pradesh", "Maharashtra", "Odisha", "Punjab", "Rajasthan", "Tamil Nadu",
+  "Telangana", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Other"];
+
+/* Deliberately loose — "has an @ and a dot after it". The server and the mail provider are the
+ * real validators, and a client regex strict enough to be interesting is a client regex that
+ * rejects somebody's valid address. Spelled identically in SubscribeFlow and Settings on the
+ * web; one copy now. */
+export const EMAIL_OK = (e) => /^\S+@\S+\.\S+$/.test((e || "").trim());
+
 export const EMAIL_TAKEN =
   "This email is already in use by another Meyy account. Use a different address.";
 /* ★ Founder, 2026-08-26, re-confirmed 2026-09-16 (Q21b): this screen CREATES a sign-in, so its
