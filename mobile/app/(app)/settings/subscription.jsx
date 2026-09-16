@@ -76,6 +76,12 @@ export default function Subscription() {
   const active = !!ent && !lapsed && ent.plan_id !== "trial"
     && (ent.status === "active" || ent.status === "grace");
   const subs = subsFromEntitlement(ent);
+  /* ★ NOTHING TO SAY, NOTHING DRAWN (founder, 2026-09-16: "in both web and phone active
+     subscriptions must not show that sliver"). The status card has exactly three things it can
+     say and an ACTIVE teacher matches none of them, so it used to render as an empty bordered
+     strip above her subscriptions — which is what a row looks like while it is still loading,
+     shown to the one teacher who has paid. Fixed on BOTH surfaces in the same commit. */
+  const planCard = onTrial || lapsed || !active;
 
   /* Never gated (§2.5): a document recording money she paid stays reachable after the thing it
      paid for has ended. */
@@ -99,6 +105,7 @@ export default function Subscription() {
   return (
     <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
       {/* The status card. No heading — the bar reads "⚙ Subscription & billing". */}
+      {planCard ? (
       <View style={[ws.set_card, ws.set_card_pad,
                     { borderColor: t.line, backgroundColor: t.card_bg }]}>
         {/* ⚠️ THE ROW IS INSIDE EACH BRANCH, as on the web — not hoisted around them. An
@@ -128,8 +135,9 @@ export default function Subscription() {
           </View>
         ) : null}
       </View>
+      ) : null}
 
-      {active ? subs.map(({ scope, until, live }) => {
+      {active ? subs.map(({ scope, until, live }, idx) => {
         const r = scopeRows(scope);
         /* The newest invoice listing this scope — a renewal issues a second one, and the one
            that explains today's validity is the latest. `invoices` arrives newest first. */
@@ -137,6 +145,11 @@ export default function Subscription() {
         return (
           <View key={scope} style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
                                     ws.set_card_inset,
+                                    /* With no status card above it, the first subscription card
+                                       IS the first element and gives back `set_sub_card`'s 10px
+                                       so the page does not start late. The web does the same
+                                       with `.set-sub-card.set-first`. */
+                                    !planCard && idx === 0 ? { marginTop: 0 } : null,
                                     { borderColor: t.line, backgroundColor: t.card_bg }]}>
             <View style={[ws.set_plan, ws.set_plan_sub]}>
               <Pill tone={live ? "on" : "off"}>{live ? "Subscribed" : "Ended"}</Pill>

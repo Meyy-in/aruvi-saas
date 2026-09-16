@@ -4434,6 +4434,12 @@ button.prepare-cta:disabled::before, .prepare-cta:disabled::before { content: no
    .set-sub-detail / .set-scope-block, which stacked every scope inside one card under a
    single shared validity row — retired with the markup that used them. */
 .set-sub-card { margin-top: 10px; }
+/* ★ With no status card above it (an ACTIVE teacher — 2026-09-16) the first subscription
+   card IS the first element and must carry the pull-up itself. ⚠️ (0,2,0) and declared AFTER
+   `.set-sub-card`: `.set-first` sits EARLIER in this file at the same specificity, so source
+   order would quietly hand the +10px back — the `.ap-row-line` trap, fifth sighting. */
+.set-sub-card.set-first { margin-top: -22px; }
+@media (max-width: 600px) { .set-sub-card.set-first { margin-top: -14px; } }
 /* The invoice number, as a download, on the subscription it paid for (2026-08-26).
    Mono because it is a reference she may have to read out or type. */
 .set-inv-dl { font-family: var(--f-mono); font-size: 12px; letter-spacing: .02em; }

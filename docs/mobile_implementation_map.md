@@ -834,10 +834,17 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   paying teacher two different things. ⚠️ **Subscribe / Add subjects & stages are DRAWN BUT DARK**
   until SubscribeFlow lands — Q11 un-deferred it, so that is a gap and not a decision. ⚠️ Every
   walk of SubscribeFlow writes real scopes to a real account.
-  ⚠️ **WEB OWED, found by the port:** when a teacher is `active` the status card matches none of
-  its three branches and renders EMPTY — a sliver above her subscriptions that reads as something
-  still loading. The phone matches it rather than diverging silently; consider not rendering the
-  card at all in that case.
+  ★ **THE EMPTY SLIVER IS GONE ON BOTH SURFACES** (founder, 2026-09-16: "in both web and phone
+  active subscriptions must not show that sliver"). The status card has three things it can say
+  and an ACTIVE teacher matches none of them, so it rendered as an empty bordered strip above her
+  subscriptions — which is what a row looks like while it is still loading, shown to the one
+  teacher who has paid. Found by the port; **fixed on the web in the same commit** (`planCard`
+  gates the card on both surfaces). ⚠️ The card also carried `.set-first`, the pull-up that hands
+  back `main`'s top padding, so with it gone the FIRST subscription card has to carry it —
+  `.set-sub-card.set-first` on the web at (0,2,0) **declared after `.set-sub-card`**, because
+  `.set-first` sits earlier in globals.css at equal specificity and source order would silently
+  hand the +10px back (the `.ap-row-line` trap, fifth sighting). Verified by computing both
+  classes in a 390px iframe: `.set-sub-card` alone 10px, with `.set-first` −14px.
 - **E. Your data & export** (E1-E4; hidden on trial): `GET /data-rights/export?format=docx|pdf` →
   `aruvi-your-data.{docx|pdf}` via F9 (**Q15: the share sheet**).
 - **F. Support** (F1-F14; never hidden)  ✅ **DONE 2026-09-16** — `app/(app)/settings/support.jsx`,

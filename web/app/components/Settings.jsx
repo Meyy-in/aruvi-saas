@@ -740,12 +740,20 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       && (ent.status === "active" || ent.status === "grace");
     // One record per subscription, latest expiry first — the rule is shared with the phone.
     const subs = subsFromEntitlement(ent);
+    /* ★ NOTHING TO SAY, NOTHING DRAWN (founder, 2026-09-16: "in both web and phone active
+       subscriptions must not show that sliver"). The card below has exactly three things it can
+       say, and an ACTIVE teacher — not on trial, not ended — matches none of them, so it used
+       to render as an empty bordered strip above her subscriptions. An empty strip at the top of
+       a screen is what a row looks like while it is still loading, and the only teacher who saw
+       it was the paying one. */
+    const planCard = onTrial || lapsed || !active;
     return (
       <div className="setwrap">
         {back}
         {/* No heading — the fixed Settings bar names this screen (2026-09-03), which
             also retires the frozen title of 2026-08-26: the list it named is now named
             by a row that never scrolls at all. */}
+        {planCard && (
         <div className="set-card set-card-pad set-first">
           {onTrial && (
             <div className="set-plan"><span className="set-pill">Free trial</span>
@@ -759,6 +767,7 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
             <div className="set-plan"><span className="set-plan-txt">Your plan details will appear here.</span></div>
           )}
         </div>
+        )}
 
         {/* ★ ONE BOX PER SUBSCRIPTION, LATEST FIRST (founder, 2026-08-26 evening).
             They were rows stacked inside a single card, under one shared "Validity"
@@ -772,14 +781,15 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
             the order she chose them in.
             An EXPIRED one is still shown: she owned it, and this row is the explanation
             for anything she can no longer prepare there. */}
-        {active && subs.map(({ scope, until, live }) => {
+        {active && subs.map(({ scope, until, live }, idx) => {
           const r = scopeRows(scope);
           /* The invoice that bought THIS subscription — the newest one listing this
              scope (a renewal issues a second invoice for the same scope, and the one
              that explains today's validity is the latest). */
           const inv = invoices.find((iv) => (iv.scopes || []).includes(scope));
           return (
-            <div key={scope} className="set-card set-card-pad set-sub-card">
+            <div key={scope} className={`set-card set-card-pad set-sub-card${
+              !planCard && idx === 0 ? " set-first" : ""}`}>
               <div className="set-plan">
                 <span className={`set-pill ${live ? "set-pill-on" : "set-pill-off"}`}>
                   {live ? "Subscribed" : "Ended"}
