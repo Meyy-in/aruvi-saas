@@ -1,7 +1,7 @@
 {
   "version": "V3.2",
-  "last_refreshed": "2026-09-03",
-  "maintained": "Hand-written. Edit THIS file; then run python3 aruvi-scripts/sync_ask_aruvi.py to re-index and copy it into web/app/ask-aruvi/. Keywords are computed, never typed.",
+  "last_refreshed": "2026-09-16",
+  "maintained": "Hand-written. Edit THIS file — it is the only copy — then run python3 aruvi-scripts/sync_ask_aruvi.py to re-index, and commit. Keywords are computed, never typed. The bank is served by GET /ask-aruvi and must NEVER be copied into web/app/ask-aruvi/: it would ship in a public page chunk and be readable before sign-in.",
   "categories": [
     {
       "id": "cat_a",
