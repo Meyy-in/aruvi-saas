@@ -98,9 +98,10 @@ every teacher today, so it is a note to keep, not a gap to close now.
 
 ### Picking this up in a new session
 
-*Two hand-offs live here. The **2026-09-16 block at the end of this section is the current one** — read it
-last and act on it. The 2026-09-15 block that follows immediately below is the previous run's, kept because
-its constraints and lessons are still in force. Read §0 above first; this is only what is NOT in the commits.*
+*Three hand-offs live here. The **2026-09-16 (evening) block at the END of this section is the current
+one** — read it last and act on it. The two above it are earlier runs of the same day and the day before,
+kept because their constraints and lessons are still in force. Read §0 above first; this is only what is NOT
+in the commits.*
 
 **Standing instruction from the founder:** *"Going by `mobile_implementation_map.md` and the
 `mobile_implementation_map/` appendix, proceed with implementation. Ask the founder's questions listed there
@@ -257,6 +258,52 @@ already declined. What is genuinely left inside 5d is the **stage-scope narrowin
 CANNOT be walked on this profile (English III · IV and Mathematics V are all preparatory, so the filter has
 nothing to narrow) and waits on a teacher with a second stage. The map is linear again: **5e** first run,
 then **6a** the shell layer, which is what lights the Settings gear, Ask Meyy and add-a-subject's door.
+
+---
+
+### Hand-off — 2026-09-16, evening (the current one)
+
+**Where the build stands.** 5d is closed as far as it can be, **5e is BUILT**, and the founder has walked
+first run end to end on a fresh number (9000000002) — the lesson generated, landed attached on 3A, and the
+check window rose over it. Everything below 6a is done bar two named gaps.
+
+**What landed today, in order:** My Classes banded by subject + the named-section tag (B11, B11a) · the
+check-mood window and its values, `setupCheckSub`/`setupCheckValues` lifted to shared with the web
+delegating · the "Which class?" screen drawn and walked · the front-door parity pass (Q21a/Q21b, the
+privacy frame, `MOBILE_TAKEN` to shared) · **first run + the activation gate (Q5: the layout)** · the
+legal documents wearing the web's type · a locked field that looks locked · the window's ← belonging to the
+journey rather than to one screen · **Privacy Notice v0.2 with §3a "Where we use AI"** · the front door's
+foot links as `.fr-link` · the check window's phone trigger.
+
+**The two gaps, both named and both deliberate:**
+1. **Add a subject is HELD to 6a (Q22).** There is no door to it on the phone until the Settings accordion
+   exists — the pick-subjects wheel and the per-class run are built there, not before. Consequence the
+   founder hit today: the check window's SECOND moment (first use of an added subject) cannot be tested on
+   the phone yet, because he cannot add one there.
+2. **The stage-scope narrowing is unwalkable on his profile** — English III · IV and Mathematics V are all
+   preparatory. It waits on a teacher with a second stage.
+
+**⚠️ THE ONE THING THAT WILL BITE AT 8b.** First run now leaves a one-shot that My Classes spends to raise
+the check window (`lib/firstRun.js` `queueFirstRunCheck`/`takeFirstRunCheck`), because the phone has no tour
+to raise it the web's way. When the tour lands, `finishTour` raises it too and **she is asked twice** —
+retire one. The note is in `lib/firstRun.js`; this line is the second place it is written down.
+
+**What is owed on the HANDSET** (everything below was walked on Expo web only): the subject bands and the
+named-section tag · the check window (both triggers) · the ← on every Add journey · the privacy notice's
+type · the greyed locked field (its own screen needs a real OTP, so it gets its eye at the next sign-in) ·
+first run's own screens on a phone rather than a browser.
+
+**Still unwalked from before, and still the cheapest confirm on the board:** the "one wait, on the card the
+lesson is for" row — prepare from a section card's "+", watch the bar on THAT card, see it settle attached.
+
+**Deploys.** `git push` to `main` is all it takes: Render's `meyy-api` is `autoDeploy: true` on that branch
+and the Dockerfile copies `data/cloud/content/`, so a legal document ships with the image. Confirmed live
+today — `https://meyy-api.onrender.com/legal/privacy` answers `version 0.2`. Both surfaces read the deployed
+API, so nothing in `data/cloud/content/` is visible to anyone until a push.
+
+**Where §2 picks up: step 6a, the shell layer.** It lights the Settings gear, Ask Meyy and add-a-subject's
+door. Its founder questions are **Q6** (paywall wording with no Subscribe), **Q7** (lapsed rules during the
+beta) and **Q8** (`<Bar>` into the layout — it changes every route file).
 
 ---
 
