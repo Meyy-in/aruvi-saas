@@ -28,6 +28,7 @@ import { Text } from "../../../components/Text";
 import { getJSON, postJSON } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { endSession } from "../../../lib/session";
+import Checkbox from "../../../components/Checkbox";
 import ThemeToggle from "../../../components/ThemeToggle";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
@@ -154,31 +155,11 @@ export default function SettingsHome() {
               disabled={mktBusy} hitSlop={10} accessibilityRole="switch"
               accessibilityState={{ checked: marketing, disabled: mktBusy }}
               accessibilityLabel="Send me occasional emails about new subjects and features">
-              {/* The web draws a 22px NATIVE checkbox with `accent-color: pine`. RN has no
-                  checkbox, so this is the app's own square — same size, same colour, same two
-                  states.
-                  ★ UNCHECKED IS WHITE WITH A FIRM EDGE, BECAUSE THAT IS WHAT THE WEB SHOWS
-                  (founder, 2026-09-16, after putting the two side by side: "render the expo in
-                  line with web app"). Measured off that comparison: the web's box is **#ffffff**
-                  inside with a **#767676** border — neither is a Meyy token, because neither is
-                  ours to choose. It is a native `<input type="checkbox">` and the OS draws both.
-                  The phone drew its own square with a TRANSPARENT interior, so the card's beige
-                  showed through and the same control read as two different objects on the two
-                  surfaces.
-                  ⚠️ The tokens are the app's, not the OS's greys: `field_bg` is the white every
-                  other input on the phone already uses, and `ink_soft` (#6b6a63, 5.43 on white)
-                  is the warm near-equivalent of that #767676 (4.54) — so it matches the web's
-                  WEIGHT without importing a neutral grey into a warm palette.
-                  ⚠️ This supersedes the `--edge` border of an hour earlier, which was the right
-                  fix for the wrong diagnosis: `--line` at 1.19 on the card really was too weak to
-                  read as an edge, but the actual complaint was the missing fill. */}
-              <View style={{ width: 22, height: 22, borderRadius: 4, borderWidth: 1.5,
-                             alignItems: "center", justifyContent: "center",
-                             opacity: mktBusy ? 0.6 : 1,
-                             borderColor: marketing ? t.pine : t.ink_soft,
-                             backgroundColor: marketing ? t.pine : t.field_bg }}>
-                {marketing ? <Text style={{ color: t.paper, fontSize: 13, lineHeight: 15 }}>✓</Text> : null}
-              </View>
+              {/* ONE checkbox for the whole app (components/Checkbox.jsx) — the same square
+                  the agreement's five ticks and its final tick use. It was drawn inline here
+                  first, which is how it came to disagree with the web; a primitive is what
+                  stops the next site disagreeing too. */}
+              <Checkbox checked={!!marketing} busy={mktBusy} />
             </Pressable>
           } />
       ) : null}

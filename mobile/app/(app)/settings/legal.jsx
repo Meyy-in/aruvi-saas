@@ -24,45 +24,19 @@
  * document's own — a settings label stacked above it made the screen read as two headings for
  * one thing (founder, 2026-08-27 and 2026-09-03).
  */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Text } from "../../../components/Text";
-import { API } from "@aruvi/shared/config";
-import Markdown from "../../../components/Markdown";
+import PrivacyBody from "../../../components/PrivacyNotice";
 import Agreement from "../../../components/Agreement";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
 
-/* The Privacy Notice, read signed-in. ⚠️ Still a BARE fetch with no identity header — the notice
-   must load for anyone, and `app/privacy.jsx` (the pre-sign-in screen) makes the same call for
-   the same reason. Two callers, one rule, stated in both. */
-function PrivacyBody() {
-  const ws = useWebStyles();
-  const [state, setState] = useState(null);
-  const [failed, setFailed] = useState("");
-  useEffect(() => {
-    let live = true;
-    fetch(`${API}/legal/privacy`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d) => { if (live) setState(d); })
-      .catch(() => { if (live) setFailed(
-        "The privacy notice couldn’t be loaded just now. Check your connection and try again."); });
-    return () => { live = false; };
-  }, []);
-  if (failed) return <Text style={ws.lgl_fail}>{failed}</Text>;
-  if (!state) return <Text style={ws.fr_loading}>Loading the privacy notice…</Text>;
-  const doc = (state && (state.document || state)) || {};
-  return (
-    <View>
-      <Markdown md={doc.body} />
-      <Text style={ws.lgl_version}>
-        {doc.title || "Privacy Notice"} · version {doc.version}
-        {doc.effective_from ? ` · effective ${doc.effective_from}` : ""}
-      </Text>
-    </View>
-  );
-}
+/* ★ The notice's own fetch and rendering moved to `components/PrivacyNotice.jsx` on 2026-09-16,
+   when the agreement's SIGN step wanted a third copy of it. The rule it carried travelled with
+   it: a BARE fetch, no identity header, because DPDP §5 makes the notice something given at or
+   before collection and the pre-sign-in screen links it before a number is typed. */
 
 export default function Legal() {
   const { t } = useTheme();

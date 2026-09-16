@@ -1134,6 +1134,91 @@ export function webStyles(t, scheme = "light") {
     set_subscribe_t: { fontFamily: F.mono(700), fontSize: 13, letterSpacing: 0.78,
                        textTransform: UP },
 
+    /* ── The subscribe wizard (`.ob-*`, globals.css 4025-4198, 5221) — 6b·D2, measured
+       2026-09-16 in the 390px iframe ────────────────────────────────────────
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    ob_body:         { flex: 1, paddingTop: 22, paddingHorizontal: 20, paddingBottom: 24 },
+    /* The web's foot is `position: sticky` so the CTA is reachable without scrolling
+       (founder, 2026-08-25, iPhone compliance). On the phone it is simply the last child
+       of a flex column, outside the scroller — same guarantee, no stickiness needed, and
+       `.ob-body`'s 86px bottom padding (which existed to clear the sticky foot) goes with
+       it. */
+    ob_foot:         { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 26,
+                       rowGap: 10, alignItems: "center" },
+    /* The five-step rail. */
+    ob_steps:        { flexDirection: "row", alignItems: "flex-start",
+                       marginTop: 6, marginBottom: 16 },
+    ob_step:         { flex: 1, alignItems: "center", rowGap: 4 },
+    ob_step_n:       { width: 24, height: 24, borderRadius: 12, borderWidth: 1,
+                       alignItems: "center", justifyContent: "center" },
+    ob_step_n_t:     { fontFamily: F.mono(400), fontSize: 11, lineHeight: 17.05 },
+    ob_step_l:       { fontFamily: F.mono(400), fontSize: 9, lineHeight: 13.95,
+                       letterSpacing: 0.45, textTransform: UP },
+    /* `.ob-step:not(:last-child)::after` — the hairline BETWEEN the numbers. RN has no
+       pseudo-element, so it is a real View, absolutely placed on the same geometry:
+       top 12 (the number's half-height), from 60% across to 140%. */
+    ob_step_rule:    { position: "absolute", top: 12, left: "60%", width: "80%", height: 1 },
+    ob_sub:          { fontFamily: F.body(400), fontSize: 13, lineHeight: 19.5,
+                       marginBottom: 14 },
+    /* The cart's row: two dropdowns and a ✕, on a card. */
+    ob_row:          { borderWidth: 1, borderRadius: 10, paddingVertical: 10,
+                       paddingHorizontal: 12, marginBottom: 8 },
+    ob_row_selects:  { flexDirection: "row", alignItems: "center", columnGap: 8 },
+    ob_rowdd:        { flex: 1, minWidth: 0 },
+    ob_row_x:        { padding: 4 },
+    ob_row_x_t:      { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15 },
+    ob_row_classes:  { fontFamily: F.body(400, true), fontSize: 11.5, lineHeight: 17.825,
+                       marginTop: 6, marginHorizontal: 2 },
+    ob_addrow:       { paddingTop: 6, paddingBottom: 2, paddingHorizontal: 2,
+                       alignSelf: "flex-start" },
+    ob_addrow_t:     { fontFamily: F.mono(400), fontSize: 11.5, lineHeight: 17.825,
+                       letterSpacing: 0.46 },
+    ob_total:        { flexDirection: "row", justifyContent: "space-between",
+                       alignItems: "baseline", borderTopWidth: 1, marginTop: 12,
+                       paddingTop: 10 },
+    ob_total_t:      { fontFamily: F.body(400), fontSize: 14, lineHeight: 21.7 },
+    ob_total_b:      { fontFamily: F.body(600), fontSize: 14, lineHeight: 21.7 },
+    ob_payrow:       { flexDirection: "row", justifyContent: "space-between",
+                       paddingVertical: 7, borderBottomWidth: 1 },
+    ob_payrow_t:     { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15 },
+    ob_consent_note: { marginTop: 12 },
+    /* Clay and a left edge so it reads as a consequence to weigh, not fine print to skim
+       past — never red, because nothing here has gone wrong (founder, 2026-08-26). */
+    ob_purge_note:   { borderLeftWidth: 2, paddingLeft: 10, marginTop: 10 },
+    ob_tick:         { fontFamily: F.body(600) },
+
+    /* ── The agreement in SIGN mode (`.lgl-check`/`.lgl-final`/`.lgl-tally`, globals.css
+       5122-5218) — 6b·D2, measured 2026-09-16 ─────────────────────────────────
+       ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
+    lgl_check:       { flexDirection: "row", alignItems: "flex-start", columnGap: 10,
+                       marginTop: 12, paddingTop: 10, borderTopWidth: 1 },
+    lgl_check_t:     { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13.5,
+                       lineHeight: 20.25 },
+    /* The final tick is inside the sunk box, so it drops the rule above it and goes bold. */
+    lgl_check_flat:  { marginTop: 0, paddingTop: 0, borderTopWidth: 0 },
+    lgl_check_final_t: { fontFamily: F.body(600) },
+    lgl_final:       { borderWidth: 1, borderRadius: 12, paddingVertical: 14,
+                       paddingHorizontal: 15, marginTop: 18 },
+    lgl_need:        { fontFamily: F.body(400, true), fontSize: 12, lineHeight: 18.6,
+                       marginTop: 8 },
+    /* Plain paper and a hairline, NOT the sunk box: everything inside `.lgl-final` is
+       required, and sharing the surface would teach the eye that this one is too. */
+    lgl_optional:    { marginTop: 14, paddingTop: 12, borderTopWidth: 1 },
+    lgl_optional_tag:{ fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 16.275,
+                       letterSpacing: 0.84, textTransform: UP, marginBottom: 6 },
+    /* The five-point tally: a row of boxes that are BUTTONS, because a teacher at four of
+       five with a dead CTA needs to find the one she missed without scrolling the whole
+       document back. */
+    lgl_tally:       { flexDirection: "row", alignItems: "center", justifyContent: "center",
+                       columnGap: 10, rowGap: 10, flexWrap: "wrap", width: "100%" },
+    lgl_tally_lbl:   { fontFamily: F.mono(400), fontSize: 10.5, lineHeight: 16.275,
+                       letterSpacing: 0.84, textTransform: UP },
+    lgl_tally_boxes: { flexDirection: "row", columnGap: 6 },
+    lgl_box:         { width: 26, height: 26, borderRadius: 6, borderWidth: 1.5,
+                       alignItems: "center", justifyContent: "center" },
+    lgl_box_t:       { fontFamily: F.mono(400), fontSize: 12, lineHeight: 18.6 },
+    lgl_box_on_t:    { fontSize: 14, lineHeight: 21.7 },
+
     /* The typed-confirm block for account deletion. */
     acct_del_row:    { flexDirection: "row", alignItems: "center", columnGap: 8, rowGap: 8,
                        flexWrap: "wrap" },
