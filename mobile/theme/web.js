@@ -900,6 +900,9 @@ export function webStyles(t, scheme = "light") {
     fr_cta_t:        { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.96, textTransform: UP },
     fr_cta_ink:      { color: "#f6f1e7" },   // button.primary's own foreground, not --paper
     fr_link:         { paddingVertical: 6, paddingHorizontal: 4, marginTop: 14 },  // .tp .fr-link
+    /* `.fr-link`'s OWN box, without the profile window's 14px lead-in — the front door's three
+       foot links sit in `.ob-foot`, which supplies its own 10px gap. */
+    fr_link_pad:     { paddingVertical: 6, paddingHorizontal: 4 },
     fr_link_t:       { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.48, color: t.pine },
     /* ⚠️ THERE IS NO `kicker_ochre` KEY AND THERE SHOULD NOT BE (2026-09-15). Four web files
        render `className="kicker kicker-ochre"` and globals.css declares `.kicker-ochre`

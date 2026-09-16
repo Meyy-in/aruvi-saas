@@ -151,7 +151,7 @@ export default function Login() {
     return (
       <Wrap foot={<>
         <Button title="Create sign in →" onPress={() => { setFlow("create"); setOtpSent(false); setScreen("otp"); }} />
-        <Link title="Already have an ID? Sign in" onPress={() => setScreen("signin")} style={s.footLink} />
+        <Link title="Already have an ID? Sign in" onPress={() => setScreen("signin")} />
       </>}>
         <Benefits />
         <Text style={[type.h2, { color: t.ink, marginTop: 26 }]}>Choose what works for you</Text>
@@ -257,7 +257,6 @@ export default function Login() {
 const s = StyleSheet.create({
   body: { paddingHorizontal: 20, paddingVertical: 22, paddingBottom: 30 },
   foot: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingVertical: 12, gap: 10, alignItems: "stretch" },
-  footLink: { textAlign: "center" },
   plan: { borderWidth: 1.5, borderRadius: 12, padding: 16, marginTop: 14 },
   mobileRow: { flexDirection: "row", alignItems: "center" },
 });

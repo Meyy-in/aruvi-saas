@@ -3,6 +3,7 @@
 import { Pressable, View, StyleSheet, ActivityIndicator } from "react-native";
 import { Text, TextInput } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
+import { useWebStyles } from "../theme/web";
 import { type } from "../theme/type";
 
 export function Button({ title, onPress, disabled, busy, kind = "primary", style }) {
@@ -18,11 +19,23 @@ export function Button({ title, onPress, disabled, busy, kind = "primary", style
   );
 }
 
+/* ★ THE WEB'S `.fr-link`, EXACTLY (founder, 2026-09-16: "align look and font 'New to Meyy? Get
+ * started →' on expo/iphone with same in the web app"). This drew 17px Newsreader with an
+ * underline; the web's foot links are the house MONO at 12px, pine, unadorned — the same control
+ * the profile window and first run use, which is why it looked like a different product on the
+ * one screen a teacher meets first.
+ * ⚠️ Underline REMOVED, not restyled: `.fr-link` has none, and on the web the affordance is the
+ * pine ink and the hover. On a phone there is no hover, and the ink is what carries it.
+ * Every caller of this primitive is a front-door foot link (login.jsx, three of them), so the
+ * change is safely made here rather than at each call site. */
 export function Link({ title, onPress, disabled, style }) {
-  const { t } = useTheme();
+  const ws = useWebStyles();
   return (
-    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="link" hitSlop={6}>
-      <Text style={[type.body, { color: t.pine, textDecorationLine: "underline", opacity: disabled ? 0.5 : 1 }, style]}>{title}</Text>
+    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="link" hitSlop={6}
+      style={[ws.fr_link_pad, disabled && { opacity: 0.45 }]}>
+      {/* `.ob-foot` centres its contents; the row itself stays stretched so a CTA beside this
+          link keeps its full width. */}
+      <Text style={[ws.fr_link_t, { textAlign: "center" }, style]}>{title}</Text>
     </Pressable>
   );
 }
