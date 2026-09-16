@@ -372,6 +372,25 @@ own account without asking.
 tree (`9d93a278 "update"`) while a change was mid-flight, so that work and its map row landed in two
 commits instead of one. Nothing was lost; the rule still bit. Commit promptly.
 
+**⚠️ THE FILE OUTBOX TELLS YOU A MAIL WENT WHEN IT DID NOT — and it has now cost three sessions.**
+`POST /support` returns `emailed: true` when the notifier's status is `"sent"` **or `"written"`**
+(`api/main.py:2290`), and `"written"` is the **FileNotifier** — it writes the mail to
+`STATE_DIR/outbox` and sends nothing (`file_notifier.py:94`). `main.py:197` installs `SmtpNotifier`
+only when all three of `ARUVI_SMTP_HOST` / `_USER` / `_PASSWORD` are set, and in `render.yaml` those
+are `sync: false` secrets `deploy/README.md` says you may leave blank. **Render was running the file
+outbox on 2026-09-16**: MEY-S-753's confirmation said "A copy is on its way to
+kumar.radhakrishnan2@gmail.com" and the founder's Gmail had nothing, anywhere, including spam. The
+CASE was stored either way (`support_repo.save()` runs before any mail), so nothing was lost but the
+copy. The one place that knows is the startup line — `[aruvi] mail: FILE OUTBOX (…) — NOTHING WILL
+SEND. Unset: …` — and `main.py:203`'s own comment already says this looked like a vanished mail
+"Twice." **Read that line in the Render log before believing any mail-sending walk.**
+★ **Founder's call, 2026-09-16: fill the three Render secrets, leave the API alone.** So the hole
+stays open by decision — a written mail still reports as emailed. The rejected repair, if it ever
+comes back: `emailed` true only for a real send, a THIRD state in the response (has an address and we
+could not mail it) because today's `emailed: false` copy asserts "There is no email address on your
+account", which in this case would itself be false; plus the mail mode on a health route so it is
+visible from outside the logs.
+
 **Two tooling notes from this run:**
 - `npx expo install` FAILS in this sandbox — the proxy refuses `api.expo.dev`. Use plain `npm install`
   with an SDK-matched version (`expo-sharing@~57.0.20` for SDK 57).
@@ -820,8 +839,9 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   owes both fixes.** `GET /support`'s `requests` stays unread by decision (the history list was struck on
   the web on 2026-09-04: an email channel's record lives in her inbox, and a list that omits half of it
   reads as "they lost it"). **Walked** on Expo web at 625 and at 360×800 (Send's bottom edge at 615px,
-  inside the fold) and sent live against Render — **MEY-S-753**. Not walked: the >3,500 counter and the
-  error line.
+  inside the fold) and sent live against Render — **MEY-S-753**, case stored, screen correct. ⚠️ **But
+  NO MAIL WENT** — see the file-outbox trap below; the screen's "a copy is on its way" was the API's
+  claim, not a verified delivery. Not walked: the >3,500 counter and the error line.
 - **G. Legal** (G1-G5): pinned pill band Agreement | Privacy; Agreement READ mode over `Markdown.jsx`
   ("Legal Agreement with User" · "✓ Accepted on {date} · version {v}" · intro + five `.lgl-ack` blocks ·
   version line) from `GET /legal/consent`; PrivacyNotice with the full version line and `?version=`.
