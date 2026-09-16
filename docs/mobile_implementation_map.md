@@ -106,8 +106,8 @@ every teacher today, so it is a note to keep, not a gap to close now.
 
 ### Picking this up in a new session
 
-*Three hand-offs live here. The **2026-09-16 (evening) block at the END of this section is the current
-one** — read it last and act on it. The two above it are earlier runs of the same day and the day before,
+*Four hand-offs live here. The **2026-09-16 (night) block at the END of this section is the current
+one** — read it last and act on it. The three above it are earlier runs of the same day and the day before,
 kept because their constraints and lessons are still in force. Read §0 above first; this is only what is NOT
 in the commits.*
 
@@ -312,6 +312,72 @@ API, so nothing in `data/cloud/content/` is visible to anyone until a push.
 **Where §2 picks up: step 6a, the shell layer.** It lights the Settings gear, Ask Meyy and add-a-subject's
 door. Its founder questions are **Q6** (paywall wording with no Subscribe), **Q7** (lapsed rules during the
 beta) and **Q8** (`<Bar>` into the layout — it changes every route file).
+
+---
+
+### Hand-off — 2026-09-16, night (THE CURRENT ONE)
+
+**Where the build stands. 6a IS CLOSED. 6b is in progress and is roughly half built.** Nine founder
+questions were answered in this run — Q6, Q7, Q8, Q17, then Q10, Q11, Q12, Q13, Q15 — so **§4 has
+almost nothing left**: only Q14 (6c) and Q18-Q20 (step 8) are still open.
+
+**What landed, in order (each is one commit, each carries its own §0 row):**
+
+| | |
+|---|---|
+| `e1d1ace7` | **One bar, in the shell** (Q8). Eleven per-route `<Bar>`s became one in `(app)/_layout.jsx`; `BNAV_H` published from BottomNav. |
+| `076e410c` | **The phone obeys her subscription** (Q7) + **the paywall is the web's window** (Q6). `@aruvi/shared/entitlement`, the reading room, `paywallKicker` shared with the web delegating. |
+| `9d93a278` · `b81eaf2e` | **The notices slot** — the section-mismatch handler had NEVER been installed, so a verified server disagreement was silent on the phone. Plus the privacy-note bar and `refreshBank()`. |
+| `07e817c7` | **The academic-year cutover** (Q17), `@aruvi/shared/year` + `YearNudge`. |
+| `42a704b3` | The map, carrying Q10/Q11/Q12/Q13/Q15's answers. |
+| `83252474` | **The gear opens** — `/settings`, the frozen bar, Settings home (Q10's glyph), and **F9** the download layer (Q15's share sheet). |
+| `6511fc9d` | **Settings › Legal and About.** |
+| `36b51295` | **F11 the dropdown, and Personal profile.** ROLES/STATES/EMAIL_OK lifted to shared. |
+
+**Where §2 picks up: 6b, in this order** — **F** (Support: the form, `POST /support` with Q13's `(app)`
+marker, the MEY-S reference, `GET /support` history, the add-an-email link **hidden on trial** per Q12) →
+**D + SubscribeFlow** → **E** (Your data & export, via F9) → **H** (About's delete flow, the typed "erase",
+the receipt). Then 6c (Ask Meyy, Q14), step 7, step 8, and **8b the tour**.
+
+**★ THE ONE THING THAT IS STILL UNEXPLAINED.** Walking Settings, the founder's session ended with no
+sign-out action: storage was swept, so `endSession` ran, and nothing says which of the six doors called it.
+Two real defects were found in the same wreckage and FIXED (`aruvi_entitlement__` — a key with an EMPTY
+user, written by a poll that ran after sign-out; and a 20-second heartbeat that could end her session on a
+401, which is `readiness.js`'s rule applied to the wrong kind of fetch — the web has never done this). ★
+**Neither is proven to be the cause.** `endSession` now takes a **`reason`** and warns with it, so the next
+occurrence names its own caller. **If it recurs, read the console first.**
+
+**⚠️ WHAT IS UNWALKED, AND WHY EACH ONE IS:**
+- **F9 entirely.** `expo-sharing` and `expo-file-system` are native modules; on Expo web the code takes the
+  browser-download branch instead. The sheet, the cache file and its cleanup have ONE authority and it is
+  the handset.
+- **Everything lapsed.** Enforcement is off on Render, so nothing can make a teacher lapsed today.
+- **The cutover.** `cutover_due` is the server's answer and it is false until the year turns. Its first
+  real showing is a June morning; the ten tests are the whole of the confidence.
+- **Personal profile's Save**, and every dropdown commit — they write to the founder's LIVE Render profile.
+- **The paywall window** — provoking a 402 spends a trial chapter on a real account.
+
+**⚠️ SETTINGS HOME LOOKS HALF-FINISHED ON PURPOSE.** Teaching profile, Help, Support and Subscription &
+billing are drawn but DIM and inert, because their screens arrive later in 6b. The card list is the
+founder's own structure and shipping half of it would teach her a shape that then changes under her — but
+it does read as broken at a glance, and the founder has been told. If he would rather they were hidden
+until they work, that is a one-line change in `settings/index.jsx`.
+
+**⚠️ SubscribeFlow REALLY BUYS.** Q11 un-defers it and `POST /onboarding/checkout` is a server-side DEV
+STUB that activates through the ManualBillingProvider — so a walk of it grants real scopes to whoever is
+signed in. **Get the founder's explicit go-ahead before running a checkout**, every time, and never on his
+own account without asking.
+
+**⚠️ AND DO NOT LET THE MAP DRIFT FROM ITS COMMIT.** Once in this run the founder committed the working
+tree (`9d93a278 "update"`) while a change was mid-flight, so that work and its map row landed in two
+commits instead of one. Nothing was lost; the rule still bit. Commit promptly.
+
+**Two tooling notes from this run:**
+- `npx expo install` FAILS in this sandbox — the proxy refuses `api.expo.dev`. Use plain `npm install`
+  with an SDK-matched version (`expo-sharing@~57.0.20` for SDK 57).
+- `git` leaves zero-byte `.git/*.lock` files it cannot clean up, because deletion is off by default in a
+  connected folder. Every commit then fails with "Another git process seems to be running". Request delete
+  permission once, remove the locks, and it stops.
 
 ---
 
