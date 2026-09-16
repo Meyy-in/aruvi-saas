@@ -23,7 +23,7 @@ import { firstGenNeeded, hasActivated } from "../../lib/firstRun";
 import {
   pruneSetupCheck, queueSetupCheck, setupCheckSub, setupCheckValues, setupKey,
 } from "@aruvi/shared/setupCheck";
-import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit,
+import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit, editBackToPick,
          openPick, pickSubject, pickBackToSubject, closePick } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
 
@@ -41,11 +41,14 @@ export default function AppLayout() {
      ONE Sheet this layout owns. */
   const [pick, setPick] = useState(null);
   const [scope, setScope] = useState(null);
+  /* Whether the open edit was reached THROUGH a pick screen — i.e. whether there is a question
+     behind it to step back to. See the window's ← below. */
+  const [pickBack, setPickBack] = useState(null);
   /* What the open edit needs from the window's chrome — today just its ← , which exists only on
      the duration step. Reported up by the editor, because the Sheet is owned here. */
   const [editChrome, setEditChrome] = useState(null);
   useEffect(() => subscribePortal((p) => {
-    setWin(p.win); setEdit(p.edit); setPick(p.pick); setScope(p.scope);
+    setWin(p.win); setEdit(p.edit); setPick(p.pick); setScope(p.scope); setPickBack(p.pickBack);
   }), []);
 
   /* ── the check window's queue: every add, watched in ONE place (app. 01 row 72) ──────────
@@ -152,10 +155,24 @@ export default function AppLayout() {
       {(win || edit || pick) ? (
         <Sheet visible scroll={!!(edit || pick)}
           onClose={edit ? closeEdit : pick ? closePick : () => setPortalWin(null)}
-          onBack={(edit || pick) ? (editChrome && editChrome.onBack) : undefined}
+          /* ★ THE ← IS THE JOURNEY'S, NOT ONLY THE SCREEN'S (founder, 2026-09-16: "can we have
+              back arrow for Add button not just for class but for subject, periods a week and
+              annual period budget"). It used to be drawn only where a SCREEN knew of a step
+              before it — the duration step, and the class question — so every other destination
+              arrived with ✕ as its only corner, and ✕ goes all the way back to the window's four
+              rows: to fix the class she had just answered she had to answer the subject again too.
+              The two halves stay separate because they know different things: the EDITOR reports
+              its own internal step (duration → periods a week), and the LAYOUT, which owns the
+              journey, supplies the step behind that — the question she came through. */
+          onBack={(edit || pick)
+            ? ((editChrome && editChrome.onBack)
+               || (edit && pickBack ? editBackToPick : undefined))
+            : undefined}
           {...((edit || pick) ? {} : portalChrome(win.mode, checkSub))}>
           {edit ? (
-            <ProfileEditor {...edit} onChrome={setEditChrome} />
+            /* `hasBack` only tells the editor a corner is being DRAWN, so its kicker clears
+               it; the editor never navigates with it. */
+            <ProfileEditor {...edit} onChrome={setEditChrome} hasBack={!!pickBack} />
           ) : pick ? (
             /* ★ THE PICK SCREENS (5d item 3). They carry their own `.tp` header exactly as the
                editor does, so the Sheet draws no header of its own — `scroll` is on for the same

@@ -25,7 +25,8 @@
 
 import { SETUP_CHECK_DELAY_MS, setupKey, takeSetupCheck } from "@aruvi/shared/setupCheck";
 
-let state = { originRoute: null, win: null, scope: null, edit: null, winBack: null, pick: null };
+let state = { originRoute: null, win: null, scope: null, edit: null, winBack: null,
+               pick: null, pickBack: null };
 const listeners = new Set();
 
 function emit() {
@@ -92,7 +93,7 @@ export function pickBackToSubject() {
 /* Close the picks and restore the window she came from — the close button's job, and identical
    to `closeEdit`'s, because to her they are the same act on the same window. */
 export function closePick() {
-  state = { ...state, pick: null, win: state.winBack || null, winBack: null };
+  state = { ...state, pick: null, win: state.winBack || null, winBack: null, pickBack: null };
   emit();
 }
 
@@ -108,7 +109,24 @@ export function openEdit(edit) {
      already null (openPick moved it to winBack), so reading `win` alone would overwrite the
      remembered window with null — and the close button would drop her on the bare screen, which
      is the very bug the paragraph above records, arriving through the door item 3 opened. */
-  state = { ...state, edit: edit || null, winBack: state.win || state.winBack, win: null, pick: null };
+  /* ★ AND THE QUESTION SHE ANSWERED ON THE WAY IN IS REMEMBERED TOO (founder, 2026-09-16: "can we
+     have back arrow for Add button not just for class but for subject, periods a week and annual
+     period budget"). The pick was simply DISCARDED here, so every journey that ran through it
+     arrived at an editor with no way back but ✕ — which reopens the WINDOW, four rows up, and
+     makes her answer the subject and the class again to fix the one she meant. `pickBack` is the
+     same idiom as `winBack` a line along: one step back, not one journey back. */
+  state = { ...state, edit: edit || null, winBack: state.win || state.winBack, win: null,
+            pickBack: state.pick || state.pickBack, pick: null };
+  emit();
+}
+
+/* The editor's ← : back to the question she came through, with her answer still on it. Only ever
+   called when there IS one — a teacher of one subject and one class meets no pick screen, and for
+   her the editor's only corner is the ✕ that puts the window back (two controls doing the same
+   thing is what the 2026-09-15 corner rule removed). */
+export function editBackToPick() {
+  if (!state.pickBack) return;
+  state = { ...state, edit: null, pick: state.pickBack, pickBack: null };
   emit();
 }
 
@@ -116,7 +134,7 @@ export function openEdit(edit) {
    cancel alike, because a teacher who has just amended one item is the person most likely to want
    the next (founder, 2026-08-27). */
 export function closeEdit() {
-  state = { ...state, edit: null, win: state.winBack || null, winBack: null };
+  state = { ...state, edit: null, win: state.winBack || null, winBack: null, pickBack: null };
   emit();
 }
 
@@ -176,6 +194,7 @@ export function cancelLessonsScope() { clearTimeout(scopeTimer); scopeTimer = nu
 
 /* An ordinary visit somewhere else — the round trip is over and there is nothing to return to. */
 export function clearPortal() {
-  state = { originRoute: null, win: null, scope: null, edit: null, winBack: null };
+  state = { originRoute: null, win: null, scope: null, edit: null, winBack: null,
+            pick: null, pickBack: null };
   emit();
 }

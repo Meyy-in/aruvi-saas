@@ -90,7 +90,8 @@ import { useWebStyles } from "../theme/web";
 
 const SECTION_LETTERS = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)); // A…Z
 
-export default function ProfileEditor({ intent = "budget", subject = "", grade = "", onChrome }) {
+export default function ProfileEditor({ intent = "budget", subject = "", grade = "", onChrome,
+                                       hasBack = false }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   /* `intent` is the destination; `subject`/`grade` the scope it acts on. The web resolves a scope
@@ -477,7 +478,9 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             `.ap-title`'s 4px had opened a gap the web does not have.
             The corner padding is the header's own, because the ✕ and ← are absolutely positioned
             over this line. */}
-        <Text style={[ws.kicker, ws.tp_kicker_pad, stepBack && { paddingLeft: 34 }]}>{kicker}</Text>
+        {/* The kicker clears the ← whenever one is drawn — its own step's, or the journey's
+            (the layout's `hasBack`, for an editor reached through a pick screen). */}
+        <Text style={[ws.kicker, ws.tp_kicker_pad, (stepBack || hasBack) && { paddingLeft: 34 }]}>{kicker}</Text>
 
         {step === "class" ? (
           <>
