@@ -567,7 +567,15 @@ export default function Home() {
      session's own flag is the missing half. ⚠️ NOT `offeredHere()`, which flips the moment the
      nudge becomes ELIGIBLE and would therefore hide it while she is still looking at it —
      `tourRanHere()` flips when she starts or finishes one, which is the fact that matters. */
-  const tourOnOffer = tourFit === true && !tourNow.step
+  /* ★ AND NOT WHILE THE LESSON IS STILL BEING MADE (founder, 2026-09-17: the offer *"should pop
+     up immediately after the completion of the lesson generation and not at the same time"*).
+     First run hands her to My Classes with the generation still running, so the nudge was
+     landing ON TOP of the wait she is watching — two things asking for the same attention, and
+     the one she cares about is the chapter. `preparing` going false IS the completion edge this
+     screen already uses to redraw the card, so the offer simply rides it: suppressed while the
+     work runs, there the moment it lands. It also means the tour never opens with its own target
+     half-built — `tourTarget` needs a PREPARED plan to point at. */
+  const tourOnOffer = tourFit === true && !tourNow.step && !preparing
     && !(acct && acct.tour_offered_at) && !tourRanHere();
   useEffect(() => { if (tourOnOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOnOffer]);
   const card = (c, banded, idx) => (

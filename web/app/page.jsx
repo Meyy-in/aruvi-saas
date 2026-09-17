@@ -154,7 +154,23 @@ export default function Home() {
      because "once" must survive sign-out and a second device. */
   const [tourSpent, setTourSpent] = useState(false);
   const tourOfferedThisSession = useRef(false);
-  const tourOnOffer = tourEligible === true && !tourSpent && !tourDismissed && !entLapsed;
+  /* ⚠️ HOISTED ABOVE THE TOUR OFFER, which reads it during render. Its own long note lives
+     further down, where the prepare flow it belongs to is explained; it is only the DECLARATION
+     that had to come up here, because a const read above its declaration is a TDZ ReferenceError
+     on first paint and nothing in a parse or a lint sees it. */
+  const [preparingCard, setPreparingCard] = useState(null);
+
+  /* ★ AND NOT WHILE THE LESSON IS STILL BEING MADE (founder, 2026-09-17: the offer *"should pop
+     up immediately after the completion of the lesson generation and not at the same time"*).
+     First run hands her straight to My Classes with the generation still running, so the nudge
+     was landing ON TOP of the wait she is watching — two things asking for the same attention,
+     and the one she cares about is the chapter. `preparingCard` going null is the completion
+     edge; the offer rides it. It also means the tour never opens with its own target half-built,
+     since `tourTarget` needs a PREPARED plan to point at.
+     ⚠️ This reads `preparingCard` during render, which is why its declaration was hoisted just
+     above. Do not move it back down to the prepare block where its own note lives. */
+  const tourOnOffer = tourEligible === true && !tourSpent && !tourDismissed && !entLapsed
+    && !preparingCard;
   /* Spend it the moment it is OFFERED, not when she takes it. Skipping is a deliberate
      answer ("if he skips it deliberately its gone") and so is ignoring it; the one thing
      she must never get is the same prompt every June. The local flag is deliberately NOT
@@ -573,7 +589,8 @@ export default function Home() {
   // head of the list — real title, real period shape, full strength — with a progress bar
   // where "Ready to teach" will be. When the plan resolves, that card becomes the real one
   // in place; she never changes screens to watch it happen.
-  //   `preparingCard` lives HERE, above the tab, because PrepareLesson unmounts the instant
+  //   `preparingCard` is declared at the top of this component (the tour offer reads it during
+  // render); it belongs to this flow, and lives above the tab because PrepareLesson unmounts the instant
   // we navigate. The request itself keeps running inside that unmounted component's closure
   // and still calls onPrepared / onPrepareError, which is why nothing had to move server-side.
   //   ★ AND THE SECTION-ATTACH PATH IS NO LONGER EXCLUDED (founder, 2026-09-15: "it should show
@@ -584,7 +601,6 @@ export default function Home() {
   // APPEAR, and for this journey that is the section card she launched it from. The premise was
   // wrong, not the rule. `preparingSection` tells MyPlans which card is waiting, and nobody waits
   // on an otherwise-empty Generate screen any more.
-  const [preparingCard, setPreparingCard] = useState(null);
   // Returns TRUE only if the card was actually taken. PrepareLesson falls back to its own
   // in-place wait on false — without that handshake the attach path would show her nothing
   // at all for five seconds, which is worse than either screen.
