@@ -16,6 +16,7 @@ import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, StyleSheet 
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
+import { DEVICE_SEEN_KEY as SEEN_KEY } from "@aruvi/shared/signout";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
          OTP_RESEND_LOCK_MS, authHeaders } from "@aruvi/shared/auth";
 import { primeBank } from "@aruvi/shared/ask-aruvi/bank";
@@ -27,7 +28,7 @@ import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { type } from "../theme/type";
 
-const SEEN_KEY = "aruvi_device_seen";
+
 
 /* ★ `MOBILE_TAKEN` now comes from @aruvi/shared/format (2026-09-16, Q21b). This file used to
  * declare its own — "…already has a Meyy sign in. Tap Sign in below." — and the web's own comment

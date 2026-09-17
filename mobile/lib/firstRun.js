@@ -37,6 +37,22 @@ export function markGenerated() {
   latch = { user: u, ever: true };
 }
 
+/* ★ THE LATCH DIES WITH THE SESSION (founder, 2026-09-17, on the handset: deleted 9000000002,
+ * signed up again on the same number, and landed on My Classes with a tour running over an
+ * account that had no teaching profile at all).
+ * ⚠️ IT IS KEYED BY THE MOBILE NUMBER, which is the identity — so a number that ERASES and then
+ * signs up again inside the same app run matches a latch set by the account that no longer
+ * exists. `hasActivated()` then answers "I watched her finish first run" about a teacher the
+ * server has never met, the gate stands down, and she is dropped into an empty app instead of
+ * into first run. The server side of the erasure is correct and complete; this was the client
+ * remembering across it.
+ * `clearSession` is the one choke point both doors pass through — the bar's Log out, Settings'
+ * erase, and every 401 branch — so it is the honest place to forget. Worst case on a plain log
+ * out is that `firstGenNeeded` asks the server again, which is what it is for. */
+export function resetActivation() {
+  latch = { user: null, ever: false };
+}
+
 /** Has THIS session watched her complete first run? The gate's own latch: her profile is written
  *  through the store before she leaves, but the serve is still in flight, so the heuristic below
  *  would answer "never generated" for a few seconds and bounce her back. */

@@ -24,7 +24,9 @@ const GLOBALS = new Set(("require module exports __DEV__ process console global 
   + "requestAnimationFrame cancelAnimationFrame performance structuredClone TextEncoder "
   + "TextDecoder Infinity NaN undefined isNaN isFinite parseInt parseFloat encodeURIComponent "
   + "decodeURIComponent encodeURI decodeURI atob btoa Reflect Proxy BigInt ArrayBuffer Uint8Array "
-  + "window document navigator localStorage sessionStorage alert").split(" "));
+  + "window document navigator localStorage sessionStorage alert location history "
+  + "ResizeObserver IntersectionObserver MutationObserver matchMedia getComputedStyle "
+  + "HTMLElement Node Event CustomEvent DOMParser Image Audio").split(" "));
 let bad = 0;
 for (const f of process.argv.slice(2)) {
   let ast;

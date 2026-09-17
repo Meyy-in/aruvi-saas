@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { API, getJSON, idInUse } from "../lib/format";
+import { DEVICE_SEEN_KEY as SEEN_KEY } from "@aruvi/shared/signout";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
          OTP_RESEND_LOCK_MS, authHeaders } from "../lib/auth";
 import SubscribeFlow, { MOBILE_TAKEN } from "./SubscribeFlow";
@@ -49,7 +50,6 @@ const Bar = () => (
   </div>
 );
 
-const SEEN_KEY = "aruvi_device_seen";
 
 export default function Login({ onEnter }) {
   const [screen, setScreen] = useState("signin");   // choose | signin | otp | subscribe

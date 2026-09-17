@@ -35,6 +35,7 @@ import { Text } from "../../../components/Text";
 import { API, getJSON, postJSON, withUser } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { clearSession, endSession } from "../../../lib/session";
+import { forgetDevice } from "@aruvi/shared/signout";
 import { downloadDocument, dataExport } from "../../../lib/download";
 import { hasDownloaded, markDownloaded } from "../../../lib/dataRights";
 import { Sheet } from "../../../components/AttachSheet";
@@ -159,6 +160,10 @@ export default function SettingsHome() {
          exit — the bar's ✕, the bottom nav — led back into a fully-rendered app for an account
          that no longer existed. `clearSession` is `endSession` without the navigation. */
       clearSession("settings: account erased");
+      /* ★ AND THE DEVICE FORGETS IT WAS EVER SIGNED IN — erasure only, never a log out. The next
+         person to open Meyy on this handset meets the Choose screen and its trial card, not a
+         Sign in door for an account that no longer exists. See `forgetDevice`. */
+      forgetDevice();
     } catch {
       setFailMsg("Couldn’t delete the account right now. Nothing was removed — try again.");
     } finally {

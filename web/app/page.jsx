@@ -6,7 +6,7 @@ import { verifiedWrite, readinessFingerprint } from "./lib/verify";
 import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache } from "./lib/sectionState";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
 import { signOutAuth } from "./lib/auth";
-import { clearTeacherCaches } from "@aruvi/shared/signout";
+import { clearTeacherCaches, forgetDevice } from "@aruvi/shared/signout";
 import GenerateTab from "./components/GenerateTab";
 import MyPlans from "./components/MyPlans";
 import Login from "./components/Login";
@@ -662,6 +662,10 @@ export default function Home() {
     clearUser();
     signOutAuth();
     clearTeacherCaches(["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"]);
+    /* ★ AND THE BROWSER FORGETS IT WAS EVER SIGNED IN — erasure only, never a sign-out. The next
+       person here meets the Choose screen and its trial card, not a Sign in door for an account
+       that no longer exists (founder, 2026-09-17, on the phone). See `forgetDevice`. */
+    forgetDevice();
   };
 
   const onSignOut = () => {

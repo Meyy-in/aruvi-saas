@@ -61,3 +61,20 @@ export function clearTeacherCaches(extraPrefixes = []) {
   try { storage.removeItem("aruvi_user"); } catch {}
   return n;
 }
+
+/* ★ THE DEVICE FLAG AN ERASURE MUST FORGET, and a log out must NOT (founder, 2026-09-17).
+ * `aruvi_device_seen` picks the friendlier door: a handset that has been signed in before opens
+ * on Sign in rather than on the Choose screen with its "Free to try · any 3 chapters" card. That
+ * is right for a teacher who logged out and is coming back, and WRONG the moment an account is
+ * erased — the promise is that signing in again starts a brand-new empty account, and the person
+ * holding the phone next is, as far as Meyy is concerned, new. She was landed on Sign in with no
+ * mention of the trial at all.
+ * ⚠️ It is deliberately NOT in `TEACHER_CACHE_PREFIXES`: that set is cleared on every session
+ * end, and clearing this one on a plain log out would show the sales pitch to a returning
+ * teacher every time. Erasure is the only caller. */
+export const DEVICE_SEEN_KEY = "aruvi_device_seen";
+
+/** Called on ERASURE only — see DEVICE_SEEN_KEY. */
+export function forgetDevice() {
+  try { storage.removeItem(DEVICE_SEEN_KEY); } catch {}
+}
