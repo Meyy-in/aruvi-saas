@@ -115,10 +115,24 @@ export default function FirstRun() {
   const periodsTouched = useRef(false);
   const durationTouched = useRef(false);
 
+  /* ★ THREE STATES, NOT TWO (founder, 2026-09-17, on the web: *"stuck in loading subjects"*).
+     `catch(() => setSubjects([]))` and a render that tests `length === 0` cannot tell "has not
+     arrived yet" from "will never arrive" — so a failed `/subjects` sat under the word
+     **Loading…** for ever, on the very first step of first run, with no error and nothing to
+     press. A spinner that never ends is the worst failure shape there is: it blames the network
+     for as long as she is willing to wait.
+     ⚠️ AND AN EMPTY LIST IS NOT A FAILURE. A teacher who arrives already PAID sees only her
+     scopes' subjects, so a subscription whose scopes match nothing we serve legitimately filters
+     the wheel to nothing — and that needs its own sentence, not a retry she can press for ever. */
+  const [subjLoad, setSubjLoad] = useState("");        // "" in flight · "ok" · "fail"
+  const [subjTry, setSubjTry] = useState(0);           // bumped by Try again
   useEffect(() => {
-    getJSON("/subjects").then((d) => setSubjects((d && d.subjects) || [])).catch(() => setSubjects([]));
+    setSubjLoad("");
+    getJSON("/subjects")
+      .then((d) => { setSubjects((d && d.subjects) || []); setSubjLoad("ok"); })
+      .catch(() => { setSubjects([]); setSubjLoad("fail"); });
     fetchEntitlement().then(setTrialInfo).catch(() => {});
-  }, []);
+  }, [subjTry]);
 
   // Arriving on the chapter step never re-opens a wheel she left open.
   useEffect(() => { if (step === "chapter") setEditingField(null); }, [step]);
@@ -414,7 +428,17 @@ export default function FirstRun() {
           Let’s start with one subject. Roll the box or use the arrows — the subject shown is your pick.
         </Text>
         {visibleSubjects.length === 0 ? (
-          <Text style={ws.fr_loading}>Loading subjects…</Text>
+          subjLoad === "fail" ? (
+            <Text style={ws.fr_loading}>Couldn’t load the subject list.{"  "}
+              <Text style={{ color: t.pine, textDecorationLine: "underline" }}
+                onPress={() => setSubjTry((n) => n + 1)}>Try again</Text>
+            </Text>
+          ) : subjLoad === "ok" ? (
+            <Text style={ws.fr_loading}>
+              {frPaidScopes ? "Your subscription doesn’t cover any subject we currently offer. Please contact support."
+                            : "No subjects are available just now. Please contact support."}
+            </Text>
+          ) : <Text style={ws.fr_loading}>Loading subjects…</Text>
         ) : (
           <RollWheel ariaLabel="Subject" value={subject} onChange={setSubject} large
             items={visibleSubjects.map((s) => ({ id: s, chip: pretty(s).charAt(0), label: pretty(s) }))} />

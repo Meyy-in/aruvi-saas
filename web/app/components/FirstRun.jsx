@@ -201,13 +201,28 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
   const [canonMinutes, setCanonMinutes] = useState({});  // {chapter: canonical total minutes}
   const [trialInfo, setTrialInfo] = useState(null);      // /entitlement, for the trial line
 
+  /* ★ THREE STATES, NOT TWO (founder, 2026-09-17: *"the web app is stuck in loading subjects"*).
+     `catch(() => setSubjects([]))` and a render that tests `length === 0` cannot tell "has not
+     arrived yet" from "will never arrive" — so a failed `/subjects` sat under the word
+     **Loading…** for ever, on the very first step of first run, with no error and nothing to
+     press. A spinner that never ends is the worst failure shape there is: it blames the network
+     for as long as she is willing to wait.
+     ⚠️ AND AN EMPTY LIST IS NOT A FAILURE. A teacher who arrives already PAID sees only her
+     scopes' subjects, so a subscription whose scopes match nothing we serve legitimately filters
+     the wheel to nothing — and that needs its own sentence, not a retry she can press for ever.
+     Hence `subjLoad`: "" while in flight, "ok" once answered, "fail" on refusal. */
+  const [subjLoad, setSubjLoad] = useState("");        // "" in flight · "ok" · "fail"
+  const [subjTry, setSubjTry] = useState(0);          // bumped by Try again
   // Load the subject catalogue once (used on the subject step).
   useEffect(() => {
-    getJSON("/subjects").then((d) => setSubjects(d.subjects || [])).catch(() => setSubjects([]));
+    setSubjLoad("");
+    getJSON("/subjects")
+      .then((d) => { setSubjects(d.subjects || []); setSubjLoad("ok"); })
+      .catch(() => { setSubjects([]); setSubjLoad("fail"); });
     // Trial state for the chapter step's disclosure line (Step 6 moment (a)); null on
     // failure = line simply doesn't render.
     fetchEntitlement().then(setTrialInfo);
-  }, []);
+  }, [subjTry]);
 
   // Stepping away from the chapter step and back (← Change class, ← Back to chapter, etc.)
   // should never re-open a duration/periods wheel the teacher left open — every fresh arrival
@@ -614,7 +629,18 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
         <div className="fr-step-body">
           <h1 className="fr-q">What do you teach?</h1>
           <p className="fr-hint">Let’s start with one subject. Roll the box or use the arrows — the subject shown is your pick.</p>
-          {visibleSubjects.length === 0 && <div className="fr-loading">Loading subjects…</div>}
+          {visibleSubjects.length === 0 && (
+            subjLoad === "fail" ? (
+              <div className="fr-loading">Couldn’t load the subject list.{" "}
+                <button type="button" className="lgl-link" onClick={() => setSubjTry((n) => n + 1)}>Try again</button>
+              </div>
+            ) : subjLoad === "ok" ? (
+              <div className="fr-loading">
+                {frPaidScopes ? "Your subscription doesn’t cover any subject we currently offer. Please contact support."
+                              : "No subjects are available just now. Please contact support."}
+              </div>
+            ) : <div className="fr-loading">Loading subjects…</div>
+          )}
           {visibleSubjects.length > 0 && (
             <RollWheel ariaLabel="Subject" value={subject} onChange={setSubject} large
               items={visibleSubjects.map((s) => ({ id: s, chip: pretty(s).charAt(0), label: pretty(s) }))} />
