@@ -10,7 +10,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { View, ScrollView, Pressable, Modal, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { Text, TextInput } from "../Text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Path, Rect } from "react-native-svg";
+import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 import { fetchEntitlement, fetchPlanNotes, savePlanNote, planNoteKey, userKey } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { useTheme } from "../../theme/ThemeContext";
@@ -44,7 +44,12 @@ const CN_GUIDE =
   "  · materials you brought in beyond the book\n" +
   "  · what to do differently next time\n" +
   "  · anything specific to a section you want to recall";
-const CN_ROMAN = { 3: "III", 4: "IV", 5: "V", 6: "VI", 7: "VII", 8: "VIII", 9: "IX", 10: "X" };
+/* ⚠️ THE FULL SCHOOL RANGE (app. 06 row 46). This stopped at 3-10, so classes I, II, XI and XII
+   fell through to the bare digit and a Class XI note was headed "Mathematics 11" while every
+   other class read "Mathematics IX". Meyy serves the preparatory stage upward, and the senior
+   secondary classes exist in the profile whether or not content is served for them yet. */
+const CN_ROMAN = { 1: "I", 2: "II", 3: "III", 4: "IV", 5: "V", 6: "VI",
+                   7: "VII", 8: "VIII", 9: "IX", 10: "X", 11: "XI", 12: "XII" };
 function cnSubjectGrade(lp) {
   const subj = String(lp.subject || "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()).trim();
   const gm = String(lp.grade || "").match(/\d+/);
@@ -276,7 +281,16 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
        app already has a rule for this: Ask Meyy's panel opens beneath the frozen header
        (`top: var(--hdr-h)`) and, since yesterday, stops above the bottom nav. A panel is a room
        INSIDE the app, so the app's own chrome stays visible and lit. The offset is the bar's
-       published height plus the status-bar inset — the phone's --hdr-h. */
+       published height plus the status-bar inset — the phone's --hdr-h.
+       ★ **A NAMED DIVERGENCE — the web CENTRES this window and keeps doing so** (founder,
+       2026-09-17, answering Q20). Asked which surface should follow which, he took neither:
+       the placements stay different and the difference is recorded rather than resolved.
+       The reasoning each way is real — on the phone a panel that covers the bar leaves exactly
+       one way out of itself, which is the rule Ask Meyy's scrim already obeys here; on a desktop
+       there is no bar worth preserving and a centred card reads as the modal it is. So this is
+       the second of the two allowed divergence kinds in CLAUDE.md §0: a phone-shaped answer,
+       named in the component that makes it. **Do not "fix" either surface to match the other
+       without asking again.** */
     <Modal visible transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <KeyboardAvoidingView style={{ flex: 1, paddingTop: insets.top + BAR_CONTENT_H }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -305,7 +319,7 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
                   ))}
                   {/* No autoFocus: the window opens whole — the child-privacy rule is readable
                       before the keyboard covers half the screen — and the sheet only gives up
-                      its room once she taps to write. "Speak" focuses it too. */}
+                      its room once she taps to write. "Dictate" focuses it too. */}
                   <TextInput ref={ref} multiline scrollEnabled={false}
                     editable={!readOnly} value={text} onChangeText={change}
                     onContentSizeChange={(e) => setContentH(e.nativeEvent.contentSize.height)}
@@ -325,9 +339,20 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
               ) : (
                 <>
                   <View style={ws.cn_foot_l}>
-                    <Pressable onPress={() => ref.current && ref.current.focus()} style={ws.cn_speak}>
+                    {/* ★ IT WAS CALLED "Speak", AND IT DOES NOT LISTEN (founder, 2026-09-17,
+                        answering Q18). All this control has ever done — on BOTH surfaces — is
+                        put the cursor in the writing area; the dictation is the KEYBOARD's, on
+                        its own mic key. The founder kept the behaviour and renamed the button,
+                        which is the honest half: a mic labelled "Speak" promises that Meyy is
+                        listening, and a teacher who speaks at it and finds nothing written
+                        learns that this app's buttons cannot be taken at their word.
+                        ⚠️ The accessibility label says what actually happens, because a screen
+                        reader user gets no keyboard-mic affordance from the icon. */}
+                    <Pressable onPress={() => ref.current && ref.current.focus()} style={ws.cn_speak}
+                      accessibilityRole="button"
+                      accessibilityLabel="Start writing — then use your keyboard's mic to dictate">
                       <MicIcon color={t.ink_soft} />
-                      <Text style={ws.cn_speak_t}>Speak</Text>
+                      <Text style={ws.cn_speak_t}>Dictate</Text>
                     </Pressable>
                     <Text style={[ws.cn_count, wc >= CN_CAP && ws.cn_count_over]}>{wc} / {CN_CAP} words</Text>
                   </View>
@@ -491,10 +516,32 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
           <SSFlowBody ws={ws} t={t} units={units} pointer={pointer} doneAll={doneAll} onOpenUnit={onOpenUnit}
             onCur={revealCur} gapNote={(lp.meta && lp.meta.competency_gap_note) || ""} />
         ) : mathsFlat ? (
-          (lp.groups[0].periods || []).map((p, i) => {
+          /* ★ A WINDOW WITH A FADE, NOT THE WHOLE PAGE (app. 06 row 30). Maths-prep has ONE
+             group, so its units render as a flat list — and a 20-unit chapter then pushed the
+             chapter head, the rail and the notes button far off the top. The web caps it
+             (`.co-flatscroll`, 348px at phone width) and hangs a 26px fade at the foot so the
+             cut edge reads as "there is more" rather than as the end of the list.
+             ⚠️ The fade is an SVG gradient, not a CSS one — RN has no `linear-gradient`; the
+             same substitution `PrepareCta` makes. `pointerEvents="none"` so it cannot eat a tap
+             on the card beneath it. */
+          <View style={ws.co_flatwrap}>
+          <ScrollView style={ws.co_flatscroll} nestedScrollEnabled
+            showsVerticalScrollIndicator={false}>
+          {(lp.groups[0].periods || []).map((p, i) => {
             const status = pointer == null ? "" : (doneAll || i < pointer) ? "done" : i === pointer ? "cur" : "up";
             return <UnitCard key={i} ws={ws} n={i} p={p} status={status} onOpen={onOpenUnit} onCur={revealCur} />;
-          })
+          })}
+          </ScrollView>
+          <Svg pointerEvents="none" width="100%" height={26} style={ws.co_flatfade}>
+            <Defs>
+              <LinearGradient id="coFlatFade" x1="0" y1="0" x2="0" y2="1">
+                <Stop offset="0" stopColor={t.paper} stopOpacity="0" />
+                <Stop offset="1" stopColor={t.paper} stopOpacity="1" />
+              </LinearGradient>
+            </Defs>
+            <Rect x="0" y="0" width="100%" height="26" fill="url(#coFlatFade)" />
+          </Svg>
+          </View>
         ) : (lp.groups || []).map((g, gi) => {
           const open = openIdx === gi;
           // Built for EVERY group, open or not — that walk is what keeps `idx` chapter-wide.
@@ -504,10 +551,28 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
           const shownLabel = (lp.subject === "social_sciences" && g.type === "competency" && !open) ? truncateWords(rawLabel, 12) : rawLabel;
           return (
             <View key={gi} style={[ws.co_acc, open && ws.co_acc_open]}>
+              {/* ★ THE HEAD READS ITS SUBJECT (app. 06 rows 16, 26).
+                  ⓵ Social Sciences heads are COMPETENCY STATEMENTS, not section titles — whole
+                  sentences where science has two or three words — so globals.css drops them two
+                  notches (18 → 16 → 13 at phone width) to stop one heading eating the screen.
+                  ⓶ The unit COUNT is hidden for science and SS at phone width: both already
+                  carry a rail above, the label is long, and a bare number competes for the width the
+                  sentence needs. Maths and English keep it — their labels are short.
+                  ⚠️ The sizes live in `web.js` (`co_acc_name`, `co_acc_name_ss`) so the parity
+                  checker can see them; only the CHOICE is made here. */}
               <Pressable onPress={() => setOpenIdx(open ? -1 : gi)} style={ws.co_acchead} accessibilityState={{ expanded: open }}>
-                <Text style={ws.co_acc_name}>{shownLabel}</Text>
-                <Text style={ws.co_count}>{cnt}</Text>
-                <Text style={{ color: t.ink_soft, transform: [{ rotate: open ? "180deg" : "0deg" }] }}>⌄</Text>
+                <Text style={[ws.co_acc_name, lp.subject === "social_sciences" && ws.co_acc_name_ss]}>
+                  {shownLabel}
+                </Text>
+                {lp.subject === "science" || lp.subject === "social_sciences"
+                  ? null : <Text style={ws.co_count}>{cnt}</Text>}
+                {/* An SVG path, not a rotated "⌄": the glyph's own baseline offset made it sit
+                    low in the row, and a rotated text node carries that offset with it. */}
+                <Svg viewBox="0 0 24 24" width={12} height={12} fill="none" stroke={t.ink_soft}
+                  strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+                  style={{ transform: [{ rotate: open ? "180deg" : "0deg" }] }}>
+                  <Path d="M6 9l6 6 6-6" />
+                </Svg>
               </Pressable>
               {open ? <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>{body}</View> : null}
             </View>

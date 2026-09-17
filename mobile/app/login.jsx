@@ -16,7 +16,8 @@ import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, StyleSheet 
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
-import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, authHeaders } from "@aruvi/shared/auth";
+import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
+         OTP_RESEND_LOCK_MS, authHeaders } from "@aruvi/shared/auth";
 import { primeBank } from "@aruvi/shared/ask-aruvi/bank";
 import { storage } from "@aruvi/shared/storage";
 import Bar from "../components/Bar";
@@ -109,6 +110,26 @@ export default function Login() {
   const [flow, setFlow] = useState("create");   // create | return
   const [mobile, setMobile] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  /* ★ THE CODE'S OWN CLOCK (founder, 2026-09-17: "there is no timer too … at end of timer, it
+     should show resend only"). ⚠️ It runs from the moment the SMS was REQUESTED, because that is
+     when Supabase's own expiry starts — anchoring it to when the screen appeared would drift by
+     however long the send took, and the drift always runs in the direction that flatters us.
+     ★ It is also what tells a WRONG code from a DEAD one: Supabase answers both with the same
+     sentence (see `OTP_WRONG` in shared/auth), so the clock is the only honest discriminator. */
+  const [otpAt, setOtpAt] = useState(0);        // ms timestamp of the last successful send
+  const [otpLeft, setOtpLeft] = useState(0);    // whole seconds remaining, 0 once dead
+  useEffect(() => {
+    if (!otpAt) return undefined;
+    const tick = () => setOtpLeft(Math.max(0, Math.ceil((otpAt + OTP_TTL_MS - Date.now()) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [otpAt]);
+  const otpDead = otpAt > 0 && otpLeft === 0;
+  /* Resend appears once the server would actually honour it — see OTP_RESEND_LOCK_MS. Offering
+     it sooner is offering a button that comes back refused. */
+  const otpElapsed = otpAt > 0 ? OTP_TTL_MS / 1000 - otpLeft : 0;
+  const otpCanResend = otpAt > 0 && otpElapsed >= OTP_RESEND_LOCK_MS / 1000;
   const [otp, setOtp] = useState("");
   const [otpErr, setOtpErr] = useState("");
   const [otpBusy, setOtpBusy] = useState(false);
@@ -130,15 +151,19 @@ export default function Login() {
   const mobileOk = /^\d{10}$/.test(mobile.trim());
 
   const requestOtp = async (num) => {
-    if (!live) return true;
+    if (!live) { setOtpAt(Date.now()); return true; }
     const err = await sendOtp(num);
     if (err) { setMobErr(err); return false; }
+    setOtpAt(Date.now());   // the clock starts when the code was ASKED FOR, not when it arrives
     return true;
   };
 
   const verifyOtp = async () => {
     const num = mobile.trim();
     setOtpErr("");
+    /* Past the timer there is nothing to ask: the code is gone at the server too, and a round
+       trip would only return the same ambiguous sentence a second later. */
+    if (otpDead) { setOtpErr(OTP_EXPIRED); return; }
     if (live) {
       setOtpBusy(true);
       const err = await verifyOtpRemote(num, otp);
@@ -239,13 +264,32 @@ export default function Login() {
               <OtpBoxes value={otp} onChange={(v) => { setOtp(v); setOtpErr(""); }} length={otpLen} autoFocus />
             </Field>
             {live ? (
-              <Quiet>Sent by SMS to +91 {mobile.trim()}.{"  "}
-                <Text style={{ color: t.pine, textDecorationLine: "underline" }}
-                  onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>Resend</Text>
-              </Quiet>
+              /* ★ WHILE IT RUNS she is told how long she has and is NOT offered Resend — a fresh
+                 code would invalidate the one she is halfway through typing. ONCE IT IS DEAD the
+                 countdown, the boxes' purpose and Verify all go, and Resend is the only thing
+                 left, which is the founder's rule: "at end of timer, it should show resend
+                 only". One state, one action. */
+              otpDead ? (
+                <Quiet>The code sent to +91 {mobile.trim()} has expired.{"  "}
+                  <Text style={{ color: t.pine, textDecorationLine: "underline" }}
+                    onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>Send a new code</Text>
+                </Quiet>
+              ) : (
+                <Quiet>Sent by SMS to +91 {mobile.trim()}.{"  "}
+                  <Text style={type.bodyStrong}>{Math.floor(otpLeft / 60)}:{String(otpLeft % 60).padStart(2, "0")}</Text> left.
+                  {otpCanResend ? (
+                    <Text>{"  "}
+                      <Text style={{ color: t.pine, textDecorationLine: "underline" }}
+                        onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>Resend</Text>
+                    </Text>
+                  ) : null}
+                </Quiet>
+              )
             ) : <Quiet>Preview build: enter <Text style={type.bodyStrong}>0000</Text>.</Quiet>}
             <ErrorLine>{otpErr}</ErrorLine>
-            <Button title={otpBusy ? "Verifying…" : "Verify & continue →"} disabled={otp.length !== otpLen} busy={otpBusy} style={{ marginTop: 22 }} onPress={verifyOtp} />
+            {otpDead ? null : (
+              <Button title={otpBusy ? "Verifying…" : "Verify & continue →"} disabled={otp.length !== otpLen} busy={otpBusy} style={{ marginTop: 22 }} onPress={verifyOtp} />
+            )}
           </>
         )}
       </Wrap>

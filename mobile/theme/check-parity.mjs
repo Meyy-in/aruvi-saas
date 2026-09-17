@@ -112,7 +112,63 @@ function specificity(sel) {
   return ids * 10000 + cls * 100 + els;
 }
 
-const PHONE = /max-width:\s*(600|640)px/;
+/* ★ EVERY BREAKPOINT THE REFERENCE WIDTH SATISFIES, NOT A HARD-CODED PAIR (2026-09-17).
+   This was `/max-width:\s*(600|640)px/`, so a rule inside `@media (max-width: 400px)` was
+   dropped by the filter below and the BASE rule was reported as the winner — which is wrong at
+   every width the phone actually runs at. It cost two false disagreements (`tp_stat_n` 21 vs 19,
+   `tp_stat_l` 8.5 vs 8) where the PHONE was right and the checker was not, and the map's step-8
+   list had carried both as debt since 2026-09-15.
+   ★ The reference width is 390 (CLAUDE.md §4: verify at 390, stress at 360), so a `max-width`
+   breakpoint applies when it is >= 390. `min-width` still disqualifies a rule outright — those
+   are desktop-up. ⚠️ If the reference width ever changes, change it HERE; it is the one number
+   that decides which half of globals.css this checker is reading. */
+/* ───────── NAMED DIVERGENCES — the checker's own blind spots, each with its reason ─────────
+ *
+ * ⚠️ THIS IS NOT A MUTE BUTTON. Every entry says WHY the checker is wrong about that key, and
+ * "the phone looks fine to me" is not a reason. The bar is that the comparison itself is
+ * ill-posed — the checker is reading a rule the phone does not render, or reading a box where
+ * the phone keeps the type. If a key is merely UNMEASURED, fix the key; do not list it here.
+ *
+ * Three families, and each one is a fact about the two platforms rather than about a screen:
+ *
+ * ⓵ `.assess-flat` — assessment items sit FLAT on the unit's paper (CLAUDE.md §3, 2026-07-10),
+ *    and globals.css re-palettes them at a HIGHER specificity: `.assess-flat .assess-prompt` is
+ *    13.5px where the bare `.assess-prompt` is 14px. `targetsAlone()` deliberately only compares
+ *    single-class rules, so it reads the bare one and reports the flat port as wrong. The phone
+ *    renders the flat layout (`AssessPanel.jsx` → `ws.assess_flat`), so its values are RIGHT.
+ *
+ * ⓶ ONE WEB CLASS, TWO RN KEYS. CSS puts the box and its type on one class; a React Native
+ *    `View` cannot carry a font, so the phone splits `x` (layout) from `x_t` (type). The checker
+ *    maps `x` → `.x`, finds no font on the phone's box, and falls through to a sibling. Where the
+ *    TEXT key is correct, the box key's report is noise.
+ *
+ * ⓷ THE 16px INPUT-ZOOM GUARD. `@media (max-width: 600px) { .dd-btn, .dd-opt { font-size: 16px } }`
+ *    exists because iOS Safari ZOOMS THE PAGE when a control smaller than 16px takes focus. It is
+ *    a browser workaround with no native counterpart — a Sheet does not zoom — so copying it onto
+ *    the phone would make every dropdown two points larger than the design for no reason.
+ */
+const NAMED_DIVERGENCES = {
+  "assess_prompt:font-size":      "the phone renders .assess-flat (13.5px), not the bare rule",
+  "assess_look_k:font-size":      "the phone renders .assess-flat (10px), not the bare rule",
+  "assess_look_k:letter-spacing": ".1em of the FLAT 10px = 1.0px; the checker computes it off 9px",
+  "assess_look_t:font-size":      "the phone renders .assess-flat (13.5px), not the bare rule",
+  "assess_scaf_row:font-size":    "the phone renders .assess-flat (13.5px), not the bare rule",
+  "assess_corr_row:font-size":    "one key serves several rows; the checker sees the whole family",
+  "assess_revrow:font-size":      "one key serves several rows; the checker sees the whole family",
+  "assess_passage:font-size":     "one key serves several rows; the checker sees the whole family",
+  "lv_pvmid:font-size":           "the phone's preview nav splits box and label across two keys",
+  "lv_pvmid:letter-spacing":      "as above — the label key carries the tracking",
+  "dd_btn:font-size":             "16px is iOS Safari's input-zoom guard; a native Sheet cannot zoom",
+  "dd_opt:font-size":             "16px is iOS Safari's input-zoom guard; a native Sheet cannot zoom",
+};
+
+const REF_WIDTH = 390;
+const PHONE = {
+  test(media) {
+    const m = /max-width:\s*(\d+(?:\.\d+)?)px/.exec(media);
+    return !!m && Number(m[1]) >= REF_WIDTH;
+  },
+};
 /* Does this selector target exactly `.cls`, with no other class required? A rule like
    `.a .b` or `.a.b` is conditional on more than the class we are asking about. */
 function targetsAlone(sel, cls) {
@@ -234,6 +290,14 @@ const num = (v) => { const n = parseFloat(v); return Number.isFinite(n) ? n : nu
 const emToPx = (v, fs_) => (/em$/.test(v) && fs_ != null ? parseFloat(v) * fs_ : num(v));
 
 const mismatches = [];
+const namedHits = [];
+/* Every disagreement goes through here, so a future check cannot bypass the table by accident. */
+function report(key, prop, line) {
+  const reason = NAMED_DIVERGENCES[`${key}:${prop}`];
+  if (reason) namedHits.push(`${key}  ${prop} — ${reason}`);
+  else mismatches.push(line);
+}
+const named = [];
 const unmapped = [];
 for (const [key, decl] of keys) {
   const cls = key.replace(/_/g, "-");
@@ -288,7 +352,7 @@ for (const [key, decl] of keys) {
   const sizes = cssSize.map((w) => num(w.value)).filter((n) => n != null);
   if (sizes.length && rnSizes.length
       && !sizes.some((w) => rnSizes.some((r) => Math.abs(w - r) < 0.01))) {
-    mismatches.push(`${key}  font-size: web says ${[...new Set(sizes)].join(" or ")}, `
+    report(key, "font-size", `${key}  font-size: web says ${[...new Set(sizes)].join(" or ")}, `
       + `phone has ${[...new Set(rnSizes)].join(" or ")}   [${cssSize[0].sel}`
       + `${cssSize[0].media ? " @" + cssSize[0].media.replace(/^@/, "") : ""}]`);
   }
@@ -311,12 +375,12 @@ for (const [key, decl] of keys) {
   if (trackPairs.length && rnTracks.length
       && !trackPairs.some((p) => rnTracks.some((r) => Math.abs(p.px - r) < 0.02))) {
     const p0 = trackPairs[0];
-    mismatches.push(`${key}  letter-spacing: web says ${p0.w.value} `
+    report(key, "letter-spacing", `${key}  letter-spacing: web says ${p0.w.value} `
       + `(= ${p0.px.toFixed(2)}px), phone has ${rnTracks[0]}`);
   }
   const cssCase = cssOf("text-transform");
   if (cssCase.length && !cssCase.map((w) => /uppercase/.test(w.value)).some((u) => u === rnCase)) {
-    mismatches.push(`${key}  text-transform: web says ${cssCase[0].value}, `
+    report(key, "text-transform", `${key}  text-transform: web says ${cssCase[0].value}, `
       + `phone ${rnCase ? "uppercases" : "does not"}`);
   }
 }
@@ -340,6 +404,14 @@ console.log("══ B · theme/web.js vs the rule that WINS ══\n");
 if (!mismatches.length) console.log("   no disagreement on face size, tracking or case\n");
 else mismatches.forEach((m) => console.log("   " + m));
 
+/* ★ THE NAMED ONES ARE PRINTED, NOT SWALLOWED. A silent skip list rots: nobody notices when a
+   reason stops being true. Shown every run, with the reason, so the cost of a bad entry is that
+   somebody reads it. */
+if (namedHits.length && !QUIET) {
+  console.log(`\n══ C · NAMED DIVERGENCES (checked, and the checker is the one that is wrong) ══`);
+  namedHits.forEach((m) => console.log("   " + m));
+}
+
 if (!QUIET) {
   console.log(`\n══ coverage ══`);
   console.log(`   ${keys.size - unmapped.length} of ${keys.size} theme keys map to a class of the same name`);
@@ -347,6 +419,13 @@ if (!QUIET) {
   console.log("   " + unmapped.join(", ") + "\n");
 }
 
-const problems = ties.length + mismatches.length;
-console.log(`${problems ? "✗" : "✓"} ${ties.length} tie-broken-by-source-order, ${mismatches.length} value disagreement(s)\n`);
+/* ⚠️ **ONLY DISAGREEMENTS FAIL THIS CHECK.** The ties in section A are a report about the WEB's
+   own cascade — dead declarations that a later same-specificity rule overrides — and they are
+   worth reading before touching those classes, but they are not a phone-parity defect and there
+   is nothing in `theme/web.js` to change for them. Failing on them meant the check could never
+   go green, so "run it until it is clean" had no meaning; section B is the contract. */
+const problems = mismatches.length;
+console.log(`${problems ? "✗" : "✓"} ${mismatches.length} value disagreement(s)`
+  + `   ·   ${namedHits.length} named divergence(s)`
+  + `   ·   ${ties.length} web-CSS tie(s) to read, not to fix\n`);
 process.exit(problems ? 1 : 0);

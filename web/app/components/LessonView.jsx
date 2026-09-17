@@ -1283,6 +1283,11 @@ function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClos
     setText(v);
   };
   return (
+    /* ★ THIS WINDOW IS CENTRED, AND THE PHONE'S IS NOT — a NAMED divergence (founder,
+       2026-09-17, answering Q20). The phone opens the same panel BELOW its top bar, because a
+       panel covering the app's own nav leaves one way out of itself; a desktop has no such bar
+       to preserve and a centred card reads as the modal it is. Both stand; neither is a bug.
+       See `mobile/components/lesson/ChapterOrg.jsx` for the other half of this note. */
     <div className="cn-modal-bg" onClick={onClose}>
       <div className="cn-modal" onClick={(e) => e.stopPropagation()}>
         <div className="cn-head">
@@ -1330,7 +1335,14 @@ function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClos
         ) : (
         <div className="cn-foot">
           <div className="cn-foot-l">
-            <button className="cn-speak" onClick={() => taRef.current?.focus()}>
+            {/* ★ RENAMED FROM "Speak" (founder, 2026-09-17, answering Q18). It never listened:
+                it focuses the writing area, and the dictation belongs to the operating system's
+                own mic. ⚠️ On the WEB that leaves the button close to a no-op — focusing a
+                textarea offers a desktop user nothing, and there is no keyboard mic to point
+                at. Recorded, not resolved: whether it should exist here at all is a separate
+                call from what it should be called. */}
+            <button className="cn-speak" onClick={() => taRef.current?.focus()}
+              aria-label="Start writing — then use your system's dictation to speak">
               <svg className="cn-speak-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <rect x="9" y="2" width="6" height="12" rx="3" />
@@ -1338,7 +1350,7 @@ function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClos
                 <line x1="12" y1="18" x2="12" y2="22" />
                 <line x1="8" y1="22" x2="16" y2="22" />
               </svg>
-              Speak
+              Dictate
             </button>
             <span className={`cn-count${wc >= CN_CAP ? " over" : ""}`}>{wc} / {CN_CAP} words</span>
           </div>

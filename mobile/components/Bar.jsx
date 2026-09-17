@@ -24,6 +24,7 @@ import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/a
 import GearIcon from "./GearIcon";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
+import { useTourAnchor } from "../lib/tour";
 import { endSession } from "../lib/session";
 
 /* The bar's own height BELOW the status bar: the 35px lockup centred in 14 + 15 of padding.
@@ -54,6 +55,7 @@ export const BAR_CONTENT_H = 64;
  * existed: a control that does nothing, on the one screen a teacher meets before she has learnt
  * anything. Identity and Log out stay — the web shows both there. */
 export default function Bar({ user = getUser(), onSettings = null, gear = true }) {
+  const gearRef = useTourAnchor("settings-gear");   // tour step 17
   const { t } = useTheme();
   const ws = useWebStyles();
   const insets = useSafeAreaInsets();
@@ -93,7 +95,7 @@ export default function Bar({ user = getUser(), onSettings = null, gear = true }
                 now so the bar stops changing shape under a teacher who has already learnt it —
                 the same reasoning as the bottom nav's inert items. */}
             {gear ? (
-              <Pressable onPress={onSettings || undefined} disabled={!onSettings} hitSlop={8}
+              <Pressable ref={gearRef} onPress={onSettings || undefined} disabled={!onSettings} hitSlop={8}
                 accessibilityRole="button" accessibilityLabel="Settings">
                 <View style={ws.hdr_gear_pad}><GearIcon color={t.bar_ink_soft} size={18} /></View>
               </Pressable>

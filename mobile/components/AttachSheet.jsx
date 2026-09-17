@@ -31,6 +31,7 @@ import { Text } from "./Text";
 import PrepareCta from "./PrepareCta";
 import { pretty, classNum, pad } from "@aruvi/shared/format";
 import { readHistory } from "@aruvi/shared/sectionHistory";
+import { useTourAnchor } from "../lib/tour";
 import { readLocalSection } from "@aruvi/shared/sectionState";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -55,9 +56,11 @@ import { useWebStyles } from "../theme/web";
  * sides. `KeyboardAvoidingView` lifts the card instead, with `padding` on iOS and `height` on
  * Android, which is the pair those two platforms actually want.
  */
-export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, scroll = false, children }) {
+export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, scroll = false,
+                        tour = null, children }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const tourRef = useTourAnchor(tour);   // only the attach picker passes a name (steps 9, 15)
   const body = scroll
     ? (
       <ScrollView style={ws.ap_scrollbody} contentContainerStyle={ws.ap_scrollpad}
@@ -96,7 +99,8 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
             overlay carries no label either — it is a convenience for a pointer, not a control. */}
         <Pressable style={ws.ap_ground} onPress={onClose} accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants" />
-        <View style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall,
+        <View ref={tourRef} collapsable={false}
+          style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall,
                       { backgroundColor: t.paper, borderColor: t.line }]}>
           {/* ⚠️ SKIPPED ENTIRELY when a window brings its own heading. `.ap-head` is the WINDOW's
               header — an ochre kicker over a 21px title — and it is right for a window whose
@@ -146,9 +150,11 @@ const chLabel = (p) => `${p.chapter_number ? `Ch. ${pad(p.chapter_number)}: ` : 
 
 /* One chapter row — "Ch. 05: Force and Pressure" as ONE sentence (founder, 2026-07-25), the
    number in pine before the colon, a light chevron as the tap affordance. */
-function ChapterRow({ plan, onPress, year }) {
+function ChapterRow({ plan, onPress, year, tourRow }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  /* Step 9's HAND points at a row inside the window, not at the window — only the first. */
+  const rowRef = useTourAnchor(tourRow ? "attach-pop-row" : null);
   /* ★ WHICH EDITION THIS PLAN IS (app. 05 row B15). Two different years live in this system and
      conflating them is the bug the 2026-08-27 foldering fixed: the TEACHER's academic year, and
      the LIBRARY EDITION a plan IS. She only ever sees the stamp for a PRIOR edition — the server
@@ -157,7 +163,7 @@ function ChapterRow({ plan, onPress, year }) {
      the server flag is absent by construction, so the caller passes it. */
   const stamp = year || plan.lp_year_display || plan.prepared_source_year;
   return (
-    <Pressable onPress={onPress} style={ws.ap_row} accessibilityRole="button">
+    <Pressable ref={rowRef} onPress={onPress} style={ws.ap_row} accessibilityRole="button">
       <View style={ws.ch_meta}>
         <Text style={ws.ch_name} numberOfLines={2}>
           {plan.chapter_number ? <Text style={ws.ch_no}>{`Ch. ${pad(plan.chapter_number)}: `}</Text> : null}
@@ -187,7 +193,7 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
 
   if (!target) return null;
   return (
-    <Sheet visible onClose={onClose} kicker={scope(target.c)}
+    <Sheet visible onClose={onClose} kicker={scope(target.c)} tour="attach-pop"
       title="Track a chapter for this section"
       sub={"Pick a chapter you’ve already prepared to track for this section, or build a new one."}>
       {/* The web caps the list at two rows and wheels through the rest so the modal can never
@@ -202,8 +208,9 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
           <Text style={ws.ap_loading}>Loading lessons…</Text>
         ) : list.length === 0 ? (
           <Text style={ws.ap_none}>No other lessons prepared for this section yet.</Text>
-        ) : list.map((p) => (
-          <ChapterRow key={p.filename} plan={p} onPress={() => onAttach(target.c, target.sectionKey, p)} />
+        ) : list.map((p, i) => (
+          <ChapterRow key={p.filename} plan={p} tourRow={i === 0}
+            onPress={() => onAttach(target.c, target.sectionKey, p)} />
         ))}
       </ScrollView>
       {/* ★ "PREPARE A NEW ONE", LIVE AT LAST (founder, 2026-09-15: "My Class + allows generation

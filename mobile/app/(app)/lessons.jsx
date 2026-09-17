@@ -58,6 +58,7 @@ import {
   pretty, subjectSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { subscribeYear } from "@aruvi/shared/year";
+import { useTourAnchor, useTour } from "../../lib/tour";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
@@ -343,6 +344,7 @@ export default function MyLessons() {
   const [priorPlans, setPriorPlans] = useState({});
   const [year, setYear] = useState(null);
   useEffect(() => subscribeYear(setYear), []);
+  const tourNow = useTour();   // steps 3-6 ring the first lesson card and its two controls
   const sSlug = current ? subjectSlug(current.name) : "";
   const gSlug = gradeSlug(activeGrade);
   const key = sSlug && gSlug ? `${sSlug}/${gSlug}` : "";
@@ -809,6 +811,7 @@ export default function MyLessons() {
             ) : null}
             {ordered.map((p, pi) => (
               <PlanCard key={p.filename} p={p} archived={effView === "archived"}
+                tourStep={pi === 0 ? tourNow.step : 0}
                 status={statusFor(p)} attached={isAttached(p)} sSlug={sSlug} gSlug={gSlug}
                 busy={pi === busyIdx ? preparing : null} onDismissBusy={clearPreparing}
                 onOpen={() => openLesson(p)}
@@ -955,7 +958,11 @@ export default function MyLessons() {
    ⚠️ The folder's year IS the stamp for its rows — they were fetched under it, so the server's
    `lp_year_display` is absent by construction and the caller supplies it. */
 function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
-                   onDismissBusy, onOpen, onArchive, onRestore, priorYear }) {
+                   onDismissBusy, onOpen, onArchive, onRestore, priorYear, tourStep }) {
+  /* Only the tour's own card claims these names, and each only on the step that rings it. */
+  const cardRef = useTourAnchor(tourStep === 3 || tourStep === 6 ? "lesson-first" : null);
+  const reportRef = useTourAnchor(tourStep === 4 ? "lesson-report" : null);
+  const archiveRef = useTourAnchor(tourStep === 5 ? "lesson-archive" : null);
   const { t } = useTheme();
   const ws = useWebStyles();
   const { completed, live } = status;
@@ -1032,7 +1039,7 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
           <Text style={[ws.mlp2_restore_t, { color: t.paper }]}>Restore</Text>
         </Pressable>
       ) : !attached && !busy && !priorYear ? (
-        <Pressable onPress={onArchive} accessibilityRole="button" hitSlop={6}
+        <Pressable ref={archiveRef} onPress={onArchive} accessibilityRole="button" hitSlop={6}
           accessibilityLabel={`Archive ${p.chapter_title}`} style={ws.mlp2_iconbtn}>
           <ArchiveIcon size={18} color={t.ink_soft} />
         </Pressable>
@@ -1046,8 +1053,10 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
           keeps archived plans out of the attach picker (founder, 2026-08-01). Not while it is
           re-preparing either: what the file would say is being rewritten as she taps. */}
       {!archived && !busy && !priorYear ? (
-        <ReportButton sSlug={sSlug} gSlug={gSlug} filename={p.filename}
-          chapterTitle={p.chapter_title} />
+        <View ref={reportRef} collapsable={false}>
+          <ReportButton sSlug={sSlug} gSlug={gSlug} filename={p.filename}
+            chapterTitle={p.chapter_title} />
+        </View>
       ) : null}
     </View>
   );

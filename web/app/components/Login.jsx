@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { API, getJSON, idInUse } from "../lib/format";
-import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, authHeaders } from "../lib/auth";
+import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
+         OTP_RESEND_LOCK_MS, authHeaders } from "../lib/auth";
 import SubscribeFlow, { MOBILE_TAKEN } from "./SubscribeFlow";
 import MeyyMark from "./MeyyMark";
 import PrivacyNotice from "./PrivacyNotice";
@@ -61,6 +62,24 @@ export default function Login({ onEnter }) {
   // OTP — four boxes, auto-advance (founder, 2026-08-25). `otp` is the joined string.
   const [mobile, setMobile] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  /* ★ THE CODE'S OWN CLOCK — the same rule as the phone's, and for the same two reasons: it
+     shows her how long she has, and it is what tells a WRONG code from a DEAD one, because
+     Supabase answers both with one sentence (see `OTP_WRONG` in shared/auth). Anchored to the
+     moment the SMS was REQUESTED, which is when the server's own expiry starts. */
+  const [otpAt, setOtpAt] = useState(0);
+  const [otpLeft, setOtpLeft] = useState(0);
+  useEffect(() => {
+    if (!otpAt) return undefined;
+    const tick = () => setOtpLeft(Math.max(0, Math.ceil((otpAt + OTP_TTL_MS - Date.now()) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [otpAt]);
+  const otpDead = otpAt > 0 && otpLeft === 0;
+  /* Resend appears once the server would honour it — see OTP_RESEND_LOCK_MS. Offering it sooner
+     is offering a button that comes back refused. */
+  const otpElapsed = otpAt > 0 ? OTP_TTL_MS / 1000 - otpLeft : 0;
+  const otpCanResend = otpAt > 0 && otpElapsed >= OTP_RESEND_LOCK_MS / 1000;
   const [otp, setOtp] = useState("");
   const [otpErr, setOtpErr] = useState("");
   const [otpBusy, setOtpBusy] = useState(false);
@@ -119,9 +138,10 @@ export default function Login({ onEnter }) {
 
   /* Ask for the code (live) or just open the boxes (stub). Returns true when sent. */
   const requestOtp = async (num) => {
-    if (!live) return true;
+    if (!live) { setOtpAt(Date.now()); return true; }
     const err = await sendOtp(num);
     if (err) { setMobErr(err); return false; }
+    setOtpAt(Date.now());
     return true;
   };
 
@@ -130,6 +150,8 @@ export default function Login({ onEnter }) {
   const verifyOtp = async () => {
     const num = mobile.trim();
     setOtpErr("");
+    // Past the timer the code is gone at the server too; a round trip would only say so slower.
+    if (otpDead) { setOtpErr(OTP_EXPIRED); return; }
     if (live) {
       setOtpBusy(true);
       const err = await verifyOtpRemote(num, otp);
@@ -276,17 +298,32 @@ export default function Login({ onEnter }) {
                 </div>
               </div>
               {live ? (
-                <p className="ob-quiet">Sent by SMS to +91 {mobile.trim()}.{" "}
-                  <button type="button" className="lgl-link" disabled={otpBusy}
-                    onClick={async () => { setOtpErr(""); setOtp(""); const ok = await requestOtp(mobile.trim()); if (ok) setOtpErr(""); }}>
-                    Resend</button></p>
+                /* ★ WHILE IT RUNS: the time left, and NO Resend — a fresh code would invalidate
+                   the one she is halfway through typing. ONCE DEAD: the countdown and Verify go,
+                   and sending a new code is the only thing on offer. */
+                otpDead ? (
+                  <p className="ob-quiet">The code sent to +91 {mobile.trim()} has expired.{" "}
+                    <button type="button" className="lgl-link" disabled={otpBusy}
+                      onClick={async () => { setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>
+                      Send a new code</button></p>
+                ) : (
+                  <p className="ob-quiet">Sent by SMS to +91 {mobile.trim()}.{" "}
+                    <b>{Math.floor(otpLeft / 60)}:{String(otpLeft % 60).padStart(2, "0")}</b> left.
+                    {otpCanResend && (
+                      <>{" "}<button type="button" className="lgl-link" disabled={otpBusy}
+                        onClick={async () => { setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>
+                        Resend</button></>
+                    )}</p>
+                )
               ) : (
                 /* Honest stub — no SMS goes out in the preview. */
                 <p className="ob-quiet">Preview build: enter <b>0000</b>.</p>
               )}
               {otpErr && <p className="ob-err" role="alert">{otpErr}</p>}
-              <button className="primary fr-cta ob-cta" disabled={otp.length !== otpLen || otpBusy}
-                onClick={verifyOtp}>{otpBusy ? "Verifying…" : "Verify & continue →"}</button>
+              {!otpDead && (
+                <button className="primary fr-cta ob-cta" disabled={otp.length !== otpLen || otpBusy}
+                  onClick={verifyOtp}>{otpBusy ? "Verifying…" : "Verify & continue →"}</button>
+              )}
             </>
           )}
         </div>

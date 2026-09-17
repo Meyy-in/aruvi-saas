@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
+import { useTourAnchor } from "../lib/tour";
 
 /* The bar's own height ABOVE the safe-area inset — `.bnav`'s 56.85, measured 2026-09-13 at
    390×844 and recorded in theme/web.js's bnav comment. Published for the same reason
@@ -74,12 +75,14 @@ function AskIcon({ color }) {
   );
 }
 
-function Item({ Icon, label, active, onPress, hint }) {
+/* `tour` is the web's own `data-tour` string — see `lib/tour.js` on why the keys must match. */
+function Item({ Icon, label, active, onPress, hint, tour }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const color = active ? t.clay : t.ink_soft;
+  const ref = useTourAnchor(tour);
   return (
-    <Pressable onPress={onPress} style={ws.bnav_item} accessibilityRole="button"
+    <Pressable ref={ref} onPress={onPress} style={ws.bnav_item} accessibilityRole="button"
       accessibilityState={{ selected: !!active }} accessibilityLabel={hint || label}>
       <Icon color={color} />
       <Text style={[ws.bnav_label, { color }]}>{label}</Text>
@@ -99,19 +102,19 @@ export default function BottomNav({ active = null, onClasses, onLessons, onAdd, 
       <View style={ws.bnav_in}>
         {/* Lapsed hides My Classes — the reading room is My Lessons (§2.5 as amended). */}
         {showClasses && (
-          <Item Icon={ClassesIcon} label="My Classes" active={active === "classes"} onPress={onClasses} />
+          <Item Icon={ClassesIcon} label="My Classes" active={active === "classes"} onPress={onClasses} tour="nav-classes" />
         )}
-        <Item Icon={LessonsIcon} label="My Lessons" active={active === "lessons"} onPress={onLessons} />
+        <Item Icon={LessonsIcon} label="My Lessons" active={active === "lessons"} onPress={onLessons} tour="nav-lessons" />
         {/* The standing "+" portal — "what would you like to change?" An expired subscription
             hides it (§2.5 as amended; the server 402s regardless). */}
         {showAdd && (
-          <Item Icon={AddIcon} label="Add" onPress={onAdd}
+          <Item Icon={AddIcon} label="Add" onPress={onAdd} tour="grow-add"
             hint="Add or change subjects, classes, or sections" />
         )}
         {/* ★ IT LIGHTS LIKE A PLACE WHILE THE PANEL IS UP (6c) — `active === "ask"`, the web's
             `askOpen ? "active" : ""`. And while it is lit the other three are not: the shell
             computes `active` as "ask" first, so the bar never claims she is in two places. */}
-        <Item Icon={AskIcon} label="Ask Meyy" active={active === "ask"} onPress={onAsk} />
+        <Item Icon={AskIcon} label="Ask Meyy" active={active === "ask"} onPress={onAsk} tour="ask-aruvi" />
       </View>
     </View>
   );

@@ -41,6 +41,7 @@ import { Text, TextInput } from "./Text";
 import { BNAV_H } from "./BottomNav";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
+import { useTourAnchor } from "../lib/tour";
 
 /* ★ Q5/Q14 IS ANSWERED BY THE BANK ITSELF (2026-09-16, read from
    `data/cloud/content/ask_aruvi/qa_knowledge_base.json`): the five categories carry `accent`
@@ -176,6 +177,8 @@ export default function AskMeyy({ top = 0, onClose }) {
     }));
   }, [kb, searching, result, cats, byCat, openCat]);
 
+  const askRootRef = useTourAnchor("ask-aruvi-root");   // tour step 19 rings the whole panel
+
   return (
     /* The scrim. `pointerEvents` is left alone: it MUST swallow taps on the screen behind it — the
        panel fills it at every phone width, so nothing of the scrim is actually exposed. */
@@ -186,7 +189,7 @@ export default function AskMeyy({ top = 0, onClose }) {
       }]}
       accessibilityViewIsModal={false}
       accessibilityLabel="Ask Meyy">
-      <View style={[ws.aa_panel, { backgroundColor: t.paper }]}>
+      <View ref={askRootRef} style={[ws.aa_panel, { backgroundColor: t.paper }]}>
 
         {/* fixed title bar */}
         <View style={[ws.aa_top, { borderBottomColor: t.line, backgroundColor: t.paper }]}>

@@ -12,7 +12,7 @@
 import { useState } from "react";
 import { View, Pressable, Modal, ScrollView, StyleSheet } from "react-native";
 import { Text } from "../Text";
-import Svg, { Line, Polygon, Text as SvgText, SvgXml } from "react-native-svg";
+import Svg, { Line, Path, Polygon, Text as SvgText, SvgXml } from "react-native-svg";
 
 const QTYPE_NAME = {
   MCQ: "Multiple choice question", TRUE_FALSE: "True or false", SCR: "Short constructed response",
@@ -209,8 +209,21 @@ function AQuestionPanel({ ws, t, n, opts, sets, nav }) {
         <APartsList ws={ws} t={t} lead={n.stem_lead} parts={n.stem_parts} />
       ) : <Text style={ws.assess_prompt}>{n.stem}</Text>}
 
+      {/* ★ A LISTENING PASSAGE IS A DIFFERENT KIND OF THING (app. 06 row 101). It rendered as one
+          more grey sentence in the flow, so the teacher had to READ that this question needs
+          something PLAYED. The web marks it: a 3px pine left rule, an equaliser glyph, and the
+          reference in mono beside the prose. Same three parts here. */}
       {n.audio_ref ? (
-        <Text style={[ws.assess_look_t, { color: t.ink_soft, marginTop: 8 }]}><Text style={{ fontFamily: "Newsreader_400Regular_Italic" }}>Listening passage</Text> — {n.audio_ref}, read aloud</Text>
+        <View style={[ws.assess_audio, { borderLeftColor: t.pine }]}>
+          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={t.ink}
+            strokeWidth={2} strokeLinecap="round">
+            <Path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 11v2" />
+          </Svg>
+          <Text style={ws.assess_audio_t}>
+            <Text style={{ fontFamily: "Newsreader_400Regular_Italic" }}>Listening passage</Text>
+            {" — "}<Text style={ws.assess_audio_ref}>{n.audio_ref}</Text>, read aloud
+          </Text>
+        </View>
       ) : null}
       <ATyped ws={ws} t={t} b={n.visual_stimulus} />
       {opts.length && !isTF && !interleaved ? (
@@ -358,9 +371,15 @@ function InclusivityText({ ws, t, text, mathsMiddle, mathsSecondary }) {
   return <Text style={ws.assess_inc}>{render(text, 0)}</Text>;
 }
 
+/* ★ A LEGACY ITEM KEEPS THE OLD CARD, AND THE CARD HAD NO CHROME (app. 06 row 94). Flat items
+   sit on the unit's paper (2026-07-10), but items authored before that still render as the white,
+   green-edged card `.assess-card` — that is what tells a teacher she is looking at an older
+   item rather than a mis-styled new one. The phone drew a bare View, so the distinction was
+   invisible. ⚠️ `#fff` literally, not `t.paper`: the web hard-codes white here in BOTH themes,
+   because the card's whole job is to read as a pasted-in object from another era. */
 function ALegacyCard({ ws, t, it }) {
   return (
-    <View>
+    <View style={[ws.assess_card, { borderColor: t.edge_green }]}>
       <Text style={ws.assess_qtype}>{qtypeName(it.item_type)}</Text>
       <Text style={ws.assess_prompt}>{it.prompt}</Text>
       {it.options && it.options.length ? it.options.map((o, k) => <View key={k} style={ws.assess_opt}><Text style={ws.assess_opt_lab}>{k + 1}.</Text><Text style={ws.assess_opt_t}>{o}</Text></View>) : null}
@@ -371,8 +390,22 @@ function ALegacyCard({ ws, t, it }) {
 }
 
 const TabNav = ({ ws, t, label, onPress }) => onPress ? (
-  <Pressable onPress={onPress} hitSlop={6} style={{ alignSelf: "flex-end" }}><Text style={ws.assess_tabnav}>{label} →</Text></Pressable>
+  <Pressable onPress={onPress} hitSlop={6}><Text style={ws.assess_tabnav}>{label} →</Text></Pressable>
 ) : null;
+
+/* ★ THE FORWARD NAV SHARES THE PANEL'S LAST ROW (app. 06 row 95). It was pinned to its own
+   right-aligned line (`alignSelf: "flex-end"`), which on a short answer left a whole empty row
+   between the words and the link. The web wraps content and nav in ONE flex row that WRAPS
+   (`.assess-qnavwrap`): a short last row keeps the link beside it, a full one pushes it below —
+   still right — which is the behaviour the bordered `.assess-nextq-wrap` was retired for in
+   2026-07-16. ⚠️ The main column must be `flex: 1` with `minWidth: 0`, or a long word refuses to
+   wrap and shoves the link off the edge. */
+const QNavWrap = ({ ws, children, nav }) => (nav ? (
+  <View style={ws.assess_qnavwrap}>
+    <View style={ws.assess_qnavmain}>{children}</View>
+    {nav}
+  </View>
+) : <View>{children}</View>);
 
 function AssessBody({ ws, t, it, tab, qn, onNext, onTab, mathsMiddle, mathsSecondary }) {
   const n = it.normalized;
@@ -396,8 +429,16 @@ function AssessBody({ ws, t, it, tab, qn, onNext, onTab, mathsMiddle, mathsSecon
       {qmark}
       {tab === "ov" ? <AOverviewPanel ws={ws} t={t} n={n} lo={lo} nav={tabNav("q", "Question")} /> : null}
       {tab === "q" ? <AQuestionPanel ws={ws} t={t} n={n} opts={opts} sets={sets} nav={tabNav("an", "Answer")} /> : null}
-      {tab === "an" ? <View><AAnswerPanel ws={ws} t={t} n={n} correct={correct} opts={opts} sets={sets} />{nextQ}</View> : null}
-      {tab === "inc" ? <View><InclusivityText ws={ws} t={t} text={n.inclusivity} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary} />{nextQ}</View> : null}
+      {tab === "an" ? (
+        <QNavWrap ws={ws} nav={nextQ}>
+          <AAnswerPanel ws={ws} t={t} n={n} correct={correct} opts={opts} sets={sets} />
+        </QNavWrap>
+      ) : null}
+      {tab === "inc" ? (
+        <QNavWrap ws={ws} nav={nextQ}>
+          <InclusivityText ws={ws} t={t} text={n.inclusivity} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary} />
+        </QNavWrap>
+      ) : null}
     </View>
   );
 }

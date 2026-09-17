@@ -1599,34 +1599,45 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
 /* Mobile: ASSESSMENT sits at the left (back stays pinned top-right). */
 @media (max-width:600px) { .assess-hd-row { justify-content:flex-start; } .assess-hd-row .assess-tag { text-align:left; } }
 .assess-back { flex:none; font-family:var(--f-mono); font-size:11px; font-weight:600; letter-spacing:.06em;
-  text-transform:uppercase; color:#0f6e56; cursor:pointer; background:none; border:1px solid #0f6e56;
+  text-transform:uppercase; color:var(--pine); cursor:pointer; background:none; border:1px solid var(--pine);
   border-radius:999px; padding:6px 15px; white-space:nowrap; }
-.assess-back:hover { color:#eafaf4; background:#0f6e56; }
+.assess-back:hover { color:#eafaf4; background:var(--pine); }
 .assess-hd-row .assess-back { position:absolute; right:0; top:50%; transform:translateY(-50%); }
-.assess-tag { font-family:var(--f-mono); font-size:10px; letter-spacing:.12em; color:#0f6e56; text-align:center; }
+/* ★ THE ASSESSMENT GREEN IS THE APP'S GREEN NOW (founder, 2026-09-17, answering Q19).
+   These surfaces used #0f6e56 — a second dark green, a shade off --pine (#1e5c4a) — for every
+   accent: the tag, the LO rail, the type label, the tick, the table head, the number line.
+   The phone's port mapped all of it to pine and the question was which surface should move.
+   ★ The founder took the SIMPLIFICATION: one green. The distinct shade was a holdover from
+   when assessment was a full-screen sub-view with its own green box and card chrome — both
+   retired on 2026-07-10 — so by 2026-09 it was marking a distinction the UI no longer draws.
+   ⚠️ The paired TINT `#eef6f1` is deliberately untouched: it is a background, it was never
+   the accent in question, and it carries more contrast against pine than it did against the
+   old green. If assessment ever needs to read as its own place again, do it with structure,
+   not by reintroducing a near-identical hue. */
+.assess-tag { font-family:var(--f-mono); font-size:10px; letter-spacing:.12em; color:var(--pine); text-align:center; }
 .assess-title { font-family:var(--f-display); font-size:21px; font-weight:500; color:#0c3a2e; margin-top:6px; }
 .assess-sub { font-size:12.5px; color:#3a6253; font-style:italic; margin-top:2px; }
 .assess-body { padding:16px 20px 20px; }
 .assess-empty { background:#fff; border:1px dashed var(--edge-green); border-radius:10px; padding:18px 16px; font-size:13px; font-style:italic; color:#3a6253; line-height:1.5; margin-bottom:11px; }
 .assess-card { background:#fff; border:1px solid var(--edge-green); border-radius:10px; padding:13px 15px; margin-bottom:11px; }
-.assess-lo { background:#eef6f1; border-left:3px solid #0f6e56; border-radius:5px; padding:7px 10px; margin-bottom:10px; }
-.assess-lo-k { font-family:var(--f-mono); font-size:8.5px; letter-spacing:.12em; color:#0f6e56; }
+.assess-lo { background:#eef6f1; border-left:3px solid var(--pine); border-radius:5px; padding:7px 10px; margin-bottom:10px; }
+.assess-lo-k { font-family:var(--f-mono); font-size:8.5px; letter-spacing:.12em; color:var(--pine); }
 .assess-lo-t { font-size:12.5px; color:#1f3a30; margin-top:2px; line-height:1.45; }
-.assess-qtype { font-family:var(--f-mono); font-size:9.5px; letter-spacing:.08em; color:#0f6e56; }
+.assess-qtype { font-family:var(--f-mono); font-size:9.5px; letter-spacing:.08em; color:var(--pine); }
 .assess-prompt { font-size:14px; color:var(--ink); margin-top:6px; line-height:1.5; }
 .assess-opts { margin:10px 0 0; padding-left:20px; }
 .assess-opts li { font-size:13px; color:var(--ink); margin:3px 0; }
-.assess-ans { font-size:13px; color:#0f6e56; font-weight:600; margin-top:8px; }
+.assess-ans { font-size:13px; color:var(--pine); font-weight:600; margin-top:8px; }
 .assess-look { margin-top:11px; padding-top:9px; border-top:1px dashed var(--edge-green); }
-.assess-look-k { font-family:var(--f-mono); font-size:9px; letter-spacing:.1em; color:#0f6e56; }
+.assess-look-k { font-family:var(--f-mono); font-size:9px; letter-spacing:.1em; color:var(--pine); }
 .assess-look-t { font-size:12px; color:#3a4540; margin-top:3px; line-height:1.5; }
 /* scaffold template — each authored line / numbered step on its OWN row (never a run-on
    paragraph); pre-wrap keeps the fill-blank spacing ("Name: ___   Role: ___"). */
 .assess-scaf { margin-top:3px; }
 .assess-scaf-row { font-size:12px; color:#3a4540; line-height:1.5; margin:4px 0; white-space:pre-wrap; }
 .assess-scaf-gap { height:7px; }
-.assess-backbtn { width:100%; margin-top:15px; font-family:var(--f-mono); font-size:12px; background:none; color:#0f6e56; border:1px solid #0f6e56; padding:12px; border-radius:8px; cursor:pointer; }
-.assess-backbtn:hover { background:#0f6e56; color:#eafaf4; }
+.assess-backbtn { width:100%; margin-top:15px; font-family:var(--f-mono); font-size:12px; background:none; color:var(--pine); border:1px solid var(--pine); padding:12px; border-radius:8px; cursor:pointer; }
+.assess-backbtn:hover { background:var(--pine); color:#eafaf4; }
 
 /* — 3b normalized cards (question-type registry, 2026-07-10): 6 templates, one anatomy — */
 .assess-metarow { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
@@ -1636,7 +1647,7 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
 .assess-opts2 { list-style:none; margin:10px 0 0; padding:0; }
 .assess-opts2 li { display:flex; gap:8px; align-items:baseline; font-size:13px; color:var(--ink); margin:4px 0; line-height:1.5; }
 .assess-opts2 li.correct { color:#0c3a2e; font-weight:600; }
-.assess-opt-lab { font-family:var(--f-mono); font-size:10px; color:#0f6e56; min-width:14px; flex:none; }
+.assess-opt-lab { font-family:var(--f-mono); font-size:10px; color:var(--pine); min-width:14px; flex:none; }
 /* ── COMPOUND items: one sub-question, then its OWN A–D set (founder 2026-08-14) ──
    Two questions live in one item and the schema gives them a single options[] array,
    grouped by a storage label (1A…2D) the teacher never sees. On screen each set sits
@@ -1648,7 +1659,7 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
 /* The sub-question tag on a correct answer / reveal row. Without it a pair of ticks reads
    as one question with two answers. */
 .assess-corr-q { font-family:var(--f-mono); font-size:9.5px; letter-spacing:.06em; color:var(--ink-soft); min-width:18px; flex:none; }
-.assess-tickmark { color:#0f6e56; font-size:11px; }
+.assess-tickmark { color:var(--pine); font-size:11px; }
 /* typed stimulus blocks — tables arrive PRE-SPLIT from the engine, never re-split here */
 .assess-vs { margin-top:10px; overflow-x:auto; }
 .assess-vs-prose, .assess-passage { background:#f4f9f6; border:1px solid var(--edge-green); border-radius:8px; padding:10px 12px; font-size:12.5px; line-height:1.55; white-space:pre-line; color:#1f3a30; }
@@ -1656,29 +1667,29 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
 .assess-vs-svg svg { max-width:100%; height:auto; }
 .assess-table { width:100%; border-collapse:collapse; font-size:12px; }
 .assess-table th, .assess-table td { border:1px solid var(--edge-green); padding:5px 8px; text-align:left; vertical-align:top; }
-.assess-table th { background:#eef6f1; font-family:var(--f-mono); font-size:10px; letter-spacing:.04em; color:#0f6e56; }
+.assess-table th { background:#eef6f1; font-family:var(--f-mono); font-size:10px; letter-spacing:.04em; color:var(--pine); }
 /* A stimulus table's title row and trailing attribution line, lifted out of the grid by
    normalize.parse_table (2026-08-04) so the columns line up. Kept visually subordinate to
    the table itself — the caption is a label, the note is provenance. */
-.assess-table-cap { font-family:var(--f-mono); font-size:10px; letter-spacing:.04em; text-transform:uppercase; color:#0f6e56; margin:0 0 4px; }
+.assess-table-cap { font-family:var(--f-mono); font-size:10px; letter-spacing:.04em; text-transform:uppercase; color:var(--pine); margin:0 0 4px; }
 .assess-table-src { font-family:var(--f-body); font-style:italic; font-size:11px; color:var(--ink-soft, #55524d); margin:4px 0 0; }
 /* maths number line — an axis with ticks, drawn (never a grid) */
 .assess-vs-nl { background:#f4f9f6; border:1px solid var(--edge-green); border-radius:8px; padding:10px 12px; }
 .assess-nl-svg { display:block; width:100%; max-width:360px; height:auto; margin:0 auto; }
-.assess-nl-axis, .assess-nl-tick { stroke:#0f6e56; stroke-width:1.5; stroke-linecap:round; }
-.assess-nl-arrow { fill:#0f6e56; }
+.assess-nl-axis, .assess-nl-tick { stroke:var(--pine); stroke-width:1.5; stroke-linecap:round; }
+.assess-nl-arrow { fill:var(--pine); }
 .assess-nl-lab { fill:#1f3a30; font-family:var(--f-mono); font-size:11px; }
 .assess-nl-instr { margin-top:6px; font-size:12px; font-style:italic; color:#3a4540; text-align:center; }
 /* tick-lists (look-for / expected elements / rubric / what-to-produce) */
 .assess-ticks { list-style:none; margin:3px 0 0; padding:0; }
 .assess-ticks li { position:relative; font-size:12px; color:#3a4540; margin:3px 0; padding-left:16px; line-height:1.5; }
-.assess-ticks li::before { content:"✓"; position:absolute; left:0; color:#0f6e56; font-size:10px; }
+.assess-ticks li::before { content:"✓"; position:absolute; left:0; color:var(--pine); font-size:10px; }
 /* what-each-choice-reveals rows ("note" key = legacy prose fallback, no label rail) */
 /* Multi-part answer keys — each "(a)/(b)/(1)/(i)" sub-answer on its own row (founder
    2026-07-11): marker in the margin, body beside it. */
 .assess-ansrows { margin-top:4px; }
 .assess-ansrow { display:flex; gap:9px; font-size:14px; color:var(--ink); margin:5px 0; line-height:1.5; }
-.assess-ans-lab { font-family:var(--f-mono); font-size:11px; color:#0f6e56; min-width:22px; flex:none; padding-top:2px; }
+.assess-ans-lab { font-family:var(--f-mono); font-size:11px; color:var(--pine); min-width:22px; flex:none; padding-top:2px; }
 .assess-ans-t { flex:1; }
 /* MATCH answer-key rows: left entry → its correct match, the arrow in pine so the pairing
    scans at a glance. Wraps gracefully on a phone (the right cell keeps the remaining width). */
@@ -1689,18 +1700,18 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
 /* TRUE_FALSE answer-key rows: same layout as a numbered answer row, with the verdict word
    set in mono so True/False scans as the answer, reason following as prose. */
 .assess-tf-row { display:flex; gap:9px; font-size:14px; color:var(--ink); margin:5px 0; line-height:1.5; }
-.assess-tf-t { font-family:var(--f-mono); font-size:12px; font-weight:600; color:#0f6e56; }
+.assess-tf-t { font-family:var(--f-mono); font-size:12px; font-weight:600; color:var(--pine); }
 .assess-tf-f { font-family:var(--f-mono); font-size:12px; font-weight:600; color:var(--clay); }
 /* Intro line before a numbered/lettered list (e.g. a FILL_IN lead + word box, or a
    multi-part question setup) — prose above the rows. */
 .assess-parts-lead { margin:0 0 7px; white-space:pre-line; }
 .assess-rev { margin-top:3px; }
 .assess-revrow { display:flex; gap:8px; font-size:12px; color:#3a4540; margin:4px 0; line-height:1.5; }
-.assess-rev-lab { font-family:var(--f-mono); font-size:10px; color:#0f6e56; min-width:14px; flex:none; padding-top:1px; }
+.assess-rev-lab { font-family:var(--f-mono); font-size:10px; color:var(--pine); min-width:14px; flex:none; padding-top:1px; }
 /* "Choice X" chip at the end of a reveal line — taps open the choice-wording popup so
    the teacher can relate the misconception to the actual option (founder 2026-07-11). */
 .assess-rev-choice { display:inline; margin-left:6px; padding:1px 7px; border:1px solid var(--edge-green); border-radius:999px;
-  background:#eef6f1; color:#0f6e56; font-family:var(--f-mono); font-size:9.5px; letter-spacing:.04em; text-transform:uppercase;
+  background:#eef6f1; color:var(--pine); font-family:var(--f-mono); font-size:9.5px; letter-spacing:.04em; text-transform:uppercase;
   cursor:pointer; white-space:nowrap; vertical-align:baseline; }
 .assess-rev-choice:hover { background:var(--edge-green); color:#f3efe6; }
 /* Choice-wording popup — Aruvi paper/ink, pine accent, ✕ pinned TOP-LEFT (per request). */
@@ -1723,7 +1734,7 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
 .assess-audio-ref { font-family:var(--f-mono); font-size:11px; letter-spacing:.03em; color:var(--ink-soft); }
 /* OPEN_TASK rich guide — collapsed by default so the card isn't a wall on a phone */
 .assess-otg { margin-top:11px; border:1px solid var(--edge-green); border-radius:8px; background:#f4f9f6; }
-.assess-otg summary { cursor:pointer; padding:8px 12px; font-family:var(--f-mono); font-size:10px; letter-spacing:.1em; color:#0f6e56; list-style-position:inside; }
+.assess-otg summary { cursor:pointer; padding:8px 12px; font-family:var(--f-mono); font-size:10px; letter-spacing:.1em; color:var(--pine); list-style-position:inside; }
 .assess-otg-body { padding:0 12px 10px; }
 .assess-otg-body .assess-look { border-top:none; padding-top:0; margin-top:9px; }
 

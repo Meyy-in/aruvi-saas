@@ -34,6 +34,8 @@ import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit, editBa
          openPick, pickSubject, pickBackToSubject, closePick, clearPortal } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
 import AskMeyy from "../../components/AskMeyy";
+import GuidedTour, { TOUR_TOTAL } from "../../components/GuidedTour";
+import { useTour, setTourStep, endTour } from "../../lib/tour";
 import { closeAsk, subscribeAsk, toggleAsk } from "../../lib/ask";
 
 export default function AppLayout() {
@@ -122,6 +124,42 @@ export default function AppLayout() {
      rather than taken from `BAR_CONTENT_H`, because the bar's height includes a safe-area inset
      that differs by handset. */
   const [askOpen, setAskOpen] = useState(false);
+
+  /* ───────── THE GUIDED TOUR (step 8b) ─────────
+     ★ THE SHELL DRIVES IT, because the tour is a journey ACROSS screens and nothing smaller than
+     the shell can move between them. Seven of the twenty steps change where she is standing; the
+     overlay itself only draws.
+     ⚠️ THE MOVES ARE A TABLE, NOT A CHAIN OF `if`s — the web's `tourNext`/`tourBack` are two
+     switch statements twenty lines apart, and the two drifted there at least once. Here Next and
+     Back read the same table from opposite ends, so a step cannot advance somewhere it will not
+     come back from. */
+  const tour = useTour();
+  const MOVES = {
+    2:  "/lessons", 7: "/", 15: "/", 16: "/settings/profile", 17: "/",
+  };
+  const BACK_MOVES = {
+    3: "/", 8: "/lessons", 17: "/", 18: "/settings/profile",
+  };
+  const tourNext = () => {
+    const n = tour.step;
+    if (n === TOUR_TOTAL) { setAskOpen(false); endTour(); router.navigate("/"); return; }
+    if (n === 18) setAskOpen(true);
+    if (n === 19) setAskOpen(false);
+    if (MOVES[n]) router.navigate(MOVES[n]);
+    setTourStep(n + 1);
+  };
+  const tourBack = () => {
+    const n = tour.step;
+    if (n === 1) { endTour(); return; }          // Back out of step 1 IS leaving the tour
+    if (n === 19 || n === 20) setAskOpen(n === 20);
+    if (BACK_MOVES[n]) router.navigate(BACK_MOVES[n]);
+    setTourStep(n - 1);
+  };
+  /* ★ ONE EXIT FOR DONE AND SKIP, and it does NOT raise the set-up check window — the phone
+     raises that from first run's own one-shot (founder, 2026-09-17, closing Q9). Two triggers
+     would ask her twice, and the one that survives is the one that also reaches a teacher who
+     SKIPPED the tour. Full reasoning in `lib/firstRun.js`. */
+  const tourSkip = () => { setAskOpen(false); endTour(); router.navigate("/"); };
   useEffect(() => subscribeAsk(setAskOpen), []);
   const [barH, setBarH] = useState(0);
   useEffect(() => {
@@ -428,6 +466,13 @@ export default function AppLayout() {
           and the panel would start at the top of the window, over the brand bar — one frame of a
           panel jumping down the screen, for nothing. */}
       {askOpen && barH > 0 ? <AskMeyy top={barH} onClose={closeAsk} /> : null}
+
+      {/* ⚠️ ABOVE Ask Meyy and the bottom nav, because steps 18-19 ring them while they are open —
+          a tour that sits under the thing it is pointing at cannot point at anything. */}
+      {tour.step > 0 ? (
+        <GuidedTour step={tour.step} info={tour.info}
+          onNext={tourNext} onBack={tourBack} onSkip={tourSkip} />
+      ) : null}
 
       {/* My Lessons is live as of step 4b; the "+" portal is live as of 5d; Ask Meyy as of 6c.
 

@@ -13,16 +13,19 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl, AppState } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, subjectSlug, classNum, pad, getJSON, markPrepared } from "@aruvi/shared/format";
+import { getUser, subjectSlug, classNum, pad, getJSON, postJSON, markPrepared } from "@aruvi/shared/format";
 import { cutoverOffered, dismissCutover, dismissCutoverResult, fetchYear, runCutover,
          subscribeYear } from "@aruvi/shared/year";
 import { markGenerated } from "../../lib/firstRun";
 import { CutoverOffer, CutoverDone } from "../../components/YearNudge";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
-import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
+import { cachedAccount, cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
+import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer,
+         noteTourInfo } from "../../lib/tour";
+import TourOffer from "../../components/TourOffer";
 import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
 import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet, HistorySheet } from "../../components/AttachSheet";
@@ -466,8 +469,26 @@ export default function Home() {
   /* ONE card, rendered the same whether or not it sits inside a subject band. The only thing
      the band changes is the KICKER: with the subject named above the group, repeating it on
      every card is the same word three times on one screen (the web's own note, MyPlans.jsx). */
-  const card = (c, banded) => (
+  /* ★ THE TOUR'S CARD IS THE FIRST ONE, and only the steps that ring it get the anchor (the web
+     does the same with `i === tourIdx`). Steps 8 and 14 ring its "+", step 10 rings the card. */
+  const tourNow = useTour();
+  /* ★ THE OFFER (app. 01 rows 59-61). Eligible = at most one bound section and nothing taught —
+     she has a lesson and has not started using it, which is exactly the moment a walkthrough is
+     worth her time. ⚠️ `null` from the check means we could not tell, and an unknown must never
+     look like a new teacher, so only an explicit `true` offers. */
+  const [tourFit, setTourFit] = useState(null);
+  useEffect(() => {
+    let live = true;
+    fetchTourEligible(getJSON).then((v) => { if (live) setTourFit(v); });
+    return () => { live = false; };
+  }, []);
+  const acct = cachedAccount();
+  const tourOnOffer = tourFit === true && !tourNow.step && !(acct && acct.tour_offered_at);
+  useEffect(() => { if (tourOnOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOnOffer]);
+  const card = (c, banded, idx) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}
+      tourAdd={idx === 0 && (tourNow.step === 8 || tourNow.step === 14)}
+      tourTarget={idx === 0 && tourNow.step === 10}
       plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`]}
       preparing={preparing && preparing.section === c.sectionKey ? preparing : null}
       onDismissPreparing={clearPreparing}
@@ -501,6 +522,23 @@ export default function Home() {
         ? <DashHead classes={st.classes} plansBySG={st.plansBySG} user={user}
                     bindingsKnown={bindingsKnown} />
         : null}
+      {/* ★ BELOW THE GREETING, ABOVE THE CARDS — she reads who she is, then what is offered. */}
+      {tourOnOffer ? (
+        <View style={{ paddingHorizontal: 18, paddingBottom: 12 }}>
+          <TourOffer onStart={() => {
+            /* The copy of steps 7-13 names the section and the chapter she is about to use. */
+            const first = st.classes[0];
+            if (first) {
+              const sec = readLocalSection(first.sectionKey);
+              const listing = st.plansBySG[`${first.subjectSlug}/${first.gradeSlug}`];
+              const plan = sec.chapter && listing ? listing[sec.chapter] : null;
+              noteTourInfo({ tag: first.sectionTag,
+                             chapter: plan ? plan.chapter_title : "your lesson" });
+            }
+            startTour();
+          }} />
+        </View>
+      ) : null}
       {/* The header sits outside the scroller, so it takes main's 26px top padding with it and
           the scroller must not repeat it — otherwise the card list starts 26px too low. */}
       <ScrollView contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
@@ -521,12 +559,12 @@ export default function Home() {
                 <View key={b.slug} style={bi ? ws.sc_band_gap : null}>
                   {/* The subject, said ONCE per band. */}
                   <Text style={ws.sc_band_hd}>{b.subject}</Text>
-                  <View style={ws.sc_band_list}>{b.items.map((c) => card(c, true))}</View>
+                  <View style={ws.sc_band_list}>{b.items.map((c, i) => card(c, true, i))}</View>
                 </View>
               ))}
             </View>
           ) : (
-            <View style={ws.sc_list} key={tick}>{st.classes.map((c) => card(c, false))}</View>
+            <View style={ws.sc_list} key={tick}>{st.classes.map((c, i) => card(c, false, i))}</View>
           )
         )}
 
@@ -628,7 +666,12 @@ function DashHead({ classes, plansBySG, user, bindingsKnown }) {
  * theme/web.js under sc_*; the web's 11px graph rule is the one thing not ported (RN has no
  * repeating gradient) — the card keeps its fill, which is what carries the status anyway. */
 function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack,
-                     onMoveOn, onHistory }) {
+                     onMoveOn, onHistory, tourAdd, tourTarget }) {
+  /* ⚠️ ONLY THE TOUR'S OWN CARD carries these, and only on the step that rings them — the web
+     stamps its `data-tour` conditionally for the same reason. Put them on every card and
+     `measureAnchor` returns whichever mounted first, which is rarely the one she is looking at. */
+  const addRef = useTourAnchor(tourAdd ? "section-add" : null);
+  const targetRef = useTourAnchor(tourTarget ? "section-card-target" : null);
   const { t } = useTheme();
   const ws = useWebStyles();
   const sec = readLocalSection(c.sectionKey);
@@ -751,7 +794,9 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
           <Text style={[ws.sc_title, ws.sc_title_muted]}>Pick a chapter to begin</Text>
         </View>
         <View style={ws.sc_right}>
-          <Round glyph="+" color={t.pine_d} label="Attach a lesson to this section" onPress={onAttach} />
+          <View ref={addRef} collapsable={false}>
+            <Round glyph="+" color={t.pine_d} label="Attach a lesson to this section" onPress={onAttach} />
+          </View>
           {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
       </View>
@@ -778,7 +823,8 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
      actions simply are not inside the card's own press target — which is what stopPropagation
      was simulating anyway. */
   return (
-    <View style={[ws.sc_card, { backgroundColor: fill, borderColor: edge }]}>
+    <View ref={targetRef} collapsable={false}
+      style={[ws.sc_card, { backgroundColor: fill, borderColor: edge }]}>
       <CardGrid color={t.card_grid} />
       <View style={[ws.sc_spine, { backgroundColor: spine }]} />
       <Pressable onPress={() => onOpen(c, plan)} accessibilityRole="button"

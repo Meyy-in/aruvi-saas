@@ -22,6 +22,10 @@ const F = {
 };
 const UP = "uppercase";
 
+/* How far the notes' writing is lifted out of its line box to clear the rule beneath it — see
+   `cn_paper`. 4px at a 32px pitch; raise it if the jotting still reads as sitting ON the line. */
+const CN_TEXT_LIFT = 4;
+
 export function webStyles(t, scheme = "light") {
   const cream = "#f3efe6";                 // --bar-ink / cream on pine (both themes)
   /* A few of the web's colours are literal hex INSIDE a rule rather than custom properties on
@@ -64,8 +68,8 @@ export function webStyles(t, scheme = "light") {
     dash_hd:         { paddingTop: 6, paddingBottom: 10, marginBottom: 2 },
     dash_title:      { fontFamily: F.display(500), fontSize: 20, lineHeight: 31, marginTop: 2, color: t.ink },
     dash_sub:        { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, marginTop: 2, color: t.ink_soft },
-    dash_welcome_title: { fontFamily: F.display(500), fontSize: 20, lineHeight: 31, color: t.ink },
-    dash_welcome_sub:   { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.15, marginTop: 2, color: t.ink_soft },
+    dash_welcome_title: { fontFamily: F.display(500), fontSize: 17, lineHeight: 26.35, color: t.ink },
+    dash_welcome_sub:   { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 19.375, marginTop: 2, color: t.ink_soft },
     sc_list:         { rowGap: 9, marginTop: 4 },
     main_tab:        { fontFamily: F.mono(400), fontSize: 14, letterSpacing: 1.12, textTransform: UP, color: t.pine_d, paddingVertical: 13, paddingHorizontal: 1, borderBottomWidth: 3, borderBottomColor: "transparent" },
     main_tab_on:     { borderBottomColor: t.clay },
@@ -128,7 +132,7 @@ export function webStyles(t, scheme = "light") {
     lgl_switch:      { flexDirection: "row", columnGap: 6, marginBottom: 14 },
     lgl_switch_btn:  { borderWidth: 1, borderRadius: 999, paddingVertical: 6,
                        paddingHorizontal: 12 },
-    lgl_switch_t:    { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.66,
+    lgl_switch_t:    { fontFamily: F.mono(400), fontSize: 10.5, letterSpacing: 0.63,
                        textTransform: UP },
     /* READ mode leads with the fact she came for: did I accept this, and when. */
     lgl_accepted:    { borderRadius: 10, paddingVertical: 10, paddingHorizontal: 12,
@@ -145,8 +149,8 @@ export function webStyles(t, scheme = "light") {
     lgl_ack_head:    { flexDirection: "row", alignItems: "baseline", columnGap: 10,
                        marginBottom: 8 },
     lgl_ack_n:       { fontFamily: F.mono(400), fontSize: 12, lineHeight: 19.575 },
-    lgl_ack_title:   { flex: 1, minWidth: 0, fontFamily: F.display(600), fontSize: 14.5,
-                       lineHeight: 19.575 },
+    lgl_ack_title:   { flex: 1, minWidth: 0, fontFamily: F.display(600), fontSize: 14,
+                       lineHeight: 18.9 },
     lgl_agreement:   { marginTop: 20, paddingTop: 16, borderTopWidth: 1 },
     /* The pinned band's heading — `.ob-title`, 21px display. ⚠️ The web computes it at weight
        700 and the bundled Fraunces stops at 600; the semibold cut is the heaviest we ship. */
@@ -396,7 +400,8 @@ export function webStyles(t, scheme = "light") {
     back_tr:         { fontFamily: F.mono(600), fontSize: 12, letterSpacing: 0.72, textTransform: UP, color: t.pine, borderWidth: 1, borderColor: t.pine, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 15, height: 30, lineHeight: 16 },
     lv_title:        { fontFamily: F.display(500), fontSize: 19.5, lineHeight: 30.225, color: t.ink },
     lv_unum:         { fontFamily: F.display(600, true), fontSize: 19.5, lineHeight: 30.225, color: t.clay, marginRight: 9 },
-    uv_durline:      { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19.5, color: t.ink_soft },
+    uv_durline:      { fontFamily: F.mono(400), fontSize: 11, lineHeight: 16.5, letterSpacing: 0.44,
+                       color: t.ink_soft },
 
     /* ── unit tabs (.uv-tabs / .uv-tab) ── */
     uv_tabs:         { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: t.line, marginTop: 2 },
@@ -415,7 +420,7 @@ export function webStyles(t, scheme = "light") {
     uv_mat_li:       { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink, paddingVertical: 3, paddingLeft: 16 },
     uv_va_kicker:    { marginTop: 10 },
     uv_va_prose:     { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink, marginTop: 6 },
-    uv_va_src:       { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 18, color: t.ink_soft, marginTop: 6 },
+    uv_va_src:       { fontFamily: F.body(400, true), fontSize: 12, lineHeight: 17.28, color: t.ink_soft, marginTop: 6 },
 
     /* ── Lesson: teacher-notes ribbon (.uv-tnotes-rib) ── */
     uv_tnotes_rib:   { backgroundColor: t.paper_sunk, borderLeftWidth: 3, borderLeftColor: t.clay, borderBottomWidth: 1, borderBottomColor: t.edge_clay, marginBottom: 12 },
@@ -450,17 +455,31 @@ export function webStyles(t, scheme = "light") {
     uv_ph_t:         { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.54, color: t.ink, flex: 1 },
     phaserow:        { fontFamily: F.body(400), fontSize: 13, lineHeight: 20.54, color: t.ink, paddingVertical: 8 },
     uv_hw:           { backgroundColor: t.tint_cream, borderWidth: 1, borderColor: t.edge, borderRadius: 11, paddingVertical: 11, paddingHorizontal: 13, marginTop: 14 },
-    uv_hw_p:         { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink, marginTop: 4 },
+    uv_hw_p:         { fontFamily: F.body(400), fontSize: 14.5, lineHeight: 22.475, color: t.ink, marginTop: 4 },
 
     /* ── completion (.lv-markcard / .lv-markbtn / .lv-donecard) ── */
     lv_markcard:     { marginTop: 18 },
     lv_markbtn:      { backgroundColor: t.pine, borderRadius: 3, minHeight: 44, paddingVertical: 11, paddingHorizontal: 22, alignItems: "center", justifyContent: "center" },
     lv_markbtn_t:    { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.96, textTransform: UP, color: "#f6f1e7" },
     lv_donecard:     { marginTop: 18, borderWidth: 1, borderColor: t.pine, backgroundColor: t.tint_pine, borderRadius: 6, paddingVertical: 12, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-    lv_chapterdone:  { borderColor: t.ochre, backgroundColor: t.tint_cream },
-    lv_donemark:     { fontFamily: F.display(600), fontSize: 18, color: t.pine, marginRight: 10 },
+    /* ⚠️ CLAY, NOT OCHRE (app. 06 row 87). The web recolours the whole card for a finished
+       CHAPTER — `--tint-clay` on `--edge-clay`, and the mark, title and undo pill follow — where
+       a finished UNIT stays pine. The phone had ochre-on-cream, which is the paywall's palette,
+       not the completion one, so "chapter done" read as a warning. */
+    lv_chapterdone:  { borderColor: t.edge_clay, backgroundColor: t.tint_clay },
+    /* ★ A DISC, NOT A TICK (app. 06 row 86). `.lv-donemark` is a 26px filled circle with a white
+       tick in it; the phone drew the glyph bare, so the card's strongest signal was missing and
+       the tick floated beside the title. `#2f7d54` is hard-coded on the web in both themes — it
+       is the disc's fill, not a themed surface — and `--clay` replaces it on a chapter-done card. */
+    lv_donemark:     { width: 26, height: 26, borderRadius: 13, alignItems: "center",
+                       justifyContent: "center", marginRight: 10 },
+    lv_donemark_t:   { fontFamily: F.display(600), fontSize: 14, color: "#fff" },
     lv_donetitle:    { fontFamily: F.display(500), fontSize: 16, color: t.ink },
-    lv_undo:         { fontFamily: F.mono(600), fontSize: 11, letterSpacing: 0.66, textTransform: UP, color: t.pine },
+    /* A bordered PILL on white, not bare mono (app. 06 row 86). */
+    lv_undo:         { borderWidth: 1, borderRadius: 7, backgroundColor: "#fff",
+                       paddingVertical: 6, paddingHorizontal: 11, alignSelf: "flex-start",
+                       marginTop: 10 },
+    lv_undo_t:       { fontFamily: F.mono(600), fontSize: 11, letterSpacing: 0.44, textTransform: UP },
 
     /* ── the pvNav strip (.lv-pvnav) ── */
     lv_pvnav:        { flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: t.clay, borderRadius: 6, paddingVertical: 5, paddingHorizontal: 13, marginTop: 16, marginBottom: 4 },
@@ -489,7 +508,51 @@ export function webStyles(t, scheme = "light") {
     assess_mt_on:    { borderBottomColor: t.pine },
     assess_mt_on_t:  { fontFamily: F.mono(700), color: t.pine },
     assess_flat:     { marginTop: 12 },
-    assess_qmark:    { fontFamily: F.display(600, true), fontSize: 15, color: t.clay, marginBottom: 4 },
+
+    /* ───────── The guided tour (step 8b) ─────────
+       ⚠️ `.gt-ring` is `box-shadow: 0 0 0 9999px` on the web — one element that is BOTH the
+       outline and the dimming. RN has no such trick, so the ring here is outline only and the
+       dim is four Views around it (`GuidedTour.jsx`). The ring's own values are the web's. */
+    gt_root:         { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 70 },
+    gt_ring:         { position: "absolute", borderWidth: 2 },
+    gt_hand:         { position: "absolute" },
+    gt_tip:          { position: "absolute", borderWidth: 1.5, borderRadius: 14,
+                       paddingTop: 15, paddingHorizontal: 16, paddingBottom: 12,
+                       shadowColor: "#1f2a24", shadowOpacity: 0.28, shadowRadius: 30,
+                       shadowOffset: { width: 0, height: 10 }, elevation: 8 },
+    gt_tip_title:    { fontFamily: F.display(600), fontSize: 16.5, lineHeight: 20.625 },
+    gt_tip_title_welcome: { fontSize: 27, lineHeight: 31.86, letterSpacing: -0.2, textAlign: "center" },
+    gt_tip_body:     { fontSize: 13, lineHeight: 19.5, marginTop: 5, fontFamily: F.body(400) },
+    gt_foot:         { flexDirection: "row", alignItems: "center",
+                       justifyContent: "space-between", marginTop: 13 },
+    gt_foot_btns:    { flexDirection: "row", alignItems: "center", columnGap: 4 },
+    gt_count:        { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.55, color: t.ink_soft },
+    gt_btn:          { fontFamily: F.mono(400), fontSize: 11.5, letterSpacing: 0.345,
+                       color: t.ink_soft, paddingVertical: 8, paddingHorizontal: 8 },
+    gt_next:         { borderRadius: 8, paddingVertical: 8, paddingHorizontal: 12 },
+    gt_next_t:       { fontFamily: F.mono(600), fontSize: 12, letterSpacing: 0.24 },
+    /* The inline circled "+" in step 14's body — it mimics the section card's own control, so
+       she reads the sentence and recognises the button rather than decoding "[+]". */
+    gt_plus:         { fontSize: 14, color: t.pine_d },
+    /* The legacy card — white and green-edged in BOTH themes on purpose: it exists to read as an
+       item authored before the 2026-07-10 flat layout, not as a themed surface. */
+    assess_card:     { backgroundColor: "#fff", borderWidth: 1, borderRadius: 10,
+                       paddingVertical: 13, paddingHorizontal: 15, marginBottom: 11 },
+    /* Forward nav shares the panel's last row and wraps below it when that row is full. */
+    assess_qnavwrap: { flexDirection: "row", flexWrap: "wrap", alignItems: "flex-end" },
+    assess_qnavmain: { flex: 1, minWidth: 0 },
+    /* A listening passage, marked rather than merely stated. */
+    assess_audio:    { flexDirection: "row", alignItems: "center", columnGap: 8, marginTop: 9,
+                       paddingVertical: 3, paddingLeft: 11, borderLeftWidth: 3 },
+    assess_audio_t:  { flex: 1, fontFamily: F.body(400), fontSize: 13.5, lineHeight: 20.25, color: t.ink },
+    assess_audio_ref: { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.33, color: t.ink_soft },
+    /* ⚠️ PINE, not clay (app. 06 row 93) — the web's Q-marker is `--pine`; clay is the unit
+       strip's colour and using it here made the two read as the same axis. ★ The web FLOATS it
+       so it shares the row with each panel's opening words; RN has no float, so it keeps its own
+       line — a named divergence, and the reason the marginRight is carried anyway (if this ever
+       becomes an inline `<Text>` inside the first paragraph, the 8px is already right). */
+    assess_qmark:    { fontFamily: F.display(600, true), fontSize: 13, lineHeight: 19.5,
+                       color: t.pine, marginRight: 8, marginBottom: 4 },
     assess_ovlo:     { paddingBottom: 9, borderBottomWidth: 1, borderBottomColor: t.line_soft, marginBottom: 4 },
     assess_ovk:      { fontFamily: F.mono(700), fontSize: 10, lineHeight: 15.5, letterSpacing: 1, textTransform: UP, color: t.ink_soft, paddingTop: 3 },
     assess_ovlo_t:   { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink, marginTop: 4 },
@@ -509,17 +572,17 @@ export function webStyles(t, scheme = "light") {
     assess_revrow:   { flexDirection: "row", gap: 8, marginVertical: 4, alignItems: "flex-start" },
     assess_rev_lab:  { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15, color: t.pine, width: 14, paddingTop: 1 },
     assess_rev_choice:{ fontFamily: F.mono(400), fontSize: 9.5, letterSpacing: 0.38, textTransform: UP, color: t.pine, backgroundColor: t.tint_pine, borderWidth: 1, borderColor: t.edge_green, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 7, marginLeft: 6, overflow: "hidden" },
-    assess_corr_q:   { fontFamily: F.mono(500), fontSize: 9, borderWidth: 1, borderColor: t.pine, color: t.pine, borderRadius: 4, paddingHorizontal: 4, lineHeight: 14 },
+    assess_corr_q:   { fontFamily: F.mono(500), fontSize: 9.5, borderWidth: 1, borderColor: t.pine, color: t.pine, borderRadius: 4, paddingHorizontal: 4, lineHeight: 14.78 },
     assess_inc:      { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 20.925, color: t.ink },
     assess_inc_strong:{ fontFamily: F.body(600) },
     assess_parts_lead:{ fontFamily: F.body(400), fontSize: 13.5, lineHeight: 20.25, color: t.ink, marginBottom: 6 },
     assess_ansrow:   { flexDirection: "row", gap: 8, alignItems: "baseline", paddingVertical: 3 },
-    assess_ans_lab:  { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15, color: t.pine, minWidth: 14 },
+    assess_ans_lab:  { fontFamily: F.mono(400), fontSize: 11, lineHeight: 16.5, color: t.pine, minWidth: 14 },
     assess_passage:  { borderLeftWidth: 3, borderLeftColor: t.ochre, backgroundColor: t.tint_cream, padding: 12, borderRadius: 6, marginBottom: 10 },
     assess_scaf:     { borderWidth: 1, borderColor: t.line, borderRadius: 8, padding: 12, backgroundColor: t.paper_2, marginTop: 4 },
-    assess_scaf_row: { fontFamily: F.mono(400), fontSize: 12.5, lineHeight: 20, color: t.ink },
-    assess_qtype:    { fontFamily: F.mono(500), fontSize: 10.5, letterSpacing: 1.89, textTransform: UP, color: t.pine },
-    assess_lo_k:     { fontFamily: F.mono(400), fontSize: 10, letterSpacing: 1, textTransform: UP, color: t.pine },
+    assess_scaf_row: { fontFamily: F.mono(400), fontSize: 13.5, lineHeight: 21.6, color: t.ink },
+    assess_qtype:    { fontFamily: F.mono(500), fontSize: 9.5, letterSpacing: 0.76, textTransform: UP, color: t.pine },
+    assess_lo_k:     { fontFamily: F.mono(400), fontSize: 8.5, letterSpacing: 1.02, textTransform: UP, color: t.pine },
     assess_book_item:{ fontFamily: F.body(600) },
 
     /* ── ChapterOrg (.co-*) ── */
@@ -528,9 +591,13 @@ export function webStyles(t, scheme = "light") {
     co_title:        { fontFamily: F.display(600), fontSize: 23, lineHeight: 25.76, color: t.ink },
     co_meta:         { fontFamily: F.mono(400), fontSize: 12, lineHeight: 18.6, letterSpacing: 0.24, color: t.ink_soft, marginTop: 9, marginBottom: 6 },
     co_rail:         { flexDirection: "row", gap: 3, marginTop: 6 },
-    co_tick:         { flex: 1, height: 4, borderRadius: 2, backgroundColor: t.card_tick },
+    /* ⚠️ THE CURRENT TICK IS OCHRE, AND IT IS 5px (app. 06 row 21). It was clay at 4px — clay is
+       the UNIT NUMBER's colour on this same screen, so the rail's "you are here" mark and the
+       unit strip read as one thing; ochre is what the section card's own rail uses for the
+       current unit, and the two rails are supposed to agree. The height was simply short. */
+    co_tick:         { flex: 1, height: 5, borderRadius: 2, backgroundColor: t.card_tick },
     co_tick_done:    { backgroundColor: t.pine },
-    co_tick_cur:     { backgroundColor: t.clay },
+    co_tick_cur:     { backgroundColor: t.ochre },
     co_headrule:     { height: 1, backgroundColor: t.clay, marginTop: 8 },
     co_axiswrap:     { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 12, marginBottom: 16 },
     co_axis:         { flex: 1, gap: 5 },
@@ -542,7 +609,7 @@ export function webStyles(t, scheme = "light") {
     /* The spine/section label above a run of units (.co-subname) — mono, sentence case, quiet.
        It was uppercase pine here, which read as a heading competing with the accordion's own
        name; the web sets it as a caption. */
-    co_subname:      { fontFamily: F.mono(400), fontSize: 11, lineHeight: 16.5, letterSpacing: 0.33, color: t.ink_soft, flex: 1 },
+    co_subname:      { fontFamily: F.mono(400), fontSize: 9, lineHeight: 13.5, letterSpacing: 0.27, color: t.ink_soft, flex: 1 },
     /* ★ THE SECTION BOX IS FILLED WHEN CLOSED, PLAIN WHEN OPEN (.co-acc / .co-acc.open).
        Closed axes carry --tint-pine on a --edge-green edge so the choices read AS choices; the
        open one drops to plain --paper so the units inside sit on the page rather than in a
@@ -552,7 +619,17 @@ export function webStyles(t, scheme = "light") {
                        borderRadius: 14, marginBottom: 12, overflow: "hidden" },
     co_acc_open:     { backgroundColor: t.paper, borderColor: t.line },
     co_acchead:      { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 12, paddingHorizontal: 13 },
-    co_acc_name:     { fontFamily: F.display(500), fontSize: 14.5, lineHeight: 20, color: t.ink, flex: 1 },
+    co_acc_name:     { fontFamily: F.display(500), fontSize: 15, lineHeight: 18, color: t.ink, flex: 1 },
+    /* Social Sciences heads are COMPETENCY STATEMENTS — whole sentences where science has two
+       or three words — so globals.css drops them two notches (18 → 16 → 13 at phone width).
+       ⚠️ A SEPARATE KEY rather than a branch inside `co_acc_name`, so the parity checker can
+       still read the base rule; `ChapterOrg` layers this one over it for SS only. */
+    co_acc_name_ss:  { fontSize: 13, lineHeight: 15.6 },
+    /* The maths-prep flat list is a WINDOW: `.co-flatscroll` is 348px at phone width, with a
+       26px fade at its foot so the cut edge reads as "there is more". */
+    co_flatwrap:     { position: "relative", marginTop: 2 },
+    co_flatscroll:   { maxHeight: 348, paddingRight: 6 },
+    co_flatfade:     { position: "absolute", left: 0, right: 0, bottom: 0, height: 26 },
     co_count:        { fontFamily: F.mono(400), fontSize: 11, color: t.ink_soft },
     co_card:         { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.line, borderRadius: 999, paddingVertical: 9, paddingHorizontal: 14, marginBottom: 8 },
     /* The CURRENT unit's capsule is ringed in OCHRE, the same ochre as its "now" pill — not
@@ -561,7 +638,7 @@ export function webStyles(t, scheme = "light") {
     co_card_done:    { borderColor: t.pine },
     /* The sitting's number: clay by default, PINE once taught, and eased back on units still
        ahead — the three states the web gives .co-num. */
-    co_num:          { fontFamily: F.display(600, true), fontSize: 15, color: t.clay, minWidth: 20 },
+    co_num:          { fontFamily: F.display(600, true), fontSize: 16, lineHeight: 20.8, color: t.clay, minWidth: 20 },
     co_num_done:     { color: t.pine },
     co_num_up:       { opacity: 0.72 },
     co_side:         { flexDirection: "row", alignItems: "center", columnGap: 10 },
@@ -587,7 +664,7 @@ export function webStyles(t, scheme = "light") {
     co_dur_n:        { fontFamily: F.mono(600), fontSize: 16, lineHeight: 17.6, color: t.pine },
     co_dur_u:        { fontFamily: F.mono(400), fontSize: 9, letterSpacing: 1.26, textTransform: UP, color: t.ink_soft, marginTop: 2 },
     co_mark:         { fontFamily: F.mono(400), fontSize: 10, color: t.pine },
-    co_go:           { color: t.ink_soft, fontSize: 14 },
+    co_go:           { color: t.ink_soft, fontSize: 15, lineHeight: 15 },
     /* ── the SS map (.cof-*) — states re-aligned to the web 2026-09-17 ──
        The three row states had drifted into each other's clothes: the port's BASE row wore the
        web's `.done` dress (paper + line-soft) and its `.done` wore a pine border the web never
@@ -672,9 +749,22 @@ export function webStyles(t, scheme = "light") {
        the slack is small. The web's fixed 204 is the value it lands on with room to spare. */
     cn_paper_wrap:   { flex: 1, minHeight: 128, backgroundColor: t.paper_2 },
     cn_rule:         { position: "absolute", left: 0, right: 0, height: 1, backgroundColor: t.line },
+    /* ★ THE WRITING SITS ABOVE THE RULE, NOT ON IT (founder, 2026-09-17: "the jotting in the
+       chapter notes sits on the horizontal line — it should be a tad higher").
+       ⚠️ **THE NUMBERS ALREADY MATCHED THE WEB, AND THAT WAS THE PROBLEM.** Same 16/32, same
+       `paddingTop: 5`, rules on the same 32px grid — but CSS splits the 16px of leading EVENLY
+       above and below the glyphs (half-leading), while React Native seats them lower in the
+       line box. So the identical numbers put the baseline a few pixels further down, and at a
+       32px rule pitch those few pixels are the whole gap between the writing and the rule
+       beneath it. ★ **A ported measurement is not a ported RESULT when the two engines lay text
+       out differently** — this is the same class of divergence as the font-scaling decision of
+       2026-09-13, and the only honest fix is to compensate rather than to match harder.
+       ⚠️ The compensation is on the PADDING, so the text rises within a band whose rule stays at
+       the band's foot. Moving the RULES down instead would have restored this gap by stealing
+       it from the line below. `CN_TEXT_LIFT` is the one number to turn if it still reads low. */
     cn_paper:        { fontFamily: F.body(400), fontSize: 16, lineHeight: 32, letterSpacing: 0.1,
                        color: t.ink, backgroundColor: "transparent",
-                       paddingTop: 5, paddingHorizontal: 22, paddingBottom: 0 },
+                       paddingTop: 5 - CN_TEXT_LIFT, paddingHorizontal: 22, paddingBottom: 0 },
     cn_foot:         { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
                        columnGap: 12, paddingTop: 12, paddingHorizontal: 22, paddingBottom: 16,
                        borderTopWidth: 1, flexShrink: 0 },
@@ -1359,7 +1449,7 @@ export function webStyles(t, scheme = "light") {
                        paddingHorizontal: 12, marginBottom: 14, borderWidth: 1,
                        borderRadius: 6 },
     acct_final_dl_t: { fontFamily: F.mono(400), fontSize: 11.5, lineHeight: 17.825,
-                       letterSpacing: 0.46 },
+                       letterSpacing: 0.46, textTransform: UP },
     acct_final_check:{ flexDirection: "row", columnGap: 9, alignItems: "flex-start",
                        padding: 10, borderWidth: 1, borderRadius: 6 },
     acct_final_check_t: { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 13,

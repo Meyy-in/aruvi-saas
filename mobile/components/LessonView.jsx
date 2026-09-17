@@ -17,8 +17,8 @@
  * (tap on the minutes also moves it — the phone's stand-in for the web's arrow keys); the
  * teacher-notes <details> is a Pressable that toggles. Everything else — order, labels, copy,
  * which field feeds which row — is the web's. */
-import { useEffect, useMemo, useState } from "react";
-import { View, ScrollView, Pressable, StyleSheet } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { View, ScrollView, Pressable, StyleSheet, AppState } from "react-native";
 import { Text } from "./Text";
 import { parseBold } from "@aruvi/shared/format";
 import {
@@ -30,6 +30,7 @@ import { useWebStyles } from "../theme/web";
 import Bar from "./Bar";
 import ChapterOrg, { kickerOf } from "./lesson/ChapterOrg";
 import PhaseBookmark from "./lesson/PhaseBookmark";
+import { useTourAnchor } from "../lib/tour";
 import AssessPanel from "./lesson/AssessPanel";
 
 /* Walk groups (and children) into a flat unit list; each unit carries its group context. */
@@ -132,7 +133,17 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
      not, and a whole row is the widest target on this screen. `over` follows the arrow live. */
   const [held, setHeld] = useState(false);
   const [over, setOver] = useState(0);
-  const centres = useMemo(() => phases.map((_, i) => rows[i] ? rows[i].y + 13 + rows[i].timeH / 2 : null).filter((v) => v != null), [rows, phases.length]);
+  /* ★ THE CENTRE COMES FROM THE PHASE'S OWN PADDING (app. 06 row 75). `13` was `ws.uv_phase`'s
+     paddingVertical hard-copied into arithmetic — so re-measuring that one style against the web
+     would have silently walked every bookmark centre off its row, and the checker cannot see a
+     number that is not in `web.js`. Read it from the style and the two cannot drift. */
+  const bookmarkTourRef = useTourAnchor("phase-bookmark");    // tour step 12
+  const firstPhaseTourRef = useTourAnchor("lesson-phase-1");  // step 11's tip fallback
+  const phasePadTop = (ws.uv_phase && ws.uv_phase.paddingVertical) || 13;
+  const centres = useMemo(
+    () => phases.map((_, i) => (rows[i] ? rows[i].y + phasePadTop + rows[i].timeH / 2 : null))
+                .filter((v) => v != null),
+    [rows, phases.length, phasePadTop]);
   return (
     <View>
       {notes ? (
@@ -157,9 +168,14 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
               on touch-down, holding and sliding is the obvious next move, and a banner that
               explains a gesture she is already performing is a banner that arrived too late. */}
           {bookmark ? (
-            <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
-              color={t.clay} onMove={bookmark.onMove} onOver={setOver}
-              onHold={(on) => { setHeld(on); if (bookmark.onLift) bookmark.onLift(on); }} />
+            /* ⚠️ A WRAPPER, and `pointerEvents="box-none"` on it — the bookmark is a drag target
+               and an ordinary View over it would eat the gesture that 2026-09-16 took four
+               attempts to get right. The wrapper exists only to be measured (tour step 12). */
+            <View ref={bookmarkTourRef} collapsable={false} pointerEvents="box-none">
+              <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
+                color={t.clay} onMove={bookmark.onMove} onOver={setOver}
+                onHold={(on) => { setHeld(on); if (bookmark.onLift) bookmark.onLift(on); }} />
+            </View>
           ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
@@ -173,7 +189,8 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
                  the bookmark is dragged again now, so a tappable row would only be a way to move
                  this mark by accident while she reads the plan mid-lesson — the one moment it
                  must not move. They light up and nothing more. */
-              <View key={i} style={[ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 },
+              <View key={i} ref={i === 0 ? firstPhaseTourRef : undefined} collapsable={false}
+                style={[ws.uv_phase, i === phases.length - 1 && { borderBottomWidth: 0 },
                   here && ws.uv_phase_arm]}
                 onLayout={(e) => { const { y } = e.nativeEvent.layout; setRows((r) => ({ ...r, [i]: { ...(r[i] || { timeH: 18 }), y } })); }}>
                 <View style={ws.uv_ph_time}
@@ -220,7 +237,8 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
     <>
       <View style={[ws.lv_stick, { paddingHorizontal: 18 }]}>
         {header}
-        <View style={ws.uv_tabs} accessibilityRole="tablist">
+        <View ref={unitTabsTourRef} collapsable={false}
+          style={ws.uv_tabs} accessibilityRole="tablist">
           {tabs.map(([id, label]) => (
             <Pressable key={id} onPress={() => setTab(id)} accessibilityRole="tab" accessibilityState={{ selected: tab === id }}
               style={[ws.uv_tab, tab === id && ws.uv_tab_on]}>
@@ -245,12 +263,18 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
 
 export default function LessonView({ view, sectionKey = "", onExit, preview = false }) {
   const { t } = useTheme();
+  const unitTabsTourRef = useTourAnchor("unit-tabs");   // tour step 11 positions its tip here
   const ws = useWebStyles();
   const lp = view.lesson_plan;
   const units = useMemo(() => flattenUnits(lp), [lp]);
   const droppedUnits = useMemo(() => (view.dropped_lp ? flattenUnits(view.dropped_lp) : []), [view.dropped_lp]);
   const total = units.length;
   const tracking = !!sectionKey && !preview;
+  /* ★ ONE ROOT, TWO NAMES (tour steps 7 and 11). The web has two separate mounts; the phone has
+     one screen that is either a read-only PREVIEW (opened from My Lessons, step 7) or the
+     TRACKING view (opened from a section card, step 11). Which anchor it claims follows that,
+     so the ring lands on the right screen without the tour having to know how she arrived. */
+  const rootTourRef = useTourAnchor(tracking ? "lesson-root" : "preview-root");
 
   const [cur, setCur] = useState(() => Math.min(tracking ? readUnitPointer(sectionKey) : 0, Math.max(0, total - 1)));
   /* ★ THE CHAPTER'S FRONT DOOR IS THE ORG PAGE UNTIL SHE HAS TAUGHT SOMETHING (founder,
@@ -278,10 +302,58 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
     const b = readLocalBookmark(sectionKey);
     return b && b.unit === cur ? b.phase : 0;
   });
-  // the pointer unit changed (mark complete / undo) → bookmark reappears at that unit's top phase
-  useEffect(() => { if (!tracking) return; const b = readLocalBookmark(sectionKey); setBkmkPhase(b && b.unit === cur ? b.phase : 0); }, [cur]);
+  /* ★ THE RESET IS PERSISTED, NOT JUST SHOWN (app. 06 row 81). This set state and stopped, so
+     after "Mark complete" the SCREEN showed the bookmark at the new unit's top phase while the
+     stored row still pointed into the OLD unit — and `pushSectionState` carries the stored row,
+     so her other device inherited the stale one. The web writes the reset for exactly this
+     reason (`writeLocalBookmark(sectionKey, cur, 0)`).
+     ⚠️ GUARDED BY A REF SO IT CANNOT FIRE ON MOUNT. `[cur]` runs on the first render too, and on
+     a freshly-opened lesson `prevCur === cur` — without the guard, simply opening a lesson would
+     overwrite the phase she left off at with 0, which is the opposite of what the bookmark is
+     for. The web carries the same ref and the same comment. */
+  const prevCurRef = useRef(cur);
+  useEffect(() => {
+    if (!tracking) return;
+    if (prevCurRef.current === cur) return;      // mount / no real change → leave the saved phase
+    prevCurRef.current = cur;
+    const b = readLocalBookmark(sectionKey);
+    if (b && b.unit === cur) {
+      setBkmkPhase(b.phase);                     // returning to a unit → where she left it
+    } else {
+      setBkmkPhase(0);                           // advanced to a new unit → top level
+      writeLocalBookmark(sectionKey, cur, 0);    // persist it, so the server row agrees
+    }
+  }, [cur, sectionKey, tracking]);
 
-  const writePointer = (i) => { const n = Math.min(Math.max(i, 0), total - 1); setCur(n); setUnitPointer(sectionKey, n); };
+  /* ★ COMING BACK TO THE APP RE-READS THE BOOKMARK (app. 06 rows 83, 125). The web listens on
+     `focus`, `pageshow` and `storage`; AppState going `active` is the phone's equivalent and the
+     one that matters on a handset — she moves a bookmark on the laptop, picks the phone up, and
+     the spine should agree. ⚠️ Only when the stored row is for the unit she is ON: a bookmark
+     belonging to another unit is not this screen's business, and adopting it would jump her
+     mid-lesson. Cheap by construction — a local read, no request. */
+  useEffect(() => {
+    if (!tracking) return undefined;
+    const resync = (st) => {
+      if (st !== "active") return;
+      const b = readLocalBookmark(sectionKey);
+      if (b && b.unit === cur) setBkmkPhase((prev) => (prev === b.phase ? prev : b.phase));
+    };
+    const sub = AppState.addEventListener("change", resync);
+    return () => sub.remove();
+  }, [cur, sectionKey, tracking]);
+
+  /* ⚠️ MOVING BACK OFF THE LAST UNIT MEANS IT IS NO LONGER DONE (app. 06 row 5). The phone set
+     the pointer and stopped, so an undo from the final unit left `done` TRUE underneath a
+     pointer that had moved — and `done` is what paints the section card clay and what the
+     history ledger reads as "completed". She would have undone the completion on screen and left
+     the chapter still filed as finished. The web has cleared it here since its own writer was
+     written; `setChapterDone` pushes, so the correction reaches her other device too. */
+  const writePointer = (i) => {
+    const n = Math.min(Math.max(i, 0), total - 1);
+    setCur(n);
+    setUnitPointer(sectionKey, n);
+    if (n < total - 1) setDone(false);
+  };
   const setDone = (v) => { setDoneFlag(v); setChapterDone(sectionKey, v); };
   const markComplete = () => {
     if (cur < total - 1) { const from = cur; writePointer(cur + 1); setUndoTo(from); }
@@ -344,14 +416,14 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
 
   const actUnit = undoTo != null ? undoTo : cur;
   const completionUI = !tracking ? null : undoTo != null ? (
-    <DoneCard ws={ws} title="Unit complete" action="↺ Undo" onAction={undoComplete} />
+    <DoneCard ws={ws} t={t} title="Unit complete" action="↺ Undo" onAction={undoComplete} />
   ) : cur >= total - 1 ? (
-    doneFlag ? <DoneCard ws={ws} title="Chapter complete" action="↺ Reopen" onAction={() => setDone(false)} chapter />
+    doneFlag ? <DoneCard ws={ws} t={t} title="Chapter complete" action="↺ Reopen" onAction={() => setDone(false)} chapter />
       : <MarkBtn ws={ws} label="Mark chapter complete" onPress={markComplete} />
   ) : <MarkBtn ws={ws} label="Mark this unit complete" onPress={markComplete} />;
 
   return (
-    <View style={{ flex: 1, backgroundColor: t.paper }}>
+    <View ref={rootTourRef} collapsable={false} style={{ flex: 1, backgroundColor: t.paper }}>
       {/* ★ ALWAYS THE LESSON TAB (founder, 2026-09-14). The web's `useUnitTabsParts` and
           `PreviewUnit` both DEFAULT to "lesson", and page.jsx passes it explicitly too, so a unit
           opens on the teaching spine whether she is tracking or previewing. This opened a preview
@@ -370,17 +442,28 @@ const NavBtn = ({ ws, label, onPress, off }) => (
   <Pressable onPress={onPress} disabled={off} hitSlop={6}><Text style={[ws.lv_pvbtn, off && ws.lv_pvbtn_off]}>{label}</Text></Pressable>
 );
 const MarkBtn = ({ ws, label, onPress }) => (
-  <View style={ws.lv_markcard}><Pressable onPress={onPress} style={ws.lv_markbtn}><Text style={ws.lv_markbtn_t}>{label}</Text></Pressable></View>
+  <View ref={useTourAnchor("mark-complete")} collapsable={false} style={ws.lv_markcard}><Pressable onPress={onPress} style={ws.lv_markbtn}><Text style={ws.lv_markbtn_t}>{label}</Text></Pressable></View>
 );
-const DoneCard = ({ ws, title, action, onAction, chapter }) => (
-  <View style={[ws.lv_donecard, chapter && ws.lv_chapterdone]}>
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Text style={ws.lv_donemark}>✓</Text>
-      <Text style={ws.lv_donetitle}>{title}</Text>
+/* ★ THE CARD RECOLOURS WHOLE WHEN THE CHAPTER IS DONE (app. 06 rows 86, 87). A finished UNIT is
+   pine; a finished CHAPTER is clay, and the mark, the title and the undo pill all move with the
+   card — on the web that is four rules under `.lv-chapterdone`, and here it is one `ink`. */
+const DoneCard = ({ ws, t, title, action, onAction, chapter }) => {
+  const ink = chapter ? t.clay : t.pine_d;
+  return (
+    <View style={[ws.lv_donecard, chapter && ws.lv_chapterdone]}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={[ws.lv_donemark, { backgroundColor: chapter ? t.clay : "#2f7d54" }]}>
+          <Text style={ws.lv_donemark_t}>✓</Text>
+        </View>
+        <Text style={[ws.lv_donetitle, { color: ink }]}>{title}</Text>
+      </View>
+      <Pressable onPress={onAction} hitSlop={6}
+        style={[ws.lv_undo, { borderColor: chapter ? t.edge_clay : t.edge_green }]}>
+        <Text style={[ws.lv_undo_t, { color: ink }]}>{action}</Text>
+      </Pressable>
     </View>
-    <Pressable onPress={onAction} hitSlop={6}><Text style={ws.lv_undo}>{action}</Text></Pressable>
-  </View>
-);
+  );
+};
 
 const s = StyleSheet.create({
   body: { paddingHorizontal: 18, paddingTop: 10, paddingBottom: 30 },   // main: 26px 18px 72px, minus the pinned block

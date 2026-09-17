@@ -36,6 +36,14 @@ export default function Lesson() {
     return () => { alive = false; };
   }, [subject, grade, filename, section]);
 
+  /* ★ THE FAILURE COPY IS THE PHONE'S OWN, AND IT STAYS (founder, 2026-09-17, answering Q20).
+     The web fails SILENTLY here — a lesson that will not load leaves her on the list with no
+     word about it — and the phone says "This lesson could not be found." / "Couldn't load this
+     lesson right now." with a way back. Asked which surface should follow which, the founder
+     named it a divergence rather than moving either.
+     ⚠️ So this is a phone ADDITION under CLAUDE.md §0's second allowance, not a gap in the port:
+     do not delete it to "match the web", and do not file it as debt. **The web still owes its
+     teacher an answer here**, and that is a web decision, recorded and not taken. */
   if (state.loading) {
     return (
       <View style={{ flex: 1, backgroundColor: t.paper }}>
