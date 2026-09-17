@@ -150,12 +150,21 @@ export default function Login() {
 
   const mobileOk = /^\d{10}$/.test(mobile.trim());
 
+  /* ★ THE ONE PLACE THE CLOCK STARTS, and EVERY door must come through it. The returning-device
+     flow called `sendOtp` directly and never set `otpAt` — so the countdown sat at 0:00 for ever
+     and `otpDead` stayed FALSE (it tests `otpAt > 0`), which meant she was neither told how long
+     she had nor ever shown Resend. A dead timer is worse than no timer: it says the code is gone
+     while the screen still asks her to type it.
+     It RETURNS the error rather than writing it, because the two doors show errors on different
+     lines (`mobErr` on the create screen, `signinErr` on the returning one) and the previous
+     version wrote to `mobErr` from a screen that does not render it. */
   const requestOtp = async (num) => {
-    if (!live) { setOtpAt(Date.now()); return true; }
-    const err = await sendOtp(num);
-    if (err) { setMobErr(err); return false; }
+    if (live) {
+      const err = await sendOtp(num);
+      if (err) return err;
+    }
     setOtpAt(Date.now());   // the clock starts when the code was ASKED FOR, not when it arrives
-    return true;
+    return null;
   };
 
   const verifyOtp = async () => {
@@ -191,7 +200,7 @@ export default function Login() {
         const uid = d.id || trimmed;
         if (!live) { setSigninBusy(false); enter(uid); return; }
         setMobile(uid); setFlow("return"); setMobErr(""); setOtp("");
-        const err = await sendOtp(uid);
+        const err = await requestOtp(uid);   // NOT `sendOtp` — see requestOtp: this is the clock
         setSigninBusy(false);
         if (err) { setSigninErr(err); return; }
         setOtpSent(true); setScreen("otp");
@@ -254,9 +263,10 @@ export default function Login() {
               setMobErr(""); setMobBusy(true);
               const taken = await idInUse(mobile.trim());
               if (taken) { setMobBusy(false); setMobErr(MOBILE_TAKEN); return; }
-              const sent = await requestOtp(mobile.trim());
+              const err = await requestOtp(mobile.trim());
               setMobBusy(false);
-              if (sent) { setOtp(""); setOtpSent(true); }
+              if (err) { setMobErr(err); return; }
+              setOtp(""); setOtpSent(true);
             }} />
         ) : (
           <>
@@ -272,7 +282,8 @@ export default function Login() {
               otpDead ? (
                 <Quiet>The code sent to +91 {mobile.trim()} has expired.{"  "}
                   <Text style={{ color: t.pine, textDecorationLine: "underline" }}
-                    onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>Send a new code</Text>
+                    onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp("");
+                      const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>Send a new code</Text>
                 </Quiet>
               ) : (
                 <Quiet>Sent by SMS to +91 {mobile.trim()}.{"  "}
@@ -280,7 +291,8 @@ export default function Login() {
                   {otpCanResend ? (
                     <Text>{"  "}
                       <Text style={{ color: t.pine, textDecorationLine: "underline" }}
-                        onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp(""); await requestOtp(mobile.trim()); }}>Resend</Text>
+                        onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp("");
+                      const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>Resend</Text>
                     </Text>
                   ) : null}
                 </Quiet>
