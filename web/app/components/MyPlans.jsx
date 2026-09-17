@@ -378,23 +378,18 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
      tour BORROWS — what was bound when it started is remembered, 1-9 unbind, 10 binds the demo
      plan, and if the tour ENDS with the section empty what was there goes back. Declared here,
      above its readers: this file has been bitten by a late const before (ed8fc93d). */
-  const demoRef = useRef({ section: null, pre: null });
   useEffect(() => {
     if (tourStep == null || !tourTarget) return;
     const { c, sectionKey, plan } = tourTarget;
-    const bound = currentChapterFile(sectionKey);
-    /* Captured on the first tick this section is the target — never again for the same section,
-       or the capture would re-read a binding the demo has already taken away. */
-    if (demoRef.current.section !== sectionKey) {
-      demoRef.current = { section: sectionKey, pre: bound || null };
-    }
-    if (tourStep >= 10 && bound !== plan.filename) {
-      bindSectionChapter(sectionKey, plan.filename);   // the real attach (step 9 → 10)
-      setSyncTick((t) => t + 1);
-    } else if (tourStep <= 9 && bound) {
-      unbindSection(sectionKey);                        // the demo needs an empty section
-      setSyncTick((t) => t + 1);
-    }
+    /* ⚠️ THE BINDING IS NO LONGER DONE HERE (2026-09-17). It was, and that was the bug the
+       founder reported four times: *"Card 5 is still not showing the archive. The archive icon is
+       also not showing in the lesson card"*. **This component UNMOUNTS for steps 3-6** — page.jsx
+       renders `MyLessonPlans` INSTEAD of `MyPlans` when `editFlow === "lessonplans"`, a ternary
+       chain, not two tabs kept alive — so the unbind those steps depend on never ran, the plan
+       still read as attached, and `.mlp2-iconbtn.archive` (absent on an attached plan) was never
+       in the DOM for `[data-tour]` to find. I had assumed the web kept both mounted and spent
+       three walks fixing the phone alone. It now lives in `page.jsx`, which is the shell and is
+       always mounted — the same move the phone made into `lib/tour.js`, for the same reason. */
     // Steps 11–13: the tracking lesson view is open (11 tracking · 12 the bookmark ·
     // 13 mark-complete); any other step closes it.
     if (tourStep === 11 || tourStep === 12 || tourStep === 13) {
@@ -445,17 +440,11 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   const prevTourRef = useRef(null);
   useEffect(() => {
     if (prevTourRef.current != null && tourStep == null) {
+      /* Closing what the tour opened is this screen's own job and stays. Giving back the borrowed
+         binding is page.jsx's — see `tourDemo` there — because this component is not mounted for
+         every step that could end the tour. */
       setOpenPlan(null); setAttachFor(null);
-      /* Give back what the demo borrowed, and ONLY if the demo left the section empty: a tour
-         walked to the end finishes bound to the demo plan, which is the thing it just taught her
-         to do, and must not be undone. A tour skipped at step 5 finishes empty, and that is the
-         one that owes her a section back. */
-      const { section, pre } = demoRef.current;
-      if (section && pre && !currentChapterFile(section)) {
-        bindSectionChapter(section, pre);
-        setSyncTick((t) => t + 1);
-      }
-      demoRef.current = { section: null, pre: null };
+      setSyncTick((t) => t + 1);
     }
     prevTourRef.current = tourStep;
   }, [tourStep]);

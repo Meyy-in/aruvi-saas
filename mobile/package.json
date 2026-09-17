@@ -12,7 +12,8 @@
     "doctor": "npx expo-doctor",
     "check:parity": "node theme/check-parity.mjs",
     "check:scope": "node check-scope.mjs $(find app components lib theme -name '*.jsx' -o -name '*.js')",
-    "check": "npm run check:scope && npm run check:parity"
+    "check:anchors": "node check-anchors.mjs $(find app components -name '*.jsx')",
+    "check": "npm run check:scope && npm run check:anchors && npm run check:parity"
   },
   "dependencies": {
     "@aruvi/shared": "file:../packages/shared",

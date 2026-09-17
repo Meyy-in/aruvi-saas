@@ -3,7 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, heldScopesOf, paywallKicker, entLapsed as lapsedOf } from "./lib/format";
 import { accountFirstName } from "./lib/account";
 import { verifiedWrite, readinessFingerprint } from "./lib/verify";
-import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache } from "./lib/sectionState";
+import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache,
+         readLocalSection, bindSectionChapter, unbindSection } from "./lib/sectionState";
+import { cachedPlans } from "@aruvi/shared/plans";
+import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
 import { signOutAuth } from "./lib/auth";
 import { clearTeacherCaches, forgetDevice } from "@aruvi/shared/signout";
@@ -286,6 +289,63 @@ export default function Home() {
      2 ring the two tab items, which are on screen either way, so nothing about the steps changes.
      ⚠️ `tourNext`'s `tour === 2 → goLessons()` and `tourBack`'s `tour === 3 → goClasses()` went
      with it: 1-6 are now all My Lessons, and a Back that walked to My Classes would undo this. */
+  /* ───────── THE DEMO'S OWN BINDING — driven from the SHELL ─────────
+   *
+   * ★ IT CANNOT LIVE IN `MyPlans` (founder, 2026-09-17, reported four times: *"Card 5 is still not
+   * showing the archive. The archive icon is also not showing in the lesson card"*). The render
+   * below is a TERNARY CHAIN, not two tabs kept alive: when `editFlow === "lessonplans"` the page
+   * renders `MyLessonPlans` INSTEAD of `MyPlans`, so `MyPlans` is unmounted for steps 3-6 and the
+   * unbind those steps depend on never ran. The plan still read as attached, and
+   * `.mlp2-iconbtn.archive` — absent on an attached plan — was never in the DOM for `[data-tour]`
+   * to find. I had assumed the web kept both mounted and fixed the phone alone for three walks.
+   *
+   * ★ BORROW AND GIVE BACK. The demo needs an UNBOUND section for steps 1-9: archive hides on an
+   * attached plan, the section card draws its "+" only when nothing is bound, and the picker lists
+   * a chapter only when it is not the bound one. First run ATTACHES what it generates, so the
+   * tour's audience always arrives bound. What was there is remembered, 1-9 unbind, 10 binds the
+   * demo plan, and a tour that ENDS with the section empty gets it back — a completed tour ends
+   * bound to the demo plan, which for a new teacher is what she had. */
+  const demoRef = useRef({ section: null, pre: null });
+  const tourDemoTarget = () => {
+    for (const sub of ((readiness || {}).subjects || [])) {
+      const sSlug = subjectSlug(sub.name);
+      for (const g of (sub.grades || [])) {
+        const gSlug = gradeSlug(g.grade);
+        for (const sec of (g.sections || [])) {
+          const rows = cachedPlans(`${sSlug}/${gSlug}`);
+          const list = Array.isArray(rows) ? rows : rows ? Object.values(rows) : [];
+          const plan = list.filter((x) => x && x.prepared && !x.archived)
+            .sort((a, b) => String(b.prepared_at || "").localeCompare(String(a.prepared_at || "")))[0];
+          if (plan) return { section: `${sSlug}_${gSlug}_${sec.tag}`, file: plan.filename };
+        }
+      }
+    }
+    return null;
+  };
+  useEffect(() => {
+    if (tour == null) return;
+    const tg = tourDemoTarget();
+    if (!tg) return;
+    /* Captured the first time this section is the target — never again for the same section, or
+       it would re-read a binding the demo has already taken away. */
+    if (demoRef.current.section !== tg.section) {
+      demoRef.current = { section: tg.section, pre: readLocalSection(tg.section).chapter || null };
+    }
+    const bound = readLocalSection(tg.section).chapter;
+    if (tour >= 10 && bound !== tg.file) bindSectionChapter(tg.section, tg.file);
+    else if (tour >= 1 && tour <= 9 && bound) unbindSection(tg.section);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tour, readiness]);
+  const prevTourNum = useRef(null);
+  useEffect(() => {
+    if (prevTourNum.current != null && tour == null) {
+      const { section, pre } = demoRef.current;
+      if (section && pre && !readLocalSection(section).chapter) bindSectionChapter(section, pre);
+      demoRef.current = { section: null, pre: null };
+    }
+    prevTourNum.current = tour;
+  }, [tour]);
+
   const startTour = () => { goLessons(); setTour(1); };
 
   // Areas 4 + 5: a VERIFIED section mismatch — the class is not on the chapter she just

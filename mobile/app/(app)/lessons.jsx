@@ -1000,7 +1000,6 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
                    onDismissBusy, onOpen, onArchive, onRestore, priorYear, tourStep }) {
   /* Only the tour's own card claims these names, and each only on the step that rings it. */
   const cardRef = useTourAnchor(tourStep === 3 || tourStep === 6 ? "lesson-first" : null);
-  const reportRef = useTourAnchor(tourStep === 4 ? "lesson-report" : null);
   const archiveRef = useTourAnchor(tourStep === 5 ? "lesson-archive" : null);
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -1096,10 +1095,11 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
           keeps archived plans out of the attach picker (founder, 2026-08-01). Not while it is
           re-preparing either: what the file would say is being rewritten as she taps. */}
       {!archived && !busy && !priorYear ? (
-        <View ref={reportRef} collapsable={false}>
-          <ReportButton sSlug={sSlug} gSlug={gSlug} filename={p.filename}
-            chapterTitle={p.chapter_title} />
-        </View>
+        /* ⚠️ NO WRAPPER. `sc_report` is absolutely positioned, so a wrapping View would become its
+           frame of reference (moving the icon off the card's corner) AND would measure as a zero
+           box, leaving the tour's ring nothing to aim at. The anchor name goes INTO the button. */
+        <ReportButton sSlug={sSlug} gSlug={gSlug} filename={p.filename}
+          chapterTitle={p.chapter_title} tour={tourStep === 4 ? "lesson-report" : null} />
       ) : null}
     </View>
   );

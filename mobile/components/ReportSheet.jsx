@@ -35,6 +35,7 @@
  * Measures live in theme/web.js under `rpt_*` / `sc_report` (§4 rule 2).
  */
 import { useState } from "react";
+import { useTourAnchor } from "../lib/tour";
 import { View, Pressable } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
@@ -193,13 +194,26 @@ function ReportWindow({ visible, sSlug, gSlug, filename, chapterTitle, onClose }
    react-native-web renders a role="button" Pressable as a real <button>, and a nested button is
    invalid; the card already splits this way for its archive icon (step 4a), and this simply
    takes the corner the card has been reserving for it since then (`mlp2_cardpad`). */
-export default function ReportButton({ sSlug, gSlug, filename, chapterTitle }) {
+/* ★ `tour` IS THE ANCHOR NAME, AND IT GOES ON THE BUTTON ITSELF (founder, 2026-09-17, two
+ * symptoms and one cause: *"the export icon is not placed properly"* AND card 4 landing at the
+ * bottom of the screen instead of under the lesson card).
+ * ⚠️ IT USED TO BE A WRAPPING `<View ref=…>` IN THE CARD, and that is fatal twice over, because
+ * `sc_report` is `position: "absolute"`. In React Native an absolute child positions against its
+ * PARENT — so the wrapper became its frame of reference and the icon left the card's bottom-right
+ * corner. And a View whose only child is absolute contributes NOTHING to layout, so it measured
+ * as a zero box, which `measureAnchor` correctly treats as absent: the ring had nothing to draw
+ * and the tip fell to its no-rect fallback at the foot of the screen.
+ * **An anchor belongs on the element that actually occupies space.** The web reached the same
+ * shape by passing `dataTour` INTO this component rather than wrapping it. */
+export default function ReportButton({ sSlug, gSlug, filename, chapterTitle, tour = null }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const tourRef = useTourAnchor(tour);
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Pressable onPress={() => setOpen(true)} accessibilityRole="button" hitSlop={6}
+      <Pressable ref={tourRef} collapsable={false}
+        onPress={() => setOpen(true)} accessibilityRole="button" hitSlop={6}
         accessibilityLabel={`Create a report of ${chapterTitle}`} style={ws.sc_report}>
         <ReportIcon color={t.ink_soft} />
       </Pressable>

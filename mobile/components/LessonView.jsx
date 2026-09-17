@@ -171,11 +171,16 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
             /* ⚠️ A WRAPPER, and `pointerEvents="box-none"` on it — the bookmark is a drag target
                and an ordinary View over it would eat the gesture that 2026-09-16 took four
                attempts to get right. The wrapper exists only to be measured (tour step 12). */
-            <View ref={bookmarkTourRef} collapsable={false} pointerEvents="box-none">
-              <PhaseBookmark centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
-                color={t.clay} onMove={bookmark.onMove} onOver={setOver}
-                onHold={(on) => { setHeld(on); if (bookmark.onLift) bookmark.onLift(on); }} />
-            </View>
+            /* ⚠️ THE ANCHOR IS ON THE BOOKMARK, NOT A WRAPPER (founder, 2026-09-17, reported four
+               times: card 12 *"still does not highlight the bookmark"*). `PhaseBookmark`'s root is
+               `position: "absolute"`, so a wrapping View contributes NOTHING to layout and
+               measures as a zero box — which `measureAnchor` correctly treats as absent, leaving
+               the ring with nothing to draw. Same mistake, same day, as the report icon's wrapper.
+               The wrapper is gone entirely: it existed only to be measured, and it could not be. */
+            <PhaseBookmark anchorRef={bookmarkTourRef}
+              centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
+              color={t.clay} onMove={bookmark.onMove} onOver={setOver}
+              onHold={(on) => { setHeld(on); if (bookmark.onLift) bookmark.onLift(on); }} />
           ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);

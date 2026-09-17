@@ -40,7 +40,7 @@ import Svg, { Path } from "react-native-svg";
 
 const H = 26;   // arrow height; centred on the time cell
 
-export default function PhaseBookmark({ centres, phase, onMove, color, onHold, onOver }) {
+export default function PhaseBookmark({ centres, phase, onMove, color, onHold, onOver, anchorRef }) {
   const top = useRef(new Animated.Value(0)).current;
   const startTop = useRef(0);
   const curTop = useRef(0);
@@ -126,7 +126,7 @@ export default function PhaseBookmark({ centres, phase, onMove, color, onHold, o
 
   if (!centres.length) return null;
   return (
-    <Animated.View {...pan.panHandlers} style={[s.wrap, { top }]}
+    <Animated.View ref={anchorRef} collapsable={false} {...pan.panHandlers} style={[s.wrap, { top }]}
       accessibilityRole="adjustable"
       accessibilityLabel={`Lesson bookmark, on phase ${phase + 1} of ${centres.length}. Hold and slide to move it`}>
       {/* THE FRAME says the bookmark is in hand. A ring and a tint, never a colour change — the
