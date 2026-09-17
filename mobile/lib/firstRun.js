@@ -79,9 +79,16 @@ export async function firstGenNeeded() {
  * because she lands on My LESSONS — her lesson is the promise — and may well close the app before
  * she ever taps My Classes; a flag that died with the session would lose the question for good.
  *
- * ⚠️ WHEN THE TOUR LANDS (8b) THIS BECOMES A SECOND TRIGGER. The tour's own ending is the web's,
- * and two of them would ask her twice. Retire this one there, or gate it on the tour being
- * unavailable — do not leave both firing.
+ * ★ WHEN THE TOUR LANDS (8b), **THIS ONE STAYS AND THE TOUR'S OWN TRIGGER GOES** (founder,
+ * 2026-09-17). Two things would otherwise raise the same window and she would be asked twice.
+ * The tour's ending was the web's trigger and is the obvious one to keep — and it is the wrong
+ * one, because **it can only fire for a teacher who ran the tour.** A teacher who skips it, or
+ * never starts it, was assumed-for exactly as much as one who did: Meyy still picked her a
+ * section, a periods a week and a year's total, and the window exists to disclose that. A
+ * trigger that misses everyone who declines a tour is not a disclosure.
+ * ⚠️ So at 8b: `finishTour` must NOT raise `{mode:"check"}` — delete that clause rather than
+ * adding a guard beside it, and leave this one alone. The order still works out: first run
+ * queues the flag, My Classes spends it on her first visit, and the tour is offered after that.
  */
 const CHECK_KEY = () => userKey("first_run_check_pending");
 

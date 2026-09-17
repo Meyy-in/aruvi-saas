@@ -167,6 +167,7 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
   const ws = useWebStyles();
   const list = useMemo(() => {
     if (!target || !plans) return [];
+    if (!plans) return null;          // not asked yet — a different fact from "none"
     return Object.values(plans)
       .filter((p) => (p.prepared || (alsoAttachable && alsoAttachable.has(p.filename)))
         && p.filename !== boundFile && !p.archived)
@@ -182,7 +183,13 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
           grow tall enough to push its own ✕ off the top. Same cap, as a bounded scroller. */}
       <ScrollView style={{ maxHeight: 160 }} contentContainerStyle={ws.ap_list}
         showsVerticalScrollIndicator={false}>
-        {list.length === 0 ? (
+        {/* ★ THREE STATES, NOT TWO (app. 05 row B14). `null` is "this device has never asked",
+            and it used to be flattened into `{}` by the caller — so the picker told a teacher
+            with a full shelf that she had nothing prepared, then filled in a beat later. The
+            web draws `.ap-loading` here for the same reason. */}
+        {list === null ? (
+          <Text style={ws.ap_loading}>Loading lessons…</Text>
+        ) : list.length === 0 ? (
           <Text style={ws.ap_none}>No other lessons prepared for this section yet.</Text>
         ) : list.map((p) => (
           <ChapterRow key={p.filename} plan={p} onPress={() => onAttach(target.c, target.sectionKey, p)} />

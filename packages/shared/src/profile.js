@@ -178,6 +178,17 @@ export const goalWord = (goal) => GOAL_WORD[goal] || "sections";
  * ⚠️ An unreachable entitlement yields NO held scopes, so the old cascade stands. That is the
  * safe direction: a removal she confirmed still happens, and the worst case is a subject she can
  * add back, rather than a record the server refuses to reconcile. */
+/* ★ AND IT IS PERMANENT FOR THE TERM (founder, 2026-09-17, answering app. 02 question 6).
+ * Surviving an empty class list means a subscriber has NO way to take a held subject out of her
+ * profile on either surface until the subscription ends — the accordion dustbin was retired on
+ * 2026-09-16 and this rule shuts the last-class door. That was a consequence of the cascade fix
+ * rather than a decision, so it was put to the founder as one, and the answer is that OWNERSHIP
+ * RUNS FOR THE TERM: she bought a subject-stage, it is hers until it lapses, and Meyy does not
+ * offer to take it away. ⚠️ The cost is real and was accepted with the rule — a teacher who buys
+ * the wrong subject looks at it all year. If that turns up in support traffic, the fix is a
+ * "stop teaching this, keep the subscription" door in the removal redesign (app. 02 row 62),
+ * NOT a change here: this function answers "has she bought it?", which is a different question
+ * from "does she want it on screen?". Do not soften it into the second one. */
 export const subjectSurvivesEmpty = (heldScopes, subjectName) =>
   holdsSubject(heldScopes, subjectName);
 

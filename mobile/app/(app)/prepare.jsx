@@ -337,7 +337,18 @@ export default function Prepare() {
         expect: (y) => planIsPrepared(y, subject, grade, resp.filename),
       }).then(({ status }) => {
         if (status === "mismatch") {
-          setError("The lesson was built but didn’t reach your lessons — please prepare it again.");
+          /* ★ IT HAS TO LAND ON THE CARD, BECAUSE THIS SCREEN IS GONE (app. 05 row D9).
+             `router.navigate` fired several lines above — the handoff is immediate and nobody
+             waits here any more — so `setError` was writing into a component that is no longer
+             mounted, and the ONE case this check exists for said nothing at all: the plan built,
+             never became hers, and she would have gone looking for it in My Lessons with no
+             idea why it was missing. The verified-write is the whole point of the read-back;
+             losing its only output made the check decorative.
+             This is the ARV-D-087 shape: **a message must be delivered where the teacher is
+             looking, not where the code that produced it happened to live.** `failPreparing`
+             puts it on the preparing card — My Lessons or the section card, wherever the wait
+             is being drawn — which is the same place every other failure on this path appears. */
+          failPreparing("The lesson was built but didn’t reach your lessons — please prepare it again.");
         }
       }).catch(() => {});
 

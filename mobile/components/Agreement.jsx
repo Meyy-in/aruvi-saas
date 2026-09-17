@@ -127,7 +127,7 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
         state.prior_version ? (
           <Text style={[ws.lgl_hint, { color: t.ink_soft }]}>
             The agreement has been updated since you accepted version {state.prior_version}.
-            Please read it again and confirm the five points.
+            Please read it again and confirm each point.
           </Text>
         ) : null
       ) : accepted ? (
@@ -216,10 +216,15 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
         </View>
       ) : null}
 
+      {/* The web's own line, word for word (`web/app/components/Agreement.jsx`). The phone had
+          invented a `· current version {n}` tail, which says a second time what the accepted
+          block above already says in a sentence — and dropped the language and the pointer the
+          web ends on. Matching beats improving here: two surfaces quoting a legal document
+          differently is the one place a teacher is entitled to identical words. */}
       <Text style={ws.lgl_version}>
-        {doc.title} · version {doc.version}
-        {state.current_version && state.current_version !== doc.version
-          ? ` · current version ${state.current_version}` : ""}
+        Version {doc.version}
+        {" · "}{doc.language === "en" ? "English" : doc.language}
+        {" · This agreement is available at any time under Settings › Legal."}
       </Text>
     </View>
   );

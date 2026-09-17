@@ -12,7 +12,7 @@
 import { useEffect, useState } from "react";
 import { View, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Text } from "../components/Text";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { API } from "@aruvi/shared/config";
 import { dateWords } from "@aruvi/shared/legalmd";
 import Bar from "../components/Bar";
@@ -24,20 +24,29 @@ export default function Privacy() {
   const { t } = useTheme();
   const ws = useWebStyles();
   const router = useRouter();
+  /* ★ `?version=` serves an OLDER published version (2026-09-17, app. 03 rows 48/54). The notice
+     is versioned by filename and never edited once shown, so the one she was GIVEN and the one
+     current today are different documents. ⚠️ Nothing links here with a version yet — on either
+     surface (the web's three call sites all take the default). Ported for API parity with
+     `web/app/components/PrivacyNotice.jsx`; wire a caller or drop it on BOTH surfaces. */
+  const { version = "" } = useLocalSearchParams();
   const [state, setState] = useState(null);
   const [failed, setFailed] = useState("");
   useEffect(() => {
     let live = true;
+    const q = version ? `?version=${encodeURIComponent(version)}` : "";
     // Deliberately a bare fetch — no user header: this must load with NO identity.
-    fetch(`${API}/legal/privacy`)
+    fetch(`${API}/legal/privacy${q}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((d) => { if (live) setState(d); })
       .catch(() => { if (live) setFailed(
         "The privacy notice couldn’t be loaded just now. Check your connection and try again."); });
     return () => { live = false; };
-  }, []);
+  }, [version]);
 
   const doc = (state && (state.document || state)) || {};
+  const older = state && state.current_version && doc.version
+    && doc.version !== state.current_version;
   return (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Bar />
@@ -59,6 +68,14 @@ export default function Privacy() {
           <Text style={ws.fr_loading}>Loading the privacy notice…</Text>
         ) : (
           <>
+            {/* Said BEFORE the document: it frames what follows, and after it she has
+                already read the wrong version believing it was current. */}
+            {older ? (
+              <Text style={ws.lgl_hint}>
+                This is version {doc.version}, which you were shown. The current notice is
+                version {state.current_version}.
+              </Text>
+            ) : null}
             <Markdown md={doc.body || ""} />
             {/* The version line in full: which version, when it was published, in what language,
                 and where to find it again. The phone printed the number alone. */}

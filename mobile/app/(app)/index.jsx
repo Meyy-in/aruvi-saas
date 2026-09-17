@@ -10,7 +10,7 @@
  * Plan status, theme and sign-out live at the foot for now; they move to Settings in step 6.
  * The section→lesson binding ("+") and the full My Lessons library are step 4. */
 import { useEffect, useState, useCallback, useRef } from "react";
-import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl } from "react-native";
+import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl, AppState } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
 import { getUser, subjectSlug, classNum, pad } from "@aruvi/shared/format";
@@ -23,7 +23,7 @@ import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shar
 import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
-import { recordHistory, hasHistory } from "@aruvi/shared/sectionHistory";
+import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
 import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
 import { subscribePreparing, clearPreparing } from "../../lib/preparing";
@@ -107,6 +107,13 @@ export default function Home() {
   useEffect(() => subscribeYear(setYear), []);
   useFocusEffect(useCallback(() => { fetchYear(); }, []));
   const [tick, setTick] = useState(0);   // re-read local section state after returning from a lesson
+  /* ★ AN EMPTY CACHE IS NOT AN ANSWER UNTIL THE SERVER HAS GIVEN ONE (app. 05 row A7; the web's
+     `bindingsKnown`). The greeting asks "has she bound anything yet?" and reads the LOCAL
+     section cache to decide — which on a new device is empty for a beat whatever the truth is.
+     So a teacher signing in on a second phone was greeted "Tap + on a class to prepare its first
+     lesson" over classes she has been teaching for a term. False on its face, and it is the
+     first sentence the app says to her. It stays quiet until the reconcile lands. */
+  const [bindingsKnown, setBindingsKnown] = useState(false);
 
   /* ★ ENDING THE SESSION IS ONE ACT, AND A 401 IS ONE OF ITS DOORS (2026-09-13).
      The web has held this since its own live check: "a 401 is not 'no profile' — the server
@@ -119,10 +126,19 @@ export default function Home() {
      out mid-lesson on a school network (the existing "couldn't reach Meyy" path). */
   const endSession = useCallback(() => endSessionShared(router, "my classes: 401"), [router]);
 
-  /* Index a plan listing by filename — the shape the cards read. */
+  /* Index a plan listing by filename — the shape the cards read.
+     ★ **UNDEFINED IS A STATE, AND IT USED TO BE FLATTENED HERE** (app. 05 rows B14, B21).
+     `cachedPlans` returns null when this device has never asked; `(rows || [])` turned that
+     into `{}`, which is indistinguishable from "asked, and she has none". So a bound section on
+     a cold cache drew "Pick a chapter to begin" — the sand, no-chapter card — for the beat
+     before the listing arrived, and the picker announced "No other lessons prepared for this
+     section yet." about a class with a full shelf. **A screen may say it does not know; it may
+     never invent an answer about her record** — the Support `metaErr` rule of 2026-08-27,
+     reached through a third door. `undefined` now travels all the way to the card. */
   const indexPlans = (rows) => {
+    if (!rows) return undefined;
     const byFile = {};
-    (rows || []).forEach((p) => { byFile[p.filename] = p; });
+    rows.forEach((p) => { byFile[p.filename] = p; });
     return byFile;
   };
   const keysOf = (classes) => [...new Set(classes.map((c) => `${c.subjectSlug}/${c.gradeSlug}`))];
@@ -193,8 +209,20 @@ export default function Home() {
     // The reconcile: corrects the pointers the cards already drew from the local cache.
     if (classes.length) {
       pullSectionState(classes.map((c) => c.sectionKey))
+        .then(() => { setBindingsKnown(true); setTick((n) => n + 1); })
+        .catch(() => {});
+      /* ★ AND THE TEACHING LEDGER ALONGSIDE, ON ITS OWN TICK (app. 05 row A6). `hasHistory` is
+         read during render to decide whether a card offers its history glyph, and it reads a
+         cache that NOTHING on this surface had ever filled from the server — so on a second
+         device the glyph would have been absent for every chapter she has taught. Its own
+         `.catch`, deliberately: the ledger failing must not cost her the pointers, which are
+         what the cards are actually drawn from. */
+      pullSectionHistory(classes.map((c) => c.sectionKey))
         .then(() => setTick((n) => n + 1))
         .catch(() => {});
+    } else {
+      // Nothing to reconcile — the question is answered, and the answer is "none".
+      setBindingsKnown(true);
     }
   }, [endSession]);
 
@@ -224,7 +252,10 @@ export default function Home() {
      lands on My Lessons and arrives here by tapping the bar, which does not remount this screen.
      ⚠️ The same one-second beat the added-a-subject window waits: she has just arrived to see her
      first card, and a window in the same frame covers the thing she came for.
-     ⚠️ At 8b this becomes a SECOND trigger beside the tour's — retire one (see lib/firstRun). */
+     ★ At 8b this one STAYS and the TOUR'S trigger is the one that goes (founder, 2026-09-17):
+     the tour's ending can only fire for a teacher who ran the tour, and Meyy assumed just as
+     much for the one who skipped it. `finishTour` must not raise the check window — full
+     reasoning in `lib/firstRun.js`. */
   useFocusEffect(useCallback(() => {
     if (!takeFirstRunCheck()) return undefined;
     const id = setTimeout(() => raisePortalCheck({ mode: "check", reason: "tour" }),
@@ -244,6 +275,33 @@ export default function Home() {
   const [attachFor, setAttachFor] = useState(null);    // { c, sectionKey }
   const [untrackFor, setUntrackFor] = useState(null);  // { c, sectionKey, plan }
   const bump = () => setTick((n) => n + 1);
+
+  /* ★ THE SECOND DEVICE, AND THE HOLD THAT MAKES IT SAFE (app. 05 rows A4, A5).
+     She teaches from a phone and plans on a laptop; the pointers move on whichever she used
+     last. My Lessons already re-pulls on its own cadence — this screen only read the server
+     once per mount, so a chapter completed on the laptop stayed stale here until she navigated
+     away and back. The web re-pulls on an interval plus `visibilitychange`; the phone's
+     equivalent of the second is AppState going `active`, which is the moment that actually
+     matters on a handset (it is the one the teacher notices).
+     ⚠️ **THE HOLD IS NOT A NICETY — A PULL MID-ATTACH CAN UNDO HER (`uiBusyRef`).** A reconcile
+     writes the server's answer over the local cache; fire it while the attach picker is open,
+     or in the gap between her tap and the write landing, and the card reverts under her hand.
+     So the tick is SKIPPED, never queued, whenever a sheet is up — she is about to change the
+     very thing being reconciled, and the next tick is twenty seconds away. */
+  const uiBusyRef = useRef(false);
+  uiBusyRef.current = !!(attachFor || untrackFor);
+  useEffect(() => {
+    const sync = () => {
+      if (uiBusyRef.current) return;
+      const keys = st.classes.map((c) => c.sectionKey);
+      if (!keys.length) return;
+      pullSectionState(keys).then(() => setTick((n) => n + 1)).catch(() => {});
+      pullSectionHistory(keys).then(() => setTick((n) => n + 1)).catch(() => {});
+    };
+    const id = setInterval(sync, 20000);
+    const sub = AppState.addEventListener("change", (s) => { if (s === "active") sync(); });
+    return () => { clearInterval(id); sub.remove(); };
+  }, [st.classes]);
 
   /* ★ THE LESSON BEING PREPARED FOR ONE OF THESE SECTIONS (founder, 2026-09-15). The wait
      happens where the lesson will appear — that is the 2026-08-06 rule — and for a prepare
@@ -296,11 +354,9 @@ export default function Home() {
     const key = `${c.subjectSlug}/${c.gradeSlug}`;
     invalidatePlans(key);
     fetchPlans(key)
-      .then((rows) => setSt((prev) => {
-        const byFile = {};
-        (rows || []).forEach((p) => { byFile[p.filename] = p; });
-        return { ...prev, plansBySG: { ...prev.plansBySG, [key]: byFile } };
-      }))
+      .then((rows) => setSt((prev) => (
+        { ...prev, plansBySG: { ...prev.plansBySG, [key]: indexPlans(rows) } }
+      )))
       .catch(() => {});
   };
   /* Untracking logs a history row ONLY when at least one unit was done — the anti-noise gate, so
@@ -347,7 +403,7 @@ export default function Home() {
      every card is the same word three times on one screen (the web's own note, MyPlans.jsx). */
   const card = (c, banded) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}
-      plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`] || {}}
+      plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`]}
       preparing={preparing && preparing.section === c.sectionKey ? preparing : null}
       onDismissPreparing={clearPreparing}
       onOpen={openAttached}
@@ -375,7 +431,10 @@ export default function Home() {
           the top of the one scroll region — so here it sits ABOVE the scroller, which is the
           same thing without a sticky. The "My classes" mono label that used to open this screen
           is GONE: the web has no such label, and two headers is worse than either. */}
-      {!st.loading && !st.err ? <DashHead classes={st.classes} plansBySG={st.plansBySG} user={user} /> : null}
+      {!st.loading && !st.err
+        ? <DashHead classes={st.classes} plansBySG={st.plansBySG} user={user}
+                    bindingsKnown={bindingsKnown} />
+        : null}
       {/* The header sits outside the scroller, so it takes main's 26px top padding with it and
           the scroller must not repeat it — otherwise the card list starts 26px too low. */}
       <ScrollView contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
@@ -424,7 +483,7 @@ export default function Home() {
             subject: tg.c.subjectSlug, grade: tg.c.gradeSlug,
             section: tg.sectionKey, tag: tg.c.sectionTag } });
         }}
-        plans={attachFor ? (st.plansBySG[`${attachFor.c.subjectSlug}/${attachFor.c.gradeSlug}`] || {}) : null}
+        plans={attachFor ? st.plansBySG[`${attachFor.c.subjectSlug}/${attachFor.c.gradeSlug}`] : null}
         boundFile={attachFor ? readLocalSection(attachFor.sectionKey).chapter : null}
         alsoAttachable={attachFor ? boundFilesForGrade(attachFor.c.subjectSlug, attachFor.c.gradeSlug) : null}
         onAttach={attachChapter} onClose={() => setAttachFor(null)} />
@@ -440,7 +499,7 @@ export default function Home() {
  * The sub-line is the web's rule too: "Continue where you left off" appears only once at least
  * one section is actually bound. Before that the WELCOME copy speaks instead — telling a teacher
  * to tap "+" the second her classes appear is an instruction she has no context for yet. */
-function DashHead({ classes, plansBySG, user }) {
+function DashHead({ classes, plansBySG, user, bindingsKnown }) {
   const ws = useWebStyles();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -470,7 +529,11 @@ function DashHead({ classes, plansBySG, user }) {
           <Text style={ws.dash_sub}>Continue where you left off with every class.</Text>
         ) : null}
       </View>
-      {classes.length > 0 && !anyBound ? (
+      {/* ⚠️ `bindingsKnown` gates ONLY the not-yet-bound copy. The "continue where you left off"
+          line above needs no gate — it appears when something IS bound, and a false negative
+          there costs a sentence, where a false positive here tells a working teacher she has
+          not started. Silence is the safe direction. */}
+      {classes.length > 0 && !anyBound && bindingsKnown ? (
         <View style={{ paddingBottom: 10 }}>
           <Text style={ws.dash_welcome_title}>Your classes are ready</Text>
           <Text style={ws.dash_welcome_sub}>
@@ -497,7 +560,11 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
   const { t } = useTheme();
   const ws = useWebStyles();
   const sec = readLocalSection(c.sectionKey);
-  const plan = sec.chapter ? plans[sec.chapter] : null;
+  /* `plans` is UNDEFINED until this device has a listing for this subject·class — a different
+     fact from "she has no lessons" (see `indexPlans`). A bound section whose listing has not
+     landed is LOADING, never empty. */
+  const listingKnown = !!plans;
+  const plan = sec.chapter && plans ? plans[sec.chapter] : null;
   const hist = hasHistory(c.sectionKey);
   /* ★ THE CORNER OF THE CARD, THE WEB'S RULE (founder, 2026-08-30 — reported against the phone
      on 2026-09-16). Un-named it is the tag she has always seen, "6A". NAMED, THE LETTER GIVES
@@ -553,6 +620,28 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
               screens cannot drift in wording, timing, easing or the failed row. */}
           <ProposedCard preparing={preparing} onDismiss={onDismissPreparing} bare />
         </View>
+      </View>
+    );
+  }
+
+  /* ★ BOUND, BUT THE LISTING HAS NOT LANDED (app. 05 row B21). She HAS a chapter here — the
+     pointer says so — and the only thing missing is its title. Drawing the sand no-chapter card
+     would tell her the opposite of the truth about her own class, and it flickers back a beat
+     later, which is how a teacher learns not to trust what this screen says. The web guards the
+     same case with `bindingsKnown`. Deliberately NOT the green teaching card either: the fill
+     carries the status and this card does not yet know its own; it keeps the neutral plane and
+     says plainly what it is doing. */
+  if (!plan && sec.chapter && !listingKnown) {
+    return (
+      <View style={[ws.sc_card, { backgroundColor: t.card_new, borderColor: t.card_new_edge }]}>
+        <CardGrid color={t.card_grid} />
+        <View style={[ws.sc_spine, { backgroundColor: t.edge }]} />
+        <Tag />
+        <View style={ws.sc_body}>
+          {banded ? null : <Text style={ws.sc_kicker}>{c.subjectName}</Text>}
+          <Text style={[ws.sc_title, ws.sc_title_muted]}>Loading your lesson…</Text>
+        </View>
+        <View style={ws.sc_right} />
       </View>
     );
   }

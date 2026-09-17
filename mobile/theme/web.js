@@ -282,7 +282,32 @@ export function webStyles(t, scheme = "light") {
                        borderWidth: 1, borderColor: t.line_soft, backgroundColor: t.paper_2 },
     ap_none:         { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19, color: t.ink_soft,
                        paddingVertical: 8, paddingHorizontal: 2 },
+    /* `.ap-loading` and `.ap-none` are ONE rule in globals.css (2746) and share every value —
+       kept as two keys because they say different things and only one of them is a state the
+       teacher should ever see twice. */
+    ap_loading:      { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19, color: t.ink_soft,
+                       paddingVertical: 8, paddingHorizontal: 2 },
     ap_actions:      { flexDirection: "row", justifyContent: "flex-end", columnGap: 10, marginTop: 2 },
+
+    /* ───────── Section history — the glyph and its popup (app. 05 rows B19, B20) ─────────
+       Derived from globals.css (`.sc-hist` 2672, `.ch-*` 2815-2846) rather than measured off a
+       running web — no dev server was reachable from this session. ⚠️ **A RE-MEASURE IS OWED**
+       at 390px before this family is called parity-clean; the rules carry no ≤600px override
+       today, which is why reading them was safe enough to ship behind that caveat.
+       ★ The rail is NOT a new thing: `.ch-rail` is `.sc-rail` plus a top margin, so the popup
+       and the section card cannot drift in how a chapter's progress looks. */
+    sc_hist:         { width: 30, height: 30, borderRadius: 15, borderWidth: 1,
+                       alignItems: "center", justifyContent: "center" },
+    ch_row:          { paddingVertical: 10, paddingHorizontal: 2, rowGap: 6 },
+    ch_meta:         { flexDirection: "row", alignItems: "center",
+                       justifyContent: "space-between", columnGap: 10 },
+    ch_name:         { flexShrink: 1, fontFamily: F.body(400), fontSize: 15, lineHeight: 19.2,
+                       color: t.ink },
+    ch_no:           { fontFamily: F.body(500), color: t.pine_d },
+    ch_pill:         { fontFamily: F.mono(400), fontSize: 8.5, lineHeight: 12, letterSpacing: 0.68,
+                       textTransform: "uppercase", paddingVertical: 3, paddingHorizontal: 9,
+                       borderRadius: 20, overflow: "hidden" },
+    ch_rail:         { flexDirection: "row", columnGap: 3, marginTop: 6 },
     ap_btn:          { borderRadius: 7, borderWidth: 1, paddingVertical: 9, paddingHorizontal: 15 },
     ap_btn_label:    { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.55, textTransform: UP },
     /* ── the paywall window (`.paywall-card/-msg/-subscribe/-later`, globals.css 3987-4000) ──
