@@ -280,7 +280,13 @@ export default function Home() {
      nudge ON My Classes; now that first run lands on My Lessons and the same nudge renders
      there too, step 1 ("this is where your classes sit") would otherwise ring the My Classes
      tab over the My Lessons view. Navigate first, then start. */
-  const startTour = () => { goClasses(); setTour(1); };
+  /* ★ STEPS 1 AND 2 STAND ON MY LESSONS (founder, 2026-09-17: they showed *"My Classes background
+     but it should be in My Lessons only"*). This opened with `goClasses()`; it now opens where the
+     teacher already is — the offer's own screen, and the one first run leaves her on. Steps 1 and
+     2 ring the two tab items, which are on screen either way, so nothing about the steps changes.
+     ⚠️ `tourNext`'s `tour === 2 → goLessons()` and `tourBack`'s `tour === 3 → goClasses()` went
+     with it: 1-6 are now all My Lessons, and a Back that walked to My Classes would undo this. */
+  const startTour = () => { goLessons(); setTour(1); };
 
   // Areas 4 + 5: a VERIFIED section mismatch — the class is not on the chapter she just
   // attached, or not marked complete. pushSectionState calls this only when the server was read
@@ -721,14 +727,14 @@ export default function Home() {
   // popup at 9/14, attach/unbind at the 9↔10 boundary, lesson at 11–12, demo-complete at 13–14, the
   // big "+" grow button surfaced at 15) is orchestrated by MyPlans/MyLessonPlans off the numeric
   // tourStep; here we only handle SHELL navigation (numbers shifted +1 from step 12 on —
-  // the bookmark step, 2026-08-25): 2→3 open My Lessons · 7→8 back to My Classes ·
+  // the bookmark step, 2026-08-25): 1-7 all stand on My Lessons, where the tour now opens
+  // (2026-09-17) · 7→8 back to My Classes ·
   // 15→16 close the popup back to My Classes home (the "+" step) · 16→17 open the profile
   // (step 17 rings the settings gear over it) · 17→18 back to My Classes (the Ask Aruvi
   // mark) · 18→19 OPEN Ask Aruvi so step 19 rings the real panel · 19→20 close it again
   // for the centred "Welcome to Aruvi" sign-off · 20 Done → My Classes.
   const tourNext = () => {
-    if (tour === 2) goLessons();
-    else if (tour === 7) goClasses();
+    if (tour === 7) goClasses();
     else if (tour === 15) goClasses();
     else if (tour === 16) goProfile();
     else if (tour === 17) goClasses();          // leave the profile → show the Ask Aruvi mark on My Classes
@@ -737,14 +743,13 @@ export default function Home() {
     else if (tour === 20) { setAskOpen(false); finishTour(); goClasses(); return; }
     setTour(tour + 1);
   };
-  // Tour Back — mirrors every move so each step reverses cleanly: 3→2 back to My Classes' tab
-  // highlight; 8→7 back to My Lessons (the preview re-opens there); 16→15 back to My Classes
-  // (the grow "+" step; 15→14 re-opens the popup, handled by MyPlans). Steps 4/5/6/7 stay within My
-  // Lessons so need no shell move. Back from step 1 backs out to the nudge.
+  // Tour Back — mirrors every move so each step reverses cleanly: 8→7 back to My Lessons (the
+  // preview re-opens there); 16→15 back to My Classes (the grow "+" step; 15→14 re-opens the
+  // popup, handled by MyPlans). Steps 1-7 all stand on My Lessons since 2026-09-17 and need no
+  // shell move between them. Back from step 1 backs out to the nudge.
   const tourBack = () => {
     if (tour === 1) { setTour(null); return; }
-    if (tour === 3) goClasses();
-    else if (tour === 8) goLessons();
+    if (tour === 8) goLessons();
     else if (tour === 17) goClasses();
     else if (tour === 18) goProfile();   // back to the settings-gear step (profile open)
     else if (tour === 19) setAskOpen(false);  // 19→18: the mark on the tab row, panel closed

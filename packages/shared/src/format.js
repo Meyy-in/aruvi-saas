@@ -624,6 +624,11 @@ export function annualBudgetPeriods(readiness, subjectSlugArg, gradeSlugArg) {
  * to this — defined ONCE here so the rule can't drift between the two screens. */
 export const ALL_GRADES = ["III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 export const subjectSlug = (name) => (name || "").toLowerCase().replace(/ /g, "_");
+/* ★ ITS PAIR, LIFTED 2026-09-17. `subjectSlug` has always lived here; `gradeSlug` was copied into
+   four screens (two per surface) and into nothing shared — so `lib/tour.js` importing it from
+   here got `undefined`, which is a runtime TypeError that no parse and no scope check can see.
+   One name, one definition: a helper that half the app already agrees on belongs beside its twin. */
+export const gradeSlug = (g) => (g || "").toLowerCase();
 
 // Module-level cache so we fetch each subject's supported grades at most once per session.
 const _supportedGradesCache = {};   // { slug: ["VI","VII",…] (uppercase Roman) }

@@ -24,6 +24,10 @@
 import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { openAsk, closeAsk } from "./ask";
+import { readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
+import { cachedReadiness } from "@aruvi/shared/readiness";
+import { cachedPlans } from "@aruvi/shared/plans";
+import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
 
 /* ★ TWENTY STEPS, DECLARED HERE. It lived in `GuidedTour.jsx` until the navigation moved into
    this module; importing the component from here to read one number would be a cycle, and the
@@ -103,6 +107,13 @@ export function tourState() { return { ...state }; }
 export function startTour(info) {
   ranThisSession = true;
   state = { ...state, step: 1, info: { ...state.info, ...(info || {}) } };
+  rememberBinding();
+  syncDemo(1);
+  /* ★ STEPS 1 AND 2 STAND ON MY LESSONS (founder, 2026-09-17: on the web they showed *"My Classes
+     background but it should be in My Lessons only"*). The web opened the tour with `goClasses()`;
+     it now opens where the teacher already is — the offer's own screen, and the one first run
+     leaves her on. Steps 1 and 2 ring the two nav items, which are on screen either way. */
+  router.navigate("/lessons");
   emit();
 }
 
@@ -123,12 +134,17 @@ export function noteTourTarget(target) {
   const b = JSON.stringify(target || null);
   if (a === b) return;                     // idempotent: this is called from a render effect
   state = { ...state, target: target || null };
+  /* The target can arrive AFTER the tour has started — My Classes has to load its listing first —
+     so the borrow is taken and the step re-applied here as well as at `startTour`. */
+  rememberBinding();
+  syncDemo(state.step);
   emit();
 }
 
 export function setTourStep(n) {
   state = { ...state, step: Math.max(0, n) };
   pinPending = false;               // a pin belongs to the step that asked for it, never the next
+  syncDemo(state.step);             // the demo's binding follows the step, wherever she is standing
   emit();
 }
 
@@ -146,6 +162,7 @@ export function noteTourInfo(info) {
    assumed just as much for the one who skipped it. See `lib/firstRun.js`. */
 export function endTour() {
   ranThisSession = true;
+  restoreBinding();                 // give back what the demo borrowed, if it left the section empty
   state = { step: 0, info: {}, target: null };
   pinPending = false;
   emit();
@@ -204,8 +221,8 @@ export function useTour() {
  * ⚠️ THE MOVES ARE A TABLE, NOT A CHAIN OF `if`s — the web's `tourNext`/`tourBack` are two switch
  * statements twenty lines apart and drifted there at least once. Next and Back read the same
  * table from opposite ends, so a step cannot advance somewhere it will not come back from. */
-const MOVES = { 2: "/lessons", 7: "/", 15: "/", 16: "/settings/profile", 17: "/" };
-const BACK_MOVES = { 3: "/", 8: "/lessons", 17: "/", 18: "/settings/profile" };
+const MOVES = { 7: "/", 15: "/", 16: "/settings/profile", 17: "/" };   // 1-6 are all My Lessons
+const BACK_MOVES = { 8: "/lessons", 17: "/", 18: "/settings/profile" };  // 3→2 stays put now
 
 /* ★ `preview: true` OPENS IT THE WAY MY LESSONS DOES — with NO section, which is what makes
    `LessonView` a read-only preview and makes it claim `preview-root` rather than `lesson-root`.
@@ -215,7 +232,7 @@ const BACK_MOVES = { 3: "/", 8: "/lessons", 17: "/", 18: "/settings/profile" };
    made `science_ix_science_ix_9A` — a key matching no stored section. The screen still counted as
    tracking and looked right while every read behind it answered from nothing. */
 function openTourLesson(opts) {
-  const tg = state.target;
+  const tg = currentTarget();
   if (!tg) {
     console.warn("[meyy] tour: no target published — step", state.step, "cannot open a lesson");
     return;
@@ -223,7 +240,106 @@ function openTourLesson(opts) {
   const preview = !!(opts && opts.preview);
   router.navigate({ pathname: "/lesson", params: {
     subject: tg.subjectSlug, grade: tg.gradeSlug, filename: tg.filename,
-    ...(preview ? {} : { section: tg.tag }), tour: "1" } });
+    /* ⚠️ `tour: "1"` IS FOR THE TRACKING OPEN ONLY. It forces the UNIT instead of the chapter map,
+       which steps 11-13 need — they describe the four tabs, the bookmark and Mark complete, all
+       of them on the unit. Step 7 is the opposite case and I got it wrong first time: a PREVIEW
+       opens on the org page on the web and must here too (founder, 2026-09-17: *"card 7 does not
+       show the org page unlike web app"*). One flag, two journeys; it rides only the one that
+       asked for it. */
+    ...(preview ? {} : { section: tg.tag, tour: "1" }) } });
+}
+
+/* ───────── WHICH SECTION AND PLAN THE DEMO USES ─────────
+ *
+ * ★ DERIVED HERE, NOT WAITED FOR (founder, 2026-09-17: step 7 failed walk after walk and the
+ * diagnostic said *"no target published"*). It was published by My Classes — the screen that
+ * knows — which was fine while the tour opened there. It does not any more: the offer lives on
+ * My Lessons, first run leaves her on My Lessons, and steps 1 and 2 now stand there too, so My
+ * Classes may never mount at all. A tour whose target depends on a screen the teacher never
+ * visits is a tour that breaks from step 7 onward.
+ * Both caches are already warm by the time any offer is eligible — `fetchTourEligible` has read
+ * `/section-state`, first run has written readiness, and My Lessons holds the plan listing — so
+ * this reads what is there rather than fetching. `noteTourTarget` still WINS when a screen has
+ * published one: My Classes knows about bands and ordering that readiness alone does not. */
+function deriveTarget() {
+  const classes = [];
+  ((cachedReadiness() || {}).subjects || []).forEach((sub) => {
+    const sSlug = subjectSlug(sub.name);
+    (sub.grades || []).forEach((g) => {
+      const gSlug = gradeSlug(g.grade);
+      (g.sections || []).forEach((sec) => classes.push({
+        subjectName: sub.name, subjectSlug: sSlug, grade: g.grade, gradeSlug: gSlug,
+        sectionTag: sec.tag, sectionKey: `${sSlug}_${gSlug}_${sec.tag}`,
+      }));
+    });
+  });
+  for (const c of classes) {
+    const rows = cachedPlans(`${c.subjectSlug}/${c.gradeSlug}`);
+    const list = Array.isArray(rows) ? rows : rows ? Object.values(rows) : [];
+    /* The most recently prepared, not merely the first — the tour is demonstrating on the lesson
+       she has just made, and "just made" is what `prepared_at` orders by. */
+    const plan = list.filter((p) => p && p.prepared && !p.archived)
+      .sort((a, b) => String(b.prepared_at || "").localeCompare(String(a.prepared_at || "")))[0];
+    if (plan) {
+      return { subjectSlug: c.subjectSlug, gradeSlug: c.gradeSlug, sectionKey: c.sectionKey,
+               filename: plan.filename, tag: c.sectionTag, chapter: plan.chapter_title, c };
+    }
+  }
+  return null;
+}
+
+/** The published target if a screen gave us one, else what the caches can tell us. */
+function currentTarget() {
+  if (state.target) return state.target;
+  const t = deriveTarget();
+  if (t) {
+    state = { ...state, target: t, info: { ...state.info, tag: t.tag, chapter: t.chapter } };
+  }
+  return t;
+}
+
+/* ───────── THE DEMO'S OWN BINDING — driven here, NOT by a screen ─────────
+ *
+ * ★ IT HAS TO LIVE IN THE MODULE BECAUSE MY CLASSES UNMOUNTS (founder, 2026-09-17: on expo the
+ * report button and the archive control were still missing at cards 4 and 5, walk after walk).
+ * The web runs this from `MyPlans`, which is a TAB and stays mounted the whole way through. On
+ * the phone every screen is a ROUTE: the tour walks to My Lessons for steps 3-6 and the screen
+ * holding the orchestration is gone — so the unbind that steps 1-9 depend on never ran, the
+ * lesson card still read as attached, and the archive control (hidden on an attached plan) never
+ * appeared for the ring to find. The same reasoning as the navigation move above, and the same
+ * answer: what the tour must do at a step belongs to the tour.
+ *
+ * ★ BORROW AND GIVE BACK. The demo needs an UNBOUND section for steps 1-9 — the archive control
+ * hides on an attached plan, the section card draws its "+" only when nothing is bound, and the
+ * picker lists a chapter only when it is not the bound one. First run ATTACHES what it generates,
+ * so the tour's audience always arrives bound. What was there is remembered, 1-9 unbind, 10 binds
+ * the demo plan, and a tour that ENDS with the section empty gets it back. A completed tour ends
+ * bound to the demo plan — which for a new teacher is what she had — so nothing is restored and
+ * nothing is lost either way. */
+let borrowed = { section: null, pre: null };
+
+function syncDemo(n) {
+  const tg = currentTarget();
+  if (!tg || !tg.sectionKey || !tg.filename) return;
+  const bound = readLocalSection(tg.sectionKey).chapter;
+  if (n >= 10 && bound !== tg.filename) bindSectionChapter(tg.sectionKey, tg.filename);
+  else if (n >= 1 && n <= 9 && bound) unbindSection(tg.sectionKey);
+}
+
+/* Captured the first time this section is the target while a tour is running — never again for
+   the same section, or it would re-read a binding the demo has already taken away. */
+function rememberBinding() {
+  const tg = currentTarget();
+  if (!state.step || !tg || !tg.sectionKey) return;
+  if (borrowed.section === tg.sectionKey) return;
+  borrowed = { section: tg.sectionKey,
+               pre: readLocalSection(tg.sectionKey).chapter || null };
+}
+
+function restoreBinding() {
+  const { section, pre } = borrowed;
+  if (section && pre && !readLocalSection(section).chapter) bindSectionChapter(section, pre);
+  borrowed = { section: null, pre: null };
 }
 
 export function tourNext() {

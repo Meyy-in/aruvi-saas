@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl, AppState } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, subjectSlug, classNum, pad, getJSON, postJSON, markPrepared } from "@aruvi/shared/format";
+import { getUser, subjectSlug, gradeSlug, classNum, pad, getJSON, postJSON, markPrepared } from "@aruvi/shared/format";
 import { cutoverOffered, dismissCutover, dismissCutoverResult, fetchYear, runCutover,
          subscribeYear } from "@aruvi/shared/year";
 import { markGenerated } from "../../lib/firstRun";
@@ -52,7 +52,7 @@ const unitsDone = (sectionKey) => {
   return Number.isFinite(n) && n > 0 ? n : 0;
 };
 
-const gradeSlug = (g) => (g || "").toLowerCase();
+/* `gradeSlug` now comes from @aruvi/shared/format (lifted 2026-09-17) — one definition. */
 const classNo = (g) => (g || "").replace(/grade/i, "").trim().toUpperCase();
 
 /* readiness → one entry per subject·grade·section */
@@ -522,59 +522,31 @@ export default function Home() {
     });
   }, [tourTarget]);
 
-  /* ★ BORROW AND GIVE BACK — which is NOT the same as "only undo what the tour attached", and the
-     difference cost a whole walk (founder, 2026-09-17: cards 4, 5, 8 and 9 all broken, and
-     *"the lesson card shows lesson already attached! and that is why archive box does not show"*).
-     ⚠️ THE DEMO REQUIRES AN UNBOUND SECTION FOR STEPS 1-9, and that is not a nicety: the archive
-     icon hides on an attached plan (step 5), the section card draws its "+" only when nothing is
-     bound (step 8), and the picker lists a chapter only when it is not the bound one (step 9).
-     First run ATTACHES the lesson it generates, so the tour's own audience always arrives with
-     the section bound — which made a guard that "never touches an existing binding" a guard that
-     breaks four steps out of twenty, on both surfaces.
-     ⚠️ AND THE ORIGINAL HARM WAS REAL TOO: Skip at step 5 used to leave her section stripped.
-     So the tour BORROWS. What was bound when it started is remembered; steps 1-9 unbind; step 10
-     binds the demo plan; and if the tour ENDS with the section empty — Skip, or Back out of step
-     1 — what was there goes back. A completed tour ends bound to the demo plan, which for a new
-     teacher IS what she had, so nothing is restored and nothing is lost either way. */
-  const demoRef = useRef({ section: null, pre: null });
-  const tourWasRunning = useRef(false);
-  useEffect(() => {
-    const running = !!tourNow.step;
-    /* Captured on the first tick this section is the target — never again for the same section,
-       or the capture would re-read a binding the demo has already taken away. */
-    if (running && tourTarget && demoRef.current.section !== tourTarget.sectionKey) {
-      demoRef.current = { section: tourTarget.sectionKey,
-                          pre: readLocalSection(tourTarget.sectionKey).chapter || null };
-    }
-    if (!running && tourWasRunning.current) {
-      const { section, pre } = demoRef.current;
-      if (section && pre && !readLocalSection(section).chapter) {
-        bindSectionChapter(section, pre); bump();
-      }
-      demoRef.current = { section: null, pre: null };
-      /* ⚠️ AND CLOSE WHAT THE TOUR OPENED. The demo effect below returns early once the tour has
-         ended (`if (!n || !tourTarget) return`), so its own `setAttachFor(null)` never runs on
-         the way out — Skip pressed at step 9 or 15 left the picker standing with the overlay
-         gone. The web has always done this (`MyPlans`'s tour-ended effect closes `openPlan` and
-         `attachFor`); the phone only noticed once the SHEET began drawing the tour, because
-         before that the sheet could not be on screen at those steps in any useful way. */
-      setAttachFor(null);
-    }
-    tourWasRunning.current = running;
-  }, [tourNow.step, tourTarget]);   // eslint-disable-line react-hooks/exhaustive-deps
-
+  /* ★ THE BINDING IS THE TOUR'S OWN JOB NOW (lib/tour.js, 2026-09-17). It used to live here, and
+     that was the bug: this screen UNMOUNTS when the tour walks to My Lessons for steps 3-6, so
+     the unbind those steps depend on never ran and cards 4 and 5 had nothing to ring.
+     What stays here is what only this screen can know or do: WHICH section and plan the demo uses
+     (`tourTarget`, published with `noteTourTarget`), and opening and closing the picker, which is
+     this screen's own state. */
   useEffect(() => {
     const n = tourNow.step;
     if (!n || !tourTarget) return;
-    const { sectionKey, plan } = tourTarget;
-    const bound = readLocalSection(sectionKey).chapter;
-    if (n >= 10 && bound !== plan.filename) { bindSectionChapter(sectionKey, plan.filename); bump(); }
-    else if (n <= 9 && bound) { unbindSection(sectionKey); bump(); }
+    bump();                              // the module may have just re-bound; redraw from the store
     /* The picker is open at 9 (nothing bound, so the new lesson IS in the list — the hand points
        at it) and again at 15 (the bound chapter is excluded: "pick the NEXT one"). */
-    if (n === 9 || n === 15) { if (!attachFor) setAttachFor({ c: tourTarget.c, sectionKey }); }
+    if (n === 9 || n === 15) { if (!attachFor) setAttachFor({ c: tourTarget.c, sectionKey: tourTarget.sectionKey }); }
     else if (attachFor) setAttachFor(null);
   }, [tourNow.step, tourTarget]);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* Leaving the tour closes what it opened. The effect above returns early once the tour has
+     ended, so its own `setAttachFor(null)` never runs on the way out — Skip at step 9 or 15 left
+     the picker standing with the overlay gone. */
+  const tourWasRunning = useRef(false);
+  useEffect(() => {
+    const running = !!tourNow.step;
+    if (!running && tourWasRunning.current) { setAttachFor(null); bump(); }
+    tourWasRunning.current = running;
+  }, [tourNow.step]);   // eslint-disable-line react-hooks/exhaustive-deps
 
   const tourDemoDone = tourNow.step === 14 || tourNow.step === 15;
   /* ★ THE OFFER (app. 01 rows 59-61). Eligible = at most one bound section and nothing taught —

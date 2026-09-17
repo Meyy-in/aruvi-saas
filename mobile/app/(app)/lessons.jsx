@@ -55,7 +55,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
   API, classNum, fetchSupportedGrades, getJSON, postJSON, heldClassesFor, heldScopesOf, pad, paywallKicker,
-  pretty, subjectSlug, userKey, withUser,
+  pretty, subjectSlug, gradeSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { subscribeYear } from "@aruvi/shared/year";
 import { cachedAccount } from "@aruvi/shared/account";
@@ -83,7 +83,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
 import { type } from "../../theme/type";
 
-const gradeSlug = (g) => (g || "").toLowerCase();
+/* `gradeSlug` now comes from @aruvi/shared/format (lifted 2026-09-17) — one definition. */
 /* Display abbreviation for the compact Subject wheel: the full "The World Around Us" shows as
    "TWAU". Only the visible LABEL is shortened — the subject id/slug used everywhere else is the
    full name, so selection, plans and API calls are unaffected. */

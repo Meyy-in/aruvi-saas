@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { getJSON, pretty, pad, classNum, markPrepared } from "../lib/format";
+import { getJSON, pretty, pad, classNum, markPrepared, gradeSlug } from "../lib/format";
 import { pullSectionState, bindSectionChapter, unbindSection } from "../lib/sectionState";
 import { readHistory, recordHistory, hasHistory, pullSectionHistory } from "../lib/sectionHistory";
 import { cachedPlans, fetchPlans, invalidatePlans, notePlansYear } from "../lib/plans";
@@ -37,7 +37,7 @@ export function YearStamp({ year, lpYear }) {
 }
 
 const subjectSlug = (name) => (name || "").toLowerCase().replace(/ /g, "_");
-const gradeSlug = (g) => (g || "").toLowerCase();
+/* `gradeSlug` now comes from @aruvi/shared/format (lifted 2026-09-17) — one definition. */
 
 // Nudge glyph — a transparent, stroke-only ROUTE (start point → dotted path → destination):
 // "I'll walk you through it". Deliberately not a filled emoji; inherits the pine of the nudge.

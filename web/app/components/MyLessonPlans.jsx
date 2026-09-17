@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { API, getJSON, pad, pretty, userKey, withUser,
+import { API, getJSON, pad, pretty, userKey, withUser, gradeSlug,
          fetchSupportedGrades, heldClassesFor } from "../lib/format";
 import { pullSectionState, readLocalSection } from "../lib/sectionState";
 import { YearStamp } from "./MyPlans";
@@ -36,7 +36,7 @@ import { RollWheel } from "./wheels";
  */
 
 const subjectSlug = (name) => (name || "").toLowerCase().replace(/ /g, "_");
-const gradeSlug = (g) => (g || "").toLowerCase();
+/* `gradeSlug` now comes from @aruvi/shared/format (lifted 2026-09-17) — one definition. */
 // Display abbreviation for the compact Subject wheel: the full "The World Around Us" is shown as
 // "TWAU". Only the visible label is shortened — the subject id/slug used everywhere else is the
 // full name, so selection, plans, and API calls are unaffected.
