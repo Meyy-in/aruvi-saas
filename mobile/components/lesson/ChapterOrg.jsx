@@ -67,10 +67,13 @@ const SS_RIBBON_W = { Central: 5, Substantive: 3.5, Present: 2.5 };
 /* ── one unit card (.co-card) ── */
 /* `tight` = the web's ≤600px Science / Social Sciences rule: those two carry the longest unit
    titles, so they drop a further notch rather than wrap. */
-function UnitCard({ ws, n, p, status, onOpen, tight }) {
+function UnitCard({ ws, n, p, status, onOpen, tight, onCur }) {
   const dur = p.meta && p.meta.duration_minutes;
+  const ref = useRef(null);
   return (
-    <Pressable onPress={() => onOpen(n)} style={[ws.co_card, status === "cur" && ws.co_card_cur, status === "done" && ws.co_card_done]}>
+    <Pressable ref={ref} onPress={() => onOpen(n)}
+      onLayout={status === "cur" && onCur ? () => onCur(ref.current) : undefined}
+      style={[ws.co_card, status === "cur" && ws.co_card_cur, status === "done" && ws.co_card_done]}>
       <Text style={[ws.co_num, status === "done" && ws.co_num_done, status === "up" && ws.co_num_up]}>{n + 1}.</Text>
       <Text style={[ws.co_utitle, tight && ws.co_utitle_tight, status === "done" && ws.co_utitle_done]}
         numberOfLines={2}>{p.title || `Unit ${n + 1}`}</Text>
@@ -90,12 +93,24 @@ function UnitCard({ ws, n, p, status, onOpen, tight }) {
 }
 
 /* ── the Social Sciences map ── */
-function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote }) {
+function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote, onCur }) {
   const [focus, setFocus] = useState(null);       // null | {t:'u'|'c', id}
   const [uPos, setUPos] = useState({});           // i → {y, h} within units column
   const [cPos, setCPos] = useState({});           // code → {y, h} within comps column
   const [cols, setCols] = useState({ u: null, c: null, w: 0, h: 0 });
   const COLORS = [t.pine, t.clay, t.ochre, t.ss_slate, t.ss_plum, t.ink_soft];
+
+  /* ★ EVERY RIBBON LEFT FROM THE SAME POINT (founder-reported, 2026-09-17).
+     `onLayout` reports a view's box RELATIVE TO ITS PARENT, and both measuring handlers sat on
+     the row/card itself — which is the FIRST CHILD of a per-item wrapper <View> (the wrapper
+     exists so the popup can sit under its row). So every row reported y: 0, every ribbon
+     anchored to the same pair of points near the top of the two columns, and the map collapsed
+     into one bundle: the web's getBoundingClientRect is page-absolute and has no such trap,
+     which is why the 1:1 port looked right on paper. The WRAPPER is the view whose y is
+     relative to the column, so y is measured there; the row keeps reporting its own HEIGHT (a
+     box's height is parent-independent). An edge needs both halves before it can be drawn. */
+  const setRow = (i, patch) => setUPos((p) => ({ ...p, [i]: { ...(p[i] || {}), ...patch } }));
+  const setComp = (code, patch) => setCPos((p) => ({ ...p, [code]: { ...(p[code] || {}), ...patch } }));
 
   const comps = useMemo(() => {
     const map = new Map();
@@ -116,6 +131,7 @@ function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote }) {
     units.forEach((u, i) => ((u.meta && u.meta.competency_edges) || []).forEach((e) => {
       const a = uPos[i], b = cPos[e.c_code], comp = byCode[e.c_code];
       if (!a || !b || !comp) return;
+      if (a.y == null || a.h == null || b.y == null || b.h == null) return;
       const ax = cols.u.x + cols.u.width, ay = cols.u.y + a.y + a.h / 2;
       const bx = cols.c.x, by = cols.c.y + b.y + b.h / 2;
       const hot = !focus || (focus.t === "c" && focus.id === e.c_code) || (focus.t === "u" && focus.id === i);
@@ -127,6 +143,13 @@ function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote }) {
 
   return (
     <View>
+      {/* ★ THE INSTRUCTION READS FIRST (founder, 2026-09-17, web + phone alike). It used to sit
+          UNDER the map — on a phone that is below the fold, so the one line telling her the
+          columns are tappable arrived after she had already decided they were not. It is now
+          PERMANENT rather than gated on `!focus` as it was at the foot: a line that vanishes
+          costs nothing at the bottom of a page and would jerk the whole map upward on her
+          first tap at the top of one. */}
+      <Text style={ws.cof_hint}>Tap a unit or a competency to follow its connections</Text>
       <View style={ws.cof_wrap} onLayout={(e) => { const { width, height } = e.nativeEvent.layout; setCols((c) => ({ ...c, w: width, h: height })); }}>
         {cols.w ? (
           <Svg width={cols.w} height={cols.h} style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -141,27 +164,9 @@ function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote }) {
             const open = focus && focus.t === "u" && focus.id === i;
             const rule = st === "cur" ? t.clay : st === "done" ? t.pine : t.line;
             return (
-              <View key={i}>
-                <Pressable onPress={() => setFocus(open ? null : { t: "u", id: i })}
-                  onLayout={(e) => { const { y, height } = e.nativeEvent.layout; setUPos((p) => ({ ...p, [i]: { y, h: height } })); }}
-                  style={[ws.cof_u, st === "cur" && ws.cof_u_cur, st === "done" && ws.cof_u_done, { opacity: dimmed ? 0.35 : 1 }]}>
-                  <Text style={[ws.cof_num, st === "cur" && { color: t.clay }]}>{pad2(i + 1)}</Text>
-                  <Text style={ws.cof_utitle} numberOfLines={1}>{(u.title || `Unit ${i + 1}`).split(":")[0]}</Text>
-                  {edges.length ? null : <Text style={{ color: t.ink_soft }}>—</Text>}
-                  <Pressable onPress={() => onOpenUnit(i)} hitSlop={8} accessibilityLabel={`Open unit ${pad2(i + 1)}`}>
-                    <Text style={ws.cof_uopen}>→</Text>
-                  </Pressable>
-                </Pressable>
-                {open ? (
-                  <Pressable onPress={() => onOpenUnit(i)} style={[ws.cof_pop, { borderLeftColor: rule }]}>
-                    <Text style={ws.cof_pop_t}>
-                      <Text style={ws.cof_num}>{pad2(i + 1)}</Text> · {u.title || `Unit ${i + 1}`}
-                      {u.meta && u.meta.duration_minutes ? ` · ${u.meta.duration_minutes} min` : ""}  <Text style={{ color: t.pine }}>→</Text>
-                    </Text>
-                    {!edges.length ? <Text style={ws.cof_pop_quiet}>Taught in full — builds no competency edge, by design</Text> : null}
-                  </Pressable>
-                ) : null}
-              </View>
+              <UnitRow key={i} ws={ws} i={i} u={u} st={st} edges={edges} dimmed={dimmed} open={open}
+                rule={rule} pad2={pad2} onOpenUnit={onOpenUnit} onCur={onCur}
+                setRow={setRow} setFocus={setFocus} />
             );
           })}
         </View>
@@ -171,13 +176,15 @@ function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote }) {
             const open = focus && focus.t === "c" && focus.id === c.code;
             const openViaUnit = !open && focus && focus.t === "u" && c.units.includes(focus.id);
             return (
-              <View key={c.code}>
+              <View key={c.code} onLayout={(e) => setComp(c.code, { y: e.nativeEvent.layout.y })}>
                 <Pressable onPress={() => setFocus(open ? null : { t: "c", id: c.code })}
-                  onLayout={(e) => { const { y, height } = e.nativeEvent.layout; setCPos((p) => ({ ...p, [c.code]: { y, h: height } })); }}
-                  style={[ws.cof_c, { opacity: dimmed ? 0.35 : 1 }]}>
+                  onLayout={(e) => setComp(c.code, { h: e.nativeEvent.layout.height })}
+                  style={[ws.cof_c, dimmed && ws.cof_dim]}>
                   <Text style={[ws.cof_code, { color: c.color }]}>{c.code}</Text>
                   <Text style={ws.cof_tiername}>{c.tier}</Text>
-                  <Text style={[ws.cof_dots, { color: c.color }]}>{SS_TIER_DOTS[c.tier]}</Text>
+                  {/* Dots carry the TIER, and the tier is never a colour (globals.css §cof:
+                      "colour is reserved for competency IDENTITY") — they stay ink. */}
+                  <Text style={ws.cof_dots}>{SS_TIER_DOTS[c.tier]}</Text>
                 </Pressable>
                 {open || openViaUnit ? (
                   <View style={[ws.cof_pop, { borderLeftColor: c.color }]}>
@@ -190,7 +197,39 @@ function SSFlowBody({ ws, t, units, pointer, doneAll, onOpenUnit, gapNote }) {
         </View>
       </View>
       {gapNote ? <Text style={ws.cof_gap}>{gapNote}</Text> : null}
-      {!focus ? <Text style={ws.cof_hint}>Tap a unit or a competency to follow its connections</Text> : null}
+    </View>
+  );
+}
+
+/* One unit row + its popup. Its own component because the row needs a ref (to bring "now" into
+   view on open) and the wrapper/row split above needs two separate layout handlers. */
+function UnitRow({ ws, i, u, st, edges, dimmed, open, rule, pad2, onOpenUnit, onCur, setRow, setFocus }) {
+  const rowRef = useRef(null);
+  return (
+    <View onLayout={(e) => setRow(i, { y: e.nativeEvent.layout.y })}>
+      <Pressable ref={rowRef} onPress={() => setFocus(open ? null : { t: "u", id: i })}
+        onLayout={(e) => {
+          setRow(i, { h: e.nativeEvent.layout.height });
+          if (st === "cur" && onCur) onCur(rowRef.current);
+        }}
+        style={[ws.cof_u, st === "cur" && ws.cof_u_cur, st === "done" && ws.cof_u_done, dimmed && ws.cof_dim]}>
+        <Text style={[ws.cof_num, st === "done" && ws.cof_num_done]}>{pad2(i + 1)}</Text>
+        <Text style={ws.cof_utitle} numberOfLines={1}>{(u.title || `Unit ${i + 1}`).split(":")[0]}</Text>
+        {edges.length ? null : <Text style={ws.cof_noedge}>—</Text>}
+        <Pressable onPress={() => onOpenUnit(i)} hitSlop={8} accessibilityLabel={`Open unit ${pad2(i + 1)}`}>
+          <Text style={[ws.cof_uopen, st === "cur" && ws.cof_uopen_cur, st === "done" && ws.cof_uopen_done]}>→</Text>
+        </Pressable>
+      </Pressable>
+      {open ? (
+        <Pressable onPress={() => onOpenUnit(i)} style={[ws.cof_pop, ws.cof_pop_open, { borderLeftColor: rule }]}>
+          <Text style={ws.cof_pop_t}>
+            <Text style={ws.cof_pop_k}>{pad2(i + 1)}</Text> · {u.title || `Unit ${i + 1}`}
+            {u.meta && u.meta.duration_minutes ? ` · ${u.meta.duration_minutes} min` : ""}
+          </Text>
+          {!edges.length ? <Text style={ws.cof_pop_quiet}>Taught in full — builds no competency edge, by design</Text> : null}
+          <Text style={ws.cof_pop_go}>→</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -306,6 +345,32 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
 export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  /* ★ THE PAGE OPENS ON THE UNIT SHE IS TEACHING (web parity, added 2026-09-17). The web has
+     always done this — `document.querySelector(".co-card.cur, .cof-u.cur").scrollIntoView({
+     block: "center" })`, once, on mount, tracking only — and the port had no equivalent, so a
+     chapter fifteen units deep opened at unit 1 and she had to hunt for "now". Measured rather
+     than guessed: the current row hands its node to `revealCur` from its own onLayout (so the
+     box is real by then), we ask for its offset inside the scroll content, and centre it in the
+     viewport the ScrollView itself reports. Once per mount — `revealedRef` — or every re-layout
+     (a popup opening, an accordion turning over) would yank the page back. */
+  const scRef = useRef(null);
+  const contentRef = useRef(null);
+  const revealedRef = useRef(false);
+  const vpRef = useRef(0);
+  const revealCur = (node) => {
+    if (!node || revealedRef.current || pointer == null) return;
+    if (!contentRef.current || !scRef.current || !node.measureLayout) return;
+    revealedRef.current = true;
+    // Belt and braces: a measure that throws inside onLayout would take the page down with it,
+    // and landing on unit 1 is a far smaller loss than not landing at all.
+    try {
+      node.measureLayout(contentRef.current, (x, y, w, h) => {
+        const vp = vpRef.current || 0;
+        const top = vp ? y - vp / 2 + h / 2 : y;
+        if (scRef.current) scRef.current.scrollTo({ y: Math.max(0, top), animated: false });
+      }, () => { revealedRef.current = false; });
+    } catch { revealedRef.current = false; }
+  };
   const [notesLocked, setNotesLocked] = useState(false);
   useEffect(() => { let live = true; fetchEntitlement().then((e) => { if (live && e) setNotesLocked(!!e.lapsed); }).catch(() => {}); return () => { live = false; }; }, []);
 
@@ -380,7 +445,7 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
       if (!visible) return;
       const status = pointer == null ? "" : (doneAll || n < pointer) ? "done" : n === pointer ? "cur" : "up";
       out.push(<UnitCard key={`${keyPrefix}-${i}`} ws={ws} n={n} p={p} status={status} onOpen={onOpenUnit}
-        tight={lp.subject === "science" || lp.subject === "social_sciences"} />);
+        onCur={revealCur} tight={lp.subject === "science" || lp.subject === "social_sciences"} />);
     });
     (g.children || []).forEach((c, i) => out.push(...renderGroup(c, `${keyPrefix}-${i}`, visible)));
     return out;
@@ -418,14 +483,17 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
         <View style={ws.co_headrule} />
         {ssFlow ? null : axisWrap}
       </View>
-      <ScrollView contentContainerStyle={s.body}>
+      <ScrollView ref={scRef} contentContainerStyle={s.body}
+        onLayout={(e) => { vpRef.current = e.nativeEvent.layout.height; }}>
+        <View ref={contentRef} collapsable={false}>
         {ssFlow ? axisWrap : null}
         {ssFlow ? (
-          <SSFlowBody ws={ws} t={t} units={units} pointer={pointer} doneAll={doneAll} onOpenUnit={onOpenUnit} gapNote={(lp.meta && lp.meta.competency_gap_note) || ""} />
+          <SSFlowBody ws={ws} t={t} units={units} pointer={pointer} doneAll={doneAll} onOpenUnit={onOpenUnit}
+            onCur={revealCur} gapNote={(lp.meta && lp.meta.competency_gap_note) || ""} />
         ) : mathsFlat ? (
           (lp.groups[0].periods || []).map((p, i) => {
             const status = pointer == null ? "" : (doneAll || i < pointer) ? "done" : i === pointer ? "cur" : "up";
-            return <UnitCard key={i} ws={ws} n={i} p={p} status={status} onOpen={onOpenUnit} />;
+            return <UnitCard key={i} ws={ws} n={i} p={p} status={status} onOpen={onOpenUnit} onCur={revealCur} />;
           })
         ) : (lp.groups || []).map((g, gi) => {
           const open = openIdx === gi;
@@ -445,6 +513,7 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
             </View>
           );
         })}
+        </View>
       </ScrollView>
       {notesOpen ? (
         <ChapterNotesModal ws={ws} t={t} chapterTitle={lp.chapter_title} subjectGrade={cnSubjectGrade(lp)} initial={noteText}

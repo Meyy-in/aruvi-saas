@@ -6508,3 +6508,67 @@ showed a perfect match of two wrong answers. The earlier note here says "native 
 correctness". This is the other face: **web tolerance is not correctness either.** For baseline,
 intrinsic sizing or text metrics the handset is the only authority, and I must say "unverified on
 iOS" rather than "fixed" — twice I said fixed and twice I was wrong.
+
+---
+
+## 2026-09-17 — `onLayout` is RELATIVE TO THE PARENT, and it collapsed the SS map into one bundle
+
+Founder, on the Expo Social Sciences Chapter Organization page: "the graph is not complete."
+
+**The map's ribbons all left from the same point.** `SSFlowBody` measures each unit row and each
+competency card and draws a cubic bézier between them. The web does it with
+`getBoundingClientRect`, which is PAGE-ABSOLUTE — subtract the wrapper's rect and you have the
+row's position in the wrapper, whatever the DOM in between. The port translated that to
+`onLayout`, and `onLayout` reports a view's box **relative to its immediate parent**. Both
+handlers sat on the row / card itself, which is the FIRST CHILD of a per-item wrapper `<View>`
+(the wrapper exists so the focus popup can sit under its own row). So every row reported
+`y: 0`, every edge anchored to the same pair of points near the top of the two columns, and a
+twelve-unit chapter drew one thick bundle instead of a map.
+
+Fixed by splitting the measurement to match what each view actually knows: **`y` comes from the
+WRAPPER** (whose parent is the column, which is what the coordinates are in), **`h` from the row**
+(a box's own height is parent-independent). An edge draws only once both halves are in —
+`a.y == null || a.h == null` skips it — so no ribbon is ever drawn from a half-measured row.
+The row moved into its own `UnitRow` component to carry the split plus a ref.
+
+★ **The standing lesson, and it is the twin of the 2026-09-14 `<Svg>` one.** That entry ended
+"native tolerance is not correctness". This is the other half: **a DOM measurement and its RN
+translation are not the same measurement.** `getBoundingClientRect` is absolute, `onLayout` is
+relative, and a 1:1 port reads identically on the page while meaning something different at
+runtime. Any ported geometry that walks up through a wrapper the web never had is suspect —
+check what the measuring view's PARENT is before trusting the number.
+
+**Four more parity misses found in the same file and fixed with it** (founder: "among few other
+issues"), all of them the port quietly wearing the wrong web class:
+
+- **The row states were inverted.** The base row wore `.cof-u.done`'s dress (paper + line-soft)
+  and `.done` wore a pine border the web gives no row, so an untaught chapter read as taught.
+  Now: ahead = paper-2 + line · taught = paper + line-soft · now = clay, doubled to stand in for
+  the web's `box-shadow: 0 0 0 1px var(--clay) inset` (padding drops a point so the capsule keeps
+  its size). The row NUMBER and the row's "→" were both hard pine; the web keeps them ink-soft
+  and lets pine mean taught (clay, for the arrow, means now).
+- **The tier dots were tinted with the competency's identity colour** — which `globals.css` §cof
+  forbids in as many words: "colour is reserved for competency IDENTITY". Tier is the dots and
+  the word, never a hue. Dots are ink again.
+- **The popup had only its 3px identity rule**, no hairline on the other three sides, so the
+  lifted note dissolved into the page. Added, with the web's radius/padding/margins, the
+  `.cof-pop-open` 44px touch height, the arrow parked at the right edge rather than run into the
+  title, and the mono/uppercase `.cof-pop-quiet` line.
+- **The page did not open on the unit she is teaching.** The web has always done this
+  (`.co-card.cur, .cof-u.cur` → `scrollIntoView({block:"center"})`, once, tracking only) and the
+  port had no equivalent, so a fifteen-unit chapter opened at unit 1. Now measured: the current
+  row hands its node up from its own `onLayout`, `measureLayout` gives its offset inside the
+  scroll content, and it is centred in the viewport the `ScrollView` reports. Once per mount —
+  guarded — or a popup opening would yank the page back.
+
+★ **And one change to BOTH surfaces** (founder, same message): "Tap a unit or a competency to
+follow its connections" now leads the map instead of trailing it. At the foot of a phone page it
+is below the fold — the one line that says the columns are tappable arrived after she had
+decided they were not. It is also PERMANENT now rather than gated on `!focus`: a line that
+vanishes costs nothing at the bottom of a page and would jerk the whole map upward on the first
+tap at the top of one.
+
+STATIC-verified only (babel-parse clean on `ChapterOrg.jsx`, `theme/web.js`, `LessonView.jsx`;
+CSS braces 2394/2394; every `ws.*` reference resolves, no orphan `cof_*` style). **The ribbon
+geometry is owed a live look on the phone** — it is the one thing here that cannot be read off
+the source.

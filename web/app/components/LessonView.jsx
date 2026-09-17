@@ -1480,6 +1480,13 @@ function SSFlowBody({ units, pointer, doneAll, onOpenUnit, gapNote }) {
   const pad2 = (n) => String(n).padStart(2, "0");
   return (
     <>
+      {/* ★ THE INSTRUCTION READS FIRST (founder, 2026-09-17, web + phone alike). It sat UNDER
+          the map, which on a narrow viewport is below the fold — the one line telling her the
+          two columns are tappable arrived after she had already decided they were not. It is
+          also PERMANENT now rather than gated on `!focus` as it was at the foot: a line that
+          vanishes costs nothing at the bottom of a page and would jerk the whole map upward on
+          the first tap at the top of one. */}
+      <div className="cof-hint">Tap a unit or a competency to follow its connections</div>
       {/* Navigation now lives on each unit row (the per-title "→", founder 2026-07-16). The
           old top-pinned "open unit NN →" button is retired — the row arrows replace it. */}
       <div className="cof-wrap" ref={wrapRef}>
@@ -1571,7 +1578,6 @@ function SSFlowBody({ units, pointer, doneAll, onOpenUnit, gapNote }) {
         </div>
       </div>
       {gapNote ? <div className="cof-gap">{gapNote}</div> : null}
-      {!focus ? <div className="cof-hint">Tap a unit or a competency to follow its connections</div> : null}
     </>
   );
 }

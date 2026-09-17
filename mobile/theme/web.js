@@ -539,25 +539,49 @@ export function webStyles(t, scheme = "light") {
     co_dur_u:        { fontFamily: F.mono(400), fontSize: 9, letterSpacing: 1.26, textTransform: UP, color: t.ink_soft, marginTop: 2 },
     co_mark:         { fontFamily: F.mono(400), fontSize: 10, color: t.pine },
     co_go:           { color: t.ink_soft, fontSize: 14 },
-    /* the SS map (.cof-*) */
+    /* ── the SS map (.cof-*) — states re-aligned to the web 2026-09-17 ──
+       The three row states had drifted into each other's clothes: the port's BASE row wore the
+       web's `.done` dress (paper + line-soft) and its `.done` wore a pine border the web never
+       gives a row, so an untaught chapter read as already taught. globals.css is the reference:
+       ahead = paper-2 + line · taught = paper + line-soft · now = clay border, doubled to stand
+       in for the web's `box-shadow: 0 0 0 1px var(--clay) inset` (the padding drops a point to
+       keep the capsule the same size). */
     cof_wrap:        { flexDirection: "row", justifyContent: "space-between", gap: 4, paddingTop: 8, paddingBottom: 4, paddingHorizontal: 14, position: "relative" },
     cof_units:       { width: 153, gap: 6 },
     cof_comps:       { width: 108, gap: 10, justifyContent: "space-between" },
-    cof_u:           { flexDirection: "row", alignItems: "center", gap: 7, minHeight: 38, paddingVertical: 4, paddingHorizontal: 8, backgroundColor: t.paper, borderWidth: 1, borderColor: t.line_soft, borderRadius: 9 },
-    cof_u_cur:       { backgroundColor: t.paper_2, borderColor: t.clay },
-    cof_u_done:      { borderColor: t.pine },
-    cof_num:         { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, color: t.pine },
+    cof_u:           { flexDirection: "row", alignItems: "center", gap: 7, minHeight: 38, paddingVertical: 4, paddingHorizontal: 8, backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.line, borderRadius: 9 },
+    cof_u_cur:       { borderColor: t.clay, borderWidth: 2, paddingVertical: 3, paddingHorizontal: 7 },
+    cof_u_done:      { backgroundColor: t.paper, borderColor: t.line_soft },
+    /* The row number is QUIET until the unit is taught, then pine — one mark of progress per
+       row, not a column of pine numbers on units she has not reached. */
+    cof_num:         { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, color: t.ink_soft },
+    cof_num_done:    { color: t.pine },
     cof_utitle:      { fontFamily: F.display(500), fontSize: 12.5, lineHeight: 15.625, color: t.ink, flex: 1 },
-    cof_uopen:       { fontFamily: F.mono(400), fontSize: 14, color: t.pine, paddingVertical: 4, paddingHorizontal: 2 },
+    /* The zero-edge dash is the faintest thing on the row (.cof-noedge is --line): it marks
+       "taught in full, builds no edge, by design", never a warning. */
+    cof_noedge:      { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, color: t.line },
+    cof_uopen:       { fontFamily: F.mono(400), fontSize: 14, color: t.ink_soft, paddingVertical: 4, paddingHorizontal: 2 },
+    cof_uopen_cur:   { color: t.clay },
+    cof_uopen_done:  { color: t.pine },
+    cof_dim:         { opacity: 0.3 },
     cof_c:           { backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.line, borderRadius: 11, paddingVertical: 9, paddingHorizontal: 10, gap: 4, alignItems: "flex-start" },
     cof_code:        { fontFamily: F.mono(500), fontSize: 12, lineHeight: 18.6, color: t.pine },
     cof_tiername:    { fontFamily: F.mono(400), fontSize: 9, lineHeight: 13.95, letterSpacing: 1.17, textTransform: UP, color: t.ink_soft },
     cof_dots:        { fontSize: 10, lineHeight: 10, letterSpacing: 4, color: t.ink },
-    cof_hint:        { fontFamily: F.mono(400), fontSize: 9.5, lineHeight: 14.725, letterSpacing: 1.14, textTransform: UP, color: t.ink_soft, marginTop: 10, marginHorizontal: 18 },
+    /* The hint now leads the map rather than trailing it (founder 2026-09-17), so its margin
+       moved from above the line to below it. */
+    cof_hint:        { fontFamily: F.mono(400), fontSize: 9.5, lineHeight: 14.725, letterSpacing: 1.14, textTransform: UP, color: t.ink_soft, marginTop: 2, marginBottom: 6, marginHorizontal: 18 },
     cof_gap:         { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19.5, color: t.ink_soft, marginTop: 10, marginHorizontal: 18 },
-    cof_pop:         { backgroundColor: t.paper_2, borderLeftWidth: 3, borderRadius: 6, padding: 10, marginVertical: 4, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
-    cof_pop_t:       { fontFamily: F.body(400), fontSize: 13, lineHeight: 19.5, color: t.ink },
-    cof_pop_quiet:   { fontFamily: F.body(400, true), fontSize: 12, lineHeight: 17, color: t.ink_soft, marginTop: 4 },
+    /* The lifted note (.cof-pop): a full hairline border AND the 3px identity rule on the left.
+       The port had only the rule, so the card's other three sides dissolved into the page. */
+    cof_pop:         { backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.line, borderLeftWidth: 3, borderRadius: 7, paddingVertical: 8, paddingHorizontal: 11, marginTop: 4, marginBottom: 2, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
+    /* The UNIT popup is the second door into the unit (.cof-pop-open): a touch-sized 44 and a
+       trailing arrow parked at the right edge, clear of the title. */
+    cof_pop_open:    { minHeight: 44, justifyContent: "center", paddingRight: 26 },
+    cof_pop_go:      { position: "absolute", right: 9, top: "50%", marginTop: -8, fontFamily: F.mono(400), fontSize: 13, lineHeight: 16, color: t.ink_soft, opacity: 0.55 },
+    cof_pop_t:       { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 18.125, color: t.ink },
+    cof_pop_k:       { fontFamily: F.mono(500), fontSize: 10, color: t.ink },
+    cof_pop_quiet:   { fontFamily: F.mono(400), fontSize: 9, lineHeight: 13, letterSpacing: 0.9, textTransform: UP, color: t.ink_soft, marginTop: 5 },
 
     /* ── chapter notes modal (.cn-*) ── */
     /* ── chapter notes (.cn-*) — measured 2026-09-14 ──

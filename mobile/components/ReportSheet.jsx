@@ -40,7 +40,8 @@ import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
 import { Sheet } from "./AttachSheet";
 import Checkbox from "./Checkbox";
-import { downloadDocument, planReport } from "../lib/download";
+import { useRouter } from "expo-router";
+import { canPreview, downloadDocument, fetchDocument, planReport } from "../lib/download";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -61,9 +62,10 @@ const REPORT_COMPS = [
   { id: "integrated", title: "Lesson Plan + Assessment", desc: "Teaching plan together with assessment" },
 ];
 
-function ReportWindow({ visible, sSlug, gSlug, filename, onClose }) {
+function ReportWindow({ visible, sSlug, gSlug, filename, chapterTitle, onClose }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const router = useRouter();
   const [comp, setComp] = useState("lesson");
   const [answers, setAnswers] = useState(false);
   const [fmt, setFmt] = useState("pdf");
@@ -76,11 +78,25 @@ function ReportWindow({ visible, sSlug, gSlug, filename, onClose }) {
     if (busy) return;
     setBusy(true); setFail("");
     /* `answers` is passed only where it can be carried — see the descriptor. */
-    downloadDocument(planReport({ sSlug, gSlug, filename, comp, fmt,
-                                  answers: showAnswers && answers }))
+    const doc = planReport({ sSlug, gSlug, filename, comp, fmt,
+                             answers: showAnswers && answers });
+    /* ★ SHOW IT BEFORE SENDING IT, WHERE THAT IS POSSIBLE (founder, 2026-09-17). A PDF on iOS
+       goes to the preview screen and the share sheet becomes HER choice, made from the arrow
+       there; a Word file has no renderer, so it keeps the straight-to-the-sheet path. The test
+       and its reasons live in `canPreview`, not here — this window should not be the place that
+       knows what a WebView can draw.
+       ⚠️ The window CLOSES either way, and on the preview path it must close BEFORE the push or
+       it would sit as a Modal over the screen it just opened. */
+    const run = canPreview(doc.mime)
+      ? fetchDocument(doc).then((f) => {
+          onClose();
+          router.push({ pathname: "/preview",
+                        params: { uri: f.uri, name: f.name, mime: f.mime, label: chapterTitle } });
+        })
       /* The web closes on success; so does this — the document has left, and a window still
          standing over the list invites a second tap that would send it twice. */
-      .then(() => onClose())
+      : downloadDocument(doc).then(() => onClose());
+    run
       .catch((e) => setFail(
         e?.status === 404 ? "This Meyy server doesn’t have reports yet."
           : e?.status === 501 ? "That format isn’t available on this server."
@@ -189,7 +205,7 @@ export default function ReportButton({ sSlug, gSlug, filename, chapterTitle }) {
       </Pressable>
       {open ? (
         <ReportWindow visible sSlug={sSlug} gSlug={gSlug} filename={filename}
-          onClose={() => setOpen(false)} />
+          chapterTitle={chapterTitle} onClose={() => setOpen(false)} />
       ) : null}
     </>
   );

@@ -262,7 +262,9 @@ export default function AppLayout() {
      is up she is in the panel; two lit items would be the bar disagreeing with itself. */
   const active = askOpen ? "ask"
     : inSettings ? null
-    : pathname.startsWith("/lessons") ? "lessons" : "classes";
+    /* `/preview` is a report OF a lesson, reached from a My Lessons card, so it keeps that
+       item lit — she has not left the repository, she is looking at something it made. */
+    : (pathname.startsWith("/lessons") || pathname.startsWith("/preview")) ? "lessons" : "classes";
 
   /* ★ THE LINE AND THE VALUES ARE COMPUTED AT RENDER, NOT FROZEN INTO THE WINDOW. She opens a row,
      changes her periods a week and the window comes back — and it must come back saying SEVEN.

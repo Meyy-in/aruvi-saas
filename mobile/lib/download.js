@@ -25,6 +25,7 @@
  * native modules: on Expo web the branch below runs instead, so the sheet, the temporary file and
  * its cleanup have exactly one authority, and it is the phone in the founder's hand.
  */
+import { Platform } from "react-native";
 import * as Sharing from "expo-sharing";
 import { File, Paths } from "expo-file-system";
 import { API } from "@aruvi/shared/config";
@@ -59,8 +60,10 @@ function dispositionName(r) {
  *
  * Resolves when the sheet has been dismissed (or the browser download has started). Throws on
  * anything that went wrong, with no message of its own. */
-export async function downloadDocument({ path, filename, mime, method = "GET", body,
-                                         fromDisposition = false }) {
+/* The request, the error unwrap and the NAME — everything the two public paths share. Returns
+   the live Response, so whoever called it still owns the body. */
+async function requestDocument({ path, filename, mime, method = "GET", body,
+                                 fromDisposition = false }) {
   /* A GET needs no body and must not declare a content type; the year-plan export POSTs the
      SCREEN'S OWN MODEL (web YearPlan.jsx: the server renders what it is given and looks nothing
      up, so the file can never contradict the table it came from). One call shape, both verbs. */
@@ -93,9 +96,76 @@ export async function downloadDocument({ path, filename, mime, method = "GET", b
      composition and the class, and only the renderer knows how it rendered them. The web reads
      the same header for the same reason, with the same literal fallback. */
   const name = fromDisposition ? (dispositionName(r) || filename) : filename;
+  return { r, name, mime };
+}
 
+/* ★ CAN THIS DOCUMENT BE SHOWN BEFORE IT IS SENT? (founder, 2026-09-17: "it displays the pdf on
+   the full screen and from there gives option to choose. Whereas our current export does not
+   display and directly opens app".)
+   Three conditions, and each is a real limit rather than caution:
+     · not the web target, where the browser's own download IS the whole gesture;
+     · iOS only — WKWebView renders a PDF natively, and Android's WebView does not (it would
+       show a blank page or offer to download it again, which is worse than no preview);
+     · PDF only — a .docx has no renderer in any WebView. iOS's own Quick Look previews Word
+       too, but that is `QLPreviewController`, which has no Expo module and cannot run inside
+       Expo Go; the day this app moves to a dev build, that is the upgrade to make.
+   ⚠️ So the YEAR PLAN, being Word-only, still goes straight to the sheet. That raggedness is
+   deliberate and named, not an oversight — closing it means giving the year-plan route a PDF
+   format, which is backend work nobody has asked for yet. */
+export const canPreview = (mime) =>
+  !IS_WEB && Platform.OS === "ios" && mime === "application/pdf";
+
+/* The cache directory's own URI — WKWebView will not read a `file://` it has not been granted
+   access to, and `allowingReadAccessToURL` is how that grant is spelled. */
+export const cacheDirUri = () => Paths.cache.uri;
+
+/* Fetch the document and write the courier copy, handing it NOWHERE. The preview path needs
+   the file to outlive this call, so the delete that `downloadDocument` does in its `finally`
+   is the caller's here — see `discardFile`. */
+export async function fetchDocument(doc) {
+  const { r, name, mime } = await requestDocument(doc);
+  /* ⚠️ THE CACHE DIRECTORY, NOT THE DOCUMENT DIRECTORY. What is written here is a COURIER copy:
+     the teacher's real copy is wherever the share sheet sends it, and this one exists only long
+     enough to hand over. `Paths.document` is for files the app itself keeps, and filling it with
+     every invoice she has ever opened would be a slow leak the OS may not reclaim. */
+  const file = new File(Paths.cache, name);
+  const bytes = new Uint8Array(await r.arrayBuffer());
+  file.create({ overwrite: true, intermediates: true });
+  file.write(toBase64(bytes), { encoding: "base64" });
+  return { uri: file.uri, name, mime };
+}
+
+/* Hand a written file to the OS. Resolves when the sheet has been dismissed. */
+export async function shareFile({ uri, name, mime }) {
+  if (!(await Sharing.isAvailableAsync())) {
+    /* Rare — a device with no share targets at all. The file is written and named; saying so
+       is better than a silent success, and the caller's own sentence is the wrong one. */
+    throw new Error("sharing-unavailable");
+  }
+  await Sharing.shareAsync(uri, {
+    /* ⚠️ Both of these are ANDROID-ONLY in expo-sharing 57: `ios/SharingModule.swift` declares
+       `mimeType` and `UTI` on its options record and never reads either — the sheet's contents
+       come from the file extension alone. Kept because they are the documented API and are
+       correct if a later version starts honouring them. */
+    mimeType: mime,
+    UTI: mime === "application/pdf" ? "com.adobe.pdf" : undefined,
+    dialogTitle: name,
+  });
+}
+
+/* Best-effort: a cache file that outlives this is the OS's to reclaim, and a failed delete must
+   never turn a completed share into an error. */
+export function discardFile(uri) {
+  try { new File(uri).delete(); } catch {}
+}
+
+/* Fetch a document from the API and hand it straight to the teacher — the path Settings uses,
+   unchanged. Resolves when the sheet has been dismissed (or the browser download has started).
+   Throws on anything that went wrong, with no message of its own. */
+export async function downloadDocument(doc) {
   if (IS_WEB) {
     /* The web's own mechanism, because on this target it IS the web. */
+    const { r, name } = await requestDocument(doc);
     const url = URL.createObjectURL(await r.blob());
     const a = document.createElement("a");
     a.href = url;
@@ -108,33 +178,13 @@ export async function downloadDocument({ path, filename, mime, method = "GET", b
     setTimeout(() => URL.revokeObjectURL(url), 30000);
     return;
   }
-
-  /* ⚠️ THE CACHE DIRECTORY, NOT THE DOCUMENT DIRECTORY. What is written here is a COURIER copy:
-     the teacher's real copy is wherever the share sheet sends it, and this one exists only long
-     enough to hand over. `Paths.document` is for files the app itself keeps, and filling it with
-     every invoice she has ever opened would be a slow leak the OS may not reclaim. */
-  const file = new File(Paths.cache, name);
+  const file = await fetchDocument(doc);
   try {
-    const bytes = new Uint8Array(await r.arrayBuffer());
-    file.create({ overwrite: true, intermediates: true });
-    file.write(toBase64(bytes), { encoding: "base64" });
-
-    if (!(await Sharing.isAvailableAsync())) {
-      /* Rare — a device with no share targets at all. The file is written and named; saying so
-         is better than a silent success, and the caller's own sentence is the wrong one. */
-      throw new Error("sharing-unavailable");
-    }
-    await Sharing.shareAsync(file.uri, {
-      mimeType: mime,
-      UTI: mime === "application/pdf" ? "com.adobe.pdf" : undefined,
-      dialogTitle: name,
-    });
+    await shareFile(file);
   } finally {
     /* ⚠️ AFTER the sheet resolves, never before: iOS reads the file when the teacher picks a
-       destination, not when the sheet opens, so deleting early hands Mail an empty attachment.
-       Best-effort — a cache file that outlives this is the OS's to reclaim, and a failed delete
-       must not turn a completed share into an error. */
-    try { file.delete(); } catch {}
+       destination, not when the sheet opens, so deleting early hands Mail an empty attachment. */
+    discardFile(file.uri);
   }
 }
 
