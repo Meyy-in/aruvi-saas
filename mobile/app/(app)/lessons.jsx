@@ -996,7 +996,11 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
   const stamp = priorYear || p.lp_year_display || p.prepared_source_year;
 
   return (
-    <View style={[ws.sc_card, !archived && ws.mlp2_cardpad,
+    /* ⚠️ `collapsable={false}` IS LOAD-BEARING, not decoration: React Native flattens a plain View
+       that only carries style into its parent, and a flattened node has no `measureInWindow` — so
+       the ring would have nothing to aim at even with the ref attached. */
+    <View ref={cardRef} collapsable={false}
+      style={[ws.sc_card, !archived && ws.mlp2_cardpad,
       { backgroundColor: busy ? t.paper_2 : fill, borderColor: busy ? t.edge_clay : edge },
       busy && ws.sc_proposed]}>
       <CardGrid color={t.card_grid} />

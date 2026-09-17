@@ -23,7 +23,7 @@ import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shar
 import { cachedAccount, cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
-import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer,
+import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, tourRanHere,
          noteTourInfo, noteTourTarget } from "../../lib/tour";
 import TourOffer from "../../components/TourOffer";
 import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
@@ -260,12 +260,27 @@ export default function Home() {
      the tour's ending can only fire for a teacher who ran the tour, and Meyy assumed just as
      much for the one who skipped it. `finishTour` must not raise the check window — full
      reasoning in `lib/firstRun.js`. */
+  /* ⚠️ NOT WHILE THE TOUR IS RUNNING (founder, 2026-09-17, on the handset: at card 8 *"it also
+     popped up the 'do you want to change anything?' window which should not come at this
+     stage"*, and then at the end it never came at all). ONE bug, both halves: the tour walks
+     back to My Classes at step 7→8, that focus SPENT the one-shot, and a one-shot spent mid-tour
+     is a one-shot gone by the end — which is precisely where it was meant to land. The flag is
+     left unspent until the tour is over, so it fires on the next My Classes focus after Done or
+     Skip. `tourRunning` is read from the live tour rather than captured, so a tour started after
+     this screen mounted still holds it. */
+  /* ⚠️ DECLARED HERE, ABOVE ITS FIRST READER. It used to sit 200 lines down, next to the tour
+     block that is its main consumer — which was fine until the set-up-check guard below needed
+     it too. A `const` read during RENDER above its own declaration is a TDZ ReferenceError, not
+     a lint warning: it throws on first paint, and nothing in a parse or a scope check sees it. */
+  const tourNow = useTour();
+  const tourRunning = !!tourNow.step;
   useFocusEffect(useCallback(() => {
+    if (tourRunning) return undefined;
     if (!takeFirstRunCheck()) return undefined;
     const id = setTimeout(() => raisePortalCheck({ mode: "check", reason: "tour" }),
                           SETUP_CHECK_DELAY_MS);
     return () => clearTimeout(id);
-  }, []));
+  }, [tourRunning]));
 
 
   const openAttached = (c, plan) => router.push({ pathname: "/lesson",
@@ -471,7 +486,6 @@ export default function Home() {
      every card is the same word three times on one screen (the web's own note, MyPlans.jsx). */
   /* ★ THE TOUR'S CARD IS THE FIRST ONE, and only the steps that ring it get the anchor (the web
      does the same with `i === tourIdx`). Steps 8 and 14 ring its "+", step 10 rings the card. */
-  const tourNow = useTour();
 
   /* ───────── THE TOUR DEMONSTRATES ON REAL DATA (step 8b, mirroring MyPlans.jsx:341-392) ─────────
      ★ **THE ATTACH AT 9→10 IS REAL.** Step 10 says "You have successfully attached X" and it is
@@ -508,13 +522,24 @@ export default function Home() {
     });
   }, [tourTarget]);
 
+  /* ⚠️ ONLY WHAT THE TOUR ITSELF ATTACHED (founder, 2026-09-17: running the tour again *"seems to
+     remove the attached lesson — going back to where we began"*). Every step from 1 to 9
+     satisfies `<= 9`, so without this ref re-entering the tour stripped a binding the teacher
+     already had, on step 1, before she had read a word. Back from 10 → 9 still undoes the demo's
+     own attach, which is what makes the demo repeatable. A finished tour LEAVES the chapter
+     attached — that is the thing it just taught her to do. */
+  const tourBoundRef = useRef(false);
+  useEffect(() => { if (!tourNow.step) tourBoundRef.current = false; }, [tourNow.step]);
   useEffect(() => {
     const n = tourNow.step;
     if (!n || !tourTarget) return;
     const { sectionKey, plan } = tourTarget;
     const bound = readLocalSection(sectionKey).chapter;
-    if (n >= 10 && bound !== plan.filename) { bindSectionChapter(sectionKey, plan.filename); bump(); }
-    else if (n <= 9 && bound) { unbindSection(sectionKey); bump(); }
+    if (n >= 10 && bound !== plan.filename) {
+      bindSectionChapter(sectionKey, plan.filename); tourBoundRef.current = true; bump();
+    } else if (n <= 9 && bound && tourBoundRef.current) {
+      unbindSection(sectionKey); tourBoundRef.current = false; bump();
+    }
     /* The picker is open at 9 (nothing bound, so the new lesson IS in the list — the hand points
        at it) and again at 15 (the bound chapter is excluded: "pick the NEXT one"). */
     if (n === 9 || n === 15) { if (!attachFor) setAttachFor({ c: tourTarget.c, sectionKey }); }
@@ -533,7 +558,17 @@ export default function Home() {
     return () => { live = false; };
   }, []);
   const acct = cachedAccount();
-  const tourOnOffer = tourFit === true && !tourNow.step && !(acct && acct.tour_offered_at);
+  /* ⚠️ A TOUR THAT HAS RUN IS NOT AN OFFER THAT IS STILL OPEN (founder, 2026-09-17: at Done
+     *"the tour beginning card comes back, and even if skipped it stays there"* — and taking it
+     again re-ran the demo over her real section).
+     The server field is what makes "once" survive a sign-out, but `cachedAccount()` is a CACHE:
+     the POST that stamps `tour_offered_at` does not rewrite it, so the instant the tour ended and
+     `step` went back to 0 every term was true again and the nudge reappeared under her. This
+     session's own flag is the missing half. ⚠️ NOT `offeredHere()`, which flips the moment the
+     nudge becomes ELIGIBLE and would therefore hide it while she is still looking at it —
+     `tourRanHere()` flips when she starts or finishes one, which is the fact that matters. */
+  const tourOnOffer = tourFit === true && !tourNow.step
+    && !(acct && acct.tour_offered_at) && !tourRanHere();
   useEffect(() => { if (tourOnOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOnOffer]);
   const card = (c, banded, idx) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}
@@ -923,8 +958,16 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
       {done ? (
         <View style={ws.sc_actions_col}>
           <Text style={ws.sc_status_done}>Complete</Text>
-          <Round glyph="+" color={t.pine_d} label="Finish with this chapter and track the next"
-            onPress={() => onMoveOn(plan)} />
+          {/* ★ STEP 14's "+" IS THIS ONE, NOT THE OTHER BRANCH'S (founder, 2026-09-17: *"card 14
+              does not show finger and highlight of + in the class card"*). `section-add` was
+              attached only to the empty card's "+", which is right for step 8 — nothing is bound
+              yet — and cannot be right for step 14, which happens AFTER the demo attach, when the
+              card is bound and complete and renders this branch instead. Two branches, one name:
+              they are mutually exclusive, so whichever is on screen owns the anchor. */}
+          <View ref={addRef} collapsable={false}>
+            <Round glyph="+" color={t.pine_d} label="Finish with this chapter and track the next"
+              onPress={() => onMoveOn(plan)} />
+          </View>
           {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
       ) : (

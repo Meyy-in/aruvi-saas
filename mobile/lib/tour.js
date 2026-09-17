@@ -25,16 +25,33 @@ import { useEffect, useRef, useState } from "react";
 
 const anchors = new Map();          // data-tour name → { measure(cb) }
 let state = { step: 0, info: {}, target: null };  // step 0 = not running
+let ranThisSession = false;   // started or finished a tour in this app run — see tourRanHere
 const listeners = new Set();
 
 const emit = () => { listeners.forEach((fn) => { try { fn({ ...state }); } catch {} }); };
 
 /* ── the registry ───────────────────────────────────────────────────────────────────────── */
 
+/* ★ REGISTRATION IS AN EVENT, because an anchor can arrive long after the step does (founder,
+ * 2026-09-17, on the handset: cards 3-6 "stuck at the bottom", which is what the tip does when
+ * it has no rect to sit under). My Lessons paints "Loading plans…" until the server answers, so
+ * on a cold Render instance the lesson card does not exist for a second or more after the step
+ * changes — and the overlay's single 220ms retry had long since given up. Rather than poll
+ * (a battery cost with no payer), the registry TELLS the overlay when a name appears. */
+const anchorWatchers = new Set();
+export function onAnchorRegistered(fn) {
+  anchorWatchers.add(fn);
+  return () => anchorWatchers.delete(fn);
+}
+
 /** Register a measurable node under the web's own `data-tour` name. Returns an unregister. */
 export function registerAnchor(name, node) {
   if (!name || !node) return () => {};
+  const had = anchors.get(name);
   anchors.set(name, node);
+  /* Only a CHANGE is news. `useTourAnchor` re-registers on every render of its owner, and
+     announcing the same node each time would put the overlay in a measure loop. */
+  if (had !== node) anchorWatchers.forEach((fn) => { try { fn(name); } catch {} });
   return () => { if (anchors.get(name) === node) anchors.delete(name); };
 }
 
@@ -77,9 +94,18 @@ export function tourState() { return { ...state }; }
 
 /** Begin at step 1. `info` carries {tag, chapter} for the steps whose copy names them. */
 export function startTour(info) {
+  ranThisSession = true;
   state = { ...state, step: 1, info: { ...state.info, ...(info || {}) } };
   emit();
 }
+
+/* ★ "THE TOUR HAS RUN HERE" — NOT the same fact as "the offer was made" (founder, 2026-09-17: at
+ * Done *"the tour beginning card comes back"*). `offeredHere` flips the instant the nudge becomes
+ * eligible, so testing it would hide the nudge she is looking at, mid-look — the trap the note on
+ * `spendTourOffer` warns about. This flips when she STARTS or FINISHES one, which is the fact the
+ * account cache cannot know until it is re-read, and it is what keeps the nudge from springing
+ * back under her the moment `step` returns to 0. */
+export function tourRanHere() { return ranThisSession; }
 
 /* ★ THE SECTION AND LESSON THE TOUR DEMONSTRATES ON, published by My Classes because that is the
    screen that knows which they are. The SHELL needs it too — steps 11-13 open the real lesson,
@@ -112,6 +138,7 @@ export function noteTourInfo(info) {
    one with REACH: the tour's ending can only fire for a teacher who ran the tour, and Meyy
    assumed just as much for the one who skipped it. See `lib/firstRun.js`. */
 export function endTour() {
+  ranThisSession = true;
   state = { step: 0, info: {}, target: null };
   pinPending = false;
   emit();

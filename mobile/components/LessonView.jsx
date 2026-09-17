@@ -273,7 +273,7 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
   );
 }
 
-export default function LessonView({ view, sectionKey = "", onExit, preview = false }) {
+export default function LessonView({ view, sectionKey = "", onExit, preview = false, tourUnit = false }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const lp = view.lesson_plan;
@@ -303,8 +303,12 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
      one-unit chapter would keep opening on the map for ever.
      Preview has no pointer to consult, so it always lands on the map, which is what it already
      did and what "first time" means for a plan attached to no class. */
-  const [showOrg, setShowOrg] = useState(() => preview
-    || !(tracking && (readUnitPointer(sectionKey) > 0 || readChapterDone(sectionKey))));
+  /* ⚠️ THE TOUR IS THE ONE CALLER THAT MUST NOT LAND ON THE MAP. Steps 7 and 11-13 describe the
+     four tabs, the phase bookmark and Mark complete — every one of them on the UNIT — and a
+     chapter with no progress opens on the org page by design (founder, 2026-09-14). So the tour
+     says which it wants rather than the landing rule guessing for it. Nothing else passes this. */
+  const [showOrg, setShowOrg] = useState(() => !tourUnit && (preview
+    || !(tracking && (readUnitPointer(sectionKey) > 0 || readChapterDone(sectionKey)))));
   const [previewAt, setPreviewAt] = useState(cur);
   const [doneFlag, setDoneFlag] = useState(() => (tracking ? readChapterDone(sectionKey) : false));
   const [undoTo, setUndoTo] = useState(null);

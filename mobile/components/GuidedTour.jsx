@@ -17,11 +17,11 @@
  * something is happening, point at nothing in particular, and never leave her looking at a ring
  * around empty paper.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { View, Pressable, useWindowDimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
-import { measureAnchor, measureFirst, pinTourScroll } from "../lib/tour";
+import { measureAnchor, measureFirst, pinTourScroll, onAnchorRegistered } from "../lib/tour";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -135,13 +135,40 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
     return () => { alive = false; };
   }, [step, cfg, vw, vh, tick]);
 
-  /* An anchor that mounts a beat after the step does (a route change, a sheet opening) would
-     otherwise leave the ring off. One retry covers it without a poll. */
+  /* ★ AN ANCHOR CAN ARRIVE LONG AFTER ITS STEP. A route change is a beat; a list that waits on
+     the server is a second or more, and My Lessons paints "Loading plans…" until it answers. The
+     registry now SAYS when a name appears, so the ring lands the moment its target exists rather
+     than at a guessed delay — that is the mechanism, and it costs nothing while nothing changes.
+     ⚠️ THE TIMED RETRY STAYS AS A BACKSTOP, but bounded: registration is not the only way a rect
+     becomes measurable — a node already registered can still measure as a zero box while it is
+     laying out, and no event fires for that. Four tries over ~2s, then it stops; an unbounded
+     retry is the poll this design exists to avoid. */
   useEffect(() => {
-    if (!cfg || !cfg.anchor || (rects && rects.ring)) return undefined;
-    const id = setTimeout(() => setTick((n) => n + 1), 220);
+    if (!cfg || !cfg.anchor) return undefined;
+    return onAnchorRegistered((name) => {
+      if (name === cfg.anchor || name === cfg.handAnchor
+          || [].concat(cfg.tipAnchor || []).includes(name)) setTick((n) => n + 1);
+    });
+  }, [cfg]);
+
+  /* ★ AND ONE CONFIRMING RE-MEASURE PER STEP, whether or not a rect was found. A measurement
+     taken while the screen is still settling after a route change answers with a position that
+     is real but already stale — the ring lands near its target rather than on it (founder,
+     2026-09-17: card 8 *"highlights above the + and not the plus"*). The found/not-found retry
+     below cannot catch that: it stops the moment there IS a ring, right or wrong. */
+  useEffect(() => {
+    if (!cfg || !cfg.anchor) return undefined;
+    const id = setTimeout(() => setTick((n) => n + 1), 450);
     return () => clearTimeout(id);
-  }, [cfg, rects]);
+  }, [step]);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  const tries = useRef(0);
+  useEffect(() => { tries.current = 0; }, [step]);
+  useEffect(() => {
+    if (!cfg || !cfg.anchor || (rects && rects.ring) || tries.current >= 4) return undefined;
+    const id = setTimeout(() => { tries.current += 1; setTick((n) => n + 1); }, 220 + tries.current * 500);
+    return () => clearTimeout(id);
+  }, [cfg, rects, step]);
 
   const tw = Math.min(vw * 0.88, 330);
   const ring = rects && rects.ring

@@ -17,7 +17,7 @@ import { type } from "../../theme/type";
 export default function Lesson() {
   const { t } = useTheme();
   const router = useRouter();
-  const { subject, grade, filename, section } = useLocalSearchParams();
+  const { subject, grade, filename, section, tour } = useLocalSearchParams();
   const sectionKey = section ? `${subject}_${grade}_${section}` : "";
   const [state, setState] = useState({ loading: true, data: null, err: "" });
 
@@ -61,7 +61,8 @@ export default function Lesson() {
       </View>
     );
   }
-  return <LessonView view={state.data.view} meta={state.data.meta} sectionKey={sectionKey} onExit={() => router.back()} />;
+  return <LessonView view={state.data.view} meta={state.data.meta} sectionKey={sectionKey}
+    tourUnit={tour === "1"} onExit={() => router.back()} />;
 }
 
 const st = StyleSheet.create({ center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 30 } });

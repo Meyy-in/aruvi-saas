@@ -146,11 +146,23 @@ export default function AppLayout() {
      LEAVING both have to be driven, and only the shell is mounted throughout.
      ⚠️ `navigate`, not `push`: the tour crosses this boundary in both directions, and pushing
      would stack a second lesson every time she stepped back and forward again. */
-  const openTourLesson = () => {
+  /* ★ `preview: true` OPENS IT THE WAY MY LESSONS DOES — with NO section, which is what makes
+     `LessonView` a read-only preview and makes it claim `preview-root` rather than `lesson-root`.
+     Step 7 is that screen (founder, 2026-09-17: *"on 7, web app already opens the lesson plan
+     whereas mobile is still on the LP card"* — there was no move for step 6 at all, so the phone
+     narrated a screen it had not opened and step 7's anchor could not exist).
+     ★ `tour: "1"` FORCES THE UNIT, NOT THE CHAPTER MAP. A chapter with no progress opens on the
+     org page by design (founder, 2026-09-14) — right for a teacher meeting it for the first time,
+     wrong for steps 11-13, which describe tabs, a bookmark and a Mark complete button that are
+     all on the unit. Observed on BOTH surfaces, which is the tell that it is the landing rule and
+     not the port. */
+  const openTourLesson = (opts) => {
     const tg = tour.target;
     if (!tg) return;
+    const preview = !!(opts && opts.preview);
     router.navigate({ pathname: "/lesson", params: {
-      subject: tg.subjectSlug, grade: tg.gradeSlug, filename: tg.filename, section: tg.sectionKey } });
+      subject: tg.subjectSlug, grade: tg.gradeSlug, filename: tg.filename,
+      ...(preview ? {} : { section: tg.sectionKey }), tour: "1" } });
   };
 
   const tourNext = () => {
@@ -158,6 +170,7 @@ export default function AppLayout() {
     if (n === TOUR_TOTAL) { setAskOpen(false); endTour(); router.navigate("/"); return; }
     if (n === 18) setAskOpen(true);
     if (n === 19) setAskOpen(false);
+    if (n === 6) { openTourLesson({ preview: true }); setTourStep(7); return; }  // into the preview
     if (n === 10) { openTourLesson(); setTourStep(11); return; }   // into the lesson
     if (n === 13) { router.navigate("/"); setTourStep(14); return; }  // and back out of it
     if (MOVES[n]) router.navigate(MOVES[n]);
@@ -167,6 +180,7 @@ export default function AppLayout() {
     const n = tour.step;
     if (n === 1) { endTour(); return; }          // Back out of step 1 IS leaving the tour
     if (n === 19 || n === 20) setAskOpen(n === 20);
+    if (n === 7) { router.navigate("/lessons"); setTourStep(6); return; }  // back out of the preview
     if (n === 11) { router.navigate("/"); setTourStep(10); return; }   // back out of the lesson
     if (n === 14) { openTourLesson(); setTourStep(13); return; }       // and back into it
     if (BACK_MOVES[n]) router.navigate(BACK_MOVES[n]);

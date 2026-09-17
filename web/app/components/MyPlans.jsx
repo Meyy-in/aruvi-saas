@@ -366,15 +366,27 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStep, tourIdx]);
 
+  /* Declared ABOVE the effect that uses it. A const initialised further down the component body
+     is fine inside an effect callback, but this file has been bitten by that shape before
+     (ed8fc93d) and the rule here is: no reader above its declaration, effect or not. */
+  const tourBoundRef = useRef(false);
   useEffect(() => {
     if (tourStep == null || !tourTarget) return;
     const { c, sectionKey, plan } = tourTarget;
     const bound = currentChapterFile(sectionKey);
     if (tourStep >= 10 && bound !== plan.filename) {
       bindSectionChapter(sectionKey, plan.filename);   // the real attach (step 9 → 10)
+      tourBoundRef.current = true;
       setSyncTick((t) => t + 1);
-    } else if (tourStep <= 9 && bound) {
-      unbindSection(sectionKey);                        // Back from 10 → 9 undoes it
+    } else if (tourStep <= 9 && bound && tourBoundRef.current) {
+      /* ⚠️ ONLY WHAT THE TOUR ITSELF ATTACHED (founder, 2026-09-17: running the tour a second
+         time *"seems to remove the attached lesson — going back to where we began"*). Without
+         the ref this undoes any binding the teacher already had, because every step from 1 to 9
+         satisfies `<= 9`: re-entering the tour with a section legitimately tracking a chapter
+         stripped it on step 1. Back from 10 → 9 still undoes the demo's own attach, which is
+         what makes the demo repeatable. */
+      unbindSection(sectionKey);
+      tourBoundRef.current = false;
       setSyncTick((t) => t + 1);
     }
     // Steps 11–13: the tracking lesson view is open (11 tracking · 12 the bookmark ·
@@ -428,6 +440,9 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   useEffect(() => {
     if (prevTourRef.current != null && tourStep == null) {
       setOpenPlan(null); setAttachFor(null);
+      /* A finished tour LEAVES the chapter attached — that is the thing it just taught her to do
+         — so the next run starts owing nothing. */
+      tourBoundRef.current = false;
     }
     prevTourRef.current = tourStep;
   }, [tourStep]);
@@ -593,7 +608,8 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   };
 
   if (loading) return <div className="spin">Opening plan…</div>;
-  if (openPlan) return <LessonView view={openPlan.view} sectionKey={openPlan.sectionKey} onExit={() => setOpenPlan(null)} />;
+  if (openPlan) return <LessonView view={openPlan.view} sectionKey={openPlan.sectionKey}
+    tourUnit={tourStep === 11 || tourStep === 12 || tourStep === 13} onExit={() => setOpenPlan(null)} />;
 
   // "+" attach-a-lesson picker — a focused MODAL layered over the cards (not a separate screen),
   // scoped to ONE subject·class. Lists chapters already prepared for that subject·grade (tap =

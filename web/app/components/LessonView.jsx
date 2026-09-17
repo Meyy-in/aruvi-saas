@@ -1965,7 +1965,7 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour 
   );
 }
 
-export default function LessonView({ view, sectionKey = "", onExit, preview = false }) {
+export default function LessonView({ view, sectionKey = "", onExit, preview = false, tourUnit = false }) {
   const lp = view.lesson_plan;
   const units = useMemo(() => flattenUnits(lp), [lp]);
   // Dropped sections (founder 2026-08-01): a below-floor plan carries its unreached
@@ -2003,6 +2003,12 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
      Preview has no pointer to consult, so it always lands on the map, which is what it already
      did and what "first time" means for a plan attached to no class. */
   const [showOrg, setShowOrg] = useState(() => {
+    /* ⚠️ THE TOUR IS THE ONE CALLER THAT MUST NOT LAND ON THE MAP (founder, 2026-09-17, seen on
+       BOTH surfaces — which is the tell that it is this landing rule and not either port). Steps
+       11-13 describe the four tabs, the phase bookmark and Mark complete, every one of them on
+       the UNIT, and a chapter with no progress opens on the org page by design. The tour says
+       which it wants rather than leaving the rule to guess. Nothing else passes this. */
+    if (tourUnit) return false;
     if (preview) return true;
     if (typeof window === "undefined") return true;
     let started = false, done = false;
