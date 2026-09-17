@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { API, getJSON, pad, pretty, userKey, withUser } from "../lib/format";
+import { API, getJSON, pad, pretty, userKey, withUser,
+         fetchSupportedGrades, heldClassesFor } from "../lib/format";
 import { pullSectionState, readLocalSection } from "../lib/sectionState";
 import { YearStamp } from "./MyPlans";
 import { cachedPlans, fetchPlans, invalidatePlans, notePlansYear } from "../lib/plans";
@@ -279,7 +280,8 @@ function ProposedCard({ preparing, onDismiss }) {
 
 export default function MyLessonPlans({ readiness, onAllocate, tourStep, preparing,
                                         onStartTour, tourActive, onDismissPrepareError, lapsed,
-                                        yearInfo, onScope, onEditYearBudget, paneIntent }) {
+                                        yearInfo, onScope, onEditYearBudget, paneIntent,
+                                        heldScopes }) {
   const LS_SUBJECT = userKey("mylessons_subject");
   const LS_CLASS = userKey("mylessons_class");
   const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
@@ -360,6 +362,52 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
 
   const current = subjects.find((s) => s.name === activeSubject) || subjects[0] || null;
   const grades = useMemo(() => (current && current.grades) || [], [current]);   // HER enrolled classes
+
+  /* ★ A SUBJECT SHE OWNS BUT NO LONGER TEACHES KEEPS ITS LESSONS (founder, 2026-09-17: "when a
+     subscribed subject is deleted by removing all classes, the lessons in my lessons … goes too.
+     both should remain"). Since the same day a paid subject SURVIVES losing its last class
+     (`subjectSurvivesEmpty`) — but surviving in the profile is only half of it: this wheel is
+     built from her enrolled classes, so a subject with none left would list itself and then have
+     no class to scope to, and her prepared lessons would still be out of reach.
+     So for such a subject the Class wheel offers THE CLASSES SHE HOLDS — her paid stages,
+     intersected with what Meyy has content for. It is the smallest honest list: every class on it
+     is one she has bought, and the shelf behind it is the one her lessons are on.
+     ⚠️ Only for a subject with NO classes. A teacher who still teaches one is offered exactly
+     what she teaches, which is the 2026-07-06 rule and is untouched.
+     ⚠️ Nothing is asked while she holds nothing: an unresolved entitlement would otherwise cache
+     an empty answer for the session and the wheel would stay empty after it arrived. */
+  const [ownedClasses, setOwnedClasses] = useState({});   // { [subject name]: ["III", …] }
+  useEffect(() => {
+    if (!heldScopes || !heldScopes.length) return undefined;
+    const need = subjects.filter((s) => !((s.grades || []).length)
+      && ownedClasses[s.name] === undefined);
+    if (!need.length) return undefined;
+    let live = true;
+    Promise.all(need.map((s) => fetchSupportedGrades(s.name)
+      .then((gs) => [s.name, heldClassesFor(heldScopes, s.name, gs)])
+      .catch(() => [s.name, []])))
+      .then((pairs) => {
+        if (!live) return;
+        setOwnedClasses((m) => {
+          const next = { ...m };
+          pairs.forEach(([name, list]) => { next[name] = list; });
+          return next;
+        });
+      });
+    return () => { live = false; };
+  }, [subjects, heldScopes, ownedClasses]);
+
+  /* The classes the wheels offer for ONE subject — hers, or the ones she holds when she teaches
+     none. One definition, used by the wheel AND by the validation effect below, or the two
+     disagree about which class is valid and she is snapped off the one she just picked. */
+  const classesOfSubject = (s) => {
+    const gs = (s && s.grades) || [];
+    if (gs.length) return gs.map((g) => g.grade);
+    return (s && ownedClasses[s.name]) || [];
+  };
+  const wheelGrades = useMemo(() => classesOfSubject(current),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [current, grades, ownedClasses]);
   // The Class wheel is RESTRICTED to the classes she has enrolled for this subject in her profile
   // (2026-07-06). It never offers a class she hasn't set up — a class shows here only once she adds
   // it (via the "add another class" flow / teaching profile). Every offered class therefore has
@@ -381,17 +429,23 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
       ? subjects.find((x) => x.name === activeSubject)
       : subjects[0];
     if (s.name !== activeSubject) {
-      const g0 = s.grades && s.grades[0] ? s.grades[0].grade : "";
+      const g0 = classesOfSubject(s)[0] || "";
       setActiveSubject(s.name); lsSet(LS_SUBJECT, s.name);
-      setActiveGrade(g0); lsSet(LS_CLASS, g0);
+      setActiveGrade(g0); if (g0) lsSet(LS_CLASS, g0);
       return;
     }
-    const taught = (s.grades || []).map((g) => g.grade);
+    const taught = classesOfSubject(s);
     if (!taught.includes(activeGrade)) {
       const g0 = taught[0] || "";
-      setActiveGrade(g0); lsSet(LS_CLASS, g0);
+      setActiveGrade(g0);
+      /* ⚠️ NEVER PERSIST AN EMPTY CLASS (2026-09-17). A subject whose held classes have not
+         arrived yet offers nothing for one render, and writing "" here put a blank into
+         `mylessons_class` that outlived the visit — so the next one opened on no class at all,
+         for a subject that has them. An empty list is a state to pass through, not to remember. */
+      if (g0) lsSet(LS_CLASS, g0);
     }
-  }, [subjects, activeSubject, activeGrade]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subjects, activeSubject, activeGrade, ownedClasses]);
 
   /* ★ REPORT THE SETTLED SCOPE UP (founder, 2026-08-27) — the second moment of the
    * "check your set-up?" window. A subscriber who has just added a subject or a class meets the
@@ -711,11 +765,12 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
   const subjectItems = useMemo(() => subjects
     .map((s) => ({ id: s.name, label: subjectLabel(s.name) }))
     .sort((a, b) => a.label.localeCompare(b.label)), [subjects]);
-  /* ONLY the classes she has enrolled for this subject, low-to-high — never the content superset. */
-  const gradeItems = useMemo(() => grades
-    .map((g) => g.grade)
+  /* ONLY the classes she has enrolled for this subject, low-to-high — never the content superset.
+     The one exception is a subject she OWNS and teaches no class of: see `wheelGrades`. */
+  const gradeItems = useMemo(() => wheelGrades
+    .slice()
     .sort((a, b) => classNum(a) - classNum(b))
-    .map((g) => ({ id: g, label: `${classNum(g)}` })), [grades]);
+    .map((g) => ({ id: g, label: `${classNum(g)}` })), [wheelGrades]);
 
   if (opening) return <div className="spin">Opening plan…</div>;
   if (openPlan) {
@@ -900,14 +955,21 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
           <div className="mlp2-wcol">
             {gradeItems.length > 1 ? (
               <RollWheel items={gradeItems} value={activeGrade} onChange={onGrade} ariaLabel="Class" large rowPx={72} peek />
-            ) : (
+            ) : activeGrade ? (
               <div className="mlp2-static">Class {classNum(activeGrade)}</div>
+            ) : (
+              /* No class to name — an em-dash, never "Class " with a blank after it. The body
+                 below says what is going on; the wheel is not the place to explain it. */
+              <div className="mlp2-static">&mdash;</div>
             )}
           </div>
         </div>
       </div>
 
-      {pane === "plan" ? (
+      {/* ⚠️ `&& activeGrade`: the Year Plan is a view of ONE subject·class and returns early
+          without one, leaving "Loading your year…" on screen for ever. With no class it falls
+          through to the body below, which says why. */}
+      {pane === "plan" && activeGrade ? (
         <YearPlan subjectName={current.name} sSlug={sSlug} gSlug={gSlug} readiness={readiness}
           onAllocate={onAllocate}
           /* The pencil beside the budget figure. Bound to the pane's OWN subject·class — the
@@ -917,7 +979,17 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
             ? () => onEditYearBudget(current.name, activeGrade) : undefined} />
       ) : (
       <>
-      {plans === undefined ? (
+      {!activeGrade ? (
+        /* ★ NO CLASS TO SCOPE TO, so there is no shelf to read and no spinner to show. Reached by
+           a subject she owns and teaches no class of, while its held classes are still being
+           fetched — or when she holds none of them any more. `plans` is keyed on the class, so
+           without this the pane sat on "Loading plans…" for ever, which is the one thing a
+           loading line must never do. */
+        <div className="mlp2-emptybody">
+          {subjectLabel(current.name)} has no classes in your profile.
+          Add one under Class in the &ldquo;+&rdquo; window to teach it again — your lessons are kept either way.
+        </div>
+      ) : plans === undefined ? (
         <div className="mlp-loading">Loading plans…</div>
       ) : shown.length === 0 && !showProposedCard ? (
         <div className="mlp2-emptybody">

@@ -6,7 +6,8 @@ import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget } from "../li
 import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections,
          secSummary, gradeDraftFrom, finalizeSubject,
          secCount, gradePpw, subjectPpw, profileStats, classCard,
-         PER_CLASS_GOALS, GOAL_WORD, portalGradeIdxs as sharedGradeIdxs } from "../lib/profile";
+         PER_CLASS_GOALS, GOAL_WORD, subjectSurvivesEmpty,
+         portalGradeIdxs as sharedGradeIdxs } from "../lib/profile";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
 /* `pushSectionState` left with `clearSectionState`, which was its only caller here. */
 import { clearSectionState } from "../lib/sectionState";
@@ -132,7 +133,10 @@ const Pencil = ({ size = 14 }) => (
  * "{subject}/{stage}"). */
 const stageOfRoman = stageOfGrade;   // lib/format is the web's ONE copy of the mapping
 
-export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome }) {
+export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, heldScopes, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome }) {
+  /* `heldScopes` is what she has BOUGHT, and it decides one thing only: whether a subject
+     survives losing its last class (`subjectSurvivesEmpty`). It is NOT `paidScopes`, which is a
+     display filter and says "no limit" while enforcement is off — see @aruvi/shared/format. */
   // SINGLE SOURCE OF TRUTH: the profile lives in the parent's `readiness` prop. Derive the
   // canonical subjects[] straight from it — no mirrored local copy. That way an edit (which
   // routes through persist → onChange → setReadiness) re-renders THIS view and every other
@@ -183,6 +187,20 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
   const [removeSubject, setRemoveSubject] = useState(null);
   const [classConfirm, setClassConfirm] = useState(null); // { removes:[romans], adds:[romans] } — manage-classes warning
   const [fromPortal, setFromPortal] = useState(false);  // visit began at My Classes' "+" → every exit returns there
+  /* ★ THE ADD-A-SUBJECT CHOOSER IS A WINDOW, NOT A SCREEN (founder, 2026-09-17: "clicking +
+     add a subject must pop up a window (not change the screen) similar to expo now").
+     On the phone the add row opens the ONE Sheet the shell owns, on its subject step — the
+     accordion she was reading stays behind the scrim, and the chooser is plainly a question
+     ABOUT that list rather than a place she has travelled to. The web replaced the whole page
+     instead, so "+ add a subject" read as navigation and the list she was standing in vanished
+     under it.
+     ⚠️ THE WINDOW HOLDS THE CHOOSER ONLY (founder's answer, same day). Continue closes it and
+     the classes → sections → duration → periods → budget run takes the page, exactly as it does
+     today: that run is a conversation, not a question, and a 560px card is not where it belongs.
+     ⚠️ ADD MODE, FROM THIS SCREEN, ONLY. `pickMode === "manage"` is the "+" portal's own visit,
+     which page.jsx ALREADY draws inside `.tp-window-card` — raising a second overlay in there
+     would nest one window inside another. Hence `!fromPortal` on the setter below. */
+  const [addWin, setAddWin] = useState(false);
   // Back links still route through setScreen("view"); on a portal visit the bounce effect
   // (below) forwards that to My Classes, so the label says where she'll actually land.
   // A portal visit is launched from the ONE portal window, and every exit re-opens it
@@ -406,8 +424,17 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
       sub.grades.forEach((g) => g.sections.forEach((x) =>
         clearSectionState(sub.name, g.grade, `${classNum(g.grade)}${secLetter(x)}`)));
     }
-    const out = (kind === "subject" || !next[si].grades.length)
-      ? next.filter((_, i) => i !== si)      // cascade: last class takes the subject
+    /* ★ THE LAST CLASS NO LONGER TAKES A SUBJECT SHE OWNS (founder, 2026-09-17). It always did
+       — "a subject with no classes is not a subject she teaches" — and for a SUBSCRIBER that
+       sentence is simply false: she bought the subject·stage, and the record leaving took her
+       prepared lessons out of My Lessons and the subject out of the "+" window’s own question
+       with it. A subject she holds now stays, with no classes, until the subscription ends.
+       ⚠️ `kind === "subject"` is untouched: that is the dustbin on the SUBJECT itself, behind
+       two confirmations, and it means what it says. This clause is only about the side effect. */
+    const emptied = !next[si].grades.length;
+    const out = (kind === "subject"
+                 || (emptied && !subjectSurvivesEmpty(heldScopes, next[si].name)))
+      ? next.filter((_, i) => i !== si)
       : next;
     persist(out);
     setConfirm(null);
@@ -433,7 +460,9 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
       const last = sub.grades.length === 1;
       return {
         title: `Remove Class ${classNum(g.grade)} from ${sub.name}?`,
-        body: `${tags} — their cards and bookmarks — will be removed.${last ? ` It is the last class — ${sub.name} goes with it.` : ""} Your lessons stay in the library.`,
+        body: `${tags} — their cards and bookmarks — will be removed.${last ? (subjectSurvivesEmpty(heldScopes, sub.name)
+          ? ` It is the last class — ${sub.name} itself stays, with no classes, for as long as you subscribe to it.`
+          : ` It is the last class — ${sub.name} goes with it.`) : ""} Your lessons stay in the library.`,
         cta: `Yes, remove Class ${classNum(g.grade)}`,
       };
     }
@@ -446,7 +475,15 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
   };
 
   /* ── add flows ── */
-  const startAddSubject = () => { setPicked([]); setPickMode("add"); setClassMode("add"); setScreen("pickSubjects"); };
+  const startAddSubject = () => {
+    setPicked([]); setPickMode("add"); setClassMode("add");
+    setAddWin(!fromPortal);          // see `addWin` above — never a window inside the window
+    setScreen("pickSubjects");
+  };
+  /* Every way OUT of the chooser window: the ✕, the scrim, and Continue (which hands the
+     journey to the full-page class run). One place, so a half-closed window — scrim gone,
+     `addWin` still true — cannot be left behind on any of them. */
+  const closeAddWin = () => { setAddWin(false); setPicked([]); setScreen("view"); };
 
   /* ── manage flows (the My Classes "+" portal) — same screens, enrolled options pre-ticked;
      unticking removes behind ONE scoped warning. Warned, never blocked. ── */
@@ -567,6 +604,9 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
   const onSubjectsPicked = () => {
     const q = [...picked];
     setQueue(q); setQi(0);
+    // The chooser was the window; the run is the page (see `addWin`). Lowered BEFORE the run
+    // starts, so the scrim never survives one frame over the classes screen.
+    setAddWin(false);
     beginSubjectRun(q[0]);
   };
 
@@ -664,8 +704,15 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     if (adds.length) applyManageClasses(keep, adds);
     else if (keep.length) { saveSubject({ ...draft, grades: keep }); setScreen("view"); }
     else {
-      // last class taken away and nothing added — the subject goes with it (warned in the confirm)
-      persist(deepCopy(canon).filter((s) => s.name !== draft.name));
+      /* Last class taken away and nothing added — warned in the confirm either way. A subject
+         she OWNS is kept as an empty record (see the dustbin branch above for why); anything
+         else goes as it always did. Persisted directly rather than through `saveSubject`,
+         which normalizes a subject around its classes and has none to work with here. */
+      const kept = subjectSurvivesEmpty(heldScopes, draft.name);
+      persist(kept
+        ? deepCopy(canon).map((s) => (s.name === draft.name
+            ? { ...s, grades: [], budget: {}, grids: [] } : s))
+        : deepCopy(canon).filter((s) => s.name !== draft.name));
       setScreen("view");
     }
   };
@@ -917,12 +964,27 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             );
           })}
         </div>
+        {/* ★ AND WHAT TO DO WHEN THERE ARE NONE (2026-09-17). Since a subject she OWNS survives
+            losing its last class, this screen is now reachable with an empty list by design
+            rather than by accident — and an empty list under "Which class?" is a dead end whose
+            only exit is the back link. The phone has carried this sentence since the pick screens
+            were built; the web had nothing. It names the row that fixes it. */}
+        {portalGradeIdxs(portalSi).length === 0 && (
+          <p className="fr-hint">{sub.name} has no classes in your profile. Add one under Class
+            {" — "}your lessons are kept either way.</p>
+        )}
         <button className="fr-link" onClick={() => setScreen("view")}>{backLabel}</button>
       </div>
     );
   }
 
-  if (screen === "pickSubjects") {
+  /* ★ ONE CHOOSER, DRAWN IN TWO PLACES (2026-09-17). It is a full page for the "+" portal's
+     manage visit (which page.jsx already frames in its own window) and a WINDOW over the
+     accordion for this screen's add row — see `addWin`. A renderer rather than two copies: the
+     scope filter, the empty-chooser fork and its subscribe door are the screen's real content,
+     and the surest way to have a teacher told two different things about her entitlement is to
+     let them drift in two blocks of JSX. */
+  const pickSubjectsScreen = () => {
     const manage = pickMode === "manage";
     const enrolled = canon.map((s) => s.name);
     /* ★ POST-TRIAL SCOPE FILTER (founder, 2026-08-24; §0 gating-at-add-time): a PAID
@@ -1024,7 +1086,12 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
         })()}
       </div>
     );
-  }
+  };
+
+  /* The full-page reading of it. `!addWin` is the whole switch: with the window up, the render
+     falls through to the accordion below and the chooser is drawn INTO it as an overlay, so the
+     list she is adding to stays on screen behind the scrim. */
+  if (screen === "pickSubjects" && !addWin) return pickSubjectsScreen();
 
   if (screen === "classes") {
     const manageC = classMode === "manage";
@@ -1108,7 +1175,9 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             <div className="fr-modal-bg" onClick={(e) => { if (e.currentTarget === e.target) setClassConfirm(null); }}>
               <div className="fr-modal">
                 <h2 className="fr-q">Remove {names} from {draft.name}?</h2>
-                <p className="fr-hint">{tags} — their cards and bookmarks — will be removed.{allGone ? ` No class is left — ${draft.name} goes with it.` : ""} Your lessons stay in the library.</p>
+                <p className="fr-hint">{tags} — their cards and bookmarks — will be removed.{allGone ? (subjectSurvivesEmpty(heldScopes, draft.name)
+                  ? ` No class is left — ${draft.name} itself stays, with no classes, for as long as you subscribe to it.`
+                  : ` No class is left — ${draft.name} goes with it.`) : ""} Your lessons stay in the library.</p>
                 <button type="button" className="tp-remove-confirm" onClick={applyClassChanges}>Yes, remove {names}</button>
                 {/* "Keep it" re-ticks the classes she was about to remove — same rule as
                     the subjects confirm (founder, 2026-08-24). */}
@@ -1543,10 +1612,22 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
                     still below, waiting for it. */}
               </span>
               <span className="tp-sub-side">
-                <span className="tp-sub-ppw">{subPpw} periods / week</span>
+                {/* ★ "0 periods / week" IS NOT A WEEK (2026-09-17). A subject she owns now
+                    survives losing its last class, so an empty record is a state she can be
+                    looking at — and an arithmetic zero reads as a defect where the plain fact
+                    reads as her own doing. */}
+                <span className="tp-sub-ppw">
+                  {(s.grades || []).length ? `${subPpw} periods / week` : "No classes"}
+                </span>
                 <span className="tp-caret">{open ? "▾" : "▸"}</span>
               </span>
             </div>
+
+            {open && !(s.grades || []).length && (
+              <p className="fr-hint">You teach no class of {s.name} at the moment. Its lessons are
+                kept, and it stays here for as long as you subscribe to it — add a class under
+                Class in the &ldquo;+&rdquo; window to teach it again.</p>
+            )}
 
             {open && (s.grades || []).map((g, gi) => {
               /* ★ EVERY VALUE ON THIS CARD COMES FROM ONE SHARED FUNCTION (Track D step 6d,
@@ -1623,6 +1704,24 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             <span className="tp-sub-left">
               <span className="tp-sub-name">+ add a subject</span>
             </span>
+          </div>
+        </div>
+      )}
+
+      {/* ★ THE CHOOSER, AS A WINDOW OVER THIS LIST (founder, 2026-09-17 — see `addWin`).
+          It borrows page.jsx's own spot-edit chrome — `.ap-overlay.tp-window` and
+          `.ap-modal.tp-window-card` — rather than growing a second modal look for one screen:
+          that card is already sized for a pick wheel with two columns, already lifts the kicker
+          clear of the ✕, and already hides the flow's footer links because THE CORNERS DO THE
+          NAVIGATING. Nothing new in globals.css, and one window idiom on the surface.
+          The ✕ and the scrim are the way out, as in every other `ap-modal`; there is no ← ,
+          because this is where the journey starts. */}
+      {addWin && screen === "pickSubjects" && (
+        <div className="ap-overlay tp-window"
+          onClick={(e) => { if (e.currentTarget === e.target) closeAddWin(); }}>
+          <div className="ap-modal tp-window-card" onClick={(e) => e.stopPropagation()}>
+            <button className="ap-close" aria-label="Close" onClick={closeAddWin}>✕</button>
+            {pickSubjectsScreen()}
           </div>
         </div>
       )}

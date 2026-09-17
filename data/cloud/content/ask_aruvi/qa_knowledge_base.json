@@ -1,6 +1,6 @@
 {
   "version": "V3.2",
-  "last_refreshed": "2026-09-16",
+  "last_refreshed": "2026-09-17",
   "maintained": "Hand-written. Edit THIS file — it is the only copy — then run python3 aruvi-scripts/sync_ask_aruvi.py to re-index, and commit. Keywords are computed, never typed. The bank is served by GET /ask-aruvi and must NEVER be copied into web/app/ask-aruvi/: it would ship in a public page chunk and be readable before sign-in.",
   "categories": [
     {
@@ -579,7 +579,7 @@
       "answer": "Each assessment item has four tabs. Overview states the learning outcome being tested, with the question type, cognitive demand, and competency where recorded. Question is the class-facing view — stem, stimulus, and plain options — safe to project or read out. Answer holds the correct option or model answer with the diagnostic guidance, and appears only when populated. Inclusivity carries the scaffolding and extension suggestions. Students should see only the Question tab.",
       "keywords": [
         "tabs",
-        "items",
+        "item",
         "shows",
         "option",
         "states",
@@ -608,7 +608,7 @@
       "keywords": [
         "unit",
         "sometimes",
-        "items",
+        "item",
         "multiple",
         "anchor",
         "several"
@@ -888,8 +888,8 @@
       "keywords": [
         "annual",
         "set",
-        "class",
         "figure",
+        "class",
         "scratch",
         "either"
       ]
@@ -957,11 +957,11 @@
       "answer": "Period allocation in Meyy reflects how much classroom effort a chapter genuinely requires — not how long it is in pages. The measure of effort differs by subject: Social Sciences uses competency weight; Science, English, Mathematics and The World Around Us use an effort index built from signals specific to each subject's architecture. The result is a defensible default allocation the teacher or administrator can audit and override for any chapter.",
       "keywords": [
         "effort",
-        "long",
         "default",
         "audit",
         "override",
-        "allocation"
+        "allocation",
+        "period"
       ]
     },
     {
@@ -1142,8 +1142,8 @@
         "pdf",
         "word",
         "download",
-        "choose",
-        "generate"
+        "generate",
+        "choose"
       ]
     },
     {
@@ -1164,14 +1164,28 @@
       "id": "d06",
       "category": "cat_d",
       "question": "How do I add another class, section, or subject?",
-      "answer": "The big “+” button in My Classes is the way. It opens a Subject · Class · Section chooser and walks you through the same short steps as your first lesson; the same “+” is also where you change your periods a week and your annual period budget. Settings › Teaching profile shows everything you teach and, behind its pencil, lets you add or remove a whole subject — but classes and sections are always added from the “+”. New section cards appear in My Classes as soon as a lesson is attached.",
+      "answer": "The big “+” button in My Classes is the way for a class or a section: it opens a Class · Section · Periods a week · Annual period budget chooser and walks you through the same short steps as your first lesson. A whole subject is added from Settings › Teaching profile instead — the “+ add a subject” row at the foot of the list opens a window offering the subjects your subscription covers, and the class questions follow. The profile screen itself is a reading room: it shows everything you teach, and each item is changed from the row that names it. New section cards appear in My Classes as soon as a lesson is attached.",
       "keywords": [
         "add",
         "class",
         "section",
+        "row",
         "subject",
-        "big",
-        "added"
+        "profile"
+      ]
+    },
+    {
+      "id": "d43",
+      "category": "cat_d",
+      "question": "How do I delete a subject?",
+      "answer": "A subject goes when its last class goes. Open the “+” in My Classes, choose Class, pick the subject, and untick its classes. Before anything is removed, Meyy names exactly what will go — the classes, their section cards and their bookmarks — and tells you whether the subject goes with them. Two things stay. Your lesson plans stay in the library, whatever you remove. And a subject you subscribe to stays in your profile too, with no classes, for as long as you subscribe — so its prepared lessons are still in My Lessons, and you can add a class back whenever you like.",
+      "keywords": [
+        "delete",
+        "class",
+        "goes",
+        "subject",
+        "subscribe",
+        "stays"
       ]
     },
     {
@@ -1197,9 +1211,9 @@
         "rename",
         "names",
         "section",
-        "pick",
         "eight",
-        "characters"
+        "characters",
+        "rose"
       ]
     },
     {
@@ -1238,10 +1252,10 @@
       "keywords": [
         "archive",
         "button",
-        "stays",
         "archiving",
         "active",
-        "deleting"
+        "deleting",
+        "folder"
       ]
     },
     {
@@ -1255,7 +1269,7 @@
         "happens",
         "end",
         "new",
-        "stays"
+        "authorises"
       ]
     },
     {
@@ -1308,10 +1322,10 @@
       "keywords": [
         "cost",
         "buying",
-        "subscription",
         "secondary",
+        "subscription",
         "unlimited",
-        "subscribe"
+        "prepare"
       ]
     },
     {
@@ -1337,8 +1351,8 @@
         "add",
         "subscribed",
         "have",
-        "subscription",
         "subject",
+        "subscription",
         "uncluttered"
       ]
     },
@@ -1432,8 +1446,8 @@
       "question": "How do I delete my account, and what is kept?",
       "answer": "Settings › Account › Delete my account. Meyy first offers you a download of your data, then asks you to type a confirmation — deletion is permanent and immediate. Everything of yours goes: profile, plans, progress, notes, support messages. Two things are deliberately kept, and neither holds any teaching content — the record that you accepted the user agreement, and the seller's invoice and reference numbering.",
       "keywords": [
-        "delete",
         "kept",
+        "delete",
         "account",
         "confirmation",
         "deletion",
@@ -1447,7 +1461,7 @@
       "answer": "No. Meyy generates lesson plans, assessments, and teacher guides — it does not process student responses or maintain individual student records. The assessment output tells you what each question tests and what each wrong answer reveals, but recording student performance, tracking mastery, or generating progress reports is outside Meyy's scope. Meyy is a planning and generation tool, not a student information system.",
       "keywords": [
         "mastered",
-        "tell",
+        "tells",
         "student",
         "has",
         "process",
@@ -1532,8 +1546,8 @@
       "keywords": [
         "holistic",
         "input",
-        "card",
         "progress",
+        "card",
         "generate",
         "dimensional"
       ]
@@ -1560,7 +1574,7 @@
       "keywords": [
         "compliant",
         "2023",
-        "tell",
+        "tells",
         "school",
         "compliance",
         "platform"

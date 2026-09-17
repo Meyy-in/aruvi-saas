@@ -205,14 +205,26 @@ export default function TeachingProfileScreen() {
                     <View style={ws.tp_sub_side}>
                       {/* Per SECTION and multiplied up, like the headline tile — see
                           `gradePpw` in shared/profile. */}
+                      {/* ★ "0 periods / week" IS NOT A WEEK (2026-09-17). A subject she owns
+                          now survives losing its last class, so an empty record is a state she
+                          can be looking at — and an arithmetic zero reads as a defect where the
+                          plain fact reads as her own doing. The web says the same words. */}
                       <Text style={[ws.tp_sub_ppw, { color: t.pine_d }]}>
-                        {subjectPpw(s)} periods / week
+                        {(s.grades || []).length ? `${subjectPpw(s)} periods / week` : "No classes"}
                       </Text>
                       <Text style={[ws.tp_caret, { color: open ? t.pine_d : t.ink_soft }]}>
                         {open ? "▾" : "▸"}
                       </Text>
                     </View>
                   </Pressable>
+
+                  {open && !(s.grades || []).length ? (
+                    <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
+                      You teach no class of {s.name} at the moment. Its lessons are kept, and it
+                      stays here for as long as you subscribe to it — add a class under Class in
+                      the “+” window to teach it again.
+                    </Text>
+                  ) : null}
 
                   {open ? (s.grades || []).map((g, gi) => {
                     const cc = classCard(s, gi);

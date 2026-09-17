@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, paywallKicker, entLapsed as lapsedOf } from "./lib/format";
+import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, heldScopesOf, paywallKicker, entLapsed as lapsedOf } from "./lib/format";
 import { accountFirstName } from "./lib/account";
 import { verifiedWrite, readinessFingerprint } from "./lib/verify";
 import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache } from "./lib/sectionState";
@@ -853,9 +853,15 @@ export default function Home() {
      runs on. The server derives the list (`live_scopes`) — the client compares no
      dates, the same rule as `lapsed`. `e.scopes` is the fallback for an older API. */
   const [paidScopes, setPaidScopes] = useState(null);
+  /* ★ AND WHAT SHE HOLDS, WHICH IS A DIFFERENT QUESTION (2026-09-17). `paidScopes` is a display
+     FILTER and is null — no limit — whenever enforcement is off, i.e. for every teacher in the
+     beta. "Has she bought this subject?" still has an answer then, and the profile needs it: a
+     subject she owns survives losing its last class (`subjectSurvivesEmpty`). Empty, never null:
+     an unreachable entitlement means she holds nothing we can prove, and the old cascade stands. */
+  const [heldScopes, setHeldScopes] = useState([]);
   useEffect(() => {
     if (!ready || !user) {
-      setEntLapsed(false); setEntTrial(false); setPaidScopes(null);
+      setEntLapsed(false); setEntTrial(false); setPaidScopes(null); setHeldScopes([]);
       return;
     }
     let live = true;
@@ -874,6 +880,7 @@ export default function Home() {
          Enforcement decides what is REFUSED; the status decides what is TRUE. */
       setEntTrial(e.status === "trial" || e.plan_id === "trial");
       setPaidScopes(paidScopesOf(e));
+      setHeldScopes(heldScopesOf(e));
     });
     sync();
     /* MID-SESSION REVOCATION lands fast (founder, 2026-08-24): re-check on focus /
@@ -1262,6 +1269,7 @@ export default function Home() {
                 <button className="ap-close" aria-label="Close" onClick={goPortalHome}>✕</button>
                 <TeachingProfile readiness={readiness} onChange={setReadiness}
                   onBack={goPortalHome} lapsed={entLapsed} paidScopes={paidScopes}
+                  heldScopes={heldScopes}
                   autoAddClassSubject={null} onConsumeAutoAdd={() => {}}
                   portalIntent={profilePortal} onConsumePortal={() => setProfilePortal(null)}
                   portalScope={profilePortalScope}
@@ -1289,6 +1297,7 @@ export default function Home() {
                 tourStep={tour} preparing={preparingCard} lapsed={entLapsed} yearInfo={yearInfo}
                 onStartTour={tourOnOffer ? startTour : undefined} tourActive={!!tour}
                 onScope={onLessonsScope} onEditYearBudget={onEditYearBudget}
+                heldScopes={heldScopes}
                 paneIntent={lessonsPaneIntentRef}
                 onDismissPrepareError={onDismissPrepareError} />
             </div>
@@ -1299,6 +1308,7 @@ export default function Home() {
             <div className="editflow" data-tour="profile-root">
               <TeachingProfile readiness={readiness} onChange={setReadiness}
                 onBack={null} lapsed={entLapsed} paidScopes={paidScopes}
+                heldScopes={heldScopes}
                 autoAddClassSubject={profileAutoAdd} onConsumeAutoAdd={() => setProfileAutoAdd(null)}
                 portalIntent={null} onConsumePortal={() => setProfilePortal(null)}
                 portalScope={null}

@@ -54,11 +54,12 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
-  API, classNum, getJSON, pad, paywallKicker, pretty, subjectSlug, userKey, withUser,
+  API, classNum, fetchSupportedGrades, getJSON, heldClassesFor, heldScopesOf, pad, paywallKicker,
+  pretty, subjectSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
-import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
+import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { pullSectionState, readLocalSection } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsArchived } from "@aruvi/shared/verify";
@@ -203,6 +204,20 @@ export default function MyLessons() {
 
   useEffect(() => { loadReadiness(); }, [loadReadiness]);
 
+  /* ★ AND A PROFILE WRITTEN SOMEWHERE ELSE LANDS HERE (founder, 2026-09-17). `loadReadiness`
+     runs on MOUNT, and the bar `navigate`s rather than remounting — so a subject bought in the
+     subscribe wizard, or a class added from the portal, sat in the store while these wheels kept
+     drawing the profile this screen had loaded when she first crossed to it. The web has no such
+     gap: `readiness` is page state there and My Lessons is a child of it. This is the same
+     subscription `settings/profile.jsx` takes, for the same reason — on the phone the profile is
+     a MODULE, so nothing re-renders on a write unless the store says so.
+     ⚠️ The immediate fire hands back the very object `cachedReadiness()` seeded state with, so
+     it costs a no-op setState and can never flash. A null is ignored: only `loadReadiness` may
+     decide this screen has nothing to draw. */
+  useEffect(() => subscribeReadiness((r) => {
+    if (r) { setReadiness(r); setLoaded(true); }
+  }), []);
+
   /* Seed the wheels from storage the first time subjects arrive, then keep both valid as the
      profile changes. The class is RESTRICTED to the classes she has enrolled for this subject, so
      a stale saved class — from a prior profile, another user on this device, or a deleted
@@ -219,13 +234,19 @@ export default function MyLessons() {
     if (s.name !== activeSubject) {
       setActiveSubject(s.name); lsSet(LS_SUBJECT, s.name);
     }
-    const taught = (s.grades || []).map((g) => g.grade);
+    const taught = classesOfSubject(s);
     if (!taught.includes(activeGrade)) {
       const saved = lsGet(LS_CLASS);
       const g0 = (saved && taught.includes(saved) ? saved : taught[0]) || "";
-      setActiveGrade(g0); lsSet(LS_CLASS, g0);
+      setActiveGrade(g0);
+      /* ⚠️ NEVER PERSIST AN EMPTY CLASS (2026-09-17). A subject whose held classes have not
+         arrived yet offers nothing for one render, and writing "" here put a blank into
+         `mylessons_class` that outlived the visit — so the next one opened on no class at all,
+         for a subject that has them. An empty list is a state to pass through, not to remember. */
+      if (g0) lsSet(LS_CLASS, g0);
     }
-  }, [subjects, activeSubject, activeGrade, LS_SUBJECT, LS_CLASS]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subjects, activeSubject, activeGrade, LS_SUBJECT, LS_CLASS, ownedClasses]);
 
   /* ★ REPORT THE SETTLED SCOPE UP (founder, 2026-08-27; ported 2026-09-16) — the second moment of
      the "check your set-up?" window. A subscriber who has just added a subject or a class meets
@@ -250,6 +271,58 @@ export default function MyLessons() {
   const current = subjects.find((s) => s.name === activeSubject) || subjects[0] || null;
   const grades = useMemo(() => (current && current.grades) || [], [current]);
   const taughtGradeObj = grades.find((g) => g.grade === activeGrade) || null;
+
+  /* ★ A SUBJECT SHE OWNS BUT NO LONGER TEACHES KEEPS ITS LESSONS (founder, 2026-09-17: "when a
+     subscribed subject is deleted by removing all classes, the lessons in my lessons … goes too.
+     both should remain"). A paid subject now SURVIVES losing its last class
+     (`subjectSurvivesEmpty`) — but surviving in the profile is only half of it: these wheels are
+     built from her enrolled classes, so such a subject would list itself and then have no class
+     to scope to, and her prepared lessons would still be out of reach.
+     So for a subject with NO classes the Class wheel offers the classes she HOLDS — her paid
+     stages, intersected with what Meyy has content for. Every class on that list is one she has
+     bought, and the shelf behind it is the one her lessons are on. A teacher who still teaches a
+     class is offered exactly what she teaches, which is the 2026-07-06 rule, untouched.
+     ⚠️ Nothing is asked while she holds nothing: an unresolved entitlement would otherwise cache
+     an empty answer for the session and the wheel would stay empty after it arrived.
+     This is the web's `ownedClasses`, same shape and same reasons. */
+  const [ownedClasses, setOwnedClasses] = useState({});   // { [subject name]: ["III", …] }
+  /* ⚠️ ITS OWN SUBSCRIPTION, not the `ent` state below — that const is declared 250 lines
+     further down, and reading it here would be the "a const read from a dep array before it
+     existed" crash the map already records once (`ed8fc93d`). Two subscriptions to one module
+     store cost nothing; a temporal-dead-zone throw costs the screen. */
+  const [heldScopes, setHeldScopes] = useState(() => heldScopesOf(entitlementState().ent));
+  useEffect(() => subscribeEntitlement((e) => setHeldScopes(heldScopesOf(e && e.ent))), []);
+  useEffect(() => {
+    if (!heldScopes.length) return undefined;
+    const need = subjects.filter((s) => !((s.grades || []).length)
+      && ownedClasses[s.name] === undefined);
+    if (!need.length) return undefined;
+    let live = true;
+    Promise.all(need.map((s) => fetchSupportedGrades(s.name)
+      .then((gs) => [s.name, heldClassesFor(heldScopes, s.name, gs)])
+      .catch(() => [s.name, []])))
+      .then((pairs) => {
+        if (!live) return;
+        setOwnedClasses((m) => {
+          const next = { ...m };
+          pairs.forEach(([name, list]) => { next[name] = list; });
+          return next;
+        });
+      });
+    return () => { live = false; };
+  }, [subjects, heldScopes, ownedClasses]);
+
+  /* The classes the wheels offer for ONE subject — hers, or the ones she holds when she teaches
+     none. ONE definition, used by the wheel AND by the validation effect, or the two disagree
+     about which class is valid and she is snapped off the one she just picked. */
+  const classesOfSubject = (s) => {
+    const gs = (s && s.grades) || [];
+    if (gs.length) return gs.map((g) => g.grade);
+    return (s && ownedClasses[s.name]) || [];
+  };
+  const wheelGrades = useMemo(() => classesOfSubject(current),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [current, grades, ownedClasses]);
 
   const sSlug = current ? subjectSlug(current.name) : "";
   const gSlug = gradeSlug(activeGrade);
@@ -500,10 +573,12 @@ export default function MyLessons() {
      identity every render) made that effect fire on every render, including the one `stepCycle`
      causes when it commits the pick before animating, cancelling the ▼'s roll. The web carries
      the same fix and the fuller note. */
-  const gradeItems = useMemo(() => grades
-    .map((g) => g.grade)
+  /* The one exception to "only the classes she has enrolled" is a subject she OWNS and teaches
+     no class of — see `wheelGrades`. */
+  const gradeItems = useMemo(() => wheelGrades
+    .slice()
     .sort((a, b) => classNum(a) - classNum(b))
-    .map((g) => ({ id: g, label: `${classNum(g)}` })), [grades]);
+    .map((g) => ({ id: g, label: `${classNum(g)}` })), [wheelGrades]);
 
   const insets = useSafeAreaInsets();
   /* Lapsed hides the two things on this screen that GROW the account: the prepare CTA and
@@ -613,7 +688,11 @@ export default function MyLessons() {
                   ariaLabel="Class" rowPx={72} padLeft={28} peek />
               ) : (
                 <View style={ws.mlp2_static}>
-                  <Text style={ws.mlp2_static_t}>Class {classNum(activeGrade)}</Text>
+                  {/* An em-dash when there is no class to name — never "Class " with a blank
+                      after it. The body below says what is going on. */}
+                  <Text style={ws.mlp2_static_t}>
+                    {activeGrade ? `Class ${classNum(activeGrade)}` : "\u2014"}
+                  </Text>
                 </View>
               )}
             </View>
@@ -633,7 +712,18 @@ export default function MyLessons() {
             .catch(() => {});
         }} />}>
 
-        {pane === "plan" ? (
+        {!activeGrade ? (
+          /* ★ NO CLASS TO SCOPE TO, so there is no shelf to read and no spinner to show. Reached
+             by a subject she owns and teaches no class of, while its held classes are still being
+             fetched — or when she holds none of them any more. `plans` is keyed on the class, so
+             without this the pane sat on "Loading plans…" for ever, which is the one thing a
+             loading line must never do. The Year Plan is a view of one subject·class and returns
+             early without one, so it is not offered here either. */
+          <Text style={ws.mlp2_emptybody}>
+            {subjectLabel(current.name)} has no classes in your profile. Add one under Class in
+            the “+” window to teach it again — your lessons are kept either way.
+          </Text>
+        ) : pane === "plan" ? (
           /* ★ THE PENCIL OPENS A WINDOW OVER THIS PANE (founder, 2026-09-15). It was held back
              twice and lit once it had somewhere to go; now it does not even take her away —
              the editor floats over the Year Plan she is reading, which is what makes "each item

@@ -58,7 +58,7 @@ import {
   annualBudgetPeriods, classNum, getJSON, largestRemainder, pad,
   postJSON, pretty,
 } from "@aruvi/shared/format";
-import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
+import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { readLocalSection, bindSectionChapter } from "@aruvi/shared/sectionState";
@@ -106,7 +106,12 @@ export default function Prepare() {
   /* The free-chapter counter reads the shell's store rather than asking again (6a F5). This
      screen is pushed and popped several times in a sitting; the shell polls throughout. */
   useEffect(() => subscribeEntitlement((e) => setTrialInfo(e.ent)), []);
-  useEffect(() => { fetchReadiness().then(setReadiness).catch(() => {}); }, []);
+  /* Paint from the store and KEEP LISTENING (2026-09-17) — a subject bought in the subscribe
+     wizard has to be choosable here too, and this screen is pushed and popped rather than
+     remounted on every crossing. The fetch no longer sets state itself: the store emits on every
+     write, the subscription above is the one path in. */
+  useEffect(() => subscribeReadiness((r) => { if (r) setReadiness(r); }), []);
+  useEffect(() => { fetchReadiness().catch(() => {}); }, []);
 
   /* Chapters (+ effort weight), her plan listing, and which chapters have a certified canonical.
      `placeholder: true` = budgeted but unpublished ("Book awaited") — nothing to generate from,

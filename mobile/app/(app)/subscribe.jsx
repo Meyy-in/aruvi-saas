@@ -41,6 +41,7 @@ import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
 import { dateWords } from "@aruvi/shared/legalmd";
 import { invalidateEntitlement } from "@aruvi/shared/entitlement";
 import { invalidateAccount } from "@aruvi/shared/account";
+import { fetchReadiness } from "@aruvi/shared/readiness";
 import Agreement from "../../components/Agreement";
 import Dropdown from "../../components/Dropdown";
 import { Button, Link, Input, Quiet, ErrorLine } from "../../components/ui";
@@ -231,6 +232,21 @@ export default function Subscribe() {
            both are read by screens she lands on next. */
         invalidateEntitlement();
         invalidateAccount();
+        /* ★ AND SO DOES HER PROFILE (founder, 2026-09-17: "in expo, when i add, it does not
+           appear there — it should mimic web app"). Every purchased scope becomes a ready-made
+           profile entry SERVER-side (`_apply_subscription_profile`, api/main.py), so the subject
+           she just bought is already in /readiness before she leaves this screen. The web
+           rehydrates it in the same breath — "rehydrate it so the new cards appear without a
+           reload" (page.jsx:1447) — and the phone did not, so `fetchReadiness` kept answering
+           from the session copy (`fresh`) and My Lessons drew the profile she had BEFORE the
+           purchase: no subject on the wheel, no card in My Classes, and no "would you like to
+           check your set-up?" either, because the shell's diff (app/(app)/_layout.jsx) had
+           nothing new to see.
+           ⚠️ FORCED READ, not `invalidateReadiness()`. Invalidating drops the copy and sends the
+           next screen to the network for a profile we are about to hold; the forced read
+           write-throughs and EMITS, which is what the screens listening to the store redraw on.
+           ⚠️ Not awaited: she leaves now, and the emit lands on whatever she lands on. */
+        fetchReadiness({ force: true }).catch(() => {});
         leave();
       })
       .catch((e) => {

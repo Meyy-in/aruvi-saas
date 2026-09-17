@@ -19,7 +19,7 @@ import { cutoverOffered, dismissCutover, dismissCutoverResult, fetchYear, runCut
 import { markGenerated } from "../../lib/firstRun";
 import { CutoverOffer, CutoverDone } from "../../components/YearNudge";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
-import { cachedReadiness, fetchReadiness } from "@aruvi/shared/readiness";
+import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
@@ -199,6 +199,19 @@ export default function Home() {
   }, [endSession]);
 
   useEffect(() => { load(); }, [load]);
+
+  /* ★ THE TWIN OF MY LESSONS’ SUBSCRIPTION (founder, 2026-09-17), and for the same reason:
+     `load` runs on mount, the bar navigates rather than remounting, so the cards on screen are
+     the cards her profile had when this screen first drew. A subject bought in the subscribe
+     wizard is exactly the case — the server turns every purchased scope into a ready-made card,
+     and she should find it here without restarting the app.
+     ⚠️ The immediate fire is the copy `load()` is already drawing from — skipped, or every mount
+     would run the load twice. And `load()` rather than a setState: a card carries its plan
+     listing and its section pointer, and assembling those IS this function. */
+  useEffect(() => {
+    let first = true;
+    return subscribeReadiness(() => { if (first) { first = false; return; } load(); });
+  }, [load]);
   useFocusEffect(useCallback(() => { setTick((n) => n + 1); }, []));
 
   /* ★ THE CHECK WINDOW AFTER FIRST RUN (founder, 2026-09-16, having walked it: "the window that

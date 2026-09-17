@@ -13,7 +13,7 @@
  * was merely spelled differently. Both surfaces must emit byte-identical records, and the only
  * way to be sure of that is one implementation.
  */
-import { classNum, stageOfGrade } from "./format.js";
+import { classNum, holdsSubject, stageOfGrade } from "./format.js";
 import { budgetPeriods, findScope } from "./budget.js";
 import { DEFAULT_DURATION, normPpw, ppwAnchor, ppwMapSum } from "./ppw.js";
 
@@ -158,6 +158,29 @@ export const GOAL_WORD = {
    commonest row is a better failure than a blank in the middle of a sentence. */
 export const goalWord = (goal) => GOAL_WORD[goal] || "sections";
 
+/* ───── does a subject SURVIVE losing its last class? (founder, 2026-09-17) ─────
+ *
+ * Until now it never did: "a subject with no classes is not a subject she teaches", so unticking
+ * the last class took the whole record with it, on both surfaces. The founder walked it and
+ * found what that costs a SUBSCRIBER — "when a subscribed subject is deleted by removing all
+ * classes, the lessons in my lessons and the subject option in add button goes too. both should
+ * remain". Both losses are the same loss: My Lessons’ wheels and the "+" window’s subject
+ * question are built from the profile, so a subject that leaves the profile takes her prepared
+ * lessons out of reach and leaves her no door back to a subject she has PAID for.
+ *
+ * ★ THE LINE IS OWNERSHIP, NOT USE (founder’s answer, 2026-09-17: "only a live paid scope").
+ * A subject she bought is hers until the subscription ends, whether or not she teaches a class
+ * of it this term — so it stays, with no classes, and the doors back stay open. A TRIAL subject
+ * still goes: she owns nothing, and a trial artifact that could never be removed would be the
+ * "detached plans" defect made permanent.
+ * ⚠️ Read `heldScopesOf`, never `paidScopesOf` — the latter is a display filter and says "no
+ * limit" while enforcement is off, which is every teacher in the beta. See format.js.
+ * ⚠️ An unreachable entitlement yields NO held scopes, so the old cascade stands. That is the
+ * safe direction: a removal she confirmed still happens, and the worst case is a subject she can
+ * add back, rather than a record the server refuses to reconcile. */
+export const subjectSurvivesEmpty = (heldScopes, subjectName) =>
+  holdsSubject(heldScopes, subjectName);
+
 export const portalGradeIdxs = (grades, scope) => {
   const list = grades || [];
   const all = list.map((_, gi) => gi);
@@ -199,27 +222,43 @@ export const portalGradeIdxs = (grades, scope) => {
 export function resolvePortalPick(subjects, goal, scope = null, chosenSubject = null) {
   const subs = subjects || [];
   if (!subs.length) return null;
+  /* An unrecognised goal is answered before anything is asked — reordering this below the
+     subject question would put a pick screen in front of a row that leads nowhere. */
+  if (goal !== "class" && !PER_CLASS_GOALS.includes(goal)) return null;
   const recOf = (name) => subs.find((s) => s && s.name === name) || null;
 
-  if (goal === "class") {
-    const name = chosenSubject || (subs.length === 1 ? subs[0].name : null);
-    if (!name) return { ask: "subject" };
-    const rec = recOf(name);
-    const g = ((rec && rec.grades) || [])[0];
-    return { open: { subject: name, grade: g ? g.grade : undefined } };
-  }
-
-  if (!PER_CLASS_GOALS.includes(goal)) return null;
-
-  const name = chosenSubject || (subs.length === 1 ? subs[0].name : null);
+  /* ★ A SCOPED VISIT NAMES THE SUBJECT UP FRONT (founder, 2026-09-17: the check window "must
+     only select for the subject & stage in question and not for all"). The added-a-subject
+     window is ABOUT one subject·stage, so asking "in which subject?" over her whole profile is
+     asking a question she has already answered — and answering it wrongly puts her in a
+     subject the window was never about. The web has routed past that screen on a scope since
+     2026-08-27 (`sSi >= 0` in TeachingProfile's intent effect); this rule was lifted from the
+     PHONE, which never had that half, so the two had diverged in the one direction nobody
+     looks: the web was right and the shared rule was not.
+     ⚠️ RESOLVED AGAINST HER SUBJECTS, never trusted — a scope naming something she has since
+     removed falls back to the ordinary pick screens rather than opening on nothing.
+     ⚠️ `chosenSubject` still wins: she cannot reach the subject screen on a scoped visit, but
+     if she ever does, her own answer outranks the window's. */
+  const named = scope && scope.subject && recOf(scope.subject) ? scope.subject : null;
+  const name = chosenSubject || named || (subs.length === 1 ? subs[0].name : null);
   if (!name) return { ask: "subject" };
-  const rec = recOf(name);
-  const grades = (rec && rec.grades) || [];
+
+  const grades = ((recOf(name) || {}).grades) || [];
   /* The scope narrows only the subject it names. A stage scope from an added-subject window must
      reach the class list — a teacher who has just bought Science·Secondary is asked about 9 and
      10, never about the 6, 7, 8 she settled months ago. */
   const sc = scope && scope.subject === name ? scope : null;
   const idxs = portalGradeIdxs(grades, sc);
+
+  if (goal === "class") {
+    /* The class row never asks WHICH class — but the record it seeds must come from the stage
+       the window is about, or a teacher who bought Science·Secondary opens the manage wheel
+       seeded with the Class 6 she settled months ago. `idxs[0]` is `grades[0]` when there is no
+       scope, which is exactly what this returned before. */
+    const g = grades[idxs[0]];
+    return { open: { subject: name, grade: g ? g.grade : undefined } };
+  }
+
   if (idxs.length === 1) return { open: { subject: name, grade: grades[idxs[0]].grade } };
   return { ask: "class", subject: name };
 }

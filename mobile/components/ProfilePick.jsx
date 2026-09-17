@@ -124,7 +124,12 @@ export default function ProfilePick({ goal, subject = null, subjects = [], scope
 
       {asking === "class" && idxs.length === 0 ? (
         <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
-          {subject} has no classes in your profile any more.
+          {/* ★ IT NAMES THE WAY BACK (2026-09-17). It used to state the dead end and stop — true,
+              and no use to a teacher standing in it. Since a subject she owns now SURVIVES losing
+              its last class, this screen is reachable by design rather than by accident, and the
+              row that fixes it is one tap away in the window she came from. */}
+          {subject} has no classes in your profile. Add one under Class — your lessons are kept
+          either way.
         </Text>
       ) : null}
     </View>

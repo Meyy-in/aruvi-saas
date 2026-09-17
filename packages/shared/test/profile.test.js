@@ -13,8 +13,9 @@ import { setStorage } from "../src/storage.js";
 import {
   SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections, secSummary,
   gradeDraftFrom, finalizeSubject, portalGradeIdxs, setGradeNumbers,
-  resolvePortalPick, goalWord, PER_CLASS_GOALS,
+  resolvePortalPick, goalWord, PER_CLASS_GOALS, subjectSurvivesEmpty,
 } from "../src/profile.js";
+import { heldScopesOf, holdsSubject, heldStagesFor, heldClassesFor } from "../src/format.js";
 import { rekeyBudget } from "../src/budget.js";
 import { readinessFingerprint } from "../src/verify.js";
 
@@ -213,10 +214,39 @@ test("★ resolvePortalPick: a scope naming ANOTHER subject does not narrow this
 
 test("resolvePortalPick: the CLASS row resolves a subject and never asks which class", () => {
   assert.deepEqual(resolvePortalPick(PICK_SUBS, "class"), { ask: "subject" });
-  // Chosen: straight to the manage-classes wheel for the whole set, whatever the scope says.
+  /* Straight to the manage-classes wheel for the whole set — but SEEDED FROM THE SCOPED STAGE
+     (2026-09-17). It used to hand back Science's first class, VI, for a window about
+     Science·Secondary: the settled middle class she was not being asked about. */
   assert.deepEqual(
     resolvePortalPick(PICK_SUBS, "class", { subject: "Science", grade: "IX" }, "Science"),
-    { open: { subject: "Science", grade: "VI" } });
+    { open: { subject: "Science", grade: "IX" } });
+});
+
+/* ★ THE SCOPE NAMES THE SUBJECT, AND THESE ARE THE LIVE CALLS (founder, 2026-09-17: the check
+   window "must only select for the subject & stage in question and not for all"). Every scoped
+   test above passes `chosenSubject` as well — which is what hid this: on a real added-subject
+   window she has answered NOTHING, so `chosenSubject` is null and the subject screen was shown
+   over her whole profile for a window about one subject·stage. */
+test("★ resolvePortalPick: a scope alone skips the subject question", () => {
+  // Science·Secondary just added; IX is her only secondary class, so nothing is left to ask.
+  assert.deepEqual(resolvePortalPick(PICK_SUBS, "section", { subject: "Science", grade: "IX" }),
+    { open: { subject: "Science", grade: "IX" } });
+  // The CLASS row too, on a teacher with two subjects and no answer given.
+  assert.deepEqual(resolvePortalPick(PICK_SUBS, "class", { subject: "English", grade: "III" }),
+    { open: { subject: "English", grade: "III" } });
+});
+
+test("★ resolvePortalPick: a scope skips the subject and still asks which class", () => {
+  // Science·Middle: VI and VII are both in play, so the class question is real — but the
+  // SUBJECT one is not, and the settled IX is never offered.
+  assert.deepEqual(resolvePortalPick(PICK_SUBS, "ppw", { subject: "Science", grade: "VI" }),
+    { ask: "class", subject: "Science" });
+});
+
+test("resolvePortalPick: a scope naming a subject she no longer teaches falls back", () => {
+  // Resolved against her subjects, never trusted — the web's rule since 2026-08-27.
+  assert.deepEqual(resolvePortalPick(PICK_SUBS, "section", { subject: "Mathematics", grade: "V" }),
+    { ask: "subject" });
 });
 
 test("resolvePortalPick: nothing to act on returns null, never a blank screen", () => {
@@ -224,6 +254,57 @@ test("resolvePortalPick: nothing to act on returns null, never a blank screen", 
   assert.equal(resolvePortalPick(null, "section"), null);
   assert.equal(resolvePortalPick(PICK_SUBS, "subject"), null, "no window has a Subject row");
   assert.equal(resolvePortalPick(PICK_SUBS, "nonsense"), null);
+});
+
+/* ───── what she HOLDS, and what survives an emptying (founder, 2026-09-17) ─────
+   "when a subscribed subject is deleted by removing all classes, the lessons in my lessons and
+   the subject option in add button goes too. both should remain." */
+
+test("★ heldScopesOf reads ownership, not the enforcement flag", () => {
+  /* The whole point: `paidScopesOf` returns null — no limit — while enforcement is off, which
+     is every teacher on Render today. Ownership still has an answer. */
+  const e = { status: "active", enforced: false,
+              live_scopes: ["mathematics/preparatory", "science/middle"] };
+  assert.deepEqual(heldScopesOf(e), ["mathematics/preparatory", "science/middle"]);
+  assert.equal(holdsSubject(heldScopesOf(e), "Mathematics"), true);
+  assert.equal(holdsSubject(heldScopesOf(e), "English"), false);
+});
+
+test("★ a TRIAL holds nothing — its \"*\" is a licence to look, not a purchase", () => {
+  assert.deepEqual(heldScopesOf({ status: "trial", scopes: ["*"], live_scopes: ["*"] }), []);
+  assert.deepEqual(heldScopesOf(null), []);
+  // And "*" is stripped even off a non-trial grant: it names no subject to keep.
+  assert.deepEqual(heldScopesOf({ status: "active", live_scopes: ["*"] }), []);
+});
+
+test("heldScopesOf prefers live_scopes and falls back for an older API", () => {
+  assert.deepEqual(heldScopesOf({ status: "active", scopes: ["a/middle", "b/middle"],
+                                  live_scopes: ["a/middle"] }), ["a/middle"],
+    "an expired scope is not held");
+  assert.deepEqual(heldScopesOf({ status: "active", scopes: ["a/middle"] }), ["a/middle"]);
+});
+
+test("★ subjectSurvivesEmpty: a subject she OWNS outlives its last class", () => {
+  const held = ["science/middle", "science/secondary"];
+  assert.equal(subjectSurvivesEmpty(held, "Science"), true,
+    "she bought it — it stays, with no classes, until the subscription ends");
+  assert.equal(subjectSurvivesEmpty(held, "Social Sciences"), false,
+    "a subject she does not own cascades away as it always did");
+  assert.equal(subjectSurvivesEmpty([], "Science"), false,
+    "an unreachable entitlement holds nothing — the old cascade stands, which is the safe way");
+});
+
+test("heldStagesFor / heldClassesFor: the classes My Lessons may still offer her", () => {
+  const held = ["science/secondary", "mathematics/preparatory"];
+  assert.deepEqual(heldStagesFor(held, "Science"), ["secondary"]);
+  /* Her held stage, intersected with what Meyy has content for — so this can never offer a
+     class that would open on an empty shelf. */
+  assert.deepEqual(heldClassesFor(held, "Science", ["vi", "vii", "viii", "ix"]), ["IX"],
+    "the settled middle classes are not hers to be offered here");
+  assert.deepEqual(heldClassesFor(held, "Mathematics", ["iii", "iv", "v", "vi"]),
+    ["III", "IV", "V"]);
+  assert.deepEqual(heldClassesFor(held, "English", ["iii", "iv"]), [],
+    "a subject she holds no stage of offers nothing");
 });
 
 test("goalWord: the teacher's own words, one copy for both surfaces", () => {

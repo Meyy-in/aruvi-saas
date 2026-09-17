@@ -66,11 +66,12 @@ import { View, Pressable, TextInput, ScrollView, ActivityIndicator } from "react
 import { Text } from "./Text";
 import {
   ROMAN, allowedStagesFor, classNum, fetchEntitlement, fetchSupportedGrades, getJSON,
-  paidScopesOf, ppwFromAnnual, pretty, stageOfGrade, subjectSlug, weeksFromAnnual,
+  heldScopesOf, paidScopesOf, ppwFromAnnual, pretty, stageOfGrade, subjectSlug, weeksFromAnnual,
 } from "@aruvi/shared/format";
 import { normalizeBudget, setGradeBudget, gradeBudgetRecord, clampPeriods } from "@aruvi/shared/budget";
 import {
   gradeDraftFrom, setGradeNumbers, secLetter, secObj, secSummary, namesFromSections,
+  subjectSurvivesEmpty,
 } from "@aruvi/shared/profile";
 import { clearSectionState } from "@aruvi/shared/sectionState";
 import {
@@ -117,8 +118,8 @@ export function primeSubjectCatalogue() {
   return CATALOGUE_IN;
 }
 
-export default function ProfileEditor({ intent = "budget", subject = "", grade = "", onChrome,
-                                       hasBack = false }) {
+export default function ProfileEditor({ intent = "budget", subject = "", grade = "", scope = null,
+                                       onChrome, hasBack = false }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const router = useRouter();
@@ -188,6 +189,11 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   /* What her subscription covers, as subject-stage scopes. `null` is NO LIMIT — trial, unpaid,
      a "*" grant, or enforcement off — never "nothing allowed". */
   const [paidScopes, setPaidScopes] = useState(() => entitlementState().paidScopes);
+  /* ★ AND WHAT SHE HOLDS, WHICH IS NOT THE SAME QUESTION (2026-09-17). `paidScopes` is a
+     display filter and is null — no limit — while enforcement is off, i.e. for every teacher
+     in the beta. Whether she has BOUGHT a subject still has an answer then, and one thing turns
+     on it: a subject she owns survives losing its last class. See @aruvi/shared/format. */
+  const [heldScopes, setHeldScopes] = useState(() => heldScopesOf(entitlementState().ent));
   /* ★ `paidScopes === null` MEANS TWO THINGS, AND THAT AMBIGUITY IS A BUG ON ITS OWN (founder,
      2026-09-16, on the handset: "when pressing add a subject, it pops up 'what else you teach'
      momentarily"). It means NO LIMIT — trial, a "*" grant, an unreachable server — and it also
@@ -321,7 +327,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
     if (step !== "subject") return;
     let live = true;
     fetchEntitlement()
-      .then((e) => { if (live) setPaidScopes(paidScopesOf(e)); })
+      .then((e) => { if (live) { setPaidScopes(paidScopesOf(e)); setHeldScopes(heldScopesOf(e)); } })
       /* An unreachable server resolves to "no limit" — a school network must never narrow her own
          subjects away — but it must RESOLVE, or the screen waits for ever. */
       .finally(() => { if (live) setScopesLoaded(true); });
@@ -342,7 +348,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
        Unreachable server → null → no limit, deliberately: a school network must never narrow
        her own classes away. */
     fetchEntitlement()
-      .then((e) => { if (live) setPaidScopes(paidScopesOf(e)); })
+      .then((e) => { if (live) { setPaidScopes(paidScopesOf(e)); setHeldScopes(heldScopesOf(e)); } })
       .finally(() => { if (live) setScopesLoaded(true); });
     return () => { live = false; };
   }, [step, subject]);
@@ -363,9 +369,23 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      sits in is no longer paid for — otherwise a class she teaches would quietly vanish from a
      screen whose job is to show what she teaches, and its absence would read to the save as an
      unticking. `|| haveGrades.includes(g)` is that guarantee, and it is the web's own. */
+  /* ★ AND A SCOPED VISIT SHOWS ONLY THE PURCHASED STAGE’S CLASSES (founder, 2026-08-27, on the
+     web: "only classes relevant to the stage purchased should show — the previously existing
+     stage classes are a settled matter"; re-reported on the phone 2026-09-17, where this filter
+     had never been ported). A Science·Middle teacher who buys Science·Secondary is asked about
+     9 and 10, not about the 6/7/8 she settled long ago.
+     ⚠️ SAFE because `pickedGrades` is seeded from EVERY enrolled class, including the ones this
+     hides, and the save reads removals off `pickedGrades` rather than off the visible list — so
+     a hidden class can never be read as an unticking. Do not invert those two.
+     ⚠️ No `haveGrades` escape here, unlike the entitlement filter above: hiding a settled
+     stage is the POINT of this one. Removing a settled class is still possible through the "+"
+     window, which carries no scope. This is the web’s `portalStage`, line for line. */
+  const portalStage = (scope && scope.grade && scope.subject === subject)
+    ? stageOfGrade(scope.grade) : null;
   const classOptions = (gradeOptions || [])
     .concat(haveGrades.filter((g) => !(gradeOptions || []).includes(g)))
     .filter((g) => !allowedStages || allowedStages.has(stageOfGrade(g)) || haveGrades.includes(g))
+    .filter((g) => !portalStage || stageOfGrade(g) === portalStage)
     .sort((a, b) => ROMAN.indexOf(a.toLowerCase()) - ROMAN.indexOf(b.toLowerCase()));
 
   /* ★ THE SAME TWO LISTS AS THE CLASS WHEEL, one level up: what Meyy HAS, and what she is
@@ -457,8 +477,17 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
           budget,
           grids: gridsOf(grades),
         }))
-      /* ★ HER LAST CLASS TAKEN AWAY TAKES THE SUBJECT WITH IT — which is why the confirm says so
-         in words before she presses it. A subject with no classes is not a subject she teaches. */
+      /* ★ HER LAST CLASS NO LONGER TAKES A SUBJECT SHE OWNS (founder, 2026-09-17: "when a
+         subscribed subject is deleted by removing all classes, the lessons in my lessons and the
+         subject option in add button goes too. both should remain"). It always did — "a subject
+         with no classes is not a subject she teaches" — and for a SUBSCRIBER that is simply not
+         true: she bought the subject·stage, and the record leaving took her prepared lessons out
+         of My Lessons and the subject out of the "+" window’s own subject question with it. A
+         subject she HOLDS now stays as an empty record until the subscription ends; anything else
+         goes exactly as before, and the confirm says which in words. */
+      : subjectSurvivesEmpty(heldScopes, subject)
+      ? subjects.map((sub) => (sub.name !== subject ? sub
+          : { ...sub, grades: [], budget: {}, grids: [] }))
       : subjects.filter((x) => x.name !== subject));
 
     setClassConfirm(null);
@@ -922,7 +951,9 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
           <Sheet visible confirm onClose={() => setClassConfirm(null)}
             kicker={pretty(subject)}
             title={`Remove ${names} from ${pretty(subject)}?`}
-            sub={`${tags} — their cards and bookmarks — will be removed.${allGone ? ` No class is left — ${pretty(subject)} goes with it.` : ""} Your lessons stay in the library.`}>
+            sub={`${tags} — their cards and bookmarks — will be removed.${allGone ? (subjectSurvivesEmpty(heldScopes, subject)
+              ? ` No class is left — ${pretty(subject)} itself stays, with no classes, for as long as you subscribe to it.`
+              : ` No class is left — ${pretty(subject)} goes with it.`) : ""} Your lessons stay in the library.`}>
             <View style={ws.ap_actions}>
               {/* "Keep them" re-ticks what she was about to remove, rather than abandoning the
                   whole edit — the same rule the subjects confirm follows (founder, 2026-08-24). */}

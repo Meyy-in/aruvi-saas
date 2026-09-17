@@ -444,6 +444,43 @@ export function subsFromEntitlement(e) {
   }).sort((a, b) => (b.until || "").localeCompare(a.until || "") || a.i - b.i);
 }
 
+/* ───── what she HOLDS, as against what she may be OFFERED (founder, 2026-09-17) ─────
+ *
+ * `paidScopesOf` above answers "which scopes should narrow what this teacher is SHOWN", and it
+ * returns null — NO LIMIT — whenever enforcement is off, which is every teacher on Render
+ * today. That is the right answer for a filter and the wrong one for a question about her
+ * RECORD. "Has she bought Mathematics?" has an answer whether or not the gate is switched on,
+ * and asking the filter would come back "no limit", which is not an answer at all.
+ * ★ A TRIAL HOLDS NOTHING. Its "*" is a licence to look at everything for three chapters, not a
+ * purchase, and reading it as ownership would make every trial subject permanent.
+ * ⚠️ LIVE scopes, like everything else here — the server derives them and the client compares no
+ * dates. `e.scopes` is the fallback for an older API, and on that path an expired scope can
+ * still be counted; that is the same trade every other reader of this field makes. */
+export function heldScopesOf(e) {
+  if (!e || e.status === "trial") return [];
+  const live = Array.isArray(e.live_scopes) ? e.live_scopes : (e.scopes || []);
+  return live.filter((s) => s && s !== "*");
+}
+/* Does she hold ANY stage of this subject? */
+export const holdsSubject = (heldScopes, subjectName) =>
+  (heldScopes || []).some((s) => String(s).split("/")[0] === subjectSlug(subjectName));
+/* The stages of ONE subject she holds, as stage slugs. */
+export const heldStagesFor = (heldScopes, subjectName) => {
+  const slug = subjectSlug(subjectName);
+  return [...new Set((heldScopes || [])
+    .filter((s) => String(s).split("/")[0] === slug)
+    .map((s) => String(s).split("/")[1]).filter(Boolean))];
+};
+/* The classes she holds for one subject — her held stages, intersected with the classes Meyy
+   actually has content for (`fetchSupportedGrades`), so this can never offer a class that would
+   open on an empty shelf. Uppercase Roman, in the catalogue's own order. */
+export const heldClassesFor = (heldScopes, subjectName, supportedGrades) => {
+  const stages = new Set(heldStagesFor(heldScopes, subjectName));
+  if (!stages.size) return [];
+  return (supportedGrades || []).map((g) => String(g).toUpperCase())
+    .filter((g) => stages.has(stageOfGrade(g)));
+};
+
 /* The stages she may be offered classes in, for ONE subject. null = no limit. */
 export function allowedStagesFor(paidScopes, subjectName) {
   if (!Array.isArray(paidScopes) || paidScopes.includes("*")) return null;

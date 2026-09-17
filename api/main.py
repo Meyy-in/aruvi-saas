@@ -2479,7 +2479,8 @@ def _default_grade_record(subject_slug: str, grade_slug: str) -> Dict[str, Any]:
 
 
 def _apply_subscription_profile(tenant_id: str, user_id: str,
-                                scopes: List[str]) -> None:
+                                scopes: List[str],
+                                buying: Optional[List[str]] = None) -> None:
     """★ SUBSCRIPTION CREATES THE DEFAULT PROFILE (founder, 2026-08-25). Every
     purchased scope lands as a profile entry immediately — the founder bought SS +
     English and found only SS in My Lessons' dropdown, because first run creates one
@@ -2496,8 +2497,21 @@ def _apply_subscription_profile(tenant_id: str, user_id: str,
         subject she had prepared plans in was reversed the same evening (2026-08-26)
         — see the block below and _purge_trial_artifacts.
     The tour-end "Are these your sections?" prompt is the designed amend moment, so
-    defaults are safe. Full-replace save through the same repo the API uses."""
+    defaults are safe. Full-replace save through the same repo the API uses.
+
+    ★ ONLY THIS PURCHASE SEEDS A CLASS (2026-09-17). `scopes` is the FULL held list — it has
+    to be, or a second checkout would drop the subjects she bought first — but seeding off it
+    meant buying subject C could quietly put a default class back into A and B. `buying` is
+    THIS cart; absent, it falls back to `scopes`, which is the old behaviour.
+
+    ★ AND A SUBJECT SHE EMPTIED ON PURPOSE STAYS EMPTY (founder, same day). Since a paid
+    subject now survives losing its last class (@aruvi/shared/profile `subjectSurvivesEmpty`),
+    `{name, grades: []}` is a real state a teacher can put her profile in — and this function
+    would have read it as "no class in the purchased stage" and handed her back a Class 6
+    Section A on her next checkout, on a path where nobody is looking at the profile. An
+    emptied subject is KEPT (it is hers) and left alone."""
     slugify = lambda name: (name or "").lower().replace(" ", "_")
+    buying_set = {s.strip() for s in (scopes if buying is None else buying) if s and s.strip()}
     by_subj: Dict[str, List[str]] = {}
     for sc in scopes:
         subj, stage = (sc.split("/") + [""])[:2]
@@ -2512,16 +2526,25 @@ def _apply_subscription_profile(tenant_id: str, user_id: str,
         offered = data.list_grades(subj)                     # content's grade slugs
         allowed = [g for st in stages for g in _STAGE_GRADES.get(st, []) if g in offered]
         prior = existing_by_slug.get(subj)
+        # She has a record for this subject and has taken every class out of it: her own act,
+        # and the profile's way of saying "I own this, I am not teaching it this term".
+        emptied = prior is not None and not (prior.get("grades") or [])
         grades: List[Dict[str, Any]] = []
         if prior:
             grades = [g for g in (prior.get("grades") or [])
                       if (g.get("grade") or "").lower() in allowed]
-        for st in stages:
-            stage_grades = [g for g in _STAGE_GRADES.get(st, []) if g in offered]
-            if stage_grades and not any((g.get("grade") or "").lower() in stage_grades
-                                        for g in grades):
-                grades.append(_default_grade_record(subj, stage_grades[0]))
-        if not grades:
+        if not emptied:
+            for st in stages:
+                if f"{subj}/{st}" not in buying_set:
+                    continue          # a scope she already held is not a reason to seed
+                stage_grades = [g for g in _STAGE_GRADES.get(st, []) if g in offered]
+                if stage_grades and not any((g.get("grade") or "").lower() in stage_grades
+                                            for g in grades):
+                    grades.append(_default_grade_record(subj, stage_grades[0]))
+        # No classes AND no prior record means there is nothing to carry and nothing was
+        # bought into it — skip. An emptied record she owns is kept, classes and all zero of
+        # them, because dropping it here is the very loss this whole change is about.
+        if not grades and prior is None:
             continue
         budget: Dict[str, Any] = {}
         for gi, g in enumerate(grades):
@@ -2880,7 +2903,9 @@ def onboarding_checkout(req: CheckoutRequest,
     # given the FULL held list, not just this cart — passing the cart alone would drop
     # the subjects she bought last time, the profile-side twin of the overwrite bug.
     try:
-        _apply_subscription_profile(tenant_id, user_id, held)
+        # `held` is everything she owns (so nothing bought earlier is dropped); `scopes` is
+        # THIS cart, and only a scope in it may seed a default class.
+        _apply_subscription_profile(tenant_id, user_id, held, buying=scopes)
     except Exception:
         pass   # a profile hiccup must never fail an activation
     # ★ FIRST purchase only: clear what the trial left in subjects she did not buy
