@@ -366,27 +366,33 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStep, tourIdx]);
 
-  /* Declared ABOVE the effect that uses it. A const initialised further down the component body
-     is fine inside an effect callback, but this file has been bitten by that shape before
-     (ed8fc93d) and the rule here is: no reader above its declaration, effect or not. */
-  const tourBoundRef = useRef(false);
+  /* ★ BORROW AND GIVE BACK — which is NOT "only undo what the tour attached", and the difference
+     cost a whole walk (founder, 2026-09-17: cards 4, 5, 8 and 9 broken on BOTH surfaces, and
+     *"the lesson card shows lesson already attached! and that is why archive box does not show"*).
+     ⚠️ THE DEMO REQUIRES AN UNBOUND SECTION FOR STEPS 1-9: the archive control hides on an
+     attached plan (step 5), the section card draws its "+" only when nothing is bound (step 8),
+     and the picker lists a chapter only when it is not the bound one (step 9). First run ATTACHES
+     what it generates, so the tour's own audience always arrives bound — which made a guard that
+     "never touches an existing binding" a guard that breaks four steps out of twenty.
+     ⚠️ AND THE ORIGINAL HARM WAS REAL: Skip at step 5 used to leave her section stripped. So the
+     tour BORROWS — what was bound when it started is remembered, 1-9 unbind, 10 binds the demo
+     plan, and if the tour ENDS with the section empty what was there goes back. Declared here,
+     above its readers: this file has been bitten by a late const before (ed8fc93d). */
+  const demoRef = useRef({ section: null, pre: null });
   useEffect(() => {
     if (tourStep == null || !tourTarget) return;
     const { c, sectionKey, plan } = tourTarget;
     const bound = currentChapterFile(sectionKey);
+    /* Captured on the first tick this section is the target — never again for the same section,
+       or the capture would re-read a binding the demo has already taken away. */
+    if (demoRef.current.section !== sectionKey) {
+      demoRef.current = { section: sectionKey, pre: bound || null };
+    }
     if (tourStep >= 10 && bound !== plan.filename) {
       bindSectionChapter(sectionKey, plan.filename);   // the real attach (step 9 → 10)
-      tourBoundRef.current = true;
       setSyncTick((t) => t + 1);
-    } else if (tourStep <= 9 && bound && tourBoundRef.current) {
-      /* ⚠️ ONLY WHAT THE TOUR ITSELF ATTACHED (founder, 2026-09-17: running the tour a second
-         time *"seems to remove the attached lesson — going back to where we began"*). Without
-         the ref this undoes any binding the teacher already had, because every step from 1 to 9
-         satisfies `<= 9`: re-entering the tour with a section legitimately tracking a chapter
-         stripped it on step 1. Back from 10 → 9 still undoes the demo's own attach, which is
-         what makes the demo repeatable. */
-      unbindSection(sectionKey);
-      tourBoundRef.current = false;
+    } else if (tourStep <= 9 && bound) {
+      unbindSection(sectionKey);                        // the demo needs an empty section
       setSyncTick((t) => t + 1);
     }
     // Steps 11–13: the tracking lesson view is open (11 tracking · 12 the bookmark ·
@@ -440,9 +446,16 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   useEffect(() => {
     if (prevTourRef.current != null && tourStep == null) {
       setOpenPlan(null); setAttachFor(null);
-      /* A finished tour LEAVES the chapter attached — that is the thing it just taught her to do
-         — so the next run starts owing nothing. */
-      tourBoundRef.current = false;
+      /* Give back what the demo borrowed, and ONLY if the demo left the section empty: a tour
+         walked to the end finishes bound to the demo plan, which is the thing it just taught her
+         to do, and must not be undone. A tour skipped at step 5 finishes empty, and that is the
+         one that owes her a section back. */
+      const { section, pre } = demoRef.current;
+      if (section && pre && !currentChapterFile(section)) {
+        bindSectionChapter(section, pre);
+        setSyncTick((t) => t + 1);
+      }
+      demoRef.current = { section: null, pre: null };
     }
     prevTourRef.current = tourStep;
   }, [tourStep]);

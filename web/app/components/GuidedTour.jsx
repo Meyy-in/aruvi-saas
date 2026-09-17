@@ -109,9 +109,12 @@ const STEPS = [
   { anchor: "mark-complete", place: "above", hand: true,
     title: "Track progress.",
     body: (i) => `Track chapter progress of “${i.chapter}” with section ${i.tag} unit by unit. Upon completion of a unit, click this button to mark it complete.` },
-  // Box lifted off the bottom edge of the phone screen (lift = 10% of the viewport height) —
-  // high enough to clear mobile browser bars, low enough to keep the SECOND section card visible.
-  { anchor: "section-add", place: "over", lift: 0.1, hand: true,
+  /* ★ BELOW THE CARD (founder, 2026-09-17: "card 14 in both web app and expo should be placed
+     just below the section card"). It was `place: "over"` with a 10%-of-viewport lift, described
+     here as "high enough to clear mobile browser bars, low enough to keep the SECOND section card
+     visible" — a compromise that put the tip nowhere near the "+" it is talking about. Changed on
+     BOTH surfaces in the same commit; the step table is one table. */
+  { anchor: "section-add", place: "below", hand: true,
     title: "You have completed the chapter and are now ready for the next.",
     body: () => <>Once all units of the chapter are marked complete by you, you are ready to teach another chapter. All you need is to click <Plus />.</> },
   { anchor: "attach-pop", place: "over",

@@ -158,11 +158,23 @@ export default function AppLayout() {
      not the port. */
   const openTourLesson = (opts) => {
     const tg = tour.target;
-    if (!tg) return;
+    /* ⚠️ NO TARGET, NO LESSON — and silently, which is why step 7 could be reported twice as
+       "same error" with nothing to go on. The target is published by My Classes, the only screen
+       that knows which section and which plan; if its listing had not loaded while she was on
+       steps 1-2 it never published, and by step 6 that screen is unmounted. Says so now, so the
+       next walk distinguishes "the move never fired" from "the move fired and the anchor missed". */
+    if (!tg) { console.warn("[meyy] tour: no target published — step", tour.step, "cannot open a lesson"); return; }
     const preview = !!(opts && opts.preview);
     router.navigate({ pathname: "/lesson", params: {
       subject: tg.subjectSlug, grade: tg.gradeSlug, filename: tg.filename,
-      ...(preview ? {} : { section: tg.sectionKey }), tour: "1" } });
+      /* ⚠️ THE TAG, NOT THE KEY. `lesson.jsx` builds the section key itself
+         (`${subject}_${grade}_${section}`), so passing the already-built key made
+         `science_ix_science_ix_9A` — a key that matches no stored section. The screen still
+         counted as "tracking", so it claimed `lesson-root` and looked right, while every read
+         behind it (the unit pointer, the bookmark, chapter-done) answered from nothing and every
+         write went somewhere that will never be read again. My Classes' own `openAttached` has
+         always passed `c.sectionTag`; this was the one caller that did not. */
+      ...(preview ? {} : { section: tg.tag }), tour: "1" } });
   };
 
   const tourNext = () => {
@@ -487,7 +499,19 @@ export default function AppLayout() {
                 if (r.open) openEdit({ intent: kind, ...r.open });
                 else openPick({ goal: kind, subject: r.ask === "class" ? r.subject : null });
               }}
-              onOpenProfile={() => { /* the full accordion arrives with Settings, step 6 */ }} />
+              /* ★ IT GOES TO THE PROFILE (founder, 2026-09-17, at the end of the tour: the link
+                 *"does not take us to the full profile"*). This was an EMPTY handler whose note
+                 said "the full accordion arrives with Settings, step 6" — and Settings arrived in
+                 6b. Second time today a placeholder outlived its reason and went on being obeyed:
+                 the login header kept the Subscribe card off a screen that already existed, and
+                 this kept a link inert next to the screen it names. **A note that states a
+                 dependency must name the thing that lifts it, and be deleted the day it lands.**
+                 ⚠️ CLOSING FIRST IS A PHONE-ONLY DIVERGENCE, and a technical limitation (§0): the
+                 web's `openFullProfile` leaves the window standing because its profile replaces
+                 the view beneath it, and its own note says closing is "her explicit act". Here
+                 the window is a `Modal`, which floats above every route — navigate under it and
+                 she gets the profile she cannot see. Same destination, one extra act. */
+              onOpenProfile={() => { setPortalWin(null); router.navigate("/settings/profile"); }} />
           )}
         </Sheet>
       ) : null}

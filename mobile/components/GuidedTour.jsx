@@ -75,7 +75,12 @@ export const STEPS = [
   /* ⚠️ Step 14's body carries an inline "+" GLYPH on the web (`.gt-plus`, a 19px circled plus
      mimicking the section card's own control), not the characters "[+]". It is rendered as a
      real node below rather than substituted into the string. */
-  { n: 14, anchor: "section-add", place: "over", lift: 0.1, hand: true, plusBody: true,
+  /* ★ BELOW THE CARD, not lifted off the bottom edge (founder, 2026-09-17: *"card 14 in both web
+     app and expo should be placed just below the section card"*). It was `place: "over"` with a
+     10%-of-viewport lift — a compromise from the days when this step had no reliable anchor to
+     sit under, and one that put the tip nowhere near the "+" it is talking about. Changed on BOTH
+     surfaces in the same commit; the step table is one table. */
+  { n: 14, anchor: "section-add", place: "below", hand: true, plusBody: true,
     title: "You have completed the chapter and are now ready for the next.",
     body: "Once all units of the chapter are marked complete by you, you are ready to teach another chapter. All you need is to click " },
   { n: 15, anchor: "attach-pop", place: "over",

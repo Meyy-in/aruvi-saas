@@ -522,24 +522,47 @@ export default function Home() {
     });
   }, [tourTarget]);
 
-  /* ⚠️ ONLY WHAT THE TOUR ITSELF ATTACHED (founder, 2026-09-17: running the tour again *"seems to
-     remove the attached lesson — going back to where we began"*). Every step from 1 to 9
-     satisfies `<= 9`, so without this ref re-entering the tour stripped a binding the teacher
-     already had, on step 1, before she had read a word. Back from 10 → 9 still undoes the demo's
-     own attach, which is what makes the demo repeatable. A finished tour LEAVES the chapter
-     attached — that is the thing it just taught her to do. */
-  const tourBoundRef = useRef(false);
-  useEffect(() => { if (!tourNow.step) tourBoundRef.current = false; }, [tourNow.step]);
+  /* ★ BORROW AND GIVE BACK — which is NOT the same as "only undo what the tour attached", and the
+     difference cost a whole walk (founder, 2026-09-17: cards 4, 5, 8 and 9 all broken, and
+     *"the lesson card shows lesson already attached! and that is why archive box does not show"*).
+     ⚠️ THE DEMO REQUIRES AN UNBOUND SECTION FOR STEPS 1-9, and that is not a nicety: the archive
+     icon hides on an attached plan (step 5), the section card draws its "+" only when nothing is
+     bound (step 8), and the picker lists a chapter only when it is not the bound one (step 9).
+     First run ATTACHES the lesson it generates, so the tour's own audience always arrives with
+     the section bound — which made a guard that "never touches an existing binding" a guard that
+     breaks four steps out of twenty, on both surfaces.
+     ⚠️ AND THE ORIGINAL HARM WAS REAL TOO: Skip at step 5 used to leave her section stripped.
+     So the tour BORROWS. What was bound when it started is remembered; steps 1-9 unbind; step 10
+     binds the demo plan; and if the tour ENDS with the section empty — Skip, or Back out of step
+     1 — what was there goes back. A completed tour ends bound to the demo plan, which for a new
+     teacher IS what she had, so nothing is restored and nothing is lost either way. */
+  const demoRef = useRef({ section: null, pre: null });
+  const tourWasRunning = useRef(false);
+  useEffect(() => {
+    const running = !!tourNow.step;
+    /* Captured on the first tick this section is the target — never again for the same section,
+       or the capture would re-read a binding the demo has already taken away. */
+    if (running && tourTarget && demoRef.current.section !== tourTarget.sectionKey) {
+      demoRef.current = { section: tourTarget.sectionKey,
+                          pre: readLocalSection(tourTarget.sectionKey).chapter || null };
+    }
+    if (!running && tourWasRunning.current) {
+      const { section, pre } = demoRef.current;
+      if (section && pre && !readLocalSection(section).chapter) {
+        bindSectionChapter(section, pre); bump();
+      }
+      demoRef.current = { section: null, pre: null };
+    }
+    tourWasRunning.current = running;
+  }, [tourNow.step, tourTarget]);   // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const n = tourNow.step;
     if (!n || !tourTarget) return;
     const { sectionKey, plan } = tourTarget;
     const bound = readLocalSection(sectionKey).chapter;
-    if (n >= 10 && bound !== plan.filename) {
-      bindSectionChapter(sectionKey, plan.filename); tourBoundRef.current = true; bump();
-    } else if (n <= 9 && bound && tourBoundRef.current) {
-      unbindSection(sectionKey); tourBoundRef.current = false; bump();
-    }
+    if (n >= 10 && bound !== plan.filename) { bindSectionChapter(sectionKey, plan.filename); bump(); }
+    else if (n <= 9 && bound) { unbindSection(sectionKey); bump(); }
     /* The picker is open at 9 (nothing bound, so the new lesson IS in the list — the hand points
        at it) and again at 15 (the bound chapter is excluded: "pick the NEXT one"). */
     if (n === 9 || n === 15) { if (!attachFor) setAttachFor({ c: tourTarget.c, sectionKey }); }
