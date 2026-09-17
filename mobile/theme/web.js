@@ -240,6 +240,19 @@ export function webStyles(t, scheme = "light") {
     ap_modal:        { width: "100%", maxWidth: 460, borderRadius: 14, borderWidth: 1,
                        paddingTop: 22, paddingHorizontal: 22, paddingBottom: 18 },
     ap_confirm:      { maxWidth: 420 },
+    /* ── The Trial/Subscribe fork, FRONT DOOR only (.ob-offer-*, globals.css 4217-4232) ──
+       ⚠️ `.ob-offer-actions` goes COLUMN under 480px on the web, and every phone is under 480px,
+       so the phone draws the stacked form unconditionally — that IS the web's rule at this
+       width, not a divergence from it. */
+    ob_offer_box:    { maxWidth: 380 },
+    ob_offer_title:  { fontFamily: F.display(600), fontSize: 18, lineHeight: 23.4, color: t.ink,
+                       marginBottom: 10 },
+    ob_offer_body:   { fontSize: 13.5, lineHeight: 20.93, color: t.ink, marginBottom: 10 },
+    ob_offer_note:   { fontSize: 11.5, lineHeight: 17.25, color: t.ink_soft, marginBottom: 18 },
+    ob_offer_actions:{ rowGap: 10 },
+    ob_offer_alt:    { alignItems: "center", borderWidth: 1, borderRadius: 6, borderColor: t.pine,
+                       paddingVertical: 11, paddingHorizontal: 14, backgroundColor: "transparent" },
+    ob_offer_alt_t:  { fontFamily: F.mono(400), fontSize: 12.5, letterSpacing: 0.5, color: t.pine },
     /* A window that must hold a tall edit: capped so it can never run off the screen, and its
        body scrolls inside. The web's `.ap-modal` has been `max-height: min(82vh, 100%)` since
        2026-08-27 — `maxHeight: "82%"` is the same ceiling in the units RN has, measured against

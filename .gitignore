@@ -54,3 +54,8 @@ genon/out/polish_tests/
 
 # dev launcher logs
 .devlogs/
+
+# ── Pulled production state — NEVER tracked (STORAGE_POLICY.md) ──
+# Live teacher records dumped from Supabase for disaster recovery. data/cloud/state/ is the
+# dev database and stays tracked; this is the opposite thing and must not follow it to GitHub.
+backups/

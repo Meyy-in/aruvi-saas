@@ -7,12 +7,16 @@
  * token — never the box she typed in. All of that is @aruvi/shared: sendOtp / verifyOtp /
  * authHeaders / idInUse / getJSON are the web's own functions.
  *
- * What is NOT here, by decision: the Subscribe card and SubscribeFlow. The beta runs on manual
- * grants with no purchase screen in the app (plan §0, assessment §5B), so the phone has one
- * door — Free to try — and subscription comes later behind BillingProvider. Without Supabase
- * env the stub stays (four boxes, 0000), labelled, so a header-mode dev API still works. */
+ * ★ BOTH DOORS, since 2026-09-17 (app. 03 rows 7 · 24 · 40; founder, on the handset after a
+ * delete-and-rejoin: *"only free to try shows and subscribe does not"*). The old note here said
+ * the beta ran on manual grants with "no purchase screen in the app" — that stopped being true
+ * on 2026-09-16, when Q11 shipped `SubscribeWizard`, and a stale reason is worse than none: it
+ * is what kept the card off the choose screen for a day after the screen behind it existed.
+ * `mode` is the page-1 choice, exactly as on the web, and it is read in ONE place — after the
+ * OTP verifies. Without Supabase env the stub stays (four boxes, 0000), labelled, so a
+ * header-mode dev API still works. */
 import { useEffect, useRef, useState } from "react";
-import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, StyleSheet } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, Pressable, StyleSheet } from "react-native";
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
@@ -101,6 +105,24 @@ function Wrap({ children, foot }) {
   );
 }
 
+/* One plan card on the choose screen (`.ob-plan`, and `.ob-plan-sub2` for the second). The web
+   marks the chosen one with an `on` class that lifts the border and tints the fill; the phone
+   says the same thing with the same two colours. It is a Pressable and not a View because the
+   choice is real — it decides where Verify sends her. */
+function PlanCard({ on, onPress, title, sub, points }) {
+  const { t } = useTheme();
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button"
+      accessibilityState={{ selected: on }}
+      style={[s.plan, { backgroundColor: on ? t.tint_pine : t.card_bg,
+                        borderColor: on ? t.pine : t.line }]}>
+      <Text style={[type.bodyStrong, { color: t.ink }]}>{title}</Text>
+      <Text style={[type.body, { color: t.ink, marginTop: 4 }]}>{sub}</Text>
+      <Text style={[type.small, { color: t.ink_soft, marginTop: 6 }]}>{points}</Text>
+    </Pressable>
+  );
+}
+
 export default function Login() {
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -109,6 +131,7 @@ export default function Login() {
   const otpLen = live ? OTP_LEN : 4;
   const [screen, setScreen] = useState(() => { try { return storage.getItem(SEEN_KEY) ? "signin" : "choose"; } catch { return "signin"; } });
   const [flow, setFlow] = useState("create");   // create | return
+  const [mode, setMode] = useState("trial");    // trial | subscribe — the page-1 choice
   const [mobile, setMobile] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   /* ★ THE CODE'S OWN CLOCK (founder, 2026-09-17: "there is no timer too … at end of timer, it
@@ -142,11 +165,16 @@ export default function Login() {
 
   useEffect(() => { if (screen !== "otp") { setOtp(""); setOtpErr(""); } }, [screen]);
 
-  const enter = (uid) => {
+  /* ★ `to` IS THE ONLY THING THE SUBSCRIBE DOOR CHANGES. Everything else about entering is the
+     same act whichever card she chose — the device is marked seen, the user is set, the bank is
+     primed — and the subscribe wizard needs all three, because by the time it mounts she is a
+     real authenticated account. She is not "entering later"; she is entering somewhere else
+     first. */
+  const enter = (uid, to = "/(app)") => {
     try { storage.setItem(SEEN_KEY, "1"); } catch {}
     setUser(uid);
     primeBank();   // the one moment she is certainly online — the Ask Meyy bank's offline guarantee
-    router.replace("/(app)");
+    router.replace(to);
   };
 
   const mobileOk = /^\d{10}$/.test(mobile.trim());
@@ -187,6 +215,10 @@ export default function Login() {
       if (r.ok) { const d = await r.json(); if (d && d.user_id) uid = d.user_id; }
     } catch {}
     setOtpBusy(false);
+    /* ★ THE ONE PLACE `mode` IS READ (the web's `Login.jsx:177`). Only on the CREATE path: a
+       returning teacher who signs in never saw the choose screen, so her `mode` is the default
+       and would send her to a purchase she did not ask for. */
+    if (mode === "subscribe" && flow === "create") { enter(uid, "/front-subscribe"); return; }
     enter(uid);
   };
 
@@ -224,11 +256,18 @@ export default function Login() {
       </>}>
         <Benefits />
         <Text style={[type.h2, { color: t.ink, marginTop: 26 }]}>Choose what works for you</Text>
-        <View style={[s.plan, { backgroundColor: t.tint_pine, borderColor: t.pine }]}>
-          <Text style={[type.bodyStrong, { color: t.ink }]}>Free to try</Text>
-          <Text style={[type.body, { color: t.ink, marginTop: 4 }]}>Try Meyy with no cost. Perfect to explore and get started.</Text>
-          <Text style={[type.small, { color: t.ink_soft, marginTop: 6 }]}>Any 3 chapters · unlimited lesson plans per chapter · all core features to plan & assess</Text>
-        </View>
+        {/* ★ TWO CARDS, AND THEY ARE BUTTONS. The web's `.ob-plan` carries an `on` class and the
+            choice is real — it decides where Verify sends her. The phone drew ONE card, as a
+            static View, so Subscribe was not merely unselected: it did not exist, and a teacher
+            who wanted to pay had no way to say so at the door. */}
+        <PlanCard on={mode === "trial"} onPress={() => setMode("trial")}
+          title="Free to try"
+          sub="Try Meyy with no cost. Perfect to explore and get started."
+          points="Any 3 chapters · unlimited lesson plans per chapter · all core features to plan & assess" />
+        <PlanCard on={mode === "subscribe"} onPress={() => setMode("subscribe")}
+          title="Subscribe"
+          sub="Unlimited access to plan across your entire syllabus."
+          points="Unlimited chapters · your full subject & stage, every class in it" />
       </Wrap>
     );
   }
