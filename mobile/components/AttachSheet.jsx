@@ -30,6 +30,8 @@ import { View, Modal, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, P
 import { Text } from "./Text";
 import PrepareCta from "./PrepareCta";
 import { pretty, classNum, pad } from "@aruvi/shared/format";
+import { readHistory } from "@aruvi/shared/sectionHistory";
+import { readLocalSection } from "@aruvi/shared/sectionState";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -144,9 +146,16 @@ const chLabel = (p) => `${p.chapter_number ? `Ch. ${pad(p.chapter_number)}: ` : 
 
 /* One chapter row — "Ch. 05: Force and Pressure" as ONE sentence (founder, 2026-07-25), the
    number in pine before the colon, a light chevron as the tap affordance. */
-function ChapterRow({ plan, onPress }) {
+function ChapterRow({ plan, onPress, year }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  /* ★ WHICH EDITION THIS PLAN IS (app. 05 row B15). Two different years live in this system and
+     conflating them is the bug the 2026-08-27 foldering fixed: the TEACHER's academic year, and
+     the LIBRARY EDITION a plan IS. She only ever sees the stamp for a PRIOR edition — the server
+     decides that by returning `lp_year_display` only when it differs, so the screen cannot
+     disagree with the rule. Inside a prior-year folder the folder's own year IS the stamp, and
+     the server flag is absent by construction, so the caller passes it. */
+  const stamp = year || plan.lp_year_display || plan.prepared_source_year;
   return (
     <Pressable onPress={onPress} style={ws.ap_row} accessibilityRole="button">
       <View style={ws.ch_meta}>
@@ -157,16 +166,18 @@ function ChapterRow({ plan, onPress }) {
         <Text style={ws.ch_go}>›</Text>
       </View>
       {plan.duration_label ? <Text style={ws.sc_durline}>{plan.duration_label}</Text> : null}
+      {stamp ? <Text style={[ws.sc_yearstamp, { color: t.ochre }]}>{stamp} version</Text> : null}
     </Pressable>
   );
 }
 
 export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach, onClose,
-                              onPrepareNew }) {
+                              onPrepareNew, priorYears, openPrior, onOpenPrior, priorPlans,
+                              onAttachPrior }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const list = useMemo(() => {
-    if (!target || !plans) return [];
+    if (!target) return [];
     if (!plans) return null;          // not asked yet — a different fact from "none"
     return Object.values(plans)
       .filter((p) => (p.prepared || (alsoAttachable && alsoAttachable.has(p.filename)))
@@ -178,7 +189,7 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
   return (
     <Sheet visible onClose={onClose} kicker={scope(target.c)}
       title="Track a chapter for this section"
-      sub="Pick a chapter you've already prepared to track for this section.">
+      sub={"Pick a chapter you’ve already prepared to track for this section, or build a new one."}>
       {/* The web caps the list at two rows and wheels through the rest so the modal can never
           grow tall enough to push its own ✕ off the top. Same cap, as a bounded scroller. */}
       <ScrollView style={{ maxHeight: 160 }} contentContainerStyle={ws.ap_list}
@@ -205,6 +216,46 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
           then drawn on that section's own card in My Classes, and the finished plan settles onto
           it already attached (founder, 2026-09-15). She never picks from this list again for the
           chapter she just asked to be built. */}
+      {/* ★ LAST YEAR'S LESSONS, RIGHT HERE IN THE PICKER (founder, 2026-08-26; app. 05 rows B16,
+          A17). She taught Ch 5 last June and wants it again this June — asking her to regenerate
+          a plan she already owns would be absurd. It sits BELOW this year's list and ABOVE
+          "prepare a new one", and it is COLLAPSED, so it never competes with current work.
+          ⚠️ Attaching one MAKES IT THIS YEAR'S WORK — that is what `onAttachPrior` is for, and
+          why it is not the same handler as the list above. */}
+      {(priorYears || []).map((yid) => {
+        const rows = priorPlans && priorPlans[yid];
+        return (
+          <View key={yid} style={[ws.ap_prior, { borderTopColor: t.line }]}>
+            <Pressable onPress={() => onOpenPrior(openPrior === yid ? null : yid)}
+              accessibilityRole="button" accessibilityState={{ expanded: openPrior === yid }}
+              style={ws.ap_prior_head}>
+              <Text style={[ws.ap_prior_caret, { color: t.ink_soft }]}>
+                {openPrior === yid ? "▾" : "▸"}
+              </Text>
+              <Text style={[ws.ap_prior_yr, { color: t.ink }]}>{yid}</Text>
+              <Text style={[ws.ap_prior_note, { color: t.ink_soft }]}>
+                lessons you prepared last year
+              </Text>
+            </Pressable>
+            {openPrior === yid ? (
+              rows === undefined ? (
+                <Text style={ws.ap_loading}>Loading lessons…</Text>
+              ) : rows.length === 0 ? (
+                <Text style={ws.ap_none}>Nothing prepared for this class in {yid}.</Text>
+              ) : (
+                <ScrollView style={{ maxHeight: 160 }} contentContainerStyle={ws.ap_list}
+                  showsVerticalScrollIndicator={false}>
+                  {rows.map((p) => (
+                    <ChapterRow key={p.filename} plan={p} year={yid}
+                      onPress={() => onAttachPrior(target.c, target.sectionKey, p, yid)} />
+                  ))}
+                </ScrollView>
+              )
+            ) : null}
+          </View>
+        );
+      })}
+
       {onPrepareNew ? (
         <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
           <Text style={ws.mlp_allocate_q}>Need a chapter you don&rsquo;t have yet?</Text>
@@ -212,6 +263,110 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
             onPress={() => onPrepareNew(target)} />
         </View>
       ) : null}
+    </Sheet>
+  );
+}
+
+/* ───────── Section history — "where each chapter stands for this section" (app. 05 row B19) ─────────
+ *
+ * ★ THE LEDGER IS THE ONLY RECORD THAT A CHAPTER WAS EVER TAUGHT. `SectionState` holds the
+ * CURRENT binding and deletes the row the moment a chapter leaves the slot, so without this
+ * popup a finished term is invisible — which is why the ledger became server-backed on
+ * 2026-09-07 and why untracking deliberately cannot reach it.
+ *
+ * ⚠️ THE CURRENT CHAPTER IS SYNTHESISED, NOT STORED, and it has to be: `recordHistory` fires only
+ * when a chapter is FINISHED or UNTRACKED, so the chapter she is teaching right now has no row
+ * yet — and that is the one line she is most likely opening this for. The web does the same
+ * (MyPlans.jsx:743-758): build a row from the live pointer, mark it ongoing or completed, and
+ * stamp `ts = now + 1` so it sorts above every stored row.
+ * ⚠️ The `done || >= 1 unit` gate is the untrack path's own anti-noise rule — a chapter attached
+ * and not yet started is not history, it is the card.
+ * ⚠️ `normStatus` maps the legacy `set_aside` to `untracked`; rows written before that rename are
+ * still on teachers' devices AND on the server, so it cannot be dropped.
+ */
+const HISTORY_LABEL = { ongoing: "Ongoing", completed: "Completed", untracked: "Untracked" };
+const normStatus = (s) => (s === "set_aside" ? "untracked" : s);
+
+export function HistorySheet({ target, plans, onClose }) {
+  const { t } = useTheme();
+  const ws = useWebStyles();
+
+  const rows = useMemo(() => {
+    if (!target) return [];
+    const { sectionKey } = target;
+    const byFile = {};
+    readHistory(sectionKey).forEach((h) => { byFile[h.file] = { ...h }; });
+
+    const sec = readLocalSection(sectionKey);
+    const curFile = sec.chapter;
+    if (curFile) {
+      const done = !!sec.done;
+      const unitsDone = sec.unit ? Number(sec.unit) : 0;
+      if (done || unitsDone >= 1) {
+        const cp = plans ? plans[curFile] : null;
+        const prev = byFile[curFile];
+        const total = cp ? (cp.total_units || null) : (prev ? prev.total_units : null);
+        byFile[curFile] = {
+          file: curFile,
+          chapter_number: cp ? cp.chapter_number : (prev ? prev.chapter_number : null),
+          chapter_title: cp ? cp.chapter_title : (prev ? prev.chapter_title : ""),
+          status: done ? "completed" : "ongoing",
+          units_done: done ? total : unitsDone,
+          total_units: total,
+          ts: Date.now() + 1,   // the live chapter sorts to the top
+        };
+      }
+    }
+    return Object.values(byFile).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  }, [target, plans]);
+
+  if (!target) return null;
+
+  /* The pill palette is the section cards' own, carried verbatim, plus the slate "untracked"
+     code that has no card equivalent (a chapter set aside before it was finished). */
+  const pillInk = { ongoing: t.pine_d, completed: "#a04a25", untracked: "#566169" };
+  const pillBg = { ongoing: "#e3efe9", completed: t.tint_clay, untracked: "#e7ebee" };
+
+  return (
+    <Sheet visible onClose={onClose} kicker={scope(target.c)}
+      title="Section history"
+      sub="Where each chapter stands for this section.">
+      <ScrollView style={{ maxHeight: 260 }} contentContainerStyle={ws.ap_list}
+        showsVerticalScrollIndicator={false}>
+        {rows.length === 0 ? (
+          <Text style={ws.ap_none}>No chapters taught yet.</Text>
+        ) : rows.map((r, i) => {
+          const st = normStatus(r.status) || "untracked";
+          const doneUnits = r.units_done || 0;
+          return (
+            <View key={r.file}
+              style={[ws.ch_row, i > 0 ? { borderTopWidth: 1, borderTopColor: t.line_soft } : null]}>
+              <View style={ws.ch_meta}>
+                {/* One sentence — "Ch. 05: Force and Pressure" — the picker's own phrasing, with
+                    the status pinned to the right end of that line. */}
+                <Text style={ws.ch_name} numberOfLines={2}>
+                  <Text style={ws.ch_no}>Ch. {r.chapter_number ? pad(r.chapter_number) : "\u2014"}:</Text>
+                  {" "}{r.chapter_title}
+                </Text>
+                <Text style={[ws.ch_pill, { backgroundColor: pillBg[st], color: pillInk[st] }]}>
+                  {HISTORY_LABEL[st] || "Untracked"}
+                </Text>
+              </View>
+              {r.total_units ? (
+                <View style={ws.ch_rail}
+                  accessibilityLabel={`${doneUnits} of ${r.total_units} units completed`}>
+                  {Array.from({ length: r.total_units }).map((_, u) => (
+                    <View key={u} style={[ws.sc_tick, {
+                      backgroundColor: u < doneUnits ? t.pine
+                        : (st === "ongoing" && u === doneUnits) ? t.ochre : t.card_tick,
+                    }]} />
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          );
+        })}
+      </ScrollView>
     </Sheet>
   );
 }

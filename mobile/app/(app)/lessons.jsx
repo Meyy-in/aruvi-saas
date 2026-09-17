@@ -57,6 +57,7 @@ import {
   API, classNum, fetchSupportedGrades, getJSON, heldClassesFor, heldScopesOf, pad, paywallKicker,
   pretty, subjectSlug, userKey, withUser,
 } from "@aruvi/shared/format";
+import { subscribeYear } from "@aruvi/shared/year";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
@@ -330,9 +331,53 @@ export default function MyLessons() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [current, grades, ownedClasses]);
 
+  /* ★ LAST YEAR'S LESSONS (app. 05 rows C9, C37). On the first day of a new academic year this
+     list starts EMPTY, which reads as loss if her old plans are not visibly somewhere. They sit
+     here: below the current list and below the prepare bar — present, findable, and out of the
+     way of this year's work. Collapsed by default, because she is living in the new year.
+     ★ READ-ONLY BY NATURE. A prior year's plans open and export exactly as they always did, and
+     nothing attaches them to a section, because sections belong to the year she is in now. The
+     one door back into current work is the "+" picker's own folder (app. 05 B16/A17), where
+     attaching deliberately MAKES a chapter this year's. */
+  const [openPrior, setOpenPrior] = useState(null);
+  const [priorPlans, setPriorPlans] = useState({});
+  const [year, setYear] = useState(null);
+  useEffect(() => subscribeYear(setYear), []);
   const sSlug = current ? subjectSlug(current.name) : "";
   const gSlug = gradeSlug(activeGrade);
   const key = sSlug && gSlug ? `${sSlug}/${gSlug}` : "";
+
+  /* Lazy: nothing is fetched until she opens a folder. ⚠️ Filtered to what she PREPARED that
+     year — the library is shared, so an unfiltered read would offer her every sample plan Meyy
+     owns as her own — and excluding anything already brought into THIS year, which is the
+     founder's 2026-08-26 screenshot: a chapter attached from the folder then showed twice on one
+     screen, "Teaching now 9A" above and "Taught in 2026-27" below. Once a lesson is back in play
+     it belongs to this year's list alone. */
+  useEffect(() => {
+    if (!openPrior || !key) return undefined;
+    const cacheKey = `${openPrior}|${key}`;
+    if (priorPlans._for === cacheKey && priorPlans[openPrior] !== undefined) return undefined;
+    let live = true;
+    setPriorPlans({ _for: cacheKey });
+    getJSON(`/plans/${sSlug}/${gSlug}?year_id=${encodeURIComponent(openPrior)}`)
+      .then((d) => {
+        if (!live) return;
+        /* ⚠️ Read from `plansByKey` (declared far above), NEVER from `plans` — this effect sits
+           ABOVE `const plans = ...`, so naming it in the dep array would be the "const read from
+           a dep array before it existed" crash of `ed8fc93d` all over again. Going to the map
+           also keeps the filter FRESH: the closure would otherwise hold whatever this year's
+           listing was when the folder was opened. */
+        const here = new Set((plansByKey[key] || []).filter((x) => x.prepared)
+          .map((x) => x.filename));
+        const mine = ((d && d.plans) || []).filter((x) => x.prepared && !here.has(x.filename));
+        setPriorPlans({ _for: cacheKey, [openPrior]: mine });
+      })
+      .catch(() => { if (live) setPriorPlans({ _for: cacheKey, [openPrior]: [] }); });
+    return () => { live = false; };
+  }, [openPrior, key, sSlug, gSlug, plansByKey]);
+
+  // Opening a different subject·class closes the folder — its contents belong to the old one.
+  useEffect(() => { setOpenPrior(null); }, [key]);
   const plans = key ? plansByKey[key] : undefined;
 
   /* The saved plans for the scoped subject·class — from the SHARED STORE, not from here. One
@@ -785,6 +830,48 @@ export default function MyLessons() {
               onPress={() => router.push({ pathname: "/prepare", params: { subject: sSlug, grade: gSlug } })} />
           </View>
         ) : null}
+        {/* Below the CTA, and only in the lessons pane: the archive is its own view, and the
+            Year Plan pane is a lens on THIS year. */}
+        {!loadErr && current && pane === "lessons" && effView !== "archived"
+          ? ((year && year.info && year.info.prior_years) || []).slice().sort().reverse().map((yid) => (
+          <View key={yid} style={[ws.mlp_prior, { borderTopColor: t.line }]}>
+            <Pressable onPress={() => setOpenPrior(openPrior === yid ? null : yid)}
+              accessibilityRole="button" accessibilityState={{ expanded: openPrior === yid }}
+              style={ws.mlp_prior_head}>
+              <Text style={[ws.mlp_prior_caret, { color: t.ink_soft }]}>
+                {openPrior === yid ? "▾" : "▸"}
+              </Text>
+              <Text style={[ws.mlp_prior_yr, { color: t.ink }]}>{yid}</Text>
+              {/* The same sentence the "+" picker's folder uses, so the folder reads identically
+                  wherever she meets it (founder, 2026-08-26). */}
+              <Text style={[ws.mlp_prior_count, { color: t.ink_soft }]}>
+                lessons you prepared last year
+              </Text>
+            </Pressable>
+            {openPrior === yid ? (
+              priorPlans[yid] === undefined ? (
+                <Text style={[ws.mlp_prior_empty, { color: t.ink_soft }]}>Loading…</Text>
+              ) : priorPlans[yid].length === 0 ? (
+                <Text style={[ws.mlp_prior_empty, { color: t.ink_soft }]}>
+                  No lessons were prepared for this class in {yid}.
+                </Text>
+              ) : (
+                /* CARDS, not rows (founder, 2026-08-26): last year's lessons are the same KIND
+                   of thing as this year's and should look it. Drawn on the SHELF state — no
+                   tracking status, because tracking belongs to the year she is in now, which is
+                   why `status` is handed empty arrays and `attached` is false. */
+                <View style={[ws.sc_list, ws.mlp_prior_list]}>
+                  {priorPlans[yid].map((pp) => (
+                    <PlanCard key={pp.filename} p={pp} archived={false}
+                      status={{ completed: [], live: [] }} attached={false}
+                      sSlug={sSlug} gSlug={gSlug} busy={null} priorYear={yid}
+                      onOpen={() => openLesson(pp)} />
+                  ))}
+                </View>
+              )
+            ) : null}
+          </View>
+        )) : null}
       </ScrollView>
 
       {/* ★ THE PAYWALL IS NOT AN ERROR (founder, 2026-08-24). A 402 — trial exhausted, or out of
@@ -859,8 +946,16 @@ export default function MyLessons() {
  * action simply is not inside the card's press target — which is what stopPropagation was
  * simulating. Same divergence, same reason, as the section card's (step 4a).
  */
+/* ★ `priorYear` MAKES THIS CARD READ-ONLY (app. 05 row C37). A lesson from a closed year is the
+   same KIND of thing as this year's and should look it — the web draws it with the same card on
+   its shelf state — but it carries NO controls: archiving belongs to the circulating shelf, and
+   the report is an act on current work. Attaching is absent for the strongest reason of the
+   three: sections belong to the year she is in now, and the one door back into current work is
+   the "+" picker's own folder, where attaching deliberately MAKES a chapter this year's.
+   ⚠️ The folder's year IS the stamp for its rows — they were fetched under it, so the server's
+   `lp_year_display` is absent by construction and the caller supplies it. */
 function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
-                   onDismissBusy, onOpen, onArchive, onRestore }) {
+                   onDismissBusy, onOpen, onArchive, onRestore, priorYear }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const { completed, live } = status;
@@ -870,7 +965,7 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
     : t.spine_shelf;
   const fill = archived ? t.paper_sunk : t.card_doc;
   const edge = archived ? t.line_soft : t.card_doc_edge;
-  const stamp = p.lp_year_display || p.prepared_source_year;
+  const stamp = priorYear || p.lp_year_display || p.prepared_source_year;
 
   return (
     <View style={[ws.sc_card, !archived && ws.mlp2_cardpad,
@@ -936,7 +1031,7 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
           style={[ws.mlp2_restore, { backgroundColor: t.pine, borderColor: t.pine }]}>
           <Text style={[ws.mlp2_restore_t, { color: t.paper }]}>Restore</Text>
         </Pressable>
-      ) : !attached && !busy ? (
+      ) : !attached && !busy && !priorYear ? (
         <Pressable onPress={onArchive} accessibilityRole="button" hitSlop={6}
           accessibilityLabel={`Archive ${p.chapter_title}`} style={ws.mlp2_iconbtn}>
           <ArchiveIcon size={18} color={t.ink_soft} />
@@ -950,7 +1045,7 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
           export one is offering to act on something she has set aside — the same reasoning that
           keeps archived plans out of the attach picker (founder, 2026-08-01). Not while it is
           re-preparing either: what the file would say is being rewritten as she taps. */}
-      {!archived && !busy ? (
+      {!archived && !busy && !priorYear ? (
         <ReportButton sSlug={sSlug} gSlug={gSlug} filename={p.filename}
           chapterTitle={p.chapter_title} />
       ) : null}

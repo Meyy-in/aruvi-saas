@@ -13,7 +13,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl, AppState } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { getUser, subjectSlug, classNum, pad } from "@aruvi/shared/format";
+import { getUser, subjectSlug, classNum, pad, getJSON, markPrepared } from "@aruvi/shared/format";
 import { cutoverOffered, dismissCutover, dismissCutoverResult, fetchYear, runCutover,
          subscribeYear } from "@aruvi/shared/year";
 import { markGenerated } from "../../lib/firstRun";
@@ -25,7 +25,8 @@ import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
 import CardGrid from "../../components/CardGrid";
-import { AttachSheet, UntrackSheet } from "../../components/AttachSheet";
+import { AttachSheet, UntrackSheet, HistorySheet } from "../../components/AttachSheet";
+import Svg, { Path } from "react-native-svg";
 import { subscribePreparing, clearPreparing } from "../../lib/preparing";
 import { raisePortalCheck } from "../../lib/portal";
 import { takeFirstRunCheck } from "../../lib/firstRun";
@@ -274,6 +275,43 @@ export default function Home() {
      card would only refresh on the next incidental render — the web's own "+ works late" lag. */
   const [attachFor, setAttachFor] = useState(null);    // { c, sectionKey }
   const [untrackFor, setUntrackFor] = useState(null);  // { c, sectionKey, plan }
+  const [historyFor, setHistoryFor] = useState(null);  // { c, sectionKey } — the teaching ledger
+  const [openPrior, setOpenPrior] = useState(null);    // which prior year's folder is expanded
+  const [priorPlans, setPriorPlans] = useState({});    // { _for, [yearId]: plans[] | undefined }
+
+  /* ★ LAST YEAR'S LESSONS, FETCHED ONLY WHEN SHE OPENS THE FOLDER (app. 05 row B16). Lazy by
+     design: most visits to the picker never touch it, and a prior year is an extra round trip
+     for a list she may not want.
+     ⚠️ FILTERED TO WHAT SHE ACTUALLY PREPARED THAT YEAR — the library is SHARED, so an
+     unfiltered `/plans` read would offer her every sample plan Meyy owns as though it were her
+     own work. `prepared && !archived` is the ownership test on this endpoint.
+     ⚠️ AND EXCLUDING WHAT THIS YEAR'S LIST ALREADY OFFERS, including the bound chapter: a plan
+     she has already brought forward is current work, and listing it in both halves of one small
+     window is noise. The folder answers "what ELSE do I have from last year?".
+     ★ The cache key carries HOW MANY of this class's plans are prepared this year, so bringing
+     one back INVALIDATES the folder's own list — otherwise the chapter she just attached is
+     still sitting in the folder when she reopens it (the web's own note). */
+  useEffect(() => {
+    if (!openPrior || !attachFor) return undefined;
+    const { c } = attachFor;
+    const key = `${c.subjectSlug}/${c.gradeSlug}`;
+    const here = Object.values(st.plansBySG[key] || {}).filter((p) => p.prepared);
+    const cacheKey = `${openPrior}|${key}|${here.length}`;
+    if (priorPlans._for === cacheKey) return undefined;
+    let live = true;
+    setPriorPlans({ _for: cacheKey });
+    getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(openPrior)}`)
+      .then((d) => {
+        if (!live) return;
+        const bound = readLocalSection(attachFor.sectionKey).chapter;
+        const hereFiles = new Set(here.map((p) => p.filename));
+        const mine = ((d && d.plans) || []).filter((p) => p.prepared && !p.archived
+          && p.filename !== bound && !hereFiles.has(p.filename));
+        setPriorPlans({ _for: cacheKey, [openPrior]: mine });
+      })
+      .catch(() => { if (live) setPriorPlans({ _for: cacheKey, [openPrior]: [] }); });
+    return () => { live = false; };
+  }, [openPrior, attachFor, st.plansBySG, priorPlans._for]);
   const bump = () => setTick((n) => n + 1);
 
   /* ★ THE SECOND DEVICE, AND THE HOLD THAT MAKES IT SAFE (app. 05 rows A4, A5).
@@ -289,7 +327,7 @@ export default function Home() {
      So the tick is SKIPPED, never queued, whenever a sheet is up — she is about to change the
      very thing being reconciled, and the next tick is twenty seconds away. */
   const uiBusyRef = useRef(false);
-  uiBusyRef.current = !!(attachFor || untrackFor);
+  uiBusyRef.current = !!(attachFor || untrackFor || historyFor);
   useEffect(() => {
     const sync = () => {
       if (uiBusyRef.current) return;
@@ -336,6 +374,33 @@ export default function Home() {
     wasPreparing.current = now;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preparing]);
+
+  /* ★ BRINGING A CHAPTER FORWARD (app. 05 row A17). Attaching from last year's folder is not
+     the same act as attaching from this year's list: the plan has to become HERS in the CURRENT
+     year, which is what `markPrepared(..., sourceYear)` records — and the source year rides
+     along so the card can carry its "2025-26 version" stamp.
+     ⚠️ MERGE, NEVER INVALIDATE-THEN-HOPE (the web's bug of 2026-08-26). The cached row is
+     upgraded in place so the card is correct the instant she taps, and the authoritative list is
+     refetched behind it; dropping the cache instead left every card for that class reading "Pick
+     a chapter to begin" until a remount, which looked like every attachment had been wiped.
+     ⚠️ The `markPrepared` failure is swallowed on purpose — the BIND still stands, and the next
+     `/plans` read reconciles. Losing the stamp is a smaller harm than losing the attach. */
+  const attachPriorChapter = async (c, sectionKey, plan, sourceYear) => {
+    const key = `${c.subjectSlug}/${c.gradeSlug}`;
+    try {
+      await markPrepared(c.subjectSlug, c.gradeSlug, plan.filename, plan.prepared_periods, sourceYear);
+    } catch { /* the bind still stands; the next /plans read reconciles */ }
+    setSt((prev) => {
+      const cur = prev.plansBySG[key];
+      if (!cur) return prev;                       // nothing cached yet; the fetch below fills it
+      const stamped = { ...plan, prepared: true, archived: false,
+                        prepared_source_year: sourceYear || null };
+      return { ...prev, plansBySG: { ...prev.plansBySG,
+        [key]: { ...cur, [plan.filename]: { ...(cur[plan.filename] || {}), ...stamped } } } };
+    });
+    setOpenPrior(null);
+    attachChapter(c, sectionKey, plan);
+  };
 
   const attachChapter = (c, sectionKey, plan) => {
     bindSectionChapter(sectionKey, plan.filename);
@@ -409,7 +474,8 @@ export default function Home() {
       onOpen={openAttached}
       onAttach={() => setAttachFor({ c, sectionKey: c.sectionKey })}
       onUntrack={(plan) => setUntrackFor({ c, sectionKey: c.sectionKey, plan })}
-      onMoveOn={(plan) => moveOnFromCompleted(c, c.sectionKey, plan)} />
+      onMoveOn={(plan) => moveOnFromCompleted(c, c.sectionKey, plan)}
+      onHistory={() => setHistoryFor({ c, sectionKey: c.sectionKey })} />
   );
 
   return (
@@ -486,8 +552,13 @@ export default function Home() {
         plans={attachFor ? st.plansBySG[`${attachFor.c.subjectSlug}/${attachFor.c.gradeSlug}`] : null}
         boundFile={attachFor ? readLocalSection(attachFor.sectionKey).chapter : null}
         alsoAttachable={attachFor ? boundFilesForGrade(attachFor.c.subjectSlug, attachFor.c.gradeSlug) : null}
-        onAttach={attachChapter} onClose={() => setAttachFor(null)} />
+        onAttach={attachChapter} onClose={() => { setAttachFor(null); setOpenPrior(null); }}
+        priorYears={((year && year.info && year.info.prior_years) || []).slice().sort().reverse()}
+        openPrior={openPrior} onOpenPrior={setOpenPrior}
+        priorPlans={priorPlans} onAttachPrior={attachPriorChapter} />
       <UntrackSheet target={untrackFor} onUntrack={untrackChapter} onClose={() => setUntrackFor(null)} />
+      <HistorySheet target={historyFor} onClose={() => setHistoryFor(null)}
+        plans={historyFor ? st.plansBySG[`${historyFor.c.subjectSlug}/${historyFor.c.gradeSlug}`] : null} />
     </View>
   );
 }
@@ -556,7 +627,8 @@ function DashHead({ classes, plansBySG, user, bindingsKnown }) {
  * on an empty or finished card, "−" to untrack (clay) while she is teaching. Measures in
  * theme/web.js under sc_*; the web's 11px graph rule is the one thing not ported (RN has no
  * repeating gradient) — the card keeps its fill, which is what carries the status anyway. */
-function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack, onMoveOn }) {
+function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack,
+                     onMoveOn, onHistory }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const sec = readLocalSection(c.sectionKey);
@@ -575,6 +647,26 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
      DISPLAY ONLY — `c.sectionTag` remains the key behind every binding, pointer and bookmark. */
   const name = c.sectionName;
   const tag = name ? String(classNum(c.grade)) : c.sectionTag;
+
+  /* ★ THE HISTORY GLYPH (app. 05 row B20). `hasHistory` has been computed on this screen since
+     the cards were built and thrown away every time — the one line of this feature that was
+     already here. It appears on EVERY card state, because the question it answers ("what has
+     this class already been taught?") does not depend on what is in the slot today; a section
+     with a term behind it and nothing bound right now is exactly the case where the card itself
+     says least. Drawn as a stroke glyph rather than the `Round` +/− pair: those two are ACTIONS
+     on the chapter in the slot, and this opens a record. */
+  const HistoryGlyph = ({ onPress }) => (
+    <Pressable onPress={onPress} accessibilityRole="button"
+      accessibilityLabel="Section history for this section" hitSlop={6}
+      style={[ws.sc_hist, { borderColor: t.line, backgroundColor: t.paper_2 }]}>
+      <Svg viewBox="0 0 24 24" width={15} height={15} fill="none" stroke={t.ink_soft}
+        strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M3 3v5h5" />
+        <Path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" />
+        <Path d="M12 7v5l3 2" />
+      </Svg>
+    </Pressable>
+  );
 
   const Round = ({ glyph, color, label, onPress }) => (
     <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} hitSlop={6}
@@ -660,6 +752,7 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
         </View>
         <View style={ws.sc_right}>
           <Round glyph="+" color={t.pine_d} label="Attach a lesson to this section" onPress={onAttach} />
+          {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
       </View>
     );
@@ -703,6 +796,16 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
             </Text>
           )}
         <Text style={ws.sc_title} numberOfLines={2}>{plan.chapter_title}</Text>
+        {/* ★ A PLAN SHE BROUGHT FORWARD KEEPS SAYING SO (app. 05 row B23). The server returns
+            `lp_year_display` ONLY when the edition differs from the year she is teaching in, so
+            the comparison is made once, server-side, and this screen cannot disagree with the
+            rule. `prepared_source_year` is the other half — the year she prepared it in, stamped
+            by `markPrepared` when she pulls a chapter out of last year's folder. */}
+        {(plan.lp_year_display || plan.prepared_source_year) ? (
+          <Text style={[ws.sc_yearstamp, { color: t.ochre }]}>
+            {plan.lp_year_display || plan.prepared_source_year} version
+          </Text>
+        ) : null}
         {total ? (
           <View style={ws.sc_rail} accessibilityLabel={
             done ? `${total} units, completed` : lu ? `Unit ${lu} of ${total}` : `${total} units, not started`}>
@@ -721,11 +824,13 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
           <Text style={ws.sc_status_done}>Complete</Text>
           <Round glyph="+" color={t.pine_d} label="Finish with this chapter and track the next"
             onPress={() => onMoveOn(plan)} />
+          {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
       ) : (
         <View style={ws.sc_right}>
           <Round glyph="−" color={t.clay} label="Stop tracking this chapter"
             onPress={() => onUntrack(plan)} />
+          {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
       )}
     </View>

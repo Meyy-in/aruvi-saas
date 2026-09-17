@@ -308,6 +308,30 @@ export function webStyles(t, scheme = "light") {
                        textTransform: "uppercase", paddingVertical: 3, paddingHorizontal: 9,
                        borderRadius: 20, overflow: "hidden" },
     ch_rail:         { flexDirection: "row", columnGap: 3, marginTop: 6 },
+
+    /* ───────── Last year's folders — the picker's and My Lessons' (app. 05 B16, C37) ─────────
+       Derived from globals.css (4278-4304), not measured on a running web — same caveat as the
+       `ch_*` family above; a 390px re-measure is owed.
+       ★ Both heads are `align-items: baseline` on the web, which RN has no equivalent for on a
+       row of mixed type sizes; `alignItems: "flex-end"` is the closest honest approximation and
+       is what the rest of this file uses for the same problem. Named here rather than silently
+       substituted. */
+    ap_prior:        { borderTopWidth: 1, marginTop: 4 },
+    ap_prior_head:   { flexDirection: "row", alignItems: "flex-end", columnGap: 8,
+                       width: "100%", paddingVertical: 10, paddingHorizontal: 2 },
+    ap_prior_caret:  { fontSize: 10, lineHeight: 14 },
+    ap_prior_yr:     { fontFamily: F.mono(400), fontSize: 11.5, lineHeight: 15, letterSpacing: 0.69 },
+    ap_prior_note:   { fontFamily: F.body(400, true), fontSize: 11, lineHeight: 15 },
+
+    mlp_prior:       { marginTop: 14, borderTopWidth: 1 },
+    mlp_prior_head:  { flexDirection: "row", alignItems: "flex-end", columnGap: 9,
+                       width: "100%", paddingVertical: 11, paddingHorizontal: 2 },
+    mlp_prior_caret: { fontSize: 10, lineHeight: 14 },
+    mlp_prior_yr:    { fontFamily: F.mono(400), fontSize: 12, lineHeight: 16, letterSpacing: 0.72 },
+    mlp_prior_count: { fontFamily: F.body(400, true), fontSize: 11.5, lineHeight: 16 },
+    mlp_prior_empty: { fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 17,
+                       paddingHorizontal: 2, paddingBottom: 12 },
+    mlp_prior_list:  { paddingBottom: 8 },
     ap_btn:          { borderRadius: 7, borderWidth: 1, paddingVertical: 9, paddingHorizontal: 15 },
     ap_btn_label:    { fontFamily: F.mono(400), fontSize: 11, letterSpacing: 0.55, textTransform: UP },
     /* ── the paywall window (`.paywall-card/-msg/-subscribe/-later`, globals.css 3987-4000) ──
