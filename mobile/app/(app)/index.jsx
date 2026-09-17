@@ -9,7 +9,7 @@
  *
  * Plan status, theme and sign-out live at the foot for now; they move to Settings in step 6.
  * The section→lesson binding ("+") and the full My Lessons library are step 4. */
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { View, ScrollView, ActivityIndicator, Pressable, StyleSheet, RefreshControl, AppState } from "react-native";
 import { Text } from "../../components/Text";
 import { useRouter, useFocusEffect } from "expo-router";
@@ -24,7 +24,7 @@ import { cachedAccount, cachedFirstName, fetchAccount, accountFirstName } from "
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer,
-         noteTourInfo } from "../../lib/tour";
+         noteTourInfo, noteTourTarget } from "../../lib/tour";
 import TourOffer from "../../components/TourOffer";
 import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
 import CardGrid from "../../components/CardGrid";
@@ -472,6 +472,56 @@ export default function Home() {
   /* ★ THE TOUR'S CARD IS THE FIRST ONE, and only the steps that ring it get the anchor (the web
      does the same with `i === tourIdx`). Steps 8 and 14 ring its "+", step 10 rings the card. */
   const tourNow = useTour();
+
+  /* ───────── THE TOUR DEMONSTRATES ON REAL DATA (step 8b, mirroring MyPlans.jsx:341-392) ─────────
+     ★ **THE ATTACH AT 9→10 IS REAL.** Step 10 says "You have successfully attached X" and it is
+     TRUE — the tour binds the chapter for her. That is the whole reason a walkthrough beats a
+     video: she ends it with her lesson actually attached to her section. ⚠️ Back from 10 to 9
+     UNBINDS, so a teacher who reverses out of the tour is not left with a binding she never
+     asked for.
+     ★ **BUT THE "COMPLETE" AT 14-15 IS A RENDERING, NOT A WRITE.** Step 14 says she has finished
+     the chapter; marking it done for real would falsify her teaching record and the history
+     ledger to make a sentence true. The card simply DRAWS its done state for those two steps.
+     ⚠️ The target is the first class that HAS a prepared plan, not simply the first class —
+     ringing a card with nothing on it would make every step after 8 nonsense. */
+  const tourTarget = useMemo(() => {
+    if (!tourNow.step) return null;
+    for (const c of st.classes) {
+      const listing = st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`];
+      const plans = listing ? Object.values(listing) : [];
+      const plan = plans.filter((p) => p.prepared && !p.archived)
+        .sort((a, b) => String(b.prepared_at || "").localeCompare(String(a.prepared_at || "")))[0];
+      if (plan) return { c, sectionKey: c.sectionKey, plan };
+    }
+    return null;
+  }, [tourNow.step, st.classes, st.plansBySG]);
+
+  /* Publish it: the step COPY names the section and chapter, and the SHELL needs the route
+     params for steps 11-13, which open the real lesson. */
+  useEffect(() => {
+    if (!tourTarget) return;
+    noteTourInfo({ tag: tourTarget.c.sectionTag, chapter: tourTarget.plan.chapter_title });
+    noteTourTarget({
+      subjectSlug: tourTarget.c.subjectSlug, gradeSlug: tourTarget.c.gradeSlug,
+      sectionKey: tourTarget.sectionKey, filename: tourTarget.plan.filename,
+      tag: tourTarget.c.sectionTag, chapter: tourTarget.plan.chapter_title,
+    });
+  }, [tourTarget]);
+
+  useEffect(() => {
+    const n = tourNow.step;
+    if (!n || !tourTarget) return;
+    const { sectionKey, plan } = tourTarget;
+    const bound = readLocalSection(sectionKey).chapter;
+    if (n >= 10 && bound !== plan.filename) { bindSectionChapter(sectionKey, plan.filename); bump(); }
+    else if (n <= 9 && bound) { unbindSection(sectionKey); bump(); }
+    /* The picker is open at 9 (nothing bound, so the new lesson IS in the list — the hand points
+       at it) and again at 15 (the bound chapter is excluded: "pick the NEXT one"). */
+    if (n === 9 || n === 15) { if (!attachFor) setAttachFor({ c: tourTarget.c, sectionKey }); }
+    else if (attachFor) setAttachFor(null);
+  }, [tourNow.step, tourTarget]);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  const tourDemoDone = tourNow.step === 14 || tourNow.step === 15;
   /* ★ THE OFFER (app. 01 rows 59-61). Eligible = at most one bound section and nothing taught —
      she has a lesson and has not started using it, which is exactly the moment a walkthrough is
      worth her time. ⚠️ `null` from the check means we could not tell, and an unknown must never
@@ -487,8 +537,10 @@ export default function Home() {
   useEffect(() => { if (tourOnOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOnOffer]);
   const card = (c, banded, idx) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}
-      tourAdd={idx === 0 && (tourNow.step === 8 || tourNow.step === 14)}
-      tourTarget={idx === 0 && tourNow.step === 10}
+      tourAdd={tourTarget && c.sectionKey === tourTarget.sectionKey
+               && (tourNow.step === 8 || tourNow.step === 14)}
+      tourTarget={tourTarget && c.sectionKey === tourTarget.sectionKey && tourNow.step === 10}
+      demoDone={tourDemoDone && tourTarget && c.sectionKey === tourTarget.sectionKey}
       plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`]}
       preparing={preparing && preparing.section === c.sectionKey ? preparing : null}
       onDismissPreparing={clearPreparing}
@@ -666,7 +718,7 @@ function DashHead({ classes, plansBySG, user, bindingsKnown }) {
  * theme/web.js under sc_*; the web's 11px graph rule is the one thing not ported (RN has no
  * repeating gradient) — the card keeps its fill, which is what carries the status anyway. */
 function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack,
-                     onMoveOn, onHistory, tourAdd, tourTarget }) {
+                     onMoveOn, onHistory, tourAdd, tourTarget, demoDone }) {
   /* ⚠️ ONLY THE TOUR'S OWN CARD carries these, and only on the step that rings them — the web
      stamps its `data-tour` conditionally for the same reason. Put them on every card and
      `measureAnchor` returns whichever mounted first, which is rarely the one she is looking at. */
@@ -809,7 +861,10 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
      its pointer read an untouched section as unit 1 — and now says so on purpose in MyPlans;
      this is the same rule stated once on each surface. */
   const lu = pointerOf(c.sectionKey) || 1;
-  const done = sec.done;
+  /* ⚠️ `demoDone` is a DRAWING instruction, never a fact: the tour says at step 14 that the
+     chapter is finished, and making that true for real would falsify her teaching record and the
+     history ledger to justify a sentence. The card looks done; nothing is done. */
+  const done = sec.done || !!demoDone;
   const total = plan.total_units || null;
   const fill = done ? t.card_done : t.card_going;
   const edge = done ? t.card_done_edge : t.card_going_edge;

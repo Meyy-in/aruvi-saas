@@ -140,11 +140,26 @@ export default function AppLayout() {
   const BACK_MOVES = {
     3: "/", 8: "/lessons", 17: "/", 18: "/settings/profile",
   };
+  /* ★ STEPS 11-13 HAPPEN INSIDE A REAL LESSON, so the shell opens one — the target is published
+     by My Classes (`noteTourTarget`), which is the screen that knows which lesson it is. On the
+     web these three steps are a modal inside the same page; here it is a route, so ARRIVING and
+     LEAVING both have to be driven, and only the shell is mounted throughout.
+     ⚠️ `navigate`, not `push`: the tour crosses this boundary in both directions, and pushing
+     would stack a second lesson every time she stepped back and forward again. */
+  const openTourLesson = () => {
+    const tg = tour.target;
+    if (!tg) return;
+    router.navigate({ pathname: "/lesson", params: {
+      subject: tg.subjectSlug, grade: tg.gradeSlug, filename: tg.filename, section: tg.sectionKey } });
+  };
+
   const tourNext = () => {
     const n = tour.step;
     if (n === TOUR_TOTAL) { setAskOpen(false); endTour(); router.navigate("/"); return; }
     if (n === 18) setAskOpen(true);
     if (n === 19) setAskOpen(false);
+    if (n === 10) { openTourLesson(); setTourStep(11); return; }   // into the lesson
+    if (n === 13) { router.navigate("/"); setTourStep(14); return; }  // and back out of it
     if (MOVES[n]) router.navigate(MOVES[n]);
     setTourStep(n + 1);
   };
@@ -152,6 +167,8 @@ export default function AppLayout() {
     const n = tour.step;
     if (n === 1) { endTour(); return; }          // Back out of step 1 IS leaving the tour
     if (n === 19 || n === 20) setAskOpen(n === 20);
+    if (n === 11) { router.navigate("/"); setTourStep(10); return; }   // back out of the lesson
+    if (n === 14) { openTourLesson(); setTourStep(13); return; }       // and back into it
     if (BACK_MOVES[n]) router.navigate(BACK_MOVES[n]);
     setTourStep(n - 1);
   };
@@ -160,6 +177,9 @@ export default function AppLayout() {
      would ask her twice, and the one that survives is the one that also reaches a teacher who
      SKIPPED the tour. Full reasoning in `lib/firstRun.js`. */
   const tourSkip = () => { setAskOpen(false); endTour(); router.navigate("/"); };
+  /* ⚠️ Whatever the tour opened, leaving it lands on My Classes — the web's `goClasses()` on
+     every exit. Without this, Skip pressed at step 12 would leave her inside a lesson with the
+     overlay gone and no sense of having left anything. */
   useEffect(() => subscribeAsk(setAskOpen), []);
   const [barH, setBarH] = useState(0);
   useEffect(() => {

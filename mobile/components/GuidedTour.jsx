@@ -21,7 +21,7 @@ import { useEffect, useMemo, useState } from "react";
 import { View, Pressable, useWindowDimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
-import { measureAnchor, measureFirst } from "../lib/tour";
+import { measureAnchor, measureFirst, pinTourScroll } from "../lib/tour";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -119,6 +119,10 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
   /* ★ MEASURE ON STEP CHANGE, ON ROTATION, AND WHEN AN ANCHOR SAYS IT MOVED — never on a timer.
      ⚠️ `alive` is not ceremony: `measureInWindow` is asynchronous, and a fast Next would
      otherwise land the PREVIOUS step's rect on the next step's screen. */
+  /* Pin ONCE on arriving at a step that asks for it — never on re-measure, or a teacher who
+     scrolled to read under the tip would be snapped back while reading. */
+  useEffect(() => { if (cfg && cfg.scrollTop) pinTourScroll(); }, [step]);   // eslint-disable-line
+
   useEffect(() => {
     if (!cfg) { setRects(null); return undefined; }
     let alive = true;

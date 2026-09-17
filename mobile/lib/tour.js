@@ -24,7 +24,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const anchors = new Map();          // data-tour name → { measure(cb) }
-let state = { step: 0, info: {} };  // step 0 = not running
+let state = { step: 0, info: {}, target: null };  // step 0 = not running
 const listeners = new Set();
 
 const emit = () => { listeners.forEach((fn) => { try { fn({ ...state }); } catch {} }); };
@@ -77,12 +77,25 @@ export function tourState() { return { ...state }; }
 
 /** Begin at step 1. `info` carries {tag, chapter} for the steps whose copy names them. */
 export function startTour(info) {
-  state = { step: 1, info: { ...(info || {}) } };
+  state = { ...state, step: 1, info: { ...state.info, ...(info || {}) } };
+  emit();
+}
+
+/* ★ THE SECTION AND LESSON THE TOUR DEMONSTRATES ON, published by My Classes because that is the
+   screen that knows which they are. The SHELL needs it too — steps 11-13 open the real lesson,
+   and only the shell can navigate — so it lives here rather than being passed down a tree that
+   does not connect the two. `{ subjectSlug, gradeSlug, sectionKey, filename, tag, chapter }`. */
+export function noteTourTarget(target) {
+  const a = JSON.stringify(state.target || null);
+  const b = JSON.stringify(target || null);
+  if (a === b) return;                     // idempotent: this is called from a render effect
+  state = { ...state, target: target || null };
   emit();
 }
 
 export function setTourStep(n) {
   state = { ...state, step: Math.max(0, n) };
+  pinPending = false;               // a pin belongs to the step that asked for it, never the next
   emit();
 }
 
@@ -99,8 +112,37 @@ export function noteTourInfo(info) {
    one with REACH: the tour's ending can only fire for a teacher who ran the tour, and Meyy
    assumed just as much for the one who skipped it. See `lib/firstRun.js`. */
 export function endTour() {
-  state = { step: 0, info: {} };
+  state = { step: 0, info: {}, target: null };
+  pinPending = false;
   emit();
+}
+
+/* ───────── The scroller the tour can pin (step 7 and step 11, app. 06 row 118) ─────────
+ * ★ TWO STEPS PIN THEIR SCREEN TO THE TOP, and they are the two whose ring is the whole screen:
+ * the lesson preview and the tracking view. Without it a long plan opens wherever she last left
+ * it, the chapter head and the tab strip are off-screen, and the tip describes something she
+ * cannot see.
+ * ⚠️ **AT MOST ONCE PER STEP.** The web allows two pins 400ms apart and its own note says
+ * repeated snapping "read as garbled" the moment the teacher scrolled to read under the box.
+ * Here the screen registers a scroller and the tour asks it once, on arrival; if she then
+ * scrolls, that is her business and nothing fights her for it.
+ */
+let scroller = null;
+/* ⚠️ THE STEP CAN ARRIVE BEFORE THE SCREEN DOES. Steps 11 and 13 navigate and advance the step in
+   the same tick (`openTourLesson(); setTourStep(11)`), so the tour asks for its pin while the
+   screen that owns the scroller is still mounting and there is nobody to ask. The pin then waits
+   here for the scroller about to register — and for nobody else: it is spent the instant it is
+   taken, cleared by the next step, and cleared by `endTour`, so it can never fire into a screen
+   the teacher opened herself a minute later. */
+let pinPending = false;
+export function registerTourScroller(fn) {
+  scroller = fn;
+  if (pinPending) { pinPending = false; try { fn(); } catch {} }
+  return () => { if (scroller === fn) scroller = null; };
+}
+export function pinTourScroll() {
+  if (scroller) { try { scroller(); } catch {} return; }
+  pinPending = true;
 }
 
 /** Subscribe to the tour from a component. */

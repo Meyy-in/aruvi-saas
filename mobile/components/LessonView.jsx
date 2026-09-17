@@ -30,7 +30,7 @@ import { useWebStyles } from "../theme/web";
 import Bar from "./Bar";
 import ChapterOrg, { kickerOf } from "./lesson/ChapterOrg";
 import PhaseBookmark from "./lesson/PhaseBookmark";
-import { useTourAnchor } from "../lib/tour";
+import { useTourAnchor, registerTourScroller } from "../lib/tour";
 import AssessPanel from "./lesson/AssessPanel";
 
 /* Walk groups (and children) into a flat unit list; each unit carries its group context. */
@@ -226,6 +226,18 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
                        defaultTab = "lesson", bookmark, tail }) {
   const items = unitAssessItems(assessment, u);
   const [tab, setTab] = useState(defaultTab);
+  /* ⚠️ DECLARED HERE, NOT IN `LessonView`. It was in `LessonView` and used down here, which babel
+     parses happily and which throws the moment a unit renders — `PreviewUnit` is a sibling
+     function, not a closure over it. A tour anchor belongs to the component that puts it on a
+     View. */
+  const unitTabsTourRef = useTourAnchor("unit-tabs");   // tour step 11 positions its tip here
+  /* ★ THIS IS THE SCROLLER THE TOUR PINS (steps 7 and 11). One screen, one scroller: whichever
+     unit is mounted owns it, and the registration is torn down with it, so the tour never holds
+     a handle to a screen that has gone. It scrolls; it does not fight her afterwards. */
+  const scrollTourRef = useRef(null);
+  useEffect(() => registerTourScroller(() => {
+    try { scrollTourRef.current && scrollTourRef.current.scrollTo({ y: 0, animated: true }); } catch {}
+  }), []);
   /* ⚠️ THE SPINE FREEZES WHILE SHE IS CHOOSING (founder, 2026-09-15: "Important that when arrow
      is pressed it must freeze the phase screen"). While the bookmark is armed the rows are
      targets, and a target that slides away under the finger is worse than no target at all — it
@@ -247,7 +259,7 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
           ))}
         </View>
       </View>
-      <ScrollView contentContainerStyle={s.body} scrollEnabled={!locked}>
+      <ScrollView ref={scrollTourRef} contentContainerStyle={s.body} scrollEnabled={!locked}>
         {tab === "overview" ? <OverviewPanel ws={ws} u={u} chapterTitle={chapterTitle} /> : null}
         {tab === "material" ? <MaterialPanel ws={ws} t={t} u={u} /> : null}
         {tab === "lesson" ? (
@@ -263,7 +275,6 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
 
 export default function LessonView({ view, sectionKey = "", onExit, preview = false }) {
   const { t } = useTheme();
-  const unitTabsTourRef = useTourAnchor("unit-tabs");   // tour step 11 positions its tip here
   const ws = useWebStyles();
   const lp = view.lesson_plan;
   const units = useMemo(() => flattenUnits(lp), [lp]);
@@ -375,7 +386,10 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
 
   if (showOrg) {
     return (
-      <View style={{ flex: 1, backgroundColor: t.paper }}>
+      /* ★ THE RING GOES ROUND THE ORG PAGE TOO. Steps 7 and 11 ring "the whole screen", and a
+         chapter she has not started opens on the map, not on a unit — without the anchor here
+         the ring had nothing to measure on exactly the plan a new teacher is shown. */
+      <View ref={rootTourRef} collapsable={false} style={{ flex: 1, backgroundColor: t.paper }}>
         <ChapterOrg lp={lp} units={units} pointer={tracking ? cur : null} doneAll={tracking && doneFlag}
           onOpenUnit={(n) => { setPreviewAt(n); setShowOrg(false); }} onBack={onExit} />
       </View>

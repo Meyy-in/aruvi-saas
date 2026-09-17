@@ -58,7 +58,8 @@ import {
   pretty, subjectSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { subscribeYear } from "@aruvi/shared/year";
-import { useTourAnchor, useTour } from "../../lib/tour";
+import { useTourAnchor, useTour, startTour, fetchTourEligible } from "../../lib/tour";
+import TourOffer from "../../components/TourOffer";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
@@ -345,6 +346,18 @@ export default function MyLessons() {
   const [year, setYear] = useState(null);
   useEffect(() => subscribeYear(setYear), []);
   const tourNow = useTour();   // steps 3-6 ring the first lesson card and its two controls
+  /* ★ THE OFFER IS HERE TOO, and this is the screen that matters most for it: first run LANDS
+     her on My Lessons (the promise was a lesson, not an empty card), so for a brand-new teacher
+     this is the first shell screen she ever sees. Offering the walkthrough only on My Classes
+     would mean the teacher likeliest to want it never meets it.
+     ⚠️ The sub-line differs by ONE WORD — "here in My Lessons" rather than "safe in My Lessons" —
+     because on this screen she is looking at the thing being reassured about. */
+  const [tourFit, setTourFit] = useState(null);
+  useEffect(() => {
+    let live = true;
+    fetchTourEligible(getJSON).then((v) => { if (live) setTourFit(v); });
+    return () => { live = false; };
+  }, []);
   const sSlug = current ? subjectSlug(current.name) : "";
   const gSlug = gradeSlug(activeGrade);
   const key = sSlug && gSlug ? `${sSlug}/${gSlug}` : "";
@@ -826,6 +839,14 @@ export default function MyLessons() {
             pushed here. ✅ It now takes the same `lapsed` flag the web's does (6a F5, 2026-09-16);
             the note that stood here said it would when Settings landed, and it turned out to need
             only the store. Only in the lessons pane, and never over the archive. */}
+        {/* Below her lessons, above the prepare bar — the web's placement (founder, 2026-08-21:
+            "the tour offer, BELOW her lesson"): she sees what she was promised, then the offer. */}
+        {tourFit === true && !tourNow.step && pane === "lessons" && effView !== "archived" ? (
+          <View style={{ paddingTop: 14 }}>
+            <TourOffer here onStart={() => startTour()} />
+          </View>
+        ) : null}
+
         {!loadErr && current && !ent.lapsed && pane === "lessons" && effView !== "archived" && plans !== undefined ? (
           <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
             <Text style={ws.mlp_allocate_q}>Need a chapter you don’t have yet?</Text>
