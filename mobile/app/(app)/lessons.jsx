@@ -218,6 +218,59 @@ export default function MyLessons() {
     if (r) { setReadiness(r); setLoaded(true); }
   }), []);
 
+  /* ⚠️ THIS BLOCK SITS ABOVE THE VALIDATION EFFECT BELOW, AND MUST: that effect names
+     `ownedClasses` in its dependency array, which is read DURING render. Declared after it,
+     that is a temporal-dead-zone throw on the first paint — the "a const read from a dep array
+     before it existed" crash the map already records once (`ed8fc93d`). `wheelGrades` stays
+     further down, because it needs `current` and nothing up here does. */
+  /* ★ A SUBJECT SHE OWNS BUT NO LONGER TEACHES KEEPS ITS LESSONS (founder, 2026-09-17: "when a
+     subscribed subject is deleted by removing all classes, the lessons in my lessons … goes too.
+     both should remain"). A paid subject now SURVIVES losing its last class
+     (`subjectSurvivesEmpty`) — but surviving in the profile is only half of it: these wheels are
+     built from her enrolled classes, so such a subject would list itself and then have no class
+     to scope to, and her prepared lessons would still be out of reach.
+     So for a subject with NO classes the Class wheel offers the classes she HOLDS — her paid
+     stages, intersected with what Meyy has content for. Every class on that list is one she has
+     bought, and the shelf behind it is the one her lessons are on. A teacher who still teaches a
+     class is offered exactly what she teaches, which is the 2026-07-06 rule, untouched.
+     ⚠️ Nothing is asked while she holds nothing: an unresolved entitlement would otherwise cache
+     an empty answer for the session and the wheel would stay empty after it arrived.
+     This is the web's `ownedClasses`, same shape and same reasons. */
+  const [ownedClasses, setOwnedClasses] = useState({});   // { [subject name]: ["III", …] }
+  /* ⚠️ ITS OWN SUBSCRIPTION, not the `ent` state below — that const is declared 250 lines
+     further down, and reading it here would be the "a const read from a dep array before it
+     existed" crash the map already records once (`ed8fc93d`). Two subscriptions to one module
+     store cost nothing; a temporal-dead-zone throw costs the screen. */
+  const [heldScopes, setHeldScopes] = useState(() => heldScopesOf(entitlementState().ent));
+  useEffect(() => subscribeEntitlement((e) => setHeldScopes(heldScopesOf(e && e.ent))), []);
+  useEffect(() => {
+    if (!heldScopes.length) return undefined;
+    const need = subjects.filter((s) => !((s.grades || []).length)
+      && ownedClasses[s.name] === undefined);
+    if (!need.length) return undefined;
+    let live = true;
+    Promise.all(need.map((s) => fetchSupportedGrades(s.name)
+      .then((gs) => [s.name, heldClassesFor(heldScopes, s.name, gs)])
+      .catch(() => [s.name, []])))
+      .then((pairs) => {
+        if (!live) return;
+        setOwnedClasses((m) => {
+          const next = { ...m };
+          pairs.forEach(([name, list]) => { next[name] = list; });
+          return next;
+        });
+      });
+    return () => { live = false; };
+  }, [subjects, heldScopes, ownedClasses]);
+
+  /* The classes the wheels offer for ONE subject — hers, or the ones she holds when she teaches
+     none. ONE definition, used by the wheel AND by the validation effect, or the two disagree
+     about which class is valid and she is snapped off the one she just picked. */
+  const classesOfSubject = (s) => {
+    const gs = (s && s.grades) || [];
+    if (gs.length) return gs.map((g) => g.grade);
+    return (s && ownedClasses[s.name]) || [];
+  };
   /* Seed the wheels from storage the first time subjects arrive, then keep both valid as the
      profile changes. The class is RESTRICTED to the classes she has enrolled for this subject, so
      a stale saved class — from a prior profile, another user on this device, or a deleted
@@ -272,54 +325,6 @@ export default function MyLessons() {
   const grades = useMemo(() => (current && current.grades) || [], [current]);
   const taughtGradeObj = grades.find((g) => g.grade === activeGrade) || null;
 
-  /* ★ A SUBJECT SHE OWNS BUT NO LONGER TEACHES KEEPS ITS LESSONS (founder, 2026-09-17: "when a
-     subscribed subject is deleted by removing all classes, the lessons in my lessons … goes too.
-     both should remain"). A paid subject now SURVIVES losing its last class
-     (`subjectSurvivesEmpty`) — but surviving in the profile is only half of it: these wheels are
-     built from her enrolled classes, so such a subject would list itself and then have no class
-     to scope to, and her prepared lessons would still be out of reach.
-     So for a subject with NO classes the Class wheel offers the classes she HOLDS — her paid
-     stages, intersected with what Meyy has content for. Every class on that list is one she has
-     bought, and the shelf behind it is the one her lessons are on. A teacher who still teaches a
-     class is offered exactly what she teaches, which is the 2026-07-06 rule, untouched.
-     ⚠️ Nothing is asked while she holds nothing: an unresolved entitlement would otherwise cache
-     an empty answer for the session and the wheel would stay empty after it arrived.
-     This is the web's `ownedClasses`, same shape and same reasons. */
-  const [ownedClasses, setOwnedClasses] = useState({});   // { [subject name]: ["III", …] }
-  /* ⚠️ ITS OWN SUBSCRIPTION, not the `ent` state below — that const is declared 250 lines
-     further down, and reading it here would be the "a const read from a dep array before it
-     existed" crash the map already records once (`ed8fc93d`). Two subscriptions to one module
-     store cost nothing; a temporal-dead-zone throw costs the screen. */
-  const [heldScopes, setHeldScopes] = useState(() => heldScopesOf(entitlementState().ent));
-  useEffect(() => subscribeEntitlement((e) => setHeldScopes(heldScopesOf(e && e.ent))), []);
-  useEffect(() => {
-    if (!heldScopes.length) return undefined;
-    const need = subjects.filter((s) => !((s.grades || []).length)
-      && ownedClasses[s.name] === undefined);
-    if (!need.length) return undefined;
-    let live = true;
-    Promise.all(need.map((s) => fetchSupportedGrades(s.name)
-      .then((gs) => [s.name, heldClassesFor(heldScopes, s.name, gs)])
-      .catch(() => [s.name, []])))
-      .then((pairs) => {
-        if (!live) return;
-        setOwnedClasses((m) => {
-          const next = { ...m };
-          pairs.forEach(([name, list]) => { next[name] = list; });
-          return next;
-        });
-      });
-    return () => { live = false; };
-  }, [subjects, heldScopes, ownedClasses]);
-
-  /* The classes the wheels offer for ONE subject — hers, or the ones she holds when she teaches
-     none. ONE definition, used by the wheel AND by the validation effect, or the two disagree
-     about which class is valid and she is snapped off the one she just picked. */
-  const classesOfSubject = (s) => {
-    const gs = (s && s.grades) || [];
-    if (gs.length) return gs.map((g) => g.grade);
-    return (s && ownedClasses[s.name]) || [];
-  };
   const wheelGrades = useMemo(() => classesOfSubject(current),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [current, grades, ownedClasses]);
