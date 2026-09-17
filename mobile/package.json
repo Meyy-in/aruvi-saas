@@ -9,7 +9,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "lint": "expo lint",
-    "doctor": "npx expo-doctor"
+    "doctor": "npx expo-doctor",
+    "check:parity": "node theme/check-parity.mjs",
+    "check:scope": "node check-scope.mjs $(find app components lib theme -name '*.jsx' -o -name '*.js')",
+    "check": "npm run check:scope && npm run check:parity"
   },
   "dependencies": {
     "@aruvi/shared": "file:../packages/shared",
