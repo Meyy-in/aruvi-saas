@@ -186,14 +186,30 @@ let scroller = null;
    taken, cleared by the next step, and cleared by `endTour`, so it can never fire into a screen
    the teacher opened herself a minute later. */
 let pinPending = false;
+/* ★ A SCROLLER DOES TWO THINGS, AND THE PHONE ONLY EVER IMPLEMENTED ONE (founder, 2026-09-17,
+ * asking what was wrong with card 13 alone). The web's overlay has both halves and its own
+ * comment names this exact step: *"Bring an off-screen target into view (e.g. Mark complete below
+ * the fold)"*. The phone ported the PIN (`scrollTop`, steps 7 and 11) and never ported the other
+ * half — so Mark complete, which sits at the very bottom of a unit's lesson panel and is off
+ * screen the moment the phases run past one screenful, had nothing bringing it up. The ring was
+ * drawn correctly, below the fold, where she could not see it; `place: "above"` then computed a
+ * negative offset and the tip fell to the foot of the screen. Everything worked and nothing was
+ * visible, which is why four fixes to the anchor changed nothing.
+ * `by` takes a DELTA because the overlay knows the rect in WINDOW coordinates and only the
+ * scroller knows its own offset. */
 export function registerTourScroller(fn) {
   scroller = fn;
-  if (pinPending) { pinPending = false; try { fn(); } catch {} }
+  if (pinPending) { pinPending = false; try { fn.top(); } catch {} }
   return () => { if (scroller === fn) scroller = null; };
 }
 export function pinTourScroll() {
-  if (scroller) { try { scroller(); } catch {} return; }
+  if (scroller) { try { scroller.top(); } catch {} return; }
   pinPending = true;
+}
+/** Scroll the current screen by `dy` so an off-screen anchor comes into view. No-op with none. */
+export function nudgeTourScroll(dy) {
+  if (!scroller || !dy) return;
+  try { scroller.by(dy); } catch {}
 }
 
 /** Subscribe to the tour from a component. */

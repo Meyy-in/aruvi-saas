@@ -240,8 +240,20 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
      unit is mounted owns it, and the registration is torn down with it, so the tour never holds
      a handle to a screen that has gone. It scrolls; it does not fight her afterwards. */
   const scrollTourRef = useRef(null);
-  useEffect(() => registerTourScroller(() => {
-    try { scrollTourRef.current && scrollTourRef.current.scrollTo({ y: 0, animated: true }); } catch {}
+  const scrollYRef = useRef(0);          // the offset only this scroller knows
+  useEffect(() => registerTourScroller({
+    top: () => {
+      try { scrollTourRef.current && scrollTourRef.current.scrollTo({ y: 0, animated: true }); } catch {}
+    },
+    /* `dy` is a delta in window coordinates, because that is what the overlay measures in and
+       the offset is what only this component tracks. Clamped at 0: a target above the top means
+       scrolling to the top, never to a negative offset. */
+    by: (dy) => {
+      try {
+        const y = Math.max(0, scrollYRef.current + dy);
+        scrollTourRef.current && scrollTourRef.current.scrollTo({ y, animated: true });
+      } catch {}
+    },
   }), []);
   /* ⚠️ THE SPINE FREEZES WHILE SHE IS CHOOSING (founder, 2026-09-15: "Important that when arrow
      is pressed it must freeze the phase screen"). While the bookmark is armed the rows are
@@ -264,7 +276,9 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
           ))}
         </View>
       </View>
-      <ScrollView ref={scrollTourRef} contentContainerStyle={s.body} scrollEnabled={!locked}>
+      <ScrollView ref={scrollTourRef} contentContainerStyle={s.body} scrollEnabled={!locked}
+        scrollEventThrottle={16}
+        onScroll={(e) => { scrollYRef.current = e.nativeEvent.contentOffset.y; }}>
         {tab === "overview" ? <OverviewPanel ws={ws} u={u} chapterTitle={chapterTitle} /> : null}
         {tab === "material" ? <MaterialPanel ws={ws} t={t} u={u} /> : null}
         {tab === "lesson" ? (

@@ -21,7 +21,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { View, Pressable, useWindowDimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
-import { measureAnchor, measureFirst, pinTourScroll, onAnchorRegistered,
+import { measureAnchor, measureFirst, pinTourScroll, nudgeTourScroll, onAnchorRegistered,
          TOUR_TOTAL } from "../lib/tour";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -128,6 +128,16 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
      scrolled to read under the tip would be snapped back while reading. */
   useEffect(() => { if (cfg && cfg.scrollTop) pinTourScroll(); }, [step]);   // eslint-disable-line
 
+  /* ★ BRING AN OFF-SCREEN TARGET INTO VIEW — the half of the web's scroll handling the phone
+     never ported, and the reason card 13 stayed invisible through four fixes to its anchor.
+     Mark complete sits at the foot of a unit's lesson panel; the moment the phases run past one
+     screenful it is below the fold, and `place: "above"` on a box below the fold computes a
+     negative offset, so the tip drops to the bottom of the screen and the ring is drawn where she
+     cannot see it. Everything worked; nothing was visible.
+     ⚠️ BOUNDED, like the web's (5 tries, 400ms apart) and only when the ring is actually outside
+     the comfortable viewport: a scroller that keeps re-centring fights a teacher reading under
+     the box, which is the complaint the pin's own two-try limit exists to prevent. */
+  const scrolls = useRef({ step: null, tries: 0, at: 0 });
   useEffect(() => {
     if (!cfg) { setRects(null); return undefined; }
     let alive = true;
@@ -135,7 +145,20 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
       const ring = cfg.anchor ? await measureAnchor(cfg.anchor) : null;
       const tip = cfg.tipAnchor ? await measureFirst(cfg.tipAnchor) : ring;
       const hand = cfg.handAnchor ? await measureAnchor(cfg.handAnchor) : ring;
-      if (alive) setRects({ ring, tip, hand });
+      if (!alive) return;
+      setRects({ ring, tip, hand });
+      if (ring && !cfg.scrollTop) {
+        const st = scrolls.current;
+        if (st.step !== step) { st.step = step; st.tries = 0; st.at = 0; }
+        const MARGIN = 96;                       // room for the tip above or below the ring
+        const off = ring.y < MARGIN || ring.y + ring.height > vh - MARGIN;
+        const now = Date.now();
+        if (off && st.tries < 5 && now - st.at > 400) {
+          st.tries += 1; st.at = now;
+          nudgeTourScroll(Math.round(ring.y + ring.height / 2 - vh / 2));   // centre it
+          setTick((n) => n + 1);                 // and re-measure where it landed
+        }
+      }
     })();
     return () => { alive = false; };
   }, [step, cfg, vw, vh, tick]);
