@@ -16,12 +16,19 @@
  * emails is UNGATED on purpose — it is the withdrawal half of a consent, and a right to withdraw
  * that depends on subscription state is not a right. Legal is shown on trial too.
  *
+ * ⚠️ PHONE-ONLY (a technical limitation, §0): the DELETE GATES AVOID THE KEYBOARD. The web has no
+ * soft keyboard, so its two gates simply appear under the card; here they open at the very bottom
+ * of the longest screen in the app, with an autofocused field, so the keyboard covers the thing it
+ * just asked her to read. `automaticallyAdjustKeyboardInsets` + a scroll-to-end on open is the
+ * same answer support.jsx reached on 2026-09-16, and for the same reason — see its note on why
+ * this is NOT a `KeyboardAvoidingView` job.
+ *
  * ⚠️ Rows whose destinations arrive later in 6b are drawn but dark — the card list is the founder's
  * structure and shipping half of it would teach her a shape that then changes under her. A row
  * with no handler renders at half strength and does not respond, which is the gear's own idiom
  * from before it was lit.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Text } from "../../../components/Text";
@@ -97,6 +104,14 @@ export default function SettingsHome() {
      ★ IT LIVES ON THIS LIST, not on a route of its own, because the RECEIPT replaces the whole
      screen. A pushed route would leave the Settings list underneath it, for an account the
      server has already destroyed. */
+  /* ★ BOTH GATES LIVE AT THE BOTTOM OF THE LONGEST SCREEN IN THE APP, and the first one autofocuses
+     a field — so opening one raises the keyboard over the very warning it is asking her to read
+     (founder, 2026-09-17, on the handset). The inset on the ScrollView makes the gate REACHABLE;
+     this brings it into view without her having to drag for it. `scrollToEnd` and not a measured
+     offset because the gate IS the end of the content in both cases, and a measure would have to
+     be re-taken every time a row above it appears or hides on trial. The delay lets the gate lay
+     out first — scrolling to an end that has not grown yet lands short. */
+  const scrollRef = useRef(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [finalOpen, setFinalOpen] = useState(false);
@@ -104,6 +119,13 @@ export default function SettingsHome() {
   const [busy, setBusy] = useState("");            // "docx" | "erase" | ""
   const [failMsg, setFailMsg] = useState("");
   const [receipt, setReceipt] = useState(null);
+  useEffect(() => {
+    if (!confirmOpen && !finalOpen) return undefined;
+    const id = setTimeout(() => {
+      try { scrollRef.current && scrollRef.current.scrollToEnd({ animated: true }); } catch {}
+    }, 120);
+    return () => clearTimeout(id);
+  }, [confirmOpen, finalOpen]);
 
   /* Download site #4. ⚠️ WORKS ON TRIAL, unlike the Your-data card — this is the one export a
      trial teacher keeps, and G3's whole promise is that she has it before anything is
@@ -202,7 +224,8 @@ export default function SettingsHome() {
   }
 
   return (
-    <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
+    <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, { paddingTop: 12 }]}
+      keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* ✅ LIVE AS OF 6d — the accordion, read-only. What she can CHANGE is the bar's "+";
           this is where she reads what she has told Meyy she teaches. */}
       <BigCard label="Teaching profile"
