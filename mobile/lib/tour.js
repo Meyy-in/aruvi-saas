@@ -22,6 +22,13 @@
  * "jumping" and is very hard to reproduce deliberately.
  */
 import { useEffect, useRef, useState } from "react";
+import { router } from "expo-router";
+import { openAsk, closeAsk } from "./ask";
+
+/* ★ TWENTY STEPS, DECLARED HERE. It lived in `GuidedTour.jsx` until the navigation moved into
+   this module; importing the component from here to read one number would be a cycle, and the
+   count is a fact about the tour rather than about the overlay that draws it. */
+export const TOUR_TOTAL = 20;
 
 const anchors = new Map();          // data-tour name → { measure(cb) }
 let state = { step: 0, info: {}, target: null };  // step 0 = not running
@@ -177,6 +184,97 @@ export function useTour() {
   const [s, setS] = useState(() => tourState());
   useEffect(() => subscribeTour(setS), []);
   return s;
+}
+
+/* ───────── WHERE THE TOUR GOES, AND WHO MAY DRAW IT ─────────────────────────────────────────
+ *
+ * ★ THE NAVIGATION LIVES WITH THE TOUR, not in the shell (founder, 2026-09-17, after three walks
+ * reported the same thing: at steps 9 and 15 *"pressing next shows the erroneous window"*).
+ * The cause was structural. The attach picker is a React Native `Modal`, which is presented in
+ * its OWN NATIVE WINDOW above the whole app — so an overlay rendered in `(app)/_layout.jsx` can
+ * never draw over it. She saw the ring from the step before, could not reach Next, and the only
+ * thing she COULD press was the lesson row: that attaches and closes the sheet while the step
+ * never moves, which is exactly the "erroneous window" in the report.
+ * The fix is not to fight the Modal but to let the SHEET render the overlay itself — and it can
+ * only do that if advancing the tour is something any screen can call. Hence these three
+ * functions. `router` is expo-router's module-level singleton and works outside a component;
+ * Ask Meyy is opened through its own store rather than the shell's local state, which also
+ * closes a small existing hole where `isAskOpen()` disagreed with what was on screen.
+ *
+ * ⚠️ THE MOVES ARE A TABLE, NOT A CHAIN OF `if`s — the web's `tourNext`/`tourBack` are two switch
+ * statements twenty lines apart and drifted there at least once. Next and Back read the same
+ * table from opposite ends, so a step cannot advance somewhere it will not come back from. */
+const MOVES = { 2: "/lessons", 7: "/", 15: "/", 16: "/settings/profile", 17: "/" };
+const BACK_MOVES = { 3: "/", 8: "/lessons", 17: "/", 18: "/settings/profile" };
+
+/* ★ `preview: true` OPENS IT THE WAY MY LESSONS DOES — with NO section, which is what makes
+   `LessonView` a read-only preview and makes it claim `preview-root` rather than `lesson-root`.
+   ★ `tour: "1"` FORCES THE UNIT, NOT THE CHAPTER MAP: a chapter with no progress opens on the org
+   page by design, which is right for a teacher meeting it and wrong for steps 11-13.
+   ⚠️ THE TAG, NOT THE KEY. `lesson.jsx` builds the section key itself, so passing the built key
+   made `science_ix_science_ix_9A` — a key matching no stored section. The screen still counted as
+   tracking and looked right while every read behind it answered from nothing. */
+function openTourLesson(opts) {
+  const tg = state.target;
+  if (!tg) {
+    console.warn("[meyy] tour: no target published — step", state.step, "cannot open a lesson");
+    return;
+  }
+  const preview = !!(opts && opts.preview);
+  router.navigate({ pathname: "/lesson", params: {
+    subject: tg.subjectSlug, grade: tg.gradeSlug, filename: tg.filename,
+    ...(preview ? {} : { section: tg.tag }), tour: "1" } });
+}
+
+export function tourNext() {
+  const n = state.step;
+  if (n === TOUR_TOTAL) { closeAsk(); endTour(); router.navigate("/"); return; }
+  if (n === 18) openAsk();
+  if (n === 19) closeAsk();
+  if (n === 6) { openTourLesson({ preview: true }); setTourStep(7); return; }  // into the preview
+  if (n === 10) { openTourLesson(); setTourStep(11); return; }                 // into the lesson
+  if (n === 13) { router.navigate("/"); setTourStep(14); return; }             // and back out of it
+  if (MOVES[n]) router.navigate(MOVES[n]);
+  setTourStep(n + 1);
+}
+
+export function tourBack() {
+  const n = state.step;
+  if (n === 1) { endTour(); return; }            // Back out of step 1 IS leaving the tour
+  if (n === 19 || n === 20) { if (n === 20) openAsk(); else closeAsk(); }
+  if (n === 7) { router.navigate("/lessons"); setTourStep(6); return; }   // back out of the preview
+  if (n === 11) { router.navigate("/"); setTourStep(10); return; }        // back out of the lesson
+  if (n === 14) { openTourLesson(); setTourStep(13); return; }            // and back into it
+  if (BACK_MOVES[n]) router.navigate(BACK_MOVES[n]);
+  setTourStep(n - 1);
+}
+
+/* ★ ONE EXIT FOR DONE AND SKIP, and it does NOT raise the set-up check window — the phone raises
+   that from first run's own one-shot. Two triggers would ask her twice, and the one that survives
+   is the one that also reaches a teacher who SKIPPED. See `lib/firstRun.js`.
+   ⚠️ Whatever the tour opened, leaving it lands on My Classes — the web's `goClasses()` on every
+   exit. Without this, Skip at step 12 would leave her inside a lesson with the overlay gone. */
+export function tourSkip() { closeAsk(); endTour(); router.navigate("/"); }
+
+/* ───────── WHO DRAWS THE OVERLAY ─────────
+ * Exactly one place at a time. The shell draws it for nineteen steps out of twenty; while the
+ * attach sheet is up it claims the job, because only a component INSIDE that Modal can appear
+ * above it. Two overlays drawing at once would double the scrim and stack two tips. */
+let overlayHost = null;                 // null = the shell · "sheet" = the attach picker
+const hostListeners = new Set();
+export function setTourOverlayHost(h) {
+  if (overlayHost === h) return;
+  overlayHost = h;
+  hostListeners.forEach((fn) => { try { fn(overlayHost); } catch {} });
+}
+export function useTourOverlayHost() {
+  const [h, setH] = useState(overlayHost);
+  useEffect(() => {
+    setH(overlayHost);
+    hostListeners.add(setH);
+    return () => hostListeners.delete(setH);
+  }, []);
+  return h;
 }
 
 /* ── the anchor hook every target uses ──────────────────────────────────────────────────── */

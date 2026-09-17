@@ -21,11 +21,11 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { View, Pressable, useWindowDimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
-import { measureAnchor, measureFirst, pinTourScroll, onAnchorRegistered } from "../lib/tour";
+import { measureAnchor, measureFirst, pinTourScroll, onAnchorRegistered,
+         TOUR_TOTAL } from "../lib/tour";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
-export const TOUR_TOTAL = 20;
 const SCRIM = "rgba(31,42,36,0.42)";
 const PAD = 8;          // the web inflates every measured rect by this before drawing
 const RING_R = 12;

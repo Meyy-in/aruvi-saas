@@ -24,14 +24,16 @@
  *   · last year's lessons (`.ap-prior`) — it needs the year record the phone does not read yet.
  * Neither changes the shape of the modal, so both drop in without moving anything.
  */
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { View, Modal, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform }
   from "react-native";
 import { Text } from "./Text";
 import PrepareCta from "./PrepareCta";
 import { pretty, classNum, pad } from "@aruvi/shared/format";
 import { readHistory } from "@aruvi/shared/sectionHistory";
-import { useTourAnchor } from "../lib/tour";
+import { useTourAnchor, useTour, tourNext, tourBack, tourSkip,
+         setTourOverlayHost } from "../lib/tour";
+import GuidedTour from "./GuidedTour";
 import { readLocalSection } from "@aruvi/shared/sectionState";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -61,6 +63,23 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
   const { t } = useTheme();
   const ws = useWebStyles();
   const tourRef = useTourAnchor(tour);   // only the attach picker passes a name (steps 9, 15)
+  /* ★ THE SHEET DRAWS THE TOUR WHILE IT IS UP (founder, reported on three walks: at steps 9 and
+     15 *"pressing next shows the erroneous window"*). A React Native `Modal` is presented in its
+     OWN NATIVE WINDOW above the whole app, so the overlay in the shell could never appear over
+     this card: she saw the previous step's ring, could not reach Next, and the only thing she
+     COULD press was a lesson row — which attaches and closes the sheet while the step never
+     moves. That is the "erroneous window" in the report.
+     ⚠️ CLAIMED ONLY WHILE THIS SHEET IS THE TOUR'S OWN (`tour` is the anchor name, and only the
+     attach picker passes one). Every other sheet — untrack, confirm, the growth window — leaves
+     the shell to draw, because the tour never rings one of those.
+     ⚠️ AND RELEASED ON UNMOUNT, so a sheet closed mid-tour hands the job straight back. */
+  const tourNow = useTour();
+  const ownsTour = !!tour && visible;
+  useEffect(() => {
+    if (!ownsTour) return undefined;
+    setTourOverlayHost("sheet");
+    return () => setTourOverlayHost(null);
+  }, [ownsTour]);
   const body = scroll
     ? (
       <ScrollView style={ws.ap_scrollbody} contentContainerStyle={ws.ap_scrollpad}
@@ -140,6 +159,11 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
           ) : null}
         </View>
       </View>
+      {/* LAST CHILD, inside the Modal — order, not zIndex, is what puts it over the card. */}
+      {ownsTour && tourNow.step > 0 ? (
+        <GuidedTour step={tourNow.step} info={tourNow.info}
+          onNext={tourNext} onBack={tourBack} onSkip={tourSkip} />
+      ) : null}
       </KeyboardAvoidingView>
     </Modal>
   );

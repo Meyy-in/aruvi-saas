@@ -552,6 +552,13 @@ export default function Home() {
         bindSectionChapter(section, pre); bump();
       }
       demoRef.current = { section: null, pre: null };
+      /* ⚠️ AND CLOSE WHAT THE TOUR OPENED. The demo effect below returns early once the tour has
+         ended (`if (!n || !tourTarget) return`), so its own `setAttachFor(null)` never runs on
+         the way out — Skip pressed at step 9 or 15 left the picker standing with the overlay
+         gone. The web has always done this (`MyPlans`'s tour-ended effect closes `openPlan` and
+         `attachFor`); the phone only noticed once the SHEET began drawing the tour, because
+         before that the sheet could not be on screen at those steps in any useful way. */
+      setAttachFor(null);
     }
     tourWasRunning.current = running;
   }, [tourNow.step, tourTarget]);   // eslint-disable-line react-hooks/exhaustive-deps

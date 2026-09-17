@@ -34,8 +34,8 @@ import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit, editBa
          openPick, pickSubject, pickBackToSubject, closePick, clearPortal } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
 import AskMeyy from "../../components/AskMeyy";
-import GuidedTour, { TOUR_TOTAL } from "../../components/GuidedTour";
-import { useTour, setTourStep, endTour } from "../../lib/tour";
+import GuidedTour from "../../components/GuidedTour";
+import { useTour, tourNext, tourBack, tourSkip, useTourOverlayHost } from "../../lib/tour";
 import { closeAsk, subscribeAsk, toggleAsk } from "../../lib/ask";
 
 export default function AppLayout() {
@@ -126,86 +126,15 @@ export default function AppLayout() {
   const [askOpen, setAskOpen] = useState(false);
 
   /* ───────── THE GUIDED TOUR (step 8b) ─────────
-     ★ THE SHELL DRIVES IT, because the tour is a journey ACROSS screens and nothing smaller than
-     the shell can move between them. Seven of the twenty steps change where she is standing; the
-     overlay itself only draws.
-     ⚠️ THE MOVES ARE A TABLE, NOT A CHAIN OF `if`s — the web's `tourNext`/`tourBack` are two
-     switch statements twenty lines apart, and the two drifted there at least once. Here Next and
-     Back read the same table from opposite ends, so a step cannot advance somewhere it will not
-     come back from. */
+     ★ THE SHELL ONLY DRAWS IT NOW. Next, Back, Skip and the seven route changes moved to
+     `lib/tour.js` on 2026-09-17, because the attach picker is a `Modal` — its own native window,
+     above everything — so at steps 9 and 15 an overlay rendered HERE could never appear over it,
+     and Next was unreachable for three walks running. Only a component inside that Modal can draw
+     above it, and it can only advance the tour if advancing is something any screen may call.
+     ⚠️ AND ONLY ONE PLACE DRAWS IT AT A TIME (`useTourOverlayHost`). While the sheet is up it
+     claims the job; two overlays would double the scrim and stack two tips. */
   const tour = useTour();
-  const MOVES = {
-    2:  "/lessons", 7: "/", 15: "/", 16: "/settings/profile", 17: "/",
-  };
-  const BACK_MOVES = {
-    3: "/", 8: "/lessons", 17: "/", 18: "/settings/profile",
-  };
-  /* ★ STEPS 11-13 HAPPEN INSIDE A REAL LESSON, so the shell opens one — the target is published
-     by My Classes (`noteTourTarget`), which is the screen that knows which lesson it is. On the
-     web these three steps are a modal inside the same page; here it is a route, so ARRIVING and
-     LEAVING both have to be driven, and only the shell is mounted throughout.
-     ⚠️ `navigate`, not `push`: the tour crosses this boundary in both directions, and pushing
-     would stack a second lesson every time she stepped back and forward again. */
-  /* ★ `preview: true` OPENS IT THE WAY MY LESSONS DOES — with NO section, which is what makes
-     `LessonView` a read-only preview and makes it claim `preview-root` rather than `lesson-root`.
-     Step 7 is that screen (founder, 2026-09-17: *"on 7, web app already opens the lesson plan
-     whereas mobile is still on the LP card"* — there was no move for step 6 at all, so the phone
-     narrated a screen it had not opened and step 7's anchor could not exist).
-     ★ `tour: "1"` FORCES THE UNIT, NOT THE CHAPTER MAP. A chapter with no progress opens on the
-     org page by design (founder, 2026-09-14) — right for a teacher meeting it for the first time,
-     wrong for steps 11-13, which describe tabs, a bookmark and a Mark complete button that are
-     all on the unit. Observed on BOTH surfaces, which is the tell that it is the landing rule and
-     not the port. */
-  const openTourLesson = (opts) => {
-    const tg = tour.target;
-    /* ⚠️ NO TARGET, NO LESSON — and silently, which is why step 7 could be reported twice as
-       "same error" with nothing to go on. The target is published by My Classes, the only screen
-       that knows which section and which plan; if its listing had not loaded while she was on
-       steps 1-2 it never published, and by step 6 that screen is unmounted. Says so now, so the
-       next walk distinguishes "the move never fired" from "the move fired and the anchor missed". */
-    if (!tg) { console.warn("[meyy] tour: no target published — step", tour.step, "cannot open a lesson"); return; }
-    const preview = !!(opts && opts.preview);
-    router.navigate({ pathname: "/lesson", params: {
-      subject: tg.subjectSlug, grade: tg.gradeSlug, filename: tg.filename,
-      /* ⚠️ THE TAG, NOT THE KEY. `lesson.jsx` builds the section key itself
-         (`${subject}_${grade}_${section}`), so passing the already-built key made
-         `science_ix_science_ix_9A` — a key that matches no stored section. The screen still
-         counted as "tracking", so it claimed `lesson-root` and looked right, while every read
-         behind it (the unit pointer, the bookmark, chapter-done) answered from nothing and every
-         write went somewhere that will never be read again. My Classes' own `openAttached` has
-         always passed `c.sectionTag`; this was the one caller that did not. */
-      ...(preview ? {} : { section: tg.tag }), tour: "1" } });
-  };
-
-  const tourNext = () => {
-    const n = tour.step;
-    if (n === TOUR_TOTAL) { setAskOpen(false); endTour(); router.navigate("/"); return; }
-    if (n === 18) setAskOpen(true);
-    if (n === 19) setAskOpen(false);
-    if (n === 6) { openTourLesson({ preview: true }); setTourStep(7); return; }  // into the preview
-    if (n === 10) { openTourLesson(); setTourStep(11); return; }   // into the lesson
-    if (n === 13) { router.navigate("/"); setTourStep(14); return; }  // and back out of it
-    if (MOVES[n]) router.navigate(MOVES[n]);
-    setTourStep(n + 1);
-  };
-  const tourBack = () => {
-    const n = tour.step;
-    if (n === 1) { endTour(); return; }          // Back out of step 1 IS leaving the tour
-    if (n === 19 || n === 20) setAskOpen(n === 20);
-    if (n === 7) { router.navigate("/lessons"); setTourStep(6); return; }  // back out of the preview
-    if (n === 11) { router.navigate("/"); setTourStep(10); return; }   // back out of the lesson
-    if (n === 14) { openTourLesson(); setTourStep(13); return; }       // and back into it
-    if (BACK_MOVES[n]) router.navigate(BACK_MOVES[n]);
-    setTourStep(n - 1);
-  };
-  /* ★ ONE EXIT FOR DONE AND SKIP, and it does NOT raise the set-up check window — the phone
-     raises that from first run's own one-shot (founder, 2026-09-17, closing Q9). Two triggers
-     would ask her twice, and the one that survives is the one that also reaches a teacher who
-     SKIPPED the tour. Full reasoning in `lib/firstRun.js`. */
-  const tourSkip = () => { setAskOpen(false); endTour(); router.navigate("/"); };
-  /* ⚠️ Whatever the tour opened, leaving it lands on My Classes — the web's `goClasses()` on
-     every exit. Without this, Skip pressed at step 12 would leave her inside a lesson with the
-     overlay gone and no sense of having left anything. */
+  const overlayHost = useTourOverlayHost();
   useEffect(() => subscribeAsk(setAskOpen), []);
   const [barH, setBarH] = useState(0);
   useEffect(() => {
@@ -527,7 +456,8 @@ export default function AppLayout() {
 
       {/* ⚠️ ABOVE Ask Meyy and the bottom nav, because steps 18-19 ring them while they are open —
           a tour that sits under the thing it is pointing at cannot point at anything. */}
-      {tour.step > 0 ? (
+      {/* Not while the attach sheet holds it — see `useTourOverlayHost`. */}
+      {tour.step > 0 && overlayHost === null ? (
         <GuidedTour step={tour.step} info={tour.info}
           onNext={tourNext} onBack={tourBack} onSkip={tourSkip} />
       ) : null}
