@@ -105,10 +105,58 @@ export function withUser(opts = {}) {
   return { ...opts, headers };
 }
 
+/* ★ A GET RETRIES ITSELF (founder, 2026-09-17, on the handset: first run's subject step showed
+ * "Couldn't load the subject list" on a brand-new account and *"seems to be ok after 3 or 4
+ * presses"*). Three or four presses is the shape of a TRANSIENT — a backend still coming up, a
+ * first TLS handshake to a host this device has never met, a radio that has just reattached —
+ * and the teacher who meets it is, by definition, on the first screen she has ever seen. She
+ * should not be the retry loop.
+ *
+ * ⚠️ ONLY GET, AND ONLY TRANSIENT STATUSES. A GET is idempotent by definition, so repeating one
+ * is safe; `postJSON` is deliberately NOT given this, because repeating a checkout or a plan
+ * generation is not. And a clean 4xx is an ANSWER, not a failure: `/onboarding/known` answers
+ * 404 for a number we do not hold, `/plans/…/view` answers 404 for a deleted plan, and callers
+ * read those codes. Retrying them would turn a correct instant answer into a three-second wait
+ * for the same one. Only a thrown fetch (no response at all) and 408 · 429 · 502 · 503 · 504
+ * come back for another try.
+ *
+ * ⚠️ AND EACH ATTEMPT NEEDS ITS OWN DEADLINE, or the retry never happens: a socket that hangs
+ * blocks the first attempt for as long as the platform allows, which on a mobile network can be
+ * a minute or more. 15s × 3 attempts bounds the worst case at ~48s including the backoff, which
+ * is the same order as the cold start it exists to absorb. */
+const RETRY_STATUS = new Set([408, 429, 502, 503, 504]);
+const GET_TRIES = 3;
+const GET_TIMEOUT_MS = 15000;
+const GET_BACKOFF_MS = [500, 1500];
+
 export async function getJSON(path, opts) {
-  const r = await fetch(API + path, withUser(opts));
-  if (!r.ok) throw new Error(`${r.status}`);
-  return r.json();
+  let lastErr;
+  for (let attempt = 0; attempt < GET_TRIES; attempt += 1) {
+    /* AbortController is available in React Native and every browser we support. If a host ever
+       lacks it, `ctl` stays undefined and the attempt simply runs without a deadline rather than
+       throwing — a slower failure is better than a broken one. */
+    let ctl;
+    let timer;
+    try { ctl = new AbortController(); } catch { ctl = null; }
+    if (ctl) timer = setTimeout(() => { try { ctl.abort(); } catch {} }, GET_TIMEOUT_MS);
+    try {
+      const r = await fetch(API + path, withUser(ctl ? { ...opts, signal: ctl.signal } : opts));
+      if (r.ok) return await r.json();
+      if (!RETRY_STATUS.has(r.status) || attempt === GET_TRIES - 1) {
+        throw new Error(`${r.status}`);
+      }
+      lastErr = new Error(`${r.status}`);
+    } catch (e) {
+      /* The status throw above lands here too; rethrow it rather than retrying a decided answer. */
+      if (e && e.message && /^\d{3}$/.test(e.message) && !RETRY_STATUS.has(Number(e.message))) throw e;
+      lastErr = e;
+      if (attempt === GET_TRIES - 1) throw e;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+    await new Promise((res) => setTimeout(res, GET_BACKOFF_MS[attempt] || 1500));
+  }
+  throw lastErr || new Error("failed");
 }
 
 /* POST a JSON body and parse the JSON response (X-Aruvi-User attached like getJSON).

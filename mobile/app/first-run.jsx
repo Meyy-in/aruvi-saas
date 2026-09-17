@@ -130,7 +130,15 @@ export default function FirstRun() {
     setSubjLoad("");
     getJSON("/subjects")
       .then((d) => { setSubjects((d && d.subjects) || []); setSubjLoad("ok"); })
-      .catch(() => { setSubjects([]); setSubjLoad("fail"); });
+      .catch((e) => {
+      /* ⚠️ THE REASON GOES TO THE CONSOLE, NEVER TO HER. "Couldn't load the subject list" is
+         the right sentence for a teacher — a status code is not — but when this is reported from
+         a handset the one thing nobody can see is WHICH failure it was. `getJSON` now retries
+         transients three times before it gives up, so anything that reaches here has already
+         survived that, and the message says whether it was a status or a dead socket. */
+        console.warn("[meyy] /subjects failed:", (e && e.message) || e);
+        setSubjects([]); setSubjLoad("fail");
+      });
     fetchEntitlement().then(setTrialInfo).catch(() => {});
   }, [subjTry]);
 
