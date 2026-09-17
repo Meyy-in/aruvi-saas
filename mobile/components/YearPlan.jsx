@@ -33,12 +33,19 @@
  * chapter rows above (founder, 2026-08-27: this is the row a teacher is actually reading when
  * she judges her year, and the label is the last thing her eye passes before the figures).
  *
- * ⚠️ ONE CONTROL FROM THE WEB'S TOTALS ROW IS STILL NOT PORTED, named here as CLAUDE.md §4
- * requires: the WORD EXPORT. The web downloads a blob through an anchor with `download`, which
- * has no counterpart here — saving a file on a phone is expo-file-system + expo-sharing, a native
- * dependency and a founder decision about where a document lands (Files? the share sheet?). The
- * server route is unchanged and waiting; this is a deliberate hold, not an oversight. With it
- * absent the export's status line (`.yp-export-msg`) has nothing to say and does not render.
+ * ★ THE WORD EXPORT LANDED 2026-09-17 (step 7, app. 05 E8-E9) — the last control of the web's
+ * totals row to arrive. It was held because saving a file on a phone is a native dependency AND
+ * a founder decision about where the document goes; Q15 answered the second on 2026-09-16 (the
+ * SHARE SHEET, because what a teacher does with a year plan is send it to a head of department),
+ * and `lib/download.js` is the first. So the arrow now sits beside the pencil, as on the web:
+ * both are things you do to the TABLE AS A WHOLE, and the totals row is where the table's own
+ * controls live.
+ * ★ AND IT POSTS THE PANE'S OWN MODEL. `sug` is computed in this file — her budget distributed
+ * by chapter weight — so asking the server to rebuild it would be a SECOND implementation of
+ * that arithmetic, and the day the two drift she holds a Word document contradicting the screen
+ * she exported it from. That is the 2026-08-21 defect (Year Plan said 14 where the chapter step
+ * said 19) reached through a new door, and the web closed it by not opening it. Same here: the
+ * payload IS the render.
  *
  * Measures live in theme/web.js under `yp_*` (§4 rule 2).
  */
@@ -47,6 +54,7 @@ import { View, Pressable } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
 import { annualBudgetPeriods, getJSON, largestRemainder, pad } from "@aruvi/shared/format";
+import { downloadDocument, yearPlanExport } from "../lib/download";
 import { fetchPlans } from "@aruvi/shared/plans";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -63,12 +71,32 @@ const Pencil = ({ size = 13, color }) => (
   </Svg>
 );
 
+/* Export — an arrow LEAVING A TRAY, upward. The web's own glyph, path for path, and deliberately
+   NOT the allocation report's file-page mark: that one sits beside a written "Word" label and can
+   afford to name the FORMAT, where this one sits bare beside the pencil and must name the ACT.
+   Upward rather than a download tray's downward arrow because the sense is "take this out of Meyy
+   and away with me", not "pull something down into this device". Same 24-box and stroke weight as
+   `Pencil`, so the pair reads as one set. */
+const ExportIcon = ({ size = 13, color }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color}
+    strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M12 15V3" />
+    <Path d="M8 7l4-4 4 4" />
+    <Path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
+  </Svg>
+);
+
 export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditBudget }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const [chapters, setChapters] = useState(null);   // null = loading, [] = none
   const [plans, setPlans] = useState([]);
   const [err, setErr] = useState(false);
+  /* "" · "working" · "failed" — the web's own three states, and the reason it is one value rather
+     than a busy flag beside an error string: a retry must clear the previous failure in the same
+     tick it starts, or the line contradicts the arrow. */
+  const [exporting, setExporting] = useState("");
+  const [exportErr, setExportErr] = useState("");
 
   /* Scoped fetch: chapters (weights + the calibrated per-chapter recommendation) and this
      teacher's prepared plans (for the committed periods). The plans half goes through the SHARED
@@ -144,6 +172,38 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
     const sugTotal = rows.reduce((s, r) => s + (r.sug || 0), 0);
     return { rows, budget, committedTotal, sugTotal };
   }, [chapters, plans, readiness, sSlug, gSlug]);
+
+  /* ★ THE PAYLOAD IS THE RENDER — see the header. Every field the web sends, in the web's own
+     shape, because the server is the same server and the document must not be able to tell which
+     surface asked for it. */
+  const downloadWord = () => {
+    if (exporting === "working") return;
+    setExporting("working"); setExportErr("");
+    downloadDocument(yearPlanExport({ sSlug, gSlug, payload: {
+      subject: subjectName, grade: gSlug,
+      budget: model.budget ?? null,
+      generated_at: new Date().toISOString(),
+      rows: model.rows.map((r) => ({
+        n: r.n, title: r.title, sug: r.sug, plan: r.plan,
+        prepared: !!r.prepared, awaited: !!r.awaited,
+      })),
+      sug_total: model.sugTotal, plan_total: model.committedTotal,
+    } }))
+      .then(() => setExporting(""))
+      .catch((e) => {
+        /* The web's four sentences, chosen from the same two facts (`lib/download.js` puts the
+           status and the server's own `detail` on the throw). 404 is not a broken export — it is
+           an API process older than the route — and saying so is the only useful thing there is
+           to say about it. */
+        setExportErr(
+          e?.status === 404 ? "This Meyy server doesn’t have the export yet."
+            : e?.status === 501 ? "Word export isn’t available on this server."
+            : e?.status ? `${e.status}${e.detail ? ` — ${e.detail}` : ""}`
+            : "Couldn’t reach Meyy just now."
+        );
+        setExporting("failed");
+      });
+  };
 
   if (chapters === null) {
     return <Text style={ws.yp_loading}>Loading your year…</Text>;
@@ -241,11 +301,38 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
               <Pencil color={t.pine_d} />
             </Pressable>
           ) : null}
+          {/* ★ THE EXPORT SITS BESIDE THE PENCIL (founder, 2026-08-30, ported 2026-09-17). It was
+              a labelled button in its own row on the web first, on the reasoning that a download
+              and an edit are different KINDS of act; that was the wrong unit of difference —
+              both are things you do to the table as a whole, and two icons cost less height than
+              a whole row, which is the scarce thing on a phone. Same treatment as the pencil, so
+              the pair reads as a set rather than as one control and one decoration. */}
+          <Pressable onPress={downloadWord} disabled={exporting === "working"}
+            accessibilityRole="button" hitSlop={10}
+            accessibilityState={{ disabled: exporting === "working" }}
+            accessibilityLabel={`Download the ${subjectName} year plan table as a Word document`}
+            style={[ws.yp_budget_edit, ws.yp_export_btn, { alignSelf: "center" },
+                    exporting === "working" && { opacity: 0.45 }]}>
+            <ExportIcon color={t.pine_d} />
+          </Pressable>
           <View style={{ flex: 1 }} />
           <Text style={[ws.yp_tot_n, ws.yp_c_sug]}>{sugTotal}</Text>
           <Text style={[ws.yp_tot_n, ws.yp_c_plan]}>{committedTotal}</Text>
         </View>
       </View>
+
+      {/* The export's only words — and only while there are any. An icon button cannot say
+          "preparing" or why it failed, and both must still be said, so they are said here, under
+          the row the arrow sits on. Nothing renders when idle: a permanent caption explaining an
+          icon is a sign the icon is wrong. It PUSHES the note down rather than overlapping it —
+          never an alert covering the table she is trying to take away. */}
+      {exporting === "working" ? (
+        <Text style={ws.yp_export_msg}>Preparing your Word document…</Text>
+      ) : exporting === "failed" ? (
+        <Text accessibilityRole="alert" style={[ws.yp_export_msg, ws.yp_export_bad]}>
+          Couldn’t download the year plan. {exportErr} Tap the arrow to try again.
+        </Text>
+      ) : null}
 
       {/* ★ THE NOTE SITS BELOW THE TOTALS AND ALWAYS SHOWS (founder, 2026-08-27). It explains the
           figures directly above it, so it reads in the order the eye moves: table, total, then

@@ -70,6 +70,7 @@ import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
+import ReportButton from "../../components/ReportSheet";
 import { subscribePreparing, clearPreparing, clearPaywall } from "../../lib/preparing";
 import { cancelLessonsScope, noteLessonsScope, openEdit } from "../../lib/portal";
 import YearPlan from "../../components/YearPlan";
@@ -763,7 +764,7 @@ export default function MyLessons() {
             ) : null}
             {ordered.map((p, pi) => (
               <PlanCard key={p.filename} p={p} archived={effView === "archived"}
-                status={statusFor(p)} attached={isAttached(p)}
+                status={statusFor(p)} attached={isAttached(p)} sSlug={sSlug} gSlug={gSlug}
                 busy={pi === busyIdx ? preparing : null} onDismissBusy={clearPreparing}
                 onOpen={() => openLesson(p)}
                 onArchive={() => archivePlan(p)} onRestore={() => restorePlan(p)} />
@@ -858,7 +859,8 @@ export default function MyLessons() {
  * action simply is not inside the card's press target — which is what stopPropagation was
  * simulating. Same divergence, same reason, as the section card's (step 4a).
  */
-function PlanCard({ p, archived, status, attached, busy, onDismissBusy, onOpen, onArchive, onRestore }) {
+function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
+                   onDismissBusy, onOpen, onArchive, onRestore }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const { completed, live } = status;
@@ -939,6 +941,18 @@ function PlanCard({ p, archived, status, attached, busy, onDismissBusy, onOpen, 
           accessibilityLabel={`Archive ${p.chapter_title}`} style={ws.mlp2_iconbtn}>
           <ArchiveIcon size={18} color={t.ink_soft} />
         </Pressable>
+      ) : null}
+
+      {/* ★ THE REPORT TRIGGER, step 7 (app. 05 C30) — the bottom of the column the archive icon
+          tops, in the right margin this card has been reserving since step 4b (`mlp2_cardpad`,
+          82px floor). Nothing moved to make room for it, which was the point of reserving it.
+          Not on an ARCHIVED card: the archive holds a plan out of circulation, and offering to
+          export one is offering to act on something she has set aside — the same reasoning that
+          keeps archived plans out of the attach picker (founder, 2026-08-01). Not while it is
+          re-preparing either: what the file would say is being rewritten as she taps. */}
+      {!archived && !busy ? (
+        <ReportButton sSlug={sSlug} gSlug={gSlug} filename={p.filename}
+          chapterTitle={p.chapter_title} />
       ) : null}
     </View>
   );

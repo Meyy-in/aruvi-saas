@@ -11,8 +11,8 @@
  * grants with no purchase screen in the app (plan §0, assessment §5B), so the phone has one
  * door — Free to try — and subscription comes later behind BillingProvider. Without Supabase
  * env the stub stays (four boxes, 0000), labelled, so a header-mode dev API still works. */
-import { useEffect, useState } from "react";
-import { View, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, StyleSheet } from "react-native";
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
@@ -54,12 +54,46 @@ const Benefits = () => {
 
 /* Module-level on purpose: a frame defined inside Login would be a NEW component type on
  * every render, remounting its subtree and blurring the input on each keystroke. */
+/* ★ THE PRIMARY BUTTON WENT UNDER THE KEYPAD (founder, 2026-09-17, iPhone 16: "when i put the
+ * cursor where mobile phone number must be put in..the enter button hides behind the key pad
+ * though 'new to Meyy? Get started' does appear immediately below the mobile").
+ * The foot appeared because it IS outside the scroll — `padding` shrinks this view and the foot
+ * rides up with the keyboard. "Enter →" / "Generate OTP →" are the LAST children of the scroll,
+ * so shrinking pushed them past the bottom of a view nobody had scrolled: reachable, but
+ * invisible, on the one screen where the button is the whole point.
+ * Two halves to the cure, and both are needed:
+ *   · `keyboardDidShow` → scrollToEnd, so the moment the keypad opens the scroll lands on the
+ *     action rather than leaving her to discover it. `Did`, not `Will`: the KAV padding must be
+ *     in place before the end is where we think it is. It also fires on FRAME changes (predictive
+ *     text bar, a switch from number-pad to letters), so the button stays put as the keypad grows.
+ *   · `KEYPAD_SLACK` of bottom padding, so the last control clears the foot's hairline instead of
+ *     sitting flush against it. Applied only while the keypad is up — the closed-keypad screen is
+ *     the web's spacing and must not change.
+ * Shared by all three screens (choose / otp / signin) because the frame is: the OTP door had the
+ * same fault one field earlier. */
+const BODY_PAD_BOTTOM = 30;   /* must equal s.body.paddingBottom below */
+const KEYPAD_SLACK = 24;
+
 function Wrap({ children, foot }) {
   const { t } = useTheme();
+  const scroller = useRef(null);
+  const [keypad, setKeypad] = useState(false);
+
+  useEffect(() => {
+    const shown = Keyboard.addListener("keyboardDidShow", () => {
+      setKeypad(true);
+      /* One frame for the padding to land, then go to the action. */
+      requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
+    });
+    const hidden = Keyboard.addListener("keyboardDidHide", () => setKeypad(false));
+    return () => { shown.remove(); hidden.remove(); };
+  }, []);
+
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: t.paper }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <Bar />
-      <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">{children}</ScrollView>
+      <ScrollView ref={scroller} contentContainerStyle={[s.body, keypad && { paddingBottom: BODY_PAD_BOTTOM + KEYPAD_SLACK }]}
+        keyboardShouldPersistTaps="handled" keyboardDismissMode="none">{children}</ScrollView>
       <View style={[s.foot, { borderTopColor: t.line }]}>{foot}</View>
     </KeyboardAvoidingView>
   );
@@ -255,7 +289,7 @@ export default function Login() {
 }
 
 const s = StyleSheet.create({
-  body: { paddingHorizontal: 20, paddingVertical: 22, paddingBottom: 30 },
+  body: { paddingHorizontal: 20, paddingVertical: 22, paddingBottom: BODY_PAD_BOTTOM },
   foot: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingVertical: 12, gap: 10, alignItems: "stretch" },
   plan: { borderWidth: 1.5, borderRadius: 12, padding: 16, marginTop: 14 },
   mobileRow: { flexDirection: "row", alignItems: "center" },

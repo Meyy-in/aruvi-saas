@@ -43,6 +43,14 @@ function toBase64(bytes) {
   return btoa(bin);
 }
 
+/* `filename="…"` off Content-Disposition. Deliberately the web's own one-line regex rather than
+   a full RFC 5987 parse: the only producer is this API, it always quotes and never sends a
+   `filename*`, and a parser written for headers we do not emit is a parser nothing tests. */
+function dispositionName(r) {
+  const m = (r.headers.get("content-disposition") || "").match(/filename="([^"]+)"/);
+  return m ? m[1] : "";
+}
+
 /* Fetch a document from the API and hand it to the teacher.
  *
  *   path      — API path, already encoded (e.g. `/invoices/2026-27%2F014`)
@@ -51,16 +59,47 @@ function toBase64(bytes) {
  *
  * Resolves when the sheet has been dismissed (or the browser download has started). Throws on
  * anything that went wrong, with no message of its own. */
-export async function downloadDocument({ path, filename, mime }) {
-  const r = await fetch(API + path, withUser());
-  if (!r.ok) throw new Error(String(r.status));
+export async function downloadDocument({ path, filename, mime, method = "GET", body,
+                                         fromDisposition = false }) {
+  /* A GET needs no body and must not declare a content type; the year-plan export POSTs the
+     SCREEN'S OWN MODEL (web YearPlan.jsx: the server renders what it is given and looks nothing
+     up, so the file can never contradict the table it came from). One call shape, both verbs. */
+  const r = await fetch(API + path, body === undefined
+    ? withUser({ method })
+    : withUser({ method, headers: { "Content-Type": "application/json" },
+                 body: JSON.stringify(body) }));
+  if (!r.ok) {
+    /* ⚠️ THE STATUS AND THE SERVER'S OWN WORDS RIDE ON THE THROW — and this is still not this
+       file speaking. Each caller owns its sentence (see the header), but no caller can choose
+       between "this Meyy server doesn't have the export yet" and "Word export isn't available
+       on this server" without knowing which status it was, and the web picks those same two
+       sentences from exactly these two facts. Read HERE because it can only be read here: a
+       Response body is consumed once, and by the time the caller has the error it is gone. */
+    let detail = "";
+    try {
+      const j = await r.json();
+      detail = typeof j.detail === "string" ? j.detail
+        : Array.isArray(j.detail) ? j.detail.map((d) => d.msg).join("; ") : "";
+    } catch { /* not JSON — the status alone is what we have */ }
+    const e = new Error(String(r.status));
+    e.status = r.status;
+    e.detail = detail;
+    throw e;
+  }
+
+  /* ★ WHO NAMES THE FILE. The two Settings documents are named by US, to the character, because
+     a teacher with both surfaces must not end up with two naming schemes in one folder. The
+     report and the year plan are named by the SERVER: the name carries the chapter, the
+     composition and the class, and only the renderer knows how it rendered them. The web reads
+     the same header for the same reason, with the same literal fallback. */
+  const name = fromDisposition ? (dispositionName(r) || filename) : filename;
 
   if (IS_WEB) {
     /* The web's own mechanism, because on this target it IS the web. */
     const url = URL.createObjectURL(await r.blob());
     const a = document.createElement("a");
     a.href = url;
-    a.download = filename;
+    a.download = name;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -74,7 +113,7 @@ export async function downloadDocument({ path, filename, mime }) {
      the teacher's real copy is wherever the share sheet sends it, and this one exists only long
      enough to hand over. `Paths.document` is for files the app itself keeps, and filling it with
      every invoice she has ever opened would be a slow leak the OS may not reclaim. */
-  const file = new File(Paths.cache, filename);
+  const file = new File(Paths.cache, name);
   try {
     const bytes = new Uint8Array(await r.arrayBuffer());
     file.create({ overwrite: true, intermediates: true });
@@ -88,7 +127,7 @@ export async function downloadDocument({ path, filename, mime }) {
     await Sharing.shareAsync(file.uri, {
       mimeType: mime,
       UTI: mime === "application/pdf" ? "com.adobe.pdf" : undefined,
-      dialogTitle: filename,
+      dialogTitle: name,
     });
   } finally {
     /* ⚠️ AFTER the sheet resolves, never before: iOS reads the file when the teacher picks a
@@ -105,6 +144,36 @@ export const dataExport = (fmt) => ({
   filename: `aruvi-your-data.${fmt}`,
   mime: fmt === "pdf" ? "application/pdf"
     : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+});
+
+/* ★ THE REPORT (app. 05 C36) — the one document whose SHAPE she chooses, so unlike the two
+   above it takes arguments instead of being a constant. The query is assembled here so that no
+   screen spells the route, and `answers` rides ONLY where the composition can carry it: that is
+   what makes "a clean copy can never carry answers" a property of the descriptor rather than a
+   rule the modal has to keep remembering. */
+export const planReport = ({ sSlug, gSlug, filename, comp, fmt, answers }) => ({
+  path: `/api/plans/${sSlug}/${gSlug}/${filename}/export/${comp}?format=${fmt}`
+    + (answers ? "&answers=1" : ""),
+  /* The web's literal fallback, kept to the character; the server normally names this itself. */
+  filename: `report.${fmt === "pdf" ? "pdf" : "docx"}`,
+  fromDisposition: true,
+  mime: fmt === "pdf" ? "application/pdf"
+    : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+});
+
+/* ★ THE YEAR PLAN POSTS THE PANE'S OWN MODEL (app. 05 E8). `sug` is the teacher's budget
+   distributed by chapter weight, computed in YearPlan.jsx; asking the server to rebuild it
+   would be a SECOND implementation of that arithmetic, and the day the two drift she holds a
+   Word document contradicting the screen she exported it from — the 2026-08-21 defect (Year
+   Plan said 14 where the chapter step said 19) reached through a new door. So the payload IS
+   the render, on this surface exactly as on the web. */
+export const yearPlanExport = ({ sSlug, gSlug, payload }) => ({
+  path: "/api/year-plan/export-docx",
+  method: "POST",
+  body: payload,
+  filename: `year-plan-${sSlug}-${gSlug}.docx`,
+  fromDisposition: true,
+  mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 });
 
 export const invoicePdf = (number) => ({

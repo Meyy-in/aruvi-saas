@@ -3411,7 +3411,26 @@ def _export_plan(subject: str, grade: str, filename: str, kind: str,
     (per subject·grade·chapter, section-agnostic). `answers` gates the assessment
     answer layer; `unit` scopes integrated to one unit; `fmt` is "pdf" | "docx".
     `inline=True` (PDF only) serves Content-Disposition: inline so the browser/mobile
-    OS opens it in its native PDF viewer instead of force-downloading."""
+    OS opens it in its native PDF viewer instead of force-downloading.
+
+    ★ THE MASTHEAD IS DATED NOW, NOT FROM THE PLAN FILE (founder, 2026-09-17: "it is not
+    showing current date"). Every renderer resolves its masthead as
+    `generated_at or plan_date or datetime.now()`, and this handler passed only `plan_date` —
+    which is the saved plan's `saved_at`, i.e. the moment that file was written into the
+    SHARED library. Two things were wrong with that, and the second is the worse one:
+
+      · it is the AUTHORING date of a certified canonical, so it never moves. 1000 of the
+        1003 files in the library are stamped August 2026, and a teacher downloading in June
+        would still have been handed "17 August 2026";
+      · saved_plans is a SHARED serve cache, so for a served variant the stamp belongs to
+        whichever teacher first caused that cache entry to be written. One teacher's
+        timestamp was appearing in every other teacher's document.
+
+    Meyy's other three documents all date themselves at generation (the year plan from the
+    client's `generated_at`, the allocation report from `report.generated_at`, the invoice
+    from its issue date), so these three were the outliers. `plan_date` is still PASSED — it
+    remains the honest fallback if a caller ever wants the file's own date, and the ladder is
+    the renderers' to resolve, not this handler's to flatten."""
     fmt = (fmt or "pdf").lower()
     if fmt not in ("pdf", "docx"):
         raise HTTPException(status_code=400, detail=f"Unknown format: {fmt}")
@@ -3421,6 +3440,8 @@ def _export_plan(subject: str, grade: str, filename: str, kind: str,
     inl = inline and is_pdf  # inline only makes sense for PDF
     try:
         view, comps, spines, plan_date, chapter = _plan_view_bundle(subject, grade, filename)
+        # One value for the whole response: three renderers must not disagree by a tick.
+        now = datetime.now()
         cn = chapter.get("chapter_number")
         base = f"grade-{grade}-{_safe_name(subject)}-ch{cn}"
         if kind == "lesson":
@@ -3428,14 +3449,15 @@ def _export_plan(subject: str, grade: str, filename: str, kind: str,
                 from aruvi_core.export_lesson_pdf import export_lesson_plan_pdf as fn
             else:
                 from aruvi_core.export_docx import export_lesson_plan_docx as fn
-            data = fn(view, competencies=comps, competency_spines=spines, plan_date=plan_date)
+            data = fn(view, competencies=comps, competency_spines=spines, plan_date=plan_date,
+                      generated_at=now)
             return _binary_response(data, f"lesson-plan-{base}.{ext}", mt, inline=inl)
         if kind == "assessment":
             if is_pdf:
                 from aruvi_core.export_assessment_pdf import export_assessment_pdf as fn
             else:
                 from aruvi_core.export_docx import export_assessment_docx as fn
-            data = fn(view, include_answers=answers, plan_date=plan_date)
+            data = fn(view, include_answers=answers, plan_date=plan_date, generated_at=now)
             suffix = "-answers" if answers else ""
             return _binary_response(data, f"assessment-{base}{suffix}.{ext}", mt, inline=inl)
         if kind == "integrated":
@@ -3444,7 +3466,8 @@ def _export_plan(subject: str, grade: str, filename: str, kind: str,
             else:
                 from aruvi_core.export_docx import export_integrated_docx as fn
             data = fn(view, include_answers=answers, unit_number=unit,
-                      competencies=comps, competency_spines=spines, plan_date=plan_date)
+                      competencies=comps, competency_spines=spines, plan_date=plan_date,
+                      generated_at=now)
             u = f"-unit{unit}" if unit is not None else ""
             suffix = "-answers" if answers else ""
             return _binary_response(data, f"integrated-{base}{u}{suffix}.{ext}", mt, inline=inl)

@@ -687,6 +687,45 @@ must confirm · source entry.
 
 ---
 
+## 2026-09-17 — A REPORT DATED ITSELF FROM SOMEBODY ELSE'S CACHE WRITE
+
+Founder, looking at a freshly downloaded lesson plan: *"where is the date on top right of the
+export reports derived from — it is not showing current date."* It read **17 August 2026** on a
+document produced on **17 September 2026**.
+
+**The chain.** All six plan renderers resolve their masthead the same way —
+`masthead_dt = generated_at or plan_date or datetime.now()` — and `api/main._export_plan` passed
+only `plan_date`, so the ladder always stopped on the middle rung. `plan_date` is the saved plan's
+`saved_at`, stamped by `save_generated_plan` at the moment that file was written into
+`saved_plans/` — which for a certified canonical is its **authoring** date.
+
+**Two faults, and the second is the worse one.**
+1. It never moves. **1000 of the 1003 files in the library are stamped August 2026**, so every
+   teacher's lesson plan, assessment and integrated export would still have said "17 August 2026"
+   next June.
+2. ★ **`saved_plans/` is the SHARED serve cache.** For a served variant the stamp belongs to
+   whichever teacher first caused that cache entry to be written — so **one teacher's timestamp
+   was appearing in every other teacher's document**. A per-teacher artifact was carrying a
+   cross-tenant value, on a path nobody was looking at.
+
+**The fix** is `generated_at=now` at the three call sites, one `now` for the whole response so
+three renderers cannot disagree by a tick. `plan_date` is still PASSED: it remains the honest
+fallback, and resolving the ladder is the renderers' job, not the handler's to flatten.
+
+★ **THE SMELL WAS ALREADY VISIBLE IN THE OTHER DOCUMENTS.** Meyy's three other exports all date
+themselves at generation — the year plan from the client's `generated_at`, the allocation report
+from `report.generated_at`, the invoice from its issue date — so these three were the outliers,
+and had been since they were built. **A parameter that every renderer accepts and no caller ever
+passes is a question nobody answered**: `generated_at` was plumbed through all six signatures from
+the start and grep found zero callers outside the allocation/competency reports.
+
+**Verified** by rendering `science/vi/ch_02_canonical` both ways: masthead BEFORE `Grade VI ·
+Science · 17 August 2026`, AFTER `Grade VI · Science · 17 September 2026`, against a file whose
+`saved_at` is `2026-08-17T11:54:19`. No test pinned the masthead date — worth one if this area is
+touched again.
+
+---
+
 ## 2026-09-11 (newest, later) — TRACK D STEP 1: `packages/shared` LIFTED, WEB ON IT
 
 - **What:** `packages/shared` (`@aruvi/shared`), an npm workspace at the repo root (root

@@ -667,6 +667,54 @@ export function webStyles(t, scheme = "light") {
     mlp2_iconbtn:    { position: "absolute", top: 7, right: 8, zIndex: 2, width: 30, height: 30,
                        borderRadius: 8, borderWidth: 1, borderColor: "transparent",
                        alignItems: "center", justifyContent: "center" },
+    /* ── the REPORTS modal (`.sc-report` + `.rpt-*`, globals.css 2150-2209) — step 7, derived
+       from the web's own rules 2026-09-17. ──────────────────────────────────────────────────
+       ⚠️ NEW KEYS, so `useWebStyles`' useMemo cannot see them until a real app start; Fast
+       Refresh renders this window unstyled. Reload before judging it.
+       ★ The CARD is the app's one window (`Sheet`), not a second copy of `.rpt-modal` — the two
+       differ only in a 20px cap (440 vs 460) and a 2px radius, and a second window shape is how
+       two windows start to differ in ways that matter. What is here is the CONTENTS. The
+       paywall took the same route on 2026-09-16, for the same reason. */
+    sc_report:       { position: "absolute", bottom: 7, right: 8, zIndex: 2, width: 30, height: 30,
+                       borderRadius: 8, borderWidth: 1, borderColor: "transparent",
+                       alignItems: "center", justifyContent: "center" },
+    /* `.rpt-hd` is a row with the ✕ in it; the Sheet's ✕ is an absolute corner, so the title
+       simply reserves that corner instead of sharing a row with it. */
+    rpt_title:       { fontFamily: F.display(600), fontSize: 23, lineHeight: 28, color: t.pine_d,
+                       paddingRight: 30 },
+    rpt_sub:         { fontFamily: F.body(400), fontSize: 14, lineHeight: 21.7, color: t.ink_soft,
+                       marginTop: 4, marginBottom: 12 },
+    rpt_kicker:      { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5, letterSpacing: 1.5,
+                       textTransform: UP, color: t.ink_soft, marginTop: 14, marginBottom: 8 },
+    rpt_opts:        { rowGap: 9 },
+    rpt_opt:         { borderRadius: 12, borderWidth: 1, paddingVertical: 13, paddingHorizontal: 15 },
+    rpt_opt_row:     { flexDirection: "row", alignItems: "center", columnGap: 12 },
+    rpt_opt_body:    { flex: 1, minWidth: 0, rowGap: 3 },
+    rpt_opt_t:       { fontFamily: F.display(600), fontSize: 16, lineHeight: 20, color: t.ink },
+    rpt_opt_d:       { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 16.9, color: t.ink_soft },
+    rpt_radio:       { width: 20, height: 20, borderRadius: 10, borderWidth: 1.5,
+                       alignItems: "center", justifyContent: "center" },
+    /* `.rpt-opt.on .rpt-radio::after { inset: 5px }` — a 20px disc less 5px on every side. */
+    rpt_radio_dot:   { width: 10, height: 10, borderRadius: 5 },
+    rpt_ans:         { flexDirection: "row", alignItems: "center", columnGap: 10,
+                       marginTop: 12, paddingTop: 11, borderTopWidth: 1 },
+    rpt_ans_t:       { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 20.9, color: t.ink, flex: 1 },
+    rpt_fmt:         { flexDirection: "row", columnGap: 9 },
+    rpt_fmt_btn:     { flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1,
+                       alignItems: "center", justifyContent: "center" },
+    rpt_fmt_btn_t:   { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.6 },
+    rpt_fmt_btn_on_t: { fontFamily: F.mono(600) },
+    rpt_foot:        { flexDirection: "row", alignItems: "center", columnGap: 10, marginTop: 20 },
+    rpt_btn:         { flex: 1, paddingVertical: 12, borderRadius: 10, borderWidth: 1,
+                       alignItems: "center", justifyContent: "center" },
+    rpt_btn_label:   { fontFamily: F.mono(400), fontSize: 12, letterSpacing: 0.48, textAlign: "center" },
+    rpt_primary_label: { fontFamily: F.mono(600) },
+    /* The web ends a failed report in `alert()`. This says it in the window instead — see
+       ReportSheet.jsx's header; the web owes the same change. Worded on `.yp-export-msg`, which
+       is the house form for exactly this (a line under the control, only while there is
+       something to say). */
+    rpt_fail:        { fontFamily: F.body(400), fontSize: 11.5, lineHeight: 16.68, marginTop: 12,
+                       color: t.clay },
     mlp2_restore:    { borderRadius: 9, borderWidth: 1, paddingVertical: 7, paddingHorizontal: 15 },
     mlp2_restore_t:  { fontFamily: F.mono(400), fontSize: 10, letterSpacing: 0.6, textTransform: UP },
     /* Transient confirmation / block message — bottom-centre, non-blocking, auto-dismissed.
@@ -1486,6 +1534,19 @@ export function webStyles(t, scheme = "light") {
        line it sits in — 10px of vertical padding cancelled by -10px of margin. On RN that is
        simply `hitSlop`, which is the same intent said properly, so the negative margins go. */
     yp_budget_edit:  { marginLeft: 6, paddingHorizontal: 8, opacity: 0.8 },
+    /* `.yp-export-btn` (globals.css 4863) inherits `.yp-budget-edit` wholesale and states only
+       what differs: the pair sits closer to each other than to the words, and a disabled arrow
+       makes no hover promise while it works. Step 7, 2026-09-17. */
+    yp_export_btn:   { marginLeft: 2 },
+    /* `.yp-export-msg` — the export's ONLY words. An icon button cannot say "preparing" or why
+       it failed, and both must still be said, so they are said under the row the icon sits on
+       and ONLY while there is something to say: nothing renders when idle, because a permanent
+       caption explaining an icon is a sign the icon is wrong. */
+    yp_export_msg:   { fontFamily: F.body(400), fontSize: 11.5, lineHeight: 16.68, marginTop: 8,
+                       marginHorizontal: 2, color: t.ink_soft },
+    /* `.yp-export-msg.bad` is CLAY, not `--danger`: a download that did not happen is a setback,
+       not a destructive act, and this app spends red on the latter. */
+    yp_export_bad:   { color: t.clay },
     yp_note:         { marginTop: 16, marginBottom: 20, fontFamily: F.body(400, true), fontSize: 14,
                        lineHeight: 22.68, color: t.ink },
     yp_note_b:       { fontFamily: F.body(600), fontStyle: "normal" },
