@@ -105,20 +105,25 @@ function Wrap({ children, foot }) {
   );
 }
 
-/* One plan card on the choose screen (`.ob-plan`, and `.ob-plan-sub2` for the second). The web
-   marks the chosen one with an `on` class that lifts the border and tints the fill; the phone
-   says the same thing with the same two colours. It is a Pressable and not a View because the
-   choice is real — it decides where Verify sends her. */
-function PlanCard({ on, onPress, title, sub, points }) {
+/* One plan card on the choose screen — `.ob-plan`, with `.ob-plan-sub2` for the second.
+   ⚠️ THE TWO HEADINGS ARE DIFFERENT COLOURS, and that is the whole visual difference between the
+   offers: `.ob-plan-hd` is PINE and `.ob-plan-sub2 .ob-plan-hd` is CLAY. The phone drew both in
+   `ink` from a local StyleSheet, which is also why nothing here was ever under the parity
+   checker (founder, 2026-09-17: *"align color of 'subscribe' with that of web app"*).
+   ⚠️ AND `on` DOES NOT TINT THE FILL. The web keeps `--card-bg` and adds a pine border plus a 1px
+   pine ring; the fill never changes. Tinting the chosen card was the phone's own invention and it
+   made the UNCHOSEN one read as disabled — on a screen whose entire job is offering a choice. */
+function PlanCard({ on, onPress, title, sub, points, sub2 }) {
   const { t } = useTheme();
+  const ws = useWebStyles();
   return (
     <Pressable onPress={onPress} accessibilityRole="button"
       accessibilityState={{ selected: on }}
-      style={[s.plan, { backgroundColor: on ? t.tint_pine : t.card_bg,
-                        borderColor: on ? t.pine : t.line }]}>
-      <Text style={[type.bodyStrong, { color: t.ink }]}>{title}</Text>
-      <Text style={[type.body, { color: t.ink, marginTop: 4 }]}>{sub}</Text>
-      <Text style={[type.small, { color: t.ink_soft, marginTop: 6 }]}>{points}</Text>
+      style={[ws.ob_plan, on && ws.ob_plan_on,
+              { backgroundColor: t.card_bg, borderColor: on ? t.pine : t.line }]}>
+      <Text style={[ws.ob_plan_hd, sub2 && ws.ob_plan_hd_sub2]}>{title}</Text>
+      <Text style={ws.ob_plan_sub}>{sub}</Text>
+      <Text style={ws.ob_plan_points}>{points}</Text>
     </Pressable>
   );
 }
@@ -255,7 +260,9 @@ export default function Login() {
         <Link title="Already have an ID? Sign in" onPress={() => setScreen("signin")} />
       </>}>
         <Benefits />
-        <Text style={[type.h2, { color: t.ink, marginTop: 26 }]}>Choose what works for you</Text>
+        {/* `.ob-h2` carries a RULE ABOVE IT (border-top + 16px padding) — it is what separates the
+            pitch from the choice. The phone had a bare 26px gap and no line. */}
+        <Text style={[ws.ob_h2, { borderTopColor: t.line }]}>Choose what works for you</Text>
         {/* ★ TWO CARDS, AND THEY ARE BUTTONS. The web's `.ob-plan` carries an `on` class and the
             choice is real — it decides where Verify sends her. The phone drew ONE card, as a
             static View, so Subscribe was not merely unselected: it did not exist, and a teacher
@@ -267,7 +274,7 @@ export default function Login() {
         <PlanCard on={mode === "subscribe"} onPress={() => setMode("subscribe")}
           title="Subscribe"
           sub="Unlimited access to plan across your entire syllabus."
-          points="Unlimited chapters · your full subject & stage, every class in it" />
+          points="Unlimited chapters · your full subject & stage, every class in it" sub2 />
       </Wrap>
     );
   }
@@ -387,6 +394,5 @@ export default function Login() {
 const s = StyleSheet.create({
   body: { paddingHorizontal: 20, paddingVertical: 22, paddingBottom: BODY_PAD_BOTTOM },
   foot: { borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingVertical: 12, gap: 10, alignItems: "stretch" },
-  plan: { borderWidth: 1.5, borderRadius: 12, padding: 16, marginTop: 14 },
   mobileRow: { flexDirection: "row", alignItems: "center" },
 });

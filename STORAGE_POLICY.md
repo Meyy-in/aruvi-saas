@@ -18,6 +18,7 @@ Nothing in Meyy today is a disaster she cannot undo by hand.
 | **GitHub** (`Meyy-in/aruvi-saas`) | Everything on the Mac except the named exceptions below | `git push` — which also redeploys Render |
 | **iCloud mirror** | Everything on the Mac, textbooks and secrets included | the rsync one-liner |
 | **Supabase Postgres** | Live teacher state only (accounts, profiles, progress, notes, invoices) | the running app, never the Mac |
+| **Render** | Nothing original — a rebuilt copy of the content, plus a disused disk | the deploy, from GitHub |
 
 ## What GitHub does NOT hold — the complete list of exceptions
 
@@ -50,13 +51,53 @@ Everything else in it is frozen test data from before the cutover. **Live teache
 lands here.** A pull from Supabase goes to `backups/state/<date>/`, gitignored — or real
 teachers' records end up on GitHub.
 
+## Render holds no original data
+
+Render is compute, not storage. `Dockerfile` copies `data/cloud/content/` into the image at
+build time from the GitHub clone, so the content on Render is a **build output**: it lives in
+the container's ephemeral filesystem and is wiped and recreated on every deploy and restart.
+GitHub and the Mac are its only durable homes. The served-plan cache under `saved_plans/` is
+written there at runtime and lost the same way — by design, it rebuilds in milliseconds.
+
+Render does snapshot the one persistent disk (`aruvi-state` at `/var/aruvi`) daily, kept at
+least seven days and restorable from the dashboard. But since the Postgres cutover that disk
+holds nothing current — pre-cutover state, plus seed copies the entrypoint still writes at
+boot that nothing reads. It is being faithfully backed up and there is nothing on it worth
+restoring. **Nothing on Render needs backing up by us.**
+
+## Invoices are records, not state — treat them apart
+
+Everything else in Bucket B is **current state**: one bookmark, one profile, one section
+binding. If it were lost the teacher restores it herself in seconds, which is why none of it
+needs a recovery window at all.
+
+Invoices are the exception, and they are the opposite in every respect. They **accumulate**,
+they **outlive the teacher's account** on purpose, they must be kept **8 years** as books of
+account (Companies Act 2013 §128 — the privacy notice and the erasure receipt both promise
+it), and they are **unreconstructable**: the PDF is stored rather than re-rendered precisely
+so the bytes she was mailed never change. The seller's counter at `invoices/_series/` is a
+single document whose loss restarts numbering.
+
+An 8-year duty is not covered by a 7-day backup window. So invoices get their own answer:
+
+1. **The mailbox is the real second copy.** Every subscription confirmation mails the invoice
+   PDF as an attachment, and those stay in the business mailbox for the same 8 years. Confirm
+   this is live — the container prints `[aruvi] mail: SENDS as …` or `FILE OUTBOX — nothing
+   will send` at boot. If it says FILE OUTBOX, no invoice has ever been mailed and Supabase is
+   the only copy that exists.
+2. **BCC a founder address on invoice mail**, so a permanent dated copy is filed the moment an
+   invoice is issued rather than whenever a dump next runs.
+3. **The monthly dump covers the structured record** (amounts, lines, GST note, seller name)
+   that the PDF alone does not.
+
 ## What to do, and how often
 
 | Action | How | How often |
 |---|---|---|
 | **Push to GitHub** | commit + push `main` | Every working session. This is also the deploy. |
 | **Mirror the Mac** | the rsync line below | Weekly, and before anything risky |
-| **Dump Supabase** | `supabase db dump` → `backups/state/<date>.sql` | Monthly |
+| **Dump Supabase** | `supabase db dump` → `backups/state/<date>.sql` | Monthly — and before anything destructive |
+| **Confirm invoice mail is sending** | Render logs, the `[aruvi] mail:` line at boot | After any deploy that touches mail config |
 | **Confirm the Supabase plan is paid** | dashboard | Whenever billing changes |
 
 ```

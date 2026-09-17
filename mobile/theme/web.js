@@ -177,6 +177,33 @@ export function webStyles(t, scheme = "light") {
     ob_benefits:     { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 22.5, color: t.ink },
     ob_tick:         { fontFamily: F.body(600), fontSize: 12.5, color: t.pine },
     ob_rule:         { borderTopWidth: 1, marginTop: 18, marginBottom: 14 },   // colour: t.line
+    /* ── The CHOOSE screen's two plan cards (.ob-h2 · .ob-plan · .ob-plan-*, globals.css
+       4070-4080), measured 2026-09-17 when the Subscribe card landed on the phone. The phone had
+       been drawing ONE card from a local StyleSheet with `type.*` faces, so nothing here was
+       under the parity checker at all — which is how the heading colour drifted unnoticed.
+       ⚠️ THE HEADINGS ARE NOT THE SAME COLOUR. `.ob-plan-hd` is PINE; `.ob-plan-sub2 .ob-plan-hd`
+       is CLAY, and that second rule is the whole visual difference between the two offers on the
+       web — Free to try in the working green, Subscribe in the warm accent. The phone painted
+       both in `ink` (founder, 2026-09-17: *"align color of 'subscribe' with that of web app"*).
+       ⚠️ AND `on` DOES NOT TINT THE FILL. The web keeps `--card-bg` and adds a pine border plus
+       `box-shadow: 0 0 0 1px pine` — a ring, not a wash. RN has no box-shadow of that kind, so
+       the ring is the border thickened to the same 2.5px total; the FILL stays card_bg either
+       way. A tinted fill was the phone's own invention and made the unchosen card look disabled. */
+    ob_h2:           { fontFamily: F.display(600), fontSize: 17, lineHeight: 21.25, color: t.ink,
+                       borderTopWidth: 1, paddingTop: 16, marginTop: 4, marginBottom: 12 },
+    ob_plan:         { borderWidth: 1.5, borderRadius: 12, paddingVertical: 13,
+                       paddingHorizontal: 15, marginBottom: 10 },
+    ob_plan_on:      { borderWidth: 2.5 },          // the web's 1.5px border + 1px pine ring
+    /* ⚠️ SEMIBOLD because the MARKUP is `<span class="ob-plan-hd"><b>…</b></span>` — the rule
+       itself declares no weight, so the checker cannot see the `<b>` and would pass either face.
+       What the web RENDERS is bold, and that is what the phone has to match. */
+    ob_plan_hd:      { fontFamily: F.display(600), fontSize: 15.5, lineHeight: 19.375,
+                       color: t.pine },
+    ob_plan_hd_sub2: { color: t.clay },             // .ob-plan-sub2 .ob-plan-hd
+    ob_plan_sub:     { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 18.125,
+                       color: t.ink, marginTop: 4 },
+    ob_plan_points:  { fontFamily: F.body(400), fontSize: 11.5, lineHeight: 17.25,
+                       color: t.ink_soft, marginTop: 6 },
     login_kicker:    { fontFamily: F.mono(500), fontSize: 10.5, lineHeight: 16.275, letterSpacing: 1.89,
                        textTransform: UP, color: t.pine, marginBottom: 8 },
     login_q:         { fontFamily: F.display(600), fontSize: 23, lineHeight: 26.45, color: t.ink,
