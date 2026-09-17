@@ -16,16 +16,18 @@ element the phone still owes, line-referenced, in dependency order.*
 web's JSX order and gives every element a status against its mobile counterpart, with `file:lines` on both
 sides, the strings verbatim, the endpoint, the shared helper, and the `theme/web.js` key it needs:
 
-| Appendix | Family | Rows | DONE | PARTIAL | MISSING | DEFERRED | Not ported |
-|---|---|---|---|---|---|---|---|
-| `mobile_implementation_map/01-shell.md` | page.jsx shell · layout · GuidedTour · ProfilePortal | 118 | 19 | 16 | 43 | 8 (tour — now SCHEDULED, step 8b) | 4 |
-| `mobile_implementation_map/02-profile.md` | TeachingProfile · wheels · shared budget | 97 | 16 | 5 | 68 | 3 | 3 |
-| `mobile_implementation_map/03-firstrun-login.md` | Login · PrivacyNotice · Agreement · FirstRun | 122 | 37 | 20 | 44 | 2 | 16 |
-| `mobile_implementation_map/04-settings-askmeyy.md` | Settings (7 subviews) · Ask Meyy · Dropdown | 120 | 30 | 12 | 67 | 1 | 3 |
-| `mobile_implementation_map/05-lists-prepare.md` | My Classes · My Lessons · Prepare · Year Plan | 126 | 67 | 15 | 10 | 18 | 10 |
-| `mobile_implementation_map/06-lessonview.md` | LessonView · ChapterOrg · Assess · Bookmark · Notes | 140 | 100 | 20 | 4 | 1 | 1 |
+| Appendix | Family | Rows | DONE | PARTIAL | MISSING | DEFERRED | Not ported | Other |
+|---|---|---|---|---|---|---|---|---|
+| `mobile_implementation_map/01-shell.md` | page.jsx shell · layout · GuidedTour · ProfilePortal | 94 | 45 | 16 | 16 | 8 (tour — now SCHEDULED, step 8b) | 4 | 5 |
+| `mobile_implementation_map/02-profile.md` | TeachingProfile · wheels · shared budget | 97 | 70 | 8 | 12 | 2 | 2 | 3 |
+| `mobile_implementation_map/03-firstrun-login.md` | Login · PrivacyNotice · Agreement · FirstRun | 120 | 109 | 4 | 1 | 1 | 4 | 1 |
+| `mobile_implementation_map/04-settings-askmeyy.md` | Settings (7 subviews) · Ask Meyy · Dropdown | 122 | 115 | 1 | 0 | 1 | 0 | 5 |
+| `mobile_implementation_map/05-lists-prepare.md` | My Classes · My Lessons · Prepare · Year Plan | 126 | 69 | 15 | 9 | 9 | 10 | 14 |
+| `mobile_implementation_map/06-lessonview.md` | LessonView · ChapterOrg · Assess · Bookmark · Notes | 129 | 100 | 20 | 4 | 1 | 1 | 3 |
 
-⚠️ **THE COUNTS ARE A DRAWING DATE, THE ROWS ARE THE TRUTH.** This table was tallied when the appendices were drawn (2026-09-15) and is corrected only when a run remembers to; the per-row status inside each appendix is what to trust, and a disagreement between the two means the table is stale, never the row. Rows gain lettered suffixes (B11a, C24a) when an element the inventory never had turns up — those are real rows and count.
+⚠️ **THE ROWS ARE THE TRUTH — AND ON 2026-09-17 THE ROWS WERE WRONG.** The rule stands (a disagreement between this table and a row means the table is stale) but it had quietly inverted: appendices **03** and **04** were drawn on 2026-09-15 and never amended when **5e** (first run + the front door), **6b** (Settings A-H), **6c** (Ask Meyy), **F9** and **F11** all landed on 2026-09-16, so ~120 rows still read MISSING for work that shipped — and a session following the rule would have re-ported finished screens. Both were **reconciled row by row against the mobile code on 2026-09-17**; every corrected row carries a dated `★ 2026-09-17 reconcile:` clause naming the file that closed it, so the evidence travels with the row and not with this paragraph. ★ **The lesson is about MAINTENANCE, not counting: a step header moved to DONE is not the same act as amending the rows underneath it, and 6b did the first without the second.** When a step closes, amend its appendix rows in the same commit — that is what §0's own "update it in the same commit as the work" means for the inventories.
+
+⚠️ **How this table is now tallied.** Counted by script from the live rows (2026-09-17), not by hand: **Rows** is the number of rows carrying a parseable status, so it is lower than the drawn-on count where a family has sub-rows or prose rows. **Other** folds WEB-ONLY-BY-NATURE, plus app. 05's eight `BUILT` rows and app. 02's one `REMOVED FROM THE WEB` — ⚠️ both are vocabulary DRIFT (neither is in the list below) and should be normalised the next time either file is opened. Rows gain lettered suffixes (B11a, C24a) when an element the inventory never had turns up — those are real rows and count.
 
 Status vocabulary (used identically in every appendix): **DONE** · **PARTIAL** · **MISSING** · **DEFERRED**
 (named in a component header or the plan, with its reason) · **NOT-PORTED-BY-DECISION** (SubscribeFlow,
@@ -931,8 +933,9 @@ replacement, Agreement read mode (app. 03 rows 59-71 MISSING (read)).
   **Walked to the last window**; ⚠️ **the erase POST and the farewell are UNWALKED and must stay
   so until there is a disposable account** — reaching them destroys the one being tested.
   ★ **6b IS NOW COMPLETE** (A-H). What is still owed in this family: the FRONT DOOR's subscribe
-  path (Login's, with the Trial/Subscribe fork), and 6c's Ask Meyy — which is blocked on
-  `GET /ask-aruvi` returning **503** from Render, a deploy gap rather than a code one.
+  path (Login's, with the Trial/Subscribe fork). ~~and 6c's Ask Meyy — which is blocked on
+  `GET /ask-aruvi` returning **503** from Render~~ — ✅ **6c SHIPPED the same day** (`932084b7`); the 503
+  was a deploy gap and `9ed5883d` carries the client half. **A live walk of the bank is still owed.**
 - **F11 Dropdown** (J1-J8): three live Settings uses; a `Sheet`-based picker styled to `.dd-btn` / `.dd-pop`.
 
 **web.js:** `set_*`, `acct_*`, `lgl_*`, `dd_*`, `ob_email_view/addr`, `sup_*` and (6b·D)
@@ -950,7 +953,16 @@ the ≤600px rules actually bit.
 theme cycles and survives sign-out → export shares a docx → invoice PDF opens → delete flow signs out on the
 receipt → the web sees the same profile/ticket.
 
-### Step 6c — Ask Meyy
+### Step 6c — Ask Meyy  ✅ **DONE 2026-09-16** (`932084b7`, `9ed5883d`)
+
+> ★ **The header carried NO marker until 2026-09-17, and that is the gap worth naming.** Ask Meyy shipped
+> on 2026-09-16 — `mobile/components/AskMeyy.jsx`, mounted in the layout's `askOpen` slot — and app. 04's
+> 25 I-rows were amended the same day, so the INVENTORY was right and only this header was silent. A step
+> whose rows say DONE and whose header says nothing reads as not-started to the next session. **Mark the
+> header in the same commit as the rows.** ⚠️ Still unwalked against a live bank: the 503 recorded under 6b
+> was a Render deploy gap, and `9ed5883d` ("say nothing has changed in a 200, because our 304 never
+> arrives") is the client half — confirm on the handset that the bank downloads, then kill the network and
+> confirm it still answers.
 
 **Entry:** 6a (F10 `askOpen` slot). Bank/ETag/search/priming/clearing are DONE in shared.
 
@@ -1222,9 +1234,9 @@ answer** — the reasoning is worth more than the row.
 | ~~Q11~~ | 6b | ✅ **ANSWERED 2026-09-16 — PORT THE PURCHASE SCREEN AND LET IT BUY.** Founder: *"replicate web app allowing a dummy purchase of subscription allowing us to test it out — actual payment connection comes in later."* ★ **THIS UN-DEFERS SubscribeFlow**, which this map has carried as NOT-PORTED-BY-DECISION throughout (the second such reversal, after the tour). It is not a mock: `POST /onboarding/checkout` is already a **DEV STUB on the server** — its own docstring says so — activating the subscription directly through the ManualBillingProvider because no gateway exists, and the web's UI is explicit that the preview activates instantly rather than faking a payment screen. So the phone ports the real flow and really buys. ⚠️ **SCOPE**: SubscribeFlow is 683 lines — cart, the account fields with their double-blind email, the agreement ticks — and it needs **F11 Dropdown** first. ⚠️ **IT WRITES TO A LIVE ACCOUNT.** A walk of this adds real scopes to whoever is signed in; the founder's own standing rule (writing to his live Render profile needs his say-so) applies to every test of it. ⚠️ And it supersedes Q6's placeholder: the paywall's Subscribe stops saying "in development" and opens this. |
 | ~~Q12~~ | 6b | ✅ **ANSWERED 2026-09-16 — HIDE IT ON TRIAL.** A link that goes nowhere is worse than no link: Support still works, and she is simply not offered a door that is bolted. ⚠️ The web still dead-ends here; this is a phone-side fix of a shared defect, so the web owes the same change (recorded, not done). |
 | ~~Q13~~ | 6b | ✅ **ANSWERED 2026-09-16 — MARK THE SURFACE.** The web's string plus an `(app)` marker, so a ticket reads `settings/support (app)`. During a beta whose whole point is that the two surfaces differ, which surface a report came from is the first thing worth knowing. |
-| Q14 | 6c | **Bank `accent` values**: confirm the five stored strings, or add a token NAME field to the bank so neither surface parses CSS. [04·5] |
+| ~~Q14~~ | 6c | ✅ **SETTLED BY THE BUILD 2026-09-16, not by an answer** — `components/AskMeyy.jsx:58` maps the five stored `accent` strings to `t.sec_a…d`/`t.ss_plum` through an `ACCENTS` table **with a pine fallback**, so an accent the phone cannot place degrades to the app's own accent rather than throwing or rendering raw CSS. The question asked whether to add a token NAME field to the bank; the fallback makes that optional rather than blocking. ⚠️ **It is still worth doing** — the phone parses a CSS-ish string today, and a sixth category added to the bank would silently come out pine. Recorded as a standing improvement, not an open blocker. [04·5] |
 | ~~Q15~~ | 6b·F9 | ✅ **ANSWERED 2026-09-16 — THE SHARE SHEET.** Written to app storage, then the OS sheet opens (Files · WhatsApp · Mail · AirDrop). ★ It matches what a teacher actually DOES with a year plan or an invoice — send it to a head of department, mail it to herself — and the sheet is its own receipt that something was produced, where a silent save invites "where did it go?". **Pulled forward from step 7 into 6b**, because Subscription & billing, Your data & export and the delete flow all wait on F9. |
-| Q16 | 7 | **Prepare-from-a-card wait**: keep the web's in-place wait, or land on My Classes with the chapter bound after the 5 s beat? [05·2] |
+| ~~Q16~~ | 7 | ✅ **ANSWERED BY THE WEB RATHER THAN ASKED, 2026-09-16** (§0 row `5d·B17+A9`) — keep the **in-place wait**. `page.jsx:578-586` excludes this path from the My Lessons wait and states its reason: *"it lands in My Classes, so there is nowhere to put this card."* The behaviour was explicit and reasoned on the web, so the phone matched by default and no founder call was needed. ⚠️ §4's own summary line has recorded it as "dissolved in practice" since 2026-09-16; the row itself was never struck, which is why it kept reading as open. [05·2] |
 | ~~Q17~~ | 6a·F6 | ✅ **ANSWERED 2026-09-16 — ONCE PER LAUNCH, THE WEB'S RULE.** Dismissing hides the cutover offer until the app is restarted; nothing is persisted. Offered per-day and once-then-never as phone-shaped alternatives and the founder took the web's: ★ **no divergence without a reason, and "a phone is rarely signed out" is a reason to keep asking, not to stop.** A cutover missed is a year of lessons filed under the wrong year, and the offer is the only door to it until Settings grows one. So she meets it each morning until she acts — which is what an undone decision with a deadline should do. |
 | Q18 | 8 | **Speak** only focuses the text area on both surfaces (the web never used the Web Speech API). Intended, or add a real recogniser as a phone capability? [06·1] |
 | Q19 | 8 | **Assess accent green `#0f6e56`** (distinct from `--pine` on the web) — add a token, or let the phone's pine stand? [06·5] |
