@@ -228,3 +228,35 @@ export function spendTourOffer(postJSON) {
 /** True while this session has not yet posted the spend — used to keep the nudge on screen
  *  across an account re-read that would otherwise yank it away mid-look. */
 export function offeredHere() { return offeredThisSession; }
+
+/* ★ ONE CONDITION, BECAUSE TWO SCREENS SHOW THE NUDGE (founder, 2026-09-17: *"on expo, the tour
+ * pop up comes before the lesson is complete even now. Web app is fine"*).
+ * The web shows it from ONE place — `page.jsx`, above the tab — so its single `tourOnOffer` is
+ * the whole rule. The phone has no shell above its routes, so My Classes and My Lessons each
+ * render their own, and each had hand-rolled the terms: My Classes carried all four, My Lessons
+ * carried ONE. Every fix to the offer had therefore been landing on the screen first run does
+ * NOT finish on — it `replace`s to `/lessons`, which is exactly where the generation she is
+ * watching appears, and exactly where the nudge was still jumping the queue.
+ * ⚠️ `preparing` differs between the two screens BY DESIGN and must be passed, not read here: My
+ * Classes owns a descriptor WITH a section, My Lessons owns one WITHOUT (the wait belongs where
+ * the lesson will appear). Each screen knows which is its own; this function must not guess.
+ *
+ * The four terms, and why each is there:
+ *   fit         — ≤1 bound section and nothing taught. `null` means we could not tell, and an
+ *                 unknown must never look like a new teacher, so only an explicit `true` offers.
+ *   step        — a tour already running is not a tour to offer.
+ *   preparing   — *"it should pop up immediately after the completion of the lesson generation
+ *                 and not at the same time"*. The nudge was landing on top of the wait she is
+ *                 watching; two things asking for the same attention, and the one she cares about
+ *                 is the chapter. It also stops the tour opening with its own target half-built,
+ *                 since the demo needs a PREPARED plan to point at.
+ *   acct + ran  — "once" lives on the account (`tour_offered_at`) so it survives a sign-out and a
+ *                 second phone. But `cachedAccount()` is a CACHE that the spend POST does not
+ *                 rewrite, so at Done every term went true again and the nudge sprang back — and
+ *                 taking it again re-ran the demo over her real section. `tourRanHere()` is the
+ *                 missing half. ⚠️ NOT `offeredHere()`, which flips the moment the nudge becomes
+ *                 ELIGIBLE and would hide it while she is still looking at it. */
+export function tourOfferOpen({ fit, step, acct, preparing }) {
+  return fit === true && !step && !preparing
+    && !(acct && acct.tour_offered_at) && !tourRanHere();
+}

@@ -925,6 +925,22 @@ docs/                  architecture-plan.md, ALLOCATION_REPORT_*.md, flow PNG, m
                        exact PORTS an external partner implements. Vendor-neutral by design
                        (roadmap §4 forbids pre-picking the cloud/gateway). Read before any
                        work on auth, billing, privacy, subscriptions or the academic year.
+backup/                ★ MISNAMED — it is NOT an archive and must not be moved or renamed.
+                       It is the genon pipeline's WORKING directory (build_library.py moves
+                       failed canonicals to backup/quarantine/; the repair_*.py scripts write
+                       their before-copies here) AND the test suite's fixture source
+                       (tests/test_genon_carriers.py loads real prototype-era plans from
+                       backup/saved_plans/ at six sites). Renaming it was considered and
+                       REJECTED 2026-09-17: several hundred references exist, and most are
+                       RECORDS — provenance blocks inside ~90 certified canonicals under
+                       data/cloud/content/saved_plans/, constitution CHANGELOGs, genon/out/
+                       stage sign-offs and the testing campaign register. Rewriting those
+                       would falsify the record of what happened; leaving them stale would
+                       recreate the dead-path bug of 2026-08-23 (data/content/saved_plans in
+                       purge_derived.py, which silently purged nothing for weeks). The name
+                       is wrong; the cost of fixing it is not worth paying.
+archive/               stray root files with nothing referencing them, parked for deliberate
+                       deletion (2026-09-17). Nothing reads it.
 cowork prompts/        ★ authoring prompts for the `chapter` skill (chapter_summary +
                        competency_mapping/effort_index, per subject/stage) — copied over
                        wholesale from Project Aruvi 2026-07-01 (see §10); this is now the

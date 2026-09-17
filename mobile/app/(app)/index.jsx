@@ -23,7 +23,7 @@ import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shar
 import { cachedAccount, cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
-import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, tourRanHere,
+import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, tourOfferOpen,
          noteTourInfo, noteTourTarget } from "../../lib/tour";
 import TourOffer from "../../components/TourOffer";
 import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
@@ -558,25 +558,12 @@ export default function Home() {
     return () => { live = false; };
   }, []);
   const acct = cachedAccount();
-  /* ⚠️ A TOUR THAT HAS RUN IS NOT AN OFFER THAT IS STILL OPEN (founder, 2026-09-17: at Done
-     *"the tour beginning card comes back, and even if skipped it stays there"* — and taking it
-     again re-ran the demo over her real section).
-     The server field is what makes "once" survive a sign-out, but `cachedAccount()` is a CACHE:
-     the POST that stamps `tour_offered_at` does not rewrite it, so the instant the tour ended and
-     `step` went back to 0 every term was true again and the nudge reappeared under her. This
-     session's own flag is the missing half. ⚠️ NOT `offeredHere()`, which flips the moment the
-     nudge becomes ELIGIBLE and would therefore hide it while she is still looking at it —
-     `tourRanHere()` flips when she starts or finishes one, which is the fact that matters. */
-  /* ★ AND NOT WHILE THE LESSON IS STILL BEING MADE (founder, 2026-09-17: the offer *"should pop
-     up immediately after the completion of the lesson generation and not at the same time"*).
-     First run hands her to My Classes with the generation still running, so the nudge was
-     landing ON TOP of the wait she is watching — two things asking for the same attention, and
-     the one she cares about is the chapter. `preparing` going false IS the completion edge this
-     screen already uses to redraw the card, so the offer simply rides it: suppressed while the
-     work runs, there the moment it lands. It also means the tour never opens with its own target
-     half-built — `tourTarget` needs a PREPARED plan to point at. */
-  const tourOnOffer = tourFit === true && !tourNow.step && !preparing
-    && !(acct && acct.tour_offered_at) && !tourRanHere();
+  /* The four terms live in `tourOfferOpen` (lib/tour.js) and NOT here, because My Lessons shows
+     this same nudge and hand-rolled its own copy of them — which is how it ended up carrying one
+     term out of four, and how every fix to the offer kept landing on the screen first run does
+     not finish on. ⚠️ `preparing` is passed rather than read there: this screen's descriptor has
+     a section, My Lessons' does not, and only each screen knows which is its own. */
+  const tourOnOffer = tourOfferOpen({ fit: tourFit, step: tourNow.step, acct, preparing });
   useEffect(() => { if (tourOnOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOnOffer]);
   const card = (c, banded, idx) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}

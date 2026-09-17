@@ -54,11 +54,13 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
-  API, classNum, fetchSupportedGrades, getJSON, heldClassesFor, heldScopesOf, pad, paywallKicker,
+  API, classNum, fetchSupportedGrades, getJSON, postJSON, heldClassesFor, heldScopesOf, pad, paywallKicker,
   pretty, subjectSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { subscribeYear } from "@aruvi/shared/year";
-import { useTourAnchor, useTour, startTour, fetchTourEligible } from "../../lib/tour";
+import { cachedAccount } from "@aruvi/shared/account";
+import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer,
+         tourOfferOpen } from "../../lib/tour";
 import TourOffer from "../../components/TourOffer";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
@@ -358,6 +360,14 @@ export default function MyLessons() {
     fetchTourEligible(getJSON).then((v) => { if (live) setTourFit(v); });
     return () => { live = false; };
   }, []);
+  /* ★ `preparing` HERE IS THE ONE WITHOUT A SECTION (declared above, line ~158) — the wait belongs
+     where the lesson will appear, and a plan generated from first run appears in THIS repository.
+     That is precisely why gating My Classes alone did nothing: first run `replace`s to /lessons. */
+  const tourOffer = tourOfferOpen({ fit: tourFit, step: tourNow.step,
+                                    acct: cachedAccount(), preparing });
+  /* Spent when OFFERED, not when taken, and idempotent per session — so whichever of the two
+     screens shows it first is the one that posts, and the other does not post again. */
+  useEffect(() => { if (tourOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOffer]);
   const sSlug = current ? subjectSlug(current.name) : "";
   const gSlug = gradeSlug(activeGrade);
   const key = sSlug && gSlug ? `${sSlug}/${gSlug}` : "";
@@ -841,7 +851,15 @@ export default function MyLessons() {
             only the store. Only in the lessons pane, and never over the archive. */}
         {/* Below her lessons, above the prepare bar — the web's placement (founder, 2026-08-21:
             "the tour offer, BELOW her lesson"): she sees what she was promised, then the offer. */}
-        {tourFit === true && !tourNow.step && pane === "lessons" && effView !== "archived" ? (
+        {/* ⚠️ THE SAME CONDITION AS MY CLASSES, FROM THE SAME FUNCTION. This screen used to test
+            `tourFit` alone, so none of the offer's other three terms applied here — and THIS is
+            the screen first run `replace`s to, so the nudge kept arriving over the generation she
+            was watching and springing back after Done, long after both were fixed on the other
+            screen (founder, 2026-09-17: *"the tour pop up comes before the lesson is complete
+            even now. Web app is fine"* — the web is fine because it has ONE offer, above the tab).
+            The two pane tests stay local: they are about where on THIS screen the nudge belongs,
+            not about whether it is owed. */}
+        {tourOffer && pane === "lessons" && effView !== "archived" ? (
           <View style={{ paddingTop: 14 }}>
             <TourOffer here onStart={() => startTour()} />
           </View>
