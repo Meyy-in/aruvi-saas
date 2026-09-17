@@ -273,8 +273,8 @@ export default function Login() {
           points="Any 3 chapters · unlimited lesson plans per chapter · all core features to plan & assess" />
         <PlanCard on={mode === "subscribe"} onPress={() => setMode("subscribe")}
           title="Subscribe"
-          sub="Unlimited access to plan across your entire syllabus."
-          points="Unlimited chapters · your full subject & stage, every class in it" sub2 />
+          sub="Unlimited access to plan across your subject & stage."
+          points="In addition to core features to plan & assess, Unlimited chapters · every class in that subject & stage" sub2 />
       </Wrap>
     );
   }

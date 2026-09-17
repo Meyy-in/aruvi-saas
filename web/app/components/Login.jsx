@@ -224,8 +224,8 @@ export default function Login({ onEnter }) {
           <button type="button" className={`ob-plan ob-plan-sub2 ${mode === "subscribe" ? "on" : ""}`}
             onClick={() => setMode("subscribe")}>
             <span className="ob-plan-hd"><b>Subscribe</b></span>
-            <span className="ob-plan-sub">Unlimited access to plan across your entire syllabus.</span>
-            <span className="ob-plan-points">Unlimited chapters · your full subject &amp; stage, every class in it</span>
+            <span className="ob-plan-sub">Unlimited access to plan across your subject &amp; stage.</span>
+            <span className="ob-plan-points">In addition to core features to plan &amp; assess, Unlimited chapters · every class in that subject &amp; stage</span>
           </button>
         </div>
         <div className="ob-foot">
