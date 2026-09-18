@@ -186,3 +186,18 @@ test("★ first run's check is owed ONCE and spent on the first ask (2026-09-18)
   setUser("t1");
   assert.equal(takeFirstRunCheck(), true, "still hers after the other teacher");
 });
+
+test("★ the question is for a SUBSCRIPTION, not for a class she added herself (2026-09-18)", async () => {
+  const { setupCheckAdds } = await import("../src/setupCheck.js");
+  const g = (grade) => ({ grade, sections: [{ tag: "x", sec: "A" }] });
+  const base = [{ name: "Science", grades: [g("VI")] }];
+  assert.deepEqual(setupCheckAdds(null, base), [], "no baseline, nothing asked");
+  assert.deepEqual(setupCheckAdds(base, [...base, { name: "English", grades: [g("IX")] }]),
+    ["English|IX"], "a new subject is asked about");
+  assert.deepEqual(setupCheckAdds(base, [{ name: "Science", grades: [g("VI"), g("VII")] }]),
+    [], "Add › Class in a stage she has asks nothing");
+  assert.deepEqual(setupCheckAdds(base, [{ name: "Science", grades: [g("VI"), g("IX")] }]),
+    ["Science|IX"], "a newly bought stage of a subject she teaches is asked about");
+  assert.deepEqual(setupCheckAdds([{ name: "Science", grades: [] }], [{ name: "Science", grades: [g("VII")] }]),
+    [], "refilling a subject she emptied asks nothing");
+});

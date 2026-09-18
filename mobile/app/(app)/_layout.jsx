@@ -28,7 +28,7 @@ import ProfilePick from "../../components/ProfilePick";
 import { resolvePortalPick } from "@aruvi/shared/profile";
 import { firstGenNeeded, hasActivated } from "../../lib/firstRun";
 import {
-  pruneSetupCheck, queueSetupCheck, setupCheckSub, setupCheckValues, setupKey,
+  pruneSetupCheck, queueSetupCheck, setupCheckAdds, setupCheckSub, setupCheckValues, setupKey,
 } from "@aruvi/shared/setupCheck";
 import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit, editBackToPick,
          openPick, pickSubject, pickBackToSubject, closePick, clearPortal } from "../../lib/portal";
@@ -76,18 +76,20 @@ export default function AppLayout() {
      and a module store here, so nothing re-renders on a write unless the store says so. */
   const [readiness, setReadiness] = useState(() => cachedReadiness());
   useEffect(() => subscribeReadiness(setReadiness), []);
-  const setupKeysRef = useRef({ user: null, keys: null });
+  const setupKeysRef = useRef({ user: null, subjects: null });
   useEffect(() => {
     const who = getUser();
-    if (setupKeysRef.current.user !== who) setupKeysRef.current = { user: who, keys: null };
+    if (setupKeysRef.current.user !== who) setupKeysRef.current = { user: who, subjects: null };
     if (!readiness || !cachedReady()) return;
     const keys = [];
     (readiness.subjects || []).forEach((s) =>
       (s.grades || []).forEach((g) => keys.push(setupKey(s.name, g.grade))));
-    const prev = setupKeysRef.current.keys;
-    setupKeysRef.current = { user: who, keys };
+    const prev = setupKeysRef.current.subjects;
+    setupKeysRef.current = { user: who, subjects: readiness.subjects || [] };
     if (!prev) return;                                   // baseline only
-    const added = keys.filter((k) => !prev.includes(k));
+    /* ★ Only a SUBSCRIPTION's defaults earn the question (founder, 2026-09-18): a class she added
+       herself to a subject already in her profile — even one she had emptied — asks nothing. */
+    const added = setupCheckAdds(prev, readiness.subjects || []);
     if (added.length) queueSetupCheck(added);
     pruneSetupCheck(keys);        // self-heal: nothing she does not teach stays queued
   }, [readiness]);

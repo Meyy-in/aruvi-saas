@@ -95,10 +95,29 @@ def main() -> int:
         if problems:
             print("Refused — nothing was granted:\n  " + "\n  ".join(problems), file=sys.stderr)
             return 2
-        print(json.dumps(provider.create_subscription(
+        prior = repo.load(args.tenant)
+        result = provider.create_subscription(
             args.tenant, args.plan, scopes=scopes,
             valid_until=args.until, source=args.source,
-            replace=args.replace), indent=2))
+            replace=args.replace)
+        # ★ A GRANT IS A SUBSCRIPTION, SO IT LANDS IN HER PROFILE (founder, 2026-09-18: "first
+        #   time subscription for a subject stage — it lists in My Lessons and default in My
+        #   Classes. Listed on profile too with default class"). Checkout has always done this;
+        #   the manual grant — which is how the beta subscribes — did not, so a granted subject
+        #   sat outside her profile until she found it herself. The SAME two functions checkout
+        #   calls, in the same order, so the two paths cannot drift. "*" seeds nothing: eleven
+        #   default subjects is not a profile. Account id == tenant id (one teacher per tenant).
+        if scopes != ["*"]:
+            held = result.get("scopes") or scopes
+            try:
+                from api import main as api_main  # noqa: E402 — only on this path; inside the guard
+                api_main._apply_subscription_profile(args.tenant, args.tenant, held, buying=scopes)
+                if prior is None or prior.status == "trial":
+                    api_main._purge_trial_artifacts(args.tenant, args.tenant, held)
+                result["profile"] = "seeded"
+            except Exception as exc:          # the grant stands even if the profile write fails
+                result["profile"] = f"NOT seeded: {exc}"
+        print(json.dumps(result, indent=2))
     elif args.action == "revoke":
         print(json.dumps(provider.cancel(args.tenant), indent=2))
     elif args.action == "trial-reset":

@@ -20,7 +20,7 @@ import Settings from "./components/Settings";
 import MyLessonPlans from "./components/MyLessonPlans";
 import GuidedTour from "./components/GuidedTour";
 import ProfilePortal, { queueSetupCheck, takeSetupCheck, pruneSetupCheck, setupKey, SETUP_CHECK_DELAY_MS, setupCheckSub as setupCheckSubParts, setupCheckValues as setupCheckValuesOf } from "./components/ProfilePortal";
-import { queueFirstRunCheck, takeFirstRunCheck } from "./lib/setupCheck";
+import { queueFirstRunCheck, takeFirstRunCheck, setupCheckAdds } from "./lib/setupCheck";
 // ThemeToggle moved into Settings (App › Appearance) — no longer on the shell's bar.
 import AskAruvi from "./ask-aruvi/AskAruvi";
 import { primeBank, clearBank, refreshBank } from "./ask-aruvi/bank";
@@ -243,17 +243,19 @@ export default function Home() {
    * first subject is the tour prompt's job, not this one. */
   // Keyed by USER: a sign-out leaves the baseline behind, and the next teacher on this browser
   // must never have the previous one's profile diffed against hers.
-  const setupKeysRef = useRef({ user: null, keys: null });
+  const setupKeysRef = useRef({ user: null, subjects: null });
   useEffect(() => {
-    if (setupKeysRef.current.user !== user) setupKeysRef.current = { user, keys: null };
+    if (setupKeysRef.current.user !== user) setupKeysRef.current = { user, subjects: null };
     if (!ready || !readiness) return;
     const keys = [];
     (readiness.subjects || []).forEach((s) =>
       (s.grades || []).forEach((g) => keys.push(setupKey(s.name, g.grade))));
-    const prev = setupKeysRef.current.keys;
-    setupKeysRef.current = { user, keys };
+    const prev = setupKeysRef.current.subjects;
+    setupKeysRef.current = { user, subjects: readiness.subjects || [] };
     if (!prev) return;                                    // baseline only
-    const added = keys.filter((k) => !prev.includes(k));
+    /* ★ Only a SUBSCRIPTION's defaults earn the question (founder, 2026-09-18) — a class she
+       added to a subject already in her profile does not. The rule is shared: `setupCheckAdds`. */
+    const added = setupCheckAdds(prev, readiness.subjects || []);
     if (added.length) queueSetupCheck(added);
     pruneSetupCheck(keys);   // self-heal: nothing she does not teach stays queued
   }, [ready, readiness, user]);
@@ -292,7 +294,8 @@ export default function Home() {
      change in that second (a window opening, a tab switch) must not lose the question for good. */
   const onMyClassesNow = ready && editFlow === null && tab === "myplans" && !generateEntry;
   useEffect(() => {
-    if (!onMyClassesNow || tour || portalWin || entLapsed) return undefined;
+    // After the tour (founder, 2026-09-18): not while it runs, and not while it is still on offer.
+    if (!onMyClassesNow || tour || tourOnOffer || portalWin || entLapsed) return undefined;
     if (!takeFirstRunCheck()) return undefined;
     let fired = false;
     const id = setTimeout(() => {
@@ -301,7 +304,7 @@ export default function Home() {
     }, SETUP_CHECK_DELAY_MS);
     return () => { clearTimeout(id); if (!fired) queueFirstRunCheck(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onMyClassesNow, tour, portalWin, entLapsed]);
+  }, [onMyClassesNow, tour, tourOnOffer, portalWin, entLapsed]);
   /* The tour opens on My Classes. It always did implicitly, because its only entry point was a
      nudge ON My Classes; now that first run lands on My Lessons and the same nudge renders
      there too, step 1 ("this is where your classes sit") would otherwise ring the My Classes

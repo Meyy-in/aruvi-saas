@@ -60,6 +60,35 @@ export function takeSetupCheck(key) {
   return true;
 }
 
+/* ───────── WHICH NEW CLASSES EARN THE QUESTION (founder, 2026-09-18) ─────────
+ * ★ THE QUESTION BELONGS TO A SUBSCRIPTION, NOT TO EVERY NEW CLASS. A new subject·stage arrives
+ * with defaults Meyy chose (a Class, Section A, a length, a year) — THAT is what she is asked to
+ * check. A class she adds herself through Add › Class, to a subject already in her profile, is her
+ * own choice; asking her whether she meant it is noise. Including a subject she EMPTIED and is now
+ * refilling: "no defaulting any more — it is an existing subject".
+ * So a new key earns the question only when its SUBJECT was absent from the previous profile, or
+ * the subject had classes before but none in this key's STAGE (a newly bought stage). A subject
+ * that was present with no classes at all asks nothing.
+ * Pure; `prev` null means "no baseline yet" and returns nothing, as the diff always has. */
+export function setupCheckAdds(prevSubjects, nextSubjects) {
+  if (!prevSubjects) return [];
+  const prev = new Map((prevSubjects || []).map((s) => [s.name, s.grades || []]));
+  const out = [];
+  (nextSubjects || []).forEach((s) => {
+    const before = prev.get(s.name);
+    const stagesBefore = new Set((before || []).map((g) => stageOfGrade(g.grade)));
+    const keysBefore = new Set((before || []).map((g) => setupKey(s.name, g.grade)));
+    (s.grades || []).forEach((g) => {
+      const k = setupKey(s.name, g.grade);
+      if (keysBefore.has(k)) return;
+      if (before === undefined) { out.push(k); return; }          // a subject new to her
+      if (!before.length) return;                                  // she emptied it — her own refill
+      if (!stagesBefore.has(stageOfGrade(g.grade))) out.push(k);   // a newly bought stage
+    });
+  });
+  return out;
+}
+
 /* Drop anything queued that is no longer a subject·class she teaches (2026-08-27). A queued key is
  * only ever SPENT when My Lessons scopes to it, and My Lessons offers only classes in her profile
  * — so a key for something she does not teach can never be spent and would sit in the queue

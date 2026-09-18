@@ -37,11 +37,10 @@
  */
 import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { classCard, profileStats, subjectPpw } from "@aruvi/shared/profile";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
-import { openEdit } from "../../../lib/portal";
 import { primeSubjectCatalogue } from "../../../components/ProfileEditor";
 import { Text } from "../../../components/Text";
 import { useTheme } from "../../../theme/ThemeContext";
@@ -103,14 +102,15 @@ function ClassCard({ cc, first }) {
   );
 }
 
-/* The empty slot at the foot of the list. It opens the ONE Sheet the shell owns, on the subject
-   step — the same window every other profile edit uses, so adding a subject is not a different
-   kind of journey from changing a section. */
+/* The empty slot at the foot of the list. ★ ADDING A SUBJECT IS SUBSCRIBING TO ONE (founder,
+   2026-09-18): it opens the in-app subscribe wizard, whose checkout lands the subject with Meyy's
+   defaults — the set-up check then asks about them. Same door as the web's row. */
 function AddSubjectRow() {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const router = useRouter();
   return (
-    <Pressable onPress={() => openEdit({ intent: "subject" })}
+    <Pressable onPress={() => router.push("/subscribe")}
       accessibilityRole="button" accessibilityLabel="Add a subject"
       style={[ws.tp_sub, { backgroundColor: t.paper_2, borderColor: t.line,
                            borderStyle: "dashed" }]}>

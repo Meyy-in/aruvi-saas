@@ -274,17 +274,6 @@ export default function Home() {
      a lint warning: it throws on first paint, and nothing in a parse or a scope check sees it. */
   const tourNow = useTour();
   const tourRunning = !!tourNow.step;
-  useFocusEffect(useCallback(() => {
-    if (tourRunning) return undefined;
-    if (!takeFirstRunCheck()) return undefined;
-    /* ⚠️ A BLUR INSIDE THE SECOND RE-QUEUES IT (2026-09-18): `take` has already spent the flag, so
-       a teacher who taps away before the timer fires would otherwise never be asked. The web's
-       copy of this effect does the same. */
-    let fired = false;
-    const id = setTimeout(() => { fired = true; raisePortalCheck({ mode: "check", reason: "tour" }); },
-                          SETUP_CHECK_DELAY_MS);
-    return () => { clearTimeout(id); if (!fired) queueFirstRunCheck(); };
-  }, [tourRunning]));
 
 
   const openAttached = (c, plan) => router.push({ pathname: "/lesson",
@@ -571,6 +560,23 @@ export default function Home() {
      a section, My Lessons' does not, and only each screen knows which is its own. */
   const tourOnOffer = tourOfferOpen({ fit: tourFit, step: tourNow.step, acct, preparing });
   useEffect(() => { if (tourOnOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOnOffer]);
+  /* ★ AFTER THE TOUR, NOT BEFORE IT (founder, 2026-09-18: "after tour system asks 'check your
+     setup?'"). The flag also waits while the tour is still ON OFFER — first run leaves her on My
+     Lessons with the offer showing, and a visit to My Classes before she has taken or passed on it
+     must not ask first. It fires on the first My Classes focus once the tour is done, skipped, or
+     no longer offered (a later session). Moved below `tourOnOffer` for that read — see the TDZ
+     note on `tourNow` above. */
+  useFocusEffect(useCallback(() => {
+    if (tourRunning || tourOnOffer) return undefined;
+    if (!takeFirstRunCheck()) return undefined;
+    /* ⚠️ A BLUR INSIDE THE SECOND RE-QUEUES IT (2026-09-18): `take` has already spent the flag, so
+       a teacher who taps away before the timer fires would otherwise never be asked. The web's
+       copy of this effect does the same. */
+    let fired = false;
+    const id = setTimeout(() => { fired = true; raisePortalCheck({ mode: "check", reason: "tour" }); },
+                          SETUP_CHECK_DELAY_MS);
+    return () => { clearTimeout(id); if (!fired) queueFirstRunCheck(); };
+  }, [tourRunning, tourOnOffer]));
   const card = (c, banded, idx) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}
       tourAdd={tourTarget && c.sectionKey === tourTarget.sectionKey

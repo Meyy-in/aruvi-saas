@@ -475,6 +475,13 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
   };
 
   /* ── add flows ── */
+  /* ★ ADDING A SUBJECT IS SUBSCRIBING TO ONE (founder, 2026-09-18: "add subject is always
+     subscribing to new one"). The row opens the SAME SubscribeFlow the front door and Settings
+     open; checkout lands the subject with Meyy's defaults and the set-up check asks about them on
+     her first My Lessons visit. The profile never walks her through sections · periods · lengths ·
+     budget for a new subject. `startAddSubject` (the old chooser + per-class run) is left only
+     until it can be deleted with a live check — nothing calls it. */
+  const addSubject = () => { if (onSubscribe) onSubscribe(); };
   const startAddSubject = () => {
     setPicked([]); setPickMode("add"); setClassMode("add");
     setAddWin(!fromPortal);          // see `addWin` above — never a window inside the window
@@ -1699,8 +1706,8 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
       {!lapsed && (
         <div className="tp-sub tp-sub-add">
           <div className="tp-sub-hd" role="button" tabIndex={0}
-            onClick={startAddSubject}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); startAddSubject(); } }}>
+            onClick={addSubject}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); addSubject(); } }}>
             <span className="tp-sub-left">
               <span className="tp-sub-name">+ add a subject</span>
             </span>
