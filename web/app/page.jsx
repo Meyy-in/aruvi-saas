@@ -20,6 +20,7 @@ import Settings from "./components/Settings";
 import MyLessonPlans from "./components/MyLessonPlans";
 import GuidedTour from "./components/GuidedTour";
 import ProfilePortal, { queueSetupCheck, takeSetupCheck, pruneSetupCheck, setupKey, SETUP_CHECK_DELAY_MS, setupCheckSub as setupCheckSubParts, setupCheckValues as setupCheckValuesOf } from "./components/ProfilePortal";
+import { adoptReadiness, cachedReadiness, cachedReady, fetchReadiness } from "./lib/readiness";
 import { queueFirstRunCheck, takeFirstRunCheck, setupCheckAdds, takeNextSetupCheck, requeueSetupCheck } from "./lib/setupCheck";
 // ThemeToggle moved into Settings (App › Appearance) — no longer on the shell's bar.
 import AskAruvi from "./ask-aruvi/AskAruvi";
@@ -457,23 +458,47 @@ export default function Home() {
   // initial restore). The API scopes the read to X-Aruvi-User; we regenerate the active-
   // subject projection the consumers read. Clearing first prevents one user's data flashing
   // for another after a sign-out/sign-in.
+  /* ★ PAINT FROM THE DEVICE COPY, THEN CHECK — the phone's rule, now the web's (founder,
+     2026-09-18: "web should mimic phone"). Before this the web kept no copy and asked the server
+     every time, and a failed request fell through to `ready = false` — so a set-up teacher whose
+     Wi-Fi blinked as she opened Meyy was shown the FIRST-RUN WELCOME SCREEN. Now: her saved
+     profile paints at once (no wait on a round trip, no flash); the server is asked behind it
+     and wins when it answers; an unreachable server leaves the copy standing. `readinessLoaded`
+     is set immediately when a copy exists, so there is nothing to wait for.
+     ⚠️ A 401 still signs her out — a refused session is never papered over with a stored
+     profile (`fetchReadiness` rethrows it for exactly this). Sign-out clears the copy
+     (@aruvi/shared/signout), so the next teacher on this browser never sees this one's classes. */
   useEffect(() => {
     if (!user) return;
-    setReady(false); setReadiness(null); setReadinessLoaded(false);
-    getJSON("/readiness").then((d) => {
-      if (d && d.ready && d.readiness) {
-        setReadiness(projectReadiness(d.readiness));
-        setReady(true);
-      }
+    const cached = cachedReadiness();
+    if (cached && cachedReady()) {
+      setReadiness(projectReadiness(cached)); setReady(true); setReadinessLoaded(true);
+    } else {
+      setReady(false); setReadiness(null); setReadinessLoaded(false);
+    }
+    let live = true;
+    fetchReadiness({ force: true }).then(() => {
+      if (!live) return;
+      /* Read the STORE, not the resolved value: after a good read it holds the server's answer
+         (including "she has no profile", which a null value alone cannot tell apart from a
+         failed read); after a failed read it still holds the copy we painted. */
+      const p = cachedReadiness();
+      if (p && cachedReady()) { setReadiness(projectReadiness(p)); setReady(true); }
+      else { setReadiness(null); setReady(false); }
     }).catch((e) => {
-      // A 401 is not "no profile": the server REFUSED this session (a stale stub id in
-      // localStorage once the API moved to Supabase Auth, or an expired token). Showing
-      // first-run to a teacher the server does not recognise would let her build a profile
-      // every save then rejects — so she goes back to the front door instead (Track B).
       if (e && e.message === "401") { onSignOut(); return; }
-      // Otherwise (no saved profile / API down) → stay in the not-ready setup flow.
-    }).finally(() => setReadinessLoaded(true));
+      // Unreachable and nothing stored → the not-ready flow, as before.
+    }).finally(() => { if (live) setReadinessLoaded(true); });
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+  /* Every profile change the web makes (first run, the profile editor, a subscription's re-read,
+     a verify mismatch) lands in `readiness`; writing it through keeps the device copy current, so
+     the next open paints what she last saw. */
+  useEffect(() => {
+    if (!user || !readinessLoaded || !readiness) return;
+    adoptReadiness(readiness.subjects || [], ready);
+  }, [user, readiness, ready, readinessLoaded]);
 
   // First-run complete: FirstRun has now walked the FULL sequence (subject → grade → chapter →
   // preview → section fan-out → arrange-week-or-skip) and hands up the canonical readiness
