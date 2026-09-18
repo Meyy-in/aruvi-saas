@@ -9,9 +9,9 @@ import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
 const ORDER = ["system", "standard", "large", "larger"];
-const WORD = { system: "iPhone", standard: "Standard", large: "Large", larger: "Larger" };
+const WORD = { system: "Device\nDefault", standard: "Standard", large: "Large", larger: "Larger" };
 const LABEL = {
-  system: "Text size: match iPhone, up to 1.2 times",
+  system: "Text size: device default",
   standard: "Text size: Standard",
   large: "Text size: Large",
   larger: "Text size: Larger",
@@ -25,7 +25,12 @@ export default function TextSizeToggle() {
     <Pressable hitSlop={10} accessibilityRole="button" accessibilityLabel={LABEL[cur]}
       accessibilityHint="Tap to change"
       onPress={() => setTextSize(ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length])}>
-      <Text style={[ws.set_pill_t, { color: t.pine }]}>{WORD[cur]}</Text>
+      {/* "Device Default" sits on TWO lines, smaller, so it fits the chevron's slot without making
+          the card taller (founder, 2026-09-18). Fixed size: the control must not grow with the
+          very setting it changes. */}
+      <Text fixed numberOfLines={cur === "system" ? 2 : 1}
+        style={[ws.set_pill_t, { color: t.pine, textAlign: "right" },
+                cur === "system" ? { fontSize: 8.5, lineHeight: 11 } : null]}>{WORD[cur]}</Text>
     </Pressable>
   );
 }

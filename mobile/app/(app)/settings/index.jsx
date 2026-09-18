@@ -260,7 +260,7 @@ export default function SettingsHome() {
         right={<ThemeToggle />} />
       {/* ★ TEXT SIZE (founder, 2026-09-18) — the iPhone's own size up to 1.2×, or a size chosen
           here that overrides it. Same card, the control where the chevron would be. */}
-      <BigCard label="Text size" sub="Match your iPhone (up to 1.2×), or choose Standard, Large or Larger"
+      <BigCard label="Text size" sub="Match your Device default or choose between standard, large and larger."
         right={<TextSizeToggle />} />
       {marketing !== null ? (
         <BigCard label="Marketing emails"

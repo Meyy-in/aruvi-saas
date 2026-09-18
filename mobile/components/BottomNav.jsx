@@ -76,7 +76,7 @@ function AskIcon({ color }) {
 }
 
 /* `tour` is the web's own `data-tour` string — see `lib/tour.js` on why the keys must match. */
-function Item({ Icon, label, active, onPress, hint, tour }) {
+function Item({ Icon, label, active, onPress, hint, tour, fixed }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const color = active ? t.clay : t.ink_soft;
@@ -85,7 +85,8 @@ function Item({ Icon, label, active, onPress, hint, tour }) {
     <Pressable ref={ref} onPress={onPress} style={ws.bnav_item} accessibilityRole="button"
       accessibilityState={{ selected: !!active }} accessibilityLabel={hint || label}>
       <Icon color={color} />
-      <Text style={[ws.bnav_label, { color }]}>{label}</Text>
+      {/* `fixed`: one line at the design's size whatever the text-size setting (2026-09-18). */}
+      <Text fixed={fixed} numberOfLines={fixed ? 1 : undefined} style={[ws.bnav_label, { color }]}>{label}</Text>
       <View style={[ws.bnav_rule, active && { backgroundColor: t.clay }]} />
     </Pressable>
   );
@@ -102,9 +103,9 @@ export default function BottomNav({ active = null, onClasses, onLessons, onAdd, 
       <View style={ws.bnav_in}>
         {/* Lapsed hides My Classes — the reading room is My Lessons (§2.5 as amended). */}
         {showClasses && (
-          <Item Icon={ClassesIcon} label="My Classes" active={active === "classes"} onPress={onClasses} tour="nav-classes" />
+          <Item Icon={ClassesIcon} label="My Classes" fixed active={active === "classes"} onPress={onClasses} tour="nav-classes" />
         )}
-        <Item Icon={LessonsIcon} label="My Lessons" active={active === "lessons"} onPress={onLessons} tour="nav-lessons" />
+        <Item Icon={LessonsIcon} label="My Lessons" fixed active={active === "lessons"} onPress={onLessons} tour="nav-lessons" />
         {/* The standing "+" portal — "what would you like to change?" An expired subscription
             hides it (§2.5 as amended; the server 402s regardless). */}
         {showAdd && (

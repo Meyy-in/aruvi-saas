@@ -40,8 +40,12 @@ function sizeProps(pref, style) {
   return { allowFontScaling: false, style: scaled(style, TEXT_SCALES[pref]) };
 }
 
-export const Text = forwardRef(function Text({ style, ...props }, ref) {
+/* `fixed` — this text NEVER scales, at any setting (founder, 2026-09-18: the bottom bar's
+   "My Classes" / "My Lessons" went to two lines at Larger and grew the bar). Use sparingly: only
+   where a fixed-height strip of chrome would break, never for reading text. */
+export const Text = forwardRef(function Text({ style, fixed, ...props }, ref) {
   const pref = useContext(TextSizeCtx);
+  if (fixed) return <RNText ref={ref} {...props} allowFontScaling={false} style={style} />;
   return <RNText ref={ref} {...props} {...sizeProps(pref, style)} />;
 });
 export const TextInput = forwardRef(function TextInput({ style, ...props }, ref) {
