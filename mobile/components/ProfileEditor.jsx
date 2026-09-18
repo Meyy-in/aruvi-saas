@@ -605,6 +605,21 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
      One window whose contents change has no gap to show. */
   useEffect(() => { if (onChrome) onChrome({ onBack: stepBack }); }, [onChrome, step]);
 
+  /* ★ THE SAVE-FAILED BANNER, ON EVERY STEP (2026-09-18 reconcile, app. 02 row 13). It used to be
+     written inline in the BUDGET branch only, so a verified mismatch on a class, section, periods a
+     week or duration save set `err` and rendered NOTHING — the one outcome the read-after-write
+     doctrine says she must be told about. One element, placed under each step's heading. */
+  const saveFail = err ? (
+          <View style={[ws.tp_savefail, { borderColor: t.edge_clay, backgroundColor: t.paper_2 }]}
+            accessibilityLiveRegion="assertive">
+            <Text style={[ws.tp_savefail_t, { color: t.ink }]}>{err}</Text>
+            <Pressable onPress={() => setErr("")} accessibilityRole="button" hitSlop={8}
+              style={[ws.tp_savefail_btn, { borderBottomColor: t.edge_clay }]}>
+              <Text style={[ws.tp_savefail_bt, { color: t.clay }]}>Dismiss</Text>
+            </Pressable>
+          </View>
+  ) : null;
+
   return (
     <>
       <View>
@@ -689,6 +704,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
         ) : step === "class" ? (
           <>
             <Text style={ws.fr_q}>Which classes do you teach {pretty(subject)} to?</Text>
+            {saveFail}
             {/* Says what an added class ARRIVES as, because this screen does not ask — and points
                 at the row that changes it. */}
             <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
@@ -703,7 +719,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
               <Text style={[ws.fr_hint, { color: t.ink_soft }]}>Loading classes…</Text>
             ) : classOptions.length === 0 ? (
               <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
-                Every class Meyy offers for {pretty(subject)} is already in your profile.
+                Every class Meyy offers for {pretty(subject)}{portalStage ? " at this stage" : ""} is already in your profile.
               </Text>
             ) : (
               /* ★ CLUSTERED, knowingly (founder, 2026-08-29): the picked classes gather adjacent
@@ -743,6 +759,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
         ) : step === "section" ? (
           <>
             <Text style={ws.fr_q}>Edit sections of Class {classNum(grade)}</Text>
+            {saveFail}
             {/* ★ ONE SENTENCE (founder, 2026-09-15): the consequences belong to the moment she
                 removes something, not to the screen she opened to ADD one. The removal confirm
                 says them where they are about her. */}
@@ -778,6 +795,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
         ) : step === "ppw" ? (
           <>
             <Text style={ws.fr_q}>How many periods a week?</Text>
+            {saveFail}
             <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
               A number, not a timetable — you’ll set the period lengths next.
             </Text>
@@ -802,6 +820,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
         ) : step === "duration" ? (
           <>
             <Text style={ws.fr_q}>How long are the periods?</Text>
+            {saveFail}
             <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
               {multi
                 ? `Split your ${weekTotal} periods between the lengths — ${anchor} min takes whatever is left over.`
@@ -862,16 +881,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             `role="alert"` on the web; `assertive` is its RN counterpart, so a teacher using a
             screen reader hears that the number under her has changed rather than being left
             with a figure she did not type. */}
-        {err ? (
-          <View style={[ws.tp_savefail, { borderColor: t.edge_clay, backgroundColor: t.paper_2 }]}
-            accessibilityLiveRegion="assertive">
-            <Text style={[ws.tp_savefail_t, { color: t.ink }]}>{err}</Text>
-            <Pressable onPress={() => setErr("")} accessibilityRole="button" hitSlop={8}
-              style={[ws.tp_savefail_btn, { borderBottomColor: t.edge_clay }]}>
-              <Text style={[ws.tp_savefail_bt, { color: t.clay }]}>Dismiss</Text>
-            </Pressable>
-          </View>
-        ) : null}
+        {saveFail}
 
         {value == null ? (
           <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />

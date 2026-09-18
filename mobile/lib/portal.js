@@ -151,14 +151,9 @@ export function setPortalWin(win) {
   emit();
 }
 
-/* Finishing an edit: hand back where she goes and what to reopen, and clear the origin — but NOT
-   the window, which the caller restores by rendering it. */
-export function leavePortal() {
-  const { originRoute, win } = state;
-  state = { originRoute: null, win, scope: null };
-  emit();
-  return { originRoute, win };
-}
+/* `leavePortal` was DELETED 2026-09-18 (app. 01 row 78): it had no caller since the editor became a
+   body of the layout's one Sheet — `closeEdit` is the exit — and its reset dropped `edit`/`pick`,
+   so a future reader wiring it would have half-cleared the store. */
 
 /* ───────── "she has just added something" — the check window's second moment (item 10) ─────────
  *
