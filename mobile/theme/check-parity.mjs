@@ -155,7 +155,6 @@ const NAMED_DIVERGENCES = {
   "assess_scaf_row:font-size":    "the phone renders .assess-flat (13.5px), not the bare rule",
   "assess_corr_row:font-size":    "one key serves several rows; the checker sees the whole family",
   "assess_revrow:font-size":      "one key serves several rows; the checker sees the whole family",
-  "assess_passage:font-size":     "one key serves several rows; the checker sees the whole family",
   "lv_pvmid:font-size":           "the phone's preview nav splits box and label across two keys",
   "lv_pvmid:letter-spacing":      "as above — the label key carries the tracking",
   "dd_btn:font-size":             "16px is iOS Safari's input-zoom guard; a native Sheet cannot zoom",

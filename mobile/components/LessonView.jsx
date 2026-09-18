@@ -87,7 +87,8 @@ function MaterialPanel({ ws, t, u }) {
   return (
     <View style={ws.uv_mat}>
       {mats.map((mm, i) => <Text key={i} style={ws.uv_mat_li}>•  {mm}</Text>)}
-      {legacyAid ? <Text style={ws.uv_va_prose}>{legacyAid}</Text> : null}
+      {/* `.uv-va-legacy` — 13px italic ink-soft, set apart from a typed prose aid (app. 06 row 69a). */}
+      {legacyAid ? <Text style={ws.uv_va_legacy}>{legacyAid}</Text> : null}
       {aids.map((a, i) => (
         <View key={i} style={ws.uv_va_kicker}>
           <Text style={ws.kicker}>{a.type === "table" ? "Prepared table" : "Prepared text"}{a.title ? ` · ${a.title}` : ""}</Text>

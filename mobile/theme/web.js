@@ -618,7 +618,15 @@ export function webStyles(t, scheme = "light") {
     assess_parts_lead:{ fontFamily: F.body(400), fontSize: 13.5, lineHeight: 20.25, color: t.ink, marginBottom: 6 },
     assess_ansrow:   { flexDirection: "row", gap: 8, alignItems: "baseline", paddingVertical: 3 },
     assess_ans_lab:  { fontFamily: F.mono(400), fontSize: 11, lineHeight: 16.5, color: t.pine, minWidth: 14 },
-    assess_passage:  { borderLeftWidth: 3, borderLeftColor: t.ochre, backgroundColor: t.tint_cream, padding: 12, borderRadius: 6, marginBottom: 10 },
+    /* ★ `.assess-vs-prose, .assess-passage` are ONE rule on the web (globals.css:1665) — a green-tint
+       box, not the ochre-ruled cream this key used to carry (2026-09-18, app. 06 row 105: the parity
+       checker compares font-size only on this family, so the box itself drifted unseen). Dark: the
+       web's `--tint-pine` fill and `--ink-soft` text. */
+    uv_va_legacy:    { fontFamily: F.body(400, true), fontSize: 13, color: t.ink_soft, marginTop: 10 },   // globals.css:4614
+    assess_passage:  { backgroundColor: dk ? t.tint_pine : "#f4f9f6", borderWidth: 1, borderColor: t.edge_green,
+                       borderRadius: 8, paddingVertical: 10, paddingHorizontal: 12, marginTop: 10 },
+    assess_passage_t:{ fontFamily: F.body(400, true), fontSize: 12.5, lineHeight: 19.375, color: dk ? t.ink_soft : "#1f3a30" },
+    assess_vs_prose_t:{ fontFamily: F.body(400), fontSize: 12.5, lineHeight: 19.375, color: dk ? t.ink_soft : "#1f3a30" },
     assess_scaf:     { borderWidth: 1, borderColor: t.line, borderRadius: 8, padding: 12, backgroundColor: t.paper_2, marginTop: 4 },
     assess_scaf_row: { fontFamily: F.mono(400), fontSize: 13.5, lineHeight: 21.6, color: t.ink },
     assess_qtype:    { fontFamily: F.mono(500), fontSize: 9.5, letterSpacing: 0.76, textTransform: UP, color: t.pine },

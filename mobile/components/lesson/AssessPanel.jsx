@@ -142,8 +142,10 @@ function ATyped({ ws, t, b, passage = false }) {
     );
   }
   return passage
-    ? <View style={ws.assess_passage}><Text style={[ws.assess_prompt, { marginTop: 0, fontFamily: "Newsreader_400Regular_Italic" }]}>{b.content}</Text></View>
-    : <P ws={ws} t={t} style={{ marginVertical: 8 }}>{b.content}</P>;
+    ? <View style={ws.assess_passage}><Text style={ws.assess_passage_t}>{b.content}</Text></View>
+    /* The web's `.assess-vs-prose` — the SAME green box as a passage, upright (app. 06 row 105;
+       it was a bare paragraph here). */
+    : <View style={ws.assess_passage}><Text style={ws.assess_vs_prose_t}>{b.content}</Text></View>;
 }
 
 /* ── the four sub-panels ── */
