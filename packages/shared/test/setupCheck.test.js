@@ -201,3 +201,17 @@ test("★ the question is for a SUBSCRIPTION, not for a class she added herself 
   assert.deepEqual(setupCheckAdds([{ name: "Science", grades: [] }], [{ name: "Science", grades: [g("VII")] }]),
     [], "refilling a subject she emptied asks nothing");
 });
+
+test("★ My Classes can spend a subscription's question too — oldest first, once (2026-09-18)", async () => {
+  const { takeNextSetupCheck, requeueSetupCheck } = await import("../src/setupCheck.js");
+  reset();
+  assert.equal(takeNextSetupCheck(), null);
+  queueSetupCheck(["Social Sciences|IX", "English|VI"]);
+  const a = takeNextSetupCheck();
+  assert.deepEqual([a.subject, a.grade], ["Social Sciences", "IX"]);
+  assert.equal(takeSetupCheck("Social Sciences|IX"), false, "My Lessons will not ask again");
+  requeueSetupCheck(a.key);
+  assert.equal(takeNextSetupCheck().key, "Social Sciences|IX", "a cancelled ask goes back to the front");
+  assert.equal(takeNextSetupCheck().key, "English|VI");
+  assert.equal(takeNextSetupCheck(), null);
+});

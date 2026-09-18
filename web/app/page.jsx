@@ -20,7 +20,7 @@ import Settings from "./components/Settings";
 import MyLessonPlans from "./components/MyLessonPlans";
 import GuidedTour from "./components/GuidedTour";
 import ProfilePortal, { queueSetupCheck, takeSetupCheck, pruneSetupCheck, setupKey, SETUP_CHECK_DELAY_MS, setupCheckSub as setupCheckSubParts, setupCheckValues as setupCheckValuesOf } from "./components/ProfilePortal";
-import { queueFirstRunCheck, takeFirstRunCheck, setupCheckAdds } from "./lib/setupCheck";
+import { queueFirstRunCheck, takeFirstRunCheck, setupCheckAdds, takeNextSetupCheck, requeueSetupCheck } from "./lib/setupCheck";
 // ThemeToggle moved into Settings (App › Appearance) — no longer on the shell's bar.
 import AskAruvi from "./ask-aruvi/AskAruvi";
 import { primeBank, clearBank, refreshBank } from "./ask-aruvi/bank";
@@ -296,15 +296,25 @@ export default function Home() {
   useEffect(() => {
     // After the tour (founder, 2026-09-18): not while it runs, and not while it is still on offer.
     if (!onMyClassesNow || tour || tourOnOffer || portalWin || entLapsed) return undefined;
-    if (!takeFirstRunCheck()) return undefined;
-    let fired = false;
+    /* First run's own question first; otherwise a SUBSCRIPTION's (founder, 2026-09-18): after a
+       purchase she may land here, looking at a default class she never chose, so My Classes asks
+       as well as My Lessons — whichever she reaches first spends the key, so she is asked once.
+       `readiness` is a dependency because checkout's re-read is what queues the key. */
+    /* ⚠️ SPENT AT FIRE TIME, not now: the key a purchase queues can land a moment after this
+       runs, and a timer cancelled before it fires then has nothing to give back. */
     const id = setTimeout(() => {
-      fired = true;
-      setPortalWin((w) => w || { mode: "check", reason: "tour" });
+      let win = null;
+      if (takeFirstRunCheck()) win = { mode: "check", reason: "tour" };
+      else {
+        const next = takeNextSetupCheck();
+        if (next) win = { mode: "check", reason: "added", subject: next.subject, grade: next.grade };
+      }
+      if (!win) return;
+      setPortalWin((w) => { if (w) { if (win.reason === "added") requeueSetupCheck(`${win.subject}|${win.grade}`); else queueFirstRunCheck(); return w; } return win; });
     }, SETUP_CHECK_DELAY_MS);
-    return () => { clearTimeout(id); if (!fired) queueFirstRunCheck(); };
+    return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onMyClassesNow, tour, tourOnOffer, portalWin, entLapsed]);
+  }, [onMyClassesNow, tour, tourOnOffer, portalWin, entLapsed, readiness]);
   /* The tour opens on My Classes. It always did implicitly, because its only entry point was a
      nudge ON My Classes; now that first run lands on My Lessons and the same nudge renders
      there too, step 1 ("this is where your classes sit") would otherwise ring the My Classes

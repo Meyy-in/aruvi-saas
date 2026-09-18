@@ -31,8 +31,9 @@ import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet, HistorySheet } from "../../components/AttachSheet";
 import Svg, { Path } from "react-native-svg";
 import { subscribePreparing, clearPreparing } from "../../lib/preparing";
-import { raisePortalCheck } from "../../lib/portal";
-import { queueFirstRunCheck, takeFirstRunCheck } from "../../lib/firstRun";
+import { hasPortalWindow, raisePortalCheck } from "../../lib/portal";
+import { takeNextSetupCheck } from "@aruvi/shared/setupCheck";
+import { takeFirstRunCheck } from "../../lib/firstRun";
 import { SETUP_CHECK_DELAY_MS } from "@aruvi/shared/setupCheck";
 import ProposedCard from "../../components/ProposedCard";
 import { useTheme } from "../../theme/ThemeContext";
@@ -568,15 +569,22 @@ export default function Home() {
      note on `tourNow` above. */
   useFocusEffect(useCallback(() => {
     if (tourRunning || tourOnOffer) return undefined;
-    if (!takeFirstRunCheck()) return undefined;
-    /* ⚠️ A BLUR INSIDE THE SECOND RE-QUEUES IT (2026-09-18): `take` has already spent the flag, so
-       a teacher who taps away before the timer fires would otherwise never be asked. The web's
-       copy of this effect does the same. */
-    let fired = false;
-    const id = setTimeout(() => { fired = true; raisePortalCheck({ mode: "check", reason: "tour" }); },
-                          SETUP_CHECK_DELAY_MS);
-    return () => { clearTimeout(id); if (!fired) queueFirstRunCheck(); };
-  }, [tourRunning, tourOnOffer]));
+    /* First run's own question first; otherwise a SUBSCRIPTION's (founder, 2026-09-18): after a
+       purchase she may come back here, looking at a default class she never chose, so My Classes
+       asks as well as My Lessons — whichever she reaches first spends the key. `st.classes` is a
+       dependency because checkout's profile re-read is what queues it, and she may already be
+       standing here when it lands. */
+    /* ⚠️ SPENT AT FIRE TIME, not on focus: the key a purchase queues can land a moment after
+       focus, and a blur inside the second then leaves the flag unspent rather than lost. */
+    const id = setTimeout(() => {
+      if (hasPortalWindow()) return;              // she opened something herself — ask next time
+      if (takeFirstRunCheck()) { raisePortalCheck({ mode: "check", reason: "tour" }); return; }
+      const next = takeNextSetupCheck();
+      if (next) raisePortalCheck({ mode: "check", reason: "added", subject: next.subject,
+                                   grade: next.grade, scope: { subject: next.subject, grade: next.grade } });
+    }, SETUP_CHECK_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [tourRunning, tourOnOffer, st.classes]));
   const card = (c, banded, idx) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}
       tourAdd={tourTarget && c.sectionKey === tourTarget.sectionKey

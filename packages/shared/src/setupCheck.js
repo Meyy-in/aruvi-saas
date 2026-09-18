@@ -89,6 +89,27 @@ export function setupCheckAdds(prevSubjects, nextSubjects) {
   return out;
 }
 
+/* ★ MY CLASSES SPENDS IT TOO (founder, 2026-09-18). After a purchase she may land on My Classes,
+ * not My Lessons — and there she sees a Class 3 · Section 3A she never chose, with nothing saying
+ * Meyy picked it. So the first My Classes visit after a subscription asks as well; whichever screen
+ * she reaches first spends the key, so she is asked once. Returns the OLDEST queued subject·class
+ * as `{subject, grade}` and spends it, or null. `requeueSetupCheck` gives it back when the ask was
+ * cancelled before it could show (the same re-queue rule as the first-run one-shot). */
+export function takeNextSetupCheck() {
+  const have = read();
+  if (!have.length) return null;
+  const key = have[0];
+  write(have.slice(1));
+  const at = key.lastIndexOf("|");
+  if (at < 1) return null;
+  return { key, subject: key.slice(0, at), grade: key.slice(at + 1) };
+}
+export function requeueSetupCheck(key) {
+  if (!key) return;
+  const have = read();
+  if (!have.includes(key)) write([key, ...have]);
+}
+
 /* Drop anything queued that is no longer a subject·class she teaches (2026-08-27). A queued key is
  * only ever SPENT when My Lessons scopes to it, and My Lessons offers only classes in her profile
  * — so a key for something she does not teach can never be spent and would sit in the queue

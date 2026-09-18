@@ -140,6 +140,8 @@ export function closeEdit() {
 
 /* Raise a CHECK window, unless she is already looking at one — or at an edit, or a question.
    A window that lands on top of something she opened herself is the 2026-08-28 defect. */
+export function hasPortalWindow() { return !!(state.win || state.edit || state.pick); }
+
 export function raisePortalCheck(win) {
   if (state.win || state.edit || state.pick) return;
   setPortalWin(win);
