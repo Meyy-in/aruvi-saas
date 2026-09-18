@@ -4,7 +4,7 @@ import { API, getJSON, pad, pretty, userKey, withUser, gradeSlug,
          fetchSupportedGrades, heldClassesFor } from "../lib/format";
 import { pullSectionState, readLocalSection } from "../lib/sectionState";
 import { YearStamp } from "./MyPlans";
-import { cachedPlans, fetchPlans, invalidatePlans, notePlansYear } from "../lib/plans";
+import { cachedPlans, fetchPlans, invalidatePlans, notePlansYear, fetchPlanView } from "../lib/plans";
 import { verifiedWrite, planIsArchived } from "../lib/verify";
 import LessonView from "./LessonView";
 import YearPlan from "./YearPlan";
@@ -560,9 +560,14 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
 
   const openLesson = async (p) => {
     setOpening(true);
+    /* Kept on the device when opened; read back from there offline (2026-09-18). */
     try {
-      const view = (await getJSON(`/plans/${sSlug}/${gSlug}/${p.filename}/view`)).view;
+      const view = (await fetchPlanView(sSlug, gSlug, p.filename)).view;
       setOpenPlan({ view, plan: p });
+    } catch (e) {
+      setToast({ kind: "block", text: String(e && e.message) === "404"
+        ? "This lesson could not be found."
+        : "Couldn’t open this lesson — it hasn’t been saved on this device yet. Try again when you’re online." });
     } finally { setOpening(false); }
   };
   // A prior year's plan opens through the SAME path: the plan asset is shared library

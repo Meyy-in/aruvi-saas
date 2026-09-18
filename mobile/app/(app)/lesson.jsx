@@ -4,6 +4,7 @@
  * holds until BOTH the view and the pull are in — the live-walk finding (no false first
  * frame) applied here too. */
 import { useEffect, useState } from "react";
+import { fetchPlanView } from "@aruvi/shared/plans";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { Text } from "../../components/Text";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -26,7 +27,8 @@ export default function Lesson() {
     (async () => {
       try {
         if (sectionKey) { try { await pullSectionState([sectionKey]); } catch {} }
-        const d = await getJSON(`/plans/${subject}/${grade}/${filename}/view`);
+        // Kept on the device when opened; read back from there offline (2026-09-18).
+        const d = await fetchPlanView(subject, grade, filename);
         if (alive) setState({ loading: false, data: d, err: "" });
       } catch (e) {
         const m = String(e.message) === "404" ? "This lesson could not be found." : "Couldn't load this lesson right now.";

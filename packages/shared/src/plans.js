@@ -61,7 +61,7 @@
  * one cached here. They stay direct getJSON calls.
  */
 
-import { API, userKey, withUser } from "./format.js";
+import { API, getJSON, userKey, withUser } from "./format.js";
 import { storage } from "./storage.js";
 
 /* Sign-out sweeps this prefix (signout.js). Keep the two in step. */
@@ -211,4 +211,66 @@ export function clearPlans() {
   mem.clear();
   inflight.clear();
   knownYear = null;
+}
+
+/* ───────── A lesson she has opened, kept for when the network is not (founder, 2026-09-18) ─────────
+ *
+ * "Wifi off, I tried to open a lesson already opened" → an unhandled "Failed to fetch". The plan
+ * LISTINGS were cached; the plan itself (`/plans/{s}/{g}/{file}/view`) never was. Now every
+ * successful open writes the view through to the device, and a failed read falls back to it.
+ * Network FIRST, copy second: a view can change when the library is re-authored, and a teacher on
+ * a good connection must always get the current one.
+ *
+ * ★ BOUNDED. A view runs to tens of kilobytes and browser storage is ~5 MB, so only the
+ * VIEW_CACHE_MAX most recently opened are kept (least-recently-opened evicted). Keys sit under
+ * PLANS_CACHE_PREFIX, so sign-out already sweeps them. A quota error drops the oldest and gives up
+ * quietly — the view is still returned; only the offline copy is missed.
+ * A 404 is NEVER papered over: a deleted plan must say so, not open from a stale copy. */
+const VIEW_CACHE_MAX = 12;
+const viewIndexKey = () => userKey(`${PLANS_CACHE_PREFIX}views_index`);
+const viewKey = (s, g, f) => userKey(`${PLANS_CACHE_PREFIX}view_${s}_${g}_${f}`);
+
+function readViewIndex() {
+  try { const v = JSON.parse(storage.getItem(viewIndexKey()) || "[]"); return Array.isArray(v) ? v : []; }
+  catch { return []; }
+}
+function keepView(s, g, f, data) {
+  const k = viewKey(s, g, f);
+  let idx = readViewIndex().filter((x) => x !== k);
+  idx.push(k);
+  while (idx.length > VIEW_CACHE_MAX) { try { storage.removeItem(idx.shift()); } catch {} }
+  for (let tries = 0; tries < 4; tries++) {
+    try {
+      storage.setItem(k, JSON.stringify(data));
+      storage.setItem(viewIndexKey(), JSON.stringify(idx));
+      return;
+    } catch {
+      const old = idx.length > 1 ? idx.shift() : null;       // quota: make room and retry
+      if (!old) return;
+      try { storage.removeItem(old); } catch {}
+    }
+  }
+}
+
+/** The stored copy of a lesson view, or null. Synchronous. */
+export function cachedPlanView(s, g, f) {
+  try { const raw = storage.getItem(viewKey(s, g, f)); return raw ? JSON.parse(raw) : null; }
+  catch { return null; }
+}
+
+/** GET the lesson view; on success keep a copy, on a network failure return the copy if there is
+ *  one. Resolves with the server's response shape (`{ view, … }`). Rejects on a 404/401 always,
+ *  and on any failure when no copy exists — so callers keep their own error handling. */
+export async function fetchPlanView(s, g, f) {
+  try {
+    const d = await getJSON(`/plans/${s}/${g}/${f}/view`);
+    keepView(s, g, f, d);
+    return d;
+  } catch (e) {
+    const code = String(e && e.message);
+    if (code === "404" || code === "401") throw e;
+    const copy = cachedPlanView(s, g, f);
+    if (copy) return copy;
+    throw e;
+  }
 }

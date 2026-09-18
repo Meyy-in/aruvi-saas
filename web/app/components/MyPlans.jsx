@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { getJSON, pretty, pad, classNum, markPrepared, gradeSlug } from "../lib/format";
 import { pullSectionState, bindSectionChapter, unbindSection } from "../lib/sectionState";
 import { readHistory, recordHistory, hasHistory, pullSectionHistory } from "../lib/sectionHistory";
-import { cachedPlans, fetchPlans, invalidatePlans, notePlansYear } from "../lib/plans";
+import { cachedPlans, fetchPlans, fetchPlanView, invalidatePlans, notePlansYear } from "../lib/plans";
 import Readiness from "./Readiness";
 import LessonView from "./LessonView";
 
@@ -289,7 +289,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     const sectionKey = `${pSub}_${pGrade}_${sectionTag}`;
     let live = true;
     setLoading(true);
-    getJSON(`/plans/${pSub}/${pGrade}/${filename}/view`)
+    fetchPlanView(pSub, pGrade, filename)
       .then((d) => { if (live) setOpenPlan({ view: d.view, sectionKey }); })
       .catch(() => {})
       .finally(() => { if (live) { setLoading(false); onConsumePending && onConsumePending(); } });
@@ -474,9 +474,15 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
 
   const openLesson = async (sSlug, gSlug, p, sectionKey) => {
     setLoading(true);
+    /* The view is kept on the device when it opens, and read back from there when the network
+       is not (2026-09-18: Wi-Fi off → an unhandled "Failed to fetch"). A lesson never opened on
+       this browser still cannot open offline — that is said, not thrown. */
     try {
-      const view = (await getJSON(`/plans/${sSlug}/${gSlug}/${p.filename}/view`)).view;
+      const view = (await fetchPlanView(sSlug, gSlug, p.filename)).view;
       setOpenPlan({ view, sectionKey });
+    } catch (e) {
+      window.alert(String(e && e.message) === "404" ? "This lesson could not be found."
+        : "Couldn’t open this lesson — it hasn’t been saved on this device yet. Try again when you’re online.");
     } finally { setLoading(false); }
   };
 

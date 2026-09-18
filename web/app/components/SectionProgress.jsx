@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import { fetchPlanView } from "../lib/plans";
 import { getJSON, pad, gradeUp } from "../lib/format";
 
 /* ───────── SectionProgress — per-section progress for one chapter (2026-06-29) ─────────
@@ -45,7 +46,7 @@ export default function SectionProgress({ subjectSlug, gradeSlug, grade, section
 
   useEffect(() => {
     let live = true;
-    getJSON(`/plans/${subjectSlug}/${gradeSlug}/${plan.filename}/view`)
+    fetchPlanView(subjectSlug, gradeSlug, plan.filename)
       .then((d) => { if (live) setTotal(countUnits(d.view && d.view.lesson_plan)); })
       .catch(() => { if (live) setTotal(0); });
     return () => { live = false; };
