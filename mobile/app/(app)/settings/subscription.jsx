@@ -33,7 +33,7 @@ import { useRouter } from "expo-router";
 import { Text } from "../../../components/Text";
 import { getJSON, fmtValidity, scopeRows, subsFromEntitlement } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
-import { downloadDocument, invoicePdf } from "../../../lib/download";
+import { canPreview, downloadDocument, fetchDocument, invoicePdf } from "../../../lib/download";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
 
@@ -99,7 +99,16 @@ export default function Subscription() {
   const [failMsg, setFailMsg] = useState("");
   const getInvoice = (number) => {
     setBusy(`inv-${number}`); setFailMsg("");
-    downloadDocument(invoicePdf(number))
+    /* ★ SHOWN BEFORE IT IS SENT (founder, 2026-09-18: "the invoice… should appear in the screen as
+       it does for pdf LP export"). The report window's rule, applied here: a PDF on iOS opens in
+       the preview screen and the share sheet is her choice from its arrow. `from: "settings"`
+       keeps the bottom nav from lighting My Lessons, which is what `/preview` means otherwise. */
+    const doc = invoicePdf(number);
+    const run = canPreview(doc.mime)
+      ? fetchDocument(doc).then((f) => router.push({ pathname: "/preview",
+          params: { uri: f.uri, name: f.name, mime: f.mime, label: `Invoice ${number}`, from: "settings" } }))
+      : downloadDocument(doc);
+    run
       .catch(() => setFailMsg("Couldn’t fetch that invoice right now."))
       .finally(() => setBusy(""));
   };

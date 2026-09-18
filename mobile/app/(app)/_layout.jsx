@@ -10,7 +10,7 @@
  * and hides the bar entirely (its screen arrives in step 6). */
 import { useEffect, useRef, useState } from "react";
 import { AppState, View } from "react-native";
-import { Redirect, Stack, useRouter, usePathname } from "expo-router";
+import { Redirect, Stack, useGlobalSearchParams, useRouter, usePathname } from "expo-router";
 import { getJSON, getUser, postJSON } from "@aruvi/shared/format";
 import { pullSectionState, setSectionMismatchHandler } from "@aruvi/shared/sectionState";
 import { refreshBank } from "@aruvi/shared/ask-aruvi/bank";
@@ -42,6 +42,9 @@ export default function AppLayout() {
   const { t } = useTheme();
   const router = useRouter();
   const pathname = usePathname() || "/";
+  /* A document opened from Settings (an invoice, her data export) rides `from: "settings"` so the
+     preview lights nothing in the bar, as Settings itself does. */
+  const fromSettings = useGlobalSearchParams().from === "settings";
   /* ⚠️ The subscription sits ABOVE the sign-in redirect below, because hooks may not follow a
      conditional return — the lesson `MyLessonPlans.jsx` taught this repo the hard way on
      2026-09-14 ("Rendered fewer hooks than expected"). */
@@ -276,7 +279,7 @@ export default function AppLayout() {
      `activeNav === "classes" && !askOpen`. The bar answers "where are you", and while the panel
      is up she is in the panel; two lit items would be the bar disagreeing with itself. */
   const active = askOpen ? "ask"
-    : inSettings ? null
+    : (inSettings || (pathname.startsWith("/preview") && fromSettings)) ? null
     /* `/preview` is a report OF a lesson, reached from a My Lessons card, so it keeps that
        item lit — she has not left the repository, she is looking at something it made. */
     : (pathname.startsWith("/lessons") || pathname.startsWith("/preview")) ? "lessons" : "classes";

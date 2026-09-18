@@ -16,7 +16,8 @@
 import { useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
 import { Text } from "../../../components/Text";
-import { downloadDocument, dataExport } from "../../../lib/download";
+import { useRouter } from "expo-router";
+import { canPreview, downloadDocument, dataExport, fetchDocument } from "../../../lib/download";
 import { markDownloaded } from "../../../lib/dataRights";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
@@ -24,14 +25,21 @@ import { useWebStyles } from "../../../theme/web";
 export default function YourData() {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const router = useRouter();
   const [busy, setBusy] = useState("");
   const [failMsg, setFailMsg] = useState("");
 
   const download = (fmt) => {
     setBusy(fmt); setFailMsg("");
-    downloadDocument(dataExport(fmt))
-      /* Only to word the final delete question honestly — never a gate. */
-      .then(() => markDownloaded())
+    /* The PDF is shown before it is sent, as the invoice and the lesson reports are (2026-09-18);
+       Word has no renderer here and keeps the straight-to-the-sheet path. */
+    const doc = dataExport(fmt);
+    (canPreview(doc.mime)
+      ? fetchDocument(doc).then((f) => router.push({ pathname: "/preview",
+          params: { uri: f.uri, name: f.name, mime: f.mime, label: "Your data", from: "settings" } }))
+      /* Only to word the final delete question honestly — never a gate. A PREVIEW is not a copy
+         in her hands, so only the path that hands the file over marks it. */
+      : downloadDocument(doc).then(() => markDownloaded()))
       .catch(() => setFailMsg(
         "Couldn’t prepare your download right now. Try again in a moment."))
       .finally(() => setBusy(""));
