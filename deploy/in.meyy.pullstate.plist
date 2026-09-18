@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Daily Supabase state snapshot (STORAGE_POLICY.md). Install with:
+       cp deploy/in.meyy.pullstate.plist ~/Library/LaunchAgents/
+       launchctl load ~/Library/LaunchAgents/in.meyy.pullstate.plist
+     Check it ran:   cat backups/state/LATEST.txt
+     Stop it:        launchctl unload ~/Library/LaunchAgents/in.meyy.pullstate.plist
+     If the Mac is asleep at 02:00 the job runs at the next wake, not never. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>in.meyy.pullstate</string>
+  <key>WorkingDirectory</key>
+  <string>/Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>aruvi-scripts/pull_state_from_postgres.py</string>
+    <string>--keep</string>
+    <string>30</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>2</integer><key>Minute</key><integer>0</integer></dict>
+  <key>StandardOutPath</key><string>/tmp/meyy-pullstate.log</string>
+  <key>StandardErrorPath</key><string>/tmp/meyy-pullstate.log</string>
+</dict>
+</plist>

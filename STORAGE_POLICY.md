@@ -106,6 +106,36 @@ rsync -avh --delete \
   "/Users/kumar_radhakrishnan/Library/Mobile Documents/com~apple~CloudDocs/kumar/AI/Aruvi-Saas/"
 ```
 
+## If the Mac is lost
+
+**Teachers are unaffected.** Render, Supabase and the apps never touch the Mac. This is a
+lost workshop, not an outage — do not rush a fix from a borrowed machine.
+
+**Until the new one arrives**, everything needed is in a browser: Render (logs, restart,
+roll back), Supabase (SQL on `documents`), GitHub (read, and edit-and-commit, which deploys),
+Gmail (support). Local dev, the genon pipeline and the founder CLI all stop. A teacher who
+pays meanwhile cannot be granted her subscription — her trial (3 chapters, no time limit)
+carries her; tell her activation follows within two days. Edit content from GitHub web if
+you must, never code: a push deploys and nothing can be tested first.
+
+**On the new Mac** — not simply an iCloud download:
+
+1. `git clone` from GitHub — canonical and integrity-checked.
+2. From iCloud, restore only the three things git does not hold: `textbooks/`, `.env`,
+   `runtime_data/anthropic.key`. That is the entire delta.
+3. Rebuild: Node, Python 3.12, Xcode CLI tools · `npm install` at the repo ROOT (workspace —
+   `--prefix web` alone won't link `@aruvi/shared`) · `pip install -r api/requirements.txt` ·
+   in `mobile/`, `npm install`, `npx expo install --fix`, `.env.local` from the example.
+4. Reinstall the Claude desktop app and re-paste the `chapter` and `canonical` skills into
+   Settings › Capabilities.
+
+⚠️ **The weak point is credentials, not files.** The files are covered three times over;
+access to them may not be. Confirm the password vault and the 2FA codes for GitHub, Render,
+Supabase and the Apple ID are reachable **from the phone alone**. Also confirm `.env` is
+visible at icloud.com — it is a dotfile, and the web interface may not list it. Check both
+now, not then. (GitHub is safe either way: the remote is HTTPS, so a fresh token from a
+browser restores push access — there is no SSH key to lose.)
+
 ## The three things this policy is actually guarding against
 
 1. **The Mac dies.** Covered twice over — GitHub for everything but the exceptions, iCloud
