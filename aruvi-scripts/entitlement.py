@@ -11,6 +11,9 @@ Usage (from the repo root):
           [--until YYYY-MM-DD] [--source manual]
   python3 aruvi-scripts/entitlement.py revoke  <tenant>          # expire now
   python3 aruvi-scripts/entitlement.py trial-reset <tenant>      # fresh 3-chapter trial
+  python3 aruvi-scripts/entitlement.py ledger-status <mobile>    # what the trial ledger holds
+  python3 aruvi-scripts/entitlement.py ledger-forget <mobile>    # clear it (testing aid)
+  ⚠️ ledger-* need the SAME ARUVI_TRIAL_LEDGER_KEY as the server, or they match nothing.
 
 Scopes are "{subject}/{stage}" (stage: preparatory | middle | secondary); "*" = all.
 `grant` with no --scopes grants "*". `trial-reset` is a testing aid for the persona
@@ -68,7 +71,7 @@ def bad_scopes(scopes):
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Founder entitlement operations (no gateway).")
-    ap.add_argument("action", choices=["status", "grant", "revoke", "trial-reset"])
+    ap.add_argument("action", choices=["status", "grant", "revoke", "trial-reset", "ledger-status", "ledger-forget"])
     ap.add_argument("tenant", help="tenant id (== user id for individual teachers)")
     ap.add_argument("--plan", default="individual_annual")
     ap.add_argument("--scopes", default="*",
@@ -120,6 +123,22 @@ def main() -> int:
         print(json.dumps(result, indent=2))
     elif args.action == "revoke":
         print(json.dumps(provider.cancel(args.tenant), indent=2))
+    elif args.action in ("ledger-status", "ledger-forget"):
+        # The trial ledger (2026-09-18): a TESTING aid, so the delete-and-rejoin limit can be
+        # walked more than once on the same test number.
+        from aruvi_core.adapters.trial_ledger_file import TrialLedgerFileImpl
+        led = TrialLedgerFileImpl(config.state_backend(),
+                                  config.TRIAL_LEDGER_KEY or config.TRIAL_LEDGER_DEV_KEY,
+                                  config.TRIAL_LEDGER_DAYS)
+        if not config.TRIAL_LEDGER_KEY:
+            print("⚠️  ARUVI_TRIAL_LEDGER_KEY not set — using the DEV key; this matches only a server "
+                  "that also runs without one.", file=sys.stderr)
+        entry = led.lookup(args.tenant)
+        if args.action == "ledger-forget" and entry:
+            led.backend.delete(led._key(args.tenant))
+            print(json.dumps({"forgot": True, "was": entry}, indent=2))
+        else:
+            print(json.dumps({"entry": entry}, indent=2))
     elif args.action == "trial-reset":
         repo.save(args.tenant, Entitlement(plan_id="trial", status="trial",
                                            source="trial", scopes=["*"]))
