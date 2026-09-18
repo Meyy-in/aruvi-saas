@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { pushSectionState, readLocalBookmark, writeLocalBookmark } from "../lib/sectionState";
+import { pushSectionState, readLocalBookmark, setUnitPointer, writeLocalBookmark } from "../lib/sectionState";
 import { userKey, boldMarks, fetchPlanNotes, savePlanNote, planNoteKey, fetchEntitlement } from "../lib/format";
 
 /* ───────── Lesson view (Screen 3) + assessment artifact (Screen 3b) ─────────
@@ -2056,9 +2056,13 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   const writePointer = (i) => {
     const clamped = Math.max(0, Math.min(units.length - 1, i));
     setCur(clamped);
-    try { window.localStorage.setItem(storageKey, String(clamped)); } catch {}
     if (clamped < units.length - 1) setDone(false);   // moved back off the last unit → not done
-    pushSectionState(sectionKey);   // sync the advanced pointer to the server (cross-device)
+    /* ★ THROUGH THE SHARED WRITER when tracking (2026-09-18, app. 06 row 6): it stores unit 0 as
+       NO key — the shape the phone and `pullSectionState` use — where this wrote "0", so the two
+       surfaces disagreed on disk about the same state. `setUnitPointer` also pushes. The
+       section-less legacy key has no shared writer and keeps its old write. */
+    if (sectionKey) setUnitPointer(sectionKey, clamped);
+    else { try { window.localStorage.setItem(storageKey, String(clamped)); } catch {} }
     return clamped;
   };
 

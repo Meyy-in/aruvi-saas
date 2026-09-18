@@ -2,11 +2,11 @@
 import { useEffect, useRef, useState } from "react";
 import { getJSON, pretty, ROMAN, stageOfGrade, projectReadiness, API, withUser,
          ESTIMATE_WEEKS, weeksFromAnnual, ppwFromAnnual, allowedStagesFor } from "../lib/format";
-import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget } from "../lib/budget";
+import { DAYS_IN_WEEK, budgetPeriods, normalizeBudget, rekeyBudget, setGradeBudget } from "../lib/budget";
 import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSections,
          secSummary, gradeDraftFrom, finalizeSubject,
          secCount, gradePpw, subjectPpw, profileStats, classCard,
-         PER_CLASS_GOALS, GOAL_WORD, subjectSurvivesEmpty,
+         PER_CLASS_GOALS, GOAL_WORD, subjectSurvivesEmpty, setGradeNumbers,
          portalGradeIdxs as sharedGradeIdxs } from "../lib/profile";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
 /* `pushSectionState` left with `clearSectionState`, which was its only caller here. */
@@ -906,18 +906,15 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
   const updNum = (patch) => setNumCtx((c) => ({ ...c, g: { ...c.g, ...patch } }));
   // save from ANY single field-edit screen; unedited fields keep their loaded values
   const saveEditNums = (finalBudget) => {
+    /* ★ THROUGH THE SHARED WRITERS (2026-09-18) — the phone's `ProfileEditor` has saved through
+       `setGradeNumbers` / `setGradeBudget` since 5d, and two spellings of one write is how the
+       fingerprint starts disagreeing between surfaces. A ppw-only save leaves the budget exactly
+       as stored (absent stays absent — the shared reading of "not set"). */
     const { si, gi, g } = numCtx;
-    const next = deepCopy(canon);
-    const rec = next[si].grades[gi];
-    const ppwMap = normPpw(g.durations, g.ppw_by_duration, g.periods_per_week, g.ppw_anchor);
-    rec.durations = [...g.durations];
-    rec.ppw_by_duration = ppwMap;
-    rec.ppw_anchor = ppwAnchor(g.durations, ppwMap, g.ppw_anchor);
-    rec.periods_per_week = ppwMapSum(ppwMap);
-    const budget = finalBudget || g.budget
-      || (next[si].budget || {})[gi] || (next[si].budget || {})[String(gi)]
-      || { method: "auto", value: 0 };
-    next[si].budget = { ...(next[si].budget || {}), [gi]: budget };
+    const name = canon[si].name;
+    const grade = canon[si].grades[gi].grade;
+    let next = setGradeNumbers(deepCopy(canon), name, grade, g);
+    if (finalBudget && finalBudget.value != null) next = setGradeBudget(next, name, grade, finalBudget.value);
     persist(next);
     setScreen("view");
   };

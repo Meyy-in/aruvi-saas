@@ -329,7 +329,7 @@ export function webStyles(t, scheme = "light") {
     /* `.ap-loading` and `.ap-none` are ONE rule in globals.css (2746) and share every value —
        kept as two keys because they say different things and only one of them is a state the
        teacher should ever see twice. */
-    ap_loading:      { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 19, color: t.ink_soft,
+    ap_loading:      { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 20.15, color: t.ink_soft,   // measured 390px, 2026-09-18
                        paddingVertical: 8, paddingHorizontal: 2 },
     ap_actions:      { flexDirection: "row", justifyContent: "flex-end", columnGap: 10, marginTop: 2 },
 
@@ -348,7 +348,7 @@ export function webStyles(t, scheme = "light") {
     ch_name:         { flexShrink: 1, fontFamily: F.body(400), fontSize: 15, lineHeight: 19.2,
                        color: t.ink },
     ch_no:           { fontFamily: F.body(500), color: t.pine_d },
-    ch_pill:         { fontFamily: F.mono(400), fontSize: 8.5, lineHeight: 12, letterSpacing: 0.68,
+    ch_pill:         { fontFamily: F.mono(400), fontSize: 8.5, lineHeight: 13.18, letterSpacing: 0.68,   // measured 390px, 2026-09-18
                        textTransform: "uppercase", paddingVertical: 3, paddingHorizontal: 9,
                        borderRadius: 20, overflow: "hidden" },
     ch_rail:         { flexDirection: "row", columnGap: 3, marginTop: 6 },
@@ -460,7 +460,15 @@ export function webStyles(t, scheme = "light") {
     uv_mat_li:       { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink, paddingVertical: 3, paddingLeft: 16 },
     uv_va_kicker:    { marginTop: 10 },
     uv_va_prose:     { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, color: t.ink, marginTop: 6 },
-    uv_va_src:       { fontFamily: F.body(400, true), fontSize: 12, lineHeight: 17.28, color: t.ink_soft, marginTop: 6 },
+    uv_va_src:       { fontFamily: F.body(400, true), fontSize: 12, lineHeight: 18.6, color: t.ink_soft, marginTop: 6 },
+    /* `.uv-va-table` — MEASURED on the running web at 390px (2026-09-18, app. 06 row 69b). No box and
+       no header fill: a ruled table — ink rule under the header, line rules between rows, light
+       column separators, first column flush left. */
+    uv_va_cap:       { fontFamily: F.body(400, true), fontSize: 13, lineHeight: 20.15, color: t.ink_soft, paddingBottom: 5 },
+    uv_va_th:        { fontFamily: F.mono(700), fontSize: 10.5, lineHeight: 16.28, letterSpacing: 1.05, textTransform: UP,
+                       color: t.ink_soft, paddingTop: 4, paddingRight: 12, paddingBottom: 6, paddingLeft: 10 },
+    uv_va_td:        { fontFamily: F.body(400), fontSize: 13.5, lineHeight: 19.58, color: t.ink,
+                       paddingTop: 6, paddingRight: 12, paddingBottom: 6, paddingLeft: 10 },
 
     /* ── Lesson: teacher-notes ribbon (.uv-tnotes-rib) ── */
     uv_tnotes_rib:   { backgroundColor: t.paper_sunk, borderLeftWidth: 3, borderLeftColor: t.clay, borderBottomWidth: 1, borderBottomColor: t.edge_clay, marginBottom: 12 },

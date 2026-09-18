@@ -102,15 +102,24 @@ function MaterialPanel({ ws, t, u }) {
 }
 function AidTable({ ws, t, table }) {
   return (
+    /* The web's `.uv-va-table`, measured at 390px (2026-09-18): it was a boxed table with a sunk
+       header and the assessment's overview type; the web draws a RULED one. */
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 6 }}>
-      <View style={{ borderWidth: 1, borderColor: t.line, borderRadius: 6, overflow: "hidden" }}>
-        {table.caption ? <Text style={[ws.uv_va_src, { padding: 8, marginTop: 0 }]}>{table.caption}</Text> : null}
-        <View style={{ flexDirection: "row", backgroundColor: t.paper_sunk }}>
-          {(table.header || []).map((h, i) => <Text key={i} style={[ws.assess_ovk, s.td]}>{h}</Text>)}
+      <View>
+        {table.caption ? <Text style={ws.uv_va_cap}>{table.caption}</Text> : null}
+        <View style={{ flexDirection: "row", borderBottomWidth: 1, borderBottomColor: t.ink }}>
+          {(table.header || []).map((h, i) => (
+            <Text key={i} style={[ws.uv_va_th, s.cell, i === 0 ? { paddingLeft: 0 }
+              : { borderLeftWidth: 1, borderLeftColor: t.line }]}>{h}</Text>
+          ))}
         </View>
-        {(table.rows || []).map((row, ri) => (
-          <View key={ri} style={{ flexDirection: "row", borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: t.line }}>
-            {row.map((c, ci) => <Text key={ci} style={[ws.uv_mat_li, s.td, { paddingLeft: 10 }]}>{c}</Text>)}
+        {(table.rows || []).map((row, ri, all) => (
+          <View key={ri} style={{ flexDirection: "row",
+            borderBottomWidth: ri < all.length - 1 ? 1 : 0, borderBottomColor: t.line }}>
+            {row.map((c, ci) => (
+              <Text key={ci} style={[ws.uv_va_td, s.cell, ci === 0 ? { paddingLeft: 0 }
+                : { borderLeftWidth: 1, borderLeftColor: t.line }]}>{c}</Text>
+            ))}
           </View>
         ))}
       </View>
@@ -505,5 +514,5 @@ const DoneCard = ({ ws, t, title, action, onAction, chapter }) => {
 
 const s = StyleSheet.create({
   body: { paddingHorizontal: 18, paddingTop: 10, paddingBottom: 30 },   // main: 26px 18px 72px, minus the pinned block
-  td: { paddingVertical: 7, paddingHorizontal: 10, minWidth: 110 },
+  cell: { minWidth: 110 },
 });
