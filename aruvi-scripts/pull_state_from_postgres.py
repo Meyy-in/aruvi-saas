@@ -75,6 +75,29 @@ def _keys(backend):
     return [k for k in backend.list_keys("") if not k.startswith(SKIP_PREFIXES)]
 
 
+def case_collisions(keys):
+    """Keys that differ ONLY in case — they collapse onto one file on a case-insensitive
+    filesystem (macOS APFS by default, and most Windows volumes).
+
+    Postgres keys are case-sensitive, so `accounts/Kumar1/...` and `accounts/kumar1/...`
+    are two different tenants; on this Mac they are one filename, and the second write
+    silently overwrites the first. Found 2026-09-18 by the verify step, which is the only
+    reason it was not a silent hole in the backup. Named here so the NEXT occurrence
+    explains itself instead of reading as "1 missing, 1 differing".
+
+    New collisions should not arise from real teachers: production identity is a mobile
+    number from the Supabase token. They come from hand-typed dev ids under the old
+    X-Aruvi-User stub, where slug() preserves case.
+    """
+    seen, clashes = {}, []
+    for k in keys:
+        seen.setdefault(k.lower(), []).append(k)
+    for _, group in sorted(seen.items()):
+        if len(group) > 1:
+            clashes.append(sorted(group))
+    return clashes
+
+
 def verify(src, dst) -> int:
     """Read every key back off disk and compare it to Postgres, document by document."""
     sk, dk = _keys(src), _keys(dst)
@@ -126,7 +149,10 @@ def main() -> int:
 
     if not args.database_url:
         print("error: ARUVI_DATABASE_URL is not set.\n"
-              "  Supabase → Project Settings → Database → Connection string → Session pooler.\n"
+              "  Supabase dashboard → the CONNECT button at the top of the project page →\n"
+              "  Session pooler. Note the username is postgres.<PROJECT-REF>, not plain\n"
+              "  postgres, and the port is 5432. (It is also already set in Render →\n"
+              "  Environment → ARUVI_DATABASE_URL — copying it from there is safest.)\n"
               "  Put it in .env as ARUVI_DATABASE_URL=… (never commit it), or pass "
               "--database-url.", file=sys.stderr)
         return 2
@@ -153,6 +179,15 @@ def main() -> int:
         if args.dry_run:
             print("dry run — nothing written.")
             return 0
+
+        clashes = case_collisions(keys)
+        if clashes:
+            print("WARNING — keys differing only in case. This filesystem cannot hold "
+                  "both, so one will overwrite the other and verify will fail:")
+            for group in clashes:
+                print("    " + "  ==  ".join(group))
+            print("  These are almost certainly duplicate dev tenants. Resolve them in "
+                  "the database; see the docstring of case_collisions().")
 
         stamp = _dt.date.today().isoformat()
         root = Path(args.out)
