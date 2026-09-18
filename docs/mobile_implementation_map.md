@@ -137,8 +137,8 @@ every teacher today, so it is a note to keep, not a gap to close now.
 
 ### Picking this up in a new session
 
-*Five hand-offs live here. The **2026-09-17 block at the END of this section is the current
-one** — read it last and act on it. The three above it are earlier runs of the same day and the day before,
+*Six hand-offs live here. The **★ CURRENT HAND-OFF at the END of this section (2026-09-17, the
+tour-walk run) is the one to act on** — read it last. The three above it are earlier runs of the same day and the day before,
 kept because their constraints and lessons are still in force. Read §0 above first; this is only what is NOT
 in the commits.*
 
@@ -246,7 +246,7 @@ text metrics** has only one authority, and it is the phone in the founder's hand
 those; do not report them as verified off the parity page. (MEMORY.md, same date, has the full account —
 it is the other face of "native tolerance is not correctness".)
 
-### ★ CURRENT HAND-OFF — written 2026-09-16, end of the LessonView-feedback run
+### Hand-off — written 2026-09-16, end of the LessonView-feedback run
 
 **What this run was.** Not a step from §2. The founder was walking the phone build and reporting what he
 saw, and every commit in it came from one of his sentences. That is worth naming, because the work it
@@ -439,7 +439,7 @@ visible from outside the logs.
   connected folder. Every commit then fails with "Another git process seems to be running". Request delete
   permission once, remove the locks, and it stops.
 
-### Hand-off — 2026-09-17 (THE CURRENT ONE)
+### Hand-off — 2026-09-17, the profile-cascade run
 
 **What this run was.** Like the two before it, not a step from §2: the founder walked the phone and reported what he saw. Three §0 rows came out of it, and the third (**5d·11**) is the one with loose ends.
 
@@ -452,6 +452,89 @@ visible from outside the logs.
 **And one founder question this raised rather than answered** (app. 02, question 6): with the accordion dustbin retired on 2026-09-16 and the last-class cascade now shut for a held subject, **a subscriber has no way to take a subject out of her profile on either surface** until the subscription ends. That follows from "the line is ownership, not use", but it was decided for the CASCADE and never as a policy on removal. Ask before the removal redesign (app. 02 row 62) is drawn.
 
 **Owed walk, both surfaces** — with a paid profile, untick every class of one subject: the confirm should say the subject STAYS; My Lessons should still list it, with her held classes on the Class wheel and her lessons under them; the “+” window's Class row should offer it back. Nothing in 5d·11 has been seen on a handset.
+
+---
+
+### ★ CURRENT HAND-OFF — 2026-09-17, the tour-walk run (READ THIS ONE)
+
+**What this run was.** Twenty-odd commits, almost none of them a step from §2. The founder walked the
+phone and the web four times over and reported what he saw; each report was a §0 row. Step **8b (the
+guided tour) went from "complete, not walked" to walked four times and rebuilt around what the walks
+found** — plus the OTP clock, account erasure, the phone's front-door subscribe, and a retry in
+`getJSON`. **Every row of it is 🟡 unwalked.**
+
+**THE ONE THING TO DO FIRST: WALK THE TOUR END TO END.** Not because it is polite to test, but
+because this run demonstrated three times that a fix made without a walk creates the next bug. The
+walk-1 "borrow guard" broke four cards. The `tourUnit` flag fixed steps 11-13 and broke step 7. A
+premise about the web I never checked sent three rounds of fixes to the wrong surface. **The loop
+"founder walks → Claude infers → Claude fixes the wrong layer" cost four walks on cards 12 and 13
+alone.** Walk it, then fix.
+
+**The four lessons this run paid for, in the order they will bite again:**
+1. **An anchor must sit on the element that OCCUPIES SPACE.** A View wrapping an absolutely-positioned
+   child measures as a ZERO BOX — which the tour correctly reads as "not mounted" — *and* steals the
+   child's frame of reference so it moves on screen. Two symptoms, one cause, no loud failure.
+   `npm run check` now includes `check-anchors.mjs`, which finds the shape.
+2. **When the ring is ABSENT, suspect the anchor. When the ring is DRAWN AND UNSEEN, suspect the
+   viewport.** Card 13 was the second kind for four walks while I treated it as the first.
+3. **What the tour must DO at a step belongs to the TOUR, not to a screen.** Both surfaces orchestrated
+   the demo from a component that unmounts mid-tour (`(app)/index.jsx`; `MyPlans`, which page.jsx
+   renders *instead of* `MyLessonPlans` in a ternary chain). Navigation, binding and the target all
+   moved to `lib/tour.js` / `page.jsx`.
+4. **A note that outlives its reason is not a note, it is an instruction.** Three bugs this run were a
+   stale comment obeyed: `login.jsx` kept the Subscribe card off a screen that had existed for a day;
+   the set-up window's profile link stayed inert because "Settings, step 6" had already shipped; and
+   §2's own "Still owed on 5d" paragraph still names pick screens that exist. **When you close a
+   dependency, delete the note that stated it, in the same commit.**
+
+**The largest UNKNOWN, and the best next piece of work after the walk: appendices 01 and 02 have never
+been reconciled.** 03 · 04 · 05 · 06 were, on 2026-09-17; **01 (shell, 45/94 DONE) and 02 (profile,
+70/97) were not.** Their 27 MISSING/PARTIAL rows cannot be trusted in either direction — 01 currently
+calls the settings gear, the bottom-nav items and Ask Meyy MISSING or PARTIAL, and all three plainly
+ship. Until they are reconciled **we do not know what the shell and profile families still owe**, and
+that is the one gap big enough to hide a real feature. Same method as the others: read the live code,
+move rows, and give every moved row a dated `★ 2026-09-17 reconcile:` clause naming the file.
+
+**Small and specific, each already named in its own row:**
+- The prepare picker dead-ends on a lone class-less subject; the data-rights export drops it (carried
+  from the previous hand-off — still open).
+- **Web owed:** the set-up check fires only for a teacher who RAN the tour, so everyone who declines
+  misses that disclosure. The phone solved it with first run's one-shot; the web has no equivalent.
+- `?version=` is reachable on NEITHER surface (all three web call sites take the default). **Wire a
+  caller or delete it on both — never leave it half-alive on one.**
+- The 17 theme keys of `7·clusters` were DERIVED from `globals.css`, not measured on a running web at
+  390px. The parity checker agrees with all ten that map to a class, which is why shipping them was
+  defensible; the re-measure is still owed.
+- `aruvi-scripts/entitlement.py` takes `--scopes` verbatim and validates nothing against the catalogue,
+  so a founder typo becomes a teacher stuck on first run's step 1 with no diagnosis. Server-side tool,
+  outside Track D, deserves its own change.
+- `web/app/components/AccountPanel.jsx` holds a dead second erase handler that would 400.
+
+**Three founder decisions, not code:**
+1. **Delete → rejoin resets the 3-chapter trial, indefinitely**, on the same Supabase Auth user (never
+   deleted — there is no admin-API call in the repo). Deliberate ("a tombstone would itself be a
+   remnant") and also the abuse vector. Needs a decision, not a patch.
+2. **Should an ATTACHED plan be archivable**, or should the tour skip step 5? That is why card 5 has
+   nothing to ring on a profile whose only lesson is attached.
+3. **DLT / SMS** — parked on company registration. Textlocal shut down 31 July 2026, so real SMS
+   sign-in has not worked since; only the test numbers 919000000001-3 (code 123456) do.
+
+**Not walkable yet:** 6a's academic-year cutover. `cutover_due` is the server's answer and it is false
+until the year actually turns, so its first real showing is a June morning and the tests are the whole
+of the confidence there.
+
+**Tools this run added — run them, they have all caught a real bug:**
+`npm run check` in `mobile/` = `check-scope.mjs` (unresolved identifiers — caught a white-screen crash
+twice) + `check-anchors.mjs` (anchors on wrappers) + `theme/check-parity.mjs`. Plus `npm test` in
+`packages/shared` (209). ⚠️ **None of them can see an UNDEFINED IMPORT** — `lib/tour.js` imported a
+`gradeSlug` that the shared package did not export, and the binding resolves while the value does not.
+That class of bug is still only findable by running the app.
+
+**Constraints that have not changed:** `git push` is Kumar's — this sandbox has no GitHub credentials.
+The API host is NOT on the egress allowlist, so nothing here can reach `meyy-api.onrender.com`; report
+that rather than working around it. And `ARUVI_ENTITLEMENT_ENFORCED=1` on Render, so the paid-scope
+filters are LIVE in production.
+
 
 ---
 
