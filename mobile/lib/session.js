@@ -15,6 +15,7 @@
 import { signOutAuth } from "@aruvi/shared/auth";
 import { clearTeacherCaches } from "@aruvi/shared/signout";
 import { resetActivation } from "./firstRun";
+import { clearPurchase } from "./purchase";
 
 /* The web's own extra prefixes, kept in step with page.jsx's onSignOut. */
 const EXTRA = ["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"];
@@ -42,5 +43,6 @@ export async function clearSession(reason = "unknown") {
   console.warn(`[meyy] session ended — ${reason}`);
   await signOutAuth();
   clearTeacherCaches(EXTRA);
+  clearPurchase();              // a settling purchase is HERS — never the next teacher's
   resetActivation();   // in-memory, keyed by mobile number — see firstRun.js for why it must go
 }

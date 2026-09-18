@@ -27,9 +27,10 @@
  * at half strength rather than vanishing, because the LIST is the founder's structure and
  * shipping half of it would teach her a shape that then changes under her.
  */
-import { useEffect, useState } from "react";
-import { View, ScrollView, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { View, ScrollView, Pressable, Animated, Easing } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import { pendingPurchase, settlePurchase } from "../../../lib/purchase";
 import { Text } from "../../../components/Text";
 import { getJSON, fmtValidity, scopeRows, subsFromEntitlement } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
@@ -63,6 +64,29 @@ function LedgerRow({ k, v, tone }) {
   );
 }
 
+/* ★ THE NEW INVOICE, ON ITS WAY (founder, 2026-09-18). A progress line in the Invoice row of a
+   subscription she has just bought — the preparing card's own bar (`sc_prep*`), so it reads as
+   the same kind of wait she already knows from a lesson being prepared. Grows to 96% and holds;
+   the real invoice number replaces it the moment /invoices lists it. */
+function InvoiceProgress() {
+  const { t } = useTheme();
+  const ws = useWebStyles();
+  const grow = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(grow, { toValue: 1, duration: 6000, easing: Easing.bezier(0.25, 0.8, 0.3, 1),
+                            useNativeDriver: false }).start();
+  }, [grow]);
+  return (
+    <View style={[ws.sc_prep, { flex: 1, marginTop: 0 }]} accessibilityLiveRegion="polite">
+      <Text style={ws.sc_prep_note}>Preparing your invoice…</Text>
+      <View style={[ws.sc_prep_bar, { backgroundColor: t.line_soft }]}>
+        <Animated.View style={[ws.sc_prep_fill, { backgroundColor: t.pine,
+          width: grow.interpolate({ inputRange: [0, 1], outputRange: ["0%", "96%"] }) }]} />
+      </View>
+    </View>
+  );
+}
+
 export default function Subscription() {
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -83,17 +107,38 @@ export default function Subscription() {
      say and an ACTIVE teacher matches none of them, so it used to render as an empty bordered
      strip above her subscriptions — which is what a row looks like while it is still loading,
      shown to the one teacher who has paid. Fixed on BOTH surfaces in the same commit. */
-  const planCard = onTrial || lapsed || !active;
+  /* While a purchase settles the status card has nothing true to say — she is no longer "on a
+     free trial", and "your plan details will appear here" is the very line the founder reported.
+     The pending cards below say what is happening instead. */
+  const planCard = (onTrial || lapsed || !active) && !purchasing;
 
   /* Never gated (§2.5): a document recording money she paid stays reachable after the thing it
      paid for has ended. */
   const [invoices, setInvoices] = useState([]);
-  useEffect(() => {
+  /* The scopes of a purchase still settling (lib/purchase). Re-read on FOCUS, not mount: the
+     wizard is pushed on top of this screen and pops back to it, so there is no second mount. */
+  const [pending, setPending] = useState(() => pendingPurchase());
+  useFocusEffect(useCallback(() => {
     let live = true;
-    getJSON("/invoices").then((d) => { if (live) setInvoices((d && d.invoices) || []); })
-      .catch(() => { if (live) setInvoices([]); });
-    return () => { live = false; };
-  }, []);
+    let tries = 0;
+    let timer = null;
+    const load = () => getJSON("/invoices").then((d) => {
+      if (!live) return;
+      const list = (d && d.invoices) || [];
+      setInvoices(list);
+      const left = settlePurchase(list);
+      setPending(left);
+      /* An invoice is issued inside checkout, so it is normally there on the first read; the
+         retries cover a slow disk or mail step. Two seconds apart, for up to half a minute,
+         then the line simply waits for her next visit rather than spinning for ever. */
+      if (left.length && ++tries < 15) timer = setTimeout(load, 2000);
+    }).catch(() => { if (live && !invoices.length) setInvoices([]); });
+    setPending(pendingPurchase());
+    load();
+    return () => { live = false; if (timer) clearTimeout(timer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []));
+  const purchasing = pending.length > 0;
 
   const [busy, setBusy] = useState("");
   const [failMsg, setFailMsg] = useState("");
@@ -172,6 +217,9 @@ export default function Subscription() {
               <LedgerRow k="Validity" tone={live ? "" : "off"}
                 v={`${live ? "until " : "ended "}${fmtValidity(until)}`} />
             ) : null}
+            {!inv && pending.includes(scope) ? (
+              <LedgerRow k="Invoice" v={<InvoiceProgress />} />
+            ) : null}
             {inv ? (
               <LedgerRow k="Invoice" v={
                 inv.has_pdf ? (
@@ -188,10 +236,29 @@ export default function Subscription() {
         );
       }) : null}
 
+      {/* ★ JUST BOUGHT, NOT YET IN HER COPY — a card per scope the store has not caught up with,
+          so the purchase shows at once beside everything she already had (whose invoices stay
+          where they were). Replaced by the ordinary card the moment the entitlement read lands. */}
+      {pending.filter((sc) => !(active && subs.some((x) => x.scope === sc))).map((scope, idx) => {
+        const r = scopeRows(scope);
+        return (
+          <View key={`p-${scope}`} style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
+                                          ws.set_card_inset,
+                                          !active && idx === 0 ? { marginTop: 0 } : null,
+                                          { borderColor: t.line, backgroundColor: t.card_bg }]}>
+            <View style={[ws.set_plan, ws.set_plan_sub]}><Pill tone="on">Subscribed</Pill></View>
+            <LedgerRow k="Subject" v={r.subject} />
+            <LedgerRow k="Stage" v={r.stage} />
+            <LedgerRow k="Class" v={r.classes} />
+            <LedgerRow k="Invoice" v={<InvoiceProgress />} />
+          </View>
+        );
+      })}
+
       {/* ✅ LIT 2026-09-16. Both open the SAME wizard the paywall and the front door open — and it
           really buys: `POST /onboarding/checkout` is a server-side dev stub that activates
           through the ManualBillingProvider. */}
-      {(onTrial || lapsed) ? (
+      {(onTrial || lapsed) && !purchasing ? (
         <Pressable accessibilityRole="button" accessibilityLabel="Subscribe"
           onPress={() => router.push("/subscribe")}
           style={[ws.set_subscribe, { backgroundColor: t.pine }]}>

@@ -44,7 +44,8 @@ import { Text, TextInput } from "./Text";
 import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
          ROLES, STATES, EMAIL_OK, EMAIL_TAKEN } from "@aruvi/shared/format";
 import { dateWords } from "@aruvi/shared/legalmd";
-import { invalidateEntitlement } from "@aruvi/shared/entitlement";
+import { syncEntitlement } from "@aruvi/shared/entitlement";
+import { notePurchase } from "../lib/purchase";
 import { invalidateAccount } from "@aruvi/shared/account";
 import { fetchReadiness } from "@aruvi/shared/readiness";
 import Agreement from "./Agreement";
@@ -252,7 +253,14 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false })
       .then(() => {
         /* Both stores hold what this just changed — her scopes and her account fields — and
            both are read by screens she lands on next. */
-        invalidateEntitlement();
+        /* ★ RE-READ, DON'T BLANK (founder, 2026-09-18). `invalidateEntitlement()` dropped the copy,
+           so Subscription & billing fell to "Your plan details will appear here" — her EXISTING
+           subscriptions and their invoices vanished — until the 20-second poll came round. A
+           forced read keeps what she had on screen until the new answer lands. Chained twice:
+           a poll already in flight carries the pre-purchase answer, and `syncEntitlement` hands
+           that same promise back to a second caller. */
+        syncEntitlement().then(() => syncEntitlement());
+        notePurchase(cartScopes);
         invalidateAccount();
         /* ★ AND SO DOES HER PROFILE (founder, 2026-09-17: "in expo, when i add, it does not
            appear there — it should mimic web app"). Every purchased scope becomes a ready-made
