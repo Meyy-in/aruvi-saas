@@ -468,8 +468,7 @@ visible from outside the logs.
 > feature; one silent-save bug fixed), and the small list below is **worked through** (§0
 > `map·leftovers`), plus two LessonView skin rows (06·69a, 06·105). **Every appendix now has zero
 > MISSING rows.** What is left, in order:
-> 1. **Founder decisions:** ~~app. 02 **Q8**~~ ✅ answered the same day — the set-up model is written at the foot of app. 02; `?version=` (should Legal show the notice version she was shown? — dead on
->    both surfaces until someone says yes); plus the three below (trial reset, archiving an attached
+> 1. **Founder decisions:** ~~app. 02 **Q8**~~ ✅ answered the same day — the set-up model is written at the foot of app. 02; ~~`?version=`~~ ✅ answered 2026-09-18 — the notice's own version line at its foot is enough; no "version you were shown" view is wanted, so the client prop stays unused on both surfaces (the server parameter stays, harmless); plus the three below (trial reset, archiving an attached
 >    plan, DLT).
 > 2. **Needs the running web at 390px** (Claude in Chrome on the founder's dev server): the
 >    `7·clusters` theme keys and `.uv-va-table` (06·69b).
