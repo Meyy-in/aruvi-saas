@@ -112,8 +112,20 @@ async function requestDocument({ path, filename, mime, method = "GET", body,
    ⚠️ So the YEAR PLAN, being Word-only, still goes straight to the sheet. That raggedness is
    deliberate and named, not an oversight — closing it means giving the year-plan route a PDF
    format, which is backend work nobody has asked for yet. */
+/* ★ AMENDED 2026-09-18 (founder: the Year Plan export "again does not display the report but
+   invokes apps — render it like we do for invoices and PDF LPs"). The note above said a .docx has
+   no renderer in any WebView; on iOS that is not so — WKWebView hands Office documents loaded
+   from a file URL to the same Quick Look machinery that draws them in Files, read-only. So Word
+   is previewed too, and what the arrow sends is still the editable .docx she asked for (the Year
+   Plan is Word-only by decision: she amends a row before handing it on). Android stays PDF-less
+   and Word-less: its WebView renders neither. ⚠️ Handset-verify: if a .docx ever draws blank, the
+   preview's own "Tap the arrow above to send or save it" is the way out, not a dead end. */
+const PREVIEWABLE = new Set([
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]);
 export const canPreview = (mime) =>
-  !IS_WEB && Platform.OS === "ios" && mime === "application/pdf";
+  !IS_WEB && Platform.OS === "ios" && PREVIEWABLE.has(mime);
 
 /* The cache directory's own URI — WKWebView will not read a `file://` it has not been granted
    access to, and `allowingReadAccessToURL` is how that grant is spelled. */

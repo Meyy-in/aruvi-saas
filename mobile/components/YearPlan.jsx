@@ -54,7 +54,8 @@ import { View, Pressable } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
 import { annualBudgetPeriods, getJSON, largestRemainder, pad } from "@aruvi/shared/format";
-import { downloadDocument, yearPlanExport } from "../lib/download";
+import { useRouter } from "expo-router";
+import { canPreview, downloadDocument, fetchDocument, yearPlanExport } from "../lib/download";
 import { fetchPlans } from "@aruvi/shared/plans";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -87,6 +88,7 @@ const ExportIcon = ({ size = 13, color }) => (
 );
 
 export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditBudget }) {
+  const router = useRouter();
   const { t } = useTheme();
   const ws = useWebStyles();
   const [chapters, setChapters] = useState(null);   // null = loading, [] = none
@@ -179,7 +181,7 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
   const downloadWord = () => {
     if (exporting === "working") return;
     setExporting("working"); setExportErr("");
-    downloadDocument(yearPlanExport({ sSlug, gSlug, payload: {
+    const doc = yearPlanExport({ sSlug, gSlug, payload: {
       subject: subjectName, grade: gSlug,
       budget: model.budget ?? null,
       generated_at: new Date().toISOString(),
@@ -188,7 +190,13 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
         prepared: !!r.prepared, awaited: !!r.awaited,
       })),
       sug_total: model.sugTotal, plan_total: model.committedTotal,
-    } }))
+    } });
+    /* ★ SHOWN BEFORE IT IS SENT (founder, 2026-09-18) — the invoice and the lesson report's path:
+       the preview screen, the share sheet a choice from its arrow. */
+    (canPreview(doc.mime)
+      ? fetchDocument(doc).then((f) => router.push({ pathname: "/preview",
+          params: { uri: f.uri, name: f.name, mime: f.mime, label: `Year plan · ${subjectName}` } }))
+      : downloadDocument(doc))
       .then(() => setExporting(""))
       .catch((e) => {
         /* The web's four sentences, chosen from the same two facts (`lib/download.js` puts the
