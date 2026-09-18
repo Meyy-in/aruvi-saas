@@ -127,3 +127,14 @@ test("a subject whose grades fail is omitted, never listed empty", async () => {
   assert.deepEqual(Object.keys(map), ["good"]);
   assert.deepEqual(map.good, ["preparatory"]);
 });
+
+test("★ newest PURCHASE first — the invoice's issue time decides (2026-09-18)", () => {
+  const ent = { scopes: ["old/middle", "new/middle", "grant/middle"],
+    scope_valid_until: { "old/middle": "2027-01-10", "grant/middle": "2027-05-01" },
+    valid_until: "2027-09-18",            // new/middle has only the account-wide date
+    live_scopes: ["old/middle", "new/middle", "grant/middle"] };
+  const inv = [{ scopes: ["new/middle"], issued_at: "2026-09-18T09:00:00+00:00" },
+               { scopes: ["old/middle"], issued_at: "2026-01-10T09:00:00+00:00" }];
+  assert.deepEqual(subsFromEntitlement(ent, inv).map((s) => s.scope),
+    ["new/middle", "grant/middle", "old/middle"]);
+});

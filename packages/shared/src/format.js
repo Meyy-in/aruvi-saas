@@ -478,18 +478,30 @@ export const scopeRows = (scope) => {
  * an older API, and the server is the authority because it honours ARUVI_TODAY, which no client
  * can. An EXPIRED subscription is still returned: she owned it, and its row is the explanation
  * for anything she can no longer prepare there. */
-export function subsFromEntitlement(e) {
+/* ★ NEWEST PURCHASE FIRST (founder, 2026-09-18: "latest top, oldest last"). The order is WHEN
+ * SHE BOUGHT IT: the issue time of the newest invoice that lists the scope. A scope with no
+ * invoice (a manual grant) falls back to one year before its validity date — every subscription
+ * runs a year from purchase — and that fallback is what the sort used alone until now, which put
+ * a scope carrying only the account-wide date in the wrong place. `invoices` is optional so a
+ * caller without them still gets the old order. Ties keep cart order. */
+const yearBefore = (d) => (d && /^\d{4}-/.test(d) ? `${Number(d.slice(0, 4)) - 1}${d.slice(4, 10)}` : "");
+export function subsFromEntitlement(e, invoices = null) {
   if (!e) return [];
   const today = new Date().toISOString().slice(0, 10);
+  const boughtAt = {};
+  (invoices || []).forEach((iv) => (iv.scopes || []).forEach((sc) => {
+    const at = String(iv.issued_at || "");
+    if (at && (!boughtAt[sc] || at > boughtAt[sc])) boughtAt[sc] = at;
+  }));
   return (e.scopes || []).map((scope, i) => {
     const until = (e.scope_valid_until || {})[scope] || e.valid_until || "";
     const liveList = e.live_scopes;
     return {
-      scope, until, i,
+      scope, until, i, bought: boughtAt[scope] || yearBefore(until),
       live: Array.isArray(liveList) ? liveList.includes(scope)
                                     : !(until && until < today),
     };
-  }).sort((a, b) => (b.until || "").localeCompare(a.until || "") || a.i - b.i);
+  }).sort((a, b) => (b.bought || "").localeCompare(a.bought || "") || a.i - b.i);
 }
 
 /* ───── what she HOLDS, as against what she may be OFFERED (founder, 2026-09-17) ─────

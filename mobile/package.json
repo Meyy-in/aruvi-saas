@@ -12,8 +12,9 @@
     "doctor": "npx expo-doctor",
     "check:parity": "node theme/check-parity.mjs",
     "check:scope": "node check-scope.mjs $(find app components lib theme -name '*.jsx' -o -name '*.js')",
+    "check:tdz": "node check-tdz.mjs $(find app components lib -name '*.jsx' -o -name '*.js')",
     "check:anchors": "node check-anchors.mjs $(find app components -name '*.jsx')",
-    "check": "npm run check:scope && npm run check:anchors && npm run check:parity"
+    "check": "npm run check:scope && npm run check:tdz && npm run check:anchors && npm run check:parity"
   },
   "dependencies": {
     "@aruvi/shared": "file:../packages/shared",

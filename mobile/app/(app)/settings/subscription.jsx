@@ -101,16 +101,6 @@ export default function Subscription() {
      would read "SUBSCRIBED" here while every write of hers is being refused. */
   const active = !!ent && !lapsed && ent.plan_id !== "trial"
     && (ent.status === "active" || ent.status === "grace");
-  const subs = subsFromEntitlement(ent);
-  /* ★ NOTHING TO SAY, NOTHING DRAWN (founder, 2026-09-16: "in both web and phone active
-     subscriptions must not show that sliver"). The status card has exactly three things it can
-     say and an ACTIVE teacher matches none of them, so it used to render as an empty bordered
-     strip above her subscriptions — which is what a row looks like while it is still loading,
-     shown to the one teacher who has paid. Fixed on BOTH surfaces in the same commit. */
-  /* While a purchase settles the status card has nothing true to say — she is no longer "on a
-     free trial", and "your plan details will appear here" is the very line the founder reported.
-     The pending cards below say what is happening instead. */
-  const planCard = (onTrial || lapsed || !active) && !purchasing;
 
   /* Never gated (§2.5): a document recording money she paid stays reachable after the thing it
      paid for has ended. */
@@ -139,6 +129,23 @@ export default function Subscription() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []));
   const purchasing = pending.length > 0;
+  /* ⚠️ EVERYTHING BELOW READS `invoices` AND `pending`, SO IT SITS BELOW THEM. The first cut of
+     2026-09-18 computed `planCard` above `purchasing` — a TDZ ReferenceError on first paint that
+     no parse or scope check sees (the `tourNow` lesson in index.jsx, again). */
+  const subs = subsFromEntitlement(ent, invoices);   // newest purchase first (2026-09-18)
+  /* ★ NOTHING TO SAY, NOTHING DRAWN (founder, 2026-09-16: "in both web and phone active
+     subscriptions must not show that sliver"). The status card has exactly three things it can
+     say and an ACTIVE teacher matches none of them, so it used to render as an empty bordered
+     strip above her subscriptions — which is what a row looks like while it is still loading,
+     shown to the one teacher who has paid. Fixed on BOTH surfaces in the same commit. */
+  /* While a purchase settles the status card has nothing true to say — she is no longer "on a
+     free trial", and "your plan details will appear here" is the very line the founder reported.
+     The pending cards below say what is happening instead. */
+  const planCard = (onTrial || lapsed || !active) && !purchasing;
+  /* Scopes just bought that her entitlement copy has not caught up with — drawn as their own
+     cards, ABOVE the rest, newest purchase first. */
+  const pendingOnly = pending.filter((sc) => !(active && subs.some((x) => x.scope === sc)));
+  const pendingCards = pendingOnly.length > 0;
 
   const [busy, setBusy] = useState("");
   const [failMsg, setFailMsg] = useState("");
@@ -193,6 +200,24 @@ export default function Subscription() {
       </View>
       ) : null}
 
+      {/* ★ JUST BOUGHT, NOT YET IN HER COPY — a card per scope the store has not caught up with,
+          so the purchase shows at once — ON TOP, newest first (founder, 2026-09-18) — above everything she already had (whose invoices stay
+          where they were). Replaced by the ordinary card the moment the entitlement read lands. */}
+      {pendingOnly.map((scope, idx) => {
+        const r = scopeRows(scope);
+        return (
+          <View key={`p-${scope}`} style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
+                                          ws.set_card_inset,
+                                          !planCard && idx === 0 ? { marginTop: 0 } : null,
+                                          { borderColor: t.line, backgroundColor: t.card_bg }]}>
+            <View style={[ws.set_plan, ws.set_plan_sub]}><Pill tone="on">Subscribed</Pill></View>
+            <LedgerRow k="Subject" v={r.subject} />
+            <LedgerRow k="Stage" v={r.stage} />
+            <LedgerRow k="Class" v={r.classes} />
+            <LedgerRow k="Invoice" v={<InvoiceProgress />} />
+          </View>
+        );
+      })}
       {active ? subs.map(({ scope, until, live }, idx) => {
         const r = scopeRows(scope);
         /* The newest invoice listing this scope — a renewal issues a second one, and the one
@@ -205,7 +230,7 @@ export default function Subscription() {
                                        IS the first element and gives back `set_sub_card`'s 10px
                                        so the page does not start late. The web does the same
                                        with `.set-sub-card.set-first`. */
-                                    !planCard && idx === 0 ? { marginTop: 0 } : null,
+                                    !planCard && idx === 0 && !pendingCards ? { marginTop: 0 } : null,
                                     { borderColor: t.line, backgroundColor: t.card_bg }]}>
             <View style={[ws.set_plan, ws.set_plan_sub]}>
               <Pill tone={live ? "on" : "off"}>{live ? "Subscribed" : "Ended"}</Pill>
@@ -236,24 +261,6 @@ export default function Subscription() {
         );
       }) : null}
 
-      {/* ★ JUST BOUGHT, NOT YET IN HER COPY — a card per scope the store has not caught up with,
-          so the purchase shows at once beside everything she already had (whose invoices stay
-          where they were). Replaced by the ordinary card the moment the entitlement read lands. */}
-      {pending.filter((sc) => !(active && subs.some((x) => x.scope === sc))).map((scope, idx) => {
-        const r = scopeRows(scope);
-        return (
-          <View key={`p-${scope}`} style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
-                                          ws.set_card_inset,
-                                          !active && idx === 0 ? { marginTop: 0 } : null,
-                                          { borderColor: t.line, backgroundColor: t.card_bg }]}>
-            <View style={[ws.set_plan, ws.set_plan_sub]}><Pill tone="on">Subscribed</Pill></View>
-            <LedgerRow k="Subject" v={r.subject} />
-            <LedgerRow k="Stage" v={r.stage} />
-            <LedgerRow k="Class" v={r.classes} />
-            <LedgerRow k="Invoice" v={<InvoiceProgress />} />
-          </View>
-        );
-      })}
 
       {/* ✅ LIT 2026-09-16. Both open the SAME wizard the paywall and the front door open — and it
           really buys: `POST /onboarding/checkout` is a server-side dev stub that activates

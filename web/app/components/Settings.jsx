@@ -738,8 +738,9 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
        (which reports false when the gate is off), so dev mode never shows "Ended". */
     const active = ent && !lapsed && ent.plan_id !== "trial"
       && (ent.status === "active" || ent.status === "grace");
-    // One record per subscription, latest expiry first — the rule is shared with the phone.
-    const subs = subsFromEntitlement(ent);
+    // One record per subscription, NEWEST PURCHASE first (founder, 2026-09-18) — the rule is
+    // shared with the phone and reads the invoices' issue times.
+    const subs = subsFromEntitlement(ent, invoices);
     /* ★ NOTHING TO SAY, NOTHING DRAWN (founder, 2026-09-16: "in both web and phone active
        subscriptions must not show that sliver"). The card below has exactly three things it can
        say, and an ACTIVE teacher — not on trial, not ended — matches none of them, so it used
