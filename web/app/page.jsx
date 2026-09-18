@@ -630,6 +630,17 @@ export default function Home() {
   useEffect(() => { if (!user) return;
     getJSON("/subjects").then((d) => { setSubjects(d.subjects); setSubject(d.subjects.includes("science") ? "science" : d.subjects[0]); }).catch(() => {});
   }, [user]);
+  /* ★ OFFLINE, THE SUBJECT COMES FROM HER OWN PROFILE (founder, 2026-09-18: Wi-Fi off → the web
+     sat on "Connecting to the Meyy engine…" although her profile was painted from the device
+     copy). `subject` came ONLY from GET /subjects, the catalogue, so a failed catalogue read held
+     every view behind that line. Her saved profile names what she teaches — enough to open My
+     Classes, whose plan listings are cached too. /subjects still wins whenever it answers. */
+  useEffect(() => {
+    if (subject) return;
+    const first = ((readiness && readiness.subjects) || [])[0];
+    if (first && first.name) setSubject(subjectSlugify(first.name));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readiness, subject]);
 
   useEffect(() => { if (!subject) return;
     getJSON(`/subjects/${subject}/grades`).then((d) => {
