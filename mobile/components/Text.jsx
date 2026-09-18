@@ -1,23 +1,50 @@
-/* ───────── Text with NO system font scaling (founder decision, 2026-09-13) ─────────
+/* ───────── Text size: the iPhone's, capped — or the teacher's own choice (2026-09-18) ─────────
  *
- * iOS scales every native <Text> by the phone's system text size; a web page does not. The
- * founder's iPhone 14 sits ~12–15% above default, and the same screen rendered 12–15% larger
- * than the Expo web frame and the web app — wrapping lines the design does not wrap. Decision:
- * the design OWNS its sizes, as the web app already does — the app draws the web's sizes exactly
- * on every phone and does not consult the iPhone's text-size slider (ceiling 1.0). Larger text,
- * if teachers ask for it, comes later as an in-app Settings option at a size designed and checked
- * on the parity page — not as an uncontrolled multiplier from iOS.
+ * History: on 2026-09-13 the founder decided the design OWNS its sizes and the app ignored the
+ * iPhone's Text Size slider entirely (ceiling 1.0), because a phone ~12–15% above default wrapped
+ * lines the design does not wrap. On 2026-09-18 he asked for the slider (Control Centre › Text
+ * Size) to be honoured after all — within a limit — AND for an in-app choice that overrides it:
+ *
+ *   "system"   Match iPhone — the iPhone's own size, capped at MAX_FONT_SCALE (1.2×). Default.
+ *   "standard" The design's own sizes, whatever the iPhone says (the 2026-09-13 behaviour).
+ *   "large"    1.1× · "larger" 1.2×
+ *
+ * ONE ceiling for both paths, so there is one size to check on the parity page and the handset.
+ * The fixed modes switch the OS scaling OFF and multiply the style themselves (font size, line
+ * height, letter spacing) — the only way to be larger than the design and ALSO independent of
+ * the slider. Nested <Text> inherits a scaled parent size and scales its own, so a run of bold
+ * inside a paragraph grows with it.
  *
  * React 19 ignores defaultProps on function components, so this cannot be set globally on
  * react-native's Text; every Text/TextInput in this app imports from HERE instead. */
-import { forwardRef } from "react";
-import { Text as RNText, TextInput as RNTextInput } from "react-native";
+import { forwardRef, useContext } from "react";
+import { StyleSheet, Text as RNText, TextInput as RNTextInput } from "react-native";
+import { TextSizeCtx, TEXT_SCALES } from "../theme/ThemeContext";
 
-export const MAX_FONT_SCALE = 1;   // 1 = the web's sizes exactly; raise only via a designed in-app option
+export const MAX_FONT_SCALE = 1.2;
 
-export const Text = forwardRef(function Text(props, ref) {
-  return <RNText ref={ref} maxFontSizeMultiplier={MAX_FONT_SCALE} {...props} />;
+function scaled(style, k) {
+  if (k === 1 || !style) return style;
+  const f = StyleSheet.flatten(style) || {};
+  const out = { ...f };
+  if (typeof f.fontSize === "number") out.fontSize = f.fontSize * k;
+  if (typeof f.lineHeight === "number") out.lineHeight = f.lineHeight * k;
+  if (typeof f.letterSpacing === "number") out.letterSpacing = f.letterSpacing * k;
+  return out;
+}
+
+function sizeProps(pref, style) {
+  if (pref === "system" || !TEXT_SCALES[pref]) {
+    return { allowFontScaling: true, maxFontSizeMultiplier: MAX_FONT_SCALE, style };
+  }
+  return { allowFontScaling: false, style: scaled(style, TEXT_SCALES[pref]) };
+}
+
+export const Text = forwardRef(function Text({ style, ...props }, ref) {
+  const pref = useContext(TextSizeCtx);
+  return <RNText ref={ref} {...props} {...sizeProps(pref, style)} />;
 });
-export const TextInput = forwardRef(function TextInput(props, ref) {
-  return <RNTextInput ref={ref} maxFontSizeMultiplier={MAX_FONT_SCALE} {...props} />;
+export const TextInput = forwardRef(function TextInput({ style, ...props }, ref) {
+  const pref = useContext(TextSizeCtx);
+  return <RNTextInput ref={ref} {...props} {...sizeProps(pref, style)} />;
 });

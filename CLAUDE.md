@@ -181,6 +181,15 @@ in a true 390px frame — and compare the same screen in the same state. Claude 
 through Claude in Chrome before any change reaches the founder's phone; the phone remains the
 sign-off (react-native-web is close, not pixel-identical — e.g. the web's variable Fraunces with
 optical sizing vs the bundled static cut reads a touch heavier on the phone side).
+**★ AMENDED 2026-09-18 (founder): text size is now the iPhone's, capped at 1.2× — or the
+teacher's own choice.** Settings › Appearance › **Text size** cycles *Match iPhone* (default; the
+Control Centre / Settings slider, capped at `MAX_FONT_SCALE` 1.2) · *Standard* (the design's
+sizes, the 2026-09-13 behaviour) · *Large* 1.1× · *Larger* 1.2×. The in-app choice overrides the
+iPhone. `components/Text.jsx` does both paths (fixed modes turn OS scaling off and multiply
+fontSize/lineHeight/letterSpacing); the preference is `aruvi-text-size` in `ThemeContext`, a
+device setting that survives sign-out. Phone-only — the web follows browser zoom. Check tight
+spots (bottom bar labels, section cards, lesson tabs, tables, top bar) at 1.2× before calling a
+screen done. The paragraph below is the history.
 **Font scaling (founder decision, 2026-09-13): the design OWNS its sizes — the web's sizes are
 the sizes, on every phone.** iOS scales native text by the phone's system text size; a web page
 does not, so a phone with enlarged text drifted 12–15% from the web and wrapped lines the design

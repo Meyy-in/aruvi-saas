@@ -42,6 +42,7 @@ import { Sheet } from "../../../components/AttachSheet";
 import { Button, Input } from "../../../components/ui";
 import Checkbox from "../../../components/Checkbox";
 import ThemeToggle from "../../../components/ThemeToggle";
+import TextSizeToggle from "../../../components/TextSizeToggle";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
 import { openAsk } from "../../../lib/ask";
@@ -257,6 +258,10 @@ export default function SettingsHome() {
           phone. */}
       <BigCard label="Appearance" sub="Light or dark, or follow your phone"
         right={<ThemeToggle />} />
+      {/* ★ TEXT SIZE (founder, 2026-09-18) — the iPhone's own size up to 1.2×, or a size chosen
+          here that overrides it. Same card, the control where the chevron would be. */}
+      <BigCard label="Text size" sub="Match your iPhone (up to 1.2×), or choose Standard, Large or Larger"
+        right={<TextSizeToggle />} />
       {marketing !== null ? (
         <BigCard label="Marketing emails"
           sub="Occasional news on new subjects, features and teaching ideas — receipts, replies and agreement notices are sent either way"
