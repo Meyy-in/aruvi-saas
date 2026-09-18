@@ -50,6 +50,25 @@ export default function GenerateTab({ subject, grade, ready, readiness, onNaviga
     // Step 1 — which subject? (only the subjects she teaches)
     const curSub = pickedSubject != null ? subjects.find((s) => s.name === pickedSubject) : null;
 
+    /* ★ ONLY SUBJECTS WITH A CLASS ARE PICKABLE (2026-09-18, app. 05 D2). Since 5d·11 a paid
+       subject survives losing its last class, and choosing one here opened a "which grade?"
+       screen with nothing on it and no way forward. One pickable subject goes straight to its
+       grades; none says where a class is added rather than showing an empty grid. */
+    const pickable = subjects.filter((s) => (s.grades || []).length > 0);
+    if (!curSub && pickable.length === 1) {
+      return <SingleGradeAutoEnter onEnter={() => setPickedSubject(pickable[0].name)} />;
+    }
+    if (!curSub && pickable.length === 0) {
+      return (
+        <div className="gpick">
+          <div className="gpick-hd">
+            <div className="kicker kicker-ochre">Prepare a lesson</div>
+            <h2 className="gpick-q">None of your subjects has a class yet.</h2>
+            <p className="fr-hint">Add a class with <b>Add</b> › Class, then prepare its lessons.</p>
+          </div>
+        </div>
+      );
+    }
     if (!curSub) {
       return (
         <div className="gpick">
@@ -58,7 +77,7 @@ export default function GenerateTab({ subject, grade, ready, readiness, onNaviga
             <h2 className="gpick-q">Which subject do you want to plan for?</h2>
           </div>
           <div className="gpick-grid">
-            {subjects.map((s) => (
+            {pickable.map((s) => (
               <button className="gpick-card" key={s.name} onClick={() => setPickedSubject(s.name)}>
                 <span className="gpick-card-name">{pretty(subjectSlug(s.name))}</span>
                 <span className="gpick-card-meta">{(s.grades || []).length} grade{(s.grades || []).length !== 1 ? "s" : ""}</span>
@@ -94,7 +113,7 @@ export default function GenerateTab({ subject, grade, ready, readiness, onNaviga
             </button>
           ))}
         </div>
-        {subjects.length > 1 && (
+        {pickable.length > 1 && (
           <button className="back gpick-back" onClick={() => setPickedSubject(null)}>← choose a different subject</button>
         )}
       </div>

@@ -169,7 +169,15 @@ def build_export_docx(payload: Dict[str, Any]) -> bytes:
     _section_head(doc, "Your teaching profile")
     prows: List[List[str]] = []
     for s in ((payload.get("profile") or {}).get("subjects")) or []:
-        for g in s.get("grades") or []:
+        # ★ A SUBJECT WITH NO CLASSES IS STILL HERS (2026-09-18, app. 04 E2). Since 5d·11 a
+        #   subject she has paid for survives losing its last class, so `grades: []` is a real
+        #   record. Walking only the grades dropped it from this table — and when it was her
+        #   only subject the export said "No teaching profile on record", a false statement
+        #   about a subscriber's record in the one document that exists to state it truly.
+        grades = s.get("grades") or []
+        if not grades:
+            prows.append([s.get("name", ""), "—", "—"])
+        for g in grades:
             secs = ", ".join(x.get("tag", "") for x in (g.get("sections") or [])) or "—"
             prows.append([s.get("name", ""), _class_of(g.get("grade", "")), secs])
     if prows:

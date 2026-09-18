@@ -27,6 +27,43 @@ from api import config  # noqa: E402
 from aruvi_core.ports import Entitlement  # noqa: E402
 from aruvi_core.adapters.entitlement_repository_file import EntitlementRepositoryFileImpl  # noqa: E402
 from aruvi_core.adapters.manual_billing_provider import ManualBillingProvider  # noqa: E402
+from aruvi_core.grades import stage_for  # noqa: E402
+from api import data  # noqa: E402
+
+
+def bad_scopes(scopes):
+    """Scopes that name nothing Meyy offers, each with the reason — [] when all are good.
+
+    ★ Added 2026-09-18 (hand-off item). `--scopes` used to be taken verbatim, so a typo
+    ("scince/middle", "science/middel") was stored as a live subscription to nothing: the
+    teacher's paid-scope filters then offered her no subject at all and she sat on first
+    run's step 1 with no diagnosis. A scope is good when its stage is one of the three and
+    the content actually has a class of that subject at that stage."""
+    out = []
+    for sc in scopes:
+        if sc == "*":
+            continue
+        subject, sep, stage = sc.partition("/")
+        if not sep or stage not in ("preparatory", "middle", "secondary"):
+            out.append(f"{sc!r}: expected subject/stage, stage one of preparatory|middle|secondary")
+            continue
+        try:
+            grades = data.list_grades(subject)
+        except Exception:
+            grades = []
+        if not grades:
+            out.append(f"{sc!r}: no subject {subject!r} in the content")
+            continue
+        stages = set()
+        for g in grades:
+            try:
+                stages.add(stage_for(g))
+            except Exception:
+                pass
+        if stage not in stages:
+            out.append(f"{sc!r}: {subject} has no {stage} classes "
+                       f"(it has: {', '.join(sorted(stages)) or 'none'})")
+    return out
 
 
 def main() -> int:
@@ -54,6 +91,10 @@ def main() -> int:
     elif args.action == "grant":
         scopes = ["*"] if args.scopes.strip() == "*" else [
             s.strip() for s in args.scopes.split(",") if s.strip()]
+        problems = bad_scopes(scopes)
+        if problems:
+            print("Refused — nothing was granted:\n  " + "\n  ".join(problems), file=sys.stderr)
+            return 2
         print(json.dumps(provider.create_subscription(
             args.tenant, args.plan, scopes=scopes,
             valid_until=args.until, source=args.source,

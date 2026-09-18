@@ -32,7 +32,7 @@ import { AttachSheet, UntrackSheet, HistorySheet } from "../../components/Attach
 import Svg, { Path } from "react-native-svg";
 import { subscribePreparing, clearPreparing } from "../../lib/preparing";
 import { raisePortalCheck } from "../../lib/portal";
-import { takeFirstRunCheck } from "../../lib/firstRun";
+import { queueFirstRunCheck, takeFirstRunCheck } from "../../lib/firstRun";
 import { SETUP_CHECK_DELAY_MS } from "@aruvi/shared/setupCheck";
 import ProposedCard from "../../components/ProposedCard";
 import { useTheme } from "../../theme/ThemeContext";
@@ -277,9 +277,13 @@ export default function Home() {
   useFocusEffect(useCallback(() => {
     if (tourRunning) return undefined;
     if (!takeFirstRunCheck()) return undefined;
-    const id = setTimeout(() => raisePortalCheck({ mode: "check", reason: "tour" }),
+    /* ⚠️ A BLUR INSIDE THE SECOND RE-QUEUES IT (2026-09-18): `take` has already spent the flag, so
+       a teacher who taps away before the timer fires would otherwise never be asked. The web's
+       copy of this effect does the same. */
+    let fired = false;
+    const id = setTimeout(() => { fired = true; raisePortalCheck({ mode: "check", reason: "tour" }); },
                           SETUP_CHECK_DELAY_MS);
-    return () => clearTimeout(id);
+    return () => { clearTimeout(id); if (!fired) queueFirstRunCheck(); };
   }, [tourRunning]));
 
 
@@ -603,7 +607,7 @@ export default function Home() {
           same thing without a sticky. The "My classes" mono label that used to open this screen
           is GONE: the web has no such label, and two headers is worse than either. */}
       {!st.loading && !st.err
-        ? <DashHead classes={st.classes} plansBySG={st.plansBySG} user={user}
+        ? <DashHead classes={st.classes} plansBySG={st.plansBySG} user={user} tourPending={tourOnOffer}
                     bindingsKnown={bindingsKnown} />
         : null}
       {/* ★ BELOW THE GREETING, ABOVE THE CARDS — she reads who she is, then what is offered. */}
@@ -633,7 +637,7 @@ export default function Home() {
         ) : st.err ? (
           <Text style={[type.body, { color: t.danger, marginTop: 18 }]}>{st.err}</Text>
         ) : st.classes.length === 0 ? (
-          <Text style={[type.body, { color: t.ink_soft, marginTop: 14 }]}>No classes yet — set up your teaching profile (first run comes in a later step).</Text>
+          <Text style={[type.body, { color: t.ink_soft, marginTop: 14 }]}>No classes set up yet. Set up your teaching profile from the settings gear above to start planning.</Text>
         ) : (
           /* Banded (>1 subject) or the plain list she has always had. The CARD itself is one
              renderer either way — `card` — so the two paths can never drift apart. */
@@ -692,7 +696,7 @@ export default function Home() {
  * The sub-line is the web's rule too: "Continue where you left off" appears only once at least
  * one section is actually bound. Before that the WELCOME copy speaks instead — telling a teacher
  * to tap "+" the second her classes appear is an instruction she has no context for yet. */
-function DashHead({ classes, plansBySG, user, bindingsKnown }) {
+function DashHead({ classes, plansBySG, user, bindingsKnown, tourPending }) {
   const ws = useWebStyles();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -730,7 +734,12 @@ function DashHead({ classes, plansBySG, user, bindingsKnown }) {
         <View style={{ paddingBottom: 10 }}>
           <Text style={ws.dash_welcome_title}>Your classes are ready</Text>
           <Text style={ws.dash_welcome_sub}>
-            {anyPlans
+            {/* ★ THE WEB'S THIRD SENTENCE (app. 05 B7, 2026-09-18 reconcile): while the tour is still
+                on offer she has not been shown the "+", so telling her to tap it is premature — the
+                web's `anyPlans && !tourResolved`. */}
+            {anyPlans && tourPending
+              ? "Your first lesson is saved in My Lessons — it will wait there for you."
+              : anyPlans
               ? "Your lesson is waiting in My Lessons — tap + on a class to start teaching it."
               : "Tap + on a class to prepare its first lesson."}
           </Text>

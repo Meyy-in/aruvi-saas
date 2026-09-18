@@ -20,6 +20,7 @@ import Settings from "./components/Settings";
 import MyLessonPlans from "./components/MyLessonPlans";
 import GuidedTour from "./components/GuidedTour";
 import ProfilePortal, { queueSetupCheck, takeSetupCheck, pruneSetupCheck, setupKey, SETUP_CHECK_DELAY_MS, setupCheckSub as setupCheckSubParts, setupCheckValues as setupCheckValuesOf } from "./components/ProfilePortal";
+import { queueFirstRunCheck, takeFirstRunCheck } from "./lib/setupCheck";
 // ThemeToggle moved into Settings (App › Appearance) — no longer on the shell's bar.
 import AskAruvi from "./ask-aruvi/AskAruvi";
 import { primeBank, clearBank, refreshBank } from "./ask-aruvi/bank";
@@ -225,7 +226,10 @@ export default function Home() {
   const finishTour = () => {
     setAskOpen(false); setTour(null); setTourDismissed(true);
     goClasses();
-    setPortalWin({ mode: "check", reason: "tour" });
+    /* ✂ NO LONGER RAISES THE CHECK WINDOW (2026-09-18). It reached only teachers who RAN the
+       tour; first run now queues a one-shot that My Classes spends (see `onMyClassesNow` below),
+       which reaches the teacher who skipped it too — the phone's rule since 2026-09-17. Two
+       triggers would ask her twice, so this one went rather than growing a guard. */
   };
 
   /* ── The "she just added something" queue (see ProfilePortal.jsx) ────────────────────────
@@ -279,6 +283,25 @@ export default function Home() {
       setPortalWin((w) => w || { mode: "check", reason: "added", subject: subjectName, grade });
     }, SETUP_CHECK_DELAY_MS);
   };
+  /* ── "Would you like to check your set-up?" — its FIRST moment (2026-09-18) ──────────────
+     First run STATES a section, a periods-a-week and a year's total rather than asking, so she is
+     owed the question once. `queueFirstRunCheck` (first run) sets a per-teacher flag; this spends
+     it the first time she stands on My Classes with no tour driving and no window already up —
+     after Done, after Skip, or with the tour never taken. One second's hold, as `onLessonsScope`.
+     ⚠️ A timer cancelled before it fires RE-QUEUES the flag: `take` spends it, and a dependency
+     change in that second (a window opening, a tab switch) must not lose the question for good. */
+  const onMyClassesNow = ready && editFlow === null && tab === "myplans" && !generateEntry;
+  useEffect(() => {
+    if (!onMyClassesNow || tour || portalWin || entLapsed) return undefined;
+    if (!takeFirstRunCheck()) return undefined;
+    let fired = false;
+    const id = setTimeout(() => {
+      fired = true;
+      setPortalWin((w) => w || { mode: "check", reason: "tour" });
+    }, SETUP_CHECK_DELAY_MS);
+    return () => { clearTimeout(id); if (!fired) queueFirstRunCheck(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onMyClassesNow, tour, portalWin, entLapsed]);
   /* The tour opens on My Classes. It always did implicitly, because its only entry point was a
      nudge ON My Classes; now that first run lands on My Lessons and the same nudge renders
      there too, step 1 ("this is where your classes sit") would otherwise ring the My Classes
@@ -527,6 +550,8 @@ export default function Home() {
     // latch: she just generated — never re-arm for HER (2026-08-26)
     latchUserRef.current = user;
     everGeneratedRef.current = true;
+    // Owe her "would you like to check your set-up?" on her first My Classes visit (see below).
+    queueFirstRunCheck();
     setFirstGenNeeded(false);
     if (subs.length) {
       /* MERGE with the checkout-created defaults, never replace (founder,
@@ -608,7 +633,9 @@ export default function Home() {
   // rewords G4 to "this chapter" and shows the budget anchor. Bulk entries (Generate tab, My
   // Lesson Plans "Generate") leave it falsy and keep the multi-chapter framing.
   const onEnterGenerate = (opts = {}) => {
-    const subs = (readiness && readiness.subjects) || [];
+    // Only subjects with a class can be prepared for (app. 05 D2): a paid subject emptied of its
+    // classes must not stop a teacher of ONE real class from being scoped straight in.
+    const subs = ((readiness && readiness.subjects) || []).filter((s) => (s.grades || []).length);
     const single = !!opts.single;
     if (opts.subject && opts.grade) {
       setSubject(opts.subject); setGrade(opts.grade);

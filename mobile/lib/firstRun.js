@@ -24,8 +24,7 @@
  * truthfully, the new year is empty — and a ten-year veteran met the guided first run. Last
  * year's folder answers the question the heuristic is actually asking.
  */
-import { getJSON, getUser, userKey } from "@aruvi/shared/format";
-import { storage } from "@aruvi/shared/storage";
+import { getJSON, getUser } from "@aruvi/shared/format";
 
 let latch = { user: null, ever: false };
 
@@ -106,18 +105,6 @@ export async function firstGenNeeded() {
  * adding a guard beside it, and leave this one alone. The order still works out: first run
  * queues the flag, My Classes spends it on her first visit, and the tour is offered after that.
  */
-const CHECK_KEY = () => userKey("first_run_check_pending");
-
-/** First run just finished: owe her the check window the next time she opens My Classes. */
-export function queueFirstRunCheck() {
-  try { storage.setItem(CHECK_KEY(), "1"); } catch {}
-}
-
-/** True once, ever — spending the flag as it answers, like `takeSetupCheck`. */
-export function takeFirstRunCheck() {
-  try {
-    if (!getUser() || !storage.getItem(CHECK_KEY())) return false;
-    storage.removeItem(CHECK_KEY());
-    return true;
-  } catch { return false; }
-}
+/* Moved to `@aruvi/shared/setupCheck` on 2026-09-18 so the web runs the same one-shot (same storage key,
+   so a flag queued before the move is still spent). Re-exported so first-run.jsx and index.jsx are unchanged. */
+export { queueFirstRunCheck, takeFirstRunCheck } from "@aruvi/shared/setupCheck";

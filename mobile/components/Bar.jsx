@@ -27,10 +27,13 @@ import { useWebStyles } from "../theme/web";
 import { useTourAnchor } from "../lib/tour";
 import { endSession } from "../lib/session";
 
-/* The bar's own height BELOW the status bar: the 35px lockup centred in 14 + 15 of padding.
+/* The bar's own height BELOW the status bar: the 32px lockup (19px mark + 2 + the 10px tag's line)
+   centred in 14 + 15 of padding. ★ 2026-09-18 (app. 01 row 26): the mark was 22px, the web's DESKTOP
+   size; at ≤600px the web draws it at 19 (globals.css `.brand-mark { height: 19px }`), and a phone is
+   always the ≤600 case — so the lockup, and this constant, both lost 3px.
    Published so a panel that must open beneath the bar can offset by it without re-deriving the
    number — the phone's answer to the web's measured --hdr-h. */
-export const BAR_CONTENT_H = 64;
+export const BAR_CONTENT_H = 61;
 
 /* ⚠️ `user` DEFAULTS TO THE SIGNED-IN ID, and does not have to be passed (founder, 2026-09-14:
    "when in iphone/expo I open a lesson plan from My Class or My Lessons, the login and wheel on
@@ -85,7 +88,7 @@ export default function Bar({ user = getUser(), onSettings = null, gear = true }
       <View style={ws.hdr}>
         {/* The lockup: mark over kicker, as on the web and on every letterhead. */}
         <View style={ws.hdr_brand}>
-          <MeyyMark height={22} color={t.bar_ink} dot="#e0705f" />
+          <MeyyMark height={19} color={t.bar_ink} dot="#e0705f" />
           <Text style={ws.hdr_brand_tag}>lesson studio</Text>
         </View>
 

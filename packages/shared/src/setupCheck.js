@@ -89,6 +89,31 @@ export function pruneSetupCheck(validKeys) {
  * the same two or three parts its own way.
  */
 
+
+/* ───────── the check window's FIRST moment: first run just finished ─────────
+ * ★ ONE TRIGGER, ON BOTH SURFACES (2026-09-18; founder's 2026-09-17 call, lifted from the phone's
+ * lib/firstRun.js). "Would you like to check your set-up?" used to ride `finishTour` on the web, so
+ * it reached ONLY teachers who ran the tour — and Meyy assumed a section, a periods-a-week and a
+ * year's total for the teacher who skipped it just as much. First run queues this flag; My Classes
+ * spends it on her first visit that no tour is driving. PERSISTED (not session state) because she
+ * lands on My Lessons and may close the app before she ever opens My Classes.
+ * ⚠️ `finishTour` must NOT also raise the window — two triggers would ask her twice. */
+const FIRST_RUN_KEY = () => userKey("first_run_check_pending");
+
+/** First run just finished: owe her the check window the next time she opens My Classes. */
+export function queueFirstRunCheck() {
+  try { if (getUser()) storage.setItem(FIRST_RUN_KEY(), "1"); } catch {}
+}
+
+/** True once, ever — spending the flag as it answers, like `takeSetupCheck`. */
+export function takeFirstRunCheck() {
+  try {
+    if (!getUser() || !storage.getItem(FIRST_RUN_KEY())) return false;
+    storage.removeItem(FIRST_RUN_KEY());
+    return true;
+  } catch { return false; }
+}
+
 /** The sub-line's PARTS — the one thing that differs between the window's two moments.
  *  · added → { reason:"added", subject, stage }   (stage already prettified)
  *  · tour  → { reason:"tour", count, tag }        (tag only when exactly one section exists)

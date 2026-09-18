@@ -171,3 +171,18 @@ test("a scope naming a subject she no longer teaches shows nothing rather than g
   assert.equal(
     setupCheckValues(profile, { mode: "check", reason: "added", subject: "Science", grade: "IX" }), null);
 });
+
+test("★ first run's check is owed ONCE and spent on the first ask (2026-09-18)", async () => {
+  const { queueFirstRunCheck, takeFirstRunCheck } = await import("../src/setupCheck.js");
+  reset();
+  assert.equal(takeFirstRunCheck(), false, "nothing queued, nothing asked");
+  queueFirstRunCheck();
+  assert.equal(takeFirstRunCheck(), true);
+  assert.equal(takeFirstRunCheck(), false, "spent");
+  queueFirstRunCheck(); clearUser();
+  assert.equal(takeFirstRunCheck(), false, "no teacher, no question");
+  setUser("t2");
+  assert.equal(takeFirstRunCheck(), false, "another teacher never spends hers");
+  setUser("t1");
+  assert.equal(takeFirstRunCheck(), true, "still hers after the other teacher");
+});

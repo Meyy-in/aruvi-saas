@@ -61,6 +61,10 @@ def render_pdf_html(payload: Dict[str, Any]) -> str:
     # ── teaching profile table ──
     prows = ""
     for s in ((payload.get("profile") or {}).get("subjects")) or []:
+        # A paid subject with no classes is still hers — see the docx twin (app. 04 E2).
+        if not (s.get("grades") or []):
+            prows += (f'<tr><td class="t-left">{_esc(s.get("name"))}</td>'
+                      f'<td>—</td><td>—</td></tr>')
         for g in s.get("grades") or []:
             secs = ", ".join(x.get("tag", "") for x in (g.get("sections") or [])) or "—"
             prows += (f'<tr><td class="t-left">{_esc(s.get("name"))}</td>'
