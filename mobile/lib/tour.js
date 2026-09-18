@@ -358,8 +358,15 @@ function restoreBinding() {
   borrowed = { section: null, pre: null };
 }
 
+/* ★ STEP 5 IS SKIPPED WHEN THERE IS NO ARCHIVE CONTROL TO RING (founder, 2026-09-18: an
+   attached lesson is never archivable). My Lessons reports whether its first card shows one;
+   Next from 4 then goes to 6 and Back from 6 to 4, so the step never points at nothing. */
+let archivable = true;
+export function noteTourArchivable(v) { archivable = v !== false; }
+
 export function tourNext() {
   const n = state.step;
+  if (n === 4 && !archivable) { setTourStep(6); return; }
   if (n === TOUR_TOTAL) { closeAsk(); endTour(); router.navigate("/"); return; }
   if (n === 18) openAsk();
   if (n === 19) closeAsk();
@@ -372,6 +379,7 @@ export function tourNext() {
 
 export function tourBack() {
   const n = state.step;
+  if (n === 6 && !archivable) { setTourStep(4); return; }
   if (n === 1) { endTour(); return; }            // Back out of step 1 IS leaving the tour
   if (n === 19 || n === 20) { if (n === 20) openAsk(); else closeAsk(); }
   if (n === 7) { router.navigate("/lessons"); setTourStep(6); return; }   // back out of the preview

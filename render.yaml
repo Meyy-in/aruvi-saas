@@ -65,6 +65,12 @@ services:
         sync: false
       # ON for the beta (founder, 2026-09-11): trial = any 3 chapters, then a manual grant
       # (aruvi-scripts/entitlement.py). OFF would make "trial" and "Subscribe" mean nothing.
+      # The trial ledger's HMAC key (founder, 2026-09-18: a free trial is once per number, even
+      # across an erasure — api/config.py TRIAL_LEDGER_KEY). Render generates it ONCE and keeps
+      # it; a Blueprint sync does not regenerate an existing value. ⚠️ Never delete or rotate it:
+      # a new key makes every ledger entry unmatchable, which silently reopens the loophole.
+      - key: ARUVI_TRIAL_LEDGER_KEY
+        generateValue: true
       - key: ARUVI_ENTITLEMENT_ENFORCED
         value: "1"
       - key: ARUVI_LP_YEAR

@@ -79,6 +79,7 @@ _ROW_PHRASE = {
     "The record that you asked us to erase": "The record that you asked us to erase",
     "Your acceptance of the User Agreement": "The record that you accepted the User Agreement",
     "Shared lesson-plan library content": "Shared lesson-plan library",
+    "The record that this number has used its free trial": "The record that this mobile number has used its free trial",
 }
 
 
@@ -100,14 +101,15 @@ def test_receipt_kept_rows_match_notice_section_7():
         assert what in whats, (
             f"the notice's §7 keeps {phrase!r} but the receipt has no {what!r} row — a "
             "receipt that quietly leaves something behind is worse than none")
-    assert len(_KEPT) == 6, "six kept rows since 2026-09-04 (erasure record + mail copies joined)"
+    assert len(_KEPT) == 7, "seven kept rows since 2026-09-18 (the trial ledger joined)"
+    assert "24 months" in {k["what"]: k["why"] for k in _KEPT}["The record that this number has used its free trial"]
     # The two rows settled by the founder on 2026-09-04 say what they were settled to say.
     by = {k["what"]: k["why"] for k in _KEPT}
     assert "mobile number" in by["The record that you asked us to erase"], \
         "the erasure record keeps the mobile and SAYS so (hashing was declined)"
     assert "8 years" in by["Email we exchanged"] and "8 years" in by["Tax records for payments made"]
     assert "30 days" in by["Disaster-recovery backups"]
-    print("✓ Receipt _KEPT ⇄ notice §7 agree, both directions, six rows")
+    print("✓ Receipt _KEPT ⇄ notice §7 agree, both directions, seven rows")
 
 
 def test_routes_open_status_seen_export():

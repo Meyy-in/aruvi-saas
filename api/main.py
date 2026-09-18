@@ -47,6 +47,8 @@ from aruvi_core.adapters.consent_repository_file import ConsentRepositoryFileImp
 from aruvi_core.adapters.support_repository_file import SupportRepositoryFileImpl
 from aruvi_core.adapters.manual_billing_provider import ManualBillingProvider
 from aruvi_core.adapters.erasure_log_file import ErasureLogFileImpl
+from aruvi_core.adapters.trial_ledger_file import TrialLedgerFileImpl  # noqa: E402
+from aruvi_core.adapters.document_backend import slug as _doc_slug  # noqa: E402
 from aruvi_core.adapters.year_cutover_file import YearCutoverFileImpl
 from aruvi_core.adapters.file_notifier import FileNotifier
 from aruvi_core.adapters.smtp_notifier import SmtpNotifier
@@ -190,6 +192,12 @@ support_repo = SupportRepositoryFileImpl(state, prefix=config.SUPPORT_PREFIX,
                                          start=config.SUPPORT_START)
 # The one store the erase walk must never traverse — see erasure_log_file.py.
 erasure_log = ErasureLogFileImpl(state)
+# ★ The trial ledger (2026-09-18) — the second store outside the erase walk, by design: a
+# free trial is once per number, even across an erasure. See trial_ledger_file.py.
+trial_ledger = TrialLedgerFileImpl(state, config.TRIAL_LEDGER_KEY or config.TRIAL_LEDGER_DEV_KEY,
+                                   config.TRIAL_LEDGER_DAYS)
+if not config.TRIAL_LEDGER_KEY:
+    print("[aruvi] trial ledger: DEV KEY in use — set ARUVI_TRIAL_LEDGER_KEY on any real deployment")
 
 # The Notifier: real SMTP only when the founder has set all three credentials in the
 # environment; otherwise the file outbox, so the preview never needs a mail account and
@@ -437,6 +445,15 @@ def _entitlement_of(tenant_id: str) -> Entitlement:
     ent = entitlement_repo.load(tenant_id)
     if ent is None:
         ent = Entitlement(plan_id="trial", status="trial", source="trial", scopes=["*"])
+        # ★ A NUMBER THAT HAS TRIALLED BEFORE STARTS WHERE IT LEFT OFF (2026-09-18). Erasure
+        #   forgot the account, but the trial ledger remembers what this number used; a fresh
+        #   trial is seeded with that many chapters already counted. Placeholders, not real
+        #   chapter keys — the old chapters are gone, so re-serving them is not "free", and a
+        #   placeholder can never match a real key. A purchase-spent trial counts as all used.
+        prior = trial_ledger.lookup(tenant_id)
+        if prior:
+            used = config.TRIAL_CHAPTER_CAP if prior.get("spent") else int(prior.get("chapters_used") or 0)
+            ent.trial_chapters = [f"_earlier/{i + 1}" for i in range(min(used, config.TRIAL_CHAPTER_CAP))]
         entitlement_repo.save(tenant_id, ent)
     return ent
 
@@ -1064,9 +1081,11 @@ def get_plans(subject: str, grade: str, response: Response,
     # prepared record, a carry-forward from an earlier year, or a section bound to the file.
     # Everything else ships total_units=None, exactly as an unreadable plan always has, and the
     # catalogue screens (Prepare, Generate, Allocate, Year Plan) never read the field at all.
-    bound_files = {st.chapter for st in
-                   (section_state_repo.load_all(tenant_id, user_id, year) or {}).values()
-                   if getattr(st, "chapter", None)}
+    # ⚠️ Each section is a plain dict in the store (2026-09-18: this read `st.chapter` through
+    #   getattr, so it was ALWAYS empty and a bound-but-unprepared plan shipped no unit count).
+    bound_files = {c for c in (
+        (st.get("chapter") if isinstance(st, dict) else getattr(st, "chapter", None))
+        for st in (section_state_repo.load_all(tenant_id, user_id, year) or {}).values()) if c}
     # Enrich each listing with total_units (LU count) for the section-card rail. Best-effort:
     # a plan that fails to normalize just ships total_units=None and the card skips its rail.
     for p in plans:
@@ -1513,11 +1532,20 @@ def get_plan_archive(year_id: Optional[str] = None,
 @app.post("/plan-archive")
 def archive_plan(req: PlanArchiveRequest, year_id: Optional[str] = None,
                  identity: tuple = Depends(_current_identity)) -> Dict[str, str]:
-    """Archive one plan (declutter without deleting). The UI blocks this for a plan any section
-    is actively teaching; the server simply records the flag. Idempotent."""
+    """Archive one plan (declutter without deleting). Refused (409) for a plan a section is
+    attached to — the UI hides the control too. Idempotent."""
     tenant_id, user_id = identity
     year = _resolve_year(tenant_id, user_id, year_id)
     key = _plan_key(req.subject, req.grade, req.filename)
+    # ★ AN ATTACHED LESSON IS NEVER ARCHIVED (founder, 2026-09-18). Both surfaces already hide
+    #   the control on one; this is the net, so the rule does not depend on a button being absent.
+    prefix = f"{(req.subject or '').lower()}_{(req.grade or '').lower()}_"
+    # ⚠️ The file store holds each section as a plain dict; read either shape.
+    _chap = lambda st: st.get("chapter") if isinstance(st, dict) else getattr(st, "chapter", None)
+    if any(k.startswith(prefix) and _chap(st) == req.filename
+           for k, st in (section_state_repo.load_all(tenant_id, user_id, year) or {}).items()):
+        raise HTTPException(status_code=409, detail=(
+            "This lesson is attached to a class. Remove it from the class first, then archive it."))
     try:
         plan_archive_repo.archive(tenant_id, user_id, year, key)
     except Exception as e:
@@ -1699,6 +1727,17 @@ def data_rights_erase(req: EraseRequest,
             "Please confirm you have downloaded your Meyy data. Deletion cannot be "
             "undone and the download is the only copy you can keep."))
     tenant_id, user_id = identity
+    # ★ THE TRIAL LEDGER, BEFORE THE ENTITLEMENT IS DESTROYED (2026-09-18): one line, keyed by a
+    #   keyed hash of the number, saying how much of the free trial it used — so erasing and
+    #   signing up again does not hand out a new one. A PAID account records the trial as spent.
+    #   Only when the tenant IS the teacher (one teacher = one tenant, the ICP); never raises.
+    try:
+        ent_before = entitlement_repo.load(tenant_id)
+        if ent_before is not None and _doc_slug(tenant_id) == _doc_slug(user_id):
+            real_used = len([k for k in ent_before.trial_chapters or []])
+            trial_ledger.note_erased(user_id, real_used, spent=(ent_before.status != "trial"))
+    except Exception:
+        pass
     # Record the consent BEFORE destroying anything: written after the fact it could be
     # lost to the very failure it exists to document. The log lives outside the erase
     # walk and carries identifiers and timestamps only — never personal data.
@@ -2427,7 +2466,14 @@ def onboarding_verified(identity: tuple = Depends(_current_identity)) -> Dict[st
     # server, so the record names the version that was CURRENT at that moment rather
     # than whatever a client thought it was. Never blocks registration.
     _stamp_privacy_seen(tenant_id, user_id, "trial_signin")
-    return {"status": "registered", "tenant_id": tenant_id, "user_id": user_id}
+    # ★ How much free trial this number has left (2026-09-18) — 0 when it was used up before an
+    #   erasure. The front door reads it to say so plainly and offer Subscribe, instead of
+    #   letting her walk into first run and meet a paywall on her very first lesson.
+    ent = _entitlement_of(tenant_id)
+    remaining = (max(0, config.TRIAL_CHAPTER_CAP - len(ent.trial_chapters or []))
+                 if ent.status == "trial" else None)
+    return {"status": "registered", "tenant_id": tenant_id, "user_id": user_id,
+            "trial_remaining": remaining}
 
 
 _STAGE_GRADES = {"preparatory": ["iii", "iv", "v"], "middle": ["vi", "vii", "viii"],

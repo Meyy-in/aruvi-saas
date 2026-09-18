@@ -303,7 +303,8 @@ def test_the_client_merge_rule_matches_the_servers():
     two sides disagree about which write won. Pinned by reading the source, because there
     is no way to import one into the other."""
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    js = open(os.path.join(root, "web/app/lib/sectionHistory.js")).read()
+    # The logic moved to the shared package in Track D step 1; web/app/lib only re-exports it.
+    js = open(os.path.join(root, "packages/shared/src/sectionHistory.js")).read()
     assert "function tsOf" in js, "the client lost its merge-order helper"
     assert "Number.isFinite(n) ? n : 0" in js, \
         "the client no longer treats an unparseable ts as 0 — the server still does"

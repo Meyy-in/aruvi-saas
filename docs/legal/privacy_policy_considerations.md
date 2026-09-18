@@ -315,3 +315,26 @@ summaries of the commencement schedule (Shardul Amarchand Mangaldas, 21 Nov 2025
 text (Rule 3 notice, Rule 6 safeguards/log retention, Rule 7 breach, Rule 8 retention); IT
 (SPDI) Rules, 2011 rr. 4–5; Toddle's privacy policy and DPDPA page; Google Play account-
 deletion and Data safety requirements. Not legal advice — for counsel's review.*
+
+---
+
+## 8. For counsel — the trial ledger (added 2026-09-18, founder)
+
+**What was built.** A free trial is once per mobile number, including across an account erasure.
+On erasure Meyy keeps one line per number: an HMAC-SHA256 of the normalised mobile under a
+server-held key (`ARUVI_TRIAL_LEDGER_KEY`), the number of trial chapters it used (or that a
+purchase spent the trial), and the date it will be forgotten — **24 months** after the erasure.
+The number itself is not stored. A returning number gets a new, empty account with its used
+chapters already counted. Code: `aruvi_core/adapters/trial_ledger_file.py`; tests
+`tests/test_trial_ledger.py`.
+
+**Disclosed in:** Privacy Notice **v0.3** §2 (trial row) and §7 (new row); User Agreement **v0.5**
+§C and §G; the erasure receipt (`_KEPT`, seventh row). Five places must agree.
+
+**The question for counsel.** A keyed hash is still personal data — Meyy holds the key and can test
+any number against it. DPDP §8(7) requires erasure when the purpose is served or consent is
+withdrawn, "unless retention is necessary for compliance with any law", and preventing abuse of a
+free offer is a business interest, not a legal duty. Is disclosed, time-limited, minimal retention
+for this purpose defensible (e.g. as a term of the trial offer the teacher accepts), and is 24
+months proportionate? If not, the fallbacks are: shorten the period; make it a condition shown
+and accepted at trial sign-up; or drop it and accept the loophole.

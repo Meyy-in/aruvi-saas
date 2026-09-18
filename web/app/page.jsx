@@ -95,6 +95,7 @@ export default function Home() {
    * So skipping only hides it for THIS session (in-memory); a fresh login re-derives from the
    * server. Once attached, the server state itself stops the offer — no client flag needed. */
   const [tour, setTour] = useState(null);
+  const [tourArchivable, setTourArchivable] = useState(true);   // reported by My Lessons — see tourNext
   const [tourInfo, setTourInfo] = useState(null);   // { tag, chapter } from MyPlans
   const [tourDismissed, setTourDismissed] = useState(false);   // session-only; never persisted
   /* ★ THE OFFER IS SERVER-CONFIRMED, ONCE, HERE (2026-08-24 — kumar1's phantom tour).
@@ -834,6 +835,8 @@ export default function Home() {
   // mark) · 18→19 OPEN Ask Aruvi so step 19 rings the real panel · 19→20 close it again
   // for the centred "Welcome to Aruvi" sign-off · 20 Done → My Classes.
   const tourNext = () => {
+    // Step 5 is skipped when the tour's lesson has no archive button (founder, 2026-09-18).
+    if (tour === 4 && !tourArchivable) { setTour(6); return; }
     if (tour === 7) goClasses();
     else if (tour === 15) goClasses();
     else if (tour === 16) goProfile();
@@ -849,6 +852,7 @@ export default function Home() {
   // shell move between them. Back from step 1 backs out to the nudge.
   const tourBack = () => {
     if (tour === 1) { setTour(null); return; }
+    if (tour === 6 && !tourArchivable) { setTour(4); return; }
     if (tour === 8) goLessons();
     else if (tour === 17) goClasses();
     else if (tour === 18) goProfile();   // back to the settings-gear step (profile open)
@@ -1422,7 +1426,7 @@ export default function Home() {
                 tourStep={tour} preparing={preparingCard} lapsed={entLapsed} yearInfo={yearInfo}
                 onStartTour={tourOnOffer ? startTour : undefined} tourActive={!!tour}
                 onScope={onLessonsScope} onEditYearBudget={onEditYearBudget}
-                heldScopes={heldScopes}
+                heldScopes={heldScopes} onTourArchivable={setTourArchivable}
                 paneIntent={lessonsPaneIntentRef}
                 onDismissPrepareError={onDismissPrepareError} />
             </div>

@@ -25,17 +25,21 @@
  * started, and offering a trial to one whose trial has ended is an offer Meyy cannot honour. The
  * in-app door passes no `trialFork`, exactly as the web's `page.jsx` passes no `onTrial`.
  */
-import { useRouter, Redirect } from "expo-router";
+import { useRouter, Redirect, useLocalSearchParams } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
 import SubscribeWizard from "../components/SubscribeWizard";
 
 export default function SubscribeFront() {
   const router = useRouter();
+  /* `trialUsed` — the number's free trial was used before an account deletion (the trial ledger,
+     2026-09-18). No trial offer then, and a sentence saying why she is on this screen. */
+  const { trialUsed } = useLocalSearchParams();
   /* No account, no wizard — every call it makes is authenticated. This is a guard, not a flow:
      the only way here is through the OTP screen, which has already set the user. */
   if (!getUser()) return <Redirect href="/login" />;
   return (
-    <SubscribeWizard trialFork
+    <SubscribeWizard trialFork={!trialUsed}
+      notice={trialUsed ? "This mobile number has already used its free trial. Subscribe to keep using Meyy." : ""}
       onDone={() => router.replace("/(app)")}
       onCancel={() => router.replace("/login")} />
   );

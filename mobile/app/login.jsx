@@ -215,15 +215,26 @@ export default function Login() {
       setOtpErr("That code didn't match. (Preview build: use 0000.)"); return;
     }
     let uid = num;
+    let trialLeft = null;
     try {
       const r = await fetch(`${API}/onboarding/verified`, { method: "POST", headers: authHeaders(num) });
-      if (r.ok) { const d = await r.json(); if (d && d.user_id) uid = d.user_id; }
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.user_id) uid = d.user_id;
+        if (d && typeof d.trial_remaining === "number") trialLeft = d.trial_remaining;
+      }
     } catch {}
     setOtpBusy(false);
     /* ★ THE ONE PLACE `mode` IS READ (the web's `Login.jsx:177`). Only on the CREATE path: a
        returning teacher who signs in never saw the choose screen, so her `mode` is the default
        and would send her to a purchase she did not ask for. */
     if (mode === "subscribe" && flow === "create") { enter(uid, "/front-subscribe"); return; }
+    /* ★ A NUMBER WHOSE FREE TRIAL IS ALREADY USED (the trial ledger, 2026-09-18) goes to Subscribe
+       with a sentence saying why, instead of into first run to meet a paywall on its first
+       lesson. Create path only — a returning teacher is not choosing a plan. */
+    if (flow === "create" && trialLeft === 0) {
+      enter(uid, { pathname: "/front-subscribe", params: { trialUsed: "1" } }); return;
+    }
     enter(uid);
   };
 

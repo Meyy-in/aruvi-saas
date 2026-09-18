@@ -96,7 +96,7 @@ function Steps({ at }) {
   );
 }
 
-export default function SubscribeWizard({ onDone, onCancel, trialFork = false }) {
+export default function SubscribeWizard({ onDone, onCancel, trialFork = false, notice = "" }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const router = useRouter();
@@ -302,6 +302,17 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false })
   /* Drawn OVER whatever the wizard is showing, including the bare hold below — the web's
      `.ob-offer-back` is a backdrop at z-index 80, not a screen of its own. Dismissing with
      "Subscribe" simply closes it: she is already where she was going. */
+  /* ★ WHY SHE IS HERE, when the door did not leave it to her (2026-09-18): a number whose free
+     trial was used before an account deletion is sent straight to Subscribe, and must be told
+     so in words — otherwise the Free-to-try card she tapped seems to have been ignored. The
+     privacy-note bar's skin: a pine-edged line above the step, not an error. */
+  const noticeBar = notice ? (
+    <View style={[ws.pn_note, { borderColor: t.line, borderLeftColor: t.pine,
+                                backgroundColor: t.paper_2, marginHorizontal: 16, marginTop: 12 }]}
+      accessibilityRole="summary">
+      <Text style={[ws.pn_note_t, { color: t.ink }]}>{notice}</Text>
+    </View>
+  ) : null;
   const trialWindow = offerTrial ? (
     /* ⚠️ `zIndex`, because it is the FIRST child of each screen's root and RN paints siblings in
        order — without it the scroller beneath would draw straight over the window. 80 is the
@@ -343,6 +354,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false })
     return (
       <View style={{ flex: 1, backgroundColor: t.paper }}>
         {trialWindow}
+        {noticeBar}
         <ScrollView contentContainerStyle={ws.ob_body} keyboardShouldPersistTaps="handled"
           automaticallyAdjustKeyboardInsets>
           <Steps at={1} />
@@ -425,6 +437,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false })
     return (
       <View style={{ flex: 1, backgroundColor: t.paper }}>
         {trialWindow}
+        {noticeBar}
         <Agreement mode="sign" context="subscribe"
           onAccepted={() => {
             setConsent((c) => ({ ...(c || {}), accepted: true }));
@@ -453,6 +466,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false })
     return (
       <View style={{ flex: 1, backgroundColor: t.paper }}>
         {trialWindow}
+        {noticeBar}
         <ScrollView contentContainerStyle={ws.ob_body} keyboardShouldPersistTaps="handled">
           <Steps at={3} />
           <Text style={[ws.ob_title, { color: t.ink }]}>What do you teach?</Text>

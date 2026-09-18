@@ -1093,6 +1093,18 @@ optional `?year_id=`, absent → the teacher's current year, bootstrapped April-
 (idempotent, re-runnable). New tests: test_account / test_academic_year / test_year_scope /
 test_migration. Full entry: MEMORY.md 2026-08-22.
 
+**A FREE TRIAL IS ONCE PER MOBILE NUMBER, EVEN ACROSS AN ERASURE (2026-09-18, founder).** Erasure
+still forgets her profile; the one thing kept is `trial_ledger/{hmac}.json` — an HMAC of the number
+under `ARUVI_TRIAL_LEDGER_KEY` (never the number), the trial chapters it used (a purchase = spent),
+forgotten after 24 months. Outside the erase walk; written in `data_rights_erase` before the
+entitlement goes; read by `_entitlement_of`'s JIT trial; `/onboarding/verified` returns
+`trial_remaining` and both front doors send 0 to Subscribe. **FIVE places now agree** on what
+survives an erasure: Privacy Notice v0.3 §7 · User Agreement v0.5 §C and §G · `_KEPT` (7 rows) ·
+the ledger's placement. ⚠️ Never rotate the key (render.yaml generates it once) — a new key
+silently reopens the loophole. Counsel item: `docs/legal/privacy_policy_considerations.md §8`.
+**An attached lesson is never archived** (server 409 + both UIs; the tour skips step 5 then), and
+**a paid subject is never removed** — she empties its classes instead.
+
 **THE TEACHING LEDGER LEAVES THE BROWSER — `section_history` is server-backed (2026-09-07).**
 The last teaching state living in localStorage alone. `SectionState` holds only the CURRENT
 binding and deletes the row the moment a chapter leaves the slot, so this ledger is the ONLY

@@ -97,6 +97,16 @@ ENTITLEMENT_ENFORCED = os.environ.get("ARUVI_ENTITLEMENT_ENFORCED", "").strip().
 # serves. Empirical; env-overridable for the field test.
 TRIAL_CHAPTER_CAP = int(os.environ.get("ARUVI_TRIAL_CHAPTERS", "3"))
 
+# TRIAL LEDGER (founder, 2026-09-18): a free trial is once per mobile number, including across
+# an account erasure. The number is stored only as an HMAC under this key — SET IT on every real
+# deployment (Render secret) and never rotate it casually: a new key orphans every entry, which
+# silently reopens the loophole. The dev fallback exists so a fresh clone runs; the API prints a
+# warning at startup while it is in use. Retention: entries are forgotten after this many days
+# (Privacy Notice §7 states 24 months — change both together).
+TRIAL_LEDGER_KEY = os.environ.get("ARUVI_TRIAL_LEDGER_KEY", "").strip()
+TRIAL_LEDGER_DEV_KEY = "meyy-dev-trial-ledger-key-not-for-production"
+TRIAL_LEDGER_DAYS = int(os.environ.get("ARUVI_TRIAL_LEDGER_DAYS", "730"))
+
 # PRICE_PER_SUBJECT_STAGE (₹/year): the working figure from the subscription-model
 # discussion (§0 — ₹500 pending the field test). Config, never code; the onboarding
 # cart reads it via GET /entitlement.

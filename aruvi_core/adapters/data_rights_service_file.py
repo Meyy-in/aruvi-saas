@@ -89,6 +89,13 @@ _KEPT = [
             "itself. It holds no teaching content, notes or profile details. It no "
             "longer applies from today: if you use Meyy again, you will be asked to "
             "read and accept the agreement afresh."},
+    # ★ 2026-09-18 — the trial ledger (trial_ledger_file.py). Retained so the free trial stays
+    #   once per number across an erasure; its store sits outside every folder this walk visits.
+    #   Five places agree: this row, Privacy Notice §7, Agreement §C and §G, and that placement.
+    {"what": "The record that this number has used its free trial",
+     "why": "A keyed one-way code made from your mobile number (never the number itself) and "
+            "how many trial chapters it used — kept for 24 months so the free trial stays "
+            "once per number, then deleted. Nothing else."},
     {"what": "Shared lesson-plan library content",
      "why": "Lesson plans are Meyy's shared library, not personal data; your account "
             "held references to them, and those references are erased."},

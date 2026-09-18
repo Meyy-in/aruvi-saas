@@ -281,7 +281,7 @@ function ProposedCard({ preparing, onDismiss }) {
 export default function MyLessonPlans({ readiness, onAllocate, tourStep, preparing,
                                         onStartTour, tourActive, onDismissPrepareError, lapsed,
                                         yearInfo, onScope, onEditYearBudget, paneIntent,
-                                        heldScopes }) {
+                                        heldScopes, onTourArchivable }) {
   const LS_SUBJECT = userKey("mylessons_subject");
   const LS_CLASS = userKey("mylessons_class");
   const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
@@ -650,6 +650,13 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
     return arr[0] || null;
   };
   const tourPlan = tourStep != null ? tourPlanOf() : null;
+  /* ★ TOUR STEP 5 NEEDS AN ARCHIVE BUTTON TO RING (founder, 2026-09-18: an attached lesson is
+     NEVER archivable). If the tour's lesson is still attached — to a second section, or completed
+     in one — the button is absent and page.jsx skips step 5 (4→6, 6→4). Declared above the
+     `opening` early return so the hook count never changes. */
+  const tourArchivable = !!tourPlan && view !== "archived" && !isAttached(tourPlan);
+  useEffect(() => { if (onTourArchivable) onTourArchivable(tourArchivable); },
+    [tourArchivable]);   // eslint-disable-line react-hooks/exhaustive-deps
 
   // Flip a plan's archived flag in local state (optimistic) so it moves between the two views
   // instantly, before the server round-trip resolves.

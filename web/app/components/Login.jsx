@@ -82,6 +82,7 @@ export default function Login({ onEnter }) {
   const otpCanResend = otpAt > 0 && otpElapsed >= OTP_RESEND_LOCK_MS / 1000;
   const [otp, setOtp] = useState("");
   const [otpErr, setOtpErr] = useState("");
+  const [trialUsed, setTrialUsed] = useState(false);   // the trial ledger said 0 left (2026-09-18)
   const [otpBusy, setOtpBusy] = useState(false);
   // "Already in use" on the CREATE path, checked before the OTP goes out.
   const [mobErr, setMobErr] = useState("");
@@ -169,12 +170,20 @@ export default function Login({ onEnter }) {
       setOtpErr("That code didn't match. (Preview build: use 0000.)"); return;
     }
     let uid = num;
+    let trialLeft = null;
     try {
       const r = await fetch(`${API}/onboarding/verified`, { method: "POST", headers: authHeaders(num) });
-      if (r.ok) { const d = await r.json(); if (d && d.user_id) uid = d.user_id; }
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.user_id) uid = d.user_id;
+        if (d && typeof d.trial_remaining === "number") trialLeft = d.trial_remaining;
+      }
     } catch {}
     setOtpBusy(false);
     if (mode === "subscribe" && flow === "create") { setMobile(uid); setScreen("subscribe"); }
+    /* ★ A NUMBER WHOSE FREE TRIAL IS ALREADY USED (the trial ledger, 2026-09-18) goes to
+       Subscribe, told why — not into first run to meet a paywall on its first lesson. */
+    else if (flow === "create" && trialLeft === 0) { setMobile(uid); setTrialUsed(true); setScreen("subscribe"); }
     else enter(uid);
   };
 
@@ -185,9 +194,13 @@ export default function Login({ onEnter }) {
        Trial lands exactly where the Free-to-try card lands — signed in, first run next.
        Her number is already OTP-verified and registered, so nothing further is owed.
        The in-app door (page.jsx) deliberately passes no onTrial. */
-    return <SubscribeFlow userId={mobile.trim()} chrome={<Bar />}
+    /* A spent trial: no trial offer in the cart, and the reason said above every step. */
+    return <SubscribeFlow userId={mobile.trim()}
+      chrome={trialUsed ? (<><Bar /><div className="pn-note" role="status">
+        <span>This mobile number has already used its free trial. Subscribe to keep using Meyy.</span>
+      </div></>) : <Bar />}
       onDone={(uid) => enter(uid)} onCancel={() => setScreen("otp")}
-      onTrial={() => enter(mobile.trim())} />;
+      onTrial={trialUsed ? null : () => enter(mobile.trim())} />;
   }
 
   /* ── THE PRIVACY NOTICE, before any account exists ── */

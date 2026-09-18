@@ -59,7 +59,7 @@ import {
 } from "@aruvi/shared/format";
 import { subscribeYear } from "@aruvi/shared/year";
 import { cachedAccount } from "@aruvi/shared/account";
-import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer,
+import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, noteTourArchivable,
          tourOfferOpen } from "../../lib/tour";
 import TourOffer from "../../components/TourOffer";
 import { storage } from "@aruvi/shared/storage";
@@ -637,6 +637,15 @@ export default function MyLessons() {
     ? [shown[matchIdx], ...shown.slice(0, matchIdx), ...shown.slice(matchIdx + 1)]
     : shown;
   const busyIdx = matchIdx >= 0 ? 0 : -1;
+  /* ★ TOUR STEP 5 HAS SOMETHING TO RING ONLY IF THE FIRST CARD SHOWS ITS ARCHIVE CONTROL
+     (founder, 2026-09-18: an attached lesson is NEVER archivable). The tour borrows her section
+     for the demo, which usually frees the card — but a lesson attached to a SECOND section, or
+     completed in one, stays attached, and then the step is skipped rather than pointing at
+     nothing. Same conditions as the control itself in PlanCard. Reported to the tour, which owns
+     the moves. */
+  const tourArchivable = !!ordered[0] && effView !== "archived" && !isAttached(ordered[0])
+    && busyIdx !== 0;
+  useEffect(() => { noteTourArchivable(tourArchivable); }, [tourArchivable]);
 
   /* Subject filter, alphabetical by LABEL (profile order is arbitrary — a stable A–Z list is
      easier to scan). Copy before sort so the source order is untouched. */
