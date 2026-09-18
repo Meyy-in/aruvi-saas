@@ -459,6 +459,24 @@ visible from outside the logs.
 
 ### ★ CURRENT HAND-OFF — 2026-09-17, the tour-walk run (READ THIS ONE)
 
+> **★ ADDENDUM 2026-09-18 — read this first.** The founder deferred the walk until everything else is
+> done, so this run did the rest: appendices **01 and 02 are reconciled** (§0 `map·01-02` — no hidden
+> feature; one silent-save bug fixed), and the small list below is **worked through** (§0
+> `map·leftovers`), plus two LessonView skin rows (06·69a, 06·105). **Every appendix now has zero
+> MISSING rows.** What is left, in order:
+> 1. **Founder decisions:** app. 02 **Q8** (adding a subject — ask per class, or set up and disclose?
+>    7 rows wait on it); `?version=` (should Legal show the notice version she was shown? — dead on
+>    both surfaces until someone says yes); plus the three below (trial reset, archiving an attached
+>    plan, DLT).
+> 2. **Needs the running web at 390px** (Claude in Chrome on the founder's dev server): the
+>    `7·clusters` theme keys and `.uv-va-table` (06·69b).
+> 3. **Web tidying, no user-visible change:** page.jsx onto the shared readiness/account/entitlement/
+>    year stores; budgets through `setGradeBudget`; the web's `writePointer` onto the shared helper (06·6).
+> 4. **THE WALK** — both surfaces, then Step 9 (TestFlight / Play internal).
+> Nothing in this run has been seen on a handset: bar mark 19px, the save-failed banner on every
+> profile step, My Classes' empty state + third welcome sentence, the set-up check on first My Classes
+> visit (web AND phone), the class-less-subject picker and export, the assess boxes.
+
 **What this run was.** Twenty-odd commits, almost none of them a step from §2. The founder walked the
 phone and the web four times over and reported what he saw; each report was a §0 row. Step **8b (the
 guided tour) went from "complete, not walked" to walked four times and rebuilt around what the walks
