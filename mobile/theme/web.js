@@ -992,6 +992,9 @@ export function webStyles(t, scheme = "light") {
                        overflow: "hidden", backgroundColor: wheelBg },
     rw_row:          { height: 72, flexDirection: "row", alignItems: "center", paddingRight: 44 },
     rw_label:        { fontFamily: F.body(600), fontSize: 19, lineHeight: 24, color: t.ink },
+    /* WALK-A-025 (founder, 2026-09-20): the ▲▼ pair sat almost on top of each other on a short
+       box. They now sit apart inside a taller wheel, with air kept from the box's own top and
+       bottom edges (paddingVertical), so neither glyph touches the roof or the floor. */
     rw_cue:          { position: "absolute", right: 7, top: 0, bottom: 0, justifyContent: "center" },
     rw_cue_btn:      { width: 34, height: 26, alignItems: "center", justifyContent: "center" },
     rw_cue_glyph:    { fontSize: 15, lineHeight: 17, color: t.pine },

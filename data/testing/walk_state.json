@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-20T15:00:27",
+  "updated_at": "2026-09-20T15:22:00",
   "items": {
     "04.19": {
       "ios": {
@@ -1562,8 +1562,8 @@
       "applies_to": "both",
       "title": "Expired OTP: boxes stay live; 'Send a new code' only a link; mid-run Resend to go",
       "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): no mid-run Resend already; at expiry 'Send a new code' is still a small link — needs the full-size button + disabled boxes.",
-      "fix": "Expired: boxes disabled (+ dimmed CSS), 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed (Login.jsx). Phone: at phone fix point.",
-      "files": "web/app/components/Login.jsx, globals.css",
+      "fix": "Expired: boxes disabled (+ dimmed CSS), 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed (Login.jsx). Phone: at phone fix point. PHONE: expired code disables the boxes (dimmed) and 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed.",
+      "files": "web/app/components/Login.jsx, globals.css; mobile/app/login.jsx, mobile/components/OtpBoxes.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1573,7 +1573,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-005",
@@ -1586,8 +1586,8 @@
       "applies_to": "both",
       "title": "First-run wheels: roll continuously; keyboard arrows after on-screen ▲▼",
       "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): subject + class wheels confirmed non-looping. ANDROID: confirmed non-looping.",
-      "fix": "RollWheel `loop` prop; first run's Subject + Class loop (chapter keeps its ends); ▲▼ keep focus on the wheel (mousedown preventDefault + refocus). Phone: at phone fix point.",
-      "files": "web/app/components/wheels.jsx, FirstRun.jsx",
+      "fix": "RollWheel `loop` prop; first run's Subject + Class loop (chapter keeps its ends); ▲▼ keep focus on the wheel (mousedown preventDefault + refocus). Phone: at phone fix point. PHONE: RollWheel takes a `loop` prop; first run's Subject + Class loop (chapter keeps its ends) and the ▲▼ wrap with them.",
+      "files": "web/app/components/wheels.jsx, FirstRun.jsx; mobile/components/RollWheel.jsx, mobile/app/first-run.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1597,7 +1597,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-006",
@@ -1722,8 +1722,8 @@
       "applies_to": "both",
       "title": "Create sign in: mobile field keeps the old number after Back",
       "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — field keeps the number.",
-      "fix": "'Create sign in' clears the mobile field, error and timer on every entry.",
-      "files": "web/app/components/Login.jsx",
+      "fix": "'Create sign in' clears the mobile field, error and timer on every entry. PHONE: 'Create sign in' clears the mobile field, its error and the timer on every entry.",
+      "files": "web/app/components/Login.jsx; mobile/app/login.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1733,7 +1733,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-012",
@@ -1746,8 +1746,8 @@
       "applies_to": "both",
       "title": "Rejoining teacher's trial card says 3 chapters when fewer remain",
       "what": "After erase + rejoin, the server seeds the trial with the ledger's used chapters (_entitlement_of → '_earlier/1', so 2 left), but FirstRun's 'Your free trial' card prints trialInfo.trial_chapter_cap — 'covers any 3 chapters' — the CAP, not what she has left. A rejoiner is promised a chapter she does not have. Show the remaining count when it is below the cap (e.g. 'You have 2 of your 3 free chapters left'), cap wording otherwise. Check the phone's card. (Considered and WITHDRAWN by founder: 'Prepare my second lesson' — her earlier lesson was erased, so for her this IS the first lesson; the CTA stays.) [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — rejoin card says 'any 3 chapters' with 2 left.",
-      "fix": "Trial card says 'You have N of your 3 free chapters left.' when fewer remain (trial_chapters_used).",
-      "files": "web/app/components/FirstRun.jsx",
+      "fix": "Trial card says 'You have N of your 3 free chapters left.' when fewer remain (trial_chapters_used). PHONE: trial card says 'You have N of your 3 free chapters left.' when fewer remain.",
+      "files": "web/app/components/FirstRun.jsx; mobile/app/first-run.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1757,7 +1757,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-013",
@@ -1770,8 +1770,8 @@
       "applies_to": "both",
       "title": "Tour offer box doesn't read as something to click",
       "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): same as web — My Classes' nudge has 'Show me how →', My Lessons' has none. ANDROID: same.",
-      "fix": "'Show me how →' added to My Lessons' nudge; the CTA is now a solid pine button on both nudges.",
-      "files": "MyLessonPlans.jsx, MyPlans.jsx, globals.css",
+      "fix": "'Show me how →' added to My Lessons' nudge; the CTA is now a solid pine button on both nudges. PHONE: TourOffer carries a filled 'Show me how →' pill on BOTH surfaces; sub-line matches the web's.",
+      "files": "MyLessonPlans.jsx, MyPlans.jsx, globals.css; mobile/components/TourOffer.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1781,7 +1781,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-014",
@@ -1818,8 +1818,8 @@
       "applies_to": "both",
       "title": "Tour tells her to click (card, '+') but clicks do nothing — only Next advances",
       "what": "Step 6 tip reads 'Let us open the lesson' / 'click on the lesson card to open a particular lesson', while the tour advances only on Next — a teacher following the words clicks the card instead. Founder: reword so she is not led to click the card directly (e.g. 'Tapping a lesson card opens it. Press Next and we'll open this one for you.'). Same copy on the phone (GuidedTour steps are shared). Observed: clicking the card during step 6 does nothing at all (the tour blocks it), so she is told to do something that silently fails. SAME at step 8 (T.11): 'Click the + sign of that section card' — clicking '+' does nothing. Review EVERY step whose copy says click/tap: either make the click itself advance the tour (the natural choice where the tour then does exactly that action — steps 6 and 8), or reword to point at Next. Step 9 (T.12) likewise: 'Select a lesson plan…' — clicking the row does nothing; include it in the same review. DECIDED (founder 2026-09-20): her click DOES the step — clicking the card / '+' / row advances the tour exactly as Next does. [WEB re-walked green 2026-09-20; phone half pending]",
-      "fix": "`tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated.",
-      "files": "GuidedTour.jsx, globals.css",
+      "fix": "`tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated. PHONE: `tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated.",
+      "files": "GuidedTour.jsx, globals.css; mobile/components/GuidedTour.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1829,7 +1829,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-016",
@@ -1842,8 +1842,8 @@
       "applies_to": "both",
       "title": "Tour step 7 says 'section your section' — target section never reaches the tour",
       "what": "Step 7 tip: 'We will now attach this lesson to section your section from ‘My Classes’…'. Body is `…to section ${i.tag}…` and i.tag falls back to 'your section' (GuidedTour.jsx fallback) because tourInfo is null. tourInfo {tag, chapter} is supplied ONLY by MyPlans (My Classes) via onTourInfo — and since 2026-09-17 the tour opens and stays on My Lessons for steps 1–7, so MyPlans never reports the target before step 7 (and on web it may be unmounted). Fix: derive the tour's target section in page.jsx (it already knows the demo binding), not from MyPlans' render; and make the fallback read grammatically ('…attach this lesson to one of your sections…'). Check any later step that uses i.tag / i.chapter. Phone has the same copy and the same info plumbing — check. [WEB re-walked green 2026-09-20; phone half pending]",
-      "fix": "startTour seeds the target section tag from the profile; `sec()` fallback reads 'one of your sections'.",
-      "files": "page.jsx, GuidedTour.jsx",
+      "fix": "startTour seeds the target section tag from the profile; `sec()` fallback reads 'one of your sections'. PHONE: `sec()` fallback reads 'one of your sections'; step 9's title has a no-tag form.",
+      "files": "page.jsx, GuidedTour.jsx; mobile/components/GuidedTour.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1853,7 +1853,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-017",
@@ -1866,8 +1866,8 @@
       "applies_to": "both",
       "title": "Tour copy corrections",
       "what": "Running list of tour wording fixes (shared web/phone copy). (1) Step 10: 'You have successfully attached “{chapter}” for section {tag}.' → 'attached “{chapter}” TO section {tag}.' Note its next sentence 'Let us click it to see how tracking works.' is another click-instruction — see WALK-A-015. (2) Step 15: 'the same window shown in step 8' → 'step 9' (the picker is step 9 of 20). Better: avoid step numbers in copy ('the same window you used a moment ago') so a re-ordering can't make it wrong again. (3) Step 16 (Add): 'Add/amend sections, classes and/or subjects. Use this button to quickly add sections, classes or subjects…' — WRONG: the Add window has no Subject row (a subject is a purchase), and it DOES amend periods a week and the annual period budget. Reword to match its four rows: class · section · periods a week · annual period budget. (4) Step 17 (profile): remove the final clause '; removing a subject is the one thing done here.' — end at 'Changes are made with ‘Add’ at the foot of the screen.' (5) Step 18 (Ask Meyy): 'up to 100 questions across 5 categories' — the bank holds 119 Q&A pairs in 5 categories. Say 'over 100' or drop the number (it will drift every monthly refresh). [WEB re-walked green 2026-09-20; phone half pending]",
-      "fix": "Copy: 'to section', step 15 'the same window you used a moment ago', step 16 classes/sections/periods/budget, step 17 last clause removed, step 18 'over 100'. WEB GuidedTour only; phone copy at phone fix point.",
-      "files": "web/app/components/GuidedTour.jsx",
+      "fix": "Copy: 'to section', step 15 'the same window you used a moment ago', step 16 classes/sections/periods/budget, step 17 last clause removed, step 18 'over 100'. WEB GuidedTour only; phone copy at phone fix point. PHONE: same copy corrections as the web (to section, 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed, 'over 100').",
+      "files": "web/app/components/GuidedTour.jsx; mobile/components/GuidedTour.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1877,7 +1877,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-018",
@@ -1914,8 +1914,8 @@
       "applies_to": "both",
       "title": "Failed first lesson: message clipped, card looks attached, set-up check fires anyway",
       "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — clipped message, clay edge, no Try again; set-up popup did NOT fire on the phone.",
-      "fix": "Failed card: full sentence, neutral spine/edge, 'Try again' (re-serves the same descriptor incl. first-run bindKey); set-up check held while a lesson is preparing/failed or eligibility unknown; eligibility re-read when a plan lands.",
-      "files": "MyLessonPlans.jsx, page.jsx, FirstRun.jsx, globals.css",
+      "fix": "Failed card: full sentence, neutral spine/edge, 'Try again' (re-serves the same descriptor incl. first-run bindKey); set-up check held while a lesson is preparing/failed or eligibility unknown; eligibility re-read when a plan lands. PHONE: failed card shows the full sentence, neutral edge + spine, and 'Try again' beside Dismiss; the serve is kept as a re-runnable closure in lib/preparing (first run and Prepare both pass it).",
+      "files": "MyLessonPlans.jsx, page.jsx, FirstRun.jsx, globals.css; mobile/components/ProposedCard.jsx, mobile/lib/preparing.js, mobile/app/first-run.jsx, mobile/app/(app)/prepare.jsx, lessons.jsx, index.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1925,7 +1925,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-020",
@@ -1938,8 +1938,8 @@
       "applies_to": "both",
       "title": "First run offline: profile never saved, yet the shell opens",
       "what": "Cycle 3: first run completed with the network OFF at 'Prepare the lesson'. The shell opened (My Lessons with a failed card; My Classes with an empty 9A card) and she then prepared ch 4 successfully online from My Lessons. A reload (⌘R) put her back on 'Welcome to Meyy!' — first run again. So the profile write made at activation (POST /readiness, fired in the same tick as the handoff) failed offline, but the client moved her into the shell as if it had succeeded; the SS IX · 9A profile she saw existed only in the browser. Work done in that session (the prepared lesson) sits against an account with no profile. Fix: verify the activation write (the read-after-write verify used elsewhere) and, on failure, keep her in first run with a plain retry — never open the shell on an unsaved profile; or queue and retry the write. Check the phone. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): SAME fault — after an offline first run and a relaunch, 02's server profile is None. Port the pending-profile retry to the phone.",
-      "fix": "Unverified profile write kept as PENDING per user and retried (online event + 15s timer, ≤40) ; on load, if the server has no profile but a pending one exists, she stays in the shell and it is re-sent.",
-      "files": "web/app/page.jsx",
+      "fix": "Unverified profile write kept as PENDING per user and retried (online event + 15s timer, ≤40) ; on load, if the server has no profile but a pending one exists, she stays in the shell and it is re-sent. PHONE (shared): an unverified profile write is kept as PENDING per teacher and retried (15s timer, ≤40) and re-sent on the next read that finds the server empty — she stays in the shell.",
+      "files": "web/app/page.jsx; packages/shared/src/readiness.js",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1949,7 +1949,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-021",
@@ -1962,8 +1962,8 @@
       "applies_to": "both",
       "title": "Leaving the subscribe wizard strands her: number taken, only the trial door left",
       "what": "04 (new number): Choose → Subscribe → Create sign in → verify → subscribe wizard (trial offer window shown). She backed out of the wizard, then tried 'Create sign in' again: refused 'already in use' — verifying had already created the account. 'Already have an ID' then dropped her straight into the TRIAL first run. So a teacher who leaves the wizard for any reason can no longer reach the subscribe-from-the-front-door path; she becomes a trial account without choosing it. Options: don't create the account until the wizard completes (or treat an account with no consent + no entitlement activity as still 'new' at Create sign in); or when an existing, never-activated account signs in having picked Subscribe, resume the wizard. Also (founder to decide): the offer window defaults TRIAL (green) even though she had just picked the Subscribe card. ALSO: the trial-or-subscribe window re-appears every time she re-verifies after the wizard's ← Back (row 03.16 expects it once per session). [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): worse than web — wizard ← Back to OTP, then re-verify, drops her straight into the TRIAL first run (no wizard, no offer). The phone's verify must keep mode=subscribe for a `fresh` account. PHONE: confirmed stranded — Create sign in with never-activated 04 → 'already in use' (phone's idInUse ignores the server's `fresh`). PHONE: also Log out mid-wizard → next sign-in lands in TRIAL.",
-      "fix": "SERVER: /onboarding/known returns `fresh` (no consent/profile/subscription/used chapter); web Create sign in treats a fresh account as new. Trial offer once per SESSION (sessionStorage). NEEDS RENDER DEPLOY.",
-      "files": "api/main.py, Login.jsx, SubscribeFlow.jsx",
+      "fix": "SERVER: /onboarding/known returns `fresh` (no consent/profile/subscription/used chapter); web Create sign in treats a fresh account as new. Trial offer once per SESSION (sessionStorage). NEEDS RENDER DEPLOY. PHONE: Create sign in reads the server's `fresh` (never-activated) answer; the chosen door (trial/subscribe) survives a return to the login screen and is spent at onDone; the trial offer is once per session.",
+      "files": "api/main.py, Login.jsx, SubscribeFlow.jsx; mobile/app/login.jsx, mobile/app/front-subscribe.jsx, mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1973,7 +1973,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-022",
@@ -1986,8 +1986,8 @@
       "applies_to": "both",
       "title": "About you: refuse a used email up front; City mandatory; mark required fields",
       "what": "Subscribe wizard, About-you step. (1) An email already on another account is refused only AFTER she completes the email verification — she is made to verify an address she can never use. Check 'already in use' FIRST (on entry / before sending any code), as the mobile check does on Create sign in. (2) Founder: City becomes MANDATORY (Save & continue gated on it; the server/profile record to match). (3) Mark every mandatory field with * — name, email, role, state, city; School name carries NO * so it reads as optional (its '(optional)' label can then go or stay — founder's call). Same form on the phone (and Settings › Personal profile shares the fields — keep consistent). [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed all three (no *, late email refusal, City optional).",
-      "fix": "Used email refused at 'Confirm this email →'; City mandatory; * on name/email/role/state/city (not school) — subscribe wizard and Settings › Personal profile.",
-      "files": "SubscribeFlow.jsx, Settings.jsx, globals.css",
+      "fix": "Used email refused at 'Confirm this email →'; City mandatory; * on name/email/role/state/city (not school) — subscribe wizard and Settings › Personal profile. PHONE: * on name/email/role/state/city (not school), City mandatory, used email refused at 'Confirm this email →'.",
+      "files": "SubscribeFlow.jsx, Settings.jsx, globals.css; mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -1997,7 +1997,7 @@
         "web"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T09:53:05"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-023",
@@ -2010,17 +2010,17 @@
       "applies_to": "phone",
       "title": "OTP screen: '+91' sits above the number's baseline",
       "what": "iPhone 16, Expo Go: on the create OTP screen the '+91' prefix is displaced slightly upward relative to the 10-digit number beside it (not on the same text line). Align the prefix and the TextInput on one baseline/centre (the web's .ob-mobile-row does). Check Android too.",
-      "fix": "",
-      "files": "mobile login screen (ob_mobile_row / ob_cc in theme/web.js)",
+      "fix": "PHONE: single-line inputs drop the lineHeight and centre, so the number sits on the same line as '+91' (same root as WALK-A-029).",
+      "files": "mobile login screen (ob_mobile_row / ob_cc in theme/web.js); mobile/components/ui.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:14:28"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-024",
@@ -2033,18 +2033,18 @@
       "applies_to": "both",
       "title": "OTP backspace: one press should step back AND clear the previous digit",
       "what": "iPhone: pressing Backspace on an empty OTP box moves focus to the previous box but leaves its digit; a second press clears it. Founder: a single Backspace on an empty box should move back and clear that digit. The web's otpKeyDown has the same two-press behaviour (focus only) — change both.",
-      "fix": "",
-      "files": "web/app/components/Login.jsx (otpKeyDown) + mobile login OTP boxes",
+      "fix": "BOTH: one Backspace on an empty OTP box steps back AND clears that digit.",
+      "files": "web/app/components/Login.jsx (otpKeyDown) + mobile login OTP boxes; web/app/components/Login.jsx, mobile/components/OtpBoxes.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "web",
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:25:30"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-025",
@@ -2057,17 +2057,17 @@
       "applies_to": "phone",
       "title": "Phone first-run wheels too short; ▲▼ crowded",
       "what": "iPhone 16: the Subject, Class and Duration wheel boxes are too short for comfortable swiping, and the ▲/▼ pair sits too close together (also on the Chapter wheel). Founder: make them the CHAPTER box's height; space the arrows apart, but keep them clear of the box's top and bottom edges on the right. Label sizes are fine (minutes/periods match the chapter title). Phone only — web sizes are separate. ANDROID: same request (subject/class to chapter-box height).",
-      "fix": "",
-      "files": "mobile first-run wheel component (RollWheel port) + theme/web.js",
+      "fix": "PHONE: Subject/Class/Duration/Periods wheels use the chapter box's height (92); the ▲▼ pair sits apart with air from the box's edges.",
+      "files": "mobile first-run wheel component (RollWheel port) + theme/web.js; mobile/app/first-run.jsx, mobile/components/RollWheel.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:36:24"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-026",
@@ -2080,17 +2080,17 @@
       "applies_to": "phone",
       "title": "Phone: periods 'Change' snaps back to the default",
       "what": "iPhone 16, chapter step: tapping Change on Estimated periods and moving the wheel restores the default immediately — the teacher cannot set periods at all (duration Change works). Likely a seeding effect overwriting the edited value (the 2026-08-21 web bug: guard with a periodsTouched ref, re-earned only on chapter change). Blocks setting 60×16 for 03.27. ANDROID: same — periods Change cannot be changed.",
-      "fix": "",
-      "files": "mobile first-run chapter step",
+      "fix": "PHONE: a re-pick of the SAME chapter is a no-op (the wheel re-commits on any layout shift, which was resetting periods and closing the editor); the wheel's parking effect no longer re-runs on every render.",
+      "files": "mobile first-run chapter step; mobile/app/first-run.jsx, mobile/components/RollWheel.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:36:24"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-027",
@@ -2103,17 +2103,17 @@
       "applies_to": "phone",
       "title": "Year Plan header 'SUGGESTED' breaks mid-word on the phone",
       "what": "iPhone 16, Year Plan: the column header 'Suggested periods' is too wide for its column, so 'SUGGESTE' sits on one line and 'D' wraps to the next. Never break inside a word: widen the column, shrink/space the header, or wrap only between words ('SUGGESTED / PERIODS'). Check the 'Planned' header and Android (and 1.2× text size).",
-      "fix": "",
-      "files": "mobile Year Plan screen + theme/web.js (yp_c / yp_colhd)",
+      "fix": "PHONE: the header breaks between words — 'Suggested' / 'periods'.",
+      "files": "mobile Year Plan screen + theme/web.js (yp_c / yp_colhd); mobile/components/YearPlan.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:43:07"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-028",
@@ -2126,17 +2126,17 @@
       "applies_to": "phone",
       "title": "Phone tour: tips at steps 9, 15, 19 overlap the bottom bar; step 12 tip jumps",
       "what": "iPhone 16. (1) At steps 9 and 15 (picker open) and 19 (Ask panel open) the tip box sits marginally over the bottom bar. With a sheet already filling the lower screen there is little room — founder: 'see how best to manage it' (e.g. place these tips ABOVE the sheet's content / inside the sheet's top, or lift them by the measured bottom-bar height, never over it). (2) Step 12's tip jumps abruptly from the bottom of the screen to the top as the step settles — place it once, or animate the move. At Larger text (T.29) it is more pronounced: 9, 15, 19 cover the bar; 12 jumps bottom→top; 13 also lands at the bottom over the bar before settling up. Fix placement so the tip is computed once from the settled target and never overlaps the measured bottom bar. ANDROID: steps 9 and 15 also turn the background suddenly very DULL (the tour's dim stacks on the sheet's own backdrop — dim once); 14 also jumps then settles; after Back/Next, 12 and 13 sometimes settle AWAY from their normal place (stale measurement — re-measure after the target settles).",
-      "fix": "",
-      "files": "mobile/components/GuidedTour.jsx (placement for steps 9, 12, 15, 19)",
+      "fix": "PHONE: every tip clears the bottom bar (lifted by BNAV_H + inset; 'below' clamped); tips are held invisible until the confirming re-measure, so 12/13/14 no longer jump; a sheet's own backdrop is not dimmed twice (steps 9, 15, 19).",
+      "files": "mobile/components/GuidedTour.jsx (placement for steps 9, 12, 15, 19); mobile/components/GuidedTour.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:53:21"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-029",
@@ -2149,17 +2149,17 @@
       "applies_to": "phone",
       "title": "Phone text fields: typed text sits at the bottom of the box",
       "what": "iPhone 16, Settings › Delete my account: the text typed into the 'Type erase' field is not vertically centred — it rides the bottom edge. Centre it (lineHeight/padding vs the fixed height, textAlignVertical on Android). ALSO the subscribe wizard's Email field (03.17) — likely every single-line TextInput sharing that style; fix at the shared field style.",
-      "fix": "",
-      "files": "mobile/app/(app)/settings/index.jsx (erase field style)",
+      "fix": "PHONE: single-line TextInputs drop the iOS lineHeight and centre vertically (textAlignVertical on Android).",
+      "files": "mobile/app/(app)/settings/index.jsx (erase field style); mobile/components/ui.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:58:49"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-030",
@@ -2172,17 +2172,17 @@
       "applies_to": "phone",
       "title": "Delete window's 'Download my data' skips the preview",
       "what": "iPhone 16: 'Download my data first (Word)' in the final delete window goes straight to the share sheet. Commit 1c9675fe made Word documents open in the preview first on iOS (Year Plan, reports, data export via settings/data.jsx, which uses canPreview + fetchDocument) — but settings/index.jsx's delete-window button still calls downloadDocument(dataExport) directly. Route it through the same preview path. ANDROID: same — goes straight to the app chooser. Note lib/download.js makes the preview iOS-ONLY by design (Android has no Quick Look; a .docx has no WebView renderer). Founder wants the document DISPLAYED first on both — needs a decision on how on Android (e.g. an in-app summary/preview screen, or open with the system viewer intent before offering share).",
-      "fix": "",
-      "files": "mobile/app/(app)/settings/index.jsx, mobile/lib/download.js",
+      "fix": "PHONE: the delete window's export now SHOWS the document — Quick Look on iOS, the system VIEW intent on Android (expo-intent-launcher + content:// URI), share sheet only as the fallback.",
+      "files": "mobile/app/(app)/settings/index.jsx, mobile/lib/download.js; mobile/lib/download.js, mobile/app/(app)/settings/index.jsx, mobile/package.json",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T11:58:49"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-031",
@@ -2195,8 +2195,8 @@
       "applies_to": "phone",
       "title": "Subscribe wizard: Save & continue hidden behind the keyboard",
       "what": "iPhone 16, About you: with the City field focused, the keyboard covers 'Save & continue →' — she must dismiss the keyboard to find it. Same family as WALK-A-001 (Support's Send). Keep the footer above the keyboard (KeyboardAvoidingView / scroll the CTA into view on focus).",
-      "fix": "About-you screen root is a KeyboardAvoidingView (padding on iOS) so the foot and 'Save & continue' stay above the keyboard.",
-      "files": "mobile/components/SubscribeWizard.jsx",
+      "fix": "About-you screen root is a KeyboardAvoidingView (padding on iOS) so the foot and 'Save & continue' stay above the keyboard. PHONE: About you lifts its foot above the keyboard (KeyboardAvoidingView) — done in the blocker fix.",
+      "files": "mobile/components/SubscribeWizard.jsx; mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
@@ -2205,7 +2205,7 @@
         "and_emu"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T12:43:06"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-032",
@@ -2218,17 +2218,17 @@
       "applies_to": "phone",
       "title": "Phone State dropdown too tall",
       "what": "iPhone 16, About you: the State list (≈36 entries) opens nearly full-screen, covering the top and bottom of the screen. Cap its height (e.g. ~55–60% of the window) and scroll inside; keep it clear of the bar and the home indicator. Check Personal profile's State too. ANDROID: same.",
-      "fix": "",
-      "files": "mobile Dropdown component",
+      "fix": "PHONE: a dropdown list is capped at half the window height and scrolls inside.",
+      "files": "mobile Dropdown component; mobile/components/Dropdown.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T12:25:24"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-033",
@@ -2241,17 +2241,17 @@
       "applies_to": "phone",
       "title": "BLOCKER: front-door subscribe wizard had no bar / safe area; Agreement could not be completed",
       "what": "iPhone 16, Subscribe from the front door: no brand bar, no Log out, and no top inset — the step rail sat under the status bar; on the Agreement the heading was hidden and could not be scrolled into view, and the five jump boxes did not reach their points. The agreement could not be completed, so no subscription was possible on the phone's front door. Causes: app/front-subscribe.jsx never rendered <Bar/> (its header claimed it did); Agreement's jumpTo used each card's y relative to its wrapper, not the scroll content. ANDROID (Pixel 7): after the fix, the Agreement's HEADING is still not visible (scroll and jump boxes work). Re-opened for Android.",
-      "fix": "front-subscribe renders <Bar gear={false}/> above the wizard (owns the safe-area top). Agreement adds the wrapper's y to each card's offset (acksY ref, declared before the early returns). About-you foot lifted above the keyboard (WALK-A-031). Round 2: ws.ob_body flex:1 → flexGrow:1 (flex on a ScrollView content container pinned it to the viewport — forms/agreement could not scroll); About you's step rail frozen above the scrolling form; dropped automaticallyAdjustKeyboardInsets (double-adjusted with the KAV).",
-      "files": "mobile/app/front-subscribe.jsx, mobile/components/Agreement.jsx, mobile/components/SubscribeWizard.jsx, mobile/theme/web.js",
+      "fix": "front-subscribe renders <Bar gear={false}/> above the wizard (owns the safe-area top). Agreement adds the wrapper's y to each card's offset (acksY ref, declared before the early returns). About-you foot lifted above the keyboard (WALK-A-031). Round 2: ws.ob_body flex:1 → flexGrow:1 (flex on a ScrollView content container pinned it to the viewport — forms/agreement could not scroll); About you's step rail frozen above the scrolling form; dropped automaticallyAdjustKeyboardInsets (double-adjusted with the KAV). PHONE round 3: the agreement prints its own title (the phone had no heading at all).",
+      "files": "mobile/app/front-subscribe.jsx, mobile/components/Agreement.jsx, mobile/components/SubscribeWizard.jsx, mobile/theme/web.js; mobile/components/Agreement.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
       "owner": "Claude",
-      "at": "2026-09-20T12:43:06"
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-034",
@@ -2264,17 +2264,17 @@
       "applies_to": "phone",
       "title": "Agreement jump: show the tick too when the whole point fits (optional)",
       "what": "iPhone 16: the five foot boxes scroll each point to the top (title first) — correct, because the purpose is READING. On longer points the 'I understand and agree' tick then sits below the fold. Founder: keep the top-down reveal; IF the whole point (title → tick) fits in the visible area, position it so the tick is visible without scrolling; otherwise leave it top-aligned. Low priority.",
-      "fix": "",
-      "files": "mobile/components/Agreement.jsx (jumpTo)",
+      "fix": "PHONE: a point that fits the visible band is lifted so its tick shows; a taller point stays top-aligned.",
+      "files": "mobile/components/Agreement.jsx (jumpTo); mobile/components/Agreement.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "ios",
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T13:00:03"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-035",
@@ -2287,16 +2287,16 @@
       "applies_to": "phone",
       "title": "Android: hardware Back does nothing — front door, first run AND the app shell",
       "what": "Pixel 7 emulator (API 34): on the OTP screen and on sign-in, the system Back (◁ or edge swipe) does nothing — the screen stays. These are one route with a `screen` state (login.jsx), so Back is swallowed. It should do exactly what the on-screen '← Back' does (OTP → Choose on create / → sign-in on returning; sign-in → Choose; privacy → where she came from), and exit the app only from Choose. Use BackHandler in login.jsx (and the first-run steps: Back = '← Back', Welcome = exit). Also the /privacy route (03.14, 03.15): hardware Back does nothing there either. WIDER: also dead on first-run Welcome and inside the app (My Lessons). Decide the shell's rule like the web's WALK-A-008: close an open lesson/sheet, then Settings, then other tab → My Classes, then exit.",
-      "fix": "",
-      "files": "mobile/app/login.jsx (+ first-run.jsx)",
+      "fix": "PHONE (Android): BackHandler on the login screens (otp → choose/sign-in, sign-in → choose, choose → exit), on first run's steps, on /privacy, and in the app shell (close a window, pop the stack, other tab → My Classes, else exit).",
+      "files": "mobile/app/login.jsx (+ first-run.jsx); mobile/app/login.jsx, first-run.jsx, privacy.jsx, app/(app)/_layout.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu"
       ],
-      "owner": "",
-      "at": "2026-09-20T13:22:27"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-036",
@@ -2309,17 +2309,17 @@
       "applies_to": "phone",
       "title": "Android: 'Verify & continue' half-hidden under the pinned foot with the keyboard up",
       "what": "Pixel 7 emulator, create OTP screen with the number pad open: the Verify button is cut in half by the fixed foot ('← Back' band) sitting above the keyboard. The scroll area must end ABOVE the foot (bottom padding = foot height) and the CTA be scrolled into view when the boxes are focused. Android resizes the window, so KeyboardAvoidingView 'padding' is not the tool there. See screenshot in the walk thread.",
-      "fix": "",
-      "files": "mobile/app/login.jsx",
+      "fix": "PHONE (Android): more bottom slack under the keypad and a second scroll-to-end once the resize settles, so Verify clears the foot.",
+      "files": "mobile/app/login.jsx; mobile/app/login.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T13:57:34"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-037",
@@ -2332,17 +2332,17 @@
       "applies_to": "phone",
       "title": "Android: first-run wheels fling too fast",
       "what": "Pixel 7 emulator: a flick on the Subject and Class wheels races past several rows (overshoots); Chapter and Duration are a bit fast too. Slow the fling — decelerationRate 'fast' + snapToInterval of one row (or disableIntervalMomentum so one flick moves one row). Check iOS feel stays right.",
-      "fix": "",
-      "files": "mobile/components/RollWheel.jsx",
+      "fix": "PHONE (Android): wheel decelerationRate 0.8 (iOS keeps 'fast'), so one flick moves about one row.",
+      "files": "mobile/components/RollWheel.jsx; mobile/components/RollWheel.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T13:57:34"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-038",
@@ -2355,17 +2355,17 @@
       "applies_to": "phone",
       "title": "Android first run: blank 'Loading…' instead of the preparing card",
       "what": "Pixel 7 emulator (Expo Go, tunnel): after 'Prepare the lesson →' the app showed an empty screen with 'Loading…' for an unusually long time, then the lesson card appeared all at once — the preparing card with its progress bar never showed. On the iPhone the handoff showed the card and bar. Suspect the handoff lands on the shell before the module-level preparing store is read (router.replace + (app) gate loading readiness on a slower device), so the gate's 'Loading…' covers the whole wait. The shell should open immediately on My Lessons with the preparing card, whatever the device speed.",
-      "fix": "",
-      "files": "mobile first-run handoff (preparing store) + app/(app)/_layout.jsx gate",
+      "fix": "PHONE: My Lessons draws the preparing card from the descriptor even before the profile/listing reads resolve, so the wait is never hidden behind 'Loading your lessons…'.",
+      "files": "mobile first-run handoff (preparing store) + app/(app)/_layout.jsx gate; mobile/app/(app)/lessons.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T14:02:42"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-039",
@@ -2378,17 +2378,17 @@
       "applies_to": "phone",
       "title": "Android: set-up check doesn't rise after tour Done until a tab switch",
       "what": "Pixel 7 emulator: ending the tour with Done left her on My Classes with no 'Would you like to check your set-up?'. It rose only after switching to My Lessons and back. Its trigger evidently depends on a screen-focus/dependency change that Done does not cause on Android (the iPhone raised it after Skip). Make the tour's end itself queue the check (as the web's finishTour does).",
-      "fix": "",
-      "files": "mobile shell (tour finish → set-up check)",
+      "fix": "PHONE: the tour's END raises the set-up check directly (a focus effect never fired on Done, which is why it needed a tab switch).",
+      "files": "mobile shell (tour finish → set-up check); mobile/app/(app)/index.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T14:34:21"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-040",
@@ -2401,17 +2401,17 @@
       "applies_to": "phone",
       "title": "About you: Save lights up while School is still below the fold",
       "what": "Pixel 7 emulator: once State is chosen, 'Save & continue' enables; City is just visible and School name sits below the fold. A teacher may tap Save without ever seeing the School field. With City mandatory (WALK-A-022) Save will wait for City — but School should still be seen: e.g. scroll the next field into view when a dropdown closes, or keep the whole form on screen above the frozen foot.",
-      "fix": "",
-      "files": "mobile/components/SubscribeWizard.jsx (About you)",
+      "fix": "PHONE: answering State scrolls the rest of the form (City, School) into view.",
+      "files": "mobile/components/SubscribeWizard.jsx (About you); mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T14:53:23"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     },
     {
       "id": "WALK-A-041",
@@ -2424,17 +2424,17 @@
       "applies_to": "phone",
       "title": "Privacy Notice sheet overlaps the top bar",
       "what": "Pixel 7 emulator, Agreement → 'Privacy Notice' in the final tick: the sheet's top rides over the app bar. The sheet must start below the bar/status bar (safe-area top + BAR_CONTENT_H). Check iOS (it looked fine there).",
-      "fix": "",
-      "files": "mobile Sheet component / Agreement.jsx",
+      "fix": "PHONE: the sheet overlay keeps the safe-area top and bottom, so it no longer rides over the bar.",
+      "files": "mobile Sheet component / Agreement.jsx; mobile/components/AttachSheet.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "and_emu",
         "ios"
       ],
-      "owner": "",
-      "at": "2026-09-20T14:53:23"
+      "owner": "Claude",
+      "at": "2026-09-20T15:22:00"
     }
   ]
 }

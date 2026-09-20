@@ -20,7 +20,7 @@
  * are all settled behaviour by now, and every one of them cost a founder report to get right.
  */
 import { useState } from "react";
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, useWindowDimensions } from "react-native";
 import { Text } from "./Text";
 import { Sheet } from "./AttachSheet";
 import { useTheme } from "../theme/ThemeContext";
@@ -32,6 +32,7 @@ const labOf = (o) => (o && typeof o === "object" ? o.label : o);
 
 export default function Dropdown({ value, onChange, options = [], placeholder = "Choose one",
                                    label, disabled = false }) {
+  const { height: winH } = useWindowDimensions();
   const { t } = useTheme();
   const ws = useWebStyles();
   const [open, setOpen] = useState(false);
@@ -55,7 +56,9 @@ export default function Dropdown({ value, onChange, options = [], placeholder = 
 
       {open ? (
         <Sheet visible scroll onClose={() => setOpen(false)} kicker={label} title={placeholder}>
-          <ScrollView keyboardShouldPersistTaps="handled">
+          {/* WALK-A-032 (founder, 2026-09-20): a long list (36 states) opened nearly full-screen,
+              covering the top and the bottom. Half the window at most, and it scrolls inside. */}
+          <ScrollView keyboardShouldPersistTaps="handled" style={{ maxHeight: Math.round(winH * 0.5) }}>
             {options.map((o) => {
               const v = valOf(o);
               const on = v === value;

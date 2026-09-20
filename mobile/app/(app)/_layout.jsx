@@ -9,7 +9,7 @@
  * the class cards, a lesson opened from them — reads as My Classes; Settings lights neither
  * and hides the bar entirely (its screen arrives in step 6). */
 import { useEffect, useRef, useState } from "react";
-import { AppState, View } from "react-native";
+import { AppState, BackHandler, View } from "react-native";
 import { Redirect, Stack, useGlobalSearchParams, useRouter, usePathname } from "expo-router";
 import { getJSON, getUser, postJSON } from "@aruvi/shared/format";
 import { pullSectionState, setSectionMismatchHandler } from "@aruvi/shared/sectionState";
@@ -58,6 +58,20 @@ export default function AppLayout() {
   /* Whether the open edit was reached THROUGH a pick screen — i.e. whether there is a question
      behind it to step back to. See the window's ← below. */
   const [pickBack, setPickBack] = useState(null);
+  /* ★ ANDROID'S BACK INSIDE THE APP (WALK-A-035, 2026-09-20 — the web's WALK-A-008 rule). It did
+     nothing at all. Now: an open window closes first; then the Stack pops (a lesson, a Settings
+     screen, a preview); then any other tab returns to My Classes; at My Classes it leaves.
+     First run is a separate route that was REPLACED, so Back can never reach it. Screens that own
+     their own Back (Ask Meyy, the tour) register later and so run first. */
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (win || edit || pick) { setWin(null); setEdit(null); setPick(null); return true; }
+      if (router.canGoBack()) { router.back(); return true; }
+      if (pathname !== "/" && pathname !== "/(app)") { router.replace("/(app)"); return true; }
+      return false;
+    });
+    return () => sub.remove();
+  }, [win, edit, pick, pathname, router]);
   /* What the open edit needs from the window's chrome — today just its ← , which exists only on
      the duration step. Reported up by the editor, because the Sheet is owned here. */
   const [editChrome, setEditChrome] = useState(null);

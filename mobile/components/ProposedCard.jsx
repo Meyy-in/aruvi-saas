@@ -52,7 +52,7 @@ export function matrixLabel(rows) {
     .join(" · ");
 }
 
-export default function ProposedCard({ preparing, onDismiss, bare = false }) {
+export default function ProposedCard({ preparing, onDismiss, onRetry, bare = false }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const grow = useRef(new Animated.Value(0)).current;
@@ -77,13 +77,25 @@ export default function ProposedCard({ preparing, onDismiss, bare = false }) {
   /* The progress line, or the failure. `bare` renders just this — My Lessons uses it to mark an
      EXISTING card busy in place, rather than drawing a second card above it. */
   const body = failed ? (
-    <View style={[ws.sc_prep, ws.sc_prep_failed]}>
-      <Text style={[ws.sc_prep_note, ws.sc_prep_note_failed]} numberOfLines={2}>{msg}</Text>
-      <Pressable onPress={onDismiss} accessibilityRole="button" hitSlop={8}
-        accessibilityLabel="Dismiss this failed lesson"
-        style={[ws.sc_prep_dismiss, { borderBottomColor: t.edge_clay }]}>
-        <Text style={ws.sc_prep_dismiss_t}>Dismiss</Text>
-      </Pressable>
+    /* WALK-A-019 (founder, 2026-09-20): the sentence shows IN FULL (the two-line clamp cut the one
+       line that says what happened), and "Try again" sits beside Dismiss — she has already chosen
+       the chapter, the duration and the periods. */
+    <View style={[ws.sc_prep, ws.sc_prep_failed, { flexWrap: "wrap" }]}>
+      <Text style={[ws.sc_prep_note, ws.sc_prep_note_failed, { flexShrink: 1 }]}>{msg}</Text>
+      <View style={{ flexDirection: "row", gap: 14 }}>
+        {onRetry ? (
+          <Pressable onPress={() => onRetry(preparing)} accessibilityRole="button" hitSlop={8}
+            accessibilityLabel="Try preparing this lesson again"
+            style={[ws.sc_prep_dismiss, { borderBottomColor: t.edge_clay }]}>
+            <Text style={ws.sc_prep_dismiss_t}>Try again</Text>
+          </Pressable>
+        ) : null}
+        <Pressable onPress={onDismiss} accessibilityRole="button" hitSlop={8}
+          accessibilityLabel="Dismiss this failed lesson"
+          style={[ws.sc_prep_dismiss, { borderBottomColor: t.edge_clay }]}>
+          <Text style={ws.sc_prep_dismiss_t}>Dismiss</Text>
+        </Pressable>
+      </View>
     </View>
   ) : (
     /* ⚠️ At phone width the web stacks this: the NOTE leads and the bar sits under it at full
@@ -105,10 +117,13 @@ export default function ProposedCard({ preparing, onDismiss, bare = false }) {
   if (bare) return body;
 
   return (
+    /* WALK-A-019: a FAILED card borrows no lifecycle colour — the clay spine read as "attached".
+       Neutral edge and spine; the words carry the state. */
     <View style={[ws.sc_card, ws.mlp2_cardpad, ws.sc_proposed,
-      { backgroundColor: t.paper_2, borderColor: t.edge_clay }]}
+      { backgroundColor: t.paper_2, borderColor: failed ? t.edge : t.edge_clay },
+      failed && { borderStyle: "solid" }]}
       accessibilityLiveRegion="polite">
-      <View style={[ws.sc_spine, { backgroundColor: t.clay }]} />
+      <View style={[ws.sc_spine, { backgroundColor: failed ? t.edge : t.clay }]} />
       <Text style={ws.sc_tag}>{pad(preparing.chapterNo)}</Text>
       <View style={ws.sc_body}>
         <Text style={ws.sc_title} numberOfLines={2}>{preparing.chapterTitle}</Text>

@@ -10,7 +10,7 @@
  * title is pinned with it, so what she is reading is named however far down she goes.
  */
 import { useEffect, useState } from "react";
-import { View, ScrollView, Pressable, StyleSheet } from "react-native";
+import { View, ScrollView, Pressable, StyleSheet, BackHandler } from "react-native";
 import { Text } from "../components/Text";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { API } from "@aruvi/shared/config";
@@ -43,6 +43,15 @@ export default function Privacy() {
         "The privacy notice couldn’t be loaded just now. Check your connection and try again."); });
     return () => { live = false; };
   }, [version]);
+  /* WALK-A-035: Android's Back returns to where she came from, as "← Back" does. Registered after
+     the login screen's own handler, so it runs first while this screen is on top. */
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (router.canGoBack()) router.back(); else router.replace("/login");
+      return true;
+    });
+    return () => sub.remove();
+  }, [router]);
 
   const doc = (state && (state.document || state)) || {};
   const older = state && state.current_version && doc.version

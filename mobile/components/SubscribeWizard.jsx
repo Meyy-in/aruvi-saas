@@ -43,6 +43,7 @@ import { useRouter } from "expo-router";
 import { Text, TextInput } from "./Text";
 import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
          ROLES, STATES, EMAIL_OK, EMAIL_TAKEN } from "@aruvi/shared/format";
+import { storage } from "@aruvi/shared/storage";
 import { dateWords } from "@aruvi/shared/legalmd";
 import { syncEntitlement } from "@aruvi/shared/entitlement";
 import { notePurchase } from "../lib/purchase";
@@ -114,6 +115,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [email2, setEmail2] = useState("");
+  const aboutScroll = useRef(null);   // WALK-A-040: the About-you form's scroller
   const [emailStage, setEmailStage] = useState("enter");   // enter | confirm | ok
   const [emailErr, setEmailErr] = useState("");
   const [emailBusy, setEmailBusy] = useState(false);
@@ -140,6 +142,12 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   useEffect(() => {
     if (!trialFork || offeredRef.current) return;
     offeredRef.current = true;
+    /* WALK-A-021 (2026-09-20): once per SESSION, not per mount — the wizard's own ← Back sends her
+       to re-verify, which remounts this component, and the offer came back every time. */
+    try {
+      if (storage.getItem("aruvi_trial_offer_seen")) return;
+      storage.setItem("aruvi_trial_offer_seen", "1");
+    } catch {}
     setOfferTrial(true);
   }, [trialFork]);
 
@@ -350,7 +358,8 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
 
   /* ── 2 · About you ───────────────────────────────────────────── */
   if (screen === "about") {
-    const ready = name.trim() && emailStage === "ok" && role && stateName;
+    /* WALK-A-022 (founder, 2026-09-20): City is mandatory, and every required field is starred. */
+    const ready = name.trim() && emailStage === "ok" && role && stateName && city.trim();
     /* WALK-A-031 (walk blocker, 2026-09-20): with a field focused the keyboard covered the foot,
        so "Save & continue" could not be reached without dismissing it. The screen now lifts its
        foot above the keyboard, so the CTA is ALWAYS visible — she may continue with the minimum. */
@@ -365,12 +374,12 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
         <View style={{ paddingHorizontal: 20, paddingTop: 12, backgroundColor: t.paper }}>
           <Steps at={1} />
         </View>
-        <ScrollView contentContainerStyle={[ws.ob_body, { paddingTop: 10 }]} keyboardShouldPersistTaps="handled">
+        <ScrollView ref={aboutScroll} contentContainerStyle={[ws.ob_body, { paddingTop: 10 }]} keyboardShouldPersistTaps="handled">
           <Text style={[ws.ob_title, { color: t.ink }]}>Tell us a bit about yourself</Text>
           <Text style={[ws.ob_sub, { color: t.ink_soft }]}>
             For your receipt and your account — nothing more.</Text>
 
-          <Field label="Your name">
+          <Field label="Your name" required>
             <Input value={name} onChangeText={setName} placeholder="Enter your full name" />
           </Field>
 
@@ -379,15 +388,23 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
               the first entry back. */}
           {emailStage === "enter" ? (
             <>
-              <Field label="Email">
+              <Field label="Email" required>
                 <Input value={email} placeholder="Enter your email"
                   onChangeText={(v) => { setEmail(v); setEmailErr(""); }}
                   keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
               </Field>
               <ErrorLine>{emailErr}</ErrorLine>
               {EMAIL_OK(email) ? (
-                <Link title="Confirm this email →" style={{ textAlign: "left" }}
-                  onPress={() => { setEmail2(""); setEmailStage("confirm"); }} />
+                /* WALK-A-022: an address that belongs to another account is refused HERE, on first
+                   entry — not after she has typed it a second time to confirm. */
+                <Link title={emailBusy ? "Checking…" : "Confirm this email →"} style={{ textAlign: "left" }}
+                  onPress={emailBusy ? undefined : async () => {
+                    setEmailBusy(true);
+                    const taken = await idInUse(email, (acctRef.current || {}).account_id);
+                    setEmailBusy(false);
+                    if (taken) { setEmailErr(EMAIL_TAKEN); return; }
+                    setEmail2(""); setEmailStage("confirm");
+                  }} />
               ) : null}
             </>
           ) : null}
@@ -416,15 +433,20 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             </Field>
           ) : null}
 
-          <Field label="Role">
+          <Field label="Role" required>
             <Dropdown value={role} onChange={setRole} options={ROLES}
               placeholder="Select your role" label="Role" />
           </Field>
-          <Field label="State">
-            <Dropdown value={stateName} onChange={setStateName} options={STATES}
-              placeholder="Select your state" label="State" />
+          <Field label="State" required>
+            {/* WALK-A-040 (founder, 2026-09-20): answering State used to light up Save while City
+                and School sat below the fold — she could finish without ever seeing School. The
+                rest of the form is brought into view when this question is answered. */}
+            <Dropdown value={stateName} onChange={(v) => {
+              setStateName(v);
+              setTimeout(() => aboutScroll.current?.scrollToEnd({ animated: true }), 180);
+            }} options={STATES} placeholder="Select your state" label="State" />
           </Field>
-          <Field label="City">
+          <Field label="City" required>
             <Input value={city} onChangeText={setCity} placeholder="Enter your city" />
           </Field>
           <Field label="School name (optional)">
@@ -605,11 +627,13 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
 }
 
 /* The wizard's field wrapper — label above, the web's `.ob-field` 12px above each. */
-function Field({ label, children }) {
+function Field({ label, children, required = false }) {
   const { t } = useTheme();
   return (
     <View style={{ marginTop: 12, rowGap: 6 }}>
-      <Text style={[type.label, { color: t.ink_soft }]}>{label}</Text>
+      {/* WALK-A-022: a clay * marks a required field; School name carries none. */}
+      <Text style={[type.label, { color: t.ink_soft }]}>{label}
+        {required ? <Text style={{ color: t.clay }}> *</Text> : null}</Text>
       {children}
     </View>
   );

@@ -16,7 +16,7 @@
  * OTP verifies. Without Supabase env the stub stays (four boxes, 0000), labelled, so a
  * header-mode dev API still works. */
 import { useEffect, useRef, useState } from "react";
-import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, Pressable, StyleSheet } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, Pressable, StyleSheet, BackHandler } from "react-native";
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
@@ -78,7 +78,7 @@ const Benefits = () => {
  * Shared by all three screens (choose / otp / signin) because the frame is: the OTP door had the
  * same fault one field earlier. */
 const BODY_PAD_BOTTOM = 30;   /* must equal s.body.paddingBottom below */
-const KEYPAD_SLACK = 24;
+const KEYPAD_SLACK = Platform.OS === "android" ? 56 : 24;   // WALK-A-036: Android resizes the window; the CTA needs clear air above the foot
 
 function Wrap({ children, foot }) {
   const { t } = useTheme();
@@ -90,6 +90,9 @@ function Wrap({ children, foot }) {
       setKeypad(true);
       /* One frame for the padding to land, then go to the action. */
       requestAnimationFrame(() => scroller.current?.scrollToEnd({ animated: true }));
+      /* WALK-A-036: on Android the resize and the new bottom padding land a beat later, and the
+         first scroll stopped with Verify half under the foot — scroll once more after they settle. */
+      setTimeout(() => scroller.current?.scrollToEnd({ animated: true }), 250);
     });
     const hidden = Keyboard.addListener("keyboardDidHide", () => setKeypad(false));
     return () => { shown.remove(); hidden.remove(); };
@@ -136,7 +139,18 @@ export default function Login() {
   const otpLen = live ? OTP_LEN : 4;
   const [screen, setScreen] = useState(() => { try { return storage.getItem(SEEN_KEY) ? "signin" : "choose"; } catch { return "signin"; } });
   const [flow, setFlow] = useState("create");   // create | return
-  const [mode, setMode] = useState("trial");    // trial | subscribe — the page-1 choice
+  /* ★ HER CHOICE OF DOOR SURVIVES A RETURN TO THIS SCREEN (WALK-A-021, 2026-09-20). The wizard's
+     own "← Back" sends her here to re-verify; this screen remounts, and with the choice held in
+     plain state she came back as a TRIAL and was dropped into first run — the subscribe path lost
+     to one Back. Kept per device, cleared once she is through the wizard (onDone). */
+  const MODE_KEY = "aruvi_signup_mode";
+  const [mode, setMode] = useState(() => {
+    try { return storage.getItem(MODE_KEY) === "subscribe" ? "subscribe" : "trial"; } catch { return "trial"; }
+  });
+  const chooseMode = (m) => {
+    setMode(m);
+    try { if (m === "subscribe") storage.setItem(MODE_KEY, m); else storage.removeItem(MODE_KEY); } catch {}
+  };
   const [mobile, setMobile] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   /* ★ THE CODE'S OWN CLOCK (founder, 2026-09-17: "there is no timer too … at end of timer, it
@@ -155,7 +169,8 @@ export default function Login() {
     return () => clearInterval(id);
   }, [otpAt]);
   const otpDead = otpAt > 0 && otpLeft === 0;
-  /* Resend appears once the server would actually honour it — see OTP_RESEND_LOCK_MS. Offering
+  /* (WALK-A-004: the mid-run Resend is gone; the values below are kept only for reference.)
+     Resend appeared once the server would actually honour it — see OTP_RESEND_LOCK_MS. Offering
      it sooner is offering a button that comes back refused. */
   const otpElapsed = otpAt > 0 ? OTP_TTL_MS / 1000 - otpLeft : 0;
   const otpCanResend = otpAt > 0 && otpElapsed >= OTP_RESEND_LOCK_MS / 1000;
@@ -169,6 +184,18 @@ export default function Login() {
   const [signinBusy, setSigninBusy] = useState(false);
 
   useEffect(() => { if (screen !== "otp") { setOtp(""); setOtpErr(""); } }, [screen]);
+  /* ★ ANDROID'S BACK DOES WHAT "← Back" DOES (WALK-A-035, 2026-09-20). The three screens are one
+     route with a `screen` state, so the system Back had nothing to pop and did nothing. Now:
+     otp → where she came from (choose on create, sign-in on returning); sign-in → choose; choose →
+     leave the app (the default). */
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (screen === "otp") { setOtpSent(false); setScreen(flow === "return" ? "signin" : "choose"); return true; }
+      if (screen === "signin") { setScreen("choose"); return true; }
+      return false;
+    });
+    return () => sub.remove();
+  }, [screen, flow]);
 
   /* ★ `to` IS THE ONLY THING THE SUBSCRIBE DOOR CHANGES. Everything else about entering is the
      same act whichever card she chose — the device is marked seen, the user is set, the bank is
@@ -267,7 +294,9 @@ export default function Login() {
   if (screen === "choose") {
     return (
       <Wrap foot={<>
-        <Button title="Create sign in →" onPress={() => { setFlow("create"); setOtpSent(false); setScreen("otp"); }} />
+        <Button title="Create sign in →" onPress={() => {
+          /* WALK-A-011 (founder, 2026-09-20): every fresh entry starts empty. */
+          setFlow("create"); setOtpSent(false); setMobile(""); setMobErr(""); setOtpAt(0); setScreen("otp"); }} />
         <Link title="Already have an ID? Sign in" onPress={() => setScreen("signin")} />
       </>}>
         <Benefits />
@@ -278,11 +307,11 @@ export default function Login() {
             choice is real — it decides where Verify sends her. The phone drew ONE card, as a
             static View, so Subscribe was not merely unselected: it did not exist, and a teacher
             who wanted to pay had no way to say so at the door. */}
-        <PlanCard on={mode === "trial"} onPress={() => setMode("trial")}
+        <PlanCard on={mode === "trial"} onPress={() => chooseMode("trial")}
           title="Free to try"
           sub="Try Meyy with no cost. Perfect to explore and get started."
           points="Any 3 chapters · unlimited lesson plans per chapter · all core features to plan & assess" />
-        <PlanCard on={mode === "subscribe"} onPress={() => setMode("subscribe")}
+        <PlanCard on={mode === "subscribe"} onPress={() => chooseMode("subscribe")}
           title="Subscribe"
           sub="Unlimited access to plan across your subject & stage."
           points="In addition to core features to plan & assess, Unlimited chapters · every class in that subject & stage" sub2 />
@@ -319,7 +348,15 @@ export default function Login() {
           <Button title={mobBusy ? (live ? "Sending…" : "Checking…") : "Generate OTP →"} disabled={!mobileOk} busy={mobBusy} style={{ marginTop: 22 }}
             onPress={async () => {
               setMobErr(""); setMobBusy(true);
-              const taken = await idInUse(mobile.trim());
+              /* WALK-A-021 (2026-09-20): a number that verified once but never became a teacher
+                 (no agreement, profile, subscription or chapter — the server's `fresh`) may come
+                 in by this door again; only an ACTIVATED account is "already in use". Without
+                 this, backing out of the subscribe wizard left her with the trial door only. */
+              let taken = false;
+              try {
+                const k = await getJSON(`/onboarding/known?id=${encodeURIComponent(mobile.trim())}`);
+                taken = !!(k && k.known && !k.fresh);
+              } catch { taken = await idInUse(mobile.trim()); }
               if (taken) { setMobBusy(false); setMobErr(MOBILE_TAKEN); return; }
               const err = await requestOtp(mobile.trim());
               setMobBusy(false);
@@ -329,7 +366,7 @@ export default function Login() {
         ) : (
           <>
             <Field label="Enter the OTP">
-              <OtpBoxes value={otp} onChange={(v) => { setOtp(v); setOtpErr(""); }} length={otpLen} autoFocus />
+              <OtpBoxes value={otp} onChange={(v) => { setOtp(v); setOtpErr(""); }} length={otpLen} autoFocus disabled={otpDead} />
             </Field>
             {live ? (
               /* ★ WHILE IT RUNS she is told how long she has and is NOT offered Resend — a fresh
@@ -338,26 +375,21 @@ export default function Login() {
                  left, which is the founder's rule: "at end of timer, it should show resend
                  only". One state, one action. */
               otpDead ? (
-                <Quiet>The code sent to +91 {mobile.trim()} has expired.{"  "}
-                  <Text style={{ color: t.pine, textDecorationLine: "underline" }}
-                    onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp("");
-                      const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>Send a new code</Text>
-                </Quiet>
+                /* WALK-A-004 (2026-09-20): once dead, the boxes are disabled and the full-size
+                   "Send a new code" below takes Verify's place. */
+                <Quiet>The code sent to +91 {mobile.trim()} has expired.</Quiet>
               ) : (
                 <Quiet>Sent by SMS to +91 {mobile.trim()}.{"  "}
                   <Text style={type.bodyStrong}>{Math.floor(otpLeft / 60)}:{String(otpLeft % 60).padStart(2, "0")}</Text> left.
-                  {otpCanResend ? (
-                    <Text>{"  "}
-                      <Text style={{ color: t.pine, textDecorationLine: "underline" }}
-                        onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp("");
-                      const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>Resend</Text>
-                    </Text>
-                  ) : null}
                 </Quiet>
               )
             ) : <Quiet>Preview build: enter <Text style={type.bodyStrong}>0000</Text>.</Quiet>}
             <ErrorLine>{otpErr}</ErrorLine>
-            {otpDead ? null : (
+            {otpDead ? (
+              <Button title="Send a new code" busy={otpBusy} style={{ marginTop: 22 }}
+                onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp("");
+                  const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }} />
+            ) : (
               <Button title={otpBusy ? "Verifying…" : "Verify & continue →"} disabled={otp.length !== otpLen} busy={otpBusy} style={{ marginTop: 22 }} onPress={verifyOtp} />
             )}
           </>

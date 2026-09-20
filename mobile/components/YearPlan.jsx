@@ -245,7 +245,9 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
             two cells. */}
         <View style={[ws.yp_colhd, { borderBottomColor: t.line }]}>
           <Text style={[ws.yp_c, ws.yp_c_chap]}>Chapter</Text>
-          <Text style={[ws.yp_c, ws.yp_c_sug]}>Suggested periods</Text>
+          {/* WALK-A-027 (founder, 2026-09-20, iPhone): "SUGGESTED" broke mid-word — "SUGGESTE" on one
+              line and "D" on the next. Break between WORDS, never inside one. */}
+          <Text style={[ws.yp_c, ws.yp_c_sug]}>Suggested{"\n"}periods</Text>
           <Text style={[ws.yp_c, ws.yp_c_plan]}>Your{"\n"}plan</Text>
         </View>
 

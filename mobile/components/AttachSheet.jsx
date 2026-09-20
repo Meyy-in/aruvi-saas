@@ -31,6 +31,7 @@ import { Text } from "./Text";
 import PrepareCta from "./PrepareCta";
 import { pretty, classNum, pad } from "@aruvi/shared/format";
 import { readHistory } from "@aruvi/shared/sectionHistory";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTourAnchor, useTour, tourNext, tourBack, tourSkip,
          setTourOverlayHost } from "../lib/tour";
 import GuidedTour from "./GuidedTour";
@@ -63,6 +64,9 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
   const { t } = useTheme();
   const ws = useWebStyles();
   const tourRef = useTourAnchor(tour);   // only the attach picker passes a name (steps 9, 15)
+  /* WALK-A-041 (founder, 2026-09-20, Android): a tall sheet rode over the app bar and the status
+     bar. The Modal is statusBarTranslucent, so the overlay owes the safe area its own room. */
+  const insets = useSafeAreaInsets();
   /* ★ THE SHEET DRAWS THE TOUR WHILE IT IS UP (founder, reported on three walks: at steps 9 and
      15 *"pressing next shows the erroneous window"*). A React Native `Modal` is presented in its
      OWN NATIVE WINDOW above the whole app, so the overlay in the shell could never appear over
@@ -94,7 +98,8 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
       {/* Tapping the ground closes, as the web's overlay onClick does; the card stops it. */}
       <KeyboardAvoidingView style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <View style={ws.ap_overlay}>
+      <View style={[ws.ap_overlay, { paddingTop: Math.max(20, (insets.top || 0) + 12),
+                                     paddingBottom: Math.max(20, (insets.bottom || 0) + 12) }]}>
         {/* ★ THE GROUND IS A SIBLING BEHIND THE CARD, NEVER ITS PARENT (founder, 2026-09-15:
             "the 'How many periods a week' window of Add button does not allow wheeling up and
             down the numbers. The arrow of course works").

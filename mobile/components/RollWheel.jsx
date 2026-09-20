@@ -33,9 +33,14 @@
  * passes 72 — and it MUST equal the snap interval or the box settles between rows.
  */
 import { useEffect, useRef } from "react";
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, Platform } from "react-native";
 import { Text } from "./Text";
 import { useWebStyles } from "../theme/web";
+
+/* WALK-A-006 (2026-09-20) — the web's `wheelChapterTitle`, same rule, same wheel: the row's chip
+ * already shows the number, so a title that begins "Chapter 4: …" said it twice. */
+export const wheelChapterTitle = (t) =>
+  String(t || "").replace(/^\s*chapter\s+\d+\s*[:.\-\u2013\u2014]\s*/i, "") || String(t || "");
 
 export const WHEEL_ROW = 64;   // the web's WHEEL_ROW; My Lessons overrides it with 72
 
@@ -43,7 +48,8 @@ export const WHEEL_ROW = 64;   // the web's WHEEL_ROW; My Lessons overrides it w
    15 to 17. It is for SHORT lists — "7 periods a week" — where a longer list like a chapter title
    stays at 15 and needs the room. */
 export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW,
-                            align = "left", padLeft = 16, peek = false, clamp = 1, large = false }) {
+                            align = "left", padLeft = 16, peek = false, clamp = 1, large = false,
+                            loop: loopProp = false }) {
   const ref = useRef(null);
   const settle = useRef(null);
   /* ★ WHAT THIS WHEEL ITSELF LAST COMMITTED (2026-09-15). The parking effect below deliberately
@@ -71,7 +77,9 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   const N = items.length;
   /* Continuous wheeling is a PEEK behaviour. The base wheel's list has ends and the ▲▼ pair
      respects them — the web's `stepScroll` clamps to [0, N-1] for exactly this reason. */
-  const loop = peek && N > 1;
+  /* WALK-A-005 (founder, 2026-09-20): first run's SUBJECT and CLASS wheels roll continuously too
+     (`loop`); the chapter wheel keeps its ends, so its list still says where the book ends. */
+  const loop = (peek || loopProp) && N > 1;
   // The real index of the current value. A value that is not in the list at all is corrected by
   // the effect below, which tells the PARENT — it is never silently displayed as item 0.
   const selIdx = Math.max(0, items.findIndex((it) => String(it.id) === String(value)));
@@ -110,8 +118,11 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
     // silently dropped.
     const id = setTimeout(() => { try { el.scrollTo({ y, animated: false }); } catch {} }, 0);
     return () => clearTimeout(id);
+    /* WALK-A-026: keyed on the LIST'S SIZE, not the array's identity. Callers build their items
+       inline, so a new array arrived on every parent render and this effect re-parked the box
+       mid-gesture — one more hand on the wheel while she was turning it. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, rowPx]);
+  }, [N, rowPx]);
 
   /* ★ FOLLOW A VALUE SET FROM OUTSIDE (founder, 2026-09-15: "on iPhone, when lesson generation
      is initiated it defaults to pre-existing subject (English) list on My Lessons and remains
@@ -241,11 +252,13 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
      pick is committed before the box moves, for the same reason the ▼ does it. */
   const step = (dir) => {
     if (!N) return;
-    const next = Math.min(N - 1, Math.max(0, selIdx + dir));
+    // Looping wheels wrap at the ends (WALK-A-005); the rest clamp, as the web's stepScroll does.
+    const next = loop ? ((selIdx + dir) % N + N) % N
+                      : Math.min(N - 1, Math.max(0, selIdx + dir));
     if (next === selIdx) return;
     mine.current = String(items[next].id);   // ours, so the follow effect leaves the roll alone
     onChange(String(items[next].id));
-    rollTo(next * rowPx);
+    rollTo((loop ? N + next : next) * rowPx);
   };
 
   const ws = useWebStyles();
@@ -253,7 +266,11 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
     <View style={[peek ? ws.rw_shell : ws.rw_shell_base, { height: rowPx + 2 }]}
       accessibilityLabel={ariaLabel}>
       <ScrollView ref={ref} showsVerticalScrollIndicator={false}
-        snapToInterval={rowPx} decelerationRate="fast" disableIntervalMomentum
+        snapToInterval={rowPx}
+        /* WALK-A-037 (founder, 2026-09-20): on Android a flick raced past several rows. "fast"
+           is 0.9; 0.8 stops the fling nearer the finger, so one flick moves about one row. iOS
+           keeps the feel it was signed off with. */
+        decelerationRate={Platform.OS === "android" ? 0.8 : "fast"} disableIntervalMomentum
         scrollEventThrottle={16}
         onScroll={onSettle} onMomentumScrollEnd={onSettle} onScrollEndDrag={onSettle}
         contentContainerStyle={{ paddingRight: 0 }}>
@@ -283,8 +300,11 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
           `position: absolute` on the shell for the same reason. It does not bob: the web's
           `fr-cue-bob` animation is a "this box moves" hint for a mouse user who has never met a
           wheel, and a thumb on a phone finds that out by touching it. */}
+      {/* WALK-A-025: the ▲▼ PAIR sits apart in the taller box, with air kept from its top and
+          bottom edges; the peek wheel's single ▼ stays centred. */}
       {N > 1 ? (
-        <View style={ws.rw_cue} pointerEvents="box-none">
+        <View style={[ws.rw_cue, !peek && { justifyContent: "space-between", paddingVertical: 10 }]}
+          pointerEvents="box-none">
           {peek ? (
             <Pressable onPress={stepCycle} style={ws.rw_cue_btn} hitSlop={8}
               accessibilityRole="button" accessibilityLabel={`Next ${ariaLabel || "item"}`}>

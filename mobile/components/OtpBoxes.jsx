@@ -8,7 +8,7 @@ import { TextInput } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { mono } from "../theme/fonts";
 
-export default function OtpBoxes({ value, onChange, length = 6, autoFocus = false }) {
+export default function OtpBoxes({ value, onChange, length = 6, autoFocus = false, disabled = false }) {
   const { t } = useTheme();
   const refs = useRef([]);
   const digits = Array.from({ length }, (_, i) => value[i] || "");
@@ -23,14 +23,21 @@ export default function OtpBoxes({ value, onChange, length = 6, autoFocus = fals
     if (d && i < length - 1) refs.current[i + 1]?.focus();
   };
   const onKey = (i, e) => {
-    if (e.nativeEvent.key === "Backspace" && !digits[i] && i > 0) refs.current[i - 1]?.focus();
+    /* WALK-A-024 (founder, 2026-09-20): one Backspace on an EMPTY box steps back AND clears that
+       digit — it used to need a second press. */
+    if (e.nativeEvent.key === "Backspace" && !digits[i] && i > 0) {
+      const arr = digits.slice(); arr[i - 1] = ""; onChange(arr.join(""));
+      refs.current[i - 1]?.focus();
+    }
   };
   return (
     <View style={s.row}>
       {digits.map((d, i) => (
         <TextInput key={i} ref={(el) => { refs.current[i] = el; }}
-          style={[s.box, { borderColor: d ? t.pine : t.edge, backgroundColor: t.field_bg, color: t.ink, fontFamily: mono(500) }]}
+          style={[s.box, { borderColor: d ? t.pine : t.edge, backgroundColor: t.field_bg, color: t.ink, fontFamily: mono(500) },
+                  disabled && { opacity: 0.45 }]}
           value={d} onChangeText={(v) => setDigit(i, v)} onKeyPress={(e) => onKey(i, e)}
+          editable={!disabled}
           keyboardType="number-pad" inputMode="numeric" maxLength={i === 0 ? length : 1}
           textContentType={i === 0 ? "oneTimeCode" : "none"} autoComplete={i === 0 ? "sms-otp" : "off"}
           autoFocus={autoFocus && i === 0} selectTextOnFocus accessibilityLabel={`OTP digit ${i + 1}`} />

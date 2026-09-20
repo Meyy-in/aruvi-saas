@@ -58,10 +58,14 @@ export function Field({ label, children }) {
  * instead: nothing is added, the affordance is simply withdrawn. Applied HERE rather than at the
  * two call sites, so every read-only field in the app says the same thing. */
 export function Input({ style, ...props }) {
+  /* WALK-A-029/023 (2026-09-20): on iOS a single-line TextInput with a lineHeight draws its text at
+     the BOTTOM of the box (and so '+91' beside it looked raised). Single-line fields drop the
+     lineHeight and centre vertically; multiline keeps it. */
+  const singleLine = !props.multiline;
   const { t } = useTheme();
   const locked = props.editable === false;
   return <TextInput placeholderTextColor={t.ink_soft}
-    style={[type.body, s.input,
+    style={[type.body, s.input, singleLine && { lineHeight: undefined, textAlignVertical: "center", paddingVertical: 0 },
       { backgroundColor: locked ? t.paper_sunk : t.field_bg, borderColor: t.edge,
         color: locked ? t.ink_soft : t.ink },
       style]} {...props} />;

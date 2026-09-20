@@ -76,7 +76,7 @@ import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
 import ReportButton from "../../components/ReportSheet";
-import { subscribePreparing, clearPreparing, clearPaywall } from "../../lib/preparing";
+import { subscribePreparing, clearPreparing, clearPaywall, retryPreparing } from "../../lib/preparing";
 import { cancelLessonsScope, noteLessonsScope, openEdit } from "../../lib/portal";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
@@ -684,6 +684,20 @@ export default function MyLessons() {
       <View style={ws.main}><Text style={style}>{msg}</Text></View>
     </View>
   );
+  /* ★ THE WAIT IS NEVER HIDDEN BEHIND "Loading your lessons…" (WALK-A-038, 2026-09-20). On a
+     slower device the profile/listing reads had not resolved when first run handed off, so the
+     screen showed a bare loading line for the whole serve and the finished lesson then appeared
+     out of nowhere — no card, no progress bar. The descriptor is enough to draw the card, and it
+     is hers: draw it first, whatever the reads are doing. */
+  if (preparing && (!loaded || !current)) {
+    return (
+      <View style={{ flex: 1, backgroundColor: t.paper }}>
+        <View style={ws.main}>
+          <ProposedCard preparing={preparing} onDismiss={clearPreparing} onRetry={retryPreparing} />
+        </View>
+      </View>
+    );
+  }
   if (loadErr && !current) return bare(loadErr, [type.body, { color: t.danger }]);
   if (!loaded) return bare("Loading your lessons…", ws.mlp2_loading);
   if (!current) {
@@ -839,7 +853,7 @@ export default function MyLessons() {
                 including when this is her very first plan and the list is otherwise the empty
                 state (hence the guard on that branch above). */}
             {showProposedCard ? (
-              <ProposedCard preparing={preparing} onDismiss={clearPreparing} />
+              <ProposedCard preparing={preparing} onDismiss={clearPreparing} onRetry={retryPreparing} />
             ) : null}
             {ordered.map((p, pi) => (
               <PlanCard key={p.filename} p={p} archived={effView === "archived"}

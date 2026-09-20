@@ -61,14 +61,28 @@ export function getPreparing() {
 /* { subject, grade, chapterNo, chapterTitle, rows: [{duration, count}] } — everything the card
    needs, all of it already known when she pressed the button. Nothing here is fetched to draw
    the card, which is the point: it is her lesson, stated back to her, not a placeholder. */
-export function startPreparing(descriptor) {
+/* `run` is the serve itself, kept beside the descriptor so a FAILED card can offer "Try again"
+   (WALK-A-019): she already chose the chapter, the duration and the periods, and the screen that
+   asked for them is gone. It is not part of the descriptor — nothing renders a function. */
+let runner = null;
+export function startPreparing(descriptor, run) {
   state = { descriptor: { ...descriptor, failed: false, message: "" }, paywall: "" };
+  runner = typeof run === "function" ? run : null;
   emit();
+}
+
+/* Re-run the same serve behind the same card. No-op when there is nothing to retry. */
+export function retryPreparing() {
+  if (!runner || !state.descriptor) return;
+  state = { ...state, descriptor: { ...state.descriptor, failed: false, message: "" } };
+  emit();
+  runner();
 }
 
 /* The plan landed (or she dismissed a failure). */
 export function clearPreparing() {
   state = { descriptor: null, paywall: "" };
+  runner = null;
   emit();
 }
 

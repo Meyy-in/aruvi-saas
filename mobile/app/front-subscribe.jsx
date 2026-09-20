@@ -27,6 +27,7 @@
  */
 import { useRouter, Redirect, useLocalSearchParams } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
+import { storage } from "@aruvi/shared/storage";
 import { View } from "react-native";
 import SubscribeWizard from "../components/SubscribeWizard";
 import Bar from "../components/Bar";
@@ -50,7 +51,11 @@ export default function SubscribeFront() {
     <Bar gear={false} />
     <SubscribeWizard trialFork={!trialUsed}
       notice={trialUsed ? "This mobile number has already used its free trial. Subscribe to keep using Meyy." : ""}
-      onDone={() => router.replace("/(app)")}
+      onDone={() => {
+        // WALK-A-021: the door she chose is spent once she is through it.
+        try { storage.removeItem("aruvi_signup_mode"); } catch {}
+        router.replace("/(app)");
+      }}
       onCancel={() => router.replace("/login")} />
     </View>
   );

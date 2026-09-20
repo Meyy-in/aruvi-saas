@@ -127,6 +127,31 @@ const PREVIEWABLE = new Set([
 export const canPreview = (mime) =>
   !IS_WEB && Platform.OS === "ios" && PREVIEWABLE.has(mime);
 
+/* ★ ANDROID SHOWS THE DOCUMENT TOO (WALK-A-030, founder 2026-09-20: "open in phone's viewer").
+ * iOS has Quick Look, which is what `canPreview` routes to. Android has no in-app renderer for a
+ * .docx, but it does have the teacher's own document apps — so the file is handed to the system
+ * VIEW intent (Docs, Word, Drive, whichever she has), from where her own share is one tap away.
+ * Falls back to the share sheet when nothing can view it, so she is never left with nothing. */
+export async function openInViewer({ uri, name, mime }) {
+  if (Platform.OS !== "android") return false;
+  try {
+    const IntentLauncher = require("expo-intent-launcher");
+    /* `getContentUriAsync` lives in the LEGACY entry point in expo-file-system 57 — a file:// URI
+       cannot be handed to another app on Android (FileUriExposedException), so the content:// one
+       is what the intent carries. */
+    const { getContentUriAsync } = require("expo-file-system/legacy");
+    const contentUri = await getContentUriAsync(uri);
+    await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+      data: contentUri,
+      flags: 1,                    // FLAG_GRANT_READ_URI_PERMISSION
+      type: mime,
+    });
+    return true;
+  } catch {
+    return false;                  // no viewer, or the intent was refused — the caller shares
+  }
+}
+
 /* The cache directory's own URI — WKWebView will not read a `file://` it has not been granted
    access to, and `allowingReadAccessToURL` is how that grant is spelled. */
 export const cacheDirUri = () => Paths.cache.uri;

@@ -130,7 +130,17 @@ export default function Login({ onEnter }) {
     if (d && i < otpLen - 1) otpRefs.current[i + 1]?.focus();
   };
   const otpKeyDown = (i, e) => {
-    if (e.key === "Backspace" && !(otp[i] || "") && i > 0) otpRefs.current[i - 1]?.focus();
+    /* WALK-A-024 (founder, 2026-09-20): one Backspace on an EMPTY box steps back AND clears that
+       digit — it used to take two presses on both surfaces. */
+    if (e.key === "Backspace" && !(otp[i] || "") && i > 0) {
+      e.preventDefault();
+      setOtp((cur) => {
+        const arr = Array.from({ length: otpLen }, (_, k) => cur[k] || "");
+        arr[i - 1] = "";
+        return arr.join("");
+      });
+      otpRefs.current[i - 1]?.focus();
+    }
   };
 
   /* ★ THE ONE PLACE THE CLOCK STARTS, and EVERY door must come through it. The returning-device

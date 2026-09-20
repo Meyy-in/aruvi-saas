@@ -37,12 +37,14 @@ export default function TourOffer({ here = false, onStart }) {
           <Text style={[ws.dash_nudge_title, { color: t.pine_d }]}>Let me show you around first</Text>
           <Text style={[ws.dash_nudge_sub, { color: t.ink_soft }]}>
             A short walk through tracking sections and handling lesson plans. Your lesson stays
-            {here ? " here" : " safe"} in My Lessons — you can add it to a class whenever you’re ready.
+            safe while we look around.
           </Text>
-          {/* On My Classes only — the web drops this line on My Lessons. */}
-          {here ? null : (
-            <Text style={[ws.yr_nudge_go_t, { color: t.pine_d, marginTop: 8 }]}>Show me how →</Text>
-          )}
+          {/* WALK-A-013 (founder, 2026-09-20): BOTH surfaces carry the call to action — the box is
+              the button, and without these words nothing said so. A filled pill, as the web's is. */}
+          <View style={{ alignSelf: "flex-start", marginTop: 10, borderRadius: 999,
+                         paddingHorizontal: 16, paddingVertical: 8, backgroundColor: t.pine }}>
+            <Text style={[ws.yr_nudge_go_t, { color: "#fdfaf4" }]}>Show me how →</Text>
+          </View>
         </View>
       </View>
     </Pressable>

@@ -30,7 +30,7 @@ import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sec
 import CardGrid from "../../components/CardGrid";
 import { AttachSheet, UntrackSheet, HistorySheet } from "../../components/AttachSheet";
 import Svg, { Path } from "react-native-svg";
-import { subscribePreparing, clearPreparing } from "../../lib/preparing";
+import { subscribePreparing, clearPreparing, retryPreparing } from "../../lib/preparing";
 import { hasPortalWindow, raisePortalCheck } from "../../lib/portal";
 import { takeNextSetupCheck } from "@aruvi/shared/setupCheck";
 import { takeFirstRunCheck } from "../../lib/firstRun";
@@ -567,6 +567,23 @@ export default function Home() {
      must not ask first. It fires on the first My Classes focus once the tour is done, skipped, or
      no longer offered (a later session). Moved below `tourOnOffer` for that read — see the TDZ
      note on `tourNow` above. */
+  /* ★ THE TOUR'S OWN ENDING RAISES IT (WALK-A-039, 2026-09-20). On Android, Done left her on My
+     Classes with no question at all — it only appeared after a tab switch, because this is a FOCUS
+     effect and Done does not re-focus a screen she is already standing on. The end of the tour is
+     itself the moment, so it is watched directly here as well; `hasPortalWindow` and the one-shot
+     flag keep the two paths from ever asking twice. */
+  const wasTouring = useRef(false);
+  useEffect(() => {
+    const ended = wasTouring.current && !tourRunning;
+    wasTouring.current = tourRunning;
+    if (!ended || tourOnOffer) return undefined;
+    const id = setTimeout(() => {
+      if (hasPortalWindow()) return;
+      if (takeFirstRunCheck()) raisePortalCheck({ mode: "check", reason: "tour" });
+    }, SETUP_CHECK_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [tourRunning, tourOnOffer]);   // eslint-disable-line react-hooks/exhaustive-deps
+
   useFocusEffect(useCallback(() => {
     if (tourRunning || tourOnOffer) return undefined;
     /* First run's own question first; otherwise a SUBSCRIPTION's (founder, 2026-09-18): after a
@@ -860,7 +877,7 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
           {/* ★ THE SAME PROGRESS LINE MY LESSONS DRAWS, not a second one. `ProposedCard`'s
               `bare` mode exists for exactly this — mark something busy in place — so the two
               screens cannot drift in wording, timing, easing or the failed row. */}
-          <ProposedCard preparing={preparing} onDismiss={onDismissPreparing} bare />
+          <ProposedCard preparing={preparing} onDismiss={onDismissPreparing} onRetry={retryPreparing} bare />
         </View>
       </View>
     );

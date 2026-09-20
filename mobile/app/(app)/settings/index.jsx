@@ -36,7 +36,7 @@ import { API, getJSON, postJSON, withUser } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { clearSession, endSession } from "../../../lib/session";
 import { forgetDevice } from "@aruvi/shared/signout";
-import { downloadDocument, dataExport } from "../../../lib/download";
+import { downloadDocument, dataExport, fetchDocument, canPreview, openInViewer, discardFile } from "../../../lib/download";
 import { hasDownloaded, markDownloaded } from "../../../lib/dataRights";
 import { Sheet } from "../../../components/AttachSheet";
 import { Button, Input } from "../../../components/ui";
@@ -132,13 +132,31 @@ export default function SettingsHome() {
   /* Download site #4. ⚠️ WORKS ON TRIAL, unlike the Your-data card — this is the one export a
      trial teacher keeps, and G3's whole promise is that she has it before anything is
      destroyed. */
-  const downloadFirst = () => {
+  /* ★ SHE SEES THE DOCUMENT, NOT A SHARE SHEET (WALK-A-030, founder 2026-09-20). This button went
+     straight to the sheet on both phones while Settings › Your data already showed the file first.
+     iOS gets Quick Look (`canPreview` → /preview); Android hands it to her own document app
+     (`openInViewer`), and only falls back to the sheet when nothing can open it. Either way the
+     file has reached her, which is what the final delete question asks about. */
+  const downloadFirst = async () => {
     setBusy("docx"); setFailMsg("");
-    downloadDocument(dataExport("docx"))
-      .then(() => markDownloaded())
-      .catch(() => setFailMsg(
-        "Couldn’t prepare your download right now. Try again in a moment."))
-      .finally(() => setBusy(""));
+    const doc = dataExport("docx");
+    try {
+      if (canPreview(doc.mime)) {
+        const f = await fetchDocument(doc);
+        markDownloaded();
+        router.push({ pathname: "/preview",
+          params: { uri: f.uri, name: f.name, mime: f.mime, label: "Your data", from: "settings" } });
+      } else {
+        const f = await fetchDocument(doc);
+        const shown = await openInViewer(f);
+        if (!shown) { await downloadDocument(doc); discardFile(f.uri); }
+        markDownloaded();
+      }
+    } catch {
+      setFailMsg("Couldn’t prepare your download right now. Try again in a moment.");
+    } finally {
+      setBusy("");
+    }
   };
 
   const erase = async () => {

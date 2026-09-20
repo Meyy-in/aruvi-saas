@@ -323,8 +323,8 @@ export default function Prepare() {
        wrong, not the rule.
        So both surfaces now hand off immediately and go to My Classes; nobody waits on this
        screen any more. */
-    startPreparing(descriptor);
-    router.navigate(fromSection ? "/" : "/lessons");
+    /* WALK-A-019: the serve is handed to the store so a failed card can run it again. */
+    const runServe = async () => {
     try {
       const resp = await postJSON(`/genon/${subject}/${grade}/${chapterNo}/plan`, { rows: matrix });
       /* READ-AFTER-WRITE (area 2). The serve returned a filename, so Y is now knowable: "that
@@ -382,6 +382,10 @@ export default function Prepare() {
     } finally {
       setBusy(false);
     }
+    };
+    startPreparing(descriptor, () => { runServe(); });
+    router.navigate(fromSection ? "/" : "/lessons");
+    await runServe();
   };
 
   const doGenerate = async () => {

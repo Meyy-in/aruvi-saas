@@ -140,11 +140,19 @@ export function fetchReadiness({ force = false } = {}) {
     const stored = mem;
     try {
       const d = await getJSON("/readiness");
-      const next = {
+      let next = {
         profile: (d && d.readiness) || null,
         ready: !!(d && d.ready),
         fresh: true,
       };
+      /* WALK-A-020: the server has nothing, but this device holds a profile whose write was never
+         confirmed — her first run. Keep her on it and send it again, rather than handing her
+         first run a second time. */
+      const pending = (!next.profile || !(next.profile.subjects || []).length) ? readPending() : null;
+      if (pending) {
+        next = { profile: { subjects: pending }, ready: true, fresh: true };
+        saveReadiness(pending).catch(() => {});
+      }
       mem = next;
       persist(next);
       emit();
@@ -225,7 +233,32 @@ export function adoptReadiness(subjects, ready) {
   return profile;
 }
 
-export async function saveReadiness(subjects) {
+/* ★ AN UNVERIFIED PROFILE WRITE IS KEPT AND RETRIED (WALK-A-020, 2026-09-20 — the web's fix,
+ * now the phone's). First run finished with the network off: the POST never landed, the check
+ * came back "unverified" (correctly silent — we could not know), and the shell opened on a
+ * profile that lived only in memory. The next launch asked the server, heard "no profile", and
+ * put her back in first run. So an unverified write is stored as PENDING for this teacher and
+ * re-sent: on a timer while the app is open, and on the next read that finds the server empty.
+ * "unverified" still says nothing to her — the doctrine is untouched; we simply do not give up. */
+function pendingKey() { return `${storeKey()}__pending`; }
+function readPending() {
+  try { const raw = storage.getItem(pendingKey()); const v = raw ? JSON.parse(raw) : null;
+    return Array.isArray(v) && v.length ? v : null; } catch { return null; }
+}
+function writePending(subjects) {
+  try {
+    if (subjects) storage.setItem(pendingKey(), JSON.stringify(subjects));
+    else storage.removeItem(pendingKey());
+  } catch {}
+}
+let retryTimer = null;
+function scheduleRetry(subjects, attempt) {
+  if (attempt >= 40 || retryTimer) return;
+  retryTimer = setTimeout(() => { retryTimer = null; saveReadiness(subjects, attempt + 1); }, 15000);
+}
+
+export async function saveReadiness(subjects, attempt = 0) {
+  if (attempt === 0) writePending(subjects);
   // Static imports: verify.js pulls in nothing from here, so there is no cycle to dodge and no
   // reason to make a phone's first save wait on a dynamic module fetch.
   const want = readinessFingerprint(subjects);
@@ -240,6 +273,11 @@ export async function saveReadiness(subjects) {
     expect: (y) => readinessFingerprint(y && y.subjects) === want,
   });
 
+  if (status === "unverified") {
+    scheduleRetry(subjects, attempt);      // kept as pending; nothing is said to her
+    return { status, profile: adoptReadiness(subjects) };
+  }
+  writePending(null);                      // the server answered — ok or mismatch, it is settled
   if (status === "mismatch") {
     const server = (actual && actual.subjects) || [];
     return { status, profile: adoptReadiness(server) };

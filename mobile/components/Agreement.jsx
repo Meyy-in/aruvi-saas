@@ -72,6 +72,8 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
   const [showPrivacy, setShowPrivacy] = useState(false);
   const scrollRef = useRef(null);
   const acksY = useRef(0);   // y of the five-card wrapper inside the scroll content (jumpTo)
+  const ackH = useRef({});   // each point's height, so a short point can show its tick (A-034)
+  const viewH = useRef(0);   // the scroller's visible height
   const ackY = useRef({});
 
   useEffect(() => {
@@ -117,12 +119,22 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
   const jumpTo = (id) => {
     const y = ackY.current[id];
     if (scrollRef.current && typeof y === "number") {
-      scrollRef.current.scrollTo({ y: Math.max(0, acksY.current + y - 40), animated: true });
+      /* WALK-A-034 (founder, 2026-09-20): read top-down — the title leads. But when the WHOLE point
+         (title → its tick) fits in the visible band, lift it a little more so the tick shows too;
+         a point taller than the band stays top-aligned, because reading comes first. */
+      const h = ackH.current[id] || 0;
+      const band = viewH.current || 0;
+      const extra = band && h && h < band - 24 ? Math.max(0, h - (band - 24)) : 0;
+      scrollRef.current.scrollTo({ y: Math.max(0, acksY.current + y - 40 + extra), animated: true });
     }
   };
 
   const body = (
     <View>
+      {/* WALK-A-033 (founder, 2026-09-20, Android): the document had no HEADING on the phone at
+          all — the web prints its title above the intro, and a signing screen that does not name
+          what it is asking her to sign is missing the one line she looks for. */}
+      {doc.title ? <Text style={[ws.ob_title, { color: t.ink, marginBottom: 4 }]}>{doc.title}</Text> : null}
       {/* Read mode leads with the fact she came for: did I accept this, and when. In sign
           mode there is nothing to report yet — except to a teacher who signed an EARLIER
           version, who is not a new signatory and should be told so. */}
@@ -164,7 +176,8 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
       <View style={ws.lgl_acks} onLayout={(e) => { acksY.current = e.nativeEvent.layout.y; }}>
         {acks.map((a) => (
           <View key={a.id}
-            onLayout={(e) => { ackY.current[a.id] = e.nativeEvent.layout.y; }}
+            onLayout={(e) => { ackY.current[a.id] = e.nativeEvent.layout.y;
+                               ackH.current[a.id] = e.nativeEvent.layout.height; }}
             style={[ws.lgl_ack, { backgroundColor: t.card_bg, borderColor: t.line }]}>
             <View style={ws.lgl_ack_head}>
               <Text style={[ws.lgl_ack_n, { color: t.clay }]}>{a.n}</Text>
@@ -239,7 +252,8 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
   /* Sign mode owns its own frame: the document scrolls, the tally and the way out do not. */
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView ref={scrollRef} contentContainerStyle={ws.ob_body}>{body}</ScrollView>
+      <ScrollView ref={scrollRef} contentContainerStyle={ws.ob_body}
+        onLayout={(e) => { viewH.current = e.nativeEvent.layout.height; }}>{body}</ScrollView>
       <View style={[ws.ob_foot, { backgroundColor: t.paper }]}>
         <View style={ws.lgl_tally} accessibilityLabel="The five points">
           <Text style={[ws.lgl_tally_lbl, { color: t.ink_soft }]}>Five points</Text>

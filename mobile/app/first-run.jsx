@@ -21,7 +21,7 @@
  * `finishActivation(over)` rule the web arrived at the hard way.
  */
 import { useEffect, useRef, useState } from "react";
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, BackHandler } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "../components/Text";
 import {
@@ -35,7 +35,7 @@ import { invalidatePlans } from "@aruvi/shared/plans";
 import { bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import Bar from "../components/Bar";
 import PrepareCta from "../components/PrepareCta";
-import { RollWheel } from "../components/RollWheel";
+import { RollWheel, wheelChapterTitle } from "../components/RollWheel";
 import { markGenerated, queueFirstRunCheck } from "../lib/firstRun";
 import { startPreparing, failPreparing, paywallPreparing, clearPreparing } from "../lib/preparing";
 import { useTheme } from "../theme/ThemeContext";
@@ -87,6 +87,16 @@ export default function FirstRun() {
   const user = getUser();
 
   const [step, setStep] = useState("welcome");   // welcome | subject | grade | chapter
+  /* WALK-A-035: Android's Back walks the steps back, as the on-screen links do; on Welcome it
+     leaves (the default). */
+  useEffect(() => {
+    const prev = { subject: "welcome", grade: "subject", chapter: "grade" };
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (prev[step]) { setStep(prev[step]); return true; }
+      return false;
+    });
+    return () => sub.remove();
+  }, [step]);
   const [subjects, setSubjects] = useState([]);
   const [subject, setSubject] = useState("");    // slug
   const [grades, setGrades] = useState([]);
@@ -191,6 +201,13 @@ export default function FirstRun() {
   /* Pick the chapter AND reset its estimate in the SAME event, so both land in one render — set
      apart, the estimate trailed the wheel by a frame and flashed the previous chapter's number. */
   const pickChapter = (no) => {
+    /* ★ ONLY A REAL CHANGE RE-SEEDS (WALK-A-026, founder 2026-09-20: "periods - not able to change,
+       pressing change quickly restores to default"). The chapter wheel commits on settle, and it
+       settles whenever the page moves under it — opening the periods editor is itself a layout
+       change — so it re-committed the SAME chapter, and this function then reset periodsTouched,
+       put the recommendation back and closed the editor she had just opened. A re-pick of the
+       chapter she is already on must do nothing at all. */
+    if (String(no) === String(chapterNo)) return;
     setChapterNo(no);
     const est = estimateFor(no);
     setDefaultPeriods(est);
@@ -312,14 +329,13 @@ export default function FirstRun() {
     adoptReadiness(merged);
     saveReadiness(merged).catch(() => {});
 
-    startPreparing(descriptor);
-    /* `replace`, not navigate: first run is not a place she can come back to. */
-    router.replace("/lessons");
-
-    /* ★ THE SERVE IS NOT AWAITED. This screen is already gone; the fetch resolves into the
-       preparing store from a closure nobody is watching. */
-    const startedAt = Date.now();
-    postJSON(`/genon/${subject}/${grade}/${chapterNo}/plan`, { rows })
+    /* WALK-A-019: the serve is a named closure, handed to the store, so a failed card can run it
+       again — including the binding, exactly as the first attempt would have. */
+    const runServe = () => {
+      /* ★ THE SERVE IS NOT AWAITED. This screen is already gone; the fetch resolves into the
+         preparing store from a closure nobody is watching. */
+      const startedAt = Date.now();
+      postJSON(`/genon/${subject}/${grade}/${chapterNo}/plan`, { rows })
       .then(async (resp) => {
         /* ★ HOLD THE BAR. A genon serve is ~0.3 ms, so without this the card is replaced in the
            breath it appears and she sees nothing — reported on the web the day this handoff first
@@ -346,6 +362,11 @@ export default function FirstRun() {
         if (e && e.status === 402) paywallPreparing(msg);
         else failPreparing(msg);
       });
+    };
+    startPreparing(descriptor, runServe);
+    /* `replace`, not navigate: first run is not a place she can come back to. */
+    router.replace("/lessons");
+    runServe();
   };
 
   /* `.fr-foot`: a centred column with 12px between the CTA and the link. The web's own
@@ -400,7 +421,15 @@ export default function FirstRun() {
               </View>
               <Text style={ws.fr_trial_h}>Your free trial</Text>
               <Text style={ws.fr_trial_p}>
-                Your free trial covers any {trialInfo.trial_chapter_cap} chapters. For any single
+                {/* WALK-A-012 (2026-09-20): a rejoining number starts with its used chapters already
+                    counted (the trial ledger), so say what is LEFT rather than the cap. */}
+                {(() => {
+                  const cap = trialInfo.trial_chapter_cap;
+                  const left = Math.max(0, cap - (trialInfo.trial_chapters_used || 0));
+                  return left < cap
+                    ? `You have ${left} of your ${cap} free chapters left. `
+                    : `Your free trial covers any ${cap} chapters. `;
+                })()}For any single
                 chapter, you can generate unlimited number of Lesson plans.
               </Text>
               <Text style={ws.fr_trial_h}>To get started</Text>
@@ -448,7 +477,7 @@ export default function FirstRun() {
             </Text>
           ) : <Text style={ws.fr_loading}>Loading subjects…</Text>
         ) : (
-          <RollWheel ariaLabel="Subject" value={subject} onChange={setSubject} large
+          <RollWheel ariaLabel="Subject" value={subject} onChange={setSubject} large loop rowPx={92}
             items={visibleSubjects.map((s) => ({ id: s, chip: pretty(s).charAt(0), label: pretty(s) }))} />
         )}
       </Frame>
@@ -474,7 +503,7 @@ export default function FirstRun() {
         ) : (
           /* Changing class re-earns the right to seed the duration wheel: 50 minutes is a fact
              about Class 9, not about her, so a new class means a new standard. */
-          <RollWheel ariaLabel="Class" value={grade} large
+          <RollWheel ariaLabel="Class" value={grade} large loop rowPx={92}
             onChange={(v) => { durationTouched.current = false; setGrade(v); }}
             items={visibleGrades.map((g) => ({ id: g, chip: classNum(g), label: `Class ${classNum(g)}` }))} />
         )}
@@ -528,7 +557,9 @@ export default function FirstRun() {
       ) : (
         <RollWheel ariaLabel="Chapter" value={chapterNo} onChange={pickChapter} rowPx={92}
           padLeft={14} clamp={2}
-          items={chapters.map((c) => ({ id: String(c.chapter_number), chip: c.chapter_number, label: c.chapter_title }))} />
+          items={chapters.map((c) => ({ id: String(c.chapter_number), chip: c.chapter_number,
+            // WALK-A-006: the chip already carries the number — drop a leading "Chapter N:".
+            label: wheelChapterTitle(c.chapter_title) }))} />
       )}
 
       <View style={ws.fr_defaults}>
@@ -552,7 +583,7 @@ export default function FirstRun() {
             </View>
           ) : (
             <View>
-              <RollWheel ariaLabel="Class duration" value={String(durationMin)}
+              <RollWheel ariaLabel="Class duration" rowPx={92} value={String(durationMin)}
                 onChange={(v) => { durationTouched.current = true; setDurationMin(Number(v)); }}
                 items={DURATION_CHOICES.map((m) => ({ id: String(m), chip: m, label: "minute classes" }))} />
               <Text style={[ws.fr_hint, { color: t.ink_soft, marginTop: 10, marginBottom: 0 }]}>
@@ -584,7 +615,7 @@ export default function FirstRun() {
             </View>
           ) : (
             <View>
-              <RollWheel ariaLabel="Estimated periods" value={String(periods)}
+              <RollWheel ariaLabel="Estimated periods" rowPx={92} value={String(periods)}
                 onChange={(v) => { periodsTouched.current = true; setPeriods(Number(v)); }}
                 items={PERIOD_CHOICES.map((p) => ({ id: String(p), chip: p, label: p === 1 ? "period" : "periods" }))} />
               <Pressable onPress={() => setEditingField(null)} accessibilityRole="button"
