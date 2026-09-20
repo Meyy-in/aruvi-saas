@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-20T09:53:05",
+  "updated_at": "2026-09-20T10:21:06",
   "items": {
     "04.19": {
       "ios": {
@@ -84,11 +84,11 @@
     },
     "03.15": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T04:59:06",
+        "at": "2026-09-20T09:57:45",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Failure sentence shows, but the screen has NO Back — dead end before sign-in; only a reload gets out. Raised WALK-A-003."
+        "comment": "Failure sentence shows, but the screen has NO Back — dead end before sign-in; only a reload gets out. Raised WALK-A-003.\n✓ re-walked 2026-09-20 after WALK-A-003: offline failure shows with ← Back above the title; Back returns to sign-in."
       }
     },
     "03.13": {
@@ -112,19 +112,19 @@
     "03.10": {
       "web": {
         "by": "Kumar",
-        "at": "2026-09-20T06:39:24",
+        "at": "2026-09-20T10:00:48",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Returning half ✓: sign-in 9000000002 → OTP (prefilled, read-only) → ← Back → sign-in; re-enter shows fresh boxes. Create half ✓ (02 after erase): ← Back from OTP returns to Choose. Re-entering 'Create sign in' after Back: boxes/sent state reset ✓, but the mobile field KEEPS the number (03.03 expects it empty) — founder: CLEAR it. → WALK-A-011.",
-        "status": "fail"
+        "comment": "Returning half ✓: sign-in 9000000002 → OTP (prefilled, read-only) → ← Back → sign-in; re-enter shows fresh boxes. Create half ✓ (02 after erase): ← Back from OTP returns to Choose. Re-entering 'Create sign in' after Back: boxes/sent state reset ✓, but the mobile field KEEPS the number (03.03 expects it empty) — founder: CLEAR it. → WALK-A-011.\n✓ re-walked 2026-09-20 after WALK-A-011: Back to Choose → Create sign in again → mobile field empty.",
+        "status": "pass"
       }
     },
     "03.07": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T05:08:01",
+        "at": "2026-09-20T10:00:48",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "At expiry the expired sentence + 'Send a new code' show and Verify goes — but the boxes still accept typing and paste, and 'Send a new code' is a small inline link. Raised WALK-A-004.\nAlso: 'Send a new code' clears boxes and restarts at 0:59 ✓. A 'Resend' link appears at 0:30 left (OTP_RESEND_LOCK_MS, deliberate) — row says NO Resend while it runs; founder: REMOVE it — folded into WALK-A-004."
+        "comment": "At expiry the expired sentence + 'Send a new code' show and Verify goes — but the boxes still accept typing and paste, and 'Send a new code' is a small inline link. Raised WALK-A-004.\nAlso: 'Send a new code' clears boxes and restarts at 0:59 ✓. A 'Resend' link appears at 0:30 left (OTP_RESEND_LOCK_MS, deliberate) — row says NO Resend while it runs; founder: REMOVE it — folded into WALK-A-004.\n✓ re-walked 2026-09-20 after WALK-A-004: no mid-run Resend; at expiry boxes disabled, full-size 'Send a new code' in Verify's place; it restarts the timer at 0:59."
       }
     },
     "03.08": {
@@ -165,38 +165,38 @@
     },
     "03.22": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T05:19:46",
+        "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Rail, heading, hint, chips, Continue-on-rest, Back → Welcome all ✓. Two issues → WALK-A-005: (1) the wheel stops at the ends — not continuous; (2) keyboard ↑↓ work only after clicking the wheel itself; after using the on-screen ▲▼ the keyboard arrows stop working (focus sits on the button)."
+        "comment": "Rail, heading, hint, chips, Continue-on-rest, Back → Welcome all ✓. Two issues → WALK-A-005: (1) the wheel stops at the ends — not continuous; (2) keyboard ↑↓ work only after clicking the wheel itself; after using the on-screen ▲▼ the keyboard arrows stop working (focus sits on the button).\n✓ re-walked 2026-09-20 after WALK-A-005: subject wheel wraps both ways; keyboard ↑↓ still work after on-screen ▲▼."
       }
     },
     "03.24": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T05:22:26",
+        "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "SS → class step: heading, hint, 'Class N' + chips, Subject ✓, Section 9A note for IX, Change subject round-trip all ✓. Same wheel issues as 03.22 (not continuous; keyboard arrows after on-screen ▲▼) → WALK-A-005."
+        "comment": "SS → class step: heading, hint, 'Class N' + chips, Subject ✓, Section 9A note for IX, Change subject round-trip all ✓. Same wheel issues as 03.22 (not continuous; keyboard arrows after on-screen ▲▼) → WALK-A-005.\n✓ re-walked 2026-09-20 after WALK-A-005: class wheel wraps; keyboard after ▲▼ ✓."
       }
     },
     "03.25": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T05:26:22",
+        "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "SS IX: heading, '50-minute classes' NCF recommended, periods Meyy recommended and changing per chapter, no placeholders ✓. Presentation → WALK-A-006: 'Chapter N:' repeated in the title beside the number chip; chapter label font small vs the heading (web). SS IX ch 4 recommended = 19 periods (for 03.30)."
+        "comment": "SS IX: heading, '50-minute classes' NCF recommended, periods Meyy recommended and changing per chapter, no placeholders ✓. Presentation → WALK-A-006: 'Chapter N:' repeated in the title beside the number chip; chapter label font small vs the heading (web). SS IX ch 4 recommended = 19 periods (for 03.30).\n✓ re-walked 2026-09-20 after WALK-A-006: no 'Chapter N:' prefix, larger title; chapter wheel keeps its ends."
       }
     },
     "03.26": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T05:32:00",
+        "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Behaviour all ✓: one edit box at a time, tags drop off-recommendation, duration note, <5 / >25 lines, chapter change re-seeds periods and keeps 60, class change resets duration to 50; ch 4 set to 60 × 16. Size issue → WALK-A-007: the duration/periods wheels inside 'Change' are much smaller than the value shown after Done."
+        "comment": "Behaviour all ✓: one edit box at a time, tags drop off-recommendation, duration note, <5 / >25 lines, chapter change re-seeds periods and keeps 60, class change resets duration to 50; ch 4 set to 60 × 16. Size issue → WALK-A-007: the duration/periods wheels inside 'Change' are much smaller than the value shown after Done.\n✓ re-walked 2026-09-20 after WALK-A-007: Change wheels read as large as the settled value."
       }
     },
     "03.27": {
@@ -211,10 +211,10 @@
     "03.28": {
       "web": {
         "by": "Kumar",
-        "at": "2026-09-20T05:54:08",
+        "at": "2026-09-20T10:08:32",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "9A card green (teaching now — colour only, by design) with ch 4 attached ✓. Tour offer: NOT on My Classes (MyPlans shows it only while !anyBound, and first run now binds 9A — row expects both surfaces; row or code to decide). After the WALK-A-009 reset (tour_offered_at cleared) it is also absent on My Lessons — and yet the server re-stamped tour_offered_at on reload (spent unseen) → WALK-A-009. Card part passes.",
-        "status": "fail"
+        "comment": "9A card green (teaching now — colour only, by design) with ch 4 attached ✓. Tour offer: NOT on My Classes (MyPlans shows it only while !anyBound, and first run now binds 9A — row expects both surfaces; row or code to decide). After the WALK-A-009 reset (tour_offered_at cleared) it is also absent on My Lessons — and yet the server re-stamped tour_offered_at on reload (spent unseen) → WALK-A-009. Card part passes.\n✓ re-walked 2026-09-20: 9A green with ch 4; tour offer shows on My Classes too (WALK-A-014).",
+        "status": "pass"
       }
     },
     "03.31": {
@@ -237,29 +237,29 @@
     },
     "03.30": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T06:31:43",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Numbers PASS: SS IX ch 4 suggested 19 = chapter step; total 245. Display FAIL: the Year Plan table renders dark in the incognito window — figures only readable by selecting the text. → WALK-A-010."
+        "comment": "Numbers PASS: SS IX ch 4 suggested 19 = chapter step; total 245. Display FAIL: the Year Plan table renders dark in the incognito window — figures only readable by selecting the text. → WALK-A-010.\n✓ re-walked 2026-09-20 after WALK-A-010 (Mac on Dark): Year Plan table light and readable; My Lessons Subject/Class wheels light too."
       }
     },
     "04.27": {
       "web": {
         "by": "Kumar",
-        "at": "2026-09-20T06:35:39",
+        "at": "2026-09-20T10:15:20",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "02 deleted from incognito: farewell 'Your account and all your data have been deleted. Backup copies are purged within 30 days.' with Done + bar ✕; both land on CHOOSE (device flag cleared — the login screen's fresh-device state) ✓. Rejoin ✓: same number → fresh account, first run (ledger keeps the used chapter; card wording → WALK-A-012). Cycle 3: after erase the account was silently re-created (ghost) → 'Create sign in' refused 'already in use' → WALK-A-018.",
-        "status": "fail"
+        "comment": "02 deleted from incognito: farewell 'Your account and all your data have been deleted. Backup copies are purged within 30 days.' with Done + bar ✕; both land on CHOOSE (device flag cleared — the login screen's fresh-device state) ✓. Rejoin ✓: same number → fresh account, first run (ledger keeps the used chapter; card wording → WALK-A-012). Cycle 3: after erase the account was silently re-created (ghost) → 'Create sign in' refused 'already in use' → WALK-A-018.\n✓ re-walked 2026-09-20 after WALK-A-018 (deployed): 02 deleted, 30s later account = None (no ghost); rejoin via Create sign in accepted.",
+        "status": "pass"
       }
     },
     "X.17": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T06:40:55",
+        "at": "2026-09-20T10:15:20",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "02 erased with 1 trial chapter used; ledger recorded chapters_used 1 ✓; rejoin via create path → Welcome/first run (not Subscribe, not empty My Classes) ✓. But the trial card still says 'covers any 3 chapters' → WALK-A-012."
+        "comment": "02 erased with 1 trial chapter used; ledger recorded chapters_used 1 ✓; rejoin via create path → Welcome/first run (not Subscribe, not empty My Classes) ✓. But the trial card still says 'covers any 3 chapters' → WALK-A-012.\n✓ re-walked 2026-09-20 after WALK-A-012: rejoin card reads 'You have 2 of your 3 free chapters left.'"
       }
     },
     "03.11": {
@@ -274,28 +274,28 @@
     "03.32": {
       "web": {
         "by": "Kumar",
-        "at": "2026-09-20T08:12:01",
+        "at": "2026-09-20T10:08:32",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Log out from first-run bar ✓ → sign-in; signing in as 03 shows only 03's data; back as 02 → Welcome. Failure half (offline prepare) pending — cycle 3. Failure half (cycle 3, DevTools Offline at Prepare): lands on My Lessons, failed card with Dismiss, no hang ✓. But the sentence is truncated ('Try again in a…'), the card's clay left edge reads as a status (founder read it as 'attached'), and My Classes then raised the set-up check (no tour possible, no lesson yet) → WALK-A-019.",
-        "status": "fail"
+        "comment": "Log out from first-run bar ✓ → sign-in; signing in as 03 shows only 03's data; back as 02 → Welcome. Failure half (offline prepare) pending — cycle 3. Failure half (cycle 3, DevTools Offline at Prepare): lands on My Lessons, failed card with Dismiss, no hang ✓. But the sentence is truncated ('Try again in a…'), the card's clay left edge reads as a status (founder read it as 'attached'), and My Classes then raised the set-up check (no tour possible, no lesson yet) → WALK-A-019.\n↻ re-walk 2026-09-20: failed card shows full sentence, neutral edge, Try again + Dismiss; no set-up popup ✓. Reload → Welcome, BUT server profile confirmed saved (SS · IX · 9A) — WALK-A-020 fix works; Welcome is the never-generated rule (no lesson yet). Try-again half next.\n✓ Try again (online, no reload) re-serves: bar ~5s, lesson lands, 9A attached. Founder: Welcome-after-reload with no lesson is reasonable — accepted.",
+        "status": "pass"
       }
     },
     "T.01": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T06:51:07",
+        "at": "2026-09-20T10:08:32",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Cycle 2 (02 rejoined, SS IX ch 4, 50 × 19): no nudge while the bar ran; nudge appeared as the lesson landed ✓. But the box gives no explicit invitation to click → WALK-A-013."
+        "comment": "Cycle 2 (02 rejoined, SS IX ch 4, 50 × 19): no nudge while the bar ran; nudge appeared as the lesson landed ✓. But the box gives no explicit invitation to click → WALK-A-013.\n✓ re-walked 2026-09-20 after WALK-A-013: solid 'Show me how →' button on the nudge."
       }
     },
     "T.02": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T06:51:07",
+        "at": "2026-09-20T10:08:32",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Offer NOT shown on My Classes (only My Lessons); still on My Lessons on return ✓. Founder: must be on both. Also ch 4 already attached to 9A before the tour → WALK-A-014."
+        "comment": "Offer NOT shown on My Classes (only My Lessons); still on My Lessons on return ✓. Founder: must be on both. Also ch 4 already attached to 9A before the tour → WALK-A-014.\n✓ re-walked 2026-09-20 after WALK-A-014: offer on BOTH My Lessons and My Classes; no set-up popup while on offer."
       }
     },
     "T.04": {
@@ -345,29 +345,29 @@
     },
     "T.09": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:43:50",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Ring back on card, 6 of 20, Next advances ✓. Copy says 'click on the lesson card' but clicking the card does NOTHING — only Next works → WALK-A-015."
+        "comment": "Ring back on card, 6 of 20, Next advances ✓. Copy says 'click on the lesson card' but clicking the card does NOTHING — only Next works → WALK-A-015.\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
       }
     },
     "T.10": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:46:31",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Preview opens, ring + lifted tip. Tip body reads 'We will now attach this lesson to section your section from ‘My Classes’…' — no section named, broken wording → WALK-A-016."
+        "comment": "Preview opens, ring + lifted tip. Tip body reads 'We will now attach this lesson to section your section from ‘My Classes’…' — no section named, broken wording → WALK-A-016.\n✓ re-walked 2026-09-20 after WALK-A-016: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
       }
     },
     "T.11": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:48:30",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Tour moves to My Classes; 9A empty; ring + hand on '+'; tip names 9A and ch 4 correctly; set-up window stays away ✓. But tip says 'Click the + sign' and clicking '+' does nothing — only Next advances → WALK-A-015 (same pattern as step 6)."
+        "comment": "Tour moves to My Classes; 9A empty; ring + hand on '+'; tip names 9A and ch 4 correctly; set-up window stays away ✓. But tip says 'Click the + sign' and clicking '+' does nothing — only Next advances → WALK-A-015 (same pattern as step 6).\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
       }
     },
     "T.12": {
@@ -381,11 +381,11 @@
     },
     "T.13": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:51:03",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Picker closes, 9A turns green, ring + hand, real names, 10 of 20 ✓. Copy: 'attached “…” for section 9A' should read 'to section 9A' → WALK-A-017."
+        "comment": "Picker closes, 9A turns green, ring + hand, real names, 10 of 20 ✓. Copy: 'attached “…” for section 9A' should read 'to section 9A' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-015/017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
       }
     },
     "T.14": {
@@ -426,38 +426,38 @@
     },
     "T.18": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:55:42",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Picker opens with tour inside, 'Select a plan.', 15 of 20, Next closes it ✓. Copy says 'the same window shown in step 8' — it was step 9 → WALK-A-017."
+        "comment": "Picker opens with tour inside, 'Select a plan.', 15 of 20, Next closes it ✓. Copy says 'the same window shown in step 8' — it was step 9 → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
       }
     },
     "T.19": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:57:05",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Ring on Add, tip above, 16 of 20 ✓. Copy wrong: says it adds subjects (it cannot — the Add window has no Subject row; a subject is a purchase) and omits that it also amends periods a week and annual budget → WALK-A-017."
+        "comment": "Ring on Add, tip above, 16 of 20 ✓. Copy wrong: says it adds subjects (it cannot — the Add window has no Subject row; a subject is a purchase) and omits that it also amends periods a week and annual budget → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
       }
     },
     "T.20": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:57:55",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Tour opens the teaching profile; tip 'Your teaching profile.' Copy: founder — remove the last clause '…removing a subject is the one thing done here.' → WALK-A-017."
+        "comment": "Tour opens the teaching profile; tip 'Your teaching profile.' Copy: founder — remove the last clause '…removing a subject is the one thing done here.' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
       }
     },
     "T.21": {
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T07:58:29",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Ring on Ask Meyy, tip above 'Use Ask Meyy to answer your queries…'; 18 of 20. Note: says 'up to 100 questions across 5 categories' — bank holds 119 pairs in 5 categories (WALK-A-017 item 5)."
+        "comment": "Ring on Ask Meyy, tip above 'Use Ask Meyy to answer your queries…'; 18 of 20. Note: says 'up to 100 questions across 5 categories' — bank holds 119 pairs in 5 categories (WALK-A-017 item 5).\n✓ re-walked: 'over 100 questions'."
       }
     },
     "T.22": {
@@ -482,9 +482,9 @@
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T08:03:19",
+        "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Back 20→7 mirrors every move: Ask re-opens/closes, profile → My Classes (17→16 lands on the Add ring = step 16's target), 9→8 shows 9A unattached, forward 9→10 re-attaches; counter counts down. Forward again to 20 then Done."
+        "comment": "Back 20→7 mirrors every move: Ask re-opens/closes, profile → My Classes (17→16 lands on the Add ring = step 16's target), 9→8 shows 9A unattached, forward 9→10 re-attaches; counter counts down. Forward again to 20 then Done.\n✓ re-walked: browser Back during the tour does nothing."
       }
     },
     "T.26": {
@@ -525,20 +525,20 @@
     },
     "03.16": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T09:24:32",
+        "at": "2026-09-20T10:18:55",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "04 fresh: Subscribe → Create sign in → verify lands in the subscribe wizard with the five-step rail and the trial-or-subscribe window ✓; wizard '← Back' returns to OTP ✓. But re-verifying shows the trial window AGAIN (row: once per session). Earlier: leaving the wizard by browser Back stranded the number → WALK-A-021."
+        "comment": "04 fresh: Subscribe → Create sign in → verify lands in the subscribe wizard with the five-step rail and the trial-or-subscribe window ✓; wizard '← Back' returns to OTP ✓. But re-verifying shows the trial window AGAIN (row: once per session). Earlier: leaving the wizard by browser Back stranded the number → WALK-A-021.\n✓ re-walked 2026-09-20 after WALK-A-021 (deployed): browser Back out of the wizard, then Create sign in with 04 again → accepted, OTP → wizard; trial window not shown a second time."
       }
     },
     "03.17": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-20T09:28:46",
+        "at": "2026-09-20T10:18:55",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Name, fresh email, house-styled Role/State dropdowns (Mac on Dark), Save & continue → Agreement ✓. Used email refused only AFTER the email verification step, not on first entry; City should be mandatory; mandatory fields need * (school stays unmarked) → WALK-A-022."
+        "comment": "Name, fresh email, house-styled Role/State dropdowns (Mac on Dark), Save & continue → Agreement ✓. Used email refused only AFTER the email verification step, not on first entry; City should be mandatory; mandatory fields need * (school stays unmarked) → WALK-A-022.\n✓ re-walked 2026-09-20 after WALK-A-022: * on name/email/role/state/city (not school); used email refused at 'Confirm this email →'; Save disabled until City filled."
       }
     },
     "03.18": {
@@ -588,9 +588,10 @@
     "03.19": {
       "web": {
         "by": "Kumar",
-        "at": "2026-09-20T09:39:10",
+        "at": "2026-09-20T10:21:06",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Pending: 04 signed the agreement before this row could be walked; walk on the next new-number subscribe path."
+        "comment": "04 (fresh, cycle C): 'Privacy Notice' in the final tick opens a sheet over the wizard with ✕; closing returns with every tick still set.",
+        "status": "pass"
       }
     }
   },
@@ -653,7 +654,7 @@
     {
       "id": "WALK-A-003",
       "opened": "2026-09-20T04:59:06",
-      "closed": "",
+      "closed": "2026-09-20T10:13:21",
       "feature": "03.15",
       "found_on": [
         "web"
@@ -665,7 +666,7 @@
       "files": "web/app/components/PrivacyNotice.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [
         "web"
       ],
@@ -682,7 +683,7 @@
       ],
       "applies_to": "both",
       "title": "Expired OTP: boxes stay live; 'Send a new code' only a link; mid-run Resend to go",
-      "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend.",
+      "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Expired: boxes disabled (+ dimmed CSS), 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed (Login.jsx). Phone: at phone fix point.",
       "files": "web/app/components/Login.jsx, globals.css",
       "commit": "",
@@ -706,7 +707,7 @@
       ],
       "applies_to": "both",
       "title": "First-run wheels: roll continuously; keyboard arrows after on-screen ▲▼",
-      "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends.",
+      "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "RollWheel `loop` prop; first run's Subject + Class loop (chapter keeps its ends); ▲▼ keep focus on the wheel (mousedown preventDefault + refocus). Phone: at phone fix point.",
       "files": "web/app/components/wheels.jsx, FirstRun.jsx",
       "commit": "",
@@ -723,7 +724,7 @@
     {
       "id": "WALK-A-006",
       "opened": "2026-09-20T05:26:22",
-      "closed": "",
+      "closed": "2026-09-20T10:13:21",
       "feature": "03.25",
       "found_on": [
         "web"
@@ -735,7 +736,7 @@
       "files": "wheels.jsx, FirstRun.jsx, PrepareLesson.jsx, globals.css",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [
         "web"
       ],
@@ -745,7 +746,7 @@
     {
       "id": "WALK-A-007",
       "opened": "2026-09-20T05:32:00",
-      "closed": "",
+      "closed": "2026-09-20T10:13:21",
       "feature": "03.26",
       "found_on": [
         "web"
@@ -757,7 +758,7 @@
       "files": "FirstRun.jsx, globals.css",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [
         "web"
       ],
@@ -767,7 +768,7 @@
     {
       "id": "WALK-A-008",
       "opened": "2026-09-20T05:43:08",
-      "closed": "",
+      "closed": "2026-09-20T10:13:21",
       "feature": "03.27",
       "found_on": [
         "web"
@@ -779,7 +780,7 @@
       "files": "web/app/page.jsx, MyPlans.jsx, MyLessonPlans.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [
         "web"
       ],
@@ -796,7 +797,7 @@
       ],
       "applies_to": "both",
       "title": "Tour offer is lost if she leaves before answering it",
-      "what": "After first run, browser Back left Meyy (WALK-A-008); Forward reloaded the app onto My Classes with NO tour offer, and 'Would you like to check your set-up?' popped instead. Cause: the offer is spent the moment it is SHOWN (POST /account/tour-offered sets tour_offered_at), and after a reload `tourSpent` reads that and `tourOfferedThisSession` has reset — so any reload, Back-and-Forward, closed tab or dropped connection between the offer appearing and her answering it removes the tour for good, and the first-run set-up check (meant to follow the tour) fires in its place. Founder decision: spend the offer on an ANSWER (Take the tour / Skip / ✕) rather than on display, or allow one re-offer after a reload. Check the phone for the same (app killed while the offer is up). Walk workaround used: clear tour_offered_at on 9000000002. FURTHER (same walk): after clearing tour_offered_at and reloading, the server was re-stamped at 05:50:30 — the offer was 'made' on reload — yet it was visible on NEITHER surface: the reload lands on My Classes, where the offer renders only while no section is bound (MyPlans !anyBound — never true after first run binds 9A), and it did not appear on My Lessons either. So the offer is spent while not on screen at all. Tour parked on 02 for this web cycle; walked on a second clean cycle. DECIDED (founder 2026-09-20): the offer is spent only when she ANSWERS (Show me how / Skip / ✕).",
+      "what": "After first run, browser Back left Meyy (WALK-A-008); Forward reloaded the app onto My Classes with NO tour offer, and 'Would you like to check your set-up?' popped instead. Cause: the offer is spent the moment it is SHOWN (POST /account/tour-offered sets tour_offered_at), and after a reload `tourSpent` reads that and `tourOfferedThisSession` has reset — so any reload, Back-and-Forward, closed tab or dropped connection between the offer appearing and her answering it removes the tour for good, and the first-run set-up check (meant to follow the tour) fires in its place. Founder decision: spend the offer on an ANSWER (Take the tour / Skip / ✕) rather than on display, or allow one re-offer after a reload. Check the phone for the same (app killed while the offer is up). Walk workaround used: clear tour_offered_at on 9000000002. FURTHER (same walk): after clearing tour_offered_at and reloading, the server was re-stamped at 05:50:30 — the offer was 'made' on reload — yet it was visible on NEITHER surface: the reload lands on My Classes, where the offer renders only while no section is bound (MyPlans !anyBound — never true after first run binds 9A), and it did not appear on My Lessons either. So the offer is spent while not on screen at all. Tour parked on 02 for this web cycle; walked on a second clean cycle. DECIDED (founder 2026-09-20): the offer is spent only when she ANSWERS (Show me how / Skip / ✕). [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Tour offer is spent on START (markTourOffered in startTour), not on display.",
       "files": "web/app/page.jsx",
       "commit": "",
@@ -813,7 +814,7 @@
     {
       "id": "WALK-A-010",
       "opened": "2026-09-20T06:31:43",
-      "closed": "",
+      "closed": "2026-09-20T10:13:21",
       "feature": "03.30",
       "found_on": [
         "web"
@@ -825,7 +826,7 @@
       "files": "web/app/globals.css",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [
         "web"
       ],
@@ -842,7 +843,7 @@
       ],
       "applies_to": "both",
       "title": "Create sign in: mobile field keeps the old number after Back",
-      "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same.",
+      "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "'Create sign in' clears the mobile field, error and timer on every entry.",
       "files": "web/app/components/Login.jsx",
       "commit": "",
@@ -866,7 +867,7 @@
       ],
       "applies_to": "both",
       "title": "Rejoining teacher's trial card says 3 chapters when fewer remain",
-      "what": "After erase + rejoin, the server seeds the trial with the ledger's used chapters (_entitlement_of → '_earlier/1', so 2 left), but FirstRun's 'Your free trial' card prints trialInfo.trial_chapter_cap — 'covers any 3 chapters' — the CAP, not what she has left. A rejoiner is promised a chapter she does not have. Show the remaining count when it is below the cap (e.g. 'You have 2 of your 3 free chapters left'), cap wording otherwise. Check the phone's card. (Considered and WITHDRAWN by founder: 'Prepare my second lesson' — her earlier lesson was erased, so for her this IS the first lesson; the CTA stays.)",
+      "what": "After erase + rejoin, the server seeds the trial with the ledger's used chapters (_entitlement_of → '_earlier/1', so 2 left), but FirstRun's 'Your free trial' card prints trialInfo.trial_chapter_cap — 'covers any 3 chapters' — the CAP, not what she has left. A rejoiner is promised a chapter she does not have. Show the remaining count when it is below the cap (e.g. 'You have 2 of your 3 free chapters left'), cap wording otherwise. Check the phone's card. (Considered and WITHDRAWN by founder: 'Prepare my second lesson' — her earlier lesson was erased, so for her this IS the first lesson; the CTA stays.) [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Trial card says 'You have N of your 3 free chapters left.' when fewer remain (trial_chapters_used).",
       "files": "web/app/components/FirstRun.jsx",
       "commit": "",
@@ -890,7 +891,7 @@
       ],
       "applies_to": "both",
       "title": "Tour offer box doesn't read as something to click",
-      "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too.",
+      "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "'Show me how →' added to My Lessons' nudge; the CTA is now a solid pine button on both nudges.",
       "files": "MyLessonPlans.jsx, MyPlans.jsx, globals.css",
       "commit": "",
@@ -914,7 +915,7 @@
       ],
       "applies_to": "both",
       "title": "Tour offer missing on My Classes; chapter pre-attached before the tour",
-      "what": "(1) After first run the offer shows only on My Lessons. MyPlans renders it only while !anyBound, and first run now binds 9A, so My Classes never shows it — T.02 and 03.28 expect it on BOTH. Founder: it should be on both. (2) Founder: chapter 4 already shows ATTACHED to 9A on My Classes before the tour is taken or skipped; the tour's steps 8–10 teach attaching. Founder view: the binding should not precede the tour's resolution. ⚠️ Conflicts with the 2026-08-21/09-14 design (first run hands her a real bound card; tour steps 7–14 anchor on it; T.27 covers 'only lesson attached') — decide the intended order before fixing; if first run stops binding, re-check 03.28, the tour's demo binding and T.25 (Skip gives back her binding). DECIDED (founder 2026-09-20): KEEP first run's binding; fix only (1) — the offer shows on My Classes too.",
+      "what": "(1) After first run the offer shows only on My Lessons. MyPlans renders it only while !anyBound, and first run now binds 9A, so My Classes never shows it — T.02 and 03.28 expect it on BOTH. Founder: it should be on both. (2) Founder: chapter 4 already shows ATTACHED to 9A on My Classes before the tour is taken or skipped; the tour's steps 8–10 teach attaching. Founder view: the binding should not precede the tour's resolution. ⚠️ Conflicts with the 2026-08-21/09-14 design (first run hands her a real bound card; tour steps 7–14 anchor on it; T.27 covers 'only lesson attached') — decide the intended order before fixing; if first run stops binding, re-check 03.28, the tour's demo binding and T.25 (Skip gives back her binding). DECIDED (founder 2026-09-20): KEEP first run's binding; fix only (1) — the offer shows on My Classes too. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Offer shows on My Classes too (dropped !anyBound; page.jsx eligibility gates it). Nudge copy no longer says 'add it to a class' (first run binds). Binding kept per founder.",
       "files": "MyPlans.jsx, MyLessonPlans.jsx",
       "commit": "",
@@ -938,7 +939,7 @@
       ],
       "applies_to": "both",
       "title": "Tour tells her to click (card, '+') but clicks do nothing — only Next advances",
-      "what": "Step 6 tip reads 'Let us open the lesson' / 'click on the lesson card to open a particular lesson', while the tour advances only on Next — a teacher following the words clicks the card instead. Founder: reword so she is not led to click the card directly (e.g. 'Tapping a lesson card opens it. Press Next and we'll open this one for you.'). Same copy on the phone (GuidedTour steps are shared). Observed: clicking the card during step 6 does nothing at all (the tour blocks it), so she is told to do something that silently fails. SAME at step 8 (T.11): 'Click the + sign of that section card' — clicking '+' does nothing. Review EVERY step whose copy says click/tap: either make the click itself advance the tour (the natural choice where the tour then does exactly that action — steps 6 and 8), or reword to point at Next. Step 9 (T.12) likewise: 'Select a lesson plan…' — clicking the row does nothing; include it in the same review. DECIDED (founder 2026-09-20): her click DOES the step — clicking the card / '+' / row advances the tour exactly as Next does.",
+      "what": "Step 6 tip reads 'Let us open the lesson' / 'click on the lesson card to open a particular lesson', while the tour advances only on Next — a teacher following the words clicks the card instead. Founder: reword so she is not led to click the card directly (e.g. 'Tapping a lesson card opens it. Press Next and we'll open this one for you.'). Same copy on the phone (GuidedTour steps are shared). Observed: clicking the card during step 6 does nothing at all (the tour blocks it), so she is told to do something that silently fails. SAME at step 8 (T.11): 'Click the + sign of that section card' — clicking '+' does nothing. Review EVERY step whose copy says click/tap: either make the click itself advance the tour (the natural choice where the tour then does exactly that action — steps 6 and 8), or reword to point at Next. Step 9 (T.12) likewise: 'Select a lesson plan…' — clicking the row does nothing; include it in the same review. DECIDED (founder 2026-09-20): her click DOES the step — clicking the card / '+' / row advances the tour exactly as Next does. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "`tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated.",
       "files": "GuidedTour.jsx, globals.css",
       "commit": "",
@@ -962,7 +963,7 @@
       ],
       "applies_to": "both",
       "title": "Tour step 7 says 'section your section' — target section never reaches the tour",
-      "what": "Step 7 tip: 'We will now attach this lesson to section your section from ‘My Classes’…'. Body is `…to section ${i.tag}…` and i.tag falls back to 'your section' (GuidedTour.jsx fallback) because tourInfo is null. tourInfo {tag, chapter} is supplied ONLY by MyPlans (My Classes) via onTourInfo — and since 2026-09-17 the tour opens and stays on My Lessons for steps 1–7, so MyPlans never reports the target before step 7 (and on web it may be unmounted). Fix: derive the tour's target section in page.jsx (it already knows the demo binding), not from MyPlans' render; and make the fallback read grammatically ('…attach this lesson to one of your sections…'). Check any later step that uses i.tag / i.chapter. Phone has the same copy and the same info plumbing — check.",
+      "what": "Step 7 tip: 'We will now attach this lesson to section your section from ‘My Classes’…'. Body is `…to section ${i.tag}…` and i.tag falls back to 'your section' (GuidedTour.jsx fallback) because tourInfo is null. tourInfo {tag, chapter} is supplied ONLY by MyPlans (My Classes) via onTourInfo — and since 2026-09-17 the tour opens and stays on My Lessons for steps 1–7, so MyPlans never reports the target before step 7 (and on web it may be unmounted). Fix: derive the tour's target section in page.jsx (it already knows the demo binding), not from MyPlans' render; and make the fallback read grammatically ('…attach this lesson to one of your sections…'). Check any later step that uses i.tag / i.chapter. Phone has the same copy and the same info plumbing — check. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "startTour seeds the target section tag from the profile; `sec()` fallback reads 'one of your sections'.",
       "files": "page.jsx, GuidedTour.jsx",
       "commit": "",
@@ -986,7 +987,7 @@
       ],
       "applies_to": "both",
       "title": "Tour copy corrections",
-      "what": "Running list of tour wording fixes (shared web/phone copy). (1) Step 10: 'You have successfully attached “{chapter}” for section {tag}.' → 'attached “{chapter}” TO section {tag}.' Note its next sentence 'Let us click it to see how tracking works.' is another click-instruction — see WALK-A-015. (2) Step 15: 'the same window shown in step 8' → 'step 9' (the picker is step 9 of 20). Better: avoid step numbers in copy ('the same window you used a moment ago') so a re-ordering can't make it wrong again. (3) Step 16 (Add): 'Add/amend sections, classes and/or subjects. Use this button to quickly add sections, classes or subjects…' — WRONG: the Add window has no Subject row (a subject is a purchase), and it DOES amend periods a week and the annual period budget. Reword to match its four rows: class · section · periods a week · annual period budget. (4) Step 17 (profile): remove the final clause '; removing a subject is the one thing done here.' — end at 'Changes are made with ‘Add’ at the foot of the screen.' (5) Step 18 (Ask Meyy): 'up to 100 questions across 5 categories' — the bank holds 119 Q&A pairs in 5 categories. Say 'over 100' or drop the number (it will drift every monthly refresh).",
+      "what": "Running list of tour wording fixes (shared web/phone copy). (1) Step 10: 'You have successfully attached “{chapter}” for section {tag}.' → 'attached “{chapter}” TO section {tag}.' Note its next sentence 'Let us click it to see how tracking works.' is another click-instruction — see WALK-A-015. (2) Step 15: 'the same window shown in step 8' → 'step 9' (the picker is step 9 of 20). Better: avoid step numbers in copy ('the same window you used a moment ago') so a re-ordering can't make it wrong again. (3) Step 16 (Add): 'Add/amend sections, classes and/or subjects. Use this button to quickly add sections, classes or subjects…' — WRONG: the Add window has no Subject row (a subject is a purchase), and it DOES amend periods a week and the annual period budget. Reword to match its four rows: class · section · periods a week · annual period budget. (4) Step 17 (profile): remove the final clause '; removing a subject is the one thing done here.' — end at 'Changes are made with ‘Add’ at the foot of the screen.' (5) Step 18 (Ask Meyy): 'up to 100 questions across 5 categories' — the bank holds 119 Q&A pairs in 5 categories. Say 'over 100' or drop the number (it will drift every monthly refresh). [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Copy: 'to section', step 15 'the same window you used a moment ago', step 16 classes/sections/periods/budget, step 17 last clause removed, step 18 'over 100'. WEB GuidedTour only; phone copy at phone fix point.",
       "files": "web/app/components/GuidedTour.jsx",
       "commit": "",
@@ -1010,7 +1011,7 @@
       ],
       "applies_to": "both",
       "title": "Ghost account: a request after erasure re-creates the account",
-      "what": "Cycle 3: 02 erased from the web (farewell, Done → Choose all normal). 'Create sign in' with 9000000002 then refused: 'already in use'. The account record exists again, created 2026-09-20T08:04:56Z (moments after the erase), display_name = the number, consent {} — never signed up. Cause: _current_identity JIT-creates an Account for ANY authenticated request (api/main.py ~303–310); a request still carrying the erased teacher's session (a poll, a re-fetch, the farewell's own refresh, sign-out cleanup) lands after the erase and resurrects her. Timing-dependent — cycle 2's rejoin was clean. Consequences: 'Create sign in' refuses her; an empty account now holds her number; data-rights promise ('all your data deleted') is undercut by a recreated record. The trial was NOT reopened (entitlement seeded from the ledger: _earlier/1, _earlier/2). Fix directions: sign out/clear the session BEFORE the erase request returns control (client) and/or refuse JIT creation for a token whose account was erased after the token was issued (server: compare token iat with the erasure time, or keep a short-lived tombstone). Check the phone's delete flow.",
+      "what": "Cycle 3: 02 erased from the web (farewell, Done → Choose all normal). 'Create sign in' with 9000000002 then refused: 'already in use'. The account record exists again, created 2026-09-20T08:04:56Z (moments after the erase), display_name = the number, consent {} — never signed up. Cause: _current_identity JIT-creates an Account for ANY authenticated request (api/main.py ~303–310); a request still carrying the erased teacher's session (a poll, a re-fetch, the farewell's own refresh, sign-out cleanup) lands after the erase and resurrects her. Timing-dependent — cycle 2's rejoin was clean. Consequences: 'Create sign in' refuses her; an empty account now holds her number; data-rights promise ('all your data deleted') is undercut by a recreated record. The trial was NOT reopened (entitlement seeded from the ledger: _earlier/1, _earlier/2). Fix directions: sign out/clear the session BEFORE the erase request returns control (client) and/or refuse JIT creation for a token whose account was erased after the token was issued (server: compare token iat with the erasure time, or keep a short-lived tombstone). Check the phone's delete flow. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "SERVER: Identity.issued_at (token iat); _current_identity refuses JIT creation for a token issued before the user's latest erasure (401 'This account was deleted…'). Header stub unaffected. Test added (test_supabase_auth). NEEDS RENDER DEPLOY.",
       "files": "api/main.py, aruvi_core/ports.py, aruvi_core/adapters/supabase_auth_provider.py, tests/test_supabase_auth.py",
       "commit": "",
@@ -1034,7 +1035,7 @@
       ],
       "applies_to": "both",
       "title": "Failed first lesson: message clipped, card looks attached, set-up check fires anyway",
-      "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect.",
+      "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Failed card: full sentence, neutral spine/edge, 'Try again' (re-serves the same descriptor incl. first-run bindKey); set-up check held while a lesson is preparing/failed or eligibility unknown; eligibility re-read when a plan lands.",
       "files": "MyLessonPlans.jsx, page.jsx, FirstRun.jsx, globals.css",
       "commit": "",
@@ -1058,7 +1059,7 @@
       ],
       "applies_to": "both",
       "title": "First run offline: profile never saved, yet the shell opens",
-      "what": "Cycle 3: first run completed with the network OFF at 'Prepare the lesson'. The shell opened (My Lessons with a failed card; My Classes with an empty 9A card) and she then prepared ch 4 successfully online from My Lessons. A reload (⌘R) put her back on 'Welcome to Meyy!' — first run again. So the profile write made at activation (POST /readiness, fired in the same tick as the handoff) failed offline, but the client moved her into the shell as if it had succeeded; the SS IX · 9A profile she saw existed only in the browser. Work done in that session (the prepared lesson) sits against an account with no profile. Fix: verify the activation write (the read-after-write verify used elsewhere) and, on failure, keep her in first run with a plain retry — never open the shell on an unsaved profile; or queue and retry the write. Check the phone.",
+      "what": "Cycle 3: first run completed with the network OFF at 'Prepare the lesson'. The shell opened (My Lessons with a failed card; My Classes with an empty 9A card) and she then prepared ch 4 successfully online from My Lessons. A reload (⌘R) put her back on 'Welcome to Meyy!' — first run again. So the profile write made at activation (POST /readiness, fired in the same tick as the handoff) failed offline, but the client moved her into the shell as if it had succeeded; the SS IX · 9A profile she saw existed only in the browser. Work done in that session (the prepared lesson) sits against an account with no profile. Fix: verify the activation write (the read-after-write verify used elsewhere) and, on failure, keep her in first run with a plain retry — never open the shell on an unsaved profile; or queue and retry the write. Check the phone. [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Unverified profile write kept as PENDING per user and retried (online event + 15s timer, ≤40) ; on load, if the server has no profile but a pending one exists, she stays in the shell and it is re-sent.",
       "files": "web/app/page.jsx",
       "commit": "",
@@ -1082,7 +1083,7 @@
       ],
       "applies_to": "both",
       "title": "Leaving the subscribe wizard strands her: number taken, only the trial door left",
-      "what": "04 (new number): Choose → Subscribe → Create sign in → verify → subscribe wizard (trial offer window shown). She backed out of the wizard, then tried 'Create sign in' again: refused 'already in use' — verifying had already created the account. 'Already have an ID' then dropped her straight into the TRIAL first run. So a teacher who leaves the wizard for any reason can no longer reach the subscribe-from-the-front-door path; she becomes a trial account without choosing it. Options: don't create the account until the wizard completes (or treat an account with no consent + no entitlement activity as still 'new' at Create sign in); or when an existing, never-activated account signs in having picked Subscribe, resume the wizard. Also (founder to decide): the offer window defaults TRIAL (green) even though she had just picked the Subscribe card. ALSO: the trial-or-subscribe window re-appears every time she re-verifies after the wizard's ← Back (row 03.16 expects it once per session).",
+      "what": "04 (new number): Choose → Subscribe → Create sign in → verify → subscribe wizard (trial offer window shown). She backed out of the wizard, then tried 'Create sign in' again: refused 'already in use' — verifying had already created the account. 'Already have an ID' then dropped her straight into the TRIAL first run. So a teacher who leaves the wizard for any reason can no longer reach the subscribe-from-the-front-door path; she becomes a trial account without choosing it. Options: don't create the account until the wizard completes (or treat an account with no consent + no entitlement activity as still 'new' at Create sign in); or when an existing, never-activated account signs in having picked Subscribe, resume the wizard. Also (founder to decide): the offer window defaults TRIAL (green) even though she had just picked the Subscribe card. ALSO: the trial-or-subscribe window re-appears every time she re-verifies after the wizard's ← Back (row 03.16 expects it once per session). [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "SERVER: /onboarding/known returns `fresh` (no consent/profile/subscription/used chapter); web Create sign in treats a fresh account as new. Trial offer once per SESSION (sessionStorage). NEEDS RENDER DEPLOY.",
       "files": "api/main.py, Login.jsx, SubscribeFlow.jsx",
       "commit": "",
@@ -1106,7 +1107,7 @@
       ],
       "applies_to": "both",
       "title": "About you: refuse a used email up front; City mandatory; mark required fields",
-      "what": "Subscribe wizard, About-you step. (1) An email already on another account is refused only AFTER she completes the email verification — she is made to verify an address she can never use. Check 'already in use' FIRST (on entry / before sending any code), as the mobile check does on Create sign in. (2) Founder: City becomes MANDATORY (Save & continue gated on it; the server/profile record to match). (3) Mark every mandatory field with * — name, email, role, state, city; School name carries NO * so it reads as optional (its '(optional)' label can then go or stay — founder's call). Same form on the phone (and Settings › Personal profile shares the fields — keep consistent).",
+      "what": "Subscribe wizard, About-you step. (1) An email already on another account is refused only AFTER she completes the email verification — she is made to verify an address she can never use. Check 'already in use' FIRST (on entry / before sending any code), as the mobile check does on Create sign in. (2) Founder: City becomes MANDATORY (Save & continue gated on it; the server/profile record to match). (3) Mark every mandatory field with * — name, email, role, state, city; School name carries NO * so it reads as optional (its '(optional)' label can then go or stay — founder's call). Same form on the phone (and Settings › Personal profile shares the fields — keep consistent). [WEB re-walked green 2026-09-20; phone half pending]",
       "fix": "Used email refused at 'Confirm this email →'; City mandatory; * on name/email/role/state/city (not school) — subscribe wizard and Settings › Personal profile.",
       "files": "SubscribeFlow.jsx, Settings.jsx, globals.css",
       "commit": "",
