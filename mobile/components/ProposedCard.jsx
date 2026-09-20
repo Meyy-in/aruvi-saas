@@ -80,9 +80,12 @@ export default function ProposedCard({ preparing, onDismiss, onRetry, bare = fal
     /* WALK-A-019 (founder, 2026-09-20): the sentence shows IN FULL (the two-line clamp cut the one
        line that says what happened), and "Try again" sits beside Dismiss — she has already chosen
        the chapter, the duration and the periods. */
-    <View style={[ws.sc_prep, ws.sc_prep_failed, { flexWrap: "wrap" }]}>
-      <Text style={[ws.sc_prep_note, ws.sc_prep_note_failed, { flexShrink: 1 }]}>{msg}</Text>
-      <View style={{ flexDirection: "row", gap: 14 }}>
+    /* WALK-A-019 round 2 (founder, 2026-09-20, live): side by side, the sentence was squeezed into
+       a five-line column beside the buttons. It now takes the full width and the two actions sit
+       on one row beneath it, at the end — the card grows by a line, which is the lesser cost. */
+    <View style={[ws.sc_prep, ws.sc_prep_failed, { flexDirection: "column", alignItems: "stretch", gap: 8 }]}>
+      <Text style={[ws.sc_prep_note, ws.sc_prep_note_failed]}>{msg}</Text>
+      <View style={{ flexDirection: "row", gap: 16, alignSelf: "flex-end" }}>
         {onRetry ? (
           <Pressable onPress={() => onRetry(preparing)} accessibilityRole="button" hitSlop={8}
             accessibilityLabel="Try preparing this lesson again"

@@ -38,7 +38,7 @@
  * whole. Never disable a row's OWN value, or changing her mind strands the wheel on a dead option.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform } from "react-native";
+import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform, BackHandler } from "react-native";
 import { useRouter } from "expo-router";
 import { Text, TextInput } from "./Text";
 import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
@@ -55,6 +55,13 @@ import { Button, Link, Input, Quiet, ErrorLine } from "./ui";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { type } from "../theme/type";
+
+/* ★ THE TRIAL OFFER IS ASKED ONCE PER APP RUN (WALK-A-045, founder 2026-09-20, iPhone). The web
+   uses `sessionStorage`, which dies with the tab; the phone's `storage` is PERMANENT, so writing
+   the flag there meant the window was answered once on a device and never shown again — to any
+   teacher, on any number, for the life of the install. A module variable is the honest port: it
+   lives exactly as long as the app process, which is what "this session" means here. */
+let trialOfferSeen = false;
 
 /* Secondary says Class 9 only for now — the Class 10 books are not out yet (founder,
    2026-08-25). ⚠️ NOT `shared/format`'s `STAGE_CLASSES`, which is the SUBSCRIPTION ledger's
@@ -116,6 +123,12 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   const [email, setEmail] = useState("");
   const [email2, setEmail2] = useState("");
   const aboutScroll = useRef(null);   // WALK-A-040: the About-you form's scroller
+  /* WALK-A-040: bring the tail of the form (City + School) clear of the lifted foot. Twice — the
+     keyboard is still rising at 120ms and the scroll range is not final until it has landed. */
+  const tailUp = () => {
+    setTimeout(() => aboutScroll.current?.scrollToEnd({ animated: true }), 120);
+    setTimeout(() => aboutScroll.current?.scrollToEnd({ animated: true }), 420);
+  };
   const [emailStage, setEmailStage] = useState("enter");   // enter | confirm | ok
   const [emailErr, setEmailErr] = useState("");
   const [emailBusy, setEmailBusy] = useState(false);
@@ -143,13 +156,32 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
     if (!trialFork || offeredRef.current) return;
     offeredRef.current = true;
     /* WALK-A-021 (2026-09-20): once per SESSION, not per mount — the wizard's own ← Back sends her
-       to re-verify, which remounts this component, and the offer came back every time. */
-    try {
-      if (storage.getItem("aruvi_trial_offer_seen")) return;
-      storage.setItem("aruvi_trial_offer_seen", "1");
-    } catch {}
+       to re-verify, which remounts this component, and the offer came back every time. The flag is
+       `trialOfferSeen` above: app run, not install (WALK-A-045). */
+    /* One-off cleanup: devices that took the persisted flag before WALK-A-045 would never be
+       offered the trial again. Clearing it costs nothing on a device that never had it. */
+    try { storage.removeItem("aruvi_trial_offer_seen"); } catch {}
+    if (trialOfferSeen) return;
+    trialOfferSeen = true;
     setOfferTrial(true);
   }, [trialFork]);
+
+  /* WALK-A-042: the window's own exit. Forgetting `aruvi_trial_offer_seen` is deliberate — the
+     flag exists so the wizard's ← Back (which remounts this component) does not re-ask, not to
+     hold her to a question she declined to answer. `offeredRef` is per-mount and goes with it. */
+  const leaveOffer = () => {
+    trialOfferSeen = false;
+    offeredRef.current = false;
+    setOfferTrial(false);
+    cancel();
+  };
+  /* Android's hardware Back is the same act. Registered only while the window is up, so every
+     other screen's Back keeps its own meaning. */
+  useEffect(() => {
+    if (!offerTrial || Platform.OS !== "android") return undefined;
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => { leaveOffer(); return true; });
+    return () => sub.remove();
+  }, [offerTrial]);
 
   /* ★ A FINISHED PURCHASE MUST LAND SOMEWHERE, however she arrived (found walking the
      checkout, 2026-09-16: reached by a deep link the stack had nothing behind it, the POST
@@ -347,6 +379,12 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             onPress={() => setOfferTrial(false)}>
             <Text style={ws.ob_offer_alt_t}>Subscribe</Text>
           </Pressable>
+          {/* ★ WALK-A-042 (founder, 2026-09-20, iPhone): THIS WINDOW MUST HAVE A WAY OUT. It is a
+              full-screen ground, so the wizard's own "← Back" sits beneath it and cannot be
+              tapped, and the phone has no browser Back to escape with — a teacher who changed her
+              mind had to buy a door to leave. Backing out un-spends the once-per-session offer:
+              she has answered nothing, so a genuine return must ask again. */}
+          <Link title="← Back" onPress={leaveOffer} />
         </View>
       </View>
     </View>
@@ -440,17 +478,26 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
           <Field label="State" required>
             {/* WALK-A-040 (founder, 2026-09-20): answering State used to light up Save while City
                 and School sat below the fold — she could finish without ever seeing School. The
-                rest of the form is brought into view when this question is answered. */}
+                rest of the form is brought into view when this question is answered. No-op when
+                it already is, which is the common case once the email step has collapsed. */}
             <Dropdown value={stateName} onChange={(v) => {
               setStateName(v);
               setTimeout(() => aboutScroll.current?.scrollToEnd({ animated: true }), 180);
             }} options={STATES} placeholder="Select your state" label="State" />
           </Field>
+          {/* ★ THE LAST TWO FIELDS COME UP TOGETHER (WALK-A-040, founder 2026-09-20, iPhone). The
+              form is whole until City takes focus; then the foot lifts to sit above the keyboard
+              and lands squarely over School, so a teacher filling in her city cannot see that a
+              school was ever asked for. Focusing either one scrolls the pair clear of the foot —
+              twice, because the first pass runs while the keyboard is still on its way up and the
+              screen has not finished shrinking. */}
           <Field label="City" required>
-            <Input value={city} onChangeText={setCity} placeholder="Enter your city" />
+            <Input value={city} onChangeText={setCity} placeholder="Enter your city"
+              onFocus={tailUp} />
           </Field>
           <Field label="School name (optional)">
-            <Input value={school} onChangeText={setSchool} placeholder="Enter your school name" />
+            <Input value={school} onChangeText={setSchool} placeholder="Enter your school name"
+              onFocus={tailUp} />
           </Field>
         </ScrollView>
         <View style={[ws.ob_foot, { backgroundColor: t.paper }]}>

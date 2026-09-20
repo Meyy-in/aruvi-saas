@@ -134,10 +134,38 @@ export default function Support() {
      resizes under edge-to-edge is for the walk to say (tracker row 04 · Support). */
   const scrollRef = useRef(null);
   const msgFocused = useRef(false);
+  /* WALK-A-044: the box grows while it holds focus — see `sup_text_tall`. A ref cannot do this
+     (it must re-render), and it is deliberately not the same thing as `msgFocused`, which the
+     keyboard listener reads without re-rendering. */
+  const [msgOn, setMsgOn] = useState(false);
   const toEnd = () => { try { scrollRef.current && scrollRef.current.scrollToEnd({ animated: true }); } catch {} };
+  /* ★ STOP AT "YOUR MESSAGE", NOT AT THE BOTTOM (WALK-A-044, founder 2026-09-20, second look).
+     With the box grown to six rows, scrolling to the end drove the top of the form up under the
+     bar — the first line of what she had written went with it. The label is the natural top edge
+     while she writes: everything she needs is below it, and nothing she wrote is above it.
+     `measureLayout` against the scroller's own content view, so the answer is a real offset and
+     not a sum of paddings that will drift the next time the card changes. */
+  const msgRef = useRef(null);
+  const wrapRef = useRef(null);      // the scroller's own frame, for the window measurement
+  const offsetY = useRef(0);         // where the scroller currently stands
+  /* Window coordinates, not `measureLayout` against the content view: `getInnerViewNode` is not
+     there on the new renderer, so that version simply did nothing at all. Two `measureInWindow`
+     calls plus the current offset give the same answer on either renderer. */
+  const toMsg = () => {
+    try {
+      const sv = scrollRef.current, node = msgRef.current, frame = wrapRef.current;
+      if (!sv || !node || !frame) return;
+      frame.measureInWindow((fx, fy) => {
+        node.measureInWindow((mx, my) => {
+          const y = Math.max(0, offsetY.current + (my - fy) - 8);
+          try { sv.scrollTo({ y, animated: true }); } catch {}
+        });
+      });
+    } catch {}
+  };
   useEffect(() => {
     const sub = Keyboard.addListener("keyboardDidShow",
-      () => { if (msgFocused.current) setTimeout(toEnd, 50); });
+      () => { if (msgFocused.current) { setTimeout(toMsg, 50); setTimeout(toMsg, 260); } });
     return () => sub.remove();
   }, []);
 
@@ -221,7 +249,9 @@ export default function Support() {
        screen is already a scroller inside a Stack under two bars, which is where a KAV needs a
        `keyboardVerticalOffset` and starts guessing. If this ever stops working on a future SDK,
        the KAV wrap is the fallback, not the first choice. */
+    <View ref={wrapRef} collapsable={false} style={{ flex: 1 }}>
     <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, { paddingTop: 12 }]}
+      onScroll={(e) => { offsetY.current = e.nativeEvent.contentOffset.y; }} scrollEventThrottle={16}
       keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* 1 · the fast door first */}
       <Text style={[ws.set_hint, { color: t.ink_soft, marginTop: 0 }]}>
@@ -264,14 +294,17 @@ export default function Support() {
           {/* No placeholder (founder, 2026-08-27). Prompt text inside the box tells a teacher
               what shape her trouble is supposed to be, and she trims it to fit; an empty box
               asks nothing and gets the whole story. */}
+          <View ref={msgRef} collapsable={false}>
           <SupField label="Your message">
             <TextInput multiline textAlignVertical="top" value={text} onChangeText={setText}
               maxLength={SUPPORT_MAX} accessibilityLabel="Your message"
-              onFocus={() => { msgFocused.current = true; if (Keyboard.isVisible && Keyboard.isVisible()) setTimeout(toEnd, 50); }}
-              onBlur={() => { msgFocused.current = false; }}
-              style={[ws.sup_text, { borderColor: t.line, backgroundColor: t.paper,
-                                     color: t.ink }]} />
+              onFocus={() => { msgFocused.current = true; setMsgOn(true);
+                setTimeout(toMsg, 60); setTimeout(toMsg, 320); }}
+              onBlur={() => { msgFocused.current = false; setMsgOn(false); }}
+              style={[ws.sup_text, msgOn && ws.sup_text_tall,
+                      { borderColor: t.line, backgroundColor: t.paper, color: t.ink }]} />
           </SupField>
+          </View>
 
           {/* Only near the cap — a live counter on an empty box reads as a word limit on how
               much trouble she is allowed to be in. */}
@@ -310,5 +343,6 @@ export default function Support() {
         </View>
       </View>
     </ScrollView>
+    </View>
   );
 }

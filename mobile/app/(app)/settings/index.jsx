@@ -144,6 +144,13 @@ export default function SettingsHome() {
       if (canPreview(doc.mime)) {
         const f = await fetchDocument(doc);
         markDownloaded();
+        /* ★ THE WINDOW MUST STAND DOWN FIRST (WALK-A-043, founder 2026-09-20, iPhone). The
+           last-step window is a React Native Modal — its own native window, above the whole app —
+           and the preview is a pushed ROUTE, so it opened BEHIND the window: she was asked to keep
+           her data and then shown the same delete window again. Close it, let her read the
+           document or send it on, and bring the window back when she returns — alone. */
+        reopenFinal.current = true;
+        setFinalOpen(false);
         router.push({ pathname: "/preview",
           params: { uri: f.uri, name: f.name, mime: f.mime, label: "Your data", from: "settings" } });
       } else {
@@ -204,6 +211,15 @@ export default function SettingsHome() {
     return () => { live = false; };
   }, []);
   useFocusEffect(loadAccount);
+
+  /* WALK-A-043: she left this screen holding the last-step window open, to read her data. Put it
+     back exactly as it was the moment she returns — the tick stays hers to give. */
+  const reopenFinal = useRef(false);
+  useFocusEffect(useCallback(() => {
+    if (!reopenFinal.current) return;
+    reopenFinal.current = false;
+    setFinalOpen(true);
+  }, []));
 
   /* Optimistic, with a rollback: the tick is the answer, so it moves at once and goes back if
      the server refuses. Saved ON TAP — there is no Save button on a switch. */

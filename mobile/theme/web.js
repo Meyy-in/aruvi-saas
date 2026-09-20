@@ -1009,7 +1009,9 @@ export function webStyles(t, scheme = "light") {
     /* `.fr-wheel-lg .fr-wheel-label { font-size: 17px }` — the whole of the web's `large`: one
        notch bigger, for short lists (1…14 periods) where longer lists like chapter titles stay
        at 15. */
-    rw_label_lg:     { fontSize: 17, lineHeight: 21.8 },
+    /* WALK-A-025 (founder, 2026-09-20): with the taller box the large label reads a notch bigger
+       still — the minutes/periods words were small against the value they replace. */
+    rw_label_lg:     { fontSize: 19, lineHeight: 24 },
     /* The chapter number in its own square, inked pine when its row is the pick. */
     rw_chip:         { width: 30, height: 30, borderRadius: 8, alignItems: "center",
                        justifyContent: "center", backgroundColor: t.paper_sunk },
@@ -1366,6 +1368,11 @@ export function webStyles(t, scheme = "light") {
     sup_text:        { minHeight: 80, height: 104, borderWidth: 1, borderRadius: 3,
                        paddingVertical: 10, paddingHorizontal: 12,
                        fontFamily: F.body(400), fontSize: 16, lineHeight: 24.8 },
+    /* WALK-A-044 (founder, 2026-09-20, iPhone): "only three rows visible ... the send message is
+       well above the keyboard top". Four rows is right with the keyboard DOWN — it keeps Send on
+       the fold. While she is actually writing, the screen above the keys is hers, so the box
+       takes it: six rows, and Send comes down to meet the keyboard. */
+    sup_text_tall:   { height: 176 },
     sup_refcap:      { fontFamily: F.mono(400), fontSize: 10, lineHeight: 15.5,
                        letterSpacing: 0.8, textTransform: UP },
     /* Mono at ledger scale — the same face the invoice number uses, because it is the same kind
@@ -1718,7 +1725,9 @@ export function webStyles(t, scheme = "light") {
     yp_c:            { fontFamily: F.mono(400), fontSize: 8.5, lineHeight: 10.6, letterSpacing: 0.26,
                        textTransform: UP, color: t.ink, textAlign: "right" },
     yp_c_chap:       { flex: 1, minWidth: 0, textAlign: "center" },
-    yp_c_sug:        { width: 54 },
+    /* WALK-A-027: 'SUGGESTED' is nine spaced mono capitals — 54px could not hold it, so it broke
+       mid-word. Two more points of column, and the header may shrink a shade rather than break. */
+    yp_c_sug:        { width: 58 },
     yp_c_plan:       { width: 68 },
     yp_row:          { flexDirection: "row", alignItems: "flex-start", columnGap: 6,
                        paddingVertical: 6, borderBottomWidth: 1 },

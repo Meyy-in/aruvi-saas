@@ -583,7 +583,7 @@ export default function FirstRun() {
             </View>
           ) : (
             <View>
-              <RollWheel ariaLabel="Class duration" rowPx={92} value={String(durationMin)}
+              <RollWheel ariaLabel="Class duration" rowPx={92} large value={String(durationMin)}
                 onChange={(v) => { durationTouched.current = true; setDurationMin(Number(v)); }}
                 items={DURATION_CHOICES.map((m) => ({ id: String(m), chip: m, label: "minute classes" }))} />
               <Text style={[ws.fr_hint, { color: t.ink_soft, marginTop: 10, marginBottom: 0 }]}>
@@ -615,7 +615,7 @@ export default function FirstRun() {
             </View>
           ) : (
             <View>
-              <RollWheel ariaLabel="Estimated periods" rowPx={92} value={String(periods)}
+              <RollWheel ariaLabel="Estimated periods" rowPx={92} large value={String(periods)}
                 onChange={(v) => { periodsTouched.current = true; setPeriods(Number(v)); }}
                 items={PERIOD_CHOICES.map((p) => ({ id: String(p), chip: p, label: p === 1 ? "period" : "periods" }))} />
               <Pressable onPress={() => setEditingField(null)} accessibilityRole="button"

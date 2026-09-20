@@ -244,11 +244,15 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
             label breaks over two lines, which is what keeps this header level with the other
             two cells. */}
         <View style={[ws.yp_colhd, { borderBottomColor: t.line }]}>
-          <Text style={[ws.yp_c, ws.yp_c_chap]}>Chapter</Text>
+          <Text style={[ws.yp_c, ws.yp_c_chap]} maxFontSizeMultiplier={1}>Chapter</Text>
           {/* WALK-A-027 (founder, 2026-09-20, iPhone): "SUGGESTED" broke mid-word — "SUGGESTE" on one
-              line and "D" on the next. Break between WORDS, never inside one. */}
-          <Text style={[ws.yp_c, ws.yp_c_sug]}>Suggested{"\n"}periods</Text>
-          <Text style={[ws.yp_c, ws.yp_c_plan]}>Your{"\n"}plan</Text>
+              line and "D" on the next. Break between WORDS, never inside one. It only broke at the
+              Larger text size: these three labels sit in fixed-width columns, so they must not grow
+              with Dynamic Type at all — the numbers under them don't. Cap the multiplier at 1. */}
+          <Text style={[ws.yp_c, ws.yp_c_sug]} numberOfLines={2} maxFontSizeMultiplier={1}
+            adjustsFontSizeToFit minimumFontScale={0.8}>Suggested{"\n"}periods</Text>
+          <Text style={[ws.yp_c, ws.yp_c_plan]} numberOfLines={2} maxFontSizeMultiplier={1}
+            adjustsFontSizeToFit minimumFontScale={0.8}>Your{"\n"}plan</Text>
         </View>
 
         {rows.map((r) => (
