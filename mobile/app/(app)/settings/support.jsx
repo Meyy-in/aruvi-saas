@@ -39,8 +39,8 @@
  * ⚠️ NO HEADING, except one. The bar reads "⚙ Support"; the only `set_title` on this screen is
  * "Message sent", which is a STATE and not the name of a screen.
  */
-import { useEffect, useState } from "react";
-import { View, ScrollView, Pressable } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { View, ScrollView, Pressable, Keyboard } from "react-native";
 import { useRouter } from "expo-router";
 import Svg, { Path, Circle } from "react-native-svg";
 import { Text, TextInput } from "../../../components/Text";
@@ -120,6 +120,26 @@ export default function Support() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [sent, setSent] = useState(null);       // the server's reference and window
+
+  /* ★ REACHABLE IS NOT VISIBLE (founder, 2026-09-19, on the iPhone — WALK smoke test: "the
+     send button is hidden behind the keyboard"). `automaticallyAdjustKeyboardInsets` (below)
+     made Send REACHABLE — the scroll range grows by the keyboard's height — but iOS only
+     brings the FOCUSED FIELD into view, and Send sits below it, so she had to know to drag.
+     When the keyboard rises for the message box, scroll to the end: the box and Send then sit
+     together just above the keys. Same idiom as settings/index.jsx (`scrollToEnd`, never a
+     measured offset). Only while the message box holds focus — the Subject dropdown raises no
+     keyboard, and a scroll she did not ask for is its own annoyance.
+     ⚠️ ANDROID IS UNPROVEN: the emulator's soft keyboard was off when this was written, and
+     the inset prop is iOS-only. The scroll below runs on both; whether Android's window
+     resizes under edge-to-edge is for the walk to say (tracker row 04 · Support). */
+  const scrollRef = useRef(null);
+  const msgFocused = useRef(false);
+  const toEnd = () => { try { scrollRef.current && scrollRef.current.scrollToEnd({ animated: true }); } catch {} };
+  useEffect(() => {
+    const sub = Keyboard.addListener("keyboardDidShow",
+      () => { if (msgFocused.current) setTimeout(toEnd, 50); });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     let live = true;
@@ -201,7 +221,7 @@ export default function Support() {
        screen is already a scroller inside a Stack under two bars, which is where a KAV needs a
        `keyboardVerticalOffset` and starts guessing. If this ever stops working on a future SDK,
        the KAV wrap is the fallback, not the first choice. */
-    <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}
+    <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, { paddingTop: 12 }]}
       keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* 1 · the fast door first */}
       <Text style={[ws.set_hint, { color: t.ink_soft, marginTop: 0 }]}>
@@ -247,6 +267,8 @@ export default function Support() {
           <SupField label="Your message">
             <TextInput multiline textAlignVertical="top" value={text} onChangeText={setText}
               maxLength={SUPPORT_MAX} accessibilityLabel="Your message"
+              onFocus={() => { msgFocused.current = true; if (Keyboard.isVisible && Keyboard.isVisible()) setTimeout(toEnd, 50); }}
+              onBlur={() => { msgFocused.current = false; }}
               style={[ws.sup_text, { borderColor: t.line, backgroundColor: t.paper,
                                      color: t.ink }]} />
           </SupField>

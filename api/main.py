@@ -77,6 +77,12 @@ app.add_middleware(
 from .testing_campaign import router as testing_campaign_router  # noqa: E402
 app.include_router(testing_campaign_router)
 
+# The three-surface WALK register (docs/walk_tracker.html) — web · iPhone · Android ticked off
+# per feature, amendments recorded, the release-switch gate. Same tooling-only status as the
+# campaign tracker above: /api/testing/walk{,/item,/amendment,/tracker}.
+from .walk_tracker import router as walk_tracker_router  # noqa: E402
+app.include_router(walk_tracker_router)
+
 # ── Bucket B — THE state backend (Track C, 2026-09-09) ────────────────────────────
 # One DocumentBackend for every per-teacher store below: the folder tree at STATE_DIR
 # (file mode — local dev, tests, the Render disk) or the `documents` table at

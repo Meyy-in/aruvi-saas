@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "walk": "meyy-three-surface-walk",
+  "updated_at": "2026-09-19T16:58:11",
+  "items": {
+    "04.19": {
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-19T09:34:27",
+        "comment": "Send hidden behind the keyboard (smoke test).\n↻ re-walk after WALK-A-001\n✓ re-walked 2026-09-19: Send slides into view (founder, iPhone 16).",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-19T09:34:27",
+        "comment": "Not testable yet: emulator soft keyboard off. Turn it on, then walk.\n↻ re-walk after WALK-A-001\n✓ re-walked 2026-09-19: Send visible above the keyboard, Pixel 7 API 34 (founder).",
+        "build": "Expo Go"
+      }
+    },
+    "01.11": {
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-19T09:34:27",
+        "build": "Expo Go",
+        "comment": "✓ re-walked 2026-09-19: bar hides with the keyboard and returns (Support, Ask Meyy)."
+      }
+    }
+  },
+  "gate": {
+    "_builds": {
+      "check": {
+        "ios": "Expo Go",
+        "at": "2026-09-19T16:58:11",
+        "and_emu": "Expo Go",
+        "web": "Expo Go"
+      }
+    }
+  },
+  "amendments": [
+    {
+      "id": "WALK-A-001",
+      "opened": "2026-09-19T09:00:03",
+      "closed": "2026-09-19T09:34:27",
+      "feature": "04.19",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Support: Send message hidden behind the iPhone keyboard",
+      "what": "Smoke test 2026-09-19 (iPhone 16, Expo Go): with the cursor in 'Your message' the keyboard covers Send. The 2026-09-16 fix made Send reachable by scrolling but never brought it into view.",
+      "fix": "ScrollView ref + scrollToEnd when the keyboard shows while the message box has focus (and on focus if the keyboard is already up). Android unproven: emulator soft keyboard was off.",
+      "files": "mobile/app/(app)/settings/support.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "Claude",
+      "at": "2026-09-19T09:34:27"
+    },
+    {
+      "id": "WALK-A-002",
+      "opened": "2026-09-19T09:32:41",
+      "closed": "2026-09-19T09:34:27",
+      "feature": "01.11",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: bottom nav rides on top of the keyboard",
+      "what": "Pixel 7 (API 34), Support message box: Android resizes the window, so the bottom nav sits above the keys and eats typing room. On the iPhone the keyboard covers it.",
+      "fix": "BottomNav returns null on Android while the keyboard is up (keyboardDidShow/Hide). iOS untouched. Header comment names the divergence.",
+      "files": "mobile/components/BottomNav.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [
+        "and_emu"
+      ],
+      "owner": "Claude",
+      "at": "2026-09-19T09:34:27"
+    }
+  ]
+}

@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Daily Supabase state snapshot (STORAGE_POLICY.md). Install with:
        cp deploy/in.meyy.pullstate.plist ~/Library/LaunchAgents/
-       launchctl load ~/Library/LaunchAgents/in.meyy.pullstate.plist
+       launchctl unload ~/Library/LaunchAgents/in.meyy.pullstate.plist 2>/dev/null
+       launchctl load   ~/Library/LaunchAgents/in.meyy.pullstate.plist
      Check it ran:   cat backups/state/LATEST.txt
+     Run it now:     launchctl kickstart -p gui/$(id -u)/in.meyy.pullstate
+     Did it ever?:   launchctl print gui/$(id -u)/in.meyy.pullstate | grep -E 'runs =|last exit'
      Stop it:        launchctl unload ~/Library/LaunchAgents/in.meyy.pullstate.plist
-     If the Mac is asleep at 02:00 the job runs at the next wake, not never. -->
+
+     ★ RunAtLoad IS LOAD-BEARING (2026-09-19). The first version had StartCalendarInterval
+     alone, on the belief that "if the Mac is asleep at 02:00 the job runs at the next wake,
+     not never". That is true of SLEEP and false of SHUTDOWN: a run missed while the machine
+     is powered off is simply dropped. Installed 18 Sep, the job showed `runs = 0` the next
+     day and `LATEST.txt` still named the manual run that had seeded it — a disaster-recovery
+     snapshot that had never once taken itself. RunAtLoad fires at login, so a night with the
+     Mac off is caught the next morning instead of skipped. Re-running on a day already
+     snapshotted just rewrites that date's folder, so the extra run costs nothing.
+
+     ★ `-u` because StandardOutPath is a FILE, and Python block-buffers a non-tty stdout: the
+     log stays EMPTY until the process exits. An overnight job that hangs or is killed is
+     exactly the case the log exists for, and exactly the case it was silent for.
+
+     ★ The log is NOT in /tmp — macOS clears it on reboot, which is when evidence of an
+     overnight failure is most wanted. ~/Library/Logs is the convention and survives. -->
 <plist version="1.0">
 <dict>
   <key>Label</key><string>in.meyy.pullstate</string>
@@ -13,13 +31,17 @@
   <key>ProgramArguments</key>
   <array>
     <string>/usr/bin/python3</string>
+    <string>-u</string>
     <string>aruvi-scripts/pull_state_from_postgres.py</string>
     <string>--keep</string>
     <string>30</string>
   </array>
   <key>StartCalendarInterval</key>
   <dict><key>Hour</key><integer>2</integer><key>Minute</key><integer>0</integer></dict>
-  <key>StandardOutPath</key><string>/tmp/meyy-pullstate.log</string>
-  <key>StandardErrorPath</key><string>/tmp/meyy-pullstate.log</string>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key>
+  <string>/Users/kumar_radhakrishnan/Library/Logs/meyy-pullstate.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/kumar_radhakrishnan/Library/Logs/meyy-pullstate.log</string>
 </dict>
 </plist>

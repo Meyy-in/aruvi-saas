@@ -95,6 +95,7 @@ An 8-year duty is not covered by a 7-day backup window. So invoices get their ow
 | Action | How | How often |
 |---|---|---|
 | **Push to GitHub** | commit + push `main` | Every working session. This is also the deploy. |
+| **Daily state snapshot** | the `in.meyy.pullstate` LaunchAgent (`deploy/`) → `backups/state/<date>/` | Automatic: 02:00, and at login so a night with the Mac off is not skipped. Verify with `cat backups/state/LATEST.txt` — if its date is not recent the job is not running (2026-09-19: it had never run once). |
 | **Mirror the Mac** | the rsync line below | Weekly, and before anything risky |
 | **Dump Supabase** | `supabase db dump` → `backups/state/<date>.sql` | Monthly — and before anything destructive |
 | **Confirm invoice mail is sending** | Render logs, the `[aruvi] mail:` line at boot | After any deploy that touches mail config |

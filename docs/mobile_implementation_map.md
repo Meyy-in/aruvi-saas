@@ -480,6 +480,13 @@ visible from outside the logs.
 > 3. **Web tidying, no user-visible change:** page.jsx onto the shared readiness/account/entitlement/
 >    year stores; budgets through `setGradeBudget`; the web's `writePointer` onto the shared helper (06·6).
 > 4. **THE WALK** — both surfaces, then Step 9 (TestFlight / Play internal).
+>    ★ 2026-09-19: the walk now has a REGISTER — `docs/walk_tracker.html` (served at
+>    `/api/testing/walk/tracker`, state in `data/testing/walk_state.json`, router `api/walk_tracker.py`).
+>    236 walkable items distilled from appendices 01-06 + the tour + cross-cutting, four columns
+>    (Web · iPhone · Android emulator · Android real device — real required on NATIVE rows only),
+>    an amendments log (WALK-A-NNN, with a "needs a native rebuild" flag) and a Release-switch gate.
+>    Android approach (founder): emulator is the daily Android column, one real-device pass at the
+>    end from the Play internal track; the Expo web preview never earns an Android tick.
 > Nothing in this run has been seen on a handset: bar mark 19px, the save-failed banner on every
 > profile step, My Classes' empty state + third welcome sentence, the set-up check on first My Classes
 > visit (web AND phone), the class-less-subject picker and export, the assess boxes.
@@ -1239,6 +1246,15 @@ than ported is the machinery, and it is the whole of the cost:
 progress) — and the twenty-first thing to check is that Done AND Skip both land on the check window.
 
 ### Step 9 — TestFlight / Play internal
+
+> ★ **2026-09-20 — the PUBLISHING side is now its own plan: `docs/going_live.md`** (website
+> hosting, DNS, and the store listings' public-page requirements). Its §3 names a BLOCKER that
+> is not a build problem and will not be found by any walk: **no public URL renders the privacy
+> notice.** `GET /legal/privacy` is open but returns JSON from the API host, and the human form
+> is a screen inside the app — `web/app` has no routes, so there is no `meyy.in/privacy` to give
+> Play or Apple. The notice is also still `v0.1`, with 16 bracketed placeholders and a footer
+> reading "For legal review before publication". Both must be closed BEFORE a listing can be
+> submitted, and neither is on the walk.
 
 **Entry:** everything above that touches a native module (F9) forces a **development build** (EAS) — Expo Go
 carried the product this far because every dependency so far was JS or bundled (`expo-sqlite/kv-store`,

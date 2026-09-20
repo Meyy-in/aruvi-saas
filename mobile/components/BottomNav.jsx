@@ -16,8 +16,18 @@
  * the frozen Settings bar; that was struck for the same reason as Ask Meyy's scrim — the nav is
  * the app's nav, and a screen that takes it away leaves exactly one way out of itself. In
  * Settings nothing lights, so the bar says "you are somewhere else" without claiming Settings is
- * one of its four places. */
-import { View, Pressable, StyleSheet } from "react-native";
+ * one of its four places.
+ *
+ * ★ THE ONE EXCEPTION — ANDROID, WHILE THE KEYBOARD IS UP (founder, 2026-09-19, the walk's
+ * smoke test on the Pixel 7 emulator: "hide the bottom bar as it is in iPhone"). Technical
+ * divergence, not a product one: Android RESIZES the window for the keyboard, so a bar at the
+ * foot of the column rides up and sits on top of the keys, taking ~57px from the little room
+ * left to type in (on a 360x640 budget phone, most of the message box). iOS does not resize —
+ * the keyboard simply covers the bar — so on the iPhone it was never visible while typing.
+ * Hiding it on Android makes the two phones LOOK the same. It returns the moment the keyboard
+ * goes; hardware Back dismisses the keyboard first, so she is never without a way out. */
+import { useEffect, useState } from "react";
+import { View, Pressable, StyleSheet, Keyboard, Platform } from "react-native";
 import Svg, { Path, Rect, Circle } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "./Text";
@@ -97,6 +107,14 @@ export default function BottomNav({ active = null, onClasses, onLessons, onAdd, 
   const { t } = useTheme();
   const ws = useWebStyles();
   const insets = useSafeAreaInsets();
+  const [kbUp, setKbUp] = useState(false);
+  useEffect(() => {
+    if (Platform.OS !== "android") return undefined;
+    const a = Keyboard.addListener("keyboardDidShow", () => setKbUp(true));
+    const b = Keyboard.addListener("keyboardDidHide", () => setKbUp(false));
+    return () => { a.remove(); b.remove(); };
+  }, []);
+  if (kbUp) return null;
   return (
     <View style={[ws.bnav, { backgroundColor: t.paper_sunk, borderTopColor: t.edge, paddingBottom: insets.bottom }]}
       accessibilityRole="tablist">
