@@ -1404,7 +1404,10 @@ export function webStyles(t, scheme = "light") {
     /* ── The subscribe wizard (`.ob-*`, globals.css 4025-4198, 5221) — 6b·D2, measured
        2026-09-16 in the 390px iframe ────────────────────────────────────────
        ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. */
-    ob_body:         { flex: 1, paddingTop: 22, paddingHorizontal: 20, paddingBottom: 24 },
+    // flexGrow, not flex (walk blocker 2026-09-20): `flex: 1` on a ScrollView's CONTENT container
+    // pins the content to the viewport height, so a form taller than the screen could not be
+    // scrolled up (About you's email field was unreachable with the keyboard open).
+    ob_body:         { flexGrow: 1, paddingTop: 22, paddingHorizontal: 20, paddingBottom: 24 },
     /* The web's foot is `position: sticky` so the CTA is reachable without scrolling
        (founder, 2026-08-25, iPhone compliance). On the phone it is simply the last child
        of a flex column, outside the scroller — same guarantee, no stickiness needed, and

@@ -27,20 +27,31 @@
  */
 import { useRouter, Redirect, useLocalSearchParams } from "expo-router";
 import { getUser } from "@aruvi/shared/format";
+import { View } from "react-native";
 import SubscribeWizard from "../components/SubscribeWizard";
+import Bar from "../components/Bar";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function SubscribeFront() {
   const router = useRouter();
+  const { t } = useTheme();
   /* `trialUsed` — the number's free trial was used before an account deletion (the trial ledger,
      2026-09-18). No trial offer then, and a sentence saying why she is on this screen. */
   const { trialUsed } = useLocalSearchParams();
   /* No account, no wizard — every call it makes is authenticated. This is a guard, not a flow:
      the only way here is through the OTP screen, which has already set the user. */
   if (!getUser()) return <Redirect href="/login" />;
+  /* ★ THE BAR WAS NEVER DRAWN (WALK walk blocker, 2026-09-20). The header above says this door
+     "keeps Bar as its chrome" — but nothing rendered it, so the wizard had no brand, no Log out,
+     and NO SAFE-AREA TOP: the step rail sat under the status bar, and on the Agreement the heading
+     was hidden behind it with no way to scroll up to it. Bar owns the top inset. */
   return (
+    <View style={{ flex: 1, backgroundColor: t.paper }}>
+    <Bar gear={false} />
     <SubscribeWizard trialFork={!trialUsed}
       notice={trialUsed ? "This mobile number has already used its free trial. Subscribe to keep using Meyy." : ""}
       onDone={() => router.replace("/(app)")}
       onCancel={() => router.replace("/login")} />
+    </View>
   );
 }

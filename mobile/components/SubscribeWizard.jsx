@@ -38,7 +38,7 @@
  * whole. Never disable a row's OWN value, or changing her mind strands the wheel on a dead option.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { Text, TextInput } from "./Text";
 import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
@@ -351,13 +351,21 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   /* ── 2 · About you ───────────────────────────────────────────── */
   if (screen === "about") {
     const ready = name.trim() && emailStage === "ok" && role && stateName;
+    /* WALK-A-031 (walk blocker, 2026-09-20): with a field focused the keyboard covered the foot,
+       so "Save & continue" could not be reached without dismissing it. The screen now lifts its
+       foot above the keyboard, so the CTA is ALWAYS visible — she may continue with the minimum. */
     return (
-      <View style={{ flex: 1, backgroundColor: t.paper }}>
+      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: t.paper }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}>
         {trialWindow}
         {noticeBar}
-        <ScrollView contentContainerStyle={ws.ob_body} keyboardShouldPersistTaps="handled"
-          automaticallyAdjustKeyboardInsets>
+        {/* The step rail stays FROZEN at the top (founder, walk 2026-09-20); only the form
+            scrolls. automaticallyAdjustKeyboardInsets is dropped — the KeyboardAvoidingView
+            already lifts the screen, and the two together over-shrank the scroll area. */}
+        <View style={{ paddingHorizontal: 20, paddingTop: 12, backgroundColor: t.paper }}>
           <Steps at={1} />
+        </View>
+        <ScrollView contentContainerStyle={[ws.ob_body, { paddingTop: 10 }]} keyboardShouldPersistTaps="handled">
           <Text style={[ws.ob_title, { color: t.ink }]}>Tell us a bit about yourself</Text>
           <Text style={[ws.ob_sub, { color: t.ink_soft }]}>
             For your receipt and your account — nothing more.</Text>
@@ -428,7 +436,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             onPress={() => setScreen("agreement")} style={{ width: "100%" }} />
           <Link title="← Back" onPress={cancel} />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 

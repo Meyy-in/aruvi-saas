@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-20T10:21:06",
+  "updated_at": "2026-09-20T15:00:27",
   "items": {
     "04.19": {
       "ios": {
@@ -35,6 +35,20 @@
         "at": "2026-09-20T04:41:44",
         "comment": "Incognito, desktop width: lands on Choose; bar mark + lesson studio, no user block; headline, four bullets, 'Choose what works for you', house fonts, no overflow.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T10:39:04",
+        "comment": "After Expo Go reinstall: opens on Choose with no flash; bar mark + LESSON STUDIO, no user block, clears the notch; headline, four bullets, 'Choose what works for you'; Meyy fonts; foot above home indicator.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:19:36",
+        "comment": "Pixel 7 API 34, after clearing Expo Go storage: Choose, no flash; bar clears status bar, foot above gesture bar; mark + LESSON STUDIO, no user block; headline, four bullets; Meyy fonts load.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "03.02": {
@@ -44,6 +58,20 @@
         "at": "2026-09-20T04:45:02",
         "comment": "Two cards with the stated copy; selected state (pine tint + border) follows each click; no reflow.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T10:41:11",
+        "comment": "Two cards with the stated copy; selected state follows each tap; foot doesn't cover the Subscribe card.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:22:27",
+        "comment": "Selected state follows each tap with feedback; foot doesn't cover the Subscribe card.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "03.03": {
@@ -53,6 +81,20 @@
         "at": "2026-09-20T04:47:51",
         "comment": "Choose → sign-in → 'Get started' back to Choose → 'Create sign in' opens OTP screen, empty field, no boxes. Back on the mobile-number screen returns to Choose.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T10:42:35",
+        "comment": "Choose → sign-in → 'Get started' back to Choose → 'Create sign in' opens OTP screen, empty field, no boxes.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:22:27",
+        "comment": "Links between Choose / sign-in / OTP all ✓. HARDWARE BACK (button or edge swipe) on the OTP and sign-in screens does NOTHING — stays put → WALK-A-035.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.04": {
@@ -62,6 +104,20 @@
         "at": "2026-09-20T04:49:21",
         "comment": "Letters rejected; 9 digits keeps Generate OTP disabled, 10 enables, 11th refused. Label, +91, placeholder, 'never share' line and 18+/Privacy Notice sentence present.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:14:28",
+        "comment": "Number pad, 10-digit gate, label, quiet line, 18+/Privacy sentence ✓. '+91' sits slightly HIGHER than the baseline of the typed number (vertical misalignment) → WALK-A-023.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:26:28",
+        "comment": "Number pad opens; keyboard doesn't cover Generate OTP; 10-digit gate; +91 aligned (the iPhone's WALK-A-023 not seen here).",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "03.05": {
@@ -71,6 +127,20 @@
         "at": "2026-09-20T04:50:27",
         "comment": "9000000003 on create: inline 'already in use' sentence, no OTP boxes, button returns from busy.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:14:28",
+        "comment": "9000000003 on create: 'already in use' sentence, no boxes, button not stuck.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:26:28",
+        "comment": "9000000003 → 'already in use', no boxes.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "03.14": {
@@ -80,6 +150,20 @@
         "at": "2026-09-20T04:54:27",
         "comment": "From create OTP (18+ sentence) and from sign-in trust line: no sign-in needed, Back pinned above title, only document scrolls, tables readable, version footer present; Back returns with typed input intact.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:20:03",
+        "comment": "No sign-in needed; Back above title in a fixed head; tables as cards; version footer; Back returns with the number intact.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:30:21",
+        "comment": "Pinned head, smooth scroll, tables as cards, version line, clears gesture bar ✓; hardware Back does NOT return to sign-in → WALK-A-035.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.15": {
@@ -89,6 +173,20 @@
         "at": "2026-09-20T09:57:45",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Failure sentence shows, but the screen has NO Back — dead end before sign-in; only a reload gets out. Raised WALK-A-003.\n✓ re-walked 2026-09-20 after WALK-A-003: offline failure shows with ← Back above the title; Back returns to sign-in."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:16:10",
+        "comment": "Airplane mode: privacy notice loading → failure sentence; ← Back present and works (phone never had the WALK-A-003 fault).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:30:21",
+        "comment": "Offline failure sentence with ← Back ✓; hardware Back does nothing → WALK-A-035.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.13": {
@@ -97,6 +195,20 @@
         "at": "2026-09-20T05:02:59",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "(a) 9000000009 → 'We don't recognise this mobile or email yet…' ✓. (c) offline → 'Couldn't reach Meyy right now…' ✓. (b) shared-email NOT walked — no two-account email on hand; walk when such a pair exists.",
+        "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:20:03",
+        "comment": "(a) unknown number sentence, clears on typing; (c) airplane → 'Couldn't reach Meyy…'. (b) shared email not walked (no pair).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:30:21",
+        "comment": "(a) unknown number via go key ✓; (c) airplane → 'Couldn't reach Meyy…' ✓. (b) not walked (no shared-email pair).",
+        "build": "Expo Go (Pixel 7 API 34)",
         "status": "pass"
       }
     },
@@ -107,6 +219,20 @@
         "at": "2026-09-20T05:02:10",
         "comment": "DevTools Offline, create path, 9000000004 → 'Couldn't send the OTP right now. Please try again.'; no boxes, no crash, button returned.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:16:10",
+        "comment": "Airplane mode, create path: inline 'couldn't send' error, no boxes, spinner stops.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:26:28",
+        "comment": "Airplane mode → 'Couldn't send the OTP…', spinner stops.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "03.10": {
@@ -116,6 +242,20 @@
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Returning half ✓: sign-in 9000000002 → OTP (prefilled, read-only) → ← Back → sign-in; re-enter shows fresh boxes. Create half ✓ (02 after erase): ← Back from OTP returns to Choose. Re-entering 'Create sign in' after Back: boxes/sent state reset ✓, but the mobile field KEEPS the number (03.03 expects it empty) — founder: CLEAR it. → WALK-A-011.\n✓ re-walked 2026-09-20 after WALK-A-011: Back to Choose → Create sign in again → mobile field empty.",
         "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:25:30",
+        "comment": "Create path: Back to Choose → Create sign in again: the mobile field STILL HOLDS the number → WALK-A-011 (phone half).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:35:56",
+        "comment": "Field keeps the number after Back → Create sign in again → WALK-A-011 (phone half).",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.07": {
@@ -125,6 +265,20 @@
         "at": "2026-09-20T10:00:48",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "At expiry the expired sentence + 'Send a new code' show and Verify goes — but the boxes still accept typing and paste, and 'Send a new code' is a small inline link. Raised WALK-A-004.\nAlso: 'Send a new code' clears boxes and restarts at 0:59 ✓. A 'Resend' link appears at 0:30 left (OTP_RESEND_LOCK_MS, deliberate) — row says NO Resend while it runs; founder: REMOVE it — folded into WALK-A-004.\n✓ re-walked 2026-09-20 after WALK-A-004: no mid-run Resend; at expiry boxes disabled, full-size 'Send a new code' in Verify's place; it restarts the timer at 0:59."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:25:30",
+        "comment": "No mid-run Resend ✓ (phone already right). At expiry 'Send a new code' is a small link, not a full-size button → WALK-A-004 (phone half). Send a new code restarts at 0:59 ✓.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:35:56",
+        "comment": "Timer stays honest after 20s in background ✓. Expiry 'Send a new code' is the small link → WALK-A-004 (phone half).",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.08": {
@@ -134,6 +288,20 @@
         "at": "2026-09-20T05:09:30",
         "comment": "Wrong code 111111 while timer running → 'That code didn't match. Please check and try again.' — no expiry sentence.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:28:19",
+        "comment": "111111 → 'That code didn't match…', no expiry wording; error clears on box edit.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:02:42",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "111111 → 'That code didn't match…'.",
+        "status": "pass"
       }
     },
     "03.06": {
@@ -143,6 +311,20 @@
         "at": "2026-09-20T05:11:09",
         "comment": "Via SIGN-IN door (02 is registered): 6 boxes, auto-advance, backspace steps back, paste spreads, mobile read-only, Verify enables only when full. Create door ✓ (02 after erase): boxes appear on Generate OTP.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:25:30",
+        "comment": "6 boxes, autofocus, auto-advance, paste spreads ✓. Backspace on an EMPTY box only moves back; a second press clears — founder: one press should step back AND clear the previous digit → WALK-A-024.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:57:34",
+        "comment": "Auto-advance ✓; Backspace works but needs a second press on an empty box → WALK-A-024. With the keyboard up, 'Verify & continue →' is half-hidden under the pinned foot (← Back) → WALK-A-036 (screenshot in walk thread).",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.21": {
@@ -152,6 +334,20 @@
         "at": "2026-09-20T05:14:05",
         "comment": "02 via sign-in door → 'Welcome to Meyy!', no bottom nav, no gear; bar shows the ID (9000000002 — no name yet, as the row allows) + Log out; free-trial card copy correct. ⌘R reload returns to Welcome, no shell flash.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:28:19",
+        "comment": "Welcome, no bottom bar, no gear; bar shows number + Log out; trial card 'any 3 chapters'; force-quit & reopen → Welcome, no shell flash.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:02:42",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Welcome, no bar/gear, 'any 3 chapters' ✓. Hardware Back does nothing on Welcome (couldn't test exit) → WALK-A-035.",
+        "status": "fail"
       }
     },
     "03.12": {
@@ -161,6 +357,12 @@
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Mobile half ✓ (02). Email half ✓ (03): unknown email not recognised; 03's correct email → OTP to 03's mobile → verify → straight into 03's shell (My Classes), not Subscribe.",
         "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:28:19",
+        "comment": "Mobile half (create door here): OTP → verify → first run; sign-in-door + email half pending.",
+        "build": "Expo Go (iPhone 16)"
       }
     },
     "03.22": {
@@ -170,6 +372,20 @@
         "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Rail, heading, hint, chips, Continue-on-rest, Back → Welcome all ✓. Two issues → WALK-A-005: (1) the wheel stops at the ends — not continuous; (2) keyboard ↑↓ work only after clicking the wheel itself; after using the on-screen ▲▼ the keyboard arrows stop working (focus sits on the button).\n✓ re-walked 2026-09-20 after WALK-A-005: subject wheel wraps both ways; keyboard ↑↓ still work after on-screen ▲▼."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:36:24",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Subject wheel box too short for swiping; ▲▼ crowded together → WALK-A-025. (Loop/keyboard: WALK-A-005 phone half.) Confirmed: wheel does not loop (stops at the ends) — WALK-A-005 phone half."
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:57:34",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Wheel flings far too fast (one flick overshoots) → WALK-A-037; no loop (WALK-A-005); short box (WALK-A-025).",
+        "status": "fail"
       }
     },
     "03.24": {
@@ -179,6 +395,20 @@
         "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "SS → class step: heading, hint, 'Class N' + chips, Subject ✓, Section 9A note for IX, Change subject round-trip all ✓. Same wheel issues as 03.22 (not continuous; keyboard arrows after on-screen ▲▼) → WALK-A-005.\n✓ re-walked 2026-09-20 after WALK-A-005: class wheel wraps; keyboard after ▲▼ ✓."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:36:24",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Class wheel: same short box / crowded arrows → WALK-A-025. Confirmed: wheel does not loop (stops at the ends) — WALK-A-005 phone half."
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:57:34",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Same as 03.22: too fast → WALK-A-037; no loop; short box.",
+        "status": "fail"
       }
     },
     "03.25": {
@@ -188,6 +418,20 @@
         "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "SS IX: heading, '50-minute classes' NCF recommended, periods Meyy recommended and changing per chapter, no placeholders ✓. Presentation → WALK-A-006: 'Chapter N:' repeated in the title beside the number chip; chapter label font small vs the heading (web). SS IX ch 4 recommended = 19 periods (for 03.30).\n✓ re-walked 2026-09-20 after WALK-A-006: no 'Chapter N:' prefix, larger title; chapter wheel keeps its ends."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:36:24",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Recommended tags + figures ✓; chapter title size fine. Titles still read 'Chapter 04: …' beside the number chip → WALK-A-006 (phone half); chapter ▲▼ too close → WALK-A-025."
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:02:42",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Chapter wheel also a bit fast (WALK-A-037). Chapter 4 = 19, NCF / Meyy tags. (Wheel speed → WALK-A-037.)",
+        "status": "pass"
       }
     },
     "03.26": {
@@ -197,6 +441,20 @@
         "at": "2026-09-20T10:03:14",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Behaviour all ✓: one edit box at a time, tags drop off-recommendation, duration note, <5 / >25 lines, chapter change re-seeds periods and keeps 60, class change resets duration to 50; ch 4 set to 60 × 16. Size issue → WALK-A-007: the duration/periods wheels inside 'Change' are much smaller than the value shown after Done.\n✓ re-walked 2026-09-20 after WALK-A-007: Change wheels read as large as the settled value."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:36:24",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Duration Change wheel box too short → WALK-A-025. PERIODS cannot be changed: tapping Change snaps straight back to the default → WALK-A-026."
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:57:34",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Duration wheel a bit fast (WALK-A-037); PERIODS cannot be changed → WALK-A-026.",
+        "status": "fail"
       }
     },
     "03.27": {
@@ -206,6 +464,20 @@
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Lands on My Lessons with bottom nav, no 'ready' screen; preparing card (ch 4 title, 16 × 60 min, progress bar) replaced in place after ~5s; lesson opens at 16 units × 60 min; tour offer shown. Back does not re-enter first run — but it exits Meyy altogether (WALK-A-008), and returning lost the tour offer (WALK-A-009).",
         "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:40:06",
+        "comment": "Ch 4 at 60 min (periods left at 19 — WALK-A-026): lands on My Lessons with bottom bar; preparing card '19 × 60 min' → ready in place; lesson 19 units × 60 min; no ready screen; Back never reaches first run; tour offered.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:02:42",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Prepare → an EMPTY screen reading 'Loading…' for an unusually long time, then the ch 4 card appears suddenly — NO preparing card, no progress bar → WALK-A-038. Hardware Back does nothing on My Lessons (doesn't reopen first run, but does nothing at all) → WALK-A-035.",
+        "status": "fail"
       }
     },
     "03.28": {
@@ -214,6 +486,20 @@
         "at": "2026-09-20T10:08:32",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "9A card green (teaching now — colour only, by design) with ch 4 attached ✓. Tour offer: NOT on My Classes (MyPlans shows it only while !anyBound, and first run now binds 9A — row expects both surfaces; row or code to decide). After the WALK-A-009 reset (tour_offered_at cleared) it is also absent on My Lessons — and yet the server re-stamped tour_offered_at on reload (spent unseen) → WALK-A-009. Card part passes.\n✓ re-walked 2026-09-20: 9A green with ch 4; tour offer shows on My Classes too (WALK-A-014).",
+        "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:43:07",
+        "comment": "9A green with ch 4 at unit 1.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:02:42",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "9A green with ch 4 attached on My Classes.",
         "status": "pass"
       }
     },
@@ -224,6 +510,20 @@
         "at": "2026-09-20T06:29:31",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "⌘R reopens the shell (no first run). Second device = normal Chrome window signed in as 9000000002: straight into the shell, SS · IX · 9A with ch 4 lesson bound. Logged out after."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:55:23",
+        "comment": "Force-quit & reopen → straight into the shell. Second device (web, normal Chrome) as 02 → same SS · IX · 9A with ch 4. Web logged out.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:36:50",
+        "comment": "Reload (r) → straight back into the shell, no flash; web second device as 02 shows SS · IX · 9A with ch 4.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "03.29": {
@@ -232,6 +532,13 @@
         "at": "2026-09-20T08:03:19",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Seen on cycle 2 after the tour: one-shot window with Class · Section · Periods a week · Annual period budget and values (9 · 9A · 8 · 245). (Cycle 1 it fired early after a reload — WALK-A-009.)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:34:21",
+        "comment": "Set-up window with values Class 9 · Section 9A · 8 a week · 245 periods (appeared only after a tab switch — see T.26).",
+        "build": "Expo Go (Pixel 7 API 34)",
         "status": "pass"
       }
     },
@@ -242,6 +549,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Numbers PASS: SS IX ch 4 suggested 19 = chapter step; total 245. Display FAIL: the Year Plan table renders dark in the incognito window — figures only readable by selecting the text. → WALK-A-010.\n✓ re-walked 2026-09-20 after WALK-A-010 (Mac on Dark): Year Plan table light and readable; My Lessons Subject/Class wheels light too."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:43:07",
+        "comment": "Ch 4 suggested 19, total 245, readable incl. Dark ✓. Column header 'SUGGESTED' breaks mid-word — the final 'D' wraps to a second line → WALK-A-027.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:36:50",
+        "comment": "Ch 4 suggested 19, total 245; header does not break mid-word on Android; scrolls, readable.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "04.27": {
@@ -250,6 +571,20 @@
         "at": "2026-09-20T10:15:20",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "02 deleted from incognito: farewell 'Your account and all your data have been deleted. Backup copies are purged within 30 days.' with Done + bar ✕; both land on CHOOSE (device flag cleared — the login screen's fresh-device state) ✓. Rejoin ✓: same number → fresh account, first run (ledger keeps the used chapter; card wording → WALK-A-012). Cycle 3: after erase the account was silently re-created (ghost) → 'Create sign in' refused 'already in use' → WALK-A-018.\n✓ re-walked 2026-09-20 after WALK-A-018 (deployed): 02 deleted, 30s later account = None (no ghost); rejoin via Create sign in accepted.",
+        "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:58:49",
+        "comment": "Delete forever → Deleting… → farewell with Done → Choose.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:40:06",
+        "comment": "Delete forever → farewell → Done → Choose; server account None (no ghost).",
+        "build": "Expo Go (Pixel 7 API 34)",
         "status": "pass"
       }
     },
@@ -260,6 +595,20 @@
         "at": "2026-09-20T10:15:20",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "02 erased with 1 trial chapter used; ledger recorded chapters_used 1 ✓; rejoin via create path → Welcome/first run (not Subscribe, not empty My Classes) ✓. But the trial card still says 'covers any 3 chapters' → WALK-A-012.\n✓ re-walked 2026-09-20 after WALK-A-012: rejoin card reads 'You have 2 of your 3 free chapters left.'"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T12:00:03",
+        "comment": "Erase → no ghost (account None), ledger chapters_used 1; rejoin via Create sign in accepted → Welcome/first run ✓. Trial card still says 'any 3 chapters' though 2 remain → WALK-A-012 (phone half).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:45:27",
+        "comment": "Ledger chapters_used 1; rejoin via Create sign in accepted → Welcome ✓. Card still says 'any 3 chapters' → WALK-A-012 (phone half).",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.11": {
@@ -269,6 +618,20 @@
         "at": "2026-09-20T06:45:04",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "After 02 logged out from first run, the window opens on 'Who's planning today?' with benefits, rule, kicker, field + placeholder, Enter gated, trust line ✓."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T10:42:35",
+        "comment": "Sign-in screen layout correct (benefits, rule, kicker, heading, field + placeholder, no auto keyboard, Enter gated at 10 digits, trust line).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:28:03",
+        "comment": "Sign-in layout, shield renders, no auto keyboard, go-key submits, keyboard doesn't cover Enter.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "03.32": {
@@ -278,6 +641,20 @@
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Log out from first-run bar ✓ → sign-in; signing in as 03 shows only 03's data; back as 02 → Welcome. Failure half (offline prepare) pending — cycle 3. Failure half (cycle 3, DevTools Offline at Prepare): lands on My Lessons, failed card with Dismiss, no hang ✓. But the sentence is truncated ('Try again in a…'), the card's clay left edge reads as a status (founder read it as 'attached'), and My Classes then raised the set-up check (no tour possible, no lesson yet) → WALK-A-019.\n↻ re-walk 2026-09-20: failed card shows full sentence, neutral edge, Try again + Dismiss; no set-up popup ✓. Reload → Welcome, BUT server profile confirmed saved (SS · IX · 9A) — WALK-A-020 fix works; Welcome is the never-generated rule (no lesson yet). Try-again half next.\n✓ Try again (online, no reload) re-serves: bar ~5s, lesson lands, 9A attached. Founder: Welcome-after-reload with no lesson is reasonable — accepted.",
         "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T12:04:38",
+        "comment": "Airplane at Prepare → My Lessons failed card with Dismiss, no hang ✓; no set-up popup ✓; reopen → Welcome (accepted); Log out from first run → sign-in; 03 sees only 03's data ✓. But the message is cut off, the edge is clay, no Try again → WALK-A-019 (phone half). Server profile after the offline first run: None → WALK-A-020 applies to the phone too.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:45:27",
+        "comment": "Airplane at Prepare → failed card, no hang; message shown IN FULL on Android (unlike iPhone); no Try again → WALK-A-019. No blank Loading screen. Log out → sign-in; hardware Back doesn't re-enter; 03 sees only 03's data ✓.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "T.01": {
@@ -287,6 +664,20 @@
         "at": "2026-09-20T10:08:32",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Cycle 2 (02 rejoined, SS IX ch 4, 50 × 19): no nudge while the bar ran; nudge appeared as the lesson landed ✓. But the box gives no explicit invitation to click → WALK-A-013.\n✓ re-walked 2026-09-20 after WALK-A-013: solid 'Show me how →' button on the nudge."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:43:07",
+        "comment": "Offer appears only after the lesson lands ✓. 'Show me how →' shows on My Classes' offer but NOT on My Lessons' → WALK-A-013 (phone half).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:02:42",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Offer shows; My Lessons' nudge has no 'Show me how →' → WALK-A-013 (phone half).",
+        "status": "fail"
       }
     },
     "T.02": {
@@ -296,6 +687,20 @@
         "at": "2026-09-20T10:08:32",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Offer NOT shown on My Classes (only My Lessons); still on My Lessons on return ✓. Founder: must be on both. Also ch 4 already attached to 9A before the tour → WALK-A-014.\n✓ re-walked 2026-09-20 after WALK-A-014: offer on BOTH My Lessons and My Classes; no set-up popup while on offer."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:40:06",
+        "comment": "Offer shows on BOTH My Classes and My Lessons (phone already right — WALK-A-014 web-only fault).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:02:42",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Offer on both My Lessons and My Classes.",
+        "status": "pass"
       }
     },
     "T.04": {
@@ -305,6 +710,20 @@
         "at": "2026-09-20T06:54:11",
         "comment": "Tour opens on My Lessons (clay underline stays on My Lessons — she is standing there, as designed); ring on My Classes bar item, tip above: 'This is where your classes sit.' + body; 1 of 20 · Skip · Next.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.05": {
@@ -314,6 +733,20 @@
         "at": "2026-09-20T07:37:40",
         "comment": "Next → ring on My Lessons bar item, tip above: 'This is where your generated lesson plans sit.'; still on My Lessons; 2 of 20 with Back.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.06": {
@@ -323,6 +756,20 @@
         "at": "2026-09-20T07:38:12",
         "comment": "Ring + centred hand on the ch 4 lesson card, tip below: 'See the lesson plan you just now generated.'; lands immediately; 3 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.07": {
@@ -332,6 +779,20 @@
         "at": "2026-09-20T07:38:43",
         "comment": "Ring on the card's report button, tip below with 'Generate PDF reports' copy; icon unmoved; 4 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.08": {
@@ -341,6 +802,20 @@
         "at": "2026-09-20T07:40:53",
         "comment": "Ring on archive icon, tip 'You can archive a Lesson plan…'; card reads 'Ready to teach', not attached to any section (tour unbinds for steps 1–9, as designed); 5 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.09": {
@@ -350,6 +825,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Ring back on card, 6 of 20, Next advances ✓. Copy says 'click on the lesson card' but clicking the card does NOTHING — only Next works → WALK-A-015.\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "As expected (unported): copy says tap the card but only Next advances → WALK-A-015."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "As on iPhone (unported) → WALK-A-015."
       }
     },
     "T.10": {
@@ -359,6 +848,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Preview opens, ring + lifted tip. Tip body reads 'We will now attach this lesson to section your section from ‘My Classes’…' — no section named, broken wording → WALK-A-016.\n✓ re-walked 2026-09-20 after WALK-A-016: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Preview opens pinned to top ✓; target-section wording per WALK-A-016 (unported)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "As on iPhone (unported) → WALK-A-016."
       }
     },
     "T.11": {
@@ -368,6 +871,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Tour moves to My Classes; 9A empty; ring + hand on '+'; tip names 9A and ch 4 correctly; set-up window stays away ✓. But tip says 'Click the + sign' and clicking '+' does nothing — only Next advances → WALK-A-015 (same pattern as step 6).\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Ring + hand on '+' ✓; tapping '+' does nothing → WALK-A-015 (unported)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "As on iPhone (unported) → WALK-A-015."
       }
     },
     "T.12": {
@@ -377,6 +894,20 @@
         "at": "2026-09-20T07:49:56",
         "comment": "Picker opens by itself; tip + hand inside the sheet on the ch 4 row: 'Select a lesson plan to track for Section 9A.'; Next reachable; 9 of 20. Clicking the row has no effect (same pattern as WALK-A-015; founder passes the step).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Picker with tour inside ✓; tip marginally covers the bottom bar → WALK-A-028; row tap does nothing (WALK-A-015)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Step 9: background turns suddenly very DULL (heavy dim over the picker) and the tip hides the bottom bar → WALK-A-028; row tap does nothing (WALK-A-015)."
       }
     },
     "T.13": {
@@ -386,6 +917,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Picker closes, 9A turns green, ring + hand, real names, 10 of 20 ✓. Copy: 'attached “…” for section 9A' should read 'to section 9A' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-015/017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "9A goes green ✓; 'for section' / tap wording → WALK-A-015/017 (unported)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "As on iPhone (unported) → WALK-A-015/017."
       }
     },
     "T.14": {
@@ -395,6 +940,20 @@
         "at": "2026-09-20T07:52:24",
         "comment": "Opens attached lesson on unit 1, top; ring + tip by unit tabs naming the four tabs; 11 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.15": {
@@ -404,6 +963,20 @@
         "at": "2026-09-20T07:52:54",
         "comment": "Lesson tab; ring on clay phase bookmark, tip above 'Bookmark where you left a particular section…'; bookmark unmoved; 12 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Bookmark ringed ✓, but the tip JUMPS abruptly from the bottom to the top of the screen at this step → WALK-A-028."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Step 12: tip jumps up then settles down; on Back/Next it sometimes settles away from its normal place → WALK-A-028."
       }
     },
     "T.16": {
@@ -413,6 +986,20 @@
         "at": "2026-09-20T07:53:44",
         "comment": "Mark complete scrolled mid-screen, ring + hand, tip above 'Track progress.' with real chapter + 9A; 13 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Step 13: tip jumps down then settles up; on Back/Next sometimes settles in the wrong place → WALK-A-028."
       }
     },
     "T.17": {
@@ -422,6 +1009,20 @@
         "at": "2026-09-20T07:54:18",
         "comment": "Back on My Classes; 9A drawn complete (clay); ring + hand on '+'; tip below 'You have completed the chapter…' ending in [+]; 14 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Step 14: tip jumps down then settles correctly → WALK-A-028."
       }
     },
     "T.18": {
@@ -431,6 +1032,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Picker opens with tour inside, 'Select a plan.', 15 of 20, Next closes it ✓. Copy says 'the same window shown in step 8' — it was step 9 → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Picker again ✓; tip marginally covers the bottom bar → WALK-A-028; 'step 8' wording → WALK-A-017 (unported)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Step 15: background very DULL, bottom bar hidden → WALK-A-028; wording (WALK-A-017)."
       }
     },
     "T.19": {
@@ -440,6 +1055,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Ring on Add, tip above, 16 of 20 ✓. Copy wrong: says it adds subjects (it cannot — the Add window has no Subject row; a subject is a purchase) and omits that it also amends periods a week and annual budget → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Ring on Add ✓; wording (subjects) → WALK-A-017 (unported)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "As on iPhone (unported) → WALK-A-017."
       }
     },
     "T.20": {
@@ -449,6 +1078,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Tour opens the teaching profile; tip 'Your teaching profile.' Copy: founder — remove the last clause '…removing a subject is the one thing done here.' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Profile + gear ✓; subject-removal line → WALK-A-017 (unported)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "As on iPhone (unported) → WALK-A-017."
       }
     },
     "T.21": {
@@ -458,6 +1101,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Ring on Ask Meyy, tip above 'Use Ask Meyy to answer your queries…'; 18 of 20. Note: says 'up to 100 questions across 5 categories' — bank holds 119 pairs in 5 categories (WALK-A-017 item 5).\n✓ re-walked: 'over 100 questions'."
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Ask Meyy ring ✓; 'up to 100' → WALK-A-017 (unported)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "As on iPhone (unported) → WALK-A-017."
       }
     },
     "T.22": {
@@ -467,6 +1124,20 @@
         "at": "2026-09-20T07:59:03",
         "comment": "Tour opens Ask Meyy panel; tip 'Use either the categories or the intelligent search…'; 19 of 20.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Ask panel open ✓; tip marginally covers the bottom bar → WALK-A-028."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Step 19: tip partly hides the bottom bar → WALK-A-028."
       }
     },
     "T.23": {
@@ -476,6 +1147,20 @@
         "at": "2026-09-20T08:03:19",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Step 20: Ask closes, centred 'Welcome to Meyy' card, dimmed scrim, 20 of 20. Done → My Classes, 9A green with ch 4 (first run's binding), no phantom progress."
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Welcome card centred; Done → My Classes, 9A green, no phantom progress."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.24": {
@@ -485,6 +1170,20 @@
         "at": "2026-09-20T10:13:21",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Back 20→7 mirrors every move: Ask re-opens/closes, profile → My Classes (17→16 lands on the Add ring = step 16's target), 9→8 shows 9A unattached, forward 9→10 re-attaches; counter counts down. Forward again to 20 then Done.\n✓ re-walked: browser Back during the tour does nothing."
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Back 20→7 mirrors every move incl. 9→8 detaching 9A; forward re-attaches."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:09:32",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Android: ring lines up; tip on screen."
       }
     },
     "T.26": {
@@ -494,6 +1193,20 @@
         "at": "2026-09-20T08:03:19",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "After Done, ~1s later 'Would you like to check your set-up?' with values on the rows (Class 9 · Section 9A · 8 a week · 245 periods) — once. Skip half ✓ (cycle 3): set-up check window rose after Skip."
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Set-up check rose once after the Skip (values shown); after the later Done it correctly did NOT rise again (one-shot)."
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:34:21",
+        "comment": "After Done, the set-up check did NOT rise on My Classes; it appeared only after switching My Lessons → My Classes → WALK-A-039.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "T.25": {
@@ -503,6 +1216,20 @@
         "at": "2026-09-20T08:21:15",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Cycle 3: before = 9A green with ch 4. Skip at step 9 (picker open) → ends on My Classes, picker closed, no overlay remnants, 9A green with ch 4 restored. (Step-5 skip variant not walked — one skip per account.)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T11:53:21",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Accidental Skip mid-tour → My Classes, 9A green restored, no overlay remnants."
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T15:00:27",
+        "comment": "Tour re-offered (tour_offered_at cleared) → Skip at step 9 with picker open → My Classes, picker closed, no remnants, 6A green restored.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "T.03": {
@@ -512,6 +1239,20 @@
         "at": "2026-09-20T08:23:26",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "After Skip: no offer on either tab; log out + sign in → shell, no offer, 9A still green with ch 4, no demo replay."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:04:49",
+        "comment": "After leaving the tour (force-quit mid-tour) and relaunching, the offer does not spring back; nothing replays the demo.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T15:00:27",
+        "comment": "After a reload mid-tour the offer did not spring back.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "04.26": {
@@ -521,6 +1262,20 @@
         "at": "2026-09-20T08:23:26",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Trial account (02, cycle 3): 'Download my data first (Word)' from the final delete window → aruvi-your-data.docx: account (ID/phone, member since, marketing no, privacy notice v0.3), profile SS · IX · 9A, year 2026-27, no notes, teaching state 'Ch. 4 … 9A: started', library-content note. Cancelled. (File name still says 'aruvi' — teacher-facing, cf. the Meyy rename.)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:58:49",
+        "comment": "Download my data (trial) → 'Preparing…' → file arrives and the button disappears ✓, but it goes STRAIGHT to the share sheet — no preview first → WALK-A-030.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:40:05",
+        "comment": "Download my data → straight to the Android app chooser, no display of the document first → WALK-A-030.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "fail"
       }
     },
     "03.16": {
@@ -530,6 +1285,20 @@
         "at": "2026-09-20T10:18:55",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "04 fresh: Subscribe → Create sign in → verify lands in the subscribe wizard with the five-step rail and the trial-or-subscribe window ✓; wizard '← Back' returns to OTP ✓. But re-verifying shows the trial window AGAIN (row: once per session). Earlier: leaving the wizard by browser Back stranded the number → WALK-A-021.\n✓ re-walked 2026-09-20 after WALK-A-021 (deployed): browser Back out of the wizard, then Create sign in with 04 again → accepted, OTP → wizard; trial window not shown a second time."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T12:12:32",
+        "comment": "Subscribe → Create sign in → verify → wizard with rail + trial window ✓; wizard ← Back → OTP ✓. Re-verify then landed straight on the TRIAL Welcome (first run) instead of the wizard — the subscribe path is lost after one Back → WALK-A-021 (phone half). Strand check: Create sign in with 04 afterwards → 'already in use'.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:53:23",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Fresh 04 via Subscribe → wizard with bar + rail (WALK-A-033 fix) and trial window."
       }
     },
     "03.17": {
@@ -539,6 +1308,20 @@
         "at": "2026-09-20T10:18:55",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "Name, fresh email, house-styled Role/State dropdowns (Mac on Dark), Save & continue → Agreement ✓. Used email refused only AFTER the email verification step, not on first entry; City should be mandatory; mandatory fields need * (school stays unmarked) → WALK-A-022.\n✓ re-walked 2026-09-20 after WALK-A-022: * on name/email/role/state/city (not school); used email refused at 'Confirm this email →'; Save disabled until City filled."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T12:56:07",
+        "comment": "No * marks; used email refused only after re-typing; Save enabled with City empty → WALK-A-022 (phone half). Email text sits at the BOTTOM of its field → WALK-A-029. With City focused, Save & continue hidden behind the keyboard → WALK-A-031 (fixed mid-walk with WALK-A-033: KAV + scroll fix; re-walked OK). Role/State lists fine, but the State list is too TALL → WALK-A-032.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:53:23",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Save & continue never hidden (031 fix holds), field text centred ✓. State list too tall → WALK-A-032. Save lights up as soon as State is chosen, while School sits below the fold unseen → WALK-A-040 (City-mandatory part is WALK-A-022). Scroll with the emulator mouse is fast (emulator artefact?)."
       }
     },
     "03.18": {
@@ -548,6 +1331,20 @@
         "at": "2026-09-20T09:30:57",
         "comment": "04: accept blocked with nothing ticked + the 'Confirm each of the five points…' line; heading 'Legal Agreement with User'; five foot boxes scroll to each point and fill as ticked; final tick; marketing off; version line; 'Recording…' → Subjects.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T12:56:07",
+        "build": "Expo Go (iPhone 16)",
+        "comment": "Re-walked after WALK-A-033 blocker fix: bar + rail visible, heading visible, document scrolls, accept → Subjects. 'Recording…' not seen (likely too quick). Jump boxes land with each point's title at the top (read top-down, as intended); on long points the tick is below the fold → WALK-A-034 (optional)."
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:53:23",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Scrolls well, jump boxes land on their points ✓; but the HEADING is not visible on Android → WALK-A-033 (Android)."
       }
     },
     "03.20": {
@@ -557,6 +1354,20 @@
         "build": "web dev (localhost:3000 → Render)",
         "comment": "04: SS · Middle through the cart and the Pay preview stub; confirming signs her in to first run ('Welcome to Meyy!', no trial card) ✓. Duplicate blocked; Pay shows ₹500 row, 'Total ₹500 / year' and the preview line ✓.",
         "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:00:03",
+        "comment": "SS · Middle in cart; duplicate blocked; ₹500 row, 'Total ₹500 / year', preview line; confirm → first run (no trial card).",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:53:23",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "SS · Middle, duplicate blocked, ₹500 renders, Pay stub, confirm → first run."
       }
     },
     "03.23": {
@@ -566,6 +1377,20 @@
         "at": "2026-09-20T09:35:03",
         "comment": "04 subscribed to SS · Middle only: first-run subject wheel offers only Social Sciences; class wheel only 6, 7, 8. Provisioned-at-checkout subscriber still gets first run (no trial card).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:00:03",
+        "comment": "Subscriber (SS · Middle): subject wheel only Social Sciences, class wheel only 6, 7, 8. (Wheel height → WALK-A-025.)",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T14:53:23",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Subject wheel only SS; class wheel only 6, 7, 8."
       }
     },
     "T.28": {
@@ -575,6 +1400,20 @@
         "at": "2026-09-20T09:39:10",
         "build": "web dev (localhost:3000 → Render)",
         "comment": "04 (SS·6): step 11 → other tab 30s → back: same step, ring in place. Step 12 → closed the Meyy tab, reopened: no overlay/half-state, 6A shows the lesson attached (binding restored), no tour offer; the first-run set-up check rose instead (expected: tour no longer on offer)."
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:04:44",
+        "comment": "04 (SS · 6): step 11 → home screen 30s → back: same step, ring in place. Step 12 → force-quit + relaunch: no overlay/half-state, 6A green with the lesson (binding restored), tour offer not back; the first-run set-up check rose instead (expected). (Periods Change still broken — WALK-A-026; 'Show me how' only on My Classes — WALK-A-013.)",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T15:00:27",
+        "comment": "Step 11 → Home 30s → back: same step, ring in place. Step 12 → reload: no overlay, 6A green, no offer; set-up check rose (expected).",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
       }
     },
     "T.27": {
@@ -592,6 +1431,45 @@
         "build": "web dev (localhost:3000 → Render)",
         "comment": "04 (fresh, cycle C): 'Privacy Notice' in the final tick opens a sheet over the wizard with ✕; closing returns with every tick still set.",
         "status": "pass"
+      },
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T12:56:07",
+        "comment": "Privacy Notice sheet from the final tick opens cleanly; closing keeps the ticks.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "pass"
+      },
+      "and_emu": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T14:53:23",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "comment": "Privacy Notice sheet opens but its top overlaps the app bar → WALK-A-041."
+      }
+    },
+    "04.25": {
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T11:58:49",
+        "comment": "Red block, eras/ERASE gating, final window, tick gating, Cancel unticks ✓. The typed text sits at the BOTTOM of the confirm field, not vertically centred → WALK-A-029.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
+      },
+      "and_emu": {
+        "by": "Kumar",
+        "at": "2026-09-20T14:40:05",
+        "comment": "Red block gating, text centred, final window, Cancel unticks.",
+        "build": "Expo Go (Pixel 7 API 34)",
+        "status": "pass"
+      }
+    },
+    "T.29": {
+      "ios": {
+        "by": "Kumar",
+        "at": "2026-09-20T13:10:10",
+        "comment": "Text size Larger, 04 tour: step 1 fine; ring hugs targets. Step 9 eats into the bottom bar; 12 jumps bottom→top; 13 first lands at the bottom over the bar, then settles up; 15 and 19 cover the bottom bar → WALK-A-028.",
+        "build": "Expo Go (iPhone 16)",
+        "status": "fail"
       }
     }
   },
@@ -683,7 +1561,7 @@
       ],
       "applies_to": "both",
       "title": "Expired OTP: boxes stay live; 'Send a new code' only a link; mid-run Resend to go",
-      "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend. [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): no mid-run Resend already; at expiry 'Send a new code' is still a small link — needs the full-size button + disabled boxes.",
       "fix": "Expired: boxes disabled (+ dimmed CSS), 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed (Login.jsx). Phone: at phone fix point.",
       "files": "web/app/components/Login.jsx, globals.css",
       "commit": "",
@@ -707,7 +1585,7 @@
       ],
       "applies_to": "both",
       "title": "First-run wheels: roll continuously; keyboard arrows after on-screen ▲▼",
-      "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends. [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): subject + class wheels confirmed non-looping. ANDROID: confirmed non-looping.",
       "fix": "RollWheel `loop` prop; first run's Subject + Class loop (chapter keeps its ends); ▲▼ keep focus on the wheel (mousedown preventDefault + refocus). Phone: at phone fix point.",
       "files": "web/app/components/wheels.jsx, FirstRun.jsx",
       "commit": "",
@@ -731,7 +1609,7 @@
       ],
       "applies_to": "web",
       "title": "Chapter wheel: drop the 'Chapter N:' prefix; larger chapter label (web only)",
-      "what": "(1) Each chapter row shows the number in the green chip AND a title reading 'Chapter 4: …' — the number twice. The label is c.chapter_title verbatim (FirstRun.jsx ~742), so the prefix comes from the chapter data; strip a leading 'Chapter N:' for display in this wheel (check whether other surfaces show the same doubling before deciding to strip at the API). (2) The chapter label reads small against 'Choose the chapter to teach' — raise it on WEB. ★ Founder: the size change is WEB ONLY; the phone's chapter-label size is to be reviewed on its own during the phone walk, NOT carried over automatically. The prefix removal (1) is a content fix — decide for the phone during its walk too.",
+      "what": "(1) Each chapter row shows the number in the green chip AND a title reading 'Chapter 4: …' — the number twice. The label is c.chapter_title verbatim (FirstRun.jsx ~742), so the prefix comes from the chapter data; strip a leading 'Chapter N:' for display in this wheel (check whether other surfaces show the same doubling before deciding to strip at the API). (2) The chapter label reads small against 'Choose the chapter to teach' — raise it on WEB. ★ Founder: the size change is WEB ONLY; the phone's chapter-label size is to be reviewed on its own during the phone walk, NOT carried over automatically. The prefix removal (1) is a content fix — decide for the phone during its walk too. PHONE (iPhone walk): prefix still shown — port wheelChapterTitle at the phone fix point (sizes: phone chapter title is fine as is).",
       "fix": "wheelChapterTitle strips a leading 'Chapter N:' (FirstRun + PrepareLesson chapter wheels); chapter label 18px on web.",
       "files": "wheels.jsx, FirstRun.jsx, PrepareLesson.jsx, globals.css",
       "commit": "",
@@ -843,7 +1721,7 @@
       ],
       "applies_to": "both",
       "title": "Create sign in: mobile field keeps the old number after Back",
-      "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same. [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — field keeps the number.",
       "fix": "'Create sign in' clears the mobile field, error and timer on every entry.",
       "files": "web/app/components/Login.jsx",
       "commit": "",
@@ -867,7 +1745,7 @@
       ],
       "applies_to": "both",
       "title": "Rejoining teacher's trial card says 3 chapters when fewer remain",
-      "what": "After erase + rejoin, the server seeds the trial with the ledger's used chapters (_entitlement_of → '_earlier/1', so 2 left), but FirstRun's 'Your free trial' card prints trialInfo.trial_chapter_cap — 'covers any 3 chapters' — the CAP, not what she has left. A rejoiner is promised a chapter she does not have. Show the remaining count when it is below the cap (e.g. 'You have 2 of your 3 free chapters left'), cap wording otherwise. Check the phone's card. (Considered and WITHDRAWN by founder: 'Prepare my second lesson' — her earlier lesson was erased, so for her this IS the first lesson; the CTA stays.) [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "After erase + rejoin, the server seeds the trial with the ledger's used chapters (_entitlement_of → '_earlier/1', so 2 left), but FirstRun's 'Your free trial' card prints trialInfo.trial_chapter_cap — 'covers any 3 chapters' — the CAP, not what she has left. A rejoiner is promised a chapter she does not have. Show the remaining count when it is below the cap (e.g. 'You have 2 of your 3 free chapters left'), cap wording otherwise. Check the phone's card. (Considered and WITHDRAWN by founder: 'Prepare my second lesson' — her earlier lesson was erased, so for her this IS the first lesson; the CTA stays.) [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — rejoin card says 'any 3 chapters' with 2 left.",
       "fix": "Trial card says 'You have N of your 3 free chapters left.' when fewer remain (trial_chapters_used).",
       "files": "web/app/components/FirstRun.jsx",
       "commit": "",
@@ -891,7 +1769,7 @@
       ],
       "applies_to": "both",
       "title": "Tour offer box doesn't read as something to click",
-      "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too. [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): same as web — My Classes' nudge has 'Show me how →', My Lessons' has none. ANDROID: same.",
       "fix": "'Show me how →' added to My Lessons' nudge; the CTA is now a solid pine button on both nudges.",
       "files": "MyLessonPlans.jsx, MyPlans.jsx, globals.css",
       "commit": "",
@@ -1035,7 +1913,7 @@
       ],
       "applies_to": "both",
       "title": "Failed first lesson: message clipped, card looks attached, set-up check fires anyway",
-      "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect. [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — clipped message, clay edge, no Try again; set-up popup did NOT fire on the phone.",
       "fix": "Failed card: full sentence, neutral spine/edge, 'Try again' (re-serves the same descriptor incl. first-run bindKey); set-up check held while a lesson is preparing/failed or eligibility unknown; eligibility re-read when a plan lands.",
       "files": "MyLessonPlans.jsx, page.jsx, FirstRun.jsx, globals.css",
       "commit": "",
@@ -1059,7 +1937,7 @@
       ],
       "applies_to": "both",
       "title": "First run offline: profile never saved, yet the shell opens",
-      "what": "Cycle 3: first run completed with the network OFF at 'Prepare the lesson'. The shell opened (My Lessons with a failed card; My Classes with an empty 9A card) and she then prepared ch 4 successfully online from My Lessons. A reload (⌘R) put her back on 'Welcome to Meyy!' — first run again. So the profile write made at activation (POST /readiness, fired in the same tick as the handoff) failed offline, but the client moved her into the shell as if it had succeeded; the SS IX · 9A profile she saw existed only in the browser. Work done in that session (the prepared lesson) sits against an account with no profile. Fix: verify the activation write (the read-after-write verify used elsewhere) and, on failure, keep her in first run with a plain retry — never open the shell on an unsaved profile; or queue and retry the write. Check the phone. [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "Cycle 3: first run completed with the network OFF at 'Prepare the lesson'. The shell opened (My Lessons with a failed card; My Classes with an empty 9A card) and she then prepared ch 4 successfully online from My Lessons. A reload (⌘R) put her back on 'Welcome to Meyy!' — first run again. So the profile write made at activation (POST /readiness, fired in the same tick as the handoff) failed offline, but the client moved her into the shell as if it had succeeded; the SS IX · 9A profile she saw existed only in the browser. Work done in that session (the prepared lesson) sits against an account with no profile. Fix: verify the activation write (the read-after-write verify used elsewhere) and, on failure, keep her in first run with a plain retry — never open the shell on an unsaved profile; or queue and retry the write. Check the phone. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): SAME fault — after an offline first run and a relaunch, 02's server profile is None. Port the pending-profile retry to the phone.",
       "fix": "Unverified profile write kept as PENDING per user and retried (online event + 15s timer, ≤40) ; on load, if the server has no profile but a pending one exists, she stays in the shell and it is re-sent.",
       "files": "web/app/page.jsx",
       "commit": "",
@@ -1083,7 +1961,7 @@
       ],
       "applies_to": "both",
       "title": "Leaving the subscribe wizard strands her: number taken, only the trial door left",
-      "what": "04 (new number): Choose → Subscribe → Create sign in → verify → subscribe wizard (trial offer window shown). She backed out of the wizard, then tried 'Create sign in' again: refused 'already in use' — verifying had already created the account. 'Already have an ID' then dropped her straight into the TRIAL first run. So a teacher who leaves the wizard for any reason can no longer reach the subscribe-from-the-front-door path; she becomes a trial account without choosing it. Options: don't create the account until the wizard completes (or treat an account with no consent + no entitlement activity as still 'new' at Create sign in); or when an existing, never-activated account signs in having picked Subscribe, resume the wizard. Also (founder to decide): the offer window defaults TRIAL (green) even though she had just picked the Subscribe card. ALSO: the trial-or-subscribe window re-appears every time she re-verifies after the wizard's ← Back (row 03.16 expects it once per session). [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "04 (new number): Choose → Subscribe → Create sign in → verify → subscribe wizard (trial offer window shown). She backed out of the wizard, then tried 'Create sign in' again: refused 'already in use' — verifying had already created the account. 'Already have an ID' then dropped her straight into the TRIAL first run. So a teacher who leaves the wizard for any reason can no longer reach the subscribe-from-the-front-door path; she becomes a trial account without choosing it. Options: don't create the account until the wizard completes (or treat an account with no consent + no entitlement activity as still 'new' at Create sign in); or when an existing, never-activated account signs in having picked Subscribe, resume the wizard. Also (founder to decide): the offer window defaults TRIAL (green) even though she had just picked the Subscribe card. ALSO: the trial-or-subscribe window re-appears every time she re-verifies after the wizard's ← Back (row 03.16 expects it once per session). [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): worse than web — wizard ← Back to OTP, then re-verify, drops her straight into the TRIAL first run (no wizard, no offer). The phone's verify must keep mode=subscribe for a `fresh` account. PHONE: confirmed stranded — Create sign in with never-activated 04 → 'already in use' (phone's idInUse ignores the server's `fresh`). PHONE: also Log out mid-wizard → next sign-in lands in TRIAL.",
       "fix": "SERVER: /onboarding/known returns `fresh` (no consent/profile/subscription/used chapter); web Create sign in treats a fresh account as new. Trial offer once per SESSION (sessionStorage). NEEDS RENDER DEPLOY.",
       "files": "api/main.py, Login.jsx, SubscribeFlow.jsx",
       "commit": "",
@@ -1107,7 +1985,7 @@
       ],
       "applies_to": "both",
       "title": "About you: refuse a used email up front; City mandatory; mark required fields",
-      "what": "Subscribe wizard, About-you step. (1) An email already on another account is refused only AFTER she completes the email verification — she is made to verify an address she can never use. Check 'already in use' FIRST (on entry / before sending any code), as the mobile check does on Create sign in. (2) Founder: City becomes MANDATORY (Save & continue gated on it; the server/profile record to match). (3) Mark every mandatory field with * — name, email, role, state, city; School name carries NO * so it reads as optional (its '(optional)' label can then go or stay — founder's call). Same form on the phone (and Settings › Personal profile shares the fields — keep consistent). [WEB re-walked green 2026-09-20; phone half pending]",
+      "what": "Subscribe wizard, About-you step. (1) An email already on another account is refused only AFTER she completes the email verification — she is made to verify an address she can never use. Check 'already in use' FIRST (on entry / before sending any code), as the mobile check does on Create sign in. (2) Founder: City becomes MANDATORY (Save & continue gated on it; the server/profile record to match). (3) Mark every mandatory field with * — name, email, role, state, city; School name carries NO * so it reads as optional (its '(optional)' label can then go or stay — founder's call). Same form on the phone (and Settings › Personal profile shares the fields — keep consistent). [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed all three (no *, late email refusal, City optional).",
       "fix": "Used email refused at 'Confirm this email →'; City mandatory; * on name/email/role/state/city (not school) — subscribe wizard and Settings › Personal profile.",
       "files": "SubscribeFlow.jsx, Settings.jsx, globals.css",
       "commit": "",
@@ -1120,6 +1998,443 @@
       ],
       "owner": "Claude",
       "at": "2026-09-20T09:53:05"
+    },
+    {
+      "id": "WALK-A-023",
+      "opened": "2026-09-20T11:14:28",
+      "closed": "",
+      "feature": "03.04",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "OTP screen: '+91' sits above the number's baseline",
+      "what": "iPhone 16, Expo Go: on the create OTP screen the '+91' prefix is displaced slightly upward relative to the 10-digit number beside it (not on the same text line). Align the prefix and the TextInput on one baseline/centre (the web's .ob-mobile-row does). Check Android too.",
+      "fix": "",
+      "files": "mobile login screen (ob_mobile_row / ob_cc in theme/web.js)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:14:28"
+    },
+    {
+      "id": "WALK-A-024",
+      "opened": "2026-09-20T11:25:30",
+      "closed": "",
+      "feature": "03.06",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "both",
+      "title": "OTP backspace: one press should step back AND clear the previous digit",
+      "what": "iPhone: pressing Backspace on an empty OTP box moves focus to the previous box but leaves its digit; a second press clears it. Founder: a single Backspace on an empty box should move back and clear that digit. The web's otpKeyDown has the same two-press behaviour (focus only) — change both.",
+      "fix": "",
+      "files": "web/app/components/Login.jsx (otpKeyDown) + mobile login OTP boxes",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:25:30"
+    },
+    {
+      "id": "WALK-A-025",
+      "opened": "2026-09-20T11:36:24",
+      "closed": "",
+      "feature": "03.22",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone first-run wheels too short; ▲▼ crowded",
+      "what": "iPhone 16: the Subject, Class and Duration wheel boxes are too short for comfortable swiping, and the ▲/▼ pair sits too close together (also on the Chapter wheel). Founder: make them the CHAPTER box's height; space the arrows apart, but keep them clear of the box's top and bottom edges on the right. Label sizes are fine (minutes/periods match the chapter title). Phone only — web sizes are separate. ANDROID: same request (subject/class to chapter-box height).",
+      "fix": "",
+      "files": "mobile first-run wheel component (RollWheel port) + theme/web.js",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:36:24"
+    },
+    {
+      "id": "WALK-A-026",
+      "opened": "2026-09-20T11:36:24",
+      "closed": "",
+      "feature": "03.26",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone: periods 'Change' snaps back to the default",
+      "what": "iPhone 16, chapter step: tapping Change on Estimated periods and moving the wheel restores the default immediately — the teacher cannot set periods at all (duration Change works). Likely a seeding effect overwriting the edited value (the 2026-08-21 web bug: guard with a periodsTouched ref, re-earned only on chapter change). Blocks setting 60×16 for 03.27. ANDROID: same — periods Change cannot be changed.",
+      "fix": "",
+      "files": "mobile first-run chapter step",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:36:24"
+    },
+    {
+      "id": "WALK-A-027",
+      "opened": "2026-09-20T11:43:07",
+      "closed": "",
+      "feature": "03.30",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Year Plan header 'SUGGESTED' breaks mid-word on the phone",
+      "what": "iPhone 16, Year Plan: the column header 'Suggested periods' is too wide for its column, so 'SUGGESTE' sits on one line and 'D' wraps to the next. Never break inside a word: widen the column, shrink/space the header, or wrap only between words ('SUGGESTED / PERIODS'). Check the 'Planned' header and Android (and 1.2× text size).",
+      "fix": "",
+      "files": "mobile Year Plan screen + theme/web.js (yp_c / yp_colhd)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:43:07"
+    },
+    {
+      "id": "WALK-A-028",
+      "opened": "2026-09-20T11:53:21",
+      "closed": "",
+      "feature": "T.12",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone tour: tips at steps 9, 15, 19 overlap the bottom bar; step 12 tip jumps",
+      "what": "iPhone 16. (1) At steps 9 and 15 (picker open) and 19 (Ask panel open) the tip box sits marginally over the bottom bar. With a sheet already filling the lower screen there is little room — founder: 'see how best to manage it' (e.g. place these tips ABOVE the sheet's content / inside the sheet's top, or lift them by the measured bottom-bar height, never over it). (2) Step 12's tip jumps abruptly from the bottom of the screen to the top as the step settles — place it once, or animate the move. At Larger text (T.29) it is more pronounced: 9, 15, 19 cover the bar; 12 jumps bottom→top; 13 also lands at the bottom over the bar before settling up. Fix placement so the tip is computed once from the settled target and never overlaps the measured bottom bar. ANDROID: steps 9 and 15 also turn the background suddenly very DULL (the tour's dim stacks on the sheet's own backdrop — dim once); 14 also jumps then settles; after Back/Next, 12 and 13 sometimes settle AWAY from their normal place (stale measurement — re-measure after the target settles).",
+      "fix": "",
+      "files": "mobile/components/GuidedTour.jsx (placement for steps 9, 12, 15, 19)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:53:21"
+    },
+    {
+      "id": "WALK-A-029",
+      "opened": "2026-09-20T11:58:49",
+      "closed": "",
+      "feature": "04.25",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone text fields: typed text sits at the bottom of the box",
+      "what": "iPhone 16, Settings › Delete my account: the text typed into the 'Type erase' field is not vertically centred — it rides the bottom edge. Centre it (lineHeight/padding vs the fixed height, textAlignVertical on Android). ALSO the subscribe wizard's Email field (03.17) — likely every single-line TextInput sharing that style; fix at the shared field style.",
+      "fix": "",
+      "files": "mobile/app/(app)/settings/index.jsx (erase field style)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:58:49"
+    },
+    {
+      "id": "WALK-A-030",
+      "opened": "2026-09-20T11:58:49",
+      "closed": "",
+      "feature": "04.26",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Delete window's 'Download my data' skips the preview",
+      "what": "iPhone 16: 'Download my data first (Word)' in the final delete window goes straight to the share sheet. Commit 1c9675fe made Word documents open in the preview first on iOS (Year Plan, reports, data export via settings/data.jsx, which uses canPreview + fetchDocument) — but settings/index.jsx's delete-window button still calls downloadDocument(dataExport) directly. Route it through the same preview path. ANDROID: same — goes straight to the app chooser. Note lib/download.js makes the preview iOS-ONLY by design (Android has no Quick Look; a .docx has no WebView renderer). Founder wants the document DISPLAYED first on both — needs a decision on how on Android (e.g. an in-app summary/preview screen, or open with the system viewer intent before offering share).",
+      "fix": "",
+      "files": "mobile/app/(app)/settings/index.jsx, mobile/lib/download.js",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T11:58:49"
+    },
+    {
+      "id": "WALK-A-031",
+      "opened": "2026-09-20T12:22:40",
+      "closed": "",
+      "feature": "03.17",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Subscribe wizard: Save & continue hidden behind the keyboard",
+      "what": "iPhone 16, About you: with the City field focused, the keyboard covers 'Save & continue →' — she must dismiss the keyboard to find it. Same family as WALK-A-001 (Support's Send). Keep the footer above the keyboard (KeyboardAvoidingView / scroll the CTA into view on focus).",
+      "fix": "About-you screen root is a KeyboardAvoidingView (padding on iOS) so the foot and 'Save & continue' stay above the keyboard.",
+      "files": "mobile/components/SubscribeWizard.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "Claude",
+      "at": "2026-09-20T12:43:06"
+    },
+    {
+      "id": "WALK-A-032",
+      "opened": "2026-09-20T12:25:24",
+      "closed": "",
+      "feature": "03.17",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone State dropdown too tall",
+      "what": "iPhone 16, About you: the State list (≈36 entries) opens nearly full-screen, covering the top and bottom of the screen. Cap its height (e.g. ~55–60% of the window) and scroll inside; keep it clear of the bar and the home indicator. Check Personal profile's State too. ANDROID: same.",
+      "fix": "",
+      "files": "mobile Dropdown component",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T12:25:24"
+    },
+    {
+      "id": "WALK-A-033",
+      "opened": "2026-09-20T12:43:06",
+      "closed": "",
+      "feature": "03.18",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "BLOCKER: front-door subscribe wizard had no bar / safe area; Agreement could not be completed",
+      "what": "iPhone 16, Subscribe from the front door: no brand bar, no Log out, and no top inset — the step rail sat under the status bar; on the Agreement the heading was hidden and could not be scrolled into view, and the five jump boxes did not reach their points. The agreement could not be completed, so no subscription was possible on the phone's front door. Causes: app/front-subscribe.jsx never rendered <Bar/> (its header claimed it did); Agreement's jumpTo used each card's y relative to its wrapper, not the scroll content. ANDROID (Pixel 7): after the fix, the Agreement's HEADING is still not visible (scroll and jump boxes work). Re-opened for Android.",
+      "fix": "front-subscribe renders <Bar gear={false}/> above the wizard (owns the safe-area top). Agreement adds the wrapper's y to each card's offset (acksY ref, declared before the early returns). About-you foot lifted above the keyboard (WALK-A-031). Round 2: ws.ob_body flex:1 → flexGrow:1 (flex on a ScrollView content container pinned it to the viewport — forms/agreement could not scroll); About you's step rail frozen above the scrolling form; dropped automaticallyAdjustKeyboardInsets (double-adjusted with the KAV).",
+      "files": "mobile/app/front-subscribe.jsx, mobile/components/Agreement.jsx, mobile/components/SubscribeWizard.jsx, mobile/theme/web.js",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "Claude",
+      "at": "2026-09-20T12:43:06"
+    },
+    {
+      "id": "WALK-A-034",
+      "opened": "2026-09-20T13:00:03",
+      "closed": "",
+      "feature": "03.18",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Agreement jump: show the tick too when the whole point fits (optional)",
+      "what": "iPhone 16: the five foot boxes scroll each point to the top (title first) — correct, because the purpose is READING. On longer points the 'I understand and agree' tick then sits below the fold. Founder: keep the top-down reveal; IF the whole point (title → tick) fits in the visible area, position it so the tick is visible without scrolling; otherwise leave it top-aligned. Low priority.",
+      "fix": "",
+      "files": "mobile/components/Agreement.jsx (jumpTo)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T13:00:03"
+    },
+    {
+      "id": "WALK-A-035",
+      "opened": "2026-09-20T13:22:27",
+      "closed": "",
+      "feature": "03.03",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: hardware Back does nothing — front door, first run AND the app shell",
+      "what": "Pixel 7 emulator (API 34): on the OTP screen and on sign-in, the system Back (◁ or edge swipe) does nothing — the screen stays. These are one route with a `screen` state (login.jsx), so Back is swallowed. It should do exactly what the on-screen '← Back' does (OTP → Choose on create / → sign-in on returning; sign-in → Choose; privacy → where she came from), and exit the app only from Choose. Use BackHandler in login.jsx (and the first-run steps: Back = '← Back', Welcome = exit). Also the /privacy route (03.14, 03.15): hardware Back does nothing there either. WIDER: also dead on first-run Welcome and inside the app (My Lessons). Decide the shell's rule like the web's WALK-A-008: close an open lesson/sheet, then Settings, then other tab → My Classes, then exit.",
+      "fix": "",
+      "files": "mobile/app/login.jsx (+ first-run.jsx)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T13:22:27"
+    },
+    {
+      "id": "WALK-A-036",
+      "opened": "2026-09-20T13:57:34",
+      "closed": "",
+      "feature": "03.06",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: 'Verify & continue' half-hidden under the pinned foot with the keyboard up",
+      "what": "Pixel 7 emulator, create OTP screen with the number pad open: the Verify button is cut in half by the fixed foot ('← Back' band) sitting above the keyboard. The scroll area must end ABOVE the foot (bottom padding = foot height) and the CTA be scrolled into view when the boxes are focused. Android resizes the window, so KeyboardAvoidingView 'padding' is not the tool there. See screenshot in the walk thread.",
+      "fix": "",
+      "files": "mobile/app/login.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T13:57:34"
+    },
+    {
+      "id": "WALK-A-037",
+      "opened": "2026-09-20T13:57:34",
+      "closed": "",
+      "feature": "03.22",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: first-run wheels fling too fast",
+      "what": "Pixel 7 emulator: a flick on the Subject and Class wheels races past several rows (overshoots); Chapter and Duration are a bit fast too. Slow the fling — decelerationRate 'fast' + snapToInterval of one row (or disableIntervalMomentum so one flick moves one row). Check iOS feel stays right.",
+      "fix": "",
+      "files": "mobile/components/RollWheel.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T13:57:34"
+    },
+    {
+      "id": "WALK-A-038",
+      "opened": "2026-09-20T14:02:42",
+      "closed": "",
+      "feature": "03.27",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android first run: blank 'Loading…' instead of the preparing card",
+      "what": "Pixel 7 emulator (Expo Go, tunnel): after 'Prepare the lesson →' the app showed an empty screen with 'Loading…' for an unusually long time, then the lesson card appeared all at once — the preparing card with its progress bar never showed. On the iPhone the handoff showed the card and bar. Suspect the handoff lands on the shell before the module-level preparing store is read (router.replace + (app) gate loading readiness on a slower device), so the gate's 'Loading…' covers the whole wait. The shell should open immediately on My Lessons with the preparing card, whatever the device speed.",
+      "fix": "",
+      "files": "mobile first-run handoff (preparing store) + app/(app)/_layout.jsx gate",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T14:02:42"
+    },
+    {
+      "id": "WALK-A-039",
+      "opened": "2026-09-20T14:34:21",
+      "closed": "",
+      "feature": "T.26",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: set-up check doesn't rise after tour Done until a tab switch",
+      "what": "Pixel 7 emulator: ending the tour with Done left her on My Classes with no 'Would you like to check your set-up?'. It rose only after switching to My Lessons and back. Its trigger evidently depends on a screen-focus/dependency change that Done does not cause on Android (the iPhone raised it after Skip). Make the tour's end itself queue the check (as the web's finishTour does).",
+      "fix": "",
+      "files": "mobile shell (tour finish → set-up check)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T14:34:21"
+    },
+    {
+      "id": "WALK-A-040",
+      "opened": "2026-09-20T14:53:23",
+      "closed": "",
+      "feature": "03.17",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "About you: Save lights up while School is still below the fold",
+      "what": "Pixel 7 emulator: once State is chosen, 'Save & continue' enables; City is just visible and School name sits below the fold. A teacher may tap Save without ever seeing the School field. With City mandatory (WALK-A-022) Save will wait for City — but School should still be seen: e.g. scroll the next field into view when a dropdown closes, or keep the whole form on screen above the frozen foot.",
+      "fix": "",
+      "files": "mobile/components/SubscribeWizard.jsx (About you)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T14:53:23"
+    },
+    {
+      "id": "WALK-A-041",
+      "opened": "2026-09-20T14:53:23",
+      "closed": "",
+      "feature": "03.19",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Privacy Notice sheet overlaps the top bar",
+      "what": "Pixel 7 emulator, Agreement → 'Privacy Notice' in the final tick: the sheet's top rides over the app bar. The sheet must start below the bar/status bar (safe-area top + BAR_CONTENT_H). Check iOS (it looked fine there).",
+      "fix": "",
+      "files": "mobile Sheet component / Agreement.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "and_emu",
+        "ios"
+      ],
+      "owner": "",
+      "at": "2026-09-20T14:53:23"
     }
   ]
 }

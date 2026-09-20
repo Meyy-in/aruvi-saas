@@ -71,6 +71,7 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
   const [err, setErr] = useState("");
   const [showPrivacy, setShowPrivacy] = useState(false);
   const scrollRef = useRef(null);
+  const acksY = useRef(0);   // y of the five-card wrapper inside the scroll content (jumpTo)
   const ackY = useRef({});
 
   useEffect(() => {
@@ -111,10 +112,12 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
       });
   };
 
+  /* WALK walk blocker (2026-09-20): each card's onLayout y is relative to the `lgl_acks` wrapper,
+     not to the scroll content, so the jump landed far above the card. Add the wrapper's own y. */
   const jumpTo = (id) => {
     const y = ackY.current[id];
     if (scrollRef.current && typeof y === "number") {
-      scrollRef.current.scrollTo({ y: Math.max(0, y - 40), animated: true });
+      scrollRef.current.scrollTo({ y: Math.max(0, acksY.current + y - 40), animated: true });
     }
   };
 
@@ -158,7 +161,7 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
           Aruvi numbers things. ⚠️ No ticks and no jump-row: both belong to sign mode, and the
           five-box row exists there so a teacher stuck at 4 of 5 can find the one she missed —
           a question that cannot arise on a screen with nothing to tick. */}
-      <View style={ws.lgl_acks}>
+      <View style={ws.lgl_acks} onLayout={(e) => { acksY.current = e.nativeEvent.layout.y; }}>
         {acks.map((a) => (
           <View key={a.id}
             onLayout={(e) => { ackY.current[a.id] = e.nativeEvent.layout.y; }}
