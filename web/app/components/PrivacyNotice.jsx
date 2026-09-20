@@ -50,8 +50,32 @@ export default function PrivacyNotice({ version = "", onBack, backLabel = "← B
     return () => { live = false; };
   }, [version]);
 
-  if (failed) return <p className="lgl-fail" role="alert">{failed}</p>;
-  if (!state) return <div className="fr-loading">Loading the privacy notice…</div>;
+  /* ★ THE WAY OUT IS DRAWN IN EVERY STATE (WALK-A-003, 2026-09-20). Loading and failure used to
+     return early, BEFORE the head that carries onBack — so a signed-out teacher on a bad
+     connection met "couldn't be loaded" with no way back at all (only a reload got out). Both
+     states now render inside the same frame, with the same Back, as the loaded document. */
+  if (failed || !state) {
+    return (
+      <div className={`lgl lgl-privacy ${frame ? "lgl-frame" : "lgl-read"}`}>
+        <div className="lgl-head">
+          {frame && onBack && (
+            <button type="button" className="fr-link lgl-back" onClick={onBack}>{backLabel}</button>
+          )}
+          <h1 className="ob-title">Privacy Notice</h1>
+        </div>
+        <div className="lgl-scroll">
+          {failed
+            ? <p className="lgl-fail" role="alert">{failed}</p>
+            : <div className="fr-loading">Loading the privacy notice…</div>}
+        </div>
+        {!frame && onBack && (
+          <div className="lgl-privacy-foot">
+            <button className="fr-link" onClick={onBack}>{backLabel}</button>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const doc = state.document || {};
   const older = state.current_version && doc.version && doc.version !== state.current_version;

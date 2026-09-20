@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { API, getJSON, idInUse } from "../lib/format";
 import { DEVICE_SEEN_KEY as SEEN_KEY } from "@aruvi/shared/signout";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
-         OTP_RESEND_LOCK_MS, authHeaders } from "../lib/auth";
+         authHeaders } from "../lib/auth";
 import SubscribeFlow, { MOBILE_TAKEN } from "./SubscribeFlow";
 import MeyyMark from "./MeyyMark";
 import PrivacyNotice from "./PrivacyNotice";
@@ -76,10 +76,6 @@ export default function Login({ onEnter }) {
     return () => clearInterval(id);
   }, [otpAt]);
   const otpDead = otpAt > 0 && otpLeft === 0;
-  /* Resend appears once the server would honour it — see OTP_RESEND_LOCK_MS. Offering it sooner
-     is offering a button that comes back refused. */
-  const otpElapsed = otpAt > 0 ? OTP_TTL_MS / 1000 - otpLeft : 0;
-  const otpCanResend = otpAt > 0 && otpElapsed >= OTP_RESEND_LOCK_MS / 1000;
   const [otp, setOtp] = useState("");
   const [otpErr, setOtpErr] = useState("");
   const [trialUsed, setTrialUsed] = useState(false);   // the trial ledger said 0 left (2026-09-18)
@@ -242,7 +238,9 @@ export default function Login({ onEnter }) {
           </button>
         </div>
         <div className="ob-foot">
-          <button className="primary fr-cta" onClick={() => { setFlow("create"); setOtpSent(false); setOtp(""); setScreen("otp"); }}>
+          <button className="primary fr-cta" onClick={() => { setFlow("create"); setOtpSent(false); setOtp(""); setOtpAt(0);
+            /* WALK-A-011 (founder, 2026-09-20): every fresh entry starts empty. */
+            setMobile(""); setMobErr(""); setScreen("otp"); }}>
             Create sign in →
           </button>
           <button className="fr-link" onClick={() => setScreen("signin")}>Already have an ID? Sign in</button>
@@ -294,7 +292,14 @@ export default function Login({ onEnter }) {
             <button className="primary fr-cta ob-cta" disabled={!mobileOk || mobBusy}
               onClick={async () => {
                 setMobErr(""); setMobBusy(true);
-                const taken = await idInUse(mobile.trim());
+                /* WALK-A-021: a number that verified once but never became a teacher (no
+                   agreement, profile, subscription or chapter — `fresh`) may come in by this
+                   door again; only an activated account is "already in use". */
+                let taken = false;
+                try {
+                  const k = await getJSON(`/onboarding/known?id=${encodeURIComponent(mobile.trim())}`);
+                  taken = !!(k && k.known && !k.fresh);
+                } catch { taken = await idInUse(mobile.trim()); }
                 if (taken) { setMobBusy(false); setMobErr(MOBILE_TAKEN); return; }
                 const err = await requestOtp(mobile.trim());
                 setMobBusy(false);
@@ -316,6 +321,7 @@ export default function Login({ onEnter }) {
                       maxLength={i === 0 ? otpLen : 1} value={otp[i] || ""}
                       onChange={(e) => setOtpDigit(i, e.target.value)}
                       onKeyDown={(e) => otpKeyDown(i, e)}
+                      disabled={otpDead}
                       aria-label={`OTP digit ${i + 1}`} />
                   ))}
                 </div>
@@ -325,27 +331,26 @@ export default function Login({ onEnter }) {
                    the one she is halfway through typing. ONCE DEAD: the countdown and Verify go,
                    and sending a new code is the only thing on offer. */
                 otpDead ? (
-                  <p className="ob-quiet">The code sent to +91 {mobile.trim()} has expired.{" "}
-                    <button type="button" className="lgl-link" disabled={otpBusy}
-                      onClick={async () => { setOtpErr(""); setOtp("");
-                        const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>
-                      Send a new code</button></p>
+                  /* WALK-A-004 (2026-09-20): once dead, the boxes are disabled and the ONLY
+                     thing on offer is a full-size "Send a new code" in Verify's place (below). */
+                  <p className="ob-quiet">The code sent to +91 {mobile.trim()} has expired.</p>
                 ) : (
+                  /* No mid-run Resend (founder, 2026-09-20): it could invalidate the code she is
+                     halfway through typing, and saved at most 30s of a 60s code. */
                   <p className="ob-quiet">Sent by SMS to +91 {mobile.trim()}.{" "}
-                    <b>{Math.floor(otpLeft / 60)}:{String(otpLeft % 60).padStart(2, "0")}</b> left.
-                    {otpCanResend && (
-                      <>{" "}<button type="button" className="lgl-link" disabled={otpBusy}
-                        onClick={async () => { setOtpErr(""); setOtp("");
-                        const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>
-                        Resend</button></>
-                    )}</p>
+                    <b>{Math.floor(otpLeft / 60)}:{String(otpLeft % 60).padStart(2, "0")}</b> left.</p>
                 )
               ) : (
                 /* Honest stub — no SMS goes out in the preview. */
                 <p className="ob-quiet">Preview build: enter <b>0000</b>.</p>
               )}
               {otpErr && <p className="ob-err" role="alert">{otpErr}</p>}
-              {!otpDead && (
+              {otpDead ? (
+                <button className="primary fr-cta ob-cta" disabled={otpBusy}
+                  onClick={async () => { setOtpErr(""); setOtp("");
+                    const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>
+                  Send a new code</button>
+              ) : (
                 <button className="primary fr-cta ob-cta" disabled={otp.length !== otpLen || otpBusy}
                   onClick={verifyOtp}>{otpBusy ? "Verifying…" : "Verify & continue →"}</button>
               )}

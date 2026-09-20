@@ -150,6 +150,10 @@ class Identity:
     # The verified mobile, when the provider knows it (Supabase phone auth, 2026-09-09) —
     # copied onto the account record at JIT creation. Empty under the header stub.
     phone: str = ""
+    # When the credential was issued (the token's `iat`, epoch seconds), when the provider
+    # knows it — None under the header stub. Used to refuse a token minted BEFORE the account
+    # was erased (WALK-A-018): such a token must never quietly re-create the account.
+    issued_at: Optional[int] = None
 
 
 @runtime_checkable

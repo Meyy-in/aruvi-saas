@@ -238,7 +238,7 @@ export function matrixLabel(rows) {
     .join(" · ");
 }
 
-function ProposedCard({ preparing, onDismiss }) {
+function ProposedCard({ preparing, onDismiss, onRetry }) {
   const rows = (preparing.rows || []).filter((r) => r.count > 0);
   const total = rows.reduce((a, r) => a + (Number(r.count) || 0), 0);
   const label = matrixLabel(rows);
@@ -259,11 +259,18 @@ function ProposedCard({ preparing, onDismiss }) {
         {label ? <div className="sc-durline">{label}</div> : null}
         {failed ? (
           <div className="sc-prep sc-prep-failed">
-            {/* `title` carries the full sentence: the note is clamped to two lines so the card
-                cannot outgrow its neighbours, and a long 4xx string must stay reachable. */}
-            <span className="sc-prep-note" title={msg}>{msg}</span>
-            <button type="button" className="sc-prep-dismiss" onClick={onDismiss}
-                    aria-label="Dismiss this failed lesson">Dismiss</button>
+            {/* WALK-A-019 (2026-09-20): the sentence is shown IN FULL — the two-line clamp cut the
+                one line that says what happened ("Try again in a…"). And "Try again" sits beside
+                Dismiss: she has already chosen the chapter, duration and periods. */}
+            <span className="sc-prep-note">{msg}</span>
+            <span className="sc-prep-actions">
+              {onRetry && (
+                <button type="button" className="sc-prep-dismiss" onClick={() => onRetry(preparing)}
+                        aria-label="Try preparing this lesson again">Try again</button>
+              )}
+              <button type="button" className="sc-prep-dismiss" onClick={onDismiss}
+                      aria-label="Dismiss this failed lesson">Dismiss</button>
+            </span>
           </div>
         ) : (
           <div className="sc-prep">
@@ -279,7 +286,7 @@ function ProposedCard({ preparing, onDismiss }) {
 }
 
 export default function MyLessonPlans({ readiness, onAllocate, tourStep, preparing,
-                                        onStartTour, tourActive, onDismissPrepareError, lapsed,
+                                        onStartTour, tourActive, onDismissPrepareError, onRetryPrepare, lapsed,
                                         yearInfo, onScope, onEditYearBudget, paneIntent,
                                         heldScopes, onTourArchivable }) {
   const LS_SUBJECT = userKey("mylessons_subject");
@@ -319,6 +326,13 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
   const [openPrior, setOpenPrior] = useState(null);
   const [priorPlans, setPriorPlans] = useState({});
   const [openPlan, setOpenPlan] = useState(null);   // { view }
+  // WALK-A-008: the browser's Back closes an open lesson first (page.jsx dispatches "aruvi:back").
+  useEffect(() => {
+    if (!openPlan) return undefined;
+    const onBack = (e) => { setOpenPlan(null); e.preventDefault(); };
+    window.addEventListener("aruvi:back", onBack);
+    return () => window.removeEventListener("aruvi:back", onBack);
+  }, [openPlan]);
   const [opening, setOpening] = useState(false);
   const [, setTick] = useState(0);                  // bumped after a section-state sync → re-read
   // Active vs Archived view over the SAME list. Archive is a per-tenant FLAG the server sets
@@ -1016,7 +1030,7 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
           {/* The lesson being prepared sits FIRST, where the finished card will land —
               including when this is her very first plan and the list is otherwise the
               empty state (hence the `showProposed` guard on that branch above). */}
-          {showProposedCard ? <ProposedCard preparing={preparing} onDismiss={onDismissPrepareError} /> : null}
+          {showProposedCard ? <ProposedCard preparing={preparing} onDismiss={onDismissPrepareError} onRetry={onRetryPrepare} /> : null}
           {ordered.map((p, pi) => {
             const { completed, live } = statusFor(p);
             const busy = pi === busyIdx;          // this card IS the one being re-prepared
@@ -1178,10 +1192,13 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
               <div className="dash-nudge-title">Let me show you around first</div>
               <div className="dash-nudge-sub">
                 A short walk through tracking sections and handling lesson plans. Your lesson stays
-                here in My Lessons — you can add it to a class whenever you&rsquo;re ready.
+                safe while we look around.
               </div>
             </div>
           </div>
+          {/* WALK-A-013: say out loud that this is the way in — the whole box is the button, and
+              the arrow alone did not read as an invitation. Same line as My Classes' nudge. */}
+          <span className="dash-nudge-cta" aria-hidden="true">Show me how&nbsp;&rarr;</span>
         </div>
       )}
       </>

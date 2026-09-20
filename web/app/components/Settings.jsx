@@ -125,7 +125,7 @@ function PersonalProfile({ onSaved }) {
       {/* No heading — the Settings bar names this screen (2026-09-03). */}
       {/* Labels ABOVE the boxes (founder, 2026-08-26 — placeholder-only left fields
           ambiguous once filled; reverted same day). */}
-      <label className="login-field ob-field"><span>Your name</span>
+      <label className="login-field ob-field"><span>Your name <span className="ob-req" aria-hidden="true">*</span></span>
         <input type="text" value={name} placeholder="Enter your full name"
           onChange={(e) => setName(e.target.value)} /></label>
       <div className="acct-row"><span className="acct-k">Mobile</span>
@@ -189,13 +189,13 @@ function PersonalProfile({ onSaved }) {
         </>
       )}
 
-      <label className="login-field ob-field"><span>Role</span>
+      <label className="login-field ob-field"><span>Role <span className="ob-req" aria-hidden="true">*</span></span>
         <Dropdown value={role} onChange={setRole} options={ROLES}
           placeholder="Select your role" ariaLabel="Role" /></label>
-      <label className="login-field ob-field"><span>State</span>
+      <label className="login-field ob-field"><span>State <span className="ob-req" aria-hidden="true">*</span></span>
         <Dropdown value={stateName} onChange={setStateName} options={STATES}
           placeholder="Select your state" ariaLabel="State" /></label>
-      <label className="login-field ob-field"><span>City</span>
+      <label className="login-field ob-field"><span>City <span className="ob-req" aria-hidden="true">*</span></span>
         <input type="text" value={city} placeholder="Enter your city"
           onChange={(e) => setCity(e.target.value)} /></label>
       <label className="login-field ob-field"><span>School name (optional)</span>
@@ -209,7 +209,8 @@ function PersonalProfile({ onSaved }) {
       {/* Save never waits on the email step (founder, 2026-08-26): other fields save
           freely; a half-done email change is simply not saved until Verify completes —
           the previously confirmed email (or none) stays. */}
-      <button className="primary fr-cta ob-cta" disabled={busy}
+      {/* WALK-A-022: the same required fields as the subscribe wizard (City is mandatory). */}
+      <button className="primary fr-cta ob-cta" disabled={busy || !String(name || "").trim() || !String(city || "").trim()}
         onClick={save}>{busy ? "Saving…" : "Save"}</button>
       {emailStage !== "ok" && (
         <p className="ob-quiet">Email isn't saved until you confirm it — everything else

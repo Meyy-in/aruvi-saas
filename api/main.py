@@ -290,6 +290,28 @@ def _credential(x_aruvi_user: Optional[str], authorization: Optional[str]) -> st
 #
 # Falls back to "local" when no header is present (e.g. health checks, curl) so nothing
 # 500s; a real teacher always has one because the frontend gates the app behind login.
+def _erased_after_issue(ident) -> bool:
+    """True when this user's latest erasure postdates the credential she is presenting.
+    Needs a token `iat` (Supabase), which makes it exact. The dev header stub carries no issue
+    time and cannot tell an old session from a new sign-in, so it is never refused here (a
+    header-stub re-sign-in straight after an erase is exactly what the data-rights tests do)."""
+    iat = getattr(ident, "issued_at", None)
+    if iat is None:
+        return False
+    try:
+        entries = [e for e in erasure_log.for_tenant(ident.tenant_id)
+                   if e.get("user_id") == ident.user_id]
+    except Exception:          # noqa: BLE001 — the log must never block sign-in
+        return False
+    if not entries:
+        return False
+    try:
+        erased = datetime.fromisoformat(entries[-1].get("confirmed_at", "")).timestamp()
+    except (TypeError, ValueError):
+        return False
+    return iat <= erased
+
+
 def _current_identity(x_aruvi_user: Optional[str] = Header(default=None),
                       authorization: Optional[str] = Header(default=None)) -> tuple[str, str]:
     """Return (tenant_id, user_id) for the caller, resolved via the account record.
@@ -299,6 +321,13 @@ def _current_identity(x_aruvi_user: Optional[str] = Header(default=None),
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e) or "Sign in to continue.")
     account = account_repo.load(ident.tenant_id, ident.user_id)
+    if account is None and _erased_after_issue(ident):
+        # WALK-A-018 (2026-09-20): a request still carrying the ERASED teacher's session (a poll,
+        # a re-fetch, the farewell's own refresh) landed after the erase and JIT-created her
+        # account again — an empty record under her number, and "Create sign in" then refused
+        # her. A credential minted before the erasure can no longer create anything; a fresh
+        # sign-in (a new token) is how she comes back.
+        raise HTTPException(status_code=401, detail="This account was deleted. Sign in again to start afresh.")
     if account is None:
         account = Account(
             account_id=ident.user_id,
@@ -2457,7 +2486,31 @@ def onboarding_known(id: str = "") -> Dict[str, Any]:
         if len(matches) > 1:
             return {"known": False, "reason": "ambiguous_email"}
         return {"known": False}
-    return {"known": account_repo.load(uid, uid) is not None, "id": uid}
+    acct = account_repo.load(uid, uid)
+    if acct is None:
+        return {"known": False, "id": uid}
+    # WALK-A-021 (2026-09-20): `fresh` = the number verified once but never became a teacher —
+    # no agreement signed, no profile, no subscription, no trial chapter used. Verifying used to
+    # be enough to lock "Create sign in" against her, so a teacher who backed out of the
+    # subscribe wizard could only reach the TRIAL door. A fresh account may come in by Create
+    # sign in again (the client routes her on as new).
+    return {"known": True, "id": uid, "fresh": _never_activated(acct)}
+
+
+def _never_activated(acct) -> bool:
+    try:
+        if acct.consent:
+            return False
+        prof = readiness_repo.load_profile(acct.tenant_id, acct.account_id)
+        if prof and (prof.get("subjects") or []):
+            return False
+        ent = entitlement_repo.load(acct.tenant_id)
+        if ent is not None and (ent.status != "trial"
+                                or [c for c in (ent.trial_chapters or []) if not str(c).startswith("_earlier/")]):
+            return False
+        return True
+    except Exception:   # noqa: BLE001 — when unsure, she is NOT fresh (the old, safe answer)
+        return False
 
 
 @app.post("/onboarding/verified")

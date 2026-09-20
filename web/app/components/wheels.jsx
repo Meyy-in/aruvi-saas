@@ -33,6 +33,11 @@ export const PICK_ROW = 52;   // px height of one PickWheel row (4 visible at on
  * the current position, animates to it when motion is allowed, and GUARANTEES the move: a short
  * fallback snaps scrollTop directly if the smooth scroll didn't take. Also honours reduced-motion
  * (jump instantly rather than animate). */
+/* WALK-A-006 (2026-09-20): the chapter wheel's chip already carries the number, so a title
+ * that begins "Chapter 4: …" said it twice. Strip a leading "Chapter N:" for the wheel only. */
+export const wheelChapterTitle = (t) =>
+  String(t || "").replace(/^\s*chapter\s+\d+\s*[:.\-\u2013\u2014]\s*/i, "") || String(t || "");
+
 export function stepScroll(el, dir, rowPx, rowCount) {
   if (!el) return;
   const cur = Math.round(el.scrollTop / rowPx);
@@ -66,7 +71,7 @@ let wheelDemoDone = false;
 // `rowPx` (default WHEEL_ROW=64) sets the single visible row's height AND the scroll-snap step —
 // they MUST stay equal or snapping lands between rows. A caller wanting a more compact wheel
 // (e.g. My Lessons' Subject/Grade) passes a smaller rowPx; first-run passes nothing and keeps 64.
-export function RollWheel({ items, value, onChange, ariaLabel, large, rowPx = WHEEL_ROW, fit = false, peek = false }) {
+export function RollWheel({ items, value, onChange, ariaLabel, large, rowPx = WHEEL_ROW, fit = false, peek = false, loop: loopProp = false }) {
   const ref = useRef(null);
   const settleTimer = useRef(null);
   const idBase = String(ariaLabel || "wheel").toLowerCase().replace(/\W+/g, "-");
@@ -79,7 +84,9 @@ export function RollWheel({ items, value, onChange, ariaLabel, large, rowPx = WH
   // after each settle, so dragging/scrolling wraps around forever — matching the ▼ arrow (which
   // already cycles). Only in peek with >1 item; the base wheel (FirstRun) is untouched.
   const N = items.length;
-  const loop = peek && N > 1;
+  /* WALK-A-005 (founder, 2026-09-20): first run's SUBJECT and CLASS wheels roll continuously too
+     (`loop` prop). The chapter wheel deliberately does not — its ends say where the book ends. */
+  const loop = (peek || loopProp) && N > 1;
   const selIdx = items.findIndex((it) => String(it.id) === String(value));
   const renderItems = loop
     ? Array.from({ length: 3 * N }, (_, i) => ({ ...items[i % N], _i: i }))
@@ -113,7 +120,11 @@ export function RollWheel({ items, value, onChange, ariaLabel, large, rowPx = WH
 
   // moves exactly one row; shared by the keyboard handler AND the ▲▼ cue buttons below, so
   // tapping a cue behaves identically to pressing an arrow key
-  const step = (dir) => stepScroll(ref.current, dir, rowPx, items.length);
+  const step = (dir) => stepScroll(ref.current, dir, rowPx, renderItems.length);
+  /* WALK-A-005: a click on ▲/▼ must not take focus off the wheel, or the keyboard arrows stop
+     working after it. Mouse-down is swallowed (focus stays put) and the wheel is re-focused. */
+  const keepFocus = (e) => e.preventDefault();
+  const cue = (dir) => { step(dir); try { ref.current && ref.current.focus({ preventScroll: true }); } catch {} };
 
   // Peek mode's single down arrow: advance to the next item and WRAP from the last back to the
   // first (founder ask, 2026-07-21). Index off the CURRENT value (not the live scrollTop, which
@@ -223,8 +234,8 @@ export function RollWheel({ items, value, onChange, ariaLabel, large, rowPx = WH
             aria-label={`Next ${ariaLabel || "option"}`}>▼</button>
         ) : (
           <>
-            <button type="button" className="fr-wheel-cue-btn" onClick={() => step(-1)} aria-label={`Previous ${ariaLabel || "option"}`}>▲</button>
-            <button type="button" className="fr-wheel-cue-btn" onClick={() => step(1)} aria-label={`Next ${ariaLabel || "option"}`}>▼</button>
+            <button type="button" className="fr-wheel-cue-btn" onMouseDown={keepFocus} onClick={() => cue(-1)} aria-label={`Previous ${ariaLabel || "option"}`}>▲</button>
+            <button type="button" className="fr-wheel-cue-btn" onMouseDown={keepFocus} onClick={() => cue(1)} aria-label={`Next ${ariaLabel || "option"}`}>▼</button>
           </>
         )}
       </span>

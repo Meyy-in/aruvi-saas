@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, largestRemainder, fetchEntitlement } from "../lib/format";
 import { readPlans } from "../lib/plans";
 import { verifiedWrite, planIsPrepared } from "../lib/verify";
-import { RollWheel } from "./wheels";
+import { RollWheel, wheelChapterTitle } from "./wheels";
 import ViewModelView from "./ViewModelView";
 
 /* ───────── PrepareLesson — the everyday, single-chapter generate flow (2026-07-03) ─────────
@@ -499,7 +499,7 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
               chapter. Only the error is cleared — the period count she set is hers to keep. */}
           <RollWheel ariaLabel="Chapter" value={chapterNo} rowPx={92}
             onChange={(id) => { setChapterNo(id); setError(""); }}
-            items={chapters.map((c) => ({ id: String(c.chapter_number), chip: c.chapter_number, label: c.chapter_title }))} />
+            items={chapters.map((c) => ({ id: String(c.chapter_number), chip: c.chapter_number, label: wheelChapterTitle(c.chapter_title) }))} />
 
           <div className="prep-block">
             <div className="prep-left">

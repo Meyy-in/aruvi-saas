@@ -2417,6 +2417,11 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   line-height: 1.28;
 }
+/* WALK-A-006/007 (founder, 2026-09-20 — WEB ONLY; the phone's sizes are reviewed on their own):
+   the chapter title read small against the question, and the duration/periods "Change" wheels
+   shrank the very figure she was choosing below the 18px value shown after Done. */
+.fr-wheel[aria-label="Chapter"] .fr-wheel-label { font-size: 18px; }
+.fr-default-wheel-wrap .fr-wheel-label { font-size: 18px; }
 /* the settled row's number chip picks up the pine fill — the brand "locked in" cue */
 .fr-opt-chip.on { background: var(--pine); color: #fdfaf4; }
 
@@ -3436,17 +3441,20 @@ button.prepare-cta:disabled::before, .prepare-cta:disabled::before { content: no
 .dash-nudge-text { flex:1; min-width:0; }
 .dash-nudge-title { font-family:var(--f-display); font-weight:500; font-size:17px; color:var(--pine-d); line-height:1.3; }
 .dash-nudge-sub { font-size:13px; color:var(--ink-soft); margin-top:3px; line-height:1.45; }
-.dash-nudge-cta { display:inline-block; margin:11px 0 0 35px; background:transparent; border:none; padding:0;
-  font-family:var(--f-body); font-style:italic; font-size:15.5px; font-weight:500; color:var(--pine);
-  cursor:pointer; text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px; }
-.dash-nudge-cta:hover { color:var(--pine-d); }
+/* WALK-A-013 (2026-09-20): the call to action reads as a BUTTON, not an underlined aside — the
+   founder found nothing on the box that invited a click. */
+.dash-nudge-cta { display:inline-block; margin:12px 0 0 35px; background:var(--pine); border:none;
+  padding:8px 16px; border-radius:999px;
+  font-family:var(--f-body); font-style:normal; font-size:15px; font-weight:600; color:#fdfaf4;
+  cursor:pointer; text-decoration:none; }
+.dash-nudge-cta:hover { background:var(--pine-d); color:#fdfaf4; }
 /* The whole invitation is the hit target (MyPlans: role=button + tabIndex). Cursor and the lift on
    hover/focus say so; the CTA line brightens with the card so it still reads as the action even
    though it is now just a <span>. */
 .dash-nudge-click { cursor:pointer; transition:background .15s, border-color .15s, transform .12s; }
 .dash-nudge-click:hover { background:var(--tint-pine-2); border-color:var(--pine-d); }
 .dash-nudge-click:active { transform:scale(.994); }
-.dash-nudge-click:hover .dash-nudge-cta { color:var(--pine-d); }
+.dash-nudge-click:hover .dash-nudge-cta { background:var(--pine-d); color:#fdfaf4; }
 .dash-nudge-click:focus-visible { outline:none; border-color:var(--pine-d); box-shadow:0 0 0 3px var(--tint-pine); }
 
 /* (The .dash-expand* rules for the "Do you teach {subject} to other classes?" window stood
@@ -3479,6 +3487,8 @@ button.prepare-cta:disabled::before, .prepare-cta:disabled::before { content: no
 .gt-root { position:fixed; inset:0; z-index:70; }
 .gt-root.gt-block { pointer-events:auto; }
 .gt-scrim { position:absolute; inset:0; }
+/* WALK-A-015: invisible, tappable twin of the ring on steps that say "tap". */
+.gt-hot { position:absolute; background:transparent; border:0; padding:0; cursor:pointer; border-radius:12px; z-index:1; }
 /* The spotlight itself: a transparent rect whose huge box-shadow paints the dim everywhere ELSE,
    leaving the target lit. */
 .gt-ring { position:absolute; border:2px solid var(--ochre); border-radius:12px; pointer-events:none;
@@ -4193,6 +4203,10 @@ button.prepare-cta:disabled::before, .prepare-cta:disabled::before { content: no
   font-size: 22px; border: 1px solid var(--line); border-radius: 10px;
   background: var(--card-bg); color: var(--ink); }
 .ob-otp-box:focus { outline: none; border-color: var(--pine); box-shadow: 0 0 0 1px var(--pine); }
+/* WALK-A-004: an expired code's boxes are visibly out of use. */
+.ob-otp-box:disabled { opacity: .45; cursor: not-allowed; }
+/* WALK-A-022: required fields carry an asterisk; School name (optional) carries none. */
+.ob-req { color: var(--clay); font-weight: 600; }
 /* In-app subscribe overlay (paywall → SubscribeFlow) — full-screen paper sheet. */
 .subflow-overlay { position: fixed; inset: 0; z-index: 70; background: var(--paper);
   overflow: auto; }
@@ -4677,7 +4691,10 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 /* larger label (Class numbers use this size; the Subject wheel's auto-fit sets its own inline size
    ~two notches up and shrinks only if a name is too long to fit). */
 .fr-wheel.peek .fr-wheel-label { font-size: 19px; font-weight: 600; color: var(--ink); }
-[data-theme-effective="dark"] .fr-wheel-shell.peek { background: #1f2c26; border-color: #2f4139; }
+/* WALK-A-010 (2026-09-20): dark is PHONE-WIDTH ONLY (see the DARK MODE block). This rule sat
+   outside that media query, so a Mac in Dark appearance darkened this surface under light ink on
+   the desktop web — the Year Plan table went unreadable. */
+@media (max-width: 600px) { [data-theme-effective="dark"] .fr-wheel-shell.peek { background: #1f2c26; border-color: #2f4139; } }
 /* single down-arrow cue (no ▲/▼ pair to stack). */
 .fr-wheel-cue.single { flex-direction: row; }
 
@@ -4731,7 +4748,10 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 
 /* ── Year Plan view ── */
 .yp { --yp-card: #fff; padding: 4px 18px 10px; }
-[data-theme-effective="dark"] .yp { --yp-card: #1f2c26; }
+/* WALK-A-010 (2026-09-20): dark is PHONE-WIDTH ONLY (see the DARK MODE block). This rule sat
+   outside that media query, so a Mac in Dark appearance darkened this surface under light ink on
+   the desktop web — the Year Plan table went unreadable. */
+@media (max-width: 600px) { [data-theme-effective="dark"] .yp { --yp-card: #1f2c26; } }
 .yp-loading, .yp-empty { padding: 28px 12px; text-align: center; color: var(--ink-soft); font-family: var(--f-body); }
 
 /* Frozen plan head: exec + tiles + column header stay put while the chapter rows scroll beneath.
@@ -5058,18 +5078,24 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 }
 .tp-savefail > button:hover { color: var(--ink); border-bottom-color: var(--ink); }
 
-.sc-card.sc-proposed-failed { border-style: solid; border-color: var(--edge-clay); }
+.sc-card.sc-proposed-failed { border-style: solid; border-color: var(--edge); }
 /* ONE ROW, always — the failed card must be the SAME HEIGHT as every other card in the list.
    The message occupies the line the progress bar had; Dismiss sits at its end exactly where
    the bar ended. A taller card reads as a different KIND of thing and pulls the eye down the
    list; this is the same card, settled. The note is clamped to two lines so an unusually long
    4xx sentence can never grow the card either — the full text stays in `title`. */
 .sc-prep-failed { align-items: center; gap: 10px; flex-wrap: nowrap; }
+/* WALK-A-019 (2026-09-20): the note wraps IN FULL. The clamp kept every card one height, but it
+   cut the only sentence that says what went wrong; a failed card that is a line taller is the
+   lesser cost. */
 .sc-prep-failed .sc-prep-note {
   font-style: normal; color: var(--ink);
-  flex: 1 1 auto; min-width: 0;                     /* min-width:0 lets it shrink, not overflow */
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  flex: 1 1 auto; min-width: 0;
 }
+.sc-prep-actions { display: inline-flex; gap: 14px; flex: 0 0 auto; }
+/* …and it does not borrow a lifecycle colour: the clay spine read as "attached". A failed card
+   is neutral — the words carry the state. */
+.sc-card.sc-proposed.sc-proposed-failed::before { background: var(--edge); }
 .sc-prep-dismiss {
   flex: 0 0 auto; cursor: pointer;
   font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
@@ -5083,7 +5109,8 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
      equal to its neighbours. */
   .sc-prep-failed { flex-direction: row; align-items: center; gap: 10px; }
   .sc-prep-failed .sc-prep-note { order: 0; font-size: 12px; }
-  .sc-prep-failed .sc-prep-dismiss { order: 0; }
+  .sc-prep-failed .sc-prep-actions { order: 0; }
+  .sc-prep-failed { flex-wrap: wrap; }
 }
 
 /* ── The user agreement (Agreement.jsx: subscribe wizard step + Settings › Legal) ──

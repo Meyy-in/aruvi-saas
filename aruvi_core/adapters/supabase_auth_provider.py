@@ -47,7 +47,12 @@ def identity_from_claims(claims: Dict[str, Any]) -> Identity:
     uid = national_number(claims.get("phone") or "")
     if not uid:
         raise ValueError("This sign-in has no mobile number attached.")
-    return Identity(user_id=uid, tenant_id=uid, role="teacher", phone=uid)
+    iat = claims.get("iat")
+    try:
+        iat = int(iat) if iat is not None else None
+    except (TypeError, ValueError):
+        iat = None
+    return Identity(user_id=uid, tenant_id=uid, role="teacher", phone=uid, issued_at=iat)
 
 
 class SupabaseAuthProvider(AuthProvider):

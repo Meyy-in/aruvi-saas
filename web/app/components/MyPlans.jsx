@@ -106,6 +106,13 @@ const SectionTag = ({ c, muted }) => (
 
 export default function MyPlans({ subject, grade, ready, readiness, onReady, onNavigate, onEnterGenerate, user, onSignOut, lapsed, pendingOpen, onConsumePending, pendingAttach, onConsumeAttach, onStartTour, tourActive, tourStep, onTourInfo, onOpenPortal, sectionCheck, yearInfo, onCutover, cutoverBusy, cutoverResult, onDismissCutoverResult, cutoverDismissed, onDismissCutover, preparingCard, preparingSection, onDismissPreparing }) {
   const [openPlan, setOpenPlan] = useState(null);  // { view, sectionKey } for LessonView
+  // WALK-A-008: the browser's Back closes an open lesson first (page.jsx dispatches "aruvi:back").
+  useEffect(() => {
+    if (!openPlan) return undefined;
+    const onBack = (e) => { setOpenPlan(null); e.preventDefault(); };
+    window.addEventListener("aruvi:back", onBack);
+    return () => window.removeEventListener("aruvi:back", onBack);
+  }, [openPlan]);
   const [loading, setLoading] = useState(false);
   const [setupStarted, setSetupStarted] = useState(false); // 2a welcome → grid flow gate
   const [attachFor, setAttachFor] = useState(null); // { c, sectionKey } — "+" track-a-chapter picker
@@ -1026,7 +1033,11 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
           time. So the invitation now sits directly under the welcome, above the cards, and says
           out loud that the lesson will wait. The "+" instruction is held back until the tour is
           resolved (taken or skipped) — see the welcome sub above. */}
-      {!anyBound && bindingsKnown && anyPlans && !tourActive && onStartTour && (
+      {/* WALK-A-014 (founder, 2026-09-20): the offer shows on My Classes too. It used to require
+          !anyBound — but first run now attaches her lesson, so a first-run teacher could never see
+          it here. Eligibility (≤1 bound section, no progress) is page.jsx's job: it passes
+          onStartTour only while the tour is genuinely on offer. */}
+      {bindingsKnown && anyPlans && !tourActive && onStartTour && (
         /* The WHOLE window is the target (founder, 2026-07-26) — a teacher reading an invitation
            should not have to hunt for the small link at the bottom of it. It is a real button for
            assistive tech too: role + tabIndex + Enter/Space, with ONE accessible name covering the
@@ -1046,7 +1057,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
               <div className="dash-nudge-title">Let me show you around first</div>
               <div className="dash-nudge-sub">
                 A short walk through tracking sections and handling lesson plans. Your lesson stays
-                safe in My Lessons — you can add it to a class whenever you&rsquo;re ready.
+                safe while we look around.
               </div>
             </div>
           </div>

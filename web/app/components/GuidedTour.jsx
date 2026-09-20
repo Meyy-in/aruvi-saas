@@ -40,7 +40,11 @@ import { useEffect, useRef, useState } from "react";
  * The tooltip is the SAME thematic sage-pine "window" as the nudge (.dash-nudge) — one visual
  * voice across the whole first-run journey. Sits ABOVE ap-overlay modals (z 70 > 60). */
 
-const fallback = { tag: "your section", chapter: "your lesson" };
+/* WALK-A-016: a missing name must still read as English. `tag` is only ever used after the
+   word "section", so its fallback is phrased to follow "section" too ("…to section" + "one of
+   yours" would not parse) — see `sec()` below, which every step uses instead of "section ${tag}". */
+const fallback = { tag: "", chapter: "your lesson" };
+const sec = (i) => (i.tag ? `section ${i.tag}` : "one of your sections");
 
 // The circled "+" exactly as it appears on the section card (mini .sc-add look).
 const Plus = () => <span className="gt-plus" aria-hidden="true">+</span>;
@@ -75,24 +79,27 @@ const STEPS = [
     body: () => "Push those lesson plans you no more want to see into the archive box. Restore it back anytime you need it." },
   // Step 6 — "open the lesson": rings the same lesson card as step 3 (identical anchor + centred
   // hand). Next opens the preview (MyLessonPlans drives that off tourStep === 7).
-  { anchor: "lesson-first", place: "below",
+  /* WALK-A-015 (founder, 2026-09-20): steps whose copy asks her to tap something now let that
+     tap DO the step (`tap: true` → a hotspot over the target calls onNext, which performs the
+     same action Next always did). Before, the scrim swallowed the click silently. */
+  { anchor: "lesson-first", place: "below", tap: true,
     title: "Let us open the lesson",
-    body: () => "click on the lesson card to open a particular lesson" },
+    body: () => "Tap a lesson card to open it. Tap this one now (or press Next)." },
   // Box LIFTED above the sticky "Attach to a class" bar (lift 130) so the bottom stays visible.
   // No hand here — the copy no longer asks her to tap anything; Next moves on to My Classes.
   { anchor: "preview-root", place: "over", lift: 130,
     scrollTop: true,
     title: "Let us open the plan to have a quick view.",
-    body: (i) => `You may review a lesson plan in its entirety here anytime. We will now attach this lesson to section ${i.tag} from ‘My Classes’ at the foot of the screen.` },
-  { anchor: "section-add", place: "below", hand: true,
+    body: (i) => `You may review a lesson plan in its entirety here anytime. We will now attach this lesson to ${sec(i)} from ‘My Classes’ at the foot of the screen.` },
+  { anchor: "section-add", place: "below", hand: true, tap: true,
     title: "Let us attach a lesson plan to a section.",
-    body: (i) => `You want to attach “${i.chapter}” to section ${i.tag}. Click the + sign of that section card.` },
-  { anchor: "attach-pop", handAnchor: "attach-pop-row", handPos: "center", place: "over", hand: true,
-    title: (i) => `Select a lesson plan to track for Section ${i.tag}.`,
+    body: (i) => `You want to attach “${i.chapter}” to ${sec(i)}. Click the + sign of that section card.` },
+  { anchor: "attach-pop", handAnchor: "attach-pop-row", handPos: "center", place: "over", hand: true, tap: true,
+    title: (i) => (i.tag ? `Select a lesson plan to track for Section ${i.tag}.` : "Select a lesson plan to track for this section."),
     body: () => "Here is where you select the different lessons to attach to your sections. You can also generate new lessons here." },
-  { anchor: "section-card-target", handPos: "center", place: "below", hand: true,
+  { anchor: "section-card-target", handPos: "center", place: "below", hand: true, tap: true,
     title: "You are now ready to track.",
-    body: (i) => `You have successfully attached “${i.chapter}” for section ${i.tag}. Let us click it to see how tracking works.` },
+    body: (i) => `You have successfully attached “${i.chapter}” to ${sec(i)}. Tap it to see how tracking works.` },
   // Box hangs just BELOW the unit's tab bar, view held at the top — the chapter header,
   // progress bar and the tabs all stay visible above it (tabs replaced the stacked
   // anatomy 2026-07-10; lesson-phase-1 kept as a fallback for mid-transition renders).
@@ -108,7 +115,7 @@ const STEPS = [
     body: () => "Move this bookmark to any particular phase to indicate where you stopped or wish to begin next for a section. Each section will have independent bookmarks." },
   { anchor: "mark-complete", place: "above", hand: true,
     title: "Track progress.",
-    body: (i) => `Track chapter progress of “${i.chapter}” with section ${i.tag} unit by unit. Upon completion of a unit, click this button to mark it complete.` },
+    body: (i) => `Track chapter progress of “${i.chapter}” with ${sec(i)} unit by unit. Upon completion of a unit, click this button to mark it complete.` },
   /* ★ BELOW THE CARD (founder, 2026-09-17: "card 14 in both web app and expo should be placed
      just below the section card"). It was `place: "over"` with a 10%-of-viewport lift, described
      here as "high enough to clear mobile browser bars, low enough to keep the SECOND section card
@@ -119,10 +126,10 @@ const STEPS = [
     body: () => <>Once all units of the chapter are marked complete by you, you are ready to teach another chapter. All you need is to click <Plus />.</> },
   { anchor: "attach-pop", place: "over",
     title: "Select a plan.",
-    body: () => "You can use the same window shown in step 8 to select an existing chapter or generate a new plan." },
+    body: () => "Use the same window you used a moment ago to select an existing chapter or generate a new plan." },
   { anchor: "grow-add", place: "above",
-    title: "Add/amend sections, classes and/or subjects.",
-    body: () => "Use this button to quickly add sections, classes or subjects to your teaching profile." },
+    title: "Add or amend your classes and sections.",
+    body: () => "Use this button to add a class or a section, or to change periods a week and the annual period budget." },
   /* Step 17 — the settings gear. ★ RE-WORDED 2026-08-28 (founder): the profile is now a VIEW.
      Every pencil moved to the "+" window of step 16 when the two doors onto one record were
      closed to one (CLAUDE.md, 2026-08-27) — so a card promising she can "build and edit" here
@@ -131,11 +138,11 @@ const STEPS = [
      purchase), and that is what this card now says. */
   { anchor: "settings-gear", place: "below",
     title: "Your teaching profile.",
-    body: () => "Your profile is built from what you do — read it whole here, at any time. Changes are made with ‘Add’ at the foot of the screen; removing a subject is the one thing done here." },
+    body: () => "Your profile is built from what you do — read it whole here, at any time. Changes are made with ‘Add’ at the foot of the screen." },
   // Step 18 — Ask Meyy (the stream-a mark in the bottom nav). Transparent hand centred on it.
   { anchor: "ask-aruvi", place: "above",
     title: "Use Ask Meyy to answer your queries",
-    body: () => "Get answers for up to 100 questions across 5 categories and use intelligent search to narrow your query." },
+    body: () => "Get answers to over 100 questions across 5 categories, and use intelligent search to narrow your query." },
   // Step 18 — the panel is now OPEN (page.jsx opened it on Next from 17), so she sees the thing
   // itself rather than a mark that promises it. "over" because the target IS the whole modal.
   { anchor: "ask-aruvi-root", place: "over",
@@ -274,6 +281,13 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
       {ring && (
         <div className="gt-ring" style={{ top: ring.top, left: ring.left, width: ring.width, height: ring.height }} />
       )}
+      {/* WALK-A-015: the thing she is told to tap is tappable — it advances exactly as Next. The
+          row inside a modal (handAnchor) is the target when there is one, else the ring. */}
+      {cfg.tap && (cfg.handAnchor ? handBox : ring) && (() => {
+        const hb = cfg.handAnchor ? handBox : ring;
+        return <button type="button" className="gt-hot" onClick={onNext} aria-label="Continue the tour"
+          style={{ top: hb.top, left: hb.left, width: hb.width, height: hb.height }} />;
+      })()}
       {handStyle && (
         <div className="gt-hand" style={handStyle} aria-hidden="true"><Hand /></div>
       )}

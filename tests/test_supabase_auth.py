@@ -37,10 +37,10 @@ from aruvi_core.adapters.supabase_auth_provider import (  # noqa: E402
 
 
 def _token(phone="919876543210", exp_in=3600, aud="authenticated", iss=URL + "/auth/v1",
-           secret=SECRET, alg="HS256", drop=()):
+           secret=SECRET, alg="HS256", drop=(), iat_offset=0):
     claims = {"sub": "0b1c2d3e-uuid", "aud": aud, "iss": iss, "phone": phone,
               "role": "authenticated", "exp": int(time.time()) + exp_in,
-              "iat": int(time.time())}
+              "iat": int(time.time()) + iat_offset}
     for k in drop:
         claims.pop(k, None)
     return jwt.encode(claims, secret, algorithm=alg)
@@ -156,6 +156,23 @@ def test_api_supabase_mode():
     assert c.get("/legal/privacy").status_code == 200
     assert c.get("/onboarding/known", params={"id": "9876543210"}).json()["known"] is True
     print("✓ API in supabase mode: bearer only, header ignored, account keyed by mobile")
+
+    # WALK-A-018: a token minted BEFORE the erasure can never re-create the account; a fresh
+    # sign-in (a later token) comes back as a new account. And a never-activated account is
+    # `fresh` at /onboarding/known (WALK-A-021).
+    known = c.get("/onboarding/known", params={"id": "9876543210"}).json()
+    assert known["known"] is True and known["fresh"] is True, known
+    old = {"Authorization": f"Bearer {_token(iat_offset=-120)}"}
+    r = c.post("/data-rights/erase", headers=old, json={"confirm": "erase", "downloaded_confirmed": True})
+    assert r.status_code == 200, r.text
+    r = c.get("/readiness", headers=old)
+    assert r.status_code == 401 and "deleted" in r.json()["detail"].lower(), r.text
+    assert m.account_repo.load("9876543210", "9876543210") is None, "no ghost account"
+    time.sleep(1.2)   # a whole second on, so the new token's integer `iat` postdates the erasure
+    new = {"Authorization": f"Bearer {_token()}"}
+    assert c.get("/readiness", headers=new).status_code == 200
+    assert m.account_repo.load("9876543210", "9876543210") is not None
+    print("✓ a pre-erasure token cannot resurrect the account; a new sign-in can")
 
 
 if __name__ == "__main__":

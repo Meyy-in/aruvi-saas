@@ -236,6 +236,12 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
   useEffect(() => {
     if (!onTrial || offeredRef.current) return;
     offeredRef.current = true;
+    /* WALK-A-021 (2026-09-20): once per SESSION, not per mount — the wizard's own ← Back to the
+       OTP screen and a re-verify remount this component, and the offer came back each time. */
+    try {
+      if (window.sessionStorage.getItem("aruvi_trial_offer_seen")) return;
+      window.sessionStorage.setItem("aruvi_trial_offer_seen", "1");
+    } catch {}
     setOfferTrial(true);
   }, [onTrial]);
 
@@ -397,13 +403,13 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
           <Steps at={1} />
           <h1 className="ob-title">Tell us a bit about yourself</h1>
           <p className="ob-sub">For your receipt and your account — nothing more.</p>
-          <label className="login-field ob-field"><span>Your name</span>
+          <label className="login-field ob-field"><span>Your name <span className="ob-req" aria-hidden="true">*</span></span>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" /></label>
 
           {/* Email — double-blind confirm (see the state note above). */}
           {emailStage === "enter" && (
             <>
-              <label className="login-field ob-field"><span>Email</span>
+              <label className="login-field ob-field"><span>Email <span className="ob-req" aria-hidden="true">*</span></span>
                 <input type="email" inputMode="email" autoComplete="off" value={email}
                   ref={emailRef}
                   onChange={(e) => { setEmail(e.target.value); setEmailErr(""); }}
@@ -411,9 +417,17 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
               {/* The taken-address message lands HERE — the stage the fix belongs to. */}
               {emailErr && <p className="ob-err" role="alert">{emailErr}</p>}
               {EMAIL_OK(email) && (
-                <button type="button" className="fr-link ob-email-next"
-                  onClick={() => { setEmail2(""); setEmailStage("confirm"); }}>
-                  Confirm this email →
+                <button type="button" className="fr-link ob-email-next" disabled={emailBusy}
+                  onClick={async () => {
+                    /* WALK-A-022 (2026-09-20): refuse an address that belongs to another account
+                       HERE, on first entry — not after she has typed it a second time to confirm. */
+                    setEmailBusy(true);
+                    const taken = await idInUse(email, userId);
+                    setEmailBusy(false);
+                    if (taken) { setEmailErr(EMAIL_TAKEN); return; }
+                    setEmail2(""); setEmailStage("confirm");
+                  }}>
+                  {emailBusy ? "Checking…" : "Confirm this email →"}
                 </button>
               )}
             </>
@@ -454,13 +468,13 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             </label>
           )}
 
-          <label className="login-field ob-field"><span>Role</span>
+          <label className="login-field ob-field"><span>Role <span className="ob-req" aria-hidden="true">*</span></span>
             <Dropdown value={role} onChange={setRole} options={ROLES}
               placeholder="Select your role" ariaLabel="Role" /></label>
-          <label className="login-field ob-field"><span>State</span>
+          <label className="login-field ob-field"><span>State <span className="ob-req" aria-hidden="true">*</span></span>
             <Dropdown value={stateName} onChange={setStateName} options={STATES}
               placeholder="Select your state" ariaLabel="State" /></label>
-          <label className="login-field ob-field"><span>City</span>
+          <label className="login-field ob-field"><span>City <span className="ob-req" aria-hidden="true">*</span></span>
             <input type="text" value={city} onChange={(e) => setCity(e.target.value)}
               /* Leaving City brings the LAST field into view. The sticky footer no longer
                  covers it (see .ob-body's bottom padding), but it is still the field
@@ -481,7 +495,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         </div>
         <div className="ob-foot">
           <button className="primary fr-cta"
-            disabled={!name.trim() || emailStage !== "ok" || !role || !stateName}
+            disabled={!name.trim() || emailStage !== "ok" || !role || !stateName || !city.trim()}
             onClick={() => setScreen("agreement")}>Save &amp; continue →</button>
           <button className="fr-link" onClick={() => onCancel && onCancel()}>← Back</button>
         </div>

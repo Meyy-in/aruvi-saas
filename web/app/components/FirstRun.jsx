@@ -5,7 +5,7 @@ import { getJSON, postJSON, markPrepared, pretty, gradeUp, ROMAN, stageOfGrade, 
          ppwFromAnnual } from "../lib/format";
 import { bindSectionChapter, pushSectionState } from "../lib/sectionState";
 import { invalidatePlans } from "../lib/plans";
-import { RollWheel, normPpw, ppwMapSum, lowestDuration, DEFAULT_PPW } from "./wheels";
+import { RollWheel, wheelChapterTitle, normPpw, ppwMapSum, lowestDuration, DEFAULT_PPW } from "./wheels";
 import MeyyMark from "./MeyyMark";
 
 /* ───────── FirstRun — shell-less Guided First Experience (Phase 1, 2026-07-01) ─────────
@@ -449,6 +449,8 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
       chapterNo: Number(chapterNo),
       chapterTitle: chosenChapter.chapter_title,
       rows,
+      // WALK-A-019: a retried first lesson must be attached exactly as this one would have been.
+      bindKey: `${subject}_${grade}_${tagFor(sections[0] || "A")}`,
     };
     /* The four screens that used to ask for these are gone, so first run SEEDS them — and both
        seeds now come from the SAME calibrated figure (2026-08-27).
@@ -603,7 +605,16 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
                 <span className="fr-trial-tick" aria-hidden="true">✓</span>
                 <h2 className="fr-trial-h">Your free trial</h2>
                 <p className="fr-trial-p">
-                  Your free trial covers any {trialInfo.trial_chapter_cap} chapters. For
+                  {/* WALK-A-012 (2026-09-20): a number that trialled before and rejoined starts with
+                      its used chapters already counted (the trial ledger) — say what is LEFT, not
+                      the cap, or she is promised a chapter she does not have. */}
+                  {(() => {
+                    const cap = trialInfo.trial_chapter_cap;
+                    const left = Math.max(0, cap - (trialInfo.trial_chapters_used || 0));
+                    return left < cap
+                      ? <>You have {left} of your {cap} free chapters left. </>
+                      : <>Your free trial covers any {cap} chapters. </>;
+                  })()}For
                   any single chapter, you can generate unlimited number of Lesson plans.
                 </p>
                 <h2 className="fr-trial-h">To get started</h2>
@@ -650,7 +661,7 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
             ) : <div className="fr-loading">Loading subjects…</div>
           )}
           {visibleSubjects.length > 0 && (
-            <RollWheel ariaLabel="Subject" value={subject} onChange={setSubject} large
+            <RollWheel ariaLabel="Subject" value={subject} onChange={setSubject} large loop
               items={visibleSubjects.map((s) => ({ id: s, chip: pretty(s).charAt(0), label: pretty(s) }))} />
           )}
         </div>
@@ -676,7 +687,7 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
               Class 9, not about her, so a new class means a new standard. */}
           {visibleGrades.length > 0 && (
             <RollWheel ariaLabel="Class" value={grade}
-              onChange={(v) => { durationTouched.current = false; setGrade(v); }} large
+              onChange={(v) => { durationTouched.current = false; setGrade(v); }} large loop
               items={visibleGrades.map((g) => ({ id: g, chip: classNum(g), label: `Class ${classNum(g)}` }))} />
           )}
 
@@ -739,7 +750,7 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
         {chapters.length === 0 && <div className="fr-loading">Loading chapters…</div>}
         {chapters.length > 0 && (
           <RollWheel ariaLabel="Chapter" value={chapterNo} onChange={pickChapter} rowPx={92}
-            items={chapters.map((c) => ({ id: String(c.chapter_number), chip: c.chapter_number, label: c.chapter_title }))} />
+            items={chapters.map((c) => ({ id: String(c.chapter_number), chip: c.chapter_number, label: wheelChapterTitle(c.chapter_title) }))} />
         )}
 
         <div className="fr-defaults">
@@ -758,7 +769,7 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
             ) : (
               <div className="fr-default-wheel-wrap">
                 <RollWheel ariaLabel="Class duration" value={String(durationMin)}
-                  onChange={(v) => { durationTouched.current = true; setDurationMin(Number(v)); }}
+                  onChange={(v) => { durationTouched.current = true; setDurationMin(Number(v)); }} large
                   items={DURATION_CHOICES.map((m) => ({ id: String(m), chip: m, label: "minute classes" }))} />
                 {/* Interim (2026-07-05): first run collects a SINGLE duration on purpose — the
                     mixed-duration case (per-week count per type → count-multiset at generation)
@@ -791,7 +802,7 @@ export default function FirstRun({ user, onComplete, onPrepared, onPrepareError,
             ) : (
               <div className="fr-default-wheel-wrap">
                 <RollWheel ariaLabel="Estimated periods" value={String(periods)}
-                  onChange={(v) => { periodsTouched.current = true; setPeriods(Number(v)); }}
+                  onChange={(v) => { periodsTouched.current = true; setPeriods(Number(v)); }} large
                   items={PERIOD_CHOICES.map((p) => ({ id: String(p), chip: p, label: p === 1 ? "period" : "periods" }))} />
                 <button type="button" className="fr-done-btn" onClick={() => setEditingField(null)}>Done</button>
               </div>

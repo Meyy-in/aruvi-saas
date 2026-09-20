@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, heldScopesOf, paywallKicker, entLapsed as lapsedOf } from "./lib/format";
+import { markPrepared, getJSON, postJSON, pretty, gradeUp, ROMAN, stageOfGrade, classNum, annualBudgetPeriods, projectReadiness, API, withUser, getUser, setUser, clearUser, fetchEntitlement, paidScopesOf, heldScopesOf, paywallKicker, entLapsed as lapsedOf } from "./lib/format";
 import { accountFirstName } from "./lib/account";
 import { verifiedWrite, readinessFingerprint } from "./lib/verify";
 import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache,
          readLocalSection, bindSectionChapter, unbindSection } from "./lib/sectionState";
 import { cachedPlans } from "@aruvi/shared/plans";
+import { invalidatePlans } from "./lib/plans";
 import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
 import { signOutAuth } from "./lib/auth";
@@ -122,6 +123,10 @@ export default function Home() {
   }, [user]);
 
   const [tourEligible, setTourEligible] = useState(null);
+  /* WALK-A-019 (2026-09-20): eligibility used to be read ONCE per sign-in. A first run that
+     finished offline read it while the network was down (→ unknown) and never asked again, so
+     the tour was never offered even after the lesson landed. A landed plan now re-asks. */
+  const [eligTick, setEligTick] = useState(0);
   useEffect(() => {
     if (!ready || !user) { setTourEligible(null); return; }
     let live = true;
@@ -136,7 +141,7 @@ export default function Home() {
       .catch(() => { if (live) setTourEligible(null); });
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, user]);
+  }, [ready, user, eligTick]);
   /* Declared HERE, far above the effect that fills it, because `tourOnOffer` on the very
      next line reads it — a `const` used before its declaration is a TDZ ReferenceError
      that white-screens the whole app, and it is invisible to babel-parse. (Found live,
@@ -183,12 +188,18 @@ export default function Home() {
      set here — that would hide the nudge she is looking at and take away the button. The
      server write lands, and her NEXT sign-in reads it. Fire-and-forget: if the write
      fails she is offered it once more, which is the harmless direction to err in. */
-  useEffect(() => {
-    if (!tourOnOffer || tourOfferedThisSession.current) return;
+  /* ★ SPENT ON AN ANSWER, NOT ON DISPLAY (WALK-A-009, founder, 2026-09-20). Spending it the moment
+     it was offered meant a reload, a Back-and-Forward, a closed tab or a dropped connection in
+     the seconds between the offer and her answer removed the tour for good — and on web it was
+     even spent while showing on NO screen (a reload lands on My Classes, where a bound teacher
+     never sees the nudge). Now the server records it when she TAKES the tour (startTour); Skip
+     and Done happen inside a taken tour, so they are covered. Ignoring it is no longer an answer:
+     she is offered it again next time. */
+  const markTourOffered = () => {
+    if (tourOfferedThisSession.current) return;
     tourOfferedThisSession.current = true;
     fetch(`${API}/account/tour-offered`, withUser({ method: "POST" })).catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tourOnOffer]);
+  };
   // Also closes Ask Aruvi: Skip can be pressed on step 18 while the panel is open, and the
   // tour must never leave the shell in a state it opened.
   /* ★ Ending the tour asks her to check her sections (founder, 2026-08-21). First run no longer
@@ -298,6 +309,10 @@ export default function Home() {
   useEffect(() => {
     // After the tour (founder, 2026-09-18): not while it runs, and not while it is still on offer.
     if (!onMyClassesNow || tour || tourOnOffer || portalWin || entLapsed) return undefined;
+    /* WALK-A-019: not while her first lesson is still coming (or has failed), and not while we
+       cannot yet tell whether the tour applies — asking her to audit a set-up before she has a
+       lesson, or ahead of a tour that is about to be offered, puts the question in the wrong place. */
+    if (preparingCard || tourEligible === null) return undefined;
     /* First run's own question first; otherwise a SUBSCRIPTION's (founder, 2026-09-18): after a
        purchase she may land here, looking at a default class she never chose, so My Classes asks
        as well as My Lessons — whichever she reaches first spends the key, so she is asked once.
@@ -316,7 +331,7 @@ export default function Home() {
     }, SETUP_CHECK_DELAY_MS);
     return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onMyClassesNow, tour, tourOnOffer, portalWin, entLapsed, readiness]);
+  }, [onMyClassesNow, tour, tourOnOffer, portalWin, entLapsed, readiness, preparingCard, tourEligible]);
   /* The tour opens on My Classes. It always did implicitly, because its only entry point was a
      nudge ON My Classes; now that first run lands on My Lessons and the same nudge renders
      there too, step 1 ("this is where your classes sit") would otherwise ring the My Classes
@@ -384,7 +399,24 @@ export default function Home() {
     prevTourNum.current = tour;
   }, [tour]);
 
-  const startTour = () => { goLessons(); setTour(1); };
+  /* WALK-A-016 (2026-09-20): the tour's target section used to reach the copy ONLY from MyPlans
+     (My Classes), but steps 1–7 now stand on My Lessons — so step 7 read "section your section".
+     Seed the tag from her profile the moment the tour starts (first section in profile order,
+     the same walk MyPlans uses to pick its target); MyPlans still overwrites it with the exact
+     target + chapter once My Classes renders. */
+  const startTour = () => {
+    let tag = "";
+    for (const sub of (readiness && readiness.subjects) || []) {
+      for (const g of sub.grades || []) {
+        const sec = (g.sections || [])[0];
+        if (sec && sec.tag) { tag = sec.tag; break; }
+      }
+      if (tag) break;
+    }
+    if (tag) setTourInfo((prev) => (prev && prev.tag ? prev : { ...(prev || {}), tag }));
+    markTourOffered();
+    goLessons(); setTour(1);
+  };
 
   // Areas 4 + 5: a VERIFIED section mismatch — the class is not on the chapter she just
   // attached, or not marked complete. pushSectionState calls this only when the server was read
@@ -483,7 +515,15 @@ export default function Home() {
          (including "she has no profile", which a null value alone cannot tell apart from a
          failed read); after a failed read it still holds the copy we painted. */
       const p = cachedReadiness();
+      let pending = null;
+      try { pending = JSON.parse(window.localStorage.getItem(`aruvi_pending_readiness_${user}`) || "null"); } catch {}
       if (p && cachedReady()) { setReadiness(projectReadiness(p)); setReady(true); }
+      else if (pending && pending.length) {
+        // WALK-A-020: her first-run profile never reached the server. Keep her where she was and
+        // send it again, rather than handing her first run a second time.
+        setReadiness(projectReadiness({ subjects: pending })); setReady(true);
+        verifyReadiness(pending);
+      }
       else { setReadiness(null); setReady(false); }
     }).catch((e) => {
       if (e && e.message === "401") { onSignOut(); return; }
@@ -514,8 +554,24 @@ export default function Home() {
   // same tested fingerprint as TeachingProfile; only the surface differs, because here she is
   // in the shell rather than on the profile screen.
   const [saveFailed, setSaveFailed] = useState(false);
-  const verifyReadiness = (subs) => {
+  /* ★ AN UNSAVED PROFILE IS RETRIED, NOT FORGOTTEN (WALK-A-020, 2026-09-20). First run finished
+     with the network off: the activation POST never landed, the check came back "unverified"
+     (correctly silent — we could not know), and the shell opened on a profile that existed only
+     in this tab. The next reload asked the server, heard "no profile", and put her back in first
+     run. Now a profile write that cannot be verified is kept as PENDING (per user, on this
+     device) and re-sent: when the browser reports it is back online, on a timer while the tab is
+     open, and on the next load if the server still has nothing. "unverified" stays silent — the
+     doctrine is untouched; we simply do not give up on her data. */
+  const pendingKey = (u) => `aruvi_pending_readiness_${u}`;
+  const setPending = (subs) => { try {
+    if (subs) window.localStorage.setItem(pendingKey(user), JSON.stringify(subs));
+    else window.localStorage.removeItem(pendingKey(user));
+  } catch {} };
+  const retryTimer = useRef(null);
+  const verifyReadiness = (subs, attempt = 0) => {
     const want = readinessFingerprint(subs);
+    if (attempt === 0) setPending(subs);
+    if (retryTimer.current) { clearTimeout(retryTimer.current); retryTimer.current = null; }
     verifiedWrite({
       write: () => fetch(`${API}/readiness`, withUser({
         method: "POST",
@@ -525,6 +581,19 @@ export default function Home() {
       read: () => getJSON("/readiness").then((d) => (d && d.readiness) || d || {}),
       expect: (y) => readinessFingerprint(y.subjects) === want,
     }).then(({ status, actual }) => {
+      if (status === "unverified") {
+        if (attempt < 40) {
+          const again = () => {
+            window.removeEventListener("online", again);
+            if (retryTimer.current) { clearTimeout(retryTimer.current); retryTimer.current = null; }
+            verifyReadiness(subs, attempt + 1);
+          };
+          window.addEventListener("online", again);
+          retryTimer.current = setTimeout(again, 15000);
+        }
+        return;
+      }
+      setPending(null);   // the server has answered — ok or mismatch, the pending copy is settled
       if (status !== "mismatch") return;
       // Y′ is the truth, including whether she is set up at all. Leaving `ready` true over an
       // empty profile would strand her in a shell with no classes and no explanation.
@@ -715,6 +784,7 @@ export default function Home() {
   const onPrepared = ({ subject: s, grade: g, filename }) => {
     setGenerateEntry(null);
     setPreparingCard(null);            // the proposed card gives way to the real one
+    setEligTick((t) => t + 1);         // WALK-A-019: a landed plan re-asks whether the tour applies
     if (prepareReturn) {
       setPendingAttach({ ...prepareReturn, filename });
       setPrepareReturn(null);
@@ -767,6 +837,27 @@ export default function Home() {
   const onPrepareError = (desc, message) =>
     setPreparingCard(desc ? { ...desc, failed: true, message } : null);
   const onDismissPrepareError = () => setPreparingCard(null);
+  /* ★ TRY AGAIN ON THE CARD (WALK-A-019, 2026-09-20). A failed card offered only Dismiss, so she
+     had to walk the whole choice again (chapter, duration, periods) to retry something she had
+     already decided. The descriptor carries all of it; re-send the same serve, hold the same bar,
+     and land it exactly as the original would have — including first run's section binding
+     (`bindKey`, set by FirstRun), so a retried first lesson is attached like any first lesson. */
+  const onRetryPrepare = (desc) => {
+    if (!desc) return;
+    const again = { ...desc, failed: false, message: undefined };
+    setPreparingCard(again);
+    const startedAt = Date.now();
+    postJSON(`/genon/${desc.subject}/${desc.grade}/${desc.chapterNo}/plan`, { rows: desc.rows })
+      .then(async (resp) => {
+        await new Promise((res) => setTimeout(res, Math.max(0, 5000 - (Date.now() - startedAt))));
+        markPrepared(desc.subject, desc.grade, resp.filename);
+        invalidatePlans(`${desc.subject}/${desc.grade}`);
+        if (desc.bindKey) bindSectionChapter(desc.bindKey, resp.filename);
+        onPrepared({ subject: desc.subject, grade: desc.grade, filename: resp.filename });
+      })
+      .catch((e) => onPrepareError(again,
+        (e && e.detail) || "Couldn't build the lesson plan right now. Try again in a moment."));
+  };
 
   // ── The paywall window (founder, 2026-08-24 — the first Step-6 surface, built early
   // because the live kumar3 trial met the raw 402 inside a section card). A 402 is not
@@ -1149,6 +1240,40 @@ export default function Home() {
     else goClasses();
   };
   const inSettingsBar = editFlow === "settings" || (editFlow === "profile" && profileViaSettings);
+
+  /* ★ THE BROWSER'S BACK STAYS INSIDE MEYY (WALK-A-008, 2026-09-20). Every screen lives on one
+     URL, so Back used to leave the app from anywhere (the founder landed on the incognito start
+     page from My Lessons). While the shell is up we keep ONE sentinel history entry above the
+     page; a Back pops it, we step back a level inside the app, and put the sentinel back:
+       1. an open overlay closes (a lesson, a preview) — components listen for "aruvi:back" and
+          call preventDefault when they closed something;
+       2. Settings (or its subview) closes, exactly as its ✕ does;
+       3. any other tab returns to My Classes;
+       4. at My Classes with nothing open, Back LEAVES, as a browser user expects.
+     First run is never re-entered: it is state, not a history entry, and the sentinel is only
+     pushed once the shell is up. The tour ignores Back (its own ← Back drives it). */
+  const backRef = useRef(null);
+  backRef.current = () => {
+    if (tour) return true;                       // the tour's own Back is the way through it
+    const ev = new CustomEvent("aruvi:back", { cancelable: true });
+    window.dispatchEvent(ev);
+    if (ev.defaultPrevented) return true;
+    if (inSettingsBar) { settingsClose(); return true; }
+    if (editFlow !== null || generateEntry || tab !== "myplans") { goClasses(); return true; }
+    return false;                                // root: let the browser leave
+  };
+  const shellUp = !!(user && ready && !firstGenNeeded);
+  useEffect(() => {
+    if (!shellUp || typeof window === "undefined") return undefined;
+    try { window.history.pushState({ meyy: 1 }, ""); } catch {}
+    const onPop = () => {
+      const handled = backRef.current ? backRef.current() : false;
+      if (handled) { try { window.history.pushState({ meyy: 1 }, ""); } catch {} }
+      else { try { window.history.back(); } catch {} }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [shellUp]);
   /* What the bar says (2026-09-03): the chosen item's own card name, verbatim — the
      same words she tapped — so the bar reads as the card she opened. The teaching
      profile is reached through Settings but rendered by TeachingProfile, which is why
@@ -1464,7 +1589,7 @@ export default function Home() {
                 onScope={onLessonsScope} onEditYearBudget={onEditYearBudget}
                 heldScopes={heldScopes} onTourArchivable={setTourArchivable}
                 paneIntent={lessonsPaneIntentRef}
-                onDismissPrepareError={onDismissPrepareError} />
+                onDismissPrepareError={onDismissPrepareError} onRetryPrepare={onRetryPrepare} />
             </div>
           ) : (editFlow === "profile" && ready) ? (
             /* Teaching profile via SETTINGS — the panorama. She asked to SEE the whole thing, so
