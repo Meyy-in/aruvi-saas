@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-20T06:39:24",
+  "updated_at": "2026-09-20T08:23:26",
   "items": {
     "04.19": {
       "ios": {
@@ -157,9 +157,10 @@
     "03.12": {
       "web": {
         "by": "Kumar",
-        "at": "2026-09-20T05:14:05",
+        "at": "2026-09-20T06:45:04",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Mobile half ✓ (02): Enter → OTP screen with mobile prefilled + read-only; verify admitted her (to first run — correct for a no-profile account; the 'lands in My Classes' check needs a profiled account). Email half pending — use 03's email."
+        "comment": "Mobile half ✓ (02). Email half ✓ (03): unknown email not recognised; 03's correct email → OTP to 03's mobile → verify → straight into 03's shell (My Classes), not Subscribe.",
+        "status": "pass"
       }
     },
     "03.22": {
@@ -228,9 +229,10 @@
     "03.29": {
       "web": {
         "by": "Kumar",
-        "at": "2026-09-20T06:29:31",
+        "at": "2026-09-20T08:03:19",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Window appeared once (after Back/Forward reload) and did not reappear on later reloads ✓ — but row values not observed; re-check on the second 02 cycle."
+        "comment": "Seen on cycle 2 after the tour: one-shot window with Class · Section · Periods a week · Annual period budget and values (9 · 9A · 8 · 245). (Cycle 1 it fired early after a reload — WALK-A-009.)",
+        "status": "pass"
       }
     },
     "03.30": {
@@ -247,7 +249,278 @@
         "by": "Kumar",
         "at": "2026-09-20T06:35:39",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "02 deleted from incognito: farewell 'Your account and all your data have been deleted. Backup copies are purged within 30 days.' with Done + bar ✕; both land on CHOOSE (device flag cleared — the login screen's fresh-device state) ✓. Rejoin half pending (second cycle)."
+        "comment": "02 deleted from incognito: farewell 'Your account and all your data have been deleted. Backup copies are purged within 30 days.' with Done + bar ✕; both land on CHOOSE (device flag cleared — the login screen's fresh-device state) ✓. Rejoin ✓: same number → fresh account, first run (ledger keeps the used chapter; card wording → WALK-A-012). Cycle 3: after erase the account was silently re-created (ghost) → 'Create sign in' refused 'already in use' → WALK-A-018.",
+        "status": "fail"
+      }
+    },
+    "X.17": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T06:40:55",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "02 erased with 1 trial chapter used; ledger recorded chapters_used 1 ✓; rejoin via create path → Welcome/first run (not Subscribe, not empty My Classes) ✓. But the trial card still says 'covers any 3 chapters' → WALK-A-012."
+      }
+    },
+    "03.11": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T06:45:04",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "After 02 logged out from first run, the window opens on 'Who's planning today?' with benefits, rule, kicker, field + placeholder, Enter gated, trust line ✓."
+      }
+    },
+    "03.32": {
+      "web": {
+        "by": "Kumar",
+        "at": "2026-09-20T08:12:01",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Log out from first-run bar ✓ → sign-in; signing in as 03 shows only 03's data; back as 02 → Welcome. Failure half (offline prepare) pending — cycle 3. Failure half (cycle 3, DevTools Offline at Prepare): lands on My Lessons, failed card with Dismiss, no hang ✓. But the sentence is truncated ('Try again in a…'), the card's clay left edge reads as a status (founder read it as 'attached'), and My Classes then raised the set-up check (no tour possible, no lesson yet) → WALK-A-019.",
+        "status": "fail"
+      }
+    },
+    "T.01": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T06:51:07",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Cycle 2 (02 rejoined, SS IX ch 4, 50 × 19): no nudge while the bar ran; nudge appeared as the lesson landed ✓. But the box gives no explicit invitation to click → WALK-A-013."
+      }
+    },
+    "T.02": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T06:51:07",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Offer NOT shown on My Classes (only My Lessons); still on My Lessons on return ✓. Founder: must be on both. Also ch 4 already attached to 9A before the tour → WALK-A-014."
+      }
+    },
+    "T.04": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T06:54:11",
+        "comment": "Tour opens on My Lessons (clay underline stays on My Lessons — she is standing there, as designed); ring on My Classes bar item, tip above: 'This is where your classes sit.' + body; 1 of 20 · Skip · Next.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.05": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:37:40",
+        "comment": "Next → ring on My Lessons bar item, tip above: 'This is where your generated lesson plans sit.'; still on My Lessons; 2 of 20 with Back.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.06": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:38:12",
+        "comment": "Ring + centred hand on the ch 4 lesson card, tip below: 'See the lesson plan you just now generated.'; lands immediately; 3 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.07": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:38:43",
+        "comment": "Ring on the card's report button, tip below with 'Generate PDF reports' copy; icon unmoved; 4 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.08": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:40:53",
+        "comment": "Ring on archive icon, tip 'You can archive a Lesson plan…'; card reads 'Ready to teach', not attached to any section (tour unbinds for steps 1–9, as designed); 5 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.09": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T07:43:50",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Ring back on card, 6 of 20, Next advances ✓. Copy says 'click on the lesson card' but clicking the card does NOTHING — only Next works → WALK-A-015."
+      }
+    },
+    "T.10": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T07:46:31",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Preview opens, ring + lifted tip. Tip body reads 'We will now attach this lesson to section your section from ‘My Classes’…' — no section named, broken wording → WALK-A-016."
+      }
+    },
+    "T.11": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T07:48:30",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Tour moves to My Classes; 9A empty; ring + hand on '+'; tip names 9A and ch 4 correctly; set-up window stays away ✓. But tip says 'Click the + sign' and clicking '+' does nothing — only Next advances → WALK-A-015 (same pattern as step 6)."
+      }
+    },
+    "T.12": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:49:56",
+        "comment": "Picker opens by itself; tip + hand inside the sheet on the ch 4 row: 'Select a lesson plan to track for Section 9A.'; Next reachable; 9 of 20. Clicking the row has no effect (same pattern as WALK-A-015; founder passes the step).",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.13": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T07:51:03",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Picker closes, 9A turns green, ring + hand, real names, 10 of 20 ✓. Copy: 'attached “…” for section 9A' should read 'to section 9A' → WALK-A-017."
+      }
+    },
+    "T.14": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:52:24",
+        "comment": "Opens attached lesson on unit 1, top; ring + tip by unit tabs naming the four tabs; 11 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.15": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:52:54",
+        "comment": "Lesson tab; ring on clay phase bookmark, tip above 'Bookmark where you left a particular section…'; bookmark unmoved; 12 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.16": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:53:44",
+        "comment": "Mark complete scrolled mid-screen, ring + hand, tip above 'Track progress.' with real chapter + 9A; 13 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.17": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:54:18",
+        "comment": "Back on My Classes; 9A drawn complete (clay); ring + hand on '+'; tip below 'You have completed the chapter…' ending in [+]; 14 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.18": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T07:55:42",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Picker opens with tour inside, 'Select a plan.', 15 of 20, Next closes it ✓. Copy says 'the same window shown in step 8' — it was step 9 → WALK-A-017."
+      }
+    },
+    "T.19": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T07:57:05",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Ring on Add, tip above, 16 of 20 ✓. Copy wrong: says it adds subjects (it cannot — the Add window has no Subject row; a subject is a purchase) and omits that it also amends periods a week and annual budget → WALK-A-017."
+      }
+    },
+    "T.20": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-20T07:57:55",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Tour opens the teaching profile; tip 'Your teaching profile.' Copy: founder — remove the last clause '…removing a subject is the one thing done here.' → WALK-A-017."
+      }
+    },
+    "T.21": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:58:29",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Ring on Ask Meyy, tip above 'Use Ask Meyy to answer your queries…'; 18 of 20. Note: says 'up to 100 questions across 5 categories' — bank holds 119 pairs in 5 categories (WALK-A-017 item 5)."
+      }
+    },
+    "T.22": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T07:59:03",
+        "comment": "Tour opens Ask Meyy panel; tip 'Use either the categories or the intelligent search…'; 19 of 20.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "T.23": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T08:03:19",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Step 20: Ask closes, centred 'Welcome to Meyy' card, dimmed scrim, 20 of 20. Done → My Classes, 9A green with ch 4 (first run's binding), no phantom progress."
+      }
+    },
+    "T.24": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T08:03:19",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Back 20→7 mirrors every move: Ask re-opens/closes, profile → My Classes (17→16 lands on the Add ring = step 16's target), 9→8 shows 9A unattached, forward 9→10 re-attaches; counter counts down. Forward again to 20 then Done."
+      }
+    },
+    "T.26": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T08:03:19",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "After Done, ~1s later 'Would you like to check your set-up?' with values on the rows (Class 9 · Section 9A · 8 a week · 245 periods) — once. Skip half ✓ (cycle 3): set-up check window rose after Skip."
+      }
+    },
+    "T.25": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T08:21:15",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Cycle 3: before = 9A green with ch 4. Skip at step 9 (picker open) → ends on My Classes, picker closed, no overlay remnants, 9A green with ch 4 restored. (Step-5 skip variant not walked — one skip per account.)"
+      }
+    },
+    "T.03": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T08:23:26",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "After Skip: no offer on either tab; log out + sign in → shell, no offer, 9A still green with ch 4, no demo replay."
+      }
+    },
+    "04.26": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-20T08:23:26",
+        "build": "web dev (localhost:3000 → Render)",
+        "comment": "Trial account (02, cycle 3): 'Download my data first (Word)' from the final delete window → aruvi-your-data.docx: account (ID/phone, member since, marketing no, privacy notice v0.3), profile SS · IX · 9A, year 2026-27, no notes, teaching state 'Ch. 4 … 9A: started', library-content note. Cancelled. (File name still says 'aruvi' — teacher-facing, cf. the Meyy rename.)"
       }
     }
   },
@@ -512,6 +785,222 @@
       ],
       "owner": "",
       "at": "2026-09-20T06:39:24"
+    },
+    {
+      "id": "WALK-A-012",
+      "opened": "2026-09-20T06:40:55",
+      "closed": "",
+      "feature": "X.17",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Rejoining teacher's trial card says 3 chapters when fewer remain",
+      "what": "After erase + rejoin, the server seeds the trial with the ledger's used chapters (_entitlement_of → '_earlier/1', so 2 left), but FirstRun's 'Your free trial' card prints trialInfo.trial_chapter_cap — 'covers any 3 chapters' — the CAP, not what she has left. A rejoiner is promised a chapter she does not have. Show the remaining count when it is below the cap (e.g. 'You have 2 of your 3 free chapters left'), cap wording otherwise. Check the phone's card. (Considered and WITHDRAWN by founder: 'Prepare my second lesson' — her earlier lesson was erased, so for her this IS the first lesson; the CTA stays.)",
+      "fix": "",
+      "files": "web/app/components/FirstRun.jsx (~606) + mobile first-run",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T06:40:55"
+    },
+    {
+      "id": "WALK-A-013",
+      "opened": "2026-09-20T06:51:07",
+      "closed": "",
+      "feature": "T.01",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Tour offer box doesn't read as something to click",
+      "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too.",
+      "fix": "",
+      "files": "web/app/components/MyLessonPlans.jsx (~1166), MyPlans.jsx (~1029), globals.css .dash-nudge*",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T06:51:07"
+    },
+    {
+      "id": "WALK-A-014",
+      "opened": "2026-09-20T06:51:07",
+      "closed": "",
+      "feature": "T.02",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Tour offer missing on My Classes; chapter pre-attached before the tour",
+      "what": "(1) After first run the offer shows only on My Lessons. MyPlans renders it only while !anyBound, and first run now binds 9A, so My Classes never shows it — T.02 and 03.28 expect it on BOTH. Founder: it should be on both. (2) Founder: chapter 4 already shows ATTACHED to 9A on My Classes before the tour is taken or skipped; the tour's steps 8–10 teach attaching. Founder view: the binding should not precede the tour's resolution. ⚠️ Conflicts with the 2026-08-21/09-14 design (first run hands her a real bound card; tour steps 7–14 anchor on it; T.27 covers 'only lesson attached') — decide the intended order before fixing; if first run stops binding, re-check 03.28, the tour's demo binding and T.25 (Skip gives back her binding).",
+      "fix": "",
+      "files": "web/app/components/MyPlans.jsx, page.jsx (first-run binding / tour demo binding) + phone",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T06:51:07"
+    },
+    {
+      "id": "WALK-A-015",
+      "opened": "2026-09-20T07:42:55",
+      "closed": "",
+      "feature": "T.09",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Tour tells her to click (card, '+') but clicks do nothing — only Next advances",
+      "what": "Step 6 tip reads 'Let us open the lesson' / 'click on the lesson card to open a particular lesson', while the tour advances only on Next — a teacher following the words clicks the card instead. Founder: reword so she is not led to click the card directly (e.g. 'Tapping a lesson card opens it. Press Next and we'll open this one for you.'). Same copy on the phone (GuidedTour steps are shared). Observed: clicking the card during step 6 does nothing at all (the tour blocks it), so she is told to do something that silently fails. SAME at step 8 (T.11): 'Click the + sign of that section card' — clicking '+' does nothing. Review EVERY step whose copy says click/tap: either make the click itself advance the tour (the natural choice where the tour then does exactly that action — steps 6 and 8), or reword to point at Next. Step 9 (T.12) likewise: 'Select a lesson plan…' — clicking the row does nothing; include it in the same review.",
+      "fix": "",
+      "files": "web/app/components/GuidedTour.jsx (step 6 copy) + mobile tour",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T07:42:55"
+    },
+    {
+      "id": "WALK-A-016",
+      "opened": "2026-09-20T07:46:31",
+      "closed": "",
+      "feature": "T.10",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Tour step 7 says 'section your section' — target section never reaches the tour",
+      "what": "Step 7 tip: 'We will now attach this lesson to section your section from ‘My Classes’…'. Body is `…to section ${i.tag}…` and i.tag falls back to 'your section' (GuidedTour.jsx fallback) because tourInfo is null. tourInfo {tag, chapter} is supplied ONLY by MyPlans (My Classes) via onTourInfo — and since 2026-09-17 the tour opens and stays on My Lessons for steps 1–7, so MyPlans never reports the target before step 7 (and on web it may be unmounted). Fix: derive the tour's target section in page.jsx (it already knows the demo binding), not from MyPlans' render; and make the fallback read grammatically ('…attach this lesson to one of your sections…'). Check any later step that uses i.tag / i.chapter. Phone has the same copy and the same info plumbing — check.",
+      "fix": "",
+      "files": "web/app/page.jsx (tourInfo), web/app/components/GuidedTour.jsx (fallback), MyPlans.jsx onTourInfo; mobile equivalents",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T07:46:31"
+    },
+    {
+      "id": "WALK-A-017",
+      "opened": "2026-09-20T07:51:03",
+      "closed": "",
+      "feature": "T.13",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Tour copy corrections",
+      "what": "Running list of tour wording fixes (shared web/phone copy). (1) Step 10: 'You have successfully attached “{chapter}” for section {tag}.' → 'attached “{chapter}” TO section {tag}.' Note its next sentence 'Let us click it to see how tracking works.' is another click-instruction — see WALK-A-015. (2) Step 15: 'the same window shown in step 8' → 'step 9' (the picker is step 9 of 20). Better: avoid step numbers in copy ('the same window you used a moment ago') so a re-ordering can't make it wrong again. (3) Step 16 (Add): 'Add/amend sections, classes and/or subjects. Use this button to quickly add sections, classes or subjects…' — WRONG: the Add window has no Subject row (a subject is a purchase), and it DOES amend periods a week and the annual period budget. Reword to match its four rows: class · section · periods a week · annual period budget. (4) Step 17 (profile): remove the final clause '; removing a subject is the one thing done here.' — end at 'Changes are made with ‘Add’ at the foot of the screen.' (5) Step 18 (Ask Meyy): 'up to 100 questions across 5 categories' — the bank holds 119 Q&A pairs in 5 categories. Say 'over 100' or drop the number (it will drift every monthly refresh).",
+      "fix": "",
+      "files": "web/app/components/GuidedTour.jsx, mobile/components/GuidedTour.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T07:51:03"
+    },
+    {
+      "id": "WALK-A-018",
+      "opened": "2026-09-20T08:08:12",
+      "closed": "",
+      "feature": "04.27",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Ghost account: a request after erasure re-creates the account",
+      "what": "Cycle 3: 02 erased from the web (farewell, Done → Choose all normal). 'Create sign in' with 9000000002 then refused: 'already in use'. The account record exists again, created 2026-09-20T08:04:56Z (moments after the erase), display_name = the number, consent {} — never signed up. Cause: _current_identity JIT-creates an Account for ANY authenticated request (api/main.py ~303–310); a request still carrying the erased teacher's session (a poll, a re-fetch, the farewell's own refresh, sign-out cleanup) lands after the erase and resurrects her. Timing-dependent — cycle 2's rejoin was clean. Consequences: 'Create sign in' refuses her; an empty account now holds her number; data-rights promise ('all your data deleted') is undercut by a recreated record. The trial was NOT reopened (entitlement seeded from the ledger: _earlier/1, _earlier/2). Fix directions: sign out/clear the session BEFORE the erase request returns control (client) and/or refuse JIT creation for a token whose account was erased after the token was issued (server: compare token iat with the erasure time, or keep a short-lived tombstone). Check the phone's delete flow.",
+      "fix": "",
+      "files": "api/main.py (_current_identity JIT, data_rights_erase), web delete flow (Settings.jsx / page.jsx), mobile delete flow",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T08:08:12"
+    },
+    {
+      "id": "WALK-A-019",
+      "opened": "2026-09-20T08:12:01",
+      "closed": "",
+      "feature": "03.32",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Failed first lesson: message clipped, card looks attached, set-up check fires anyway",
+      "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect.",
+      "fix": "",
+      "files": "web/app/components/MyLessonPlans.jsx (preparing/failed card), globals.css, page.jsx (first-run check gate) + phone",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T08:12:01"
+    },
+    {
+      "id": "WALK-A-020",
+      "opened": "2026-09-20T08:16:44",
+      "closed": "",
+      "feature": "03.32",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "First run offline: profile never saved, yet the shell opens",
+      "what": "Cycle 3: first run completed with the network OFF at 'Prepare the lesson'. The shell opened (My Lessons with a failed card; My Classes with an empty 9A card) and she then prepared ch 4 successfully online from My Lessons. A reload (⌘R) put her back on 'Welcome to Meyy!' — first run again. So the profile write made at activation (POST /readiness, fired in the same tick as the handoff) failed offline, but the client moved her into the shell as if it had succeeded; the SS IX · 9A profile she saw existed only in the browser. Work done in that session (the prepared lesson) sits against an account with no profile. Fix: verify the activation write (the read-after-write verify used elsewhere) and, on failure, keep her in first run with a plain retry — never open the shell on an unsaved profile; or queue and retry the write. Check the phone.",
+      "fix": "",
+      "files": "web/app/components/FirstRun.jsx (finishActivation/prepareAndHandOff), page.jsx onFirstRunComplete + phone",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "owner": "",
+      "at": "2026-09-20T08:16:44"
     }
   ]
 }
