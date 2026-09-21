@@ -37,6 +37,8 @@ const classNum = (g) => {
 export default function PrepareLesson({ subject, grade, readiness, onNavigate, onBack, onPrepared,
                                         onPreparing, onPrepareError, onPaywall }) {
   const [chapters, setChapters] = useState([]);
+  const [chLoad, setChLoad] = useState("");                // "" = asking · ok · fail (WALK-A-051)
+  const [chTry, setChTry] = useState(0);                   // bumped by Try again
   const [chapterNo, setChapterNo] = useState("");          // chapter_number as string
   // Trial counter for the chapter step (Step 6 moment (b), founder 2026-08-24: shown
   // HERE and only here — the moment she is about to spend a chapter is the one moment
@@ -95,18 +97,27 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
   useEffect(() => {
     setStep("chapter"); setChapterNo(""); setView(null); setError(""); setNote("");
     setChapters([]); setPlans([]); setShowInfo(false); setShowBreakdown(false); setWarnRegen(false);
+    setChLoad("");
     getJSON(`/subjects/${subject}/${grade}/chapters`)
       // placeholder:true = budgeted but unpublished ("Book awaited"). Nothing to generate from,
       // so it never enters this picker; the Year Plan is where those rows live (2026-08-06).
-      .then((d) => { setChapters((d.chapters || []).filter((c) => !c.placeholder)); setSyllabusW(d.syllabus_total_weight || null); })
-      .catch(() => { setChapters([]); setSyllabusW(null); });
+      .then((d) => { setChapters((d.chapters || []).filter((c) => !c.placeholder)); setSyllabusW(d.syllabus_total_weight || null); setChLoad("ok"); })
+      /* ★ THREE STATES, NOT TWO (WALK-A-051, found on the phone 2026-09-21 and true here too).
+         An empty list means "she has none". A FAILED fetch also left it empty, and this screen
+         then announced "No chapter mappings for this subject & grade yet" — telling a teacher
+         that Meyy does not cover her subject when the truth was that the request failed. The
+         reason goes to the console, never to her. */
+      .catch((e) => {
+        console.warn("[meyy] /chapters failed:", (e && e.message) || e);
+        setChapters([]); setSyllabusW(null); setChLoad("fail");
+      });
     // The listing comes from the shared store, so the copy My Classes / My Lessons already
     // hold serves this picker too (@aruvi/shared/plans, 2026-09-14).
     readPlans(`${subject}/${grade}`, setPlans).catch(() => setPlans([]));
     getJSON(`/genon/${subject}/${grade}/chapters`)
       .then((d) => { setGenonChs(d.chapters || []); setCanonMinutes(d.canonical_minutes || {}); setCanonPeriods(d.canonical_periods || {}); })
       .catch(() => { setGenonChs([]); setCanonMinutes({}); });
-  }, [subject, grade]);
+  }, [subject, grade, chTry]);
 
   // Is the deterministic (genon) path available for the chosen chapter?
   const genonAvailable = !!chapterNo && genonChs.includes(Number(chapterNo));
@@ -491,7 +502,18 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
       ) : null}
 
       {!chapters.length ? (
-        <div className="empty">No chapter mappings for this subject &amp; grade yet.</div>
+        chLoad === "fail" ? (
+          <div className="empty">
+            We couldn&rsquo;t load the chapters just now — check your connection and try again.{" "}
+            <button type="button" className="lgl-link" onClick={() => setChTry((n) => n + 1)}>
+              Try again
+            </button>
+          </div>
+        ) : chLoad === "ok" ? (
+          <div className="empty">No chapter mappings for this subject &amp; grade yet.</div>
+        ) : (
+          <div className="empty">Loading chapters&hellip;</div>
+        )
       ) : (
         <>
           {/* Clear the refusal the moment she moves the wheel: the message is about the chapter

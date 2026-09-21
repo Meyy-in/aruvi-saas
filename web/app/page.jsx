@@ -1628,6 +1628,7 @@ export default function Home() {
               preparingCard={preparingCard}
               preparingSection={prepareReturn ? prepareReturn.sectionTag : null}
               onDismissPreparing={() => setPreparingCard(null)}
+              onRetryPreparing={onRetryPrepare}
               onStartTour={tourOnOffer ? startTour : undefined}
               tourActive={!!tour} tourStep={tour}
               onTourInfo={setTourInfo} onOpenPortal={() => setPortalWin({ mode: "change" })}

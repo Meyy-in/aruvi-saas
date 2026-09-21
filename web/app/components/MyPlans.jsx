@@ -104,7 +104,7 @@ const SectionTag = ({ c, muted }) => (
   </div>
 );
 
-export default function MyPlans({ subject, grade, ready, readiness, onReady, onNavigate, onEnterGenerate, user, onSignOut, lapsed, pendingOpen, onConsumePending, pendingAttach, onConsumeAttach, onStartTour, tourActive, tourStep, onTourInfo, onOpenPortal, sectionCheck, yearInfo, onCutover, cutoverBusy, cutoverResult, onDismissCutoverResult, cutoverDismissed, onDismissCutover, preparingCard, preparingSection, onDismissPreparing }) {
+export default function MyPlans({ subject, grade, ready, readiness, onReady, onNavigate, onEnterGenerate, user, onSignOut, lapsed, pendingOpen, onConsumePending, pendingAttach, onConsumeAttach, onStartTour, tourActive, tourStep, onTourInfo, onOpenPortal, sectionCheck, yearInfo, onCutover, cutoverBusy, cutoverResult, onDismissCutoverResult, cutoverDismissed, onDismissCutover, preparingCard, preparingSection, onDismissPreparing, onRetryPreparing }) {
   const [openPlan, setOpenPlan] = useState(null);  // { view, sectionKey } for LessonView
   // WALK-A-008: the browser's Back closes an open lesson first (page.jsx dispatches "aruvi:back").
   useEffect(() => {
@@ -1170,12 +1170,24 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
                     </div>
                     {preparingCard.failed ? (
                       <div className="sc-prep sc-prep-failed">
+                        {/* WALK-A-019, second half (founder, 2026-09-21, web sweep): the My
+                            Lessons card got "Try again" and both phone cards got it; THIS card —
+                            the section card, where a first lesson fails — was missed, so she was
+                            left with Dismiss and a walk back through chapter, duration and
+                            periods to retry a choice she had already made. */}
                         <span className="sc-prep-note" title={preparingCard.message}>
                           {preparingCard.message
                             || "Couldn’t build the lesson plan right now. Try again in a moment."}
                         </span>
-                        <button type="button" className="sc-prep-dismiss" onClick={onDismissPreparing}
-                          aria-label="Dismiss this failed lesson">Dismiss</button>
+                        <span className="sc-prep-actions">
+                          {onRetryPreparing && (
+                            <button type="button" className="sc-prep-dismiss"
+                              onClick={() => onRetryPreparing(preparingCard)}
+                              aria-label="Try preparing this lesson again">Try again</button>
+                          )}
+                          <button type="button" className="sc-prep-dismiss" onClick={onDismissPreparing}
+                            aria-label="Dismiss this failed lesson">Dismiss</button>
+                        </span>
                       </div>
                     ) : (
                       <div className="sc-prep">

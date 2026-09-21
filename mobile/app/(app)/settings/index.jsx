@@ -288,8 +288,13 @@ export default function SettingsHome() {
        Android's mandatory edge-to-edge the window no longer resizes — so the scroller is given
        the keypad's own room and told to go to the end when the keys arrive. */
     <ScrollView ref={scrollRef}
+      /* ⚠️ ANDROID ONLY. iOS already insets this scroller for the keyboard
+         (`automaticallyAdjustKeyboardInsets`, below); adding the measured height there padded it
+         TWICE and left the delete block riding up with a blank half-screen beneath it (founder,
+         2026-09-21, iPhone sweep). Android gets nothing from that prop, which is why it needed
+         the measurement in the first place. */
       contentContainerStyle={[ws.main, { paddingTop: 12 },
-                              kbH ? { paddingBottom: kbH + 24 } : null]}
+                              Platform.OS === "android" && kbH ? { paddingBottom: kbH + 24 } : null]}
       keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* ✅ LIVE AS OF 6d — the accordion, read-only. What she can CHANGE is the bar's "+";
           this is where she reads what she has told Meyy she teaches. */}
