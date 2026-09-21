@@ -203,11 +203,26 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
      is real but already stale — the ring lands near its target rather than on it (founder,
      2026-09-17: card 8 *"highlights above the + and not the plus"*). The found/not-found retry
      below cannot catch that: it stops the moment there IS a ring, right or wrong. */
+  /* ★ SETTLED MEANS "THE RING IS KNOWN", NOT "450ms HAVE PASSED" (WALK-A-050, founder 2026-09-21:
+     the 14 → 15 transition is "a bit delayed and jumpy"). A fixed timer is right for a target
+     that is already on screen and wrong for one that arrives WITH A SHEET: the card was released
+     on the clock while its anchor was still mounting, so it appeared, and then the screen beneath
+     it settled underneath. Now the confirming re-measure still happens on the clock, but the card
+     waits for that re-measure to have produced a ring. A step whose anchor never resolves is not
+     held hostage: the safety net releases it a second later, which is the old behaviour for the
+     only case the old timer was really serving. */
+  const ticked = useRef(0);
   useEffect(() => {
     if (!cfg || !cfg.anchor) return undefined;
-    const id = setTimeout(() => { setTick((n) => n + 1); setSettled(true); }, 450);
-    return () => clearTimeout(id);
+    ticked.current = 0;
+    const id = setTimeout(() => { ticked.current = step; setTick((n) => n + 1); }, 450);
+    const net = setTimeout(() => setSettled(true), 1600);
+    return () => { clearTimeout(id); clearTimeout(net); };
   }, [step]);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (cfg && cfg.anchor && ticked.current === step && rects && rects.ring) setSettled(true);
+  }, [rects, tick, step]);   // eslint-disable-line react-hooks/exhaustive-deps
 
   const tries = useRef(0);
   useEffect(() => { tries.current = 0; }, [step]);

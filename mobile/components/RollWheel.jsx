@@ -283,6 +283,12 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
     <View style={[peek ? ws.rw_shell : ws.rw_shell_base, { height: rowPx + 2 }]}
       accessibilityLabel={ariaLabel}>
       <ScrollView ref={ref} showsVerticalScrollIndicator={false}
+        /* ★ START WHERE SHE LEFT IT (WALK-A-049). The park effect below cannot run until after
+           the first frame, so a freshly mounted looped wheel painted row 0 — the first copy's
+           FIRST ITEM — and only then jumped to the pick: English, then the subject she chose,
+           on every rebuild of the screen. `contentOffset` is applied as the scroller is created,
+           so there is no first frame to get wrong. The effect stays, for every later correction. */
+        contentOffset={{ x: 0, y: (loop ? N + selIdx : selIdx) * rowPx }}
         snapToInterval={rowPx}
         /* WALK-A-037 (founder, 2026-09-20): on Android a flick raced past several rows. "fast"
            is 0.9; 0.8 stops the fling nearer the finger, so one flick moves about one row. iOS

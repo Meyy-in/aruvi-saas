@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-21T11:58:11",
+ "updated_at": "2026-09-21T12:10:20",
  "items": {
   "04.19": {
    "ios": {
@@ -489,9 +489,9 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-21T08:59:42",
+    "at": "2026-09-21T12:10:20",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Dev build: no blank 'Loading...' - the preparing card with its progress bar appears at once and stays until the lesson is ready (A-038 holds). Lands in the shell; My Classes shows the section green with the lesson attached; tour offered on both tabs with the 'Show me how ->' pill.",
+    "comment": "Re-walked 2026-09-21 after WALK-A-059: first run generates the lesson and hands over to My Lessons with no crash; the preparing card and progress hold (A-038).",
     "status": "pass"
    }
   },
@@ -1063,11 +1063,11 @@
     "comment": "Picker again ✓; tip marginally covers the bottom bar → WALK-A-028; 'step 8' wording → WALK-A-017 (unported).\n✓ re-walked after WALK-A-017/028: 'a moment ago'; tip clears the bar; dimmed once."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-21T11:58:11",
+    "at": "2026-09-21T12:10:20",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Dev build, normal type: step 15's background is clean now, like 9 (A-028 scrim half holds for any sheet, not just the one owning the overlay). REMAINING: the 14 -> 15 transition is still delayed and jumpy - the card arrives late and settles rather than appearing in place -> WALK-A-050 (second half)."
+    "comment": "Dev build, normal type: step 15's background is clean like 9, and 14 -> 15 arrives in place (the card now waits for its ring to measure rather than being released on a 450ms timer). Residual, minor: the sheet's own 'track a chapter for this section' card bobs once before settling - the window beneath the tip, not the tip -> noted on WALK-A-050."
    }
   },
   "T.19": {
@@ -2605,8 +2605,8 @@
    ],
    "applies_to": "phone",
    "title": "Looped wheels flash their first item — first run rebuilt itself on every render",
-   "what": "Pixel 7 dev build, first run → Subject: on every move the box shows ENGLISH (item 0) for a frame before the new subject settles. Founder's map, by ▼: English→Maths no flash; Maths→Science flashes; Science→Social Sciences flashes; SS→TWAU flashes; TWAU→English (the wrap) no flash. Same when dragging. So it flashes whenever the move neither starts nor ends at item 0 — the box is momentarily sitting on a row that is a multiple of N in the looped 3-copy list. Rows render static labels, so this IS the scroll offset, not a render artifact. A trace is parked in RollWheel behind `global.__RW_TRACE` (rollTo target + every settle offset): turn it on, reproduce once, and the offsets will name the frame. Reproducible without the founder. ✅ NARROWED: the CLASS wheel does the same thing with Class 6 (its item 0), so this is RollWheel's loop, not the subject list. Both wheels are `loop rowPx={92} large`; the chapter wheel does not loop. ✅ ROOT CAUSE (2026-09-21, from the on-wheel trace): the trace showed P1 — the MOUNT park — running on a move that needs no park, and no STEP entry at all, because the buffer had been wiped. The wheel was being UNMOUNTED AND REMOUNTED on every change. `Foot`, `Cta`, `BackLink` and `Frame` were declared INSIDE FirstRun, so each render produced new component types and React threw the whole step away and rebuilt it. A freshly mounted ScrollView renders at offset 0, which in a looped list is the first copy's FIRST ROW — English, or Class 6 — and the park effect only corrects it a frame later. Defining a component inside a render is always this bug; here it had a face. It also means first run rebuilt its entire screen on every keystroke. ✓ Android re-walk 2026-09-21: green.",
-   "fix": "PHONE: the four are hoisted to module scope and take their theme, styles, insets and user from hooks of their own, so identity is stable and the subtree survives a render. Plus the earlier half: `selIdx` no longer clamps a missing value to item 0, it holds the last good index. Trace confirmed after the fix: GO 7.00 then a clean glide 6.01→7.00, never passing row 5 (English), and the founder confirms the flash is gone.",
+   "what": "Pixel 7 dev build, first run → Subject: on every move the box shows ENGLISH (item 0) for a frame before the new subject settles. Founder's map, by ▼: English→Maths no flash; Maths→Science flashes; Science→Social Sciences flashes; SS→TWAU flashes; TWAU→English (the wrap) no flash. Same when dragging. So it flashes whenever the move neither starts nor ends at item 0 — the box is momentarily sitting on a row that is a multiple of N in the looped 3-copy list. Rows render static labels, so this IS the scroll offset, not a render artifact. A trace is parked in RollWheel behind `global.__RW_TRACE` (rollTo target + every settle offset): turn it on, reproduce once, and the offsets will name the frame. Reproducible without the founder. ✅ NARROWED: the CLASS wheel does the same thing with Class 6 (its item 0), so this is RollWheel's loop, not the subject list. Both wheels are `loop rowPx={92} large`; the chapter wheel does not loop. ✅ ROOT CAUSE (2026-09-21, from the on-wheel trace): the trace showed P1 — the MOUNT park — running on a move that needs no park, and no STEP entry at all, because the buffer had been wiped. The wheel was being UNMOUNTED AND REMOUNTED on every change. `Foot`, `Cta`, `BackLink` and `Frame` were declared INSIDE FirstRun, so each render produced new component types and React threw the whole step away and rebuilt it. A freshly mounted ScrollView renders at offset 0, which in a looped list is the first copy's FIRST ROW — English, or Class 6 — and the park effect only corrects it a frame later. Defining a component inside a render is always this bug; here it had a face. It also means first run rebuilt its entire screen on every keystroke. ✓ Android re-walk 2026-09-21: green. ✓ Android 2026-09-21: flash gone on both wheels with `contentOffset` and the hoist reverted.",
+   "fix": "PHONE: the four are hoisted to module scope and take their theme, styles, insets and user from hooks of their own, so identity is stable and the subtree survives a render. Plus the earlier half: `selIdx` no longer clamps a missing value to item 0, it holds the last good index. Trace confirmed after the fix: GO 7.00 then a clean glide 6.01→7.00, never passing row 5 (English), and the founder confirms the flash is gone. ⚠️ REVISED 2026-09-21: the hoist was REVERTED — see WALK-A-059, a hard crash at the first-run handover that arrived with it. The flash is now fixed at its own source: the wheel takes its starting offset as `contentOffset`, so a freshly mounted looped wheel never paints row 0. The `selIdx` clamp fix stays.",
    "files": "mobile/app/first-run.jsx; mobile/components/RollWheel.jsx",
    "commit": "",
    "native_rebuild": false,
@@ -2627,12 +2627,12 @@
    ],
    "applies_to": "phone",
    "title": "Tour cards that arrive with a sheet are late, and 14→15 jumps",
-   "what": "Pixel 7 dev build: every other card appears at once; step 9 leaves the teacher looking at a dimmed screen with no tip for roughly two seconds. Step 9 is one of the two drawn over a Sheet, so the wait is probably the sheet opening before the tip can measure its anchor — the `settled` gate added for WALK-A-028 will not release until the anchor stops moving. Not seen on iPhone. ✓ Step 9 is prompt after the faster backoff. STILL OPEN: the 14 → 15 transition is delayed and JUMPY — the card arrives late and settles rather than appearing in place. 15 is `place: \"over\"`, whose tip position does not depend on the ring at all, so the settle cannot be the tip re-placing itself: suspect the sheet beneath it animating in while `settled` has already released the card at 450ms. Next: hold `settled` until the ring has actually measured on steps whose anchor lives inside a sheet, rather than on a fixed timer.",
+   "what": "Pixel 7 dev build: every other card appears at once; step 9 leaves the teacher looking at a dimmed screen with no tip for roughly two seconds. Step 9 is one of the two drawn over a Sheet, so the wait is probably the sheet opening before the tip can measure its anchor — the `settled` gate added for WALK-A-028 will not release until the anchor stops moving. Not seen on iPhone. ✓ Step 9 is prompt after the faster backoff. STILL OPEN: the 14 → 15 transition is delayed and JUMPY — the card arrives late and settles rather than appearing in place. 15 is `place: \"over\"`, whose tip position does not depend on the ring at all, so the settle cannot be the tip re-placing itself: suspect the sheet beneath it animating in while `settled` has already released the card at 450ms. Next: hold `settled` until the ring has actually measured on steps whose anchor lives inside a sheet, rather than on a fixed timer. ✓ 2026-09-21: step 9 prompt, 14 → 15 arrives in place once `settled` waits for the ring instead of a timer. RESIDUAL (minor, polish): the attach sheet's own 'track a chapter for this section' card bobs once before settling — that is the WINDOW beneath the tip, not the tip.",
    "fix": "PHONE: the anchor retry backoff was 220 · 720 · 1220 — far too patient for a target that arrives with a fading Modal. Six tries at 110 + n×220 reach further in under half the time, and a genuinely absent anchor still gives up in about a second and a half.",
    "files": "mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -2825,6 +2825,28 @@
    ],
    "owner": "Claude",
    "at": "2026-09-21T10:58:31"
+  },
+  {
+   "id": "WALK-A-059",
+   "opened": "2026-09-21T12:04:10",
+   "closed": "",
+   "feature": "03.27",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "Hard crash handing over from first run to My Lessons",
+   "what": "Pixel 7 dev build: after the first lesson is generated in first run, the app dies with the new architecture's mounting error — 'addViewAt: failed to insert view [976] into parent [444] at index 18 — The specified child already has a parent.' Dismiss does not recover it; only a force-stop does. Three runs in a row. It appeared with the WALK-A-049 hoist (Foot/Cta/BackLink/Frame moved to module scope in first-run.jsx) and at exactly the moment first run tears down while `router.replace('/lessons')` mounts the preparing card. Two of my attempts to claim the tour overlay host earlier (render body, then useLayoutEffect) crashed the same way and were reverted, which suggests the real subject is something being reparented during that handover rather than any one of those changes. ✓ 2026-09-21: with the hoist reverted, first run and the handover to My Lessons run clean. The crash's real subject is still unknown — it is the hoist that is parked, not the bug that is fixed.",
+   "fix": "HELD OFF: the hoist is reverted, so first run is back to the shape it had when 03.27 passed this morning. The flash it was fixing is fixed at its own source instead — the wheel takes its starting offset as `contentOffset` rather than parking a frame late, so a remount costs a wasted rebuild but shows nothing wrong. STILL TO DO: find why that handover reparents a view at all. The hoist is real waste and worth restoring once it is understood — but not blind.",
+   "files": "mobile/app/first-run.jsx; mobile/components/RollWheel.jsx; mobile/components/AttachSheet.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "open",
+   "recheck": [
+    "and_emu"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T12:04:10"
   }
  ]
 }

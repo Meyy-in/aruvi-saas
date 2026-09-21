@@ -81,62 +81,6 @@ function Progress({ active }) {
   );
 }
 
-/* ★ THESE LIVE OUT HERE, AND IT IS NOT A TIDINESS POINT (WALK-A-049, founder 2026-09-21, Pixel 7:
-   "for every change of subject, English flashes and then the new subject comes").
-   They were declared INSIDE FirstRun, so every render produced a new component type and React
-   threw the whole step away and rebuilt it — every keystroke, every wheel commit. The wheel paid
-   for it in public: a freshly mounted ScrollView renders at offset 0, which in a looped list is
-   the first copy's FIRST ROW, and only the park effect a frame later puts it back where she left
-   it. English, then the subject she chose. The trace said it plainly — P1 (the MOUNT park) ran on
-   a move that should have needed no park at all.
-   Defining a component in a render is always this bug; here it had a face. */
-function Foot({ children }) {
-  const ws = useWebStyles();
-  /* `.fr-foot`: a centred column with 12px between the CTA and the link. The web's own
-     padding-top here is 20 (web.js's fr_foot carries the profile window's 108, a different
-     screen's measure), and `alignSelf: "stretch"` is what lets a full-width CTA be full width
-     inside a centred column. */
-  return <View style={[ws.fr_foot, { paddingTop: 20, alignSelf: "stretch" }]}>{children}</View>;
-}
-
-function Cta({ label, onPress, disabled }) {
-  const { t } = useTheme();
-  const ws = useWebStyles();
-  return (
-    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
-      style={[ws.fr_cta, { backgroundColor: disabled ? t.paper_sunk : t.pine }]}>
-      <Text style={[ws.fr_cta_t, disabled ? { color: t.ink_soft } : ws.fr_cta_ink]}>{label}</Text>
-    </Pressable>
-  );
-}
-
-function BackLink({ label, onPress }) {
-  const ws = useWebStyles();
-  return (
-    <Pressable onPress={onPress} accessibilityRole="button" style={ws.fr_link} hitSlop={6}>
-      <Text style={ws.fr_link_t}>{label}</Text>
-    </Pressable>
-  );
-}
-
-function Frame({ children, foot }) {
-  const { t } = useTheme();
-  const insets = useSafeAreaInsets();
-  const user = getUser();
-  return (
-    <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar user={user} gear={false} />
-      {/* WALK-A-046: 28 cleared the gesture pill; the three buttons need the real inset. */}
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 22,
-                                           paddingBottom: 28 + insets.bottom }}>
-        {children}
-        {foot}
-      </ScrollView>
-    </View>
-  );
-}
-
 export default function FirstRun() {
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -431,6 +375,48 @@ export default function FirstRun() {
   /* ── WELCOME ─────────────────────────────────────────────────────────────────────
      Orientation only: the benefits list lives on the front door. The trial card renders for a
      TRIAL teacher; a subscribed entrant gets the clean version (title · To get started · CTA). */
+  /* ⚠️ THESE STAY INSIDE, for now (2026-09-21). Hoisting them to module scope was the right
+     answer to WALK-A-049 — a component defined in a render is a new type every time, so React
+     threw this screen away and rebuilt it on every keystroke — but it also coincided exactly with
+     a hard Fabric crash at the moment first run hands over to My Lessons ("addViewAt: failed to
+     insert view … the specified child already has a parent"), three runs in a row. The flash it
+     was fixing is now fixed at its own source: the wheel starts at the right offset instead of
+     parking there a frame later, so a remount costs a rebuild but shows nothing wrong. The hoist
+     is still worth doing once the crash is understood — it is real waste — but not blind, and
+     not while it is the only thing standing between a teacher and a dead app. */
+  /* `.fr-foot`: a centred column with 12px between the CTA and the link. The web's own
+     padding-top here is 20 (web.js's fr_foot carries the profile window's 108, a different
+     screen's measure), and `alignSelf: "stretch"` is what lets a full-width CTA be full width
+     inside a centred column. */
+  const Foot = ({ children }) => (
+    <View style={[ws.fr_foot, { paddingTop: 20, alignSelf: "stretch" }]}>{children}</View>
+  );
+  const Cta = ({ label, onPress, disabled }) => (
+    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
+      style={[ws.fr_cta, { backgroundColor: disabled ? t.paper_sunk : t.pine }]}>
+      <Text style={[ws.fr_cta_t, disabled ? { color: t.ink_soft } : ws.fr_cta_ink]}>{label}</Text>
+    </Pressable>
+  );
+  const BackLink = ({ label, onPress }) => (
+    <Pressable onPress={onPress} accessibilityRole="button" style={ws.fr_link} hitSlop={6}>
+      <Text style={ws.fr_link_t}>{label}</Text>
+    </Pressable>
+  );
+
+  const Frame = ({ children, foot }) => (
+    <View style={{ flex: 1, backgroundColor: t.paper }}>
+      <Bar user={user} gear={false} />
+      {/* WALK-A-046: 28 cleared the gesture pill; the three buttons need the real inset. */}
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 22,
+                                           paddingBottom: 28 + insets.bottom }}>
+        {children}
+        {foot}
+      </ScrollView>
+    </View>
+  );
+
+  /* ── STEP 1 · SUBJECT ── */
   if (step === "welcome") {
     const onTrial = trialInfo && trialInfo.enforced && trialInfo.status === "trial";
     return (
@@ -479,7 +465,6 @@ export default function FirstRun() {
     );
   }
 
-  /* ── STEP 1 · SUBJECT ── */
   if (step === "subject") {
     return (
       <Frame foot={
