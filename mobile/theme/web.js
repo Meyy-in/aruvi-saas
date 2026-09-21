@@ -264,6 +264,9 @@ export function webStyles(t, scheme = "light") {
        overlay is now only a layout box; the thing that is tappable is the thing that is dim. */
     ap_ground:       { position: "absolute", top: 0, right: 0, bottom: 0, left: 0,
                        backgroundColor: "rgba(31,42,36,.42)" },
+    /* WALK-A-028: while the tour owns this sheet, the screen behind it is the lesson, not the
+       backdrop — .18 keeps the window forward without hiding what the card is pointing at. */
+    ap_ground_tour:  { backgroundColor: "rgba(31,42,36,.18)" },
     ap_modal:        { width: "100%", maxWidth: 460, borderRadius: 14, borderWidth: 1,
                        paddingTop: 22, paddingHorizontal: 22, paddingBottom: 18 },
     ap_confirm:      { maxWidth: 420 },
@@ -1005,7 +1008,12 @@ export function webStyles(t, scheme = "light") {
     rw_shell_base:   { borderWidth: 1, borderColor: "#c7d9cf", borderRadius: 12,
                        overflow: "hidden", backgroundColor: t.tint_pine_2 },
     rw_row_base:     { flexDirection: "row", alignItems: "center", columnGap: 12, paddingRight: 52 },
-    rw_label_base:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 15, lineHeight: 19.2, color: t.ink },
+    /* 17, not the web's 15 (founder, 2026-09-21, Pixel 7: "the font size of chapter can be
+       increased one notch in choose the chapter screen"). This style reaches ONLY the two chapter
+       wheels — first run's and Prepare's; the My Lessons pair are peek wheels on `rw_label`, and
+       everything else passes `large`. Chapter titles are the longest labels in the app and clamp
+       to two lines, which is why they started smaller; at 92px rows there is room for a notch. */
+    rw_label_base:   { flex: 1, minWidth: 0, fontFamily: F.body(400), fontSize: 17, lineHeight: 21.8, color: t.ink },
     /* `.fr-wheel-lg .fr-wheel-label { font-size: 17px }` — the whole of the web's `large`: one
        notch bigger, for short lists (1…14 periods) where longer lists like chapter titles stay
        at 15. */

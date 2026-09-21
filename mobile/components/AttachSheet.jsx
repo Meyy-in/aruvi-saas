@@ -79,6 +79,13 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
      ⚠️ AND RELEASED ON UNMOUNT, so a sheet closed mid-tour hands the job straight back. */
   const tourNow = useTour();
   const ownsTour = !!tour && visible;
+  /* ⚠️ A PLAIN EFFECT, AND IT MUST STAY ONE (WALK-A-028, 2026-09-21). Claiming the overlay host
+     any earlier makes the SHELL unmount its GuidedTour in the middle of this sheet's commit, and
+     the new architecture refuses: "addViewAt: failed to insert view … the specified child already
+     has a parent" — a hard crash, twice, first from a render-body call and then from a
+     useLayoutEffect. The one commit where both overlays exist is a lesser evil than that, and it
+     is no longer what made those steps dark: the sheet's own ground lightens while a tour runs,
+     which needs no arbitration at all. */
   useEffect(() => {
     if (!ownsTour) return undefined;
     setTourOverlayHost("sheet");
@@ -121,7 +128,17 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
         {/* Hidden from assistive tech on purpose: the ✕ is the labelled way out, and a
             full-screen second "Close" control would be an enormous duplicate target. The web's
             overlay carries no label either — it is a convenience for a pointer, not a control. */}
-        <Pressable style={ws.ap_ground} onPress={onClose} accessibilityElementsHidden
+        {/* ★ LIGHTER WHILE THE TOUR IS TALKING (WALK-A-028). The ground exists to push a window
+            forward; during a tour the screen BEHIND it is the thing being explained, and the
+            teacher is being asked to look at a section card she can barely see. The sheet's own
+            dim is right at every other moment. */}
+        {/* ⚠️ ANY sheet, not just the one that owns the overlay (founder, 2026-09-21: step 9 came
+            good and 15 stayed dark). Step 15's window is a different Sheet variant — it passes no
+            `tour`, so it never claimed the job and never lightened. What matters is whether a
+            TOUR IS RUNNING: while it is, the screen behind every window is the thing being
+            explained. */}
+        <Pressable style={[ws.ap_ground, tourNow.step > 0 && ws.ap_ground_tour]}
+          onPress={onClose} accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants" />
         <View ref={tourRef} collapsable={false}
           style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall,

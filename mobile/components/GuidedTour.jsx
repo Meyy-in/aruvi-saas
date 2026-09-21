@@ -211,9 +211,15 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
 
   const tries = useRef(0);
   useEffect(() => { tries.current = 0; }, [step]);
+  /* ⚠️ THE BACKOFF WAS TOO PATIENT FOR AN ANCHOR THAT ARRIVES WITH A SHEET (WALK-A-050, founder
+     2026-09-21, Pixel 7: step 9's tip "takes about 2 seconds"). Step 9 rings a target INSIDE the
+     attach sheet, which is a Modal still fading in when the step changes, so the first measures
+     find nothing — and 220 · 720 · 1220 meant she watched a dimmed screen with no card on it.
+     Six quicker tries reach further in less than half the time, and an anchor that really is
+     absent still gives up in about a second and a half. */
   useEffect(() => {
-    if (!cfg || !cfg.anchor || (rects && rects.ring) || tries.current >= 4) return undefined;
-    const id = setTimeout(() => { tries.current += 1; setTick((n) => n + 1); }, 220 + tries.current * 500);
+    if (!cfg || !cfg.anchor || (rects && rects.ring) || tries.current >= 6) return undefined;
+    const id = setTimeout(() => { tries.current += 1; setTick((n) => n + 1); }, 110 + tries.current * 220);
     return () => clearTimeout(id);
   }, [cfg, rects, step]);
 

@@ -186,7 +186,6 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   const rollTo = (y) => {
     const el = ref.current;
     if (!el) return;
-    if (__DEV__ && global.__RW_TRACE) console.log("[rw]", ariaLabel, "rollTo", y, "row", y / rowPx, "sel", selIdx, "value", String(value));
     pending.current = y;
     if (pendingTimer.current) clearTimeout(pendingTimer.current);
     /* If the glide is interrupted — a re-render, a finger, a browser that drops the smooth
@@ -203,7 +202,6 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
 
   const onSettle = (e) => {
     const y = e.nativeEvent.contentOffset.y;
-    if (__DEV__ && global.__RW_TRACE) console.log("[rw]", ariaLabel, "at", Math.round(y), "row", (y / rowPx).toFixed(2), "pending", pending.current);
     /* ⚠️ NEVER COMMIT FROM AN OFFSET THAT IS STILL TRAVELLING. The pick for a programmatic roll
        was made before it started; all that is left is to notice it has landed. */
     if (pending.current != null) {
@@ -270,7 +268,14 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
     if (next === selIdx) return;
     mine.current = String(items[next].id);   // ours, so the follow effect leaves the roll alone
     onChange(String(items[next].id));
-    rollTo((loop ? N + next : next) * rowPx);
+    /* ★ A WRAP IS ONE STEP, NOT A JOURNEY (WALK-A-005 second half, founder 2026-09-21: "after the
+       last subject, pressing next runs fast through all intermediate values before reaching the
+       first"). Targeting the MIDDLE copy's row meant that wrapping from the last item to the
+       first scrolled backwards past every item in between — the wrap read as an undo. Rolling to
+       `selIdx + dir` instead continues in the direction she pressed, into the neighbouring copy,
+       and the settle's recentring hop puts the box back in the middle copy invisibly. This is
+       what `stepCycle` (the peek wheel's ▼) has always done. */
+    rollTo((loop ? N + selIdx + dir : next) * rowPx);
   };
 
   const ws = useWebStyles();

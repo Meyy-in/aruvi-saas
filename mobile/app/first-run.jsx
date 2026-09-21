@@ -81,6 +81,62 @@ function Progress({ active }) {
   );
 }
 
+/* ★ THESE LIVE OUT HERE, AND IT IS NOT A TIDINESS POINT (WALK-A-049, founder 2026-09-21, Pixel 7:
+   "for every change of subject, English flashes and then the new subject comes").
+   They were declared INSIDE FirstRun, so every render produced a new component type and React
+   threw the whole step away and rebuilt it — every keystroke, every wheel commit. The wheel paid
+   for it in public: a freshly mounted ScrollView renders at offset 0, which in a looped list is
+   the first copy's FIRST ROW, and only the park effect a frame later puts it back where she left
+   it. English, then the subject she chose. The trace said it plainly — P1 (the MOUNT park) ran on
+   a move that should have needed no park at all.
+   Defining a component in a render is always this bug; here it had a face. */
+function Foot({ children }) {
+  const ws = useWebStyles();
+  /* `.fr-foot`: a centred column with 12px between the CTA and the link. The web's own
+     padding-top here is 20 (web.js's fr_foot carries the profile window's 108, a different
+     screen's measure), and `alignSelf: "stretch"` is what lets a full-width CTA be full width
+     inside a centred column. */
+  return <View style={[ws.fr_foot, { paddingTop: 20, alignSelf: "stretch" }]}>{children}</View>;
+}
+
+function Cta({ label, onPress, disabled }) {
+  const { t } = useTheme();
+  const ws = useWebStyles();
+  return (
+    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
+      style={[ws.fr_cta, { backgroundColor: disabled ? t.paper_sunk : t.pine }]}>
+      <Text style={[ws.fr_cta_t, disabled ? { color: t.ink_soft } : ws.fr_cta_ink]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function BackLink({ label, onPress }) {
+  const ws = useWebStyles();
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" style={ws.fr_link} hitSlop={6}>
+      <Text style={ws.fr_link_t}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function Frame({ children, foot }) {
+  const { t } = useTheme();
+  const insets = useSafeAreaInsets();
+  const user = getUser();
+  return (
+    <View style={{ flex: 1, backgroundColor: t.paper }}>
+      <Bar user={user} gear={false} />
+      {/* WALK-A-046: 28 cleared the gesture pill; the three buttons need the real inset. */}
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 22,
+                                           paddingBottom: 28 + insets.bottom }}>
+        {children}
+        {foot}
+      </ScrollView>
+    </View>
+  );
+}
+
 export default function FirstRun() {
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -371,37 +427,6 @@ export default function FirstRun() {
     runServe();
   };
 
-  /* `.fr-foot`: a centred column with 12px between the CTA and the link. The web's own
-     padding-top here is 20 (web.js's fr_foot carries the profile window's 108, a different
-     screen's measure), and `alignSelf: "stretch"` is what lets a full-width CTA be full width
-     inside a centred column. */
-  const Foot = ({ children }) => (
-    <View style={[ws.fr_foot, { paddingTop: 20, alignSelf: "stretch" }]}>{children}</View>
-  );
-  const Cta = ({ label, onPress, disabled }) => (
-    <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
-      style={[ws.fr_cta, { backgroundColor: disabled ? t.paper_sunk : t.pine }]}>
-      <Text style={[ws.fr_cta_t, disabled ? { color: t.ink_soft } : ws.fr_cta_ink]}>{label}</Text>
-    </Pressable>
-  );
-  const BackLink = ({ label, onPress }) => (
-    <Pressable onPress={onPress} accessibilityRole="button" style={ws.fr_link} hitSlop={6}>
-      <Text style={ws.fr_link_t}>{label}</Text>
-    </Pressable>
-  );
-
-  const Frame = ({ children, foot }) => (
-    <View style={{ flex: 1, backgroundColor: t.paper }}>
-      <Bar user={user} gear={false} />
-      {/* WALK-A-046: 28 cleared the gesture pill; the three buttons need the real inset. */}
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 22,
-                                           paddingBottom: 28 + insets.bottom }}>
-        {children}
-        {foot}
-      </ScrollView>
-    </View>
-  );
 
   /* ── WELCOME ─────────────────────────────────────────────────────────────────────
      Orientation only: the benefits list lives on the front door. The trial card renders for a
