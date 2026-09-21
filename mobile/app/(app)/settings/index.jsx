@@ -29,7 +29,7 @@
  * from before it was lit.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, Keyboard, Platform } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Text } from "../../../components/Text";
 import { API, getJSON, postJSON, withUser } from "@aruvi/shared/format";
@@ -212,6 +212,23 @@ export default function SettingsHome() {
   }, []);
   useFocusEffect(loadAccount);
 
+  /* WALK-A-053: follow the keypad. Only while the delete block is open — every other field on
+     this screen sits well above the fold and a scroll she did not ask for is its own annoyance. */
+  /* ⚠️ THE KEYPAD'S OWN MEASURED HEIGHT, not a guess and not a KeyboardAvoidingView. A KAV does
+     not lift inside the tab shell, and `automaticallyAdjustKeyboardInsets` is iOS-only — so
+     without this the scroller has no range past the keys and the block cannot even be dragged
+     into view. Ends with the keypad, so nothing is padded when there is nothing to clear. */
+  const [kbH, setKbH] = useState(0);
+  useEffect(() => {
+    const shown = Keyboard.addListener("keyboardDidShow", (e) => {
+      setKbH(Math.round((e && e.endCoordinates && e.endCoordinates.height) || 320));
+      setTimeout(() => { try { scrollRef.current?.scrollToEnd({ animated: true }); } catch {} }, 60);
+      setTimeout(() => { try { scrollRef.current?.scrollToEnd({ animated: true }); } catch {} }, 320);
+    });
+    const hidden = Keyboard.addListener("keyboardDidHide", () => setKbH(0));
+    return () => { shown.remove(); hidden.remove(); };
+  }, []);
+
   /* WALK-A-043: she left this screen holding the last-step window open, to read her data. Put it
      back exactly as it was the moment she returns — the tick stays hers to give. */
   const reopenFinal = useRef(false);
@@ -264,7 +281,15 @@ export default function SettingsHome() {
   }
 
   return (
-    <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, { paddingTop: 12 }]}
+    /* ★ THE ERASE FIELD MUST NOT BE TYPED AT BLIND (founder, 2026-09-21, Pixel 7, WALK-A-053).
+       The delete block is the LAST thing on this screen, so when the keypad rose it took the
+       field and "Continue →" with it: she was typing the one word that arms an irreversible act
+       into a box she could not see. `automaticallyAdjustKeyboardInsets` is iOS-only, and under
+       Android's mandatory edge-to-edge the window no longer resizes — so the scroller is given
+       the keypad's own room and told to go to the end when the keys arrive. */
+    <ScrollView ref={scrollRef}
+      contentContainerStyle={[ws.main, { paddingTop: 12 },
+                              kbH ? { paddingBottom: kbH + 24 } : null]}
       keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* ✅ LIVE AS OF 6d — the accordion, read-only. What she can CHANGE is the bar's "+";
           this is where she reads what she has told Meyy she teaches. */}
@@ -399,8 +424,11 @@ export default function SettingsHome() {
             <Text style={[ws.acct_final_check_t, { color: t.ink }]}>
               I confirm I have downloaded my Meyy data.</Text>
           </Pressable>
+          {/* WALK-A-054 (founder, 2026-09-21): the present tense claimed a thing that had not
+              happened — the line sits under an UNTICKED box and said the confirmation was already
+              recorded. It describes what the tick will do, so it says so. */}
           <Text style={[ws.acct_final_note, { color: t.ink_soft }]}>
-            Your confirmation is recorded against your account.
+            Your confirmation will be recorded against your account.
           </Text>
           {failMsg ? (
             <Text accessibilityRole="alert" style={[ws.acct_fail, { color: t.danger }]}>{failMsg}</Text>

@@ -166,12 +166,40 @@ export async function getJSON(path, opts) {
  * SEAM_POLISH_ENABLED here and the ARUVI_SEAM_POLISH server gate — was REMOVED, not
  * merely off. Every generation is a pure partition of the certified canonical. */
 
-export async function postJSON(path, body) {
-  const r = await fetch(API + path, withUser({
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body || {}),
-  }));
+/* ★ A POST NEEDS A DEADLINE TOO (founder, 2026-09-21, Pixel 7, WALK-A-052). In airplane mode the
+ * lesson serve never came back and the preparing card sat at "Preparing…" for as long as anyone
+ * was willing to watch — fifty seconds and counting, with no failure and nothing to press. The
+ * GET path has had its own deadline since 2026-09-17 for exactly this reason; the POST was left
+ * without one, so a socket that hangs hangs for ever.
+ * ⚠️ NOT RETRIED, deliberately: a GET can be asked twice safely and a POST cannot — a second
+ * serve could bill a second chapter. One attempt, bounded. The default is generous because
+ * building a lesson plan legitimately takes time; callers with a shorter promise pass their own.
+ * Aborting surfaces as a thrown fetch with no `status`, which every caller already treats as
+ * "couldn't do it right now" — the failure a teacher can act on.
+ * 45s, not two minutes (founder, 2026-09-21): a serve itself takes MILLISECONDS — the five
+ * seconds she sees is the preparing card's own hold — so the only thing this has to absorb is a
+ * cold start, which is what bounds the GET path at ~48s. Beyond that there is nothing to wait
+ * for, and silence is its own failure. */
+const POST_TIMEOUT_MS = 45000;
+
+export async function postJSON(path, body, timeoutMs = POST_TIMEOUT_MS) {
+  let ctl;
+  let timer;
+  /* If a host ever lacks AbortController the call simply runs without a deadline rather than
+     throwing — a slower failure is better than a broken one. */
+  try { ctl = new AbortController(); } catch { ctl = null; }
+  if (ctl && timeoutMs) timer = setTimeout(() => { try { ctl.abort(); } catch {} }, timeoutMs);
+  let r;
+  try {
+    r = await fetch(API + path, withUser({
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {}),
+      ...(ctl ? { signal: ctl.signal } : {}),
+    }));
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
   if (!r.ok) {
     // Carry the SERVER'S OWN SENTENCE up to the caller (ARV-D-088, 2026-08-10). This used to
     // throw the status code alone, so every teacher-facing failure collapsed into one generic

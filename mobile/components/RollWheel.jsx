@@ -80,9 +80,19 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   /* WALK-A-005 (founder, 2026-09-20): first run's SUBJECT and CLASS wheels roll continuously too
      (`loop`); the chapter wheel keeps its ends, so its list still says where the book ends. */
   const loop = (peek || loopProp) && N > 1;
-  // The real index of the current value. A value that is not in the list at all is corrected by
-  // the effect below, which tells the PARENT — it is never silently displayed as item 0.
-  const selIdx = Math.max(0, items.findIndex((it) => String(it.id) === String(value)));
+  /* The real index of the current value. A value that is not in the list at all is corrected by
+     the effect below, which tells the PARENT — it is never silently displayed as item 0.
+     ⚠️ AND `Math.max(0, …)` WAS DOING EXACTLY THAT (WALK-A-049, founder 2026-09-21, Pixel 7:
+     "for every change of subject, English flashes and then the new subject comes"). A missing
+     value gives findIndex −1, which that clamp turned into ITEM 0 — so for the render or two
+     between a list changing and the parent being told, the box sat on the first row. The class
+     wheel does it on every subject change, because its grades reload underneath it while it is
+     still holding the old one. Holding the LAST GOOD index instead keeps the box where she left
+     it until the correction arrives, which is the honest answer to "we don't know yet". */
+  const lastIdx = useRef(0);
+  const foundIdx = items.findIndex((it) => String(it.id) === String(value));
+  if (foundIdx >= 0) lastIdx.current = foundIdx;
+  const selIdx = foundIdx >= 0 ? foundIdx : Math.min(lastIdx.current, Math.max(0, N - 1));
   const rendered = loop
     ? Array.from({ length: 3 * N }, (_, i) => ({ ...items[i % N], _k: i }))
     : items.map((it, i) => ({ ...it, _k: i }));
@@ -176,6 +186,7 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   const rollTo = (y) => {
     const el = ref.current;
     if (!el) return;
+    if (__DEV__ && global.__RW_TRACE) console.log("[rw]", ariaLabel, "rollTo", y, "row", y / rowPx, "sel", selIdx, "value", String(value));
     pending.current = y;
     if (pendingTimer.current) clearTimeout(pendingTimer.current);
     /* If the glide is interrupted — a re-render, a finger, a browser that drops the smooth
@@ -192,6 +203,7 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
 
   const onSettle = (e) => {
     const y = e.nativeEvent.contentOffset.y;
+    if (__DEV__ && global.__RW_TRACE) console.log("[rw]", ariaLabel, "at", Math.round(y), "row", (y / rowPx).toFixed(2), "pending", pending.current);
     /* ⚠️ NEVER COMMIT FROM AN OFFSET THAT IS STILL TRAVELLING. The pick for a programmatic roll
        was made before it started; all that is left is to notice it has landed. */
     if (pending.current != null) {

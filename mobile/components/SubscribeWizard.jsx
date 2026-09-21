@@ -351,7 +351,13 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
      trial was used before an account deletion is sent straight to Subscribe, and must be told
      so in words — otherwise the Free-to-try card she tapped seems to have been ignored. The
      privacy-note bar's skin: a pine-edged line above the step, not an error. */
-  const noticeBar = notice ? (
+  /* ★ THE NOTICE HAS SAID ITS PIECE (founder, 2026-09-21, WALK-A-057). "This mobile number has
+     already used its free trial" explains why she is on this path — and then sat above every
+     screen of the wizard, pushing the step rail down and taking room she needs to fill the form.
+     The moment she starts answering, she has accepted the answer; the bar goes. It never comes
+     back in this wizard, because the reason has not changed and repeating it is nagging. */
+  const started = !!(name || email || role || stateName || city || school);
+  const noticeBar = notice && !started ? (
     <View style={[ws.pn_note, { borderColor: t.line, borderLeftColor: t.pine,
                                 backgroundColor: t.paper_2, marginHorizontal: 16, marginTop: 12 }]}
       accessibilityRole="summary">
@@ -408,7 +414,11 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
        foot above the keyboard, so the CTA is ALWAYS visible — she may continue with the minimum. */
     return (
       <KeyboardAvoidingView style={{ flex: 1, backgroundColor: t.paper }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        /* ⚠️ BOTH SURFACES (WALK-A-040, Android half, 2026-09-21). `undefined` on Android was
+           right while the window resized for the keypad; under mandatory edge-to-edge it does
+           not, so the keys simply covered City and School and the form could not be finished —
+           the founder could not get past State. Same correction as the sign-in screen. */
+        behavior="padding">
         {trialWindow}
         {noticeBar}
         {/* The step rail stays FROZEN at the top (founder, walk 2026-09-20); only the form
@@ -520,6 +530,13 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
       <View style={{ flex: 1, backgroundColor: t.paper }}>
         {trialWindow}
         {noticeBar}
+        {/* WALK-A-058 (founder, 2026-09-21): step 2 was the one screen of five with no rail, so
+            the teacher lost her place in the middle of a five-step commitment — on the longest
+            screen, the one she is least sure about. The rail is frozen here exactly as it is on
+            About you; the Agreement scrolls beneath it. */}
+        <View style={{ paddingHorizontal: 20, paddingTop: 12, backgroundColor: t.paper }}>
+          <Steps at={2} />
+        </View>
         <Agreement mode="sign" context="subscribe"
           onAccepted={() => {
             setConsent((c) => ({ ...(c || {}), accepted: true }));

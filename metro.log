@@ -1,0 +1,15 @@
+env: load .env.local
+env: export EXPO_PUBLIC_API_URL EXPO_PUBLIC_SUPABASE_ANON_KEY EXPO_PUBLIC_SUPABASE_URL
+Starting project at /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/mobile
+Logs: /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/mobile/.expo/dev/logs/start.log
+Starting Metro Bundler
+
+Waiting on http://localhost:8081
+
+Logs for your project will appear below.
+Android Bundled 702ms node_modules/expo-router/entry.js (1796 modules)
+Android Bundled 132ms node_modules/expo-router/entry.js (1 module)
+Android Bundled 111ms node_modules/expo-router/entry.js (1 module)
+Android Bundled 59ms node_modules/expo-router/entry.js (1 module)
+ WARN  [meyy] session ended — settings: account erased
+ WARN  [meyy] session ended — bar: Log out

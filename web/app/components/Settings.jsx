@@ -1122,7 +1122,7 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
               <span>I confirm I have downloaded my Meyy data.</span>
             </label>
             <p className="acct-final-note">
-              Your confirmation is recorded against your account.
+              Your confirmation will be recorded against your account.
             </p>
             <div className="acct-final-row">
               <button className="acct-del-go"

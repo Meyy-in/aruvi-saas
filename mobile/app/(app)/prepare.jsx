@@ -66,6 +66,7 @@ import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
 import { startPreparing, clearPreparing, failPreparing, paywallPreparing } from "../../lib/preparing";
 import { Sheet } from "../../components/AttachSheet";
 import { RollWheel } from "../../components/RollWheel";
+import { Link } from "../../components/ui";
 import PrepareCta from "../../components/PrepareCta";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
@@ -116,16 +117,30 @@ export default function Prepare() {
   /* Chapters (+ effort weight), her plan listing, and which chapters have a certified canonical.
      `placeholder: true` = budgeted but unpublished ("Book awaited") — nothing to generate from,
      so it never enters this picker; the Year Plan is where those rows live. */
+  /* ★ THREE STATES, NOT TWO (founder, 2026-09-21 on the Pixel, WALK-A-051 — the same lesson the
+     subject list learned on the web). In airplane mode the fetch failed, the list came back empty
+     and this screen announced "No chapter mappings for this subject & grade yet" — telling a
+     teacher that Meyy does not cover Social Sciences Class 6, when the truth was that her phone
+     was offline. An empty list means "she has none"; it must never be how a failure is reported. */
+  const [chLoad, setChLoad] = useState("");        // "" = asking · ok · fail
+  const [chTry, setChTry] = useState(0);           // bumped by Try again
   useEffect(() => {
     if (!subject || !grade) return;
     let live = true;
+    setChLoad("");
     getJSON(`/subjects/${subject}/${grade}/chapters`)
       .then((d) => {
         if (!live) return;
         setChapters((d.chapters || []).filter((c) => !c.placeholder));
         setSyllabusW(d.syllabus_total_weight || null);
+        setChLoad("ok");
       })
-      .catch(() => { if (live) { setChapters([]); setSyllabusW(null); } });
+      .catch((e) => {
+        /* The reason goes to the console, never to her — `getJSON` has already retried the
+           transients, so anything arriving here has earned a sentence she can act on. */
+        console.warn("[meyy] /chapters failed:", (e && e.message) || e);
+        if (live) { setChapters([]); setSyllabusW(null); setChLoad("fail"); }
+      });
     fetchPlans(`${subject}/${grade}`).then((r) => { if (live) setPlans(r); }).catch(() => {});
     getJSON(`/genon/${subject}/${grade}/chapters`)
       .then((d) => {
@@ -136,7 +151,7 @@ export default function Prepare() {
       })
       .catch(() => { if (live) { setGenonChs([]); setCanonMinutes({}); } });
     return () => { live = false; };
-  }, [subject, grade]);
+  }, [subject, grade, chTry]);
 
   const genonAvailable = !!chapterNo && genonChs.includes(Number(chapterNo));
 
@@ -445,7 +460,18 @@ export default function Prepare() {
         ) : null}
 
         {!chapters.length ? (
-          <Text style={ws.empty}>No chapter mappings for this subject &amp; grade yet.</Text>
+          chLoad === "fail" ? (
+            <>
+              <Text style={ws.empty}>
+                We couldn’t load the chapters just now — check your connection and try again.
+              </Text>
+              <Link title="Try again" onPress={() => setChTry((n) => n + 1)} />
+            </>
+          ) : chLoad === "ok" ? (
+            <Text style={ws.empty}>No chapter mappings for this subject &amp; grade yet.</Text>
+          ) : (
+            <Text style={ws.empty}>Loading chapters…</Text>
+          )
         ) : (
           <>
             {/* Clear the refusal the moment she moves the wheel: the message is about the chapter

@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-21T07:34:23",
+ "updated_at": "2026-09-21T11:07:20",
  "items": {
   "04.19": {
    "ios": {
@@ -351,10 +351,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T14:02:42",
+    "at": "2026-09-21T08:37:03",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Welcome, no bar/gear, 'any 3 chapters' ✓. Hardware Back does nothing on Welcome (couldn't test exit) → WALK-A-035.",
-    "status": "fail"
+    "comment": "Dev build: 04 (ledger cleared) lands on Welcome - no bar, no gear, right chapter count. Hardware Back leaves the app, which is the intended root behaviour (she is signed in; Back at step one does not unpick the sign-in). A-035 no longer blocks this row.",
+    "status": "pass"
    }
   },
   "03.12": {
@@ -370,6 +370,13 @@
     "at": "2026-09-20T16:12:11",
     "comment": "Sign-in door offers mobile and email. Email half: unknown email not recognised (no code sent); 04's email -> OTP to 04's mobile 9000000004, named on screen -> verify -> straight into 04's shell (My Classes with its lesson), not first run and not the wizard. Mobile half walked earlier.",
     "build": "Expo Go (iPhone 16)",
+    "status": "pass"
+   },
+   "and_emu": {
+    "by": "Kumar",
+    "at": "2026-09-21T11:05:40",
+    "comment": "Dev build: the sign-in door offers mobile and email; an unknown email is not recognised and no code is sent; 04's email sends the code to 04's mobile and names it; verifying lands straight in 04's shell.",
+    "build": "Expo Go (Pixel 7 API 34)",
     "status": "pass"
    }
   },
@@ -390,9 +397,9 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:57:34",
+    "at": "2026-09-21T08:53:26",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Wheel flings far too fast (one flick overshoots) → WALK-A-037; no loop (WALK-A-005); short box (WALK-A-025).",
+    "comment": "Dev build: the subject list LOOPS both ways now (A-005 holds) and the box is comfortable to work with (A-025 holds). Two open: ENGLISH flashes for a frame on every forward move that neither starts nor ends at item 0 -> WALK-A-049; and a hard flick still carries past more than one subject, and wheeling with the mouse still does not feel smooth -> WALK-A-037 (not settled by decelerationRate 0.8).",
     "status": "fail"
    }
   },
@@ -413,9 +420,9 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:57:34",
+    "at": "2026-09-21T08:55:03",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Same as 03.22: too fast → WALK-A-037; no loop; short box.",
+    "comment": "Dev build: class list loops both ways (A-005 holds). Class 6 - item 0 - flashes on the same kind of move, so WALK-A-049 is RollWheel's loop and not the subject list. Flick still carries too far -> WALK-A-037.",
     "status": "fail"
    }
   },
@@ -459,10 +466,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:57:34",
+    "at": "2026-09-21T08:56:34",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Duration wheel a bit fast (WALK-A-037); PERIODS cannot be changed → WALK-A-026.",
-    "status": "fail"
+    "comment": "Dev build: chapter wheel steady, no flash (it does not loop) and lands where left; periods CAN be changed and the new number sticks (A-026 holds); duration the same; the 'minutes'/'periods' labels are a sensible size while amending.",
+    "status": "pass"
    }
   },
   "03.27": {
@@ -482,10 +489,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T14:02:42",
+    "at": "2026-09-21T08:59:42",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Prepare → an EMPTY screen reading 'Loading…' for an unusually long time, then the ch 4 card appears suddenly — NO preparing card, no progress bar → WALK-A-038. Hardware Back does nothing on My Lessons (doesn't reopen first run, but does nothing at all) → WALK-A-035.",
-    "status": "fail"
+    "comment": "Dev build: no blank 'Loading...' - the preparing card with its progress bar appears at once and stays until the lesson is ready (A-038 holds). Lands in the shell; My Classes shows the section green with the lesson attached; tour offered on both tabs with the 'Show me how ->' pill.",
+    "status": "pass"
    }
   },
   "03.28": {
@@ -620,10 +627,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T14:45:27",
-    "comment": "Ledger chapters_used 1; rejoin via Create sign in accepted → Welcome ✓. Card still says 'any 3 chapters' → WALK-A-012 (phone half).",
+    "at": "2026-09-21T10:48:38",
+    "comment": "Dev build: erase completes with a receipt and lands at the chooser; no ghost - Create sign in with 04 is accepted at once; the number's spent balance is carried across the erasure (ledger chapters_used 3, stamped back onto the account) and the front door sends her to Subscribe with the honest sentence, since all three were genuinely used. The 'will be recorded' wording holds (A-054). NOT exercised here: the PARTIAL-balance card ('2 of 3 left'), because 04 had spent all three - verified on iPhone. Separately: three counted against two lessons -> WALK-A-055.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.11": {
@@ -666,10 +673,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T14:45:27",
-    "comment": "Airplane at Prepare → failed card, no hang; message shown IN FULL on Android (unlike iPhone); no Try again → WALK-A-019. No blank Loading screen. Log out → sign-in; hardware Back doesn't re-enter; 03 sees only 03's data ✓.",
+    "at": "2026-09-21T10:35:57",
+    "comment": "Dev build: offline the Prepare screen now names the real failure with a Try again (A-051); a serve that gets no answer fails on the card within the new 45s deadline instead of spinning for ever (A-052) - 'Couldn't build the lesson plan' in full, with Try again / Dismiss; Try again back online prepares and lands the lesson. A-019's card holds.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "T.01": {
@@ -689,10 +696,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T14:02:42",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Offer shows; My Lessons' nudge has no 'Show me how →' → WALK-A-013 (phone half).",
-    "status": "fail"
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half).",
+    "status": "pass"
    }
   },
   "T.02": {
@@ -849,11 +856,11 @@
     "comment": "As expected (unported): copy says tap the card but only Next advances → WALK-A-015.\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances the tour."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "As on iPhone (unported) → WALK-A-015."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.10": {
@@ -872,11 +879,11 @@
     "comment": "Preview opens pinned to top ✓; target-section wording per WALK-A-016 (unported).\n✓ re-walked after WALK-A-016: step 7 names section 9A."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "As on iPhone (unported) → WALK-A-016."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.11": {
@@ -895,11 +902,11 @@
     "comment": "Ring + hand on '+' ✓; tapping '+' does nothing → WALK-A-015 (unported).\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances the tour."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "As on iPhone (unported) → WALK-A-015."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.12": {
@@ -920,9 +927,9 @@
    "and_emu": {
     "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:50",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Step 9: background turns suddenly very DULL (heavy dim over the picker) and the tip hides the bottom bar → WALK-A-028; row tap does nothing (WALK-A-015)."
+    "comment": "Dev build: the bottom bar is visible now and tapping the highlighted row does the step (A-014 holds), but the background behind the tip is still HEAVILY dimmed on Android where iOS got a light scrim -> WALK-A-028 (Android half). The tip also takes about 2 seconds to appear on this step -> WALK-A-050."
    }
   },
   "T.13": {
@@ -941,11 +948,11 @@
     "comment": "9A goes green ✓; 'for section' / tap wording → WALK-A-015/017 (unported).\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances the tour."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "As on iPhone (unported) → WALK-A-015/017."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.14": {
@@ -987,11 +994,11 @@
     "comment": "Bookmark ringed ✓, but the tip JUMPS abruptly from the bottom to the top of the screen at this step → WALK-A-028.\n✓ re-walked after WALK-A-028: step 12 appears in place, no jump; stable after Back/Next."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Step 12: tip jumps up then settles down; on Back/Next it sometimes settles away from its normal place → WALK-A-028."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.16": {
@@ -1010,11 +1017,11 @@
     "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target.\n✓ re-walked after WALK-A-028: step 13 in place and stable."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Step 13: tip jumps down then settles up; on Back/Next sometimes settles in the wrong place → WALK-A-028."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.17": {
@@ -1033,11 +1040,11 @@
     "comment": "Walked on iPhone after tour reset: tip on screen, footer one row, ring on target.\n✓ re-walked after WALK-A-028: step 14 in place."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Step 14: tip jumps down then settles correctly → WALK-A-028."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.18": {
@@ -1058,9 +1065,9 @@
    "and_emu": {
     "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:50",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Step 15: background very DULL, bottom bar hidden → WALK-A-028; wording (WALK-A-017)."
+    "comment": "Dev build: bar visible, wording right, but the background behind the tip is still heavily dimmed on Android -> WALK-A-028 (Android half)."
    }
   },
   "T.19": {
@@ -1079,11 +1086,11 @@
     "comment": "Ring on Add ✓; wording (subjects) → WALK-A-017 (unported).\n✓ re-walked after WALK-A-017: 'Add or amend your classes and sections' + periods/budget."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "As on iPhone (unported) → WALK-A-017."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.20": {
@@ -1102,11 +1109,11 @@
     "comment": "Profile + gear ✓; subject-removal line → WALK-A-017 (unported).\n✓ re-walked after WALK-A-017: profile line ends at 'the foot of the screen.'"
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "As on iPhone (unported) → WALK-A-017."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.21": {
@@ -1125,11 +1132,11 @@
     "comment": "Ask Meyy ring ✓; 'up to 100' → WALK-A-017 (unported).\n✓ re-walked after WALK-A-017: 'over 100 questions'."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "As on iPhone (unported) → WALK-A-017."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.22": {
@@ -1148,11 +1155,11 @@
     "comment": "Ask panel open ✓; tip marginally covers the bottom bar → WALK-A-028.\n✓ re-walked after WALK-A-028: Ask panel step clears the bottom bar; dimmed once."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:09:32",
+    "at": "2026-09-21T10:22:36",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Step 19: tip partly hides the bottom bar → WALK-A-028."
+    "comment": "Dev build tour, single pass: wording and anchors correct across every card (A-015/016/017 ported); tips appear in place on 12-14 with only an occasional misalign when stepped through fast; step 19 clears the bottom bar; rings on target. Step 1's nudge carries the 'Show me how ->' pill (A-013 phone half)."
    }
   },
   "T.23": {
@@ -1218,10 +1225,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T14:34:21",
-    "comment": "After Done, the set-up check did NOT rise on My Classes; it appeared only after switching My Lessons → My Classes → WALK-A-039.",
+    "at": "2026-09-21T10:23:22",
+    "comment": "Dev build: after Done the set-up check rises on My Classes by itself, with no tab switch (A-039 holds); values correct; section card green with the lesson attached.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "T.25": {
@@ -1287,10 +1294,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T14:40:05",
-    "comment": "Download my data → straight to the Android app chooser, no display of the document first → WALK-A-030.",
+    "at": "2026-09-21T10:44:58",
+    "comment": "Dev build: the delete window's download goes to the share sheet because the emulator has NO app that can open a .docx - 'cmd package query-activities' for that MIME returns no activities, so the viewer hand-off is correctly falling back, not failing. The window itself behaves: it stands down, and on return the delete window alone remains with the tick unticked (A-043 holds). OWED: one check on a real handset with Word or Google Docs installed before A-030 closes on Android.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.16": {
@@ -1332,11 +1339,11 @@
     "status": "pass"
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:53:23",
+    "at": "2026-09-21T10:54:20",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Save & continue never hidden (031 fix holds), field text centred ✓. State list too tall → WALK-A-032. Save lights up as soon as State is chosen, while School sits below the fold unseen → WALK-A-040 (City-mandatory part is WALK-A-022). Scroll with the emulator mouse is fast (emulator artefact?)."
+    "comment": "Dev build: * on name/email/role/state/city and not school; used email refused at 'Confirm this email ->' first time; field text centred; State list a sensible height, scrolling inside (A-022/A-029/A-032 all hold). A-040's Android half needed the same correction as the sign-in screen - the wizard lifted on iOS only, so the keypad covered City and School and the form could not be finished past State; with the wizard lifting on both, City and School stay above 'Save & continue'. NOTE: the used-email check sits on 'Checking...' for about 5 seconds before refusing -> WALK-A-056."
    }
   },
   "03.18": {
@@ -1355,11 +1362,11 @@
     "comment": "Re-walked after WALK-A-033 blocker fix: bar + rail visible, heading visible, document scrolls, accept → Subjects. 'Recording…' not seen (likely too quick). Jump boxes land with each point's title at the top (read top-down, as intended); on long points the tick is below the fold → WALK-A-034 (optional)."
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:53:23",
+    "at": "2026-09-21T10:56:54",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Scrolls well, jump boxes land on their points ✓; but the HEADING is not visible on Android → WALK-A-033 (Android)."
+    "comment": "Dev build: Agreement heading visible at the top (A-033), jump boxes land on their ticks with the tick clear of the foot (A-034), and the foot clears the nav bar (A-046)."
    }
   },
   "03.20": {
@@ -1455,11 +1462,11 @@
     "status": "pass"
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-20T14:53:23",
+    "at": "2026-09-21T10:56:54",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Privacy Notice sheet opens but its top overlaps the app bar → WALK-A-041."
+    "comment": "Dev build: the Privacy Notice sheet starts below the app bar, no longer riding over it (A-041)."
    }
   },
   "04.25": {
@@ -1484,6 +1491,13 @@
     "at": "2026-09-20T16:04:27",
     "comment": "Re-walk at Larger text after WALK-A-028: cards 9 and 15 no longer dull the screen or swallow the bottom bar (light scrim, bar visible); 12 and 13 appear in place with no jump; 19 clears the bar; rings on target and every card's text fits.",
     "build": "Expo Go (iPhone 16)",
+    "status": "pass"
+   },
+   "and_emu": {
+    "by": "Kumar",
+    "at": "2026-09-21T11:03:50",
+    "comment": "Dev build at font_scale 1.30 (largest): every card's text fits its box, rings on target, 12/13/14 land in place, bottom bar visible throughout - and the heavy dim on 9 and 15 did NOT appear in this run.",
+    "build": "Expo Go (Pixel 7 API 34)",
     "status": "pass"
    }
   }
@@ -1599,14 +1613,13 @@
    ],
    "applies_to": "both",
    "title": "First-run wheels: roll continuously; keyboard arrows after on-screen ▲▼",
-   "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): subject + class wheels confirmed non-looping. ANDROID: confirmed non-looping.",
+   "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): subject + class wheels confirmed non-looping. ANDROID: confirmed non-looping. ✓ Android re-walk 2026-09-21 (dev build): green.",
    "fix": "RollWheel `loop` prop; first run's Subject + Class loop (chapter keeps its ends); ▲▼ keep focus on the wheel (mousedown preventDefault + refocus). Phone: at phone fix point. PHONE: RollWheel takes a `loop` prop; first run's Subject + Class loop (chapter keeps its ends) and the ▲▼ wrap with them.",
    "files": "web/app/components/wheels.jsx, FirstRun.jsx; mobile/components/RollWheel.jsx, mobile/app/first-run.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -1781,14 +1794,13 @@
    ],
    "applies_to": "both",
    "title": "Tour offer box doesn't read as something to click",
-   "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): same as web — My Classes' nudge has 'Show me how →', My Lessons' has none. ANDROID: same.",
+   "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): same as web — My Classes' nudge has 'Show me how →', My Lessons' has none. ANDROID: same. ✓ Android re-walk 2026-09-21: green.",
    "fix": "'Show me how →' added to My Lessons' nudge; the CTA is now a solid pine button on both nudges. PHONE: TourOffer carries a filled 'Show me how →' pill on BOTH surfaces; sub-line matches the web's.",
    "files": "MyLessonPlans.jsx, MyPlans.jsx, globals.css; mobile/components/TourOffer.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -1805,14 +1817,13 @@
    ],
    "applies_to": "both",
    "title": "Tour offer missing on My Classes; chapter pre-attached before the tour",
-   "what": "(1) After first run the offer shows only on My Lessons. MyPlans renders it only while !anyBound, and first run now binds 9A, so My Classes never shows it — T.02 and 03.28 expect it on BOTH. Founder: it should be on both. (2) Founder: chapter 4 already shows ATTACHED to 9A on My Classes before the tour is taken or skipped; the tour's steps 8–10 teach attaching. Founder view: the binding should not precede the tour's resolution. ⚠️ Conflicts with the 2026-08-21/09-14 design (first run hands her a real bound card; tour steps 7–14 anchor on it; T.27 covers 'only lesson attached') — decide the intended order before fixing; if first run stops binding, re-check 03.28, the tour's demo binding and T.25 (Skip gives back her binding). DECIDED (founder 2026-09-20): KEEP first run's binding; fix only (1) — the offer shows on My Classes too. [WEB re-walked green 2026-09-20; phone half pending]",
+   "what": "(1) After first run the offer shows only on My Lessons. MyPlans renders it only while !anyBound, and first run now binds 9A, so My Classes never shows it — T.02 and 03.28 expect it on BOTH. Founder: it should be on both. (2) Founder: chapter 4 already shows ATTACHED to 9A on My Classes before the tour is taken or skipped; the tour's steps 8–10 teach attaching. Founder view: the binding should not precede the tour's resolution. ⚠️ Conflicts with the 2026-08-21/09-14 design (first run hands her a real bound card; tour steps 7–14 anchor on it; T.27 covers 'only lesson attached') — decide the intended order before fixing; if first run stops binding, re-check 03.28, the tour's demo binding and T.25 (Skip gives back her binding). DECIDED (founder 2026-09-20): KEEP first run's binding; fix only (1) — the offer shows on My Classes too. [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
    "fix": "Offer shows on My Classes too (dropped !anyBound; page.jsx eligibility gates it). Nudge copy no longer says 'add it to a class' (first run binds). Binding kept per founder.",
    "files": "MyPlans.jsx, MyLessonPlans.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -1829,14 +1840,13 @@
    ],
    "applies_to": "both",
    "title": "Tour tells her to click (card, '+') but clicks do nothing — only Next advances",
-   "what": "Step 6 tip reads 'Let us open the lesson' / 'click on the lesson card to open a particular lesson', while the tour advances only on Next — a teacher following the words clicks the card instead. Founder: reword so she is not led to click the card directly (e.g. 'Tapping a lesson card opens it. Press Next and we'll open this one for you.'). Same copy on the phone (GuidedTour steps are shared). Observed: clicking the card during step 6 does nothing at all (the tour blocks it), so she is told to do something that silently fails. SAME at step 8 (T.11): 'Click the + sign of that section card' — clicking '+' does nothing. Review EVERY step whose copy says click/tap: either make the click itself advance the tour (the natural choice where the tour then does exactly that action — steps 6 and 8), or reword to point at Next. Step 9 (T.12) likewise: 'Select a lesson plan…' — clicking the row does nothing; include it in the same review. DECIDED (founder 2026-09-20): her click DOES the step — clicking the card / '+' / row advances the tour exactly as Next does. [WEB re-walked green 2026-09-20; phone half pending]",
+   "what": "Step 6 tip reads 'Let us open the lesson' / 'click on the lesson card to open a particular lesson', while the tour advances only on Next — a teacher following the words clicks the card instead. Founder: reword so she is not led to click the card directly (e.g. 'Tapping a lesson card opens it. Press Next and we'll open this one for you.'). Same copy on the phone (GuidedTour steps are shared). Observed: clicking the card during step 6 does nothing at all (the tour blocks it), so she is told to do something that silently fails. SAME at step 8 (T.11): 'Click the + sign of that section card' — clicking '+' does nothing. Review EVERY step whose copy says click/tap: either make the click itself advance the tour (the natural choice where the tour then does exactly that action — steps 6 and 8), or reword to point at Next. Step 9 (T.12) likewise: 'Select a lesson plan…' — clicking the row does nothing; include it in the same review. DECIDED (founder 2026-09-20): her click DOES the step — clicking the card / '+' / row advances the tour exactly as Next does. [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
    "fix": "`tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated. PHONE: `tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated.",
    "files": "GuidedTour.jsx, globals.css; mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -1853,14 +1863,13 @@
    ],
    "applies_to": "both",
    "title": "Tour step 7 says 'section your section' — target section never reaches the tour",
-   "what": "Step 7 tip: 'We will now attach this lesson to section your section from ‘My Classes’…'. Body is `…to section ${i.tag}…` and i.tag falls back to 'your section' (GuidedTour.jsx fallback) because tourInfo is null. tourInfo {tag, chapter} is supplied ONLY by MyPlans (My Classes) via onTourInfo — and since 2026-09-17 the tour opens and stays on My Lessons for steps 1–7, so MyPlans never reports the target before step 7 (and on web it may be unmounted). Fix: derive the tour's target section in page.jsx (it already knows the demo binding), not from MyPlans' render; and make the fallback read grammatically ('…attach this lesson to one of your sections…'). Check any later step that uses i.tag / i.chapter. Phone has the same copy and the same info plumbing — check. [WEB re-walked green 2026-09-20; phone half pending]",
+   "what": "Step 7 tip: 'We will now attach this lesson to section your section from ‘My Classes’…'. Body is `…to section ${i.tag}…` and i.tag falls back to 'your section' (GuidedTour.jsx fallback) because tourInfo is null. tourInfo {tag, chapter} is supplied ONLY by MyPlans (My Classes) via onTourInfo — and since 2026-09-17 the tour opens and stays on My Lessons for steps 1–7, so MyPlans never reports the target before step 7 (and on web it may be unmounted). Fix: derive the tour's target section in page.jsx (it already knows the demo binding), not from MyPlans' render; and make the fallback read grammatically ('…attach this lesson to one of your sections…'). Check any later step that uses i.tag / i.chapter. Phone has the same copy and the same info plumbing — check. [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
    "fix": "startTour seeds the target section tag from the profile; `sec()` fallback reads 'one of your sections'. PHONE: `sec()` fallback reads 'one of your sections'; step 9's title has a no-tag form.",
    "files": "page.jsx, GuidedTour.jsx; mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -1877,14 +1886,13 @@
    ],
    "applies_to": "both",
    "title": "Tour copy corrections",
-   "what": "Running list of tour wording fixes (shared web/phone copy). (1) Step 10: 'You have successfully attached “{chapter}” for section {tag}.' → 'attached “{chapter}” TO section {tag}.' Note its next sentence 'Let us click it to see how tracking works.' is another click-instruction — see WALK-A-015. (2) Step 15: 'the same window shown in step 8' → 'step 9' (the picker is step 9 of 20). Better: avoid step numbers in copy ('the same window you used a moment ago') so a re-ordering can't make it wrong again. (3) Step 16 (Add): 'Add/amend sections, classes and/or subjects. Use this button to quickly add sections, classes or subjects…' — WRONG: the Add window has no Subject row (a subject is a purchase), and it DOES amend periods a week and the annual period budget. Reword to match its four rows: class · section · periods a week · annual period budget. (4) Step 17 (profile): remove the final clause '; removing a subject is the one thing done here.' — end at 'Changes are made with ‘Add’ at the foot of the screen.' (5) Step 18 (Ask Meyy): 'up to 100 questions across 5 categories' — the bank holds 119 Q&A pairs in 5 categories. Say 'over 100' or drop the number (it will drift every monthly refresh). [WEB re-walked green 2026-09-20; phone half pending]",
+   "what": "Running list of tour wording fixes (shared web/phone copy). (1) Step 10: 'You have successfully attached “{chapter}” for section {tag}.' → 'attached “{chapter}” TO section {tag}.' Note its next sentence 'Let us click it to see how tracking works.' is another click-instruction — see WALK-A-015. (2) Step 15: 'the same window shown in step 8' → 'step 9' (the picker is step 9 of 20). Better: avoid step numbers in copy ('the same window you used a moment ago') so a re-ordering can't make it wrong again. (3) Step 16 (Add): 'Add/amend sections, classes and/or subjects. Use this button to quickly add sections, classes or subjects…' — WRONG: the Add window has no Subject row (a subject is a purchase), and it DOES amend periods a week and the annual period budget. Reword to match its four rows: class · section · periods a week · annual period budget. (4) Step 17 (profile): remove the final clause '; removing a subject is the one thing done here.' — end at 'Changes are made with ‘Add’ at the foot of the screen.' (5) Step 18 (Ask Meyy): 'up to 100 questions across 5 categories' — the bank holds 119 Q&A pairs in 5 categories. Say 'over 100' or drop the number (it will drift every monthly refresh). [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
    "fix": "Copy: 'to section', step 15 'the same window you used a moment ago', step 16 classes/sections/periods/budget, step 17 last clause removed, step 18 'over 100'. WEB GuidedTour only; phone copy at phone fix point. PHONE: same copy corrections as the web (to section, 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed, 'over 100').",
    "files": "web/app/components/GuidedTour.jsx; mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -1925,14 +1933,13 @@
    ],
    "applies_to": "both",
    "title": "Failed first lesson: message clipped, card looks attached, set-up check fires anyway",
-   "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — clipped message, clay edge, no Try again; set-up popup did NOT fire on the phone.",
+   "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — clipped message, clay edge, no Try again; set-up popup did NOT fire on the phone. ✓ Android re-walk 2026-09-21: green.",
    "fix": "Failed card: full sentence, neutral spine/edge, 'Try again' (re-serves the same descriptor incl. first-run bindKey); set-up check held while a lesson is preparing/failed or eligibility unknown; eligibility re-read when a plan lands. PHONE: failed card shows the full sentence, neutral edge + spine, and 'Try again' beside Dismiss; the serve is kept as a re-runnable closure in lib/preparing (first run and Prepare both pass it). Round 2 (live): the failed block stacks — full-width sentence, actions on one row beneath, at the end.",
    "files": "MyLessonPlans.jsx, page.jsx, FirstRun.jsx, globals.css; mobile/components/ProposedCard.jsx, mobile/lib/preparing.js, mobile/app/first-run.jsx, mobile/app/(app)/prepare.jsx, lessons.jsx, index.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -2065,15 +2072,14 @@
    ],
    "applies_to": "phone",
    "title": "Phone first-run wheels too short; ▲▼ crowded",
-   "what": "iPhone 16: the Subject, Class and Duration wheel boxes are too short for comfortable swiping, and the ▲/▼ pair sits too close together (also on the Chapter wheel). Founder: make them the CHAPTER box's height; space the arrows apart, but keep them clear of the box's top and bottom edges on the right. Label sizes are fine (minutes/periods match the chapter title). Phone only — web sizes are separate. ANDROID: same request (subject/class to chapter-box height).",
+   "what": "iPhone 16: the Subject, Class and Duration wheel boxes are too short for comfortable swiping, and the ▲/▼ pair sits too close together (also on the Chapter wheel). Founder: make them the CHAPTER box's height; space the arrows apart, but keep them clear of the box's top and bottom edges on the right. Label sizes are fine (minutes/periods match the chapter title). Phone only — web sizes are separate. ANDROID: same request (subject/class to chapter-box height). ✓ Android re-walk 2026-09-21 (dev build): green.",
    "fix": "PHONE: Subject/Class/Duration/Periods wheels use the chapter box's height (92); the ▲▼ pair sits apart with air from the box's edges. Round 2: the large wheel label is 19px (was 17) so the minutes/periods words match the value they replace.",
    "files": "mobile first-run wheel component (RollWheel port) + theme/web.js; mobile/app/first-run.jsx, mobile/components/RollWheel.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "ios",
-    "and_emu"
+    "ios"
    ],
    "owner": "Claude",
    "at": "2026-09-20T15:22:00"
@@ -2088,15 +2094,14 @@
    ],
    "applies_to": "phone",
    "title": "Phone: periods 'Change' snaps back to the default",
-   "what": "iPhone 16, chapter step: tapping Change on Estimated periods and moving the wheel restores the default immediately — the teacher cannot set periods at all (duration Change works). Likely a seeding effect overwriting the edited value (the 2026-08-21 web bug: guard with a periodsTouched ref, re-earned only on chapter change). Blocks setting 60×16 for 03.27. ANDROID: same — periods Change cannot be changed.",
+   "what": "iPhone 16, chapter step: tapping Change on Estimated periods and moving the wheel restores the default immediately — the teacher cannot set periods at all (duration Change works). Likely a seeding effect overwriting the edited value (the 2026-08-21 web bug: guard with a periodsTouched ref, re-earned only on chapter change). Blocks setting 60×16 for 03.27. ANDROID: same — periods Change cannot be changed. ✓ Android re-walk 2026-09-21 (dev build): green.",
    "fix": "PHONE: a re-pick of the SAME chapter is a no-op (the wheel re-commits on any layout shift, which was resetting periods and closing the editor); the wheel's parking effect no longer re-runs on every render.",
    "files": "mobile first-run chapter step; mobile/app/first-run.jsx, mobile/components/RollWheel.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "ios",
-    "and_emu"
+    "ios"
    ],
    "owner": "Claude",
    "at": "2026-09-20T15:22:00"
@@ -2134,12 +2139,12 @@
    ],
    "applies_to": "phone",
    "title": "Phone tour: tips at steps 9, 15, 19 overlap the bottom bar; step 12 tip jumps",
-   "what": "iPhone 16. (1) At steps 9 and 15 (picker open) and 19 (Ask panel open) the tip box sits marginally over the bottom bar. With a sheet already filling the lower screen there is little room — founder: 'see how best to manage it' (e.g. place these tips ABOVE the sheet's content / inside the sheet's top, or lift them by the measured bottom-bar height, never over it). (2) Step 12's tip jumps abruptly from the bottom of the screen to the top as the step settles — place it once, or animate the move. At Larger text (T.29) it is more pronounced: 9, 15, 19 cover the bar; 12 jumps bottom→top; 13 also lands at the bottom over the bar before settling up. Fix placement so the tip is computed once from the settled target and never overlaps the measured bottom bar. ANDROID: steps 9 and 15 also turn the background suddenly very DULL (the tour's dim stacks on the sheet's own backdrop — dim once); 14 also jumps then settles; after Back/Next, 12 and 13 sometimes settle AWAY from their normal place (stale measurement — re-measure after the target settles). ✓ iPhone re-walk 2026-09-20 at Larger text: green on 9, 12, 13, 15, 19.",
+   "what": "iPhone 16. (1) At steps 9 and 15 (picker open) and 19 (Ask panel open) the tip box sits marginally over the bottom bar. With a sheet already filling the lower screen there is little room — founder: 'see how best to manage it' (e.g. place these tips ABOVE the sheet's content / inside the sheet's top, or lift them by the measured bottom-bar height, never over it). (2) Step 12's tip jumps abruptly from the bottom of the screen to the top as the step settles — place it once, or animate the move. At Larger text (T.29) it is more pronounced: 9, 15, 19 cover the bar; 12 jumps bottom→top; 13 also lands at the bottom over the bar before settling up. Fix placement so the tip is computed once from the settled target and never overlaps the measured bottom bar. ANDROID: steps 9 and 15 also turn the background suddenly very DULL (the tour's dim stacks on the sheet's own backdrop — dim once); 14 also jumps then settles; after Back/Next, 12 and 13 sometimes settle AWAY from their normal place (stale measurement — re-measure after the target settles). ✓ iPhone re-walk 2026-09-20 at Larger text: green on 9, 12, 13, 15, 19. ANDROID re-walk 2026-09-21 (dev build): the LIFT half is green — 9, 15 and 19 no longer hide the bottom bar and 12-14 land in place. The SCRIM half is not: steps 9 and 15 still dim heavily on Android. Those two draw over a Sheet, and a React Native Modal dims its own window natively on Android, so the tour's transparent scrim is laid over a dim the tour does not own. Look at the Sheet's Modal, not the tour's scrim. ⚠️ 2026-09-21, second Android run (font_scale 1.30, a different account): the heavy dim on 9 and 15 did NOT appear. Nothing was changed in the tour's scrim between the two runs, so either the larger type moves the tip clear of the Sheet it was drawn over, or the first run was on a stale bundle. UNRESOLVED either way — it needs one more tour at NORMAL type on a fresh account before the Android half can be called green. Do not close on the 1.30 run alone.",
    "fix": "PHONE: every tip clears the bottom bar (lifted by BNAV_H + inset; 'below' clamped); tips are held invisible until the confirming re-measure, so 12/13/14 no longer jump; a sheet's own backdrop is not dimmed twice (steps 9, 15, 19).",
    "files": "mobile/components/GuidedTour.jsx (placement for steps 9, 12, 15, 19); mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "open",
    "recheck": [
     "and_emu"
    ],
@@ -2178,7 +2183,7 @@
    ],
    "applies_to": "phone",
    "title": "Delete window's 'Download my data' skips the preview",
-   "what": "iPhone 16: 'Download my data first (Word)' in the final delete window goes straight to the share sheet. Commit 1c9675fe made Word documents open in the preview first on iOS (Year Plan, reports, data export via settings/data.jsx, which uses canPreview + fetchDocument) — but settings/index.jsx's delete-window button still calls downloadDocument(dataExport) directly. Route it through the same preview path. ANDROID: same — goes straight to the app chooser. Note lib/download.js makes the preview iOS-ONLY by design (Android has no Quick Look; a .docx has no WebView renderer). Founder wants the document DISPLAYED first on both — needs a decision on how on Android (e.g. an in-app summary/preview screen, or open with the system viewer intent before offering share). iPhone re-walk 2026-09-20: the preview now happens, but behind the delete window → WALK-A-043. ✓ iPhone re-walk 2026-09-20: green.",
+   "what": "iPhone 16: 'Download my data first (Word)' in the final delete window goes straight to the share sheet. Commit 1c9675fe made Word documents open in the preview first on iOS (Year Plan, reports, data export via settings/data.jsx, which uses canPreview + fetchDocument) — but settings/index.jsx's delete-window button still calls downloadDocument(dataExport) directly. Route it through the same preview path. ANDROID: same — goes straight to the app chooser. Note lib/download.js makes the preview iOS-ONLY by design (Android has no Quick Look; a .docx has no WebView renderer). Founder wants the document DISPLAYED first on both — needs a decision on how on Android (e.g. an in-app summary/preview screen, or open with the system viewer intent before offering share). iPhone re-walk 2026-09-20: the preview now happens, but behind the delete window → WALK-A-043. ✓ iPhone re-walk 2026-09-20: green. ANDROID 2026-09-21: the emulator has no .docx handler at all (query-activities: none), so openInViewer correctly falls through to the sheet. This cannot be proven on the emulator — it needs one run on a real handset with a document app installed.",
    "fix": "PHONE: the delete window's export now SHOWS the document — Quick Look on iOS, the system VIEW intent on Android (expo-intent-launcher + content:// URI), share sheet only as the fallback.",
    "files": "mobile/app/(app)/settings/index.jsx, mobile/lib/download.js; mobile/lib/download.js, mobile/app/(app)/settings/index.jsx, mobile/package.json",
    "commit": "",
@@ -2358,14 +2363,13 @@
    ],
    "applies_to": "phone",
    "title": "Android first run: blank 'Loading…' instead of the preparing card",
-   "what": "Pixel 7 emulator (Expo Go, tunnel): after 'Prepare the lesson →' the app showed an empty screen with 'Loading…' for an unusually long time, then the lesson card appeared all at once — the preparing card with its progress bar never showed. On the iPhone the handoff showed the card and bar. Suspect the handoff lands on the shell before the module-level preparing store is read (router.replace + (app) gate loading readiness on a slower device), so the gate's 'Loading…' covers the whole wait. The shell should open immediately on My Lessons with the preparing card, whatever the device speed.",
+   "what": "Pixel 7 emulator (Expo Go, tunnel): after 'Prepare the lesson →' the app showed an empty screen with 'Loading…' for an unusually long time, then the lesson card appeared all at once — the preparing card with its progress bar never showed. On the iPhone the handoff showed the card and bar. Suspect the handoff lands on the shell before the module-level preparing store is read (router.replace + (app) gate loading readiness on a slower device), so the gate's 'Loading…' covers the whole wait. The shell should open immediately on My Lessons with the preparing card, whatever the device speed. ✓ Android re-walk 2026-09-21 (dev build): green.",
    "fix": "PHONE: My Lessons draws the preparing card from the descriptor even before the profile/listing reads resolve, so the wait is never hidden behind 'Loading your lessons…'.",
    "files": "mobile first-run handoff (preparing store) + app/(app)/_layout.jsx gate; mobile/app/(app)/lessons.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios"
    ],
    "owner": "Claude",
@@ -2381,14 +2385,13 @@
    ],
    "applies_to": "phone",
    "title": "Android: set-up check doesn't rise after tour Done until a tab switch",
-   "what": "Pixel 7 emulator: ending the tour with Done left her on My Classes with no 'Would you like to check your set-up?'. It rose only after switching to My Lessons and back. Its trigger evidently depends on a screen-focus/dependency change that Done does not cause on Android (the iPhone raised it after Skip). Make the tour's end itself queue the check (as the web's finishTour does).",
+   "what": "Pixel 7 emulator: ending the tour with Done left her on My Classes with no 'Would you like to check your set-up?'. It rose only after switching to My Lessons and back. Its trigger evidently depends on a screen-focus/dependency change that Done does not cause on Android (the iPhone raised it after Skip). Make the tour's end itself queue the check (as the web's finishTour does). ✓ Android re-walk 2026-09-21: green.",
    "fix": "PHONE: the tour's END raises the set-up check directly (a focus effect never fired on Done, which is why it needed a tab switch).",
    "files": "mobile shell (tour finish → set-up check); mobile/app/(app)/index.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios"
    ],
    "owner": "Claude",
@@ -2404,9 +2407,9 @@
    ],
    "applies_to": "phone",
    "title": "About you: Save lights up while School is still below the fold",
-   "what": "Pixel 7 emulator: once State is chosen, 'Save & continue' enables; City is just visible and School name sits below the fold. A teacher may tap Save without ever seeing the School field. With City mandatory (WALK-A-022) Save will wait for City — but School should still be seen: e.g. scroll the next field into view when a dropdown closes, or keep the whole form on screen above the frozen foot. iPhone re-walk 2026-09-20: the scroll-after-State is NOT enough — City comes into view but School name still sits behind the 'Save & continue' foot. Founder: once State is chosen, City AND School should both show above the foot. Likely the scroller has no bottom padding for the frozen foot. iPhone re-walk 2026-09-20, second look: the State list was never the cause — the whole form is visible once Role and State are answered. It is the KEYBOARD: focusing City lifts the foot to just under it, and 'Save & continue' then sits squarely over School. She fills in her city never knowing a school was asked for. ✓ iPhone re-walk 2026-09-20: green.",
+   "what": "Pixel 7 emulator: once State is chosen, 'Save & continue' enables; City is just visible and School name sits below the fold. A teacher may tap Save without ever seeing the School field. With City mandatory (WALK-A-022) Save will wait for City — but School should still be seen: e.g. scroll the next field into view when a dropdown closes, or keep the whole form on screen above the frozen foot. iPhone re-walk 2026-09-20: the scroll-after-State is NOT enough — City comes into view but School name still sits behind the 'Save & continue' foot. Founder: once State is chosen, City AND School should both show above the foot. Likely the scroller has no bottom padding for the frozen foot. iPhone re-walk 2026-09-20, second look: the State list was never the cause — the whole form is visible once Role and State are answered. It is the KEYBOARD: focusing City lifts the foot to just under it, and 'Save & continue' then sits squarely over School. She fills in her city never knowing a school was asked for. ✓ iPhone re-walk 2026-09-20: green. ANDROID 2026-09-21: the same fault in its Android form — the wizard's KeyboardAvoidingView lifted on iOS only, so under edge-to-edge the keypad covered City and School outright and the form could not be completed. It lifts on both now.",
    "fix": "PHONE: focusing City or School scrolls the tail of the form clear of the lifted foot (twice — the keyboard is still rising on the first pass). The State scroll stays as a no-op safety net.",
-   "files": "mobile/components/SubscribeWizard.jsx",
+   "files": "mobile/components/SubscribeWizard.jsx (KeyboardAvoidingView behavior)",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
@@ -2471,15 +2474,13 @@
    ],
    "applies_to": "phone",
    "title": "Delete window: the data preview opens behind the window",
-   "what": "iPhone: Settings → Delete my account → 'erase' → the last-step window → 'Download my data first (Word)'. The document now previews rather than going straight to the share sheet (WALK-A-030), but the last-step window is a React Native Modal — its own native window — and the preview is a pushed ROUTE, so it renders beneath it. She sees the delete window still sitting there and never sees the document she was asked to keep. ✓ iPhone re-walk 2026-09-20: green.",
+   "what": "iPhone: Settings → Delete my account → 'erase' → the last-step window → 'Download my data first (Word)'. The document now previews rather than going straight to the share sheet (WALK-A-030), but the last-step window is a React Native Modal — its own native window — and the preview is a pushed ROUTE, so it renders beneath it. She sees the delete window still sitting there and never sees the document she was asked to keep. ✓ iPhone re-walk 2026-09-20: green. ✓ Android 2026-09-21: the window stands down and returns alone, tick unticked.",
    "fix": "PHONE: the last-step window closes before the preview route is pushed and is restored on focus when she comes back, so the document is what she sees and the delete window alone remains behind it. The tick stays hers to give.",
    "files": "mobile/app/(app)/settings/index.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "and_emu"
-   ],
+   "recheck": [],
    "owner": "Claude",
    "at": "2026-09-20T16:22:47"
   },
@@ -2596,6 +2597,238 @@
    ],
    "owner": "Claude",
    "at": "2026-09-21T07:34:23"
+  },
+  {
+   "id": "WALK-A-049",
+   "opened": "2026-09-21T08:53:26",
+   "closed": "",
+   "feature": "03.22",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "Looped wheels flash their first item on every forward move",
+   "what": "Pixel 7 dev build, first run → Subject: on every move the box shows ENGLISH (item 0) for a frame before the new subject settles. Founder's map, by ▼: English→Maths no flash; Maths→Science flashes; Science→Social Sciences flashes; SS→TWAU flashes; TWAU→English (the wrap) no flash. Same when dragging. So it flashes whenever the move neither starts nor ends at item 0 — the box is momentarily sitting on a row that is a multiple of N in the looped 3-copy list. Rows render static labels, so this IS the scroll offset, not a render artifact. A trace is parked in RollWheel behind `global.__RW_TRACE` (rollTo target + every settle offset): turn it on, reproduce once, and the offsets will name the frame. Reproducible without the founder. ✅ NARROWED: the CLASS wheel does the same thing with Class 6 (its item 0), so this is RollWheel's loop, not the subject list. Both wheels are `loop rowPx={92} large`; the chapter wheel does not loop.",
+   "fix": "PARTIAL (2026-09-21). Found and fixed: `selIdx` was `Math.max(0, findIndex(...))`, so a value not in the list resolved to ITEM 0 — the very thing the comment beside it swears never happens. The class wheel hits that on every subject change, because its grades reload while it still holds the old one, and the `[items]` effect then COMMITS item 0 to the parent before the parent corrects it. It now holds the last good index until the correction arrives. STILL OPEN: this does not explain the SUBJECT wheel, whose value is always in its own list, and where `selIdx` drives only the highlight and the arrow targets — not the scroll. A row visible under the window means the OFFSET went there, so the remaining cause is in the scroll. Next step: flip `global.__RW_TRACE` on, one Maths→▼→Science move, read the rollTo target against the settle offsets. Two minutes at the emulator.",
+   "files": "mobile/components/RollWheel.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "open",
+   "recheck": [
+    "and_emu",
+    "ios"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T11:07:20"
+  },
+  {
+   "id": "WALK-A-050",
+   "opened": "2026-09-21T10:22:50",
+   "closed": "",
+   "feature": "T.12",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "Tour step 9's tip takes about two seconds to appear",
+   "what": "Pixel 7 dev build: every other card appears at once; step 9 leaves the teacher looking at a dimmed screen with no tip for roughly two seconds. Step 9 is one of the two drawn over a Sheet, so the wait is probably the sheet opening before the tip can measure its anchor — the `settled` gate added for WALK-A-028 will not release until the anchor stops moving. Not seen on iPhone.",
+   "fix": "",
+   "files": "mobile/components/GuidedTour.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "open",
+   "recheck": [
+    "and_emu"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:22:50"
+  },
+  {
+   "id": "WALK-A-051",
+   "opened": "2026-09-21T10:26:23",
+   "closed": "",
+   "feature": "03.32",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "Offline, the Prepare screen says the subject has no chapters",
+   "what": "Pixel 7 in airplane mode, My Lessons → 'Prepare a new lesson': the screen drew normally and announced 'No chapter mappings for this subject & grade yet.' The chapters fetch had failed and the empty list was reported as an empty CATALOGUE — so a teacher is told Meyy does not cover Social Sciences Class 6 when in fact her phone is offline. The same two-states-for-three mistake the subject list made on the web. ✓ Android re-walk 2026-09-21: green.",
+   "fix": "PHONE: the chapter list has three states — asking ('Loading chapters…'), failed ('We couldn’t load the chapters just now — check your connection and try again' with a Try again that refetches), and genuinely empty (the old sentence). The reason goes to the console, never to her. Check the web's prepare screen for the same shape.",
+   "files": "mobile/app/(app)/prepare.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "ios",
+    "web"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:26:23"
+  },
+  {
+   "id": "WALK-A-052",
+   "opened": "2026-09-21T10:32:01",
+   "closed": "",
+   "feature": "03.32",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "all",
+   "title": "A prepare that gets no answer never fails — the card spins for ever",
+   "what": "Pixel 7, airplane mode at Prepare: the preparing card sat at 'Preparing…' with the progress bar stalled for fifty seconds and counting, with no failure, no message and nothing to press. `postJSON` had NO deadline — the GET path got one on 2026-09-17 precisely because a hung socket can block for a minute or more, and the POST was left without. This is not only the airplane case: any teacher whose signal dies mid-serve gets a card that never resolves. Shared code, so all three surfaces. ✓ Android re-walk 2026-09-21: green.",
+   "fix": "SHARED: `postJSON` takes a deadline (default 120s, caller-overridable) and aborts, which surfaces as a thrown fetch with no status — the shape every caller already turns into 'Couldn’t build the lesson plan right now.' NOT retried: a GET may be asked twice, a POST may not (a second serve could bill a second chapter). FOUNDER ANSWERED (2026-09-21): a serve takes milliseconds — the five seconds she sees is the preparing card's own hold — so the deadline is 45s, sized to absorb a cold start (what bounds the GET path at ~48s) and nothing more.",
+   "files": "packages/shared/src/format.js",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "ios",
+    "web"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:33:31"
+  },
+  {
+   "id": "WALK-A-053",
+   "opened": "2026-09-21T10:39:07",
+   "closed": "",
+   "feature": "04.25",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "Android: the keypad hides the erase field and Continue",
+   "what": "Pixel 7 dev build, Settings → Delete my account: tapping into the 'Type erase' box raised the keypad over the box AND over 'Continue →'. The founder could not see the cursor or what he was typing. The delete block is the last thing on the screen and `automaticallyAdjustKeyboardInsets` is iOS-only, so under Android's mandatory edge-to-edge (no window resize) there was nothing to scroll into. Typing the one word that arms an irreversible act, blind.",
+   "fix": "PHONE: while the keypad is up the Settings scroller carries the keypad's own room and scrolls to the end when the keys arrive, so the field, Continue and Cancel all stay in view. Only while the keypad is up — no scroll she did not ask for otherwise.",
+   "files": "mobile/app/(app)/settings/index.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "and_emu",
+    "ios"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:39:07"
+  },
+  {
+   "id": "WALK-A-054",
+   "opened": "2026-09-21T10:44:46",
+   "closed": "",
+   "feature": "04.25",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "both",
+   "title": "The delete window claims a confirmation that has not been given",
+   "what": "The last-step window's note read 'Your confirmation is recorded against your account.' while the box above it was still UNTICKED — it states as done a thing the teacher has not yet done, in the one window where every word is about an irreversible act and a record of consent.",
+   "fix": "BOTH: 'Your confirmation WILL BE recorded against your account.' — it describes what the tick does. Phone and web together, since the sentence is shared by eye if not by code.",
+   "files": "mobile/app/(app)/settings/index.jsx; web/app/components/Settings.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "and_emu",
+    "ios",
+    "web"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:44:46"
+  },
+  {
+   "id": "WALK-A-055",
+   "opened": "2026-09-21T10:48:38",
+   "closed": "",
+   "feature": "03.32",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "all",
+   "title": "A trial chapter was counted for a lesson the teacher never received",
+   "what": "Pixel 7, 04: the trial ledger recorded chapters_used 3 (spent: false — a genuine count) while My Lessons held only TWO lesson plans at the moment of erasure. One chapter of a three-chapter trial was spent on nothing she can see. The likely author is the airplane-mode test itself: the POST sat queued while the radio was off, the founder turned it back on to press Try again, the queued serve then reached the server, which generated and counted it — and the client had already abandoned it at the 45s deadline (WALK-A-052), so its plan never reached her listing and its chapter was never refunded. A LOST RESPONSE MUST NOT COST A CHAPTER. Note the existing mitigation only half covers this: re-serving the SAME chapter is free, so a retry on the same chapter is safe — but a serve whose response is lost, followed by a different chapter, costs two. Unproven, and it cannot be re-run on this account (erased): reproduce with a server-side log of which chapter each count belongs to, then compare against her listing.",
+   "fix": "To decide: (a) the count belongs to a DELIVERED plan — count on the read-back, not on generation; or (b) an idempotency key per prepare attempt so a retry of the same attempt can never count twice and an abandoned one can be reconciled; and (c) the client should retry the same chapter rather than offering a fresh pick after a failure. Founder to weigh: this is a teacher's free trial, so erring towards not counting is the honest default.",
+   "files": "api/main.py (_count_trial_chapter and the serve); packages/shared/src/format.js; mobile/app/(app)/prepare.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "open",
+   "recheck": [
+    "and_emu",
+    "ios",
+    "web"
+   ],
+   "owner": "founder",
+   "at": "2026-09-21T10:48:38"
+  },
+  {
+   "id": "WALK-A-056",
+   "opened": "2026-09-21T10:54:20",
+   "closed": "",
+   "feature": "03.17",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "all",
+   "title": "The email-in-use check makes her wait about five seconds",
+   "what": "Pixel 7: at 'Confirm this email →' the wizard sits on 'Checking…' for roughly five seconds before refusing an address already in use. The check is honest and the wording is right (WALK-A-022 put it up front, which was the improvement) — but five seconds of nothing, at the moment she is being told she cannot use her own email, reads as a broken screen. Worth measuring whether this is the API's cold start or the lookup itself before choosing a fix.",
+   "fix": "To decide once measured: if it is the cold start, nothing to fix in the client beyond keeping the spinner honest; if the lookup itself is slow, it wants an index or a cheaper existence check. Either way the screen should say what it is doing rather than only that it is busy.",
+   "files": "api (the id-in-use lookup); mobile/components/SubscribeWizard.jsx; web SubscribeFlow equivalent",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "open",
+   "recheck": [
+    "and_emu",
+    "ios",
+    "web"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:54:20"
+  },
+  {
+   "id": "WALK-A-057",
+   "opened": "2026-09-21T10:56:54",
+   "closed": "",
+   "feature": "03.18",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "both",
+   "title": "The trial-spent notice stays up through the whole wizard",
+   "what": "Pixel 7: 'This mobile number has already used its free trial. Subscribe to keep using Meyy.' is pinned above every screen of the subscribe wizard, pushing the step rail down and eating room on a form that already struggles for it with the keypad up. It explains why she is here — once.",
+   "fix": "BOTH: the notice shows until she starts answering (any field filled), then goes and does not come back in this wizard. Founder's rule: once she has started entering her details she has accepted the answer, and repeating it is nagging. WEB NOT DONE YET, deliberately: there the notice is passed in as `chrome` from Login.jsx and lives OUTSIDE SubscribeFlow, so hiding it on first entry means giving SubscribeFlow the notice as its own prop — a change to the chrome contract, not a one-liner, and the web's screen does not lose the step rail to it the way a phone does. Worth doing for consistency, at a moment when the web is being touched anyway.",
+   "files": "mobile/components/SubscribeWizard.jsx; web SubscribeFlow equivalent (to match)",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "and_emu",
+    "ios"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:56:54"
+  },
+  {
+   "id": "WALK-A-058",
+   "opened": "2026-09-21T10:58:31",
+   "closed": "",
+   "feature": "03.18",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "The Agreement is the one wizard step with no step rail",
+   "what": "Pixel 7: the phone wizard draws the five-step rail on About you (1), Subjects (3) and Pay (4) — never on the Agreement (2). So on the longest screen of the five, the one a teacher is least sure about, she has no idea where she is or how much is left. The web shows the rail throughout.",
+   "fix": "PHONE: the rail is drawn frozen above the Agreement, as it is above About you, and the document scrolls beneath it.",
+   "files": "mobile/components/SubscribeWizard.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "and_emu",
+    "ios"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T10:58:31"
   }
  ]
 }
