@@ -59,3 +59,6 @@ genon/out/polish_tests/
 # Live teacher records dumped from Supabase for disaster recovery. data/cloud/state/ is the
 # dev database and stays tracked; this is the opposite thing and must not follow it to GitHub.
 backups/
+
+metro.log
+wheel.log
