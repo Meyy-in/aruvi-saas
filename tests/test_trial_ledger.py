@@ -3,7 +3,7 @@
 Delete → sign up again used to hand out three more free chapters, for ever. The trial ledger keeps
 one line per number — a KEYED hash, never the number — with the chapters it used, for 24 months.
 These tests pin: the number is not stored; a returning number starts with its used chapters
-counted; a paid account counts as spent; an entry never shrinks; an expired entry is forgotten;
+counted; a paid account keeps what it never used (WALK-A-048); an entry never shrinks; an expired entry is forgotten;
 and the ledger sits outside the erase walk. Stdlib + the API's own deps.
 """
 from __future__ import annotations
@@ -66,12 +66,26 @@ def test_all_used_returns_with_nothing_left():
     assert c.post("/onboarding/verified", headers=H(m)).json()["trial_remaining"] == 0
 
 
-def test_a_paid_account_counts_the_trial_as_spent():
+def test_a_paid_account_keeps_the_chapters_it_never_used():
+    """WALK-A-048 (founder, 2026-09-21): the quota is spent by USE, not by having paid.
+
+    A direct subscriber who deletes his account and returns used no free chapters, so all three
+    are still his. The old rule told him he had 'already used' a trial he never had."""
     m = "9000000041"
     c.post("/onboarding/verified", headers=H(m))
     main.billing_provider.create_subscription(m, "individual_annual", scopes=["science/middle"], source="manual")
     _erase(m)
-    assert c.post("/onboarding/verified", headers=H(m)).json()["trial_remaining"] == 0
+    assert c.post("/onboarding/verified", headers=H(m)).json()["trial_remaining"] == 3
+
+
+def test_a_paid_account_still_owes_the_chapters_it_did_use():
+    """He tried two trial chapters, then subscribed, then deleted: one chapter is left."""
+    m = "9000000042"
+    c.post("/onboarding/verified", headers=H(m))
+    _use(m, 2)
+    main.billing_provider.create_subscription(m, "individual_annual", scopes=["science/middle"], source="manual")
+    _erase(m)
+    assert c.post("/onboarding/verified", headers=H(m)).json()["trial_remaining"] == 1
 
 
 def test_an_unused_trial_leaves_no_line():

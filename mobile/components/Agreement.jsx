@@ -37,6 +37,7 @@ import Checkbox from "./Checkbox";
 import PrivacyNotice from "./PrivacyNotice";
 import { Sheet } from "./AttachSheet";
 import { Button, Link } from "./ui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -62,6 +63,7 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
                                     context = "subscribe" }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const insets = useSafeAreaInsets();   // WALK-A-046: the navigation bar's own room
   const [state, setState] = useState(null);
   const [failed, setFailed] = useState("");
   const [ticks, setTicks] = useState({});
@@ -254,7 +256,7 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
     <View style={{ flex: 1 }}>
       <ScrollView ref={scrollRef} contentContainerStyle={ws.ob_body}
         onLayout={(e) => { viewH.current = e.nativeEvent.layout.height; }}>{body}</ScrollView>
-      <View style={[ws.ob_foot, { backgroundColor: t.paper }]}>
+      <View style={[ws.ob_foot, { paddingBottom: 26 + insets.bottom, backgroundColor: t.paper }]}>
         <View style={ws.lgl_tally} accessibilityLabel="The five points">
           <Text style={[ws.lgl_tally_lbl, { color: t.ink_soft }]}>Five points</Text>
           <View style={ws.lgl_tally_boxes}>

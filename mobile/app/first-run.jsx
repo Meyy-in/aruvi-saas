@@ -23,6 +23,7 @@
 import { useEffect, useRef, useState } from "react";
 import { View, ScrollView, Pressable, BackHandler } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../components/Text";
 import {
   ROMAN, classNum, fetchEntitlement, getJSON, getUser, gradeUp, markPrepared, paidScopesOf, postJSON,
@@ -84,6 +85,7 @@ export default function FirstRun() {
   const { t } = useTheme();
   const ws = useWebStyles();
   const router = useRouter();
+  const insets = useSafeAreaInsets();   // WALK-A-046: the navigation bar's own room
   const user = getUser();
 
   const [step, setStep] = useState("welcome");   // welcome | subject | grade | chapter
@@ -392,7 +394,9 @@ export default function FirstRun() {
   const Frame = ({ children, foot }) => (
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <Bar user={user} gear={false} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 22, paddingBottom: 28 }}>
+      {/* WALK-A-046: 28 cleared the gesture pill; the three buttons need the real inset. */}
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 22,
+                                           paddingBottom: 28 + insets.bottom }}>
         {children}
         {foot}
       </ScrollView>

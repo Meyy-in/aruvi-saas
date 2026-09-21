@@ -1764,13 +1764,19 @@ def data_rights_erase(req: EraseRequest,
     tenant_id, user_id = identity
     # ★ THE TRIAL LEDGER, BEFORE THE ENTITLEMENT IS DESTROYED (2026-09-18): one line, keyed by a
     #   keyed hash of the number, saying how much of the free trial it used — so erasing and
-    #   signing up again does not hand out a new one. A PAID account records the trial as spent.
+    #   signing up again does not hand out a new one.
+    #   ⚠️ THE QUOTA IS CONSUMED BY CHAPTERS USED, AND BY NOTHING ELSE (founder, 2026-09-21,
+    #   WALK-A-048). This used to pass `spent=(status != "trial")`, so a DIRECT SUBSCRIBER who
+    #   deleted his account came back to "this mobile number has already used its free trial" —
+    #   with chapters_used 0. He had never taken a trial; he had paid. The free chapters belong
+    #   to the NUMBER and only using them spends them, which is the same rule for everyone and
+    #   still farm-proof: `chapters_used` survives the erasure, so a balance is never reset.
     #   Only when the tenant IS the teacher (one teacher = one tenant, the ICP); never raises.
     try:
         ent_before = entitlement_repo.load(tenant_id)
         if ent_before is not None and _doc_slug(tenant_id) == _doc_slug(user_id):
             real_used = len([k for k in ent_before.trial_chapters or []])
-            trial_ledger.note_erased(user_id, real_used, spent=(ent_before.status != "trial"))
+            trial_ledger.note_erased(user_id, real_used)
     except Exception:
         pass
     # Record the consent BEFORE destroying anything: written after the fact it could be

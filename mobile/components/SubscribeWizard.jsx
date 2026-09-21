@@ -40,6 +40,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform, BackHandler } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, TextInput } from "./Text";
 import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
          ROLES, STATES, EMAIL_OK, EMAIL_TAKEN } from "@aruvi/shared/format";
@@ -123,6 +124,10 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   const [email, setEmail] = useState("");
   const [email2, setEmail2] = useState("");
   const aboutScroll = useRef(null);   // WALK-A-040: the About-you form's scroller
+  /* WALK-A-046: the foot must clear the navigation bar — ~48dp on 3-button navigation, and
+     edge-to-edge is mandatory from Android 16. */
+  const insets = useSafeAreaInsets();
+  const footPad = { paddingBottom: 26 + insets.bottom };
   /* WALK-A-040: bring the tail of the form (City + School) clear of the lifted foot. Twice — the
      keyboard is still rising at 120ms and the scroll range is not final until it has landed. */
   const tailUp = () => {
@@ -500,7 +505,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
               onFocus={tailUp} />
           </Field>
         </ScrollView>
-        <View style={[ws.ob_foot, { backgroundColor: t.paper }]}>
+        <View style={[ws.ob_foot, footPad, { backgroundColor: t.paper }]}>
           <Button title="Save & continue →" disabled={!ready}
             onPress={() => setScreen("agreement")} style={{ width: "100%" }} />
           <Link title="← Back" onPress={cancel} />
@@ -614,7 +619,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             </Text>
           ) : null}
         </ScrollView>
-        <View style={[ws.ob_foot, { backgroundColor: t.paper }]}>
+        <View style={[ws.ob_foot, footPad, { backgroundColor: t.paper }]}>
           <Button title="Continue →" disabled={!cartScopes.length}
             onPress={() => setScreen("pay")} style={{ width: "100%" }} />
           <Link title="← Back"
@@ -664,7 +669,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
           <Text accessibilityRole="alert" style={[ws.ob_err, { color: t.danger }]}>{payErr}</Text>
         ) : null}
       </ScrollView>
-      <View style={[ws.ob_foot, { backgroundColor: t.paper }]}>
+      <View style={[ws.ob_foot, footPad, { backgroundColor: t.paper }]}>
         <Button title={payBusy ? "Activating…" : `Pay ₹${total} & start →`} busy={payBusy}
           disabled={payBusy} onPress={doCheckout} style={{ width: "100%" }} />
         <Link title="← Back" onPress={() => setScreen("cart")} />

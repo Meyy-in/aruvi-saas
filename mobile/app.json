@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#164436"
       },
-      "edgeToEdgeEnabled": true
+      "predictiveBackGestureEnabled": false
     },
     "plugins": [
       "expo-router",

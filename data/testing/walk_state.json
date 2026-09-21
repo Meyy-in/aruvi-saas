@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-20T16:47:14",
+ "updated_at": "2026-09-21T07:34:23",
  "items": {
   "04.19": {
    "ios": {
@@ -98,10 +98,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:22:27",
-    "comment": "Links between Choose / sign-in / OTP all ✓. HARDWARE BACK (button or edge swipe) on the OTP and sign-in screens does NOTHING — stays put → WALK-A-035.",
+    "at": "2026-09-21T07:09:41",
+    "comment": "Dev build (npx expo run:android), 3-button navigation. Back from the mobile-number screen lands on the chooser; Back from the OTP screen returns to the number with the code cleared; Back from sign-in lands on the chooser. Forward links all hold. WALK-A-035 proven - the handlers were always right; Expo Go never delivered the press. 'Already have an ID? Sign in' now clears the nav bar (WALK-A-046).",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.04": {
@@ -167,10 +167,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:30:21",
-    "comment": "Pinned head, smooth scroll, tables as cards, version line, clears gesture bar ✓; hardware Back does NOT return to sign-in → WALK-A-035.",
+    "at": "2026-09-21T07:24:56",
+    "comment": "Dev build: pinned head, smooth scroll, tables as cards, version line at the end, clears the nav bar; hardware Back returns to sign-in (A-035 proven).",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.15": {
@@ -190,10 +190,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:30:21",
-    "comment": "Offline failure sentence with ← Back ✓; hardware Back does nothing → WALK-A-035.",
+    "at": "2026-09-21T07:24:56",
+    "comment": "Dev build: offline the notice fails inside the same frame with '<- Back'; hardware Back also returns to sign-in from the failed state.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.13": {
@@ -259,10 +259,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:35:56",
-    "comment": "Field keeps the number after Back → Create sign in again → WALK-A-011 (phone half).",
+    "at": "2026-09-21T07:21:53",
+    "comment": "Dev build: leaving by Back and re-entering Create sign in shows an EMPTY mobile field (A-011 phone half); the returning sign-in door clears too.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.07": {
@@ -282,10 +282,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:35:56",
-    "comment": "Timer stays honest after 20s in background ✓. Expiry 'Send a new code' is the small link → WALK-A-004 (phone half).",
+    "at": "2026-09-21T07:19:34",
+    "comment": "Dev build: at expiry the boxes are disabled and cannot be typed into; 'Send a new code' is a full-size button, not a link (A-004 phone half); pressing it sends a fresh code and restarts the clock; no mid-run Resend appears.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.08": {
@@ -328,10 +328,10 @@
    },
    "and_emu": {
     "by": "Kumar",
-    "at": "2026-09-20T13:57:34",
-    "comment": "Auto-advance ✓; Backspace works but needs a second press on an empty box → WALK-A-024. With the keyboard up, 'Verify & continue →' is half-hidden under the pinned foot (← Back) → WALK-A-036 (screenshot in walk thread).",
+    "at": "2026-09-21T07:18:43",
+    "comment": "Dev build: boxes auto-advance; backspace on an empty box clears the previous digit in ONE press (A-024 holds); 'Verify & continue' fully visible with the keypad up (A-036 holds). The app's '<- Back' foot was under the keypad -> WALK-A-047, fixed mid-walk (KeyboardAvoidingView lifts on Android too) and clear in the founder's screenshot. The system's left nav slot showing the dismiss-keyboard chevron while the IME is open is Android's own behaviour, not a fault.",
     "build": "Expo Go (Pixel 7 API 34)",
-    "status": "fail"
+    "status": "pass"
    }
   },
   "03.21": {
@@ -1576,14 +1576,13 @@
    ],
    "applies_to": "both",
    "title": "Expired OTP: boxes stay live; 'Send a new code' only a link; mid-run Resend to go",
-   "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): no mid-run Resend already; at expiry 'Send a new code' is still a small link — needs the full-size button + disabled boxes.",
+   "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): no mid-run Resend already; at expiry 'Send a new code' is still a small link — needs the full-size button + disabled boxes. ✓ Android re-walk 2026-09-21 (dev build): green.",
    "fix": "Expired: boxes disabled (+ dimmed CSS), 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed (Login.jsx). Phone: at phone fix point. PHONE: expired code disables the boxes (dimmed) and 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed.",
    "files": "web/app/components/Login.jsx, globals.css; mobile/app/login.jsx, mobile/components/OtpBoxes.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -1736,14 +1735,13 @@
    ],
    "applies_to": "both",
    "title": "Create sign in: mobile field keeps the old number after Back",
-   "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — field keeps the number.",
+   "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — field keeps the number. ✓ Android re-walk 2026-09-21: green.",
    "fix": "'Create sign in' clears the mobile field, error and timer on every entry. PHONE: 'Create sign in' clears the mobile field, its error and the timer on every entry.",
    "files": "web/app/components/Login.jsx; mobile/app/login.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios",
     "web"
    ],
@@ -2044,7 +2042,7 @@
    ],
    "applies_to": "both",
    "title": "OTP backspace: one press should step back AND clear the previous digit",
-   "what": "iPhone: pressing Backspace on an empty OTP box moves focus to the previous box but leaves its digit; a second press clears it. Founder: a single Backspace on an empty box should move back and clear that digit. The web's otpKeyDown has the same two-press behaviour (focus only) — change both.",
+   "what": "iPhone: pressing Backspace on an empty OTP box moves focus to the previous box but leaves its digit; a second press clears it. Founder: a single Backspace on an empty box should move back and clear that digit. The web's otpKeyDown has the same two-press behaviour (focus only) — change both. ✓ Android re-walk 2026-09-21 (dev build): green.",
    "fix": "BOTH: one Backspace on an empty OTP box steps back AND clears that digit.",
    "files": "web/app/components/Login.jsx (otpKeyDown) + mobile login OTP boxes; web/app/components/Login.jsx, mobile/components/OtpBoxes.jsx",
    "commit": "",
@@ -2052,8 +2050,7 @@
    "status": "fixed-awaiting-rewalk",
    "recheck": [
     "web",
-    "ios",
-    "and_emu"
+    "ios"
    ],
    "owner": "Claude",
    "at": "2026-09-20T15:22:00"
@@ -2294,17 +2291,17 @@
    ],
    "applies_to": "phone",
    "title": "Android: hardware Back does nothing — front door, first run AND the app shell",
-   "what": "Pixel 7 emulator (API 34): on the OTP screen and on sign-in, the system Back (◁ or edge swipe) does nothing — the screen stays. These are one route with a `screen` state (login.jsx), so Back is swallowed. It should do exactly what the on-screen '← Back' does (OTP → Choose on create / → sign-in on returning; sign-in → Choose; privacy → where she came from), and exit the app only from Choose. Use BackHandler in login.jsx (and the first-run steps: Back = '← Back', Welcome = exit). Also the /privacy route (03.14, 03.15): hardware Back does nothing there either. WIDER: also dead on first-run Welcome and inside the app (My Lessons). Decide the shell's rule like the web's WALK-A-008: close an open lesson/sheet, then Settings, then other tab → My Classes, then exit.",
+   "what": "Pixel 7 emulator (API 34): on the OTP screen and on sign-in, the system Back (◁ or edge swipe) does nothing — the screen stays. These are one route with a `screen` state (login.jsx), so Back is swallowed. It should do exactly what the on-screen '← Back' does (OTP → Choose on create / → sign-in on returning; sign-in → Choose; privacy → where she came from), and exit the app only from Choose. Use BackHandler in login.jsx (and the first-run steps: Back = '← Back', Welcome = exit). Also the /privacy route (03.14, 03.15): hardware Back does nothing there either. WIDER: also dead on first-run Welcome and inside the app (My Lessons). Decide the shell's rule like the web's WALK-A-008: close an open lesson/sheet, then Settings, then other tab → My Classes, then exit. ⚠️ ROOT CAUSE (2026-09-21): the handlers were never the problem. Android 13+ dispatches Back through onBackInvokedCallback, and React Native only listens for the LEGACY event; react-native-screens has not integrated the new path, so with predictive back enabled RN never receives the press at all. Expo Go is a separate app with its own manifest and cannot be changed from here — which is why our BackHandler AND expo-router's own route-pop are both dead on the emulator (Privacy Notice, 03.14). Expo's own build config defaults `android:enableOnBackInvokedCallback` to FALSE, so a real Meyy build gets the legacy path and the handlers work. NOT WALKABLE IN EXPO GO: every Back row must be walked on a development build. `android.predictiveBackGestureEnabled: false` is now pinned in app.json so this cannot drift. ✅ SETTLED 2026-09-21: the handlers were RIGHT all along. On the development build `adb shell input keyevent 4` from the mobile-number screen returns to the chooser exactly as written. What failed for twenty attempts was the EMULATOR'S DELIVERY of the press — the Pixel 7 image runs gesture navigation and a mouse-dragged edge swipe does not register as a back gesture. Walk Back rows with the emulator set to 3-button navigation (Settings → System → Gestures → System navigation), or with `adb shell input keyevent 4`. The predictive-back reading above still stands as the reason a real build is required: Expo Go cannot be trusted for Back at all.",
    "fix": "PHONE (Android): BackHandler on the login screens (otp → choose/sign-in, sign-in → choose, choose → exit), on first run's steps, on /privacy, and in the app shell (close a window, pop the stack, other tab → My Classes, else exit).",
-   "files": "mobile/app/login.jsx (+ first-run.jsx); mobile/app/login.jsx, first-run.jsx, privacy.jsx, app/(app)/_layout.jsx",
+   "files": "mobile/app/login.jsx (+ first-run.jsx); mobile/app/login.jsx, first-run.jsx, privacy.jsx, app/(app)/_layout.jsx; mobile/app.json (predictiveBackGestureEnabled: false)",
    "commit": "",
-   "native_rebuild": false,
+   "native_rebuild": true,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
    "owner": "Claude",
-   "at": "2026-09-20T15:22:00"
+   "at": "2026-09-21T07:03:01"
   },
   {
    "id": "WALK-A-036",
@@ -2316,14 +2313,13 @@
    ],
    "applies_to": "phone",
    "title": "Android: 'Verify & continue' half-hidden under the pinned foot with the keyboard up",
-   "what": "Pixel 7 emulator, create OTP screen with the number pad open: the Verify button is cut in half by the fixed foot ('← Back' band) sitting above the keyboard. The scroll area must end ABOVE the foot (bottom padding = foot height) and the CTA be scrolled into view when the boxes are focused. Android resizes the window, so KeyboardAvoidingView 'padding' is not the tool there. See screenshot in the walk thread.",
+   "what": "Pixel 7 emulator, create OTP screen with the number pad open: the Verify button is cut in half by the fixed foot ('← Back' band) sitting above the keyboard. The scroll area must end ABOVE the foot (bottom padding = foot height) and the CTA be scrolled into view when the boxes are focused. Android resizes the window, so KeyboardAvoidingView 'padding' is not the tool there. See screenshot in the walk thread. ✓ Android re-walk 2026-09-21 (dev build): green.",
    "fix": "PHONE (Android): more bottom slack under the keypad and a second scroll-to-end once the resize settles, so Verify clears the foot.",
    "files": "mobile/app/login.jsx; mobile/app/login.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "fixed-awaiting-rewalk",
    "recheck": [
-    "and_emu",
     "ios"
    ],
    "owner": "Claude",
@@ -2530,6 +2526,76 @@
    ],
    "owner": "Claude",
    "at": "2026-09-20T16:27:55"
+  },
+  {
+   "id": "WALK-A-046",
+   "opened": "2026-09-21T07:08:33",
+   "closed": "",
+   "feature": "03.03",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "Pinned feet sit under the Android navigation bar",
+   "what": "Pixel 7, with the emulator switched to 3-button navigation: the sign-in screen's foot sits straight under ◁ ◯ ▢, so 'Already have an ID? Sign in' cannot be pressed — the press lands on the system bar. Edge-to-edge is mandatory from Android 16, so the app owns that space and must give the bar its room. The gesture pill is thin enough that every foot LOOKED right until the walk switched navigation modes; a great many Android teachers use the three buttons.",
+   "fix": "PHONE: every pinned foot adds the safe-area bottom inset — login's Wrap, the subscribe wizard's three feet, the Agreement's foot, and first-run's scroll tail. The bottom nav already did this.",
+   "files": "mobile/app/login.jsx; mobile/app/first-run.jsx; mobile/components/SubscribeWizard.jsx; mobile/components/Agreement.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "and_emu",
+    "ios"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T07:08:33"
+  },
+  {
+   "id": "WALK-A-047",
+   "opened": "2026-09-21T07:18:43",
+   "closed": "",
+   "feature": "03.06",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "phone",
+   "title": "Android: the keypad covers the sign-in screen's pinned foot",
+   "what": "Pixel 7 dev build: with the OTP keypad up, the sign-in screen's pinned foot stayed at the bottom of the screen and the keys drew over it, so the app's own '← Back' could not be seen or pressed. The KeyboardAvoidingView lifted on iOS only — `undefined` on Android was right while the window resized for the keypad, but under mandatory edge-to-edge the IME simply draws over the app and nothing resizes. (Not to be confused with Android replacing ◁ with the ⌄ dismiss-keyboard chevron while the IME is open — that is the system's own behaviour and correct.)",
+   "fix": "PHONE: the sign-in Wrap lifts on both surfaces (behavior=\"padding\"), so the foot rides the keyboard.",
+   "files": "mobile/app/login.jsx",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "and_emu",
+    "ios"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T07:18:43"
+  },
+  {
+   "id": "WALK-A-048",
+   "opened": "2026-09-21T07:29:18",
+   "closed": "",
+   "feature": "03.21",
+   "found_on": [
+    "and_emu"
+   ],
+   "applies_to": "both",
+   "title": "A returning subscriber is told she used a free trial she never had",
+   "what": "Pixel 7: 9000000004 took the Free-to-try door and landed in the subscribe wizard under 'This mobile number has already used its free trial. Subscribe to keep using Meyy.' The ledger is right to refuse — api/main.py records `spent=(ent_before.status != \"trial\")`, so an erased PAID account cannot come back on a free trial, which stops subscribe-cancel-delete-rejoin farming. But 04's entry reads chapters_used: 0. She never had a trial; she paid. The sentence states something untrue about her own history at the moment she is being asked to pay again. FOUNDER'S CALL on the wording; the rule itself is sound and should not change. FOUNDER (2026-09-21): the quota belongs to the number and is consumed by chapters USED, notwithstanding a direct subscription — one consistent rule for everyone, on all three surfaces.",
+   "fix": "SERVER (all surfaces at once): erasure records only the chapters actually used — `note_erased(user_id, real_used)`, no paid⇒spent. And the trial-usage record now SURVIVES the purchase that supersedes the trial (manual_billing_provider carried `trial_chapters` only when the prior was not a trial, so a teacher who tried two chapters then subscribed came back to all three). Inert while subscribed: every gate reading that list checks `status == \"trial\"` first. Two tests replace the old one.",
+   "files": "api/main.py; aruvi_core/adapters/manual_billing_provider.py; tests/test_trial_ledger.py",
+   "commit": "",
+   "native_rebuild": false,
+   "status": "fixed-awaiting-rewalk",
+   "recheck": [
+    "and_emu",
+    "ios",
+    "web"
+   ],
+   "owner": "Claude",
+   "at": "2026-09-21T07:34:23"
   }
  ]
 }

@@ -19,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, Pressable, StyleSheet, BackHandler } from "react-native";
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
 import { DEVICE_SEEN_KEY as SEEN_KEY } from "@aruvi/shared/signout";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
@@ -82,6 +83,12 @@ const KEYPAD_SLACK = Platform.OS === "android" ? 56 : 24;   // WALK-A-036: Andro
 
 function Wrap({ children, foot }) {
   const { t } = useTheme();
+  /* WALK-A-046 (founder, 2026-09-21, Pixel 7): a pinned foot must clear the NAVIGATION BAR.
+     Edge-to-edge is mandatory from Android 16, and on 3-button navigation the bar is ~48dp — the
+     foot sat straight under ◁ ◯ ▢, so "Already have an ID? Sign in" could not be pressed. The
+     gesture pill is thin enough that this stayed invisible until the walk switched the emulator
+     over; a great many Android teachers use the three buttons. */
+  const insets = useSafeAreaInsets();
   const scroller = useRef(null);
   const [keypad, setKeypad] = useState(false);
 
@@ -99,11 +106,19 @@ function Wrap({ children, foot }) {
   }, []);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: t.paper }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    /* ⚠️ ANDROID LIFTS TOO (WALK-A-047, founder 2026-09-21, Pixel 7). `undefined` on Android was
+       right while the window resized for the keypad; under mandatory edge-to-edge it does not —
+       the IME simply draws over the app, so the pinned foot stayed at the screen's bottom with
+       "← Back" underneath the keys. Padding on both surfaces: the foot rides the keyboard. */
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: t.paper }} behavior="padding">
       <Bar />
       <ScrollView ref={scroller} contentContainerStyle={[s.body, keypad && { paddingBottom: BODY_PAD_BOTTOM + KEYPAD_SLACK }]}
         keyboardShouldPersistTaps="handled" keyboardDismissMode="none">{children}</ScrollView>
-      <View style={[s.foot, { borderTopColor: t.line }]}>{foot}</View>
+      {/* ⚠️ THE INSET GOES AWAY WITH THE KEYPAD (WALK-A-046, second look): while the keyboard is
+          up the navigation bar is behind it, so holding 48dp back for it pushed "← Back" out of
+          reach. Room for the bar only when the bar is what is down there. */}
+      <View style={[s.foot, { borderTopColor: t.line,
+                              paddingBottom: 12 + (keypad ? 0 : insets.bottom) }]}>{foot}</View>
     </KeyboardAvoidingView>
   );
 }

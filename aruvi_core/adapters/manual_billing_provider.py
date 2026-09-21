@@ -45,6 +45,14 @@ class ManualBillingProvider(BillingProvider):
         until = valid_until or (date.today() + timedelta(days=365)).isoformat()
         asked = list(scopes) if scopes else ["*"]
         prior = None if replace else self.repo.load(tenant_id)
+        # ★ WHAT THE TRIAL SPENT OUTLIVES THE TRIAL (founder, 2026-09-21, WALK-A-048). The free
+        #   chapters belong to the NUMBER and are spent only by using them, so the count has to
+        #   survive the purchase that supersedes the trial — otherwise a teacher who tried two
+        #   chapters, subscribed, then later deleted her account came back to all three again,
+        #   and the old rule papered over that by burning the whole quota of anyone who had ever
+        #   paid. Inert while she is subscribed: every gate that reads this list first checks
+        #   `status == "trial"`.
+        carried_trial = list(prior.trial_chapters or []) if prior is not None else []
         # A trial is not a holding to preserve — the first purchase supersedes it whole
         # (its breadth is "*", which would otherwise swallow every later scope check).
         if prior is not None and prior.status == "trial":
@@ -76,7 +84,7 @@ class ManualBillingProvider(BillingProvider):
             # readers see a sane single date; the gates read the per-scope map.
             valid_until=(max(per_scope.values()) if per_scope else until),
             source=source, scopes=merged,
-            trial_chapters=list(prior.trial_chapters) if prior else [],
+            trial_chapters=carried_trial,
             scope_valid_until=per_scope,
         )
         self.repo.save(tenant_id, ent)
