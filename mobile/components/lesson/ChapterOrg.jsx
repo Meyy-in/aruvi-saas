@@ -497,7 +497,7 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <View style={[ws.co_stick, { paddingHorizontal: 18 }]}>
         <View style={ws.co_topbar}>
-          <Text style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp, sectionLabel)}</Text>
+          <Text fixed style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp, sectionLabel)}</Text>
           <Pressable onPress={onBack} hitSlop={8}><Text style={ws.back_tr}>← back</Text></Pressable>
         </View>
         <View style={ws.co_head}>

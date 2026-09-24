@@ -54,7 +54,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
-  API, classNum, fetchSupportedGrades, getJSON, postJSON, heldClassesFor, heldScopesOf, pad, paywallKicker,
+  API, classNum, getJSON, postJSON, pad, paywallKicker,
   pretty, subjectSlug, gradeSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { subscribeYear } from "@aruvi/shared/year";
@@ -179,7 +179,41 @@ export default function MyLessons() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prepKey]);
 
-  const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
+  /* ★ WHICH CLASSES THE WHEEL OFFERS (WALK-A-068, founder 2026-09-22; ported from the web
+     2026-09-24). The classes in her PROFILE, plus the classes SHE HAS LESSONS FOR — and nothing
+     else. It used to offer, for a subject with no classes, every class she HOLDS (paid stages ×
+     what Meyy covers): too wide — My Lessons invited her to plan for 6, 7 and 8 while My Classes
+     said "No classes set up yet". The source is /plans-prepared ("{subject}/{grade}/{file}"),
+     one call for every subject. ⚠️ Declared ABOVE `subjects`, which reads it during render (TDZ).
+     Unreachable is NOT "she has none" (WALK-A-051): null keeps the wheel on her profile alone. */
+  const [lessonClasses, setLessonClasses] = useState(null);   // { [subjectSlug]: ["III", …] } | null
+  useEffect(() => {
+    let live = true;
+    getJSON("/plans-prepared")
+      .then((d) => {
+        if (!live) return;
+        const by = {};
+        Object.keys((d && d.prepared) || {}).forEach((k) => {
+          const [sub, gr] = String(k).split("/");
+          if (!sub || !gr) return;
+          (by[sub] = by[sub] || []).push(gr.toUpperCase());
+        });
+        Object.keys(by).forEach((k) => { by[k] = Array.from(new Set(by[k])); });
+        setLessonClasses(by);
+      })
+      .catch(() => { if (live) setLessonClasses(null); });
+    return () => { live = false; };
+    // a landed prepare is exactly when a new subject·class pair can appear
+  }, [prepKey]);
+
+  /* A subject with NO classes and NO lessons is not offered (WALK-A-068): there is nothing of hers
+     behind it. While lessonClasses is unknown, every subject stays. */
+  const allSubjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
+  const subjects = useMemo(() => {
+    if (!lessonClasses) return allSubjects;
+    return allSubjects.filter((s) => ((s.grades || []).length > 0)
+      || ((lessonClasses[subjectSlug(s.name)] || []).length > 0));
+  }, [allSubjects, lessonClasses]);
 
   /* Subject in focus (by display name); class in focus (uppercase Roman). RESTORE the last choice;
      fall back to the first taught subject/class on a first ever visit. A stale saved class is
@@ -224,59 +258,16 @@ export default function MyLessons() {
     if (r) { setReadiness(r); setLoaded(true); }
   }), []);
 
-  /* ⚠️ THIS BLOCK SITS ABOVE THE VALIDATION EFFECT BELOW, AND MUST: that effect names
-     `ownedClasses` in its dependency array, which is read DURING render. Declared after it,
-     that is a temporal-dead-zone throw on the first paint — the "a const read from a dep array
-     before it existed" crash the map already records once (`ed8fc93d`). `wheelGrades` stays
-     further down, because it needs `current` and nothing up here does. */
-  /* ★ A SUBJECT SHE OWNS BUT NO LONGER TEACHES KEEPS ITS LESSONS (founder, 2026-09-17: "when a
-     subscribed subject is deleted by removing all classes, the lessons in my lessons … goes too.
-     both should remain"). A paid subject now SURVIVES losing its last class
-     (`subjectSurvivesEmpty`) — but surviving in the profile is only half of it: these wheels are
-     built from her enrolled classes, so such a subject would list itself and then have no class
-     to scope to, and her prepared lessons would still be out of reach.
-     So for a subject with NO classes the Class wheel offers the classes she HOLDS — her paid
-     stages, intersected with what Meyy has content for. Every class on that list is one she has
-     bought, and the shelf behind it is the one her lessons are on. A teacher who still teaches a
-     class is offered exactly what she teaches, which is the 2026-07-06 rule, untouched.
-     ⚠️ Nothing is asked while she holds nothing: an unresolved entitlement would otherwise cache
-     an empty answer for the session and the wheel would stay empty after it arrived.
-     This is the web's `ownedClasses`, same shape and same reasons. */
-  const [ownedClasses, setOwnedClasses] = useState({});   // { [subject name]: ["III", …] }
-  /* ⚠️ ITS OWN SUBSCRIPTION, not the `ent` state below — that const is declared 250 lines
-     further down, and reading it here would be the "a const read from a dep array before it
-     existed" crash the map already records once (`ed8fc93d`). Two subscriptions to one module
-     store cost nothing; a temporal-dead-zone throw costs the screen. */
-  const [heldScopes, setHeldScopes] = useState(() => heldScopesOf(entitlementState().ent));
-  useEffect(() => subscribeEntitlement((e) => setHeldScopes(heldScopesOf(e && e.ent))), []);
-  useEffect(() => {
-    if (!heldScopes.length) return undefined;
-    const need = subjects.filter((s) => !((s.grades || []).length)
-      && ownedClasses[s.name] === undefined);
-    if (!need.length) return undefined;
-    let live = true;
-    Promise.all(need.map((s) => fetchSupportedGrades(s.name)
-      .then((gs) => [s.name, heldClassesFor(heldScopes, s.name, gs)])
-      .catch(() => [s.name, []])))
-      .then((pairs) => {
-        if (!live) return;
-        setOwnedClasses((m) => {
-          const next = { ...m };
-          pairs.forEach(([name, list]) => { next[name] = list; });
-          return next;
-        });
-      });
-    return () => { live = false; };
-  }, [subjects, heldScopes, ownedClasses]);
-
-  /* The classes the wheels offer for ONE subject — hers, or the ones she holds when she teaches
-     none. ONE definition, used by the wheel AND by the validation effect, or the two disagree
-     about which class is valid and she is snapped off the one she just picked. */
   const classesOfSubject = (s) => {
-    const gs = (s && s.grades) || [];
-    if (gs.length) return gs.map((g) => g.grade);
-    return (s && ownedClasses[s.name]) || [];
+    const mine = ((s && s.grades) || []).map((g) => g.grade);
+    const withLessons = (lessonClasses && lessonClasses[subjectSlug((s && s.name) || "")]) || [];
+    // Class order, not alphabetical: "IX" must not sort before "VI".
+    return Array.from(new Set([...mine, ...withLessons]))
+      .sort((a, b) => (classNum(a) || 0) - (classNum(b) || 0));
   };
+  /* Taught, or only lessons sitting on it? Both are on the wheel (her work stays reachable), but
+     only the PROFILE grants the right to prepare more (WALK-A-068). */
+  const isTaughtClass = (s, g) => ((s && s.grades) || []).some((x) => x.grade === g);
   /* Seed the wheels from storage the first time subjects arrive, then keep both valid as the
      profile changes. The class is RESTRICTED to the classes she has enrolled for this subject, so
      a stale saved class — from a prior profile, another user on this device, or a deleted
@@ -305,7 +296,7 @@ export default function MyLessons() {
       if (g0) lsSet(LS_CLASS, g0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subjects, activeSubject, activeGrade, LS_SUBJECT, LS_CLASS, ownedClasses]);
+  }, [subjects, activeSubject, activeGrade, LS_SUBJECT, LS_CLASS, lessonClasses]);
 
   /* ★ REPORT THE SETTLED SCOPE UP (founder, 2026-08-27; ported 2026-09-16) — the second moment of
      the "check your set-up?" window. A subscriber who has just added a subject or a class meets
@@ -333,7 +324,7 @@ export default function MyLessons() {
 
   const wheelGrades = useMemo(() => classesOfSubject(current),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [current, grades, ownedClasses]);
+    [current, grades, lessonClasses]);
 
   /* ★ LAST YEAR'S LESSONS (app. 05 rows C9, C37). On the first day of a new academic year this
      list starts EMPTY, which reads as loss if her old plans are not visibly somewhere. They sit
@@ -889,11 +880,23 @@ export default function MyLessons() {
         ) : null}
 
         {!loadErr && current && !ent.lapsed && pane === "lessons" && effView !== "archived" && plans !== undefined ? (
-          <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
-            <Text style={ws.mlp_allocate_q}>Need a chapter you don’t have yet?</Text>
-            <PrepareCta size="allocate" label="Prepare a new lesson →"
-              onPress={() => router.push({ pathname: "/prepare", params: { subject: sSlug, grade: gSlug } })} />
-          </View>
+          isTaughtClass(current, activeGrade) ? (
+            <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
+              <Text style={ws.mlp_allocate_q}>Need a chapter you don’t have yet?</Text>
+              <PrepareCta size="allocate" label="Prepare a new lesson →"
+                onPress={() => router.push({ pathname: "/prepare", params: { subject: sSlug, grade: gSlug } })} />
+            </View>
+          ) : (
+            /* WALK-A-068: a class she only has LESSONS on — preparing needs a profile row
+               (sections, periods a week, budget). The founder's wording, same as the web. */
+            <View style={[ws.mlp_allocate, { backgroundColor: t.paper, borderColor: t.line }]}>
+              <Text style={ws.mlp_allocate_q}>
+                Your teaching profile does not specify the classes you teach. The lessons already
+                generated are kept. To generate new lessons, add the classes you teach under Class
+                in the Add window from the bottom tool bar.
+              </Text>
+            </View>
+          )
         ) : null}
         {/* Below the CTA, and only in the lessons pane: the archive is its own view, and the
             Year Plan pane is a lens on THIS year. */}

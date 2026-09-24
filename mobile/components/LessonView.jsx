@@ -452,7 +452,10 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
   const header = (
     <View style={ws.lv_hd}>
       <View style={ws.co_topbar}>
-        <Text style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp, sectionLabel)}</Text>
+        {/* WALK-A-076 (founder, 2026-09-24): at Larger text the one-line kicker ran out of room and
+            cut off the section — the one part she needs. `fixed` keeps this strip at the design
+            size at every text setting, as the bottom bar's labels are. */}
+        <Text fixed style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp, sectionLabel)}</Text>
         <Pressable onPress={goOrg} hitSlop={8}><Text style={ws.back_tr}>← Orgn.</Text></Pressable>
       </View>
       <Text style={ws.lv_title}>
