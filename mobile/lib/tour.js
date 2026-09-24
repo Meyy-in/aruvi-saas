@@ -27,7 +27,7 @@ import { openAsk, closeAsk } from "./ask";
 import { readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { cachedReadiness } from "@aruvi/shared/readiness";
 import { cachedPlans } from "@aruvi/shared/plans";
-import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
+import { subjectSlug, gradeSlug, postJSON } from "@aruvi/shared/format";
 
 /* ★ TWENTY STEPS, DECLARED HERE. It lived in `GuidedTour.jsx` until the navigation moved into
    this module; importing the component from here to read one number would be a cycle, and the
@@ -106,6 +106,11 @@ export function tourState() { return { ...state }; }
 /** Begin at step 1. `info` carries {tag, chapter} for the steps whose copy names them. */
 export function startTour(info) {
   ranThisSession = true;
+  /* ★ THE OFFER IS SPENT WHEN SHE TAKES IT (WALK-A-009, founder decision; ported from the web's
+     markTourOffered-in-startTour 2026-09-24). It used to be spent the moment the nudge SHOWED, so
+     leaving before answering — the app closed, a dropped connection — removed the tour for good.
+     Skip and Done happen inside a taken tour, so they are covered. */
+  spendTourOffer((p) => postJSON(p, {}));
   state = { ...state, step: 1, info: { ...state.info, ...(info || {}) } };
   rememberBinding();
   syncDemo(1);

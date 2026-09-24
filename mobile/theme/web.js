@@ -1542,8 +1542,11 @@ export function webStyles(t, scheme = "light") {
     /* The typed-confirm block for account deletion. */
     acct_del_row:    { flexDirection: "row", alignItems: "center", columnGap: 8, rowGap: 8,
                        flexWrap: "wrap" },
+    /* WALK-A-083 (founder, 2026-09-24): at the largest text size the fixed 110px box cut off its own
+       'Type "erase"' prompt on both phones. It now GROWS to fill the row from a 150px start; the row
+       already wraps, so at large text Continue/Cancel drop to the next line instead of squeezing it. */
     acct_del_input:  { borderWidth: 1, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 10,
-                       fontFamily: F.mono(400), fontSize: 12, width: 110 },
+                       fontFamily: F.mono(400), fontSize: 12, flexGrow: 1, flexBasis: 150, minWidth: 150 },
     acct_del_go:     { borderRadius: 5, paddingVertical: 8, paddingHorizontal: 14 },
     acct_del_go_t:   { fontFamily: F.mono(400), fontSize: 11.5 },
     acct_fail:       { fontFamily: F.body(400), fontSize: 12.5, lineHeight: 18, marginTop: 10 },

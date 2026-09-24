@@ -562,7 +562,7 @@ export default function Home() {
      not finish on. ⚠️ `preparing` is passed rather than read there: this screen's descriptor has
      a section, My Lessons' does not, and only each screen knows which is its own. */
   const tourOnOffer = tourOfferOpen({ fit: tourFit, step: tourNow.step, acct, preparing });
-  useEffect(() => { if (tourOnOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOnOffer]);
+  // WALK-A-009: the offer is no longer spent on display — startTour spends it when she takes it.
   /* ★ AFTER THE TOUR, NOT BEFORE IT (founder, 2026-09-18: "after tour system asks 'check your
      setup?'"). The flag also waits while the tour is still ON OFFER — first run leaves her on My
      Lessons with the offer showing, and a visit to My Classes before she has taken or passed on it

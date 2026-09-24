@@ -361,7 +361,7 @@ export default function MyLessons() {
                                     acct: cachedAccount(), preparing });
   /* Spent when OFFERED, not when taken, and idempotent per session — so whichever of the two
      screens shows it first is the one that posts, and the other does not post again. */
-  useEffect(() => { if (tourOffer) spendTourOffer((p) => postJSON(p, {})); }, [tourOffer]);
+  // WALK-A-009: the offer is no longer spent on display — startTour spends it when she takes it.
   const sSlug = current ? subjectSlug(current.name) : "";
   const gSlug = gradeSlug(activeGrade);
   const key = sSlug && gSlug ? `${sSlug}/${gSlug}` : "";
