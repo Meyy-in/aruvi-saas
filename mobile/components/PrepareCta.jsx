@@ -46,13 +46,29 @@ import { useWebStyles } from "../theme/web";
 
 let seq = 0;
 
+/* HELD (WALK-A-070): the grey equivalent of a theme colour — the same luminance weights a
+   CSS grayscale(1) filter uses, so the phone's held bar matches the web's. */
+function greyOf(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ""));
+  if (!m) return "#8a8a8a";
+  const n = parseInt(m[1], 16);
+  const y = Math.round(0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255));
+  const h = y.toString(16).padStart(2, "0");
+  return `#${h}${h}${h}`;
+}
+
 export default function PrepareCta({ label, onPress, disabled = false, busy = false,
-                                     size = "primary", style }) {
+                                     held = false, size = "primary", style }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const gid = useRef(`pcta-${++seq}`).current;
   const [box, setBox] = useState(null);
-  const off = disabled || busy;
+  const off = disabled || busy || held;
+  /* HELD is disabled but NOT absent (founder, 2026-09-24): the whole identity stays — gradient,
+     spark, weight, inset — drawn in grey, no glow. The other disabled states still drop it. */
+  const drawn = !off || (held && !busy);
+  const c0 = held ? greyOf(t.clay) : t.clay;
+  const c1 = held ? greyOf(t.ochre) : t.ochre;
   // Each context keeps its own size; the identity below is shared. (The web's own division.)
   const boxStyle = size === "allocate" ? ws.pcta_box_allocate
     : size === "fr" ? ws.pcta_box_fr : ws.pcta_box_primary;
@@ -66,16 +82,16 @@ export default function PrepareCta({ label, onPress, disabled = false, busy = fa
           const { width, height } = e.nativeEvent.layout;
           setBox((b) => (b && b.width === width && b.height === height ? b : { width, height }));
         }}
-        style={[boxStyle, ws.pcta_clip, off && { backgroundColor: t.paper_sunk }]}>
-        {!off ? (
+        style={[boxStyle, ws.pcta_clip, off && !drawn && { backgroundColor: t.paper_sunk }]}>
+        {drawn ? (
           <>
             {box && box.width > 0 && box.height > 0 ? (
               <View style={StyleSheet.absoluteFill} pointerEvents="none">
                 <Svg width={box.width} height={box.height}>
                   <Defs>
                     <LinearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-                      <Stop offset="0" stopColor={t.clay} />
-                      <Stop offset="1" stopColor={t.ochre} />
+                      <Stop offset="0" stopColor={c0} />
+                      <Stop offset="1" stopColor={c1} />
                     </LinearGradient>
                   </Defs>
                   <Rect x="0" y="0" width={box.width} height={box.height} fill={`url(#${gid})`} />
@@ -91,10 +107,10 @@ export default function PrepareCta({ label, onPress, disabled = false, busy = fa
             /* The spark is suppressed while working so the spinner reads as the only signal —
                the web does the same (`:disabled::before { content: none }`). */
             <ActivityIndicator size="small" color={t.ink_soft} />
-          ) : !off ? (
+          ) : drawn ? (
             <Text style={[lbl, ws.pcta_ident, ws.pcta_spark]}>✦</Text>
           ) : null}
-          <Text style={[lbl, off ? { color: t.ink_soft } : ws.pcta_ident]}>{label}</Text>
+          <Text style={[lbl, drawn ? ws.pcta_ident : { color: t.ink_soft }]}>{label}</Text>
         </View>
       </Pressable>
     </View>

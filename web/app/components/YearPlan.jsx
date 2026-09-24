@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { API, annualBudgetPeriods, getJSON, suggestedPeriodsByChapter, pad, withUser } from "../lib/format";
+import { API, annualBudgetPeriods, bareChapterTitle, getJSON, suggestedPeriodsByChapter, pad, withUser } from "../lib/format";
 import { fetchPlans } from "../lib/plans";
 
 /* ───────── YearPlan — the whole teaching year for ONE subject·class, at a glance ─────────
@@ -160,7 +160,10 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onAlloc
       const sug = sugByCh[cn] ?? null;
       return {
         n: cn,
-        title: c.chapter_title || "",
+        // WALK-A-072: the NN tag beside the row already says which chapter this is, so a title
+        // arriving as "Chapter 8: Building Blocks…" said it twice. Stripped here, once, so the
+        // row AND the Word export read the same. The authored chapter_title is untouched.
+        title: bareChapterTitle(c.chapter_title),
         // Budgeted but unpublished — the API titles these "Book awaited" and flags them
         // (2026-08-06). They belong here: her year is 18 chapters whether or not the books
         // have shipped, and their periods are already held in the budget. They just can't

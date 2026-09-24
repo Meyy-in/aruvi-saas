@@ -64,6 +64,7 @@ from aruvi_core.report_competency import build_report as build_competency_report
 # startup — only the export endpoints would error, with a clear message.
 
 from . import data, config, legal
+from .report_names import report_filename, year_plan_filename
 
 app = FastAPI(title="Aruvi API", version="0.1.0")
 app.add_middleware(
@@ -3597,7 +3598,11 @@ def _export_plan(subject: str, grade: str, filename: str, kind: str,
         # One value for the whole response: three renderers must not disagree by a tick.
         now = datetime.now()
         cn = chapter.get("chapter_number")
-        base = f"grade-{grade}-{_safe_name(subject)}-ch{cn}"
+        # WALK-A-066: named by chapter NAME, founder's scheme — see api/report_names.py.
+        ctitle = chapter.get("chapter_title") or (view.get("chapter_title") if isinstance(view, dict) else "")
+        def _name(k):
+            return report_filename(k, answers, grade, subject, ctitle, ext, unit=unit,
+                                   chapter_number=cn)
         if kind == "lesson":
             if is_pdf:
                 from aruvi_core.export_lesson_pdf import export_lesson_plan_pdf as fn
@@ -3605,15 +3610,14 @@ def _export_plan(subject: str, grade: str, filename: str, kind: str,
                 from aruvi_core.export_docx import export_lesson_plan_docx as fn
             data = fn(view, competencies=comps, competency_spines=spines, plan_date=plan_date,
                       generated_at=now)
-            return _binary_response(data, f"lesson-plan-{base}.{ext}", mt, inline=inl)
+            return _binary_response(data, _name("lesson"), mt, inline=inl)
         if kind == "assessment":
             if is_pdf:
                 from aruvi_core.export_assessment_pdf import export_assessment_pdf as fn
             else:
                 from aruvi_core.export_docx import export_assessment_docx as fn
             data = fn(view, include_answers=answers, plan_date=plan_date, generated_at=now)
-            suffix = "-answers" if answers else ""
-            return _binary_response(data, f"assessment-{base}{suffix}.{ext}", mt, inline=inl)
+            return _binary_response(data, _name("assessment"), mt, inline=inl)
         if kind == "integrated":
             if is_pdf:
                 from aruvi_core.export_integrated_pdf import export_integrated_pdf as fn
@@ -3622,9 +3626,7 @@ def _export_plan(subject: str, grade: str, filename: str, kind: str,
             data = fn(view, include_answers=answers, unit_number=unit,
                       competencies=comps, competency_spines=spines, plan_date=plan_date,
                       generated_at=now)
-            u = f"-unit{unit}" if unit is not None else ""
-            suffix = "-answers" if answers else ""
-            return _binary_response(data, f"integrated-{base}{u}{suffix}.{ext}", mt, inline=inl)
+            return _binary_response(data, _name("integrated"), mt, inline=inl)
         raise HTTPException(status_code=404, detail=f"Unknown export kind: {kind}")
     except HTTPException:
         raise
@@ -3681,7 +3683,7 @@ def export_year_plan_docx_route(req: YearPlanExportRequest) -> StreamingResponse
         raise HTTPException(status_code=501, detail=f"DOCX export unavailable: {e}")
     try:
         docx_bytes = export_year_plan_docx(req.model_dump())
-        fname = f"year-plan-class-{_safe_name(req.grade)}-{_safe_name(req.subject)}.docx"
+        fname = year_plan_filename(req.grade, req.subject)   # WALK-A-066
         return _binary_response(docx_bytes, fname, _DOCX_MT)
     except HTTPException:
         raise

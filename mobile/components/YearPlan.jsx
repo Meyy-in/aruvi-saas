@@ -53,7 +53,7 @@ import { useEffect, useMemo, useState } from "react";
 import { View, Pressable } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
-import { annualBudgetPeriods, getJSON, largestRemainder, pad } from "@aruvi/shared/format";
+import { annualBudgetPeriods, bareChapterTitle, getJSON, largestRemainder, pad } from "@aruvi/shared/format";
 import { useRouter } from "expo-router";
 import { canPreview, downloadDocument, fetchDocument, yearPlanExport } from "../lib/download";
 import { fetchPlans } from "@aruvi/shared/plans";
@@ -158,7 +158,7 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
       const cn = c.chapter_number;
       return {
         n: cn,
-        title: c.chapter_title || "",
+        title: bareChapterTitle(c.chapter_title),   // WALK-A-072 — see web YearPlan
         /* Budgeted but unpublished — the API titles these "Book awaited" and flags them. They
            belong here: her year is 18 chapters whether or not the books have shipped, and their
            periods are already held in the budget. They just can't carry a plan, so the "not yet"

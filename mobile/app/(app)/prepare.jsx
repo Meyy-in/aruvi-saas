@@ -598,7 +598,7 @@ export default function Prepare() {
             ) : null}
 
             <View style={ws.prep_savebar}>
-              <PrepareCta size="primary" disabled={!chosen || samePlanHeld} busy={busy} onPress={onPrepareClick}
+              <PrepareCta size="primary" disabled={!chosen} held={samePlanHeld} busy={busy} onPress={onPrepareClick}
                 label={busy ? "Building the lesson…"
                   : chosenAlreadyPrepared ? "Prepare again →" : "Prepare the lesson →"} />
               {busy ? (

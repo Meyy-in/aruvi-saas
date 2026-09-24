@@ -29,7 +29,7 @@ import { View, Modal, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, P
   from "react-native";
 import { Text } from "./Text";
 import PrepareCta from "./PrepareCta";
-import { pretty, classNum, pad } from "@aruvi/shared/format";
+import { pretty, classNum, pad, bareChapterTitle } from "@aruvi/shared/format";
 import { readHistory } from "@aruvi/shared/sectionHistory";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTourAnchor, useTour, tourNext, tourBack, tourSkip,
@@ -192,7 +192,7 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
 }
 
 const scope = (c) => `${pretty(c.subjectSlug)} · Class ${classNum(c.grade)} · ${c.sectionTag}`;
-const chLabel = (p) => `${p.chapter_number ? `Ch. ${pad(p.chapter_number)}: ` : ""}${p.chapter_title}`;
+const chLabel = (p) => `${p.chapter_number ? `Ch. ${pad(p.chapter_number)}: ` : ""}${p.chapter_number ? bareChapterTitle(p.chapter_title) : p.chapter_title}`;
 
 /* One chapter row — "Ch. 05: Force and Pressure" as ONE sentence (founder, 2026-07-25), the
    number in pine before the colon, a light chevron as the tap affordance. */
@@ -213,7 +213,7 @@ function ChapterRow({ plan, onPress, year, tourRow }) {
       <View style={ws.ch_meta}>
         <Text style={ws.ch_name} numberOfLines={2}>
           {plan.chapter_number ? <Text style={ws.ch_no}>{`Ch. ${pad(plan.chapter_number)}: `}</Text> : null}
-          {plan.chapter_title}
+          {plan.chapter_number ? bareChapterTitle(plan.chapter_title) : plan.chapter_title}
         </Text>
         <Text style={ws.ch_go}>›</Text>
       </View>
@@ -399,7 +399,7 @@ export function HistorySheet({ target, plans, onClose }) {
                     the status pinned to the right end of that line. */}
                 <Text style={ws.ch_name} numberOfLines={2}>
                   <Text style={ws.ch_no}>Ch. {r.chapter_number ? pad(r.chapter_number) : "\u2014"}:</Text>
-                  {" "}{r.chapter_title}
+                  {" "}{bareChapterTitle(r.chapter_title)}
                 </Text>
                 <Text style={[ws.ch_pill, { backgroundColor: pillBg[st], color: pillInk[st] }]}>
                   {HISTORY_LABEL[st] || "Untracked"}

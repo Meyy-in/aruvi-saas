@@ -3431,6 +3431,19 @@ button.prepare-cta::before, .prepare-cta::before { content: "✦"; margin-right:
    assumes nothing happened and clicks again (which used to fire a second paid request).
    The star glyph is suppressed while working so the spinner reads as the only signal. */
 button.prepare-cta:disabled::before, .prepare-cta:disabled::before { content: none; margin-right: 0; }
+/* HELD — "you already have this plan at this length" (WALK-A-070, founder 2026-09-24: "not
+   totally grey it but … the previous bar to its grey equivalent"). Unlike the other disabled
+   states (no chapter yet, working), this button is not ABSENT — it is the same act, paused until
+   she changes the length. So it keeps its whole shape — gradient, spark, weight — drawn in grey:
+   the identical bar through a greyscale filter. No glow, no hover, and a not-allowed cursor. */
+button.prepare-cta.is-held:disabled, .prepare-cta.is-held:disabled {
+  background: linear-gradient(135deg, var(--clay) 0%, var(--ochre) 100%);
+  color: #fdf8ef; font-weight: 600; box-shadow: none;
+  filter: grayscale(1); opacity: 1; cursor: not-allowed;
+}
+button.prepare-cta.is-held:disabled::before, .prepare-cta.is-held:disabled::before {
+  content: "✦"; margin-right: 8px;
+}
 .prep-working { display: inline-flex; align-items: center; gap: 9px; }
 .prep-spin {
   width: 13px; height: 13px; flex: none; border-radius: 50%;

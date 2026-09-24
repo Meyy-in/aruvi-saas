@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { getJSON, pretty, pad, classNum, markPrepared, gradeSlug } from "../lib/format";
+import { getJSON, pretty, pad, classNum, markPrepared, gradeSlug, bareChapterTitle } from "../lib/format";
 import { pullSectionState, bindSectionChapter, unbindSection } from "../lib/sectionState";
 import { readHistory, recordHistory, hasHistory, pullSectionHistory } from "../lib/sectionHistory";
 import { cachedPlans, fetchPlans, fetchPlanView, invalidatePlans, notePlansYear } from "../lib/plans";
@@ -686,7 +686,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
                       .ch-meta-tx b had — and the title follows it in ink after the colon. */}
                   <span className="ch-meta">
                     <span className="ch-name" title={p.chapter_title}>
-                      <b className="ch-no">Ch. {pad(p.chapter_number)}:</b> {p.chapter_title}
+                      <b className="ch-no">Ch. {pad(p.chapter_number)}:</b> {bareChapterTitle(p.chapter_title)}
                     </span>
                     <span className="ch-go" aria-hidden="true">›</span>
                   </span>
@@ -722,7 +722,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
                         onClick={() => attachPriorChapter(c, sectionKey, p, yid)}>
                         <span className="ch-meta">
                           <span className="ch-name" title={p.chapter_title}>
-                            <b className="ch-no">Ch. {pad(p.chapter_number)}:</b> {p.chapter_title}
+                            <b className="ch-no">Ch. {pad(p.chapter_number)}:</b> {bareChapterTitle(p.chapter_title)}
                           </span>
                           <span className="ch-go" aria-hidden="true">›</span>
                         </span>
@@ -755,7 +755,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   const untrackModal = untrackFor ? (() => {
     const { c, sectionKey, plan } = untrackFor;
     // Same chapter phrasing as the "+" picker: "Ch. 05: Force and Pressure".
-    const chLabel = `${plan.chapter_number ? `Ch. ${pad(plan.chapter_number)}: ` : ""}${plan.chapter_title}`;
+    const chLabel = `${plan.chapter_number ? `Ch. ${pad(plan.chapter_number)}: ` : ""}${plan.chapter_number ? bareChapterTitle(plan.chapter_title) : plan.chapter_title}`;
     return (
       <div className="ap-overlay" onClick={() => setUntrackFor(null)}>
         <div className="ap-modal ap-confirm" onClick={(e) => e.stopPropagation()}>
@@ -823,7 +823,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
                       status pill still pinned to the right end of that line. */}
                   <div className="ch-meta">
                     <span className="ch-name" title={r.chapter_title}>
-                      <b className="ch-no">Ch. {r.chapter_number ? pad(r.chapter_number) : "—"}:</b> {r.chapter_title}
+                      <b className="ch-no">Ch. {r.chapter_number ? pad(r.chapter_number) : "—"}:</b> {bareChapterTitle(r.chapter_title)}
                     </span>
                     <span className={`ch-pill ch-${st}`}>{HISTORY_LABEL[st] || "Untracked"}</span>
                   </div>

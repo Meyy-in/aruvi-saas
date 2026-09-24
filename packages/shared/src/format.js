@@ -769,3 +769,14 @@ export async function planNameFor(subject, grade, chapterNumber, rows) {
     return (d && typeof d.filename === "string") ? d.filename : "";
   } catch { return ""; }
 }
+
+
+/* ── a chapter title without its own "Chapter N:" prefix (WALK-A-072, 2026-09-24) ──────
+ * Wherever the NUMBER is already shown beside the title (a Year Plan row's NN tag, a picker's
+ * "Ch. 08:"), a title authored as "Chapter 8: Building Blocks…" said it twice. Display-time
+ * only — chapter_title stays the authored string. Same rule as the wheels' wheelChapterTitle
+ * (WALK-A-006); a title that is ONLY "Chapter 3" is left whole rather than emptied. */
+export function bareChapterTitle(t) {
+  const s = String(t || "");
+  return s.replace(/^\s*chapter\s+\d+\s*[:.\-\u2013\u2014]\s*/i, "") || s;
+}

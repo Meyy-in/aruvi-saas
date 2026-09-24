@@ -666,7 +666,8 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
           {!busy && error ? <p className="prep-floor" role="alert">{error}</p> : null}
 
           <div className="savebar savebar-prep">
-            <button className="primary prepare-cta" disabled={!chosen || busy || samePlanHeld} onClick={onPrepareClick}>
+            <button className={`primary prepare-cta${samePlanHeld && !busy ? " is-held" : ""}`}
+                    disabled={!chosen || busy || samePlanHeld} onClick={onPrepareClick}>
               {busy
                 ? <span className="prep-working"><span className="prep-spin" aria-hidden="true" />
                     Building the lesson…</span>
