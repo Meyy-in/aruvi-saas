@@ -4917,6 +4917,12 @@ select option { background-color: var(--field-bg); color: var(--ink); }
    prose beneath it is unreadable on exactly the narrow screen it matters on. */
 /* The Reports window says a failure in the window, on the Year Plan export's pattern
    (WALK-A-064's family, 2026-09-24) — clay ink on the house surface, above the buttons. */
+/* The no-class variant of the prepare bar (WALK-A-068): a sentence, not a call to action — she
+   is being told where her lessons stand, not invited to do something here. No CTA, so no button
+   colour; the house's quiet ink at the same measure as the bar it replaces. */
+.mlp-allocate-noclass { display: block; }
+.mlp-allocate-noclass .mlp-allocate-q { display: block; color: var(--ink-soft); line-height: 1.5; max-width: 46ch; }
+
 .rpt-err { margin: 10px 2px 0; font-family: var(--f-body); font-size: 12px; line-height: 1.45; color: var(--clay); }
 
 .yp-export-msg { margin: 8px 2px 0; font-family: var(--f-body); font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); }

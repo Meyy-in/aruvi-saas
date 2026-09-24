@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { API, getJSON, pad, pretty, userKey, withUser, gradeSlug,
-         fetchSupportedGrades, heldClassesFor } from "../lib/format";
+/* `fetchSupportedGrades` / `heldClassesFor` left with WALK-A-068: the wheel no longer asks the
+   entitlement which classes she holds — it asks her profile and her lessons. `subjectSlug` and
+   `classNum` are defined locally below and are used by the new list. */
+import { API, getJSON, pad, pretty, userKey, withUser, gradeSlug } from "../lib/format";
 import { pullSectionState, readLocalSection } from "../lib/sectionState";
 import { YearStamp } from "./MyPlans";
 import { cachedPlans, fetchPlans, invalidatePlans, notePlansYear, fetchPlanView } from "../lib/plans";
@@ -322,7 +324,73 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
                                         heldScopes, onTourArchivable }) {
   const LS_SUBJECT = userKey("mylessons_subject");
   const LS_CLASS = userKey("mylessons_class");
-  const subjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
+  /* ⚠️ THIS BLOCK SITS ABOVE `subjects` ON PURPOSE (2026-09-24). `subjects` reads
+     `lessonClasses` in both its factory and its dependency array, and both run DURING render —
+     so with the declaration below it, the first render of this component threw
+     "Cannot access 'lessonClasses' before initialization" and My Lessons would not open at all.
+     It looked intermittent only because a reload lands on My Classes, where this component is
+     never mounted. Same shape as the TDZ crash 05.14 records on the phone; `mobile/check-tdz.mjs`
+     exists for exactly this. Keep declarations above their readers here. */
+  /* ★ A SUBJECT SHE OWNS BUT NO LONGER TEACHES KEEPS ITS LESSONS (founder, 2026-09-17: "when a
+     subscribed subject is deleted by removing all classes, the lessons in my lessons … goes too.
+     both should remain"). That promise stands. What changed is WHICH CLASSES the wheel then
+     offers.
+     ★ AMENDED (WALK-A-068, founder 2026-09-22). It used to offer THE CLASSES SHE HOLDS — her
+     paid stages, intersected with what Meyy has content for. Walked at 05.22 and 05.14, that
+     proved too wide in two visible ways: My Lessons invited her to plan for 6, 7 and 8 while My
+     Classes said "No classes set up yet", and the Prepare screen, having no profile row to read a
+     budget from, froze its suggestion at the flat DEFAULT_PERIODS of 12. Two screens, two
+     different answers about the same teacher.
+     ★ SO THE LIST IS NOW: the classes in her PROFILE, plus the classes SHE HAS LESSONS FOR —
+     and nothing else. Every class on it is one she either teaches or has prepared work sitting
+     on, which is the smallest list that keeps the 2026-09-17 promise. A subject with neither
+     leaves the subject wheel entirely (see `subjects` below): there is nothing of hers behind it.
+     The source is /plans-prepared, whose keys are "{subjectSlug}/{gradeSlug}/{filename}", so one
+     call answers it for every subject at once — no per-subject probing, and no entitlement
+     lookup, which is what `ownedClasses` needed and why it has gone. */
+  const [lessonClasses, setLessonClasses] = useState(null);   // { [subjectSlug]: ["III", …] }, null = not known yet
+  useEffect(() => {
+    let live = true;
+    getJSON("/plans-prepared")
+      .then((d) => {
+        if (!live) return;
+        const by = {};
+        Object.keys((d && d.prepared) || {}).forEach((k) => {
+          const [sub, gr] = String(k).split("/");
+          if (!sub || !gr) return;
+          const label = gr.toUpperCase();                     // gradeSlug is a plain lowercase
+          (by[sub] = by[sub] || []).push(label);
+        });
+        Object.keys(by).forEach((k) => { by[k] = Array.from(new Set(by[k])); });
+        setLessonClasses(by);
+      })
+      /* Unreachable is NOT "she has none" (the WALK-A-051 rule). Leaving it null keeps the wheel
+         on her profile alone and drops no subject, rather than announcing an emptier account than
+         she has. */
+      .catch(() => { if (live) setLessonClasses(null); });
+    return () => { live = false; };
+    /* ⚠️ DEPS ARE PROPS ONLY, DELIBERATELY. The obvious trigger for "re-read after a prepare" is
+       `plansNonce` — but that is declared ~185 lines below, and a dep array is evaluated DURING
+       render, so naming it here would sit in the temporal dead zone and throw on first paint.
+       The file already states that rule in plansNonce's own comment; this is the second time it
+       has bitten (see the note above `lessonClasses`). `preparing` is a PROP and answers the same
+       question: it goes non-null while a lesson is being built and back to null when it lands,
+       and that landing is exactly when a new subject·class pair can appear. */
+  }, [preparing, yearInfo && yearInfo.current_year]);
+
+  /* ★ A SUBJECT WITH NO CLASSES AND NO LESSONS IS NOT OFFERED (WALK-A-068, founder 2026-09-22:
+     "where no lessons exist, the subject in question will not be in the subject drop down
+     anyway"). There is nothing of hers behind it — no class to scope to and no shelf to read —
+     so listing it can only lead to an empty pane. While `lessonClasses` is still null (the call
+     has not answered, or failed) every subject stays, because "we do not know yet" must never
+     render as "you have none"; the list narrows once the answer is in. */
+  const allSubjects = useMemo(() => (readiness && readiness.subjects) || [], [readiness]);
+  const subjects = useMemo(() => {
+    if (!lessonClasses) return allSubjects;
+    return allSubjects.filter((s) => ((s.grades || []).length > 0)
+      || ((lessonClasses[subjectSlug(s.name)] || []).length > 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allSubjects, lessonClasses]);
 
   // Subject in focus (by display name); class in focus (uppercase Roman). RESTORE the last choice
   // from localStorage (see LS_* above); fall back to the first taught subject/class on first ever
@@ -408,51 +476,23 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
   const current = subjects.find((s) => s.name === activeSubject) || subjects[0] || null;
   const grades = useMemo(() => (current && current.grades) || [], [current]);   // HER enrolled classes
 
-  /* ★ A SUBJECT SHE OWNS BUT NO LONGER TEACHES KEEPS ITS LESSONS (founder, 2026-09-17: "when a
-     subscribed subject is deleted by removing all classes, the lessons in my lessons … goes too.
-     both should remain"). Since the same day a paid subject SURVIVES losing its last class
-     (`subjectSurvivesEmpty`) — but surviving in the profile is only half of it: this wheel is
-     built from her enrolled classes, so a subject with none left would list itself and then have
-     no class to scope to, and her prepared lessons would still be out of reach.
-     So for such a subject the Class wheel offers THE CLASSES SHE HOLDS — her paid stages,
-     intersected with what Meyy has content for. It is the smallest honest list: every class on it
-     is one she has bought, and the shelf behind it is the one her lessons are on.
-     ⚠️ Only for a subject with NO classes. A teacher who still teaches one is offered exactly
-     what she teaches, which is the 2026-07-06 rule and is untouched.
-     ⚠️ Nothing is asked while she holds nothing: an unresolved entitlement would otherwise cache
-     an empty answer for the session and the wheel would stay empty after it arrived. */
-  const [ownedClasses, setOwnedClasses] = useState({});   // { [subject name]: ["III", …] }
-  useEffect(() => {
-    if (!heldScopes || !heldScopes.length) return undefined;
-    const need = subjects.filter((s) => !((s.grades || []).length)
-      && ownedClasses[s.name] === undefined);
-    if (!need.length) return undefined;
-    let live = true;
-    Promise.all(need.map((s) => fetchSupportedGrades(s.name)
-      .then((gs) => [s.name, heldClassesFor(heldScopes, s.name, gs)])
-      .catch(() => [s.name, []])))
-      .then((pairs) => {
-        if (!live) return;
-        setOwnedClasses((m) => {
-          const next = { ...m };
-          pairs.forEach(([name, list]) => { next[name] = list; });
-          return next;
-        });
-      });
-    return () => { live = false; };
-  }, [subjects, heldScopes, ownedClasses]);
-
   /* The classes the wheels offer for ONE subject — hers, or the ones she holds when she teaches
      none. One definition, used by the wheel AND by the validation effect below, or the two
      disagree about which class is valid and she is snapped off the one she just picked. */
   const classesOfSubject = (s) => {
-    const gs = (s && s.grades) || [];
-    if (gs.length) return gs.map((g) => g.grade);
-    return (s && ownedClasses[s.name]) || [];
+    const mine = ((s && s.grades) || []).map((g) => g.grade);
+    const withLessons = (lessonClasses && lessonClasses[subjectSlug((s && s.name) || "")]) || [];
+    const all = Array.from(new Set([...mine, ...withLessons]));
+    // Class order, not alphabetical: "IX" must not sort before "VI".
+    return all.sort((a, b) => (classNum(a) || 0) - (classNum(b) || 0));
   };
+  /* Is this class one she actually TEACHES, or only one she has lessons sitting on? The two are
+     offered together on the wheel — her lessons must stay reachable — but they afford different
+     things, and only the profile grants the right to prepare more (WALK-A-068). */
+  const isTaughtClass = (s, g) => ((s && s.grades) || []).some((x) => x.grade === g);
   const wheelGrades = useMemo(() => classesOfSubject(current),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [current, grades, ownedClasses]);
+    [current, grades, lessonClasses]);
   // The Class wheel is RESTRICTED to the classes she has enrolled for this subject in her profile
   // (2026-07-06). It never offers a class she hasn't set up — a class shows here only once she adds
   // it (via the "add another class" flow / teaching profile). Every offered class therefore has
@@ -490,7 +530,7 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
       if (g0) lsSet(LS_CLASS, g0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subjects, activeSubject, activeGrade, ownedClasses]);
+  }, [subjects, activeSubject, activeGrade, lessonClasses]);
 
   /* ★ REPORT THE SETTLED SCOPE UP (founder, 2026-08-27) — the second moment of the
    * "check your set-up?" window. A subscriber who has just added a subject or a class meets the
@@ -881,12 +921,42 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
   /* LAPSED (§2.5 as amended, founder 2026-08-24): My Lessons becomes the reading room —
      open, export, print. The prepare bar disappears entirely; renewal is offered in
      Settings, never pushed here. */
-  const prepareCTA = lapsed ? null : (
+  /* ★ AND NOT FOR A CLASS SHE NO LONGER TEACHES (WALK-A-068, founder 2026-09-22): "she now must
+     not have access to 'prepare a new lesson' as she has consciously deleted all the classes.
+     Below the lessons under the pair, the reminder to add classes … must pop up."
+     The wheel deliberately offers two kinds of class — the ones she teaches and the ones she
+     merely has lessons on — because her work must stay reachable. They afford different things.
+     Preparing is a teaching act: it needs a section to teach, periods a week and an annual budget,
+     all of which live on the PROFILE row. Without one there is nothing to prepare against, which
+     is also why the Prepare screen froze its suggestion at the flat 12 when it was reached this
+     way — a defect that now cannot occur, because this is the only door to it. */
+  const taughtHere = !!current && isTaughtClass(current, activeGrade);
+  const prepareCTA = lapsed ? null : taughtHere ? (
     <div className="mlp-allocate">
       <span className="mlp-allocate-q">Need a chapter you don&rsquo;t have yet?</span>
       <button className="mlp-allocate-btn prepare-cta" onClick={() => onAllocate && onAllocate(sSlug, gSlug)}>
         Prepare a new lesson →
       </button>
+    </div>
+  ) : (
+    /* ★ THE WORDING IS THE FOUNDER'S (2026-09-24), and it corrects two things in my first draft.
+       (1) It named the class — "You teach no Class 6 for Science" — as though one particular
+       class had gone missing. What is actually absent is any statement of what she teaches, so
+       the sentence now speaks about the PROFILE, which is the only place Meyy can learn it: "such
+       knowing by system cannot be through an independent My Lessons but rather a teaching profile
+       set up".
+       (2) It pressed her to TEACH. A teacher may use Meyy for lesson plans alone and never track a
+       section — the founder's own ruling at 05.14 — so telling her she "teaches no class" reads
+       as a correction of a choice she is entitled to make. It now states a fact about the
+       profile, confirms her work is safe, and says what adding classes would let her do.
+       Her lessons are here and stay here; the "+" window is where a class is added, never the
+       read-only profile under the gear. */
+    <div className="mlp-allocate mlp-allocate-noclass">
+      <span className="mlp-allocate-q">
+        Your teaching profile does not specify the classes you teach. The lessons already generated
+        are kept. To generate new lessons, add the classes you teach under Class in the Add window
+        from the bottom tool bar.
+      </span>
     </div>
   );
 
