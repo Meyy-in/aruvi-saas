@@ -584,9 +584,14 @@ export default function Home() {
     }).then(({ status, actual }) => {
       if (status === "unverified") {
         if (attempt < 40) {
+          /* WALK-A-085: the retry is HERS — stamped with the teacher it was armed for, and it
+             stands down if anyone else is signed in when it fires (page.jsx does not remount on
+             sign-out, so this closure would otherwise send her profile under the next teacher). */
+          const owner = getUser() || "";
           const again = () => {
             window.removeEventListener("online", again);
             if (retryTimer.current) { clearTimeout(retryTimer.current); retryTimer.current = null; }
+            if (!owner || (getUser() || "") !== owner) return;
             verifyReadiness(subs, attempt + 1);
           };
           window.addEventListener("online", again);
@@ -953,6 +958,8 @@ export default function Home() {
   useEffect(() => { onSessionRefused(() => { if (signOutRef.current) signOutRef.current(); }); }, []);
 
   const onSignOut = () => {
+    // WALK-A-085: a pending profile's retry never outlives the session that armed it.
+    if (retryTimer.current) { clearTimeout(retryTimer.current); retryTimer.current = null; }
     setErased(false);
     clearUser(); setUserState("");
     signOutAuth();   // the Supabase session, when there is one (lib/auth.js)

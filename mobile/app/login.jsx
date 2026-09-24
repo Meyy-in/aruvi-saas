@@ -258,12 +258,14 @@ export default function Login() {
     }
     let uid = num;
     let trialLeft = null;
+    let setUp = null;          // WALK-A-086 — see the web's Login.jsx
     try {
       const r = await fetch(`${API}/onboarding/verified`, { method: "POST", headers: authHeaders(num) });
       if (r.ok) {
         const d = await r.json();
         if (d && d.user_id) uid = d.user_id;
         if (d && typeof d.trial_remaining === "number") trialLeft = d.trial_remaining;
+        if (d && typeof d.set_up === "boolean") setUp = d.set_up;
       }
     } catch {}
     setOtpBusy(false);
@@ -275,6 +277,13 @@ export default function Login() {
        with a sentence saying why, instead of into first run to meet a paywall on its first
        lesson. Create path only — a returning teacher is not choosing a plan. */
     if (flow === "create" && trialLeft === 0) {
+      enter(uid, { pathname: "/front-subscribe", params: { trialUsed: "1" } }); return;
+    }
+    /* WALK-A-086 (founder, 2026-09-24): a RETURNING sign-in with no free chapters left and
+       nothing ever set up goes to Subscribe, told why — not through first run to a paywall at its
+       last step. `set_up === false` only, so an older API changes nothing; a teacher with lessons
+       or a profile goes into her app as before. */
+    if (trialLeft === 0 && setUp === false) {
       enter(uid, { pathname: "/front-subscribe", params: { trialUsed: "1" } }); return;
     }
     enter(uid);

@@ -177,12 +177,14 @@ export default function Login({ onEnter }) {
     }
     let uid = num;
     let trialLeft = null;
+    let setUp = null;          // WALK-A-086: has this account ever become a working teacher?
     try {
       const r = await fetch(`${API}/onboarding/verified`, { method: "POST", headers: authHeaders(num) });
       if (r.ok) {
         const d = await r.json();
         if (d && d.user_id) uid = d.user_id;
         if (d && typeof d.trial_remaining === "number") trialLeft = d.trial_remaining;
+        if (d && typeof d.set_up === "boolean") setUp = d.set_up;
       }
     } catch {}
     setOtpBusy(false);
@@ -190,6 +192,13 @@ export default function Login({ onEnter }) {
     /* ★ A NUMBER WHOSE FREE TRIAL IS ALREADY USED (the trial ledger, 2026-09-18) goes to
        Subscribe, told why — not into first run to meet a paywall on its first lesson. */
     else if (flow === "create" && trialLeft === 0) { setMobile(uid); setTrialUsed(true); setScreen("subscribe"); }
+    /* ★ AND ON A RETURNING SIGN-IN, WHEN NOTHING WAS EVER SET UP (WALK-A-086, founder 2026-09-24).
+       A number with no free chapters left that never became a working teacher — erased and
+       rejoined, or backed out of the subscribe wizard before Pay once its trial was spent — used
+       to walk the whole first run and meet the paywall at its last step. `set_up === false`
+       only: an older API that does not send it changes nothing. A teacher with lessons or a
+       profile is set up, and goes into her app exactly as before. */
+    else if (trialLeft === 0 && setUp === false) { setMobile(uid); setTrialUsed(true); setScreen("subscribe"); }
     else enter(uid);
   };
 

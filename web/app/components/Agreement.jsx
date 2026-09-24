@@ -261,6 +261,10 @@ export default function Agreement({ mode = "read", userId = "", onAccepted, onBa
           {/* Said where the button is, so a teacher staring at a dead button knows why —
               the alternative is a disabled control with no explanation, which reads as
               a broken page rather than an unfinished form. */}
+          {/* WALK-A-084 (founder, 2026-09-24, wording his): say the boxes are jump links. */}
+          {!allTicked && (
+            <p className="lgl-need lgl-jumphint">Tap a box to go straight to that point.</p>
+          )}
           {!allTicked && (
             <p className="lgl-need">Confirm each of the five points and accept the
               full agreement to continue.</p>

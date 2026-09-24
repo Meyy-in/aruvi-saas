@@ -55,7 +55,7 @@
  * which is the exact defect My Classes' header already warns about.
  */
 
-import { API, getJSON, userKey, withUser } from "./format.js";
+import { API, getJSON, getUser, userKey, withUser } from "./format.js";
 import { verifiedWrite, readinessFingerprint } from "./verify.js";
 import { storage } from "./storage.js";
 
@@ -185,6 +185,9 @@ export function invalidateReadiness() {
 export function clearReadiness() {
   mem = null;
   inflight = null;
+  /* WALK-A-085: a pending profile's retry must not outlive her session. Its closure holds HER
+     subjects; left running, the next attempt would POST them under whoever signs in next. */
+  cancelProfileRetry();
 }
 
 /* ───────── THE ONE WAY A PROFILE IS WRITTEN (F1, Track D step 5d, 2026-09-15) ─────────
@@ -252,9 +255,21 @@ function writePending(subjects) {
   } catch {}
 }
 let retryTimer = null;
+/* ★ WHOSE RETRY IS IT? (WALK-A-085, 2026-09-24) The timer is stamped with the teacher it was
+   armed for and fires only for her — belt and braces beside clearReadiness() cancelling it,
+   because a sign-out that skipped the sweep must still never send one teacher's profile under
+   another's sign-in (the WALK-A-080 rule for section marks, applied here). */
 function scheduleRetry(subjects, attempt) {
   if (attempt >= 40 || retryTimer) return;
-  retryTimer = setTimeout(() => { retryTimer = null; saveReadiness(subjects, attempt + 1); }, 15000);
+  const owner = getUser() || "";
+  retryTimer = setTimeout(() => {
+    retryTimer = null;
+    if (!owner || (getUser() || "") !== owner) return;   // she has gone; it is not ours to send
+    saveReadiness(subjects, attempt + 1);
+  }, 15000);
+}
+export function cancelProfileRetry() {
+  if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 }
 
 export async function saveReadiness(subjects, attempt = 0) {

@@ -2539,7 +2539,30 @@ def onboarding_verified(identity: tuple = Depends(_current_identity)) -> Dict[st
     remaining = (max(0, config.TRIAL_CHAPTER_CAP - len(ent.trial_chapters or []))
                  if ent.status == "trial" else None)
     return {"status": "registered", "tenant_id": tenant_id, "user_id": user_id,
-            "trial_remaining": remaining}
+            "trial_remaining": remaining, "set_up": _has_set_up(tenant_id, user_id, ent)}
+
+
+def _has_set_up(tenant_id: str, user_id: str, ent) -> bool:
+    """WALK-A-086 (founder, 2026-09-24): has this account ever become a working teacher — a
+    teaching profile, a prepared lesson, or a subscription that is not the trial? The front door
+    reads it beside `trial_remaining`: a RETURNING sign-in with no free chapters left and nothing
+    set up (an erased-and-rejoined number, or one that backed out of the subscribe wizard before
+    Pay after its trial was spent) goes straight to Subscribe with the reason, instead of walking
+    the whole first run to meet the paywall at its last step. Unlike `_never_activated`, a signed
+    agreement does NOT count: signing it is a step of the wizard she abandoned.
+    When unsure → True, i.e. the old behaviour (into the app)."""
+    try:
+        if ent is not None and ent.status not in ("trial", None, ""):
+            return True
+        prof = readiness_repo.load_profile(tenant_id, user_id)
+        if prof and (prof.get("subjects") or []):
+            return True
+        year = _resolve_year(tenant_id, user_id)
+        if prepared_plans_repo.load_all(tenant_id, user_id, year):
+            return True
+        return False
+    except Exception:   # noqa: BLE001
+        return True
 
 
 _STAGE_GRADES = {"preparatory": ["iii", "iv", "v"], "middle": ["vi", "vii", "viii"],

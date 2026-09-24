@@ -40,7 +40,7 @@
  * "Message sent", which is a STATE and not the name of a screen.
  */
 import { useEffect, useRef, useState } from "react";
-import { View, ScrollView, Pressable, Keyboard } from "react-native";
+import { View, ScrollView, Pressable, Keyboard, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import Svg, { Path, Circle } from "react-native-svg";
 import { Text, TextInput } from "../../../components/Text";
@@ -163,10 +163,22 @@ export default function Support() {
       });
     } catch {}
   };
+  /* ★ ANDROID NEEDS THE ROOM MADE FOR IT (WALK-A-044, re-walk FAIL 2026-09-24 on the emulator:
+     the box still hid behind the keyboard). `automaticallyAdjustKeyboardInsets` is iOS-only, and
+     under edge-to-edge Android does not shrink the window — so the scroller had NO range past the
+     keys and `toMsg` could not scroll the box above them. The same answer WALK-A-053 gave the
+     delete block (settings/index.jsx): pad the content by the keypad's MEASURED height while it is
+     up, on Android only (iOS already has the inset; padding it too doubles the gap). */
+  const [kbH, setKbH] = useState(0);
   useEffect(() => {
-    const sub = Keyboard.addListener("keyboardDidShow",
-      () => { if (msgFocused.current) { setTimeout(toMsg, 50); setTimeout(toMsg, 260); } });
-    return () => sub.remove();
+    const sub = Keyboard.addListener("keyboardDidShow", (e) => {
+      if (Platform.OS === "android") {
+        setKbH(Math.round((e && e.endCoordinates && e.endCoordinates.height) || 320));
+      }
+      if (msgFocused.current) { setTimeout(toMsg, 50); setTimeout(toMsg, 260); setTimeout(toMsg, 420); }
+    });
+    const hid = Keyboard.addListener("keyboardDidHide", () => setKbH(0));
+    return () => { sub.remove(); hid.remove(); };
   }, []);
 
   useEffect(() => {
@@ -250,7 +262,8 @@ export default function Support() {
        `keyboardVerticalOffset` and starts guessing. If this ever stops working on a future SDK,
        the KAV wrap is the fallback, not the first choice. */
     <View ref={wrapRef} collapsable={false} style={{ flex: 1 }}>
-    <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, { paddingTop: 12 }]}
+    <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, { paddingTop: 12 },
+                              Platform.OS === "android" && kbH ? { paddingBottom: kbH + 24 } : null]}
       onScroll={(e) => { offsetY.current = e.nativeEvent.contentOffset.y; }} scrollEventThrottle={16}
       keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* 1 · the fast door first */}
