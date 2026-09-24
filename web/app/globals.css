@@ -4923,6 +4923,12 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 .mlp-allocate-noclass { display: block; }
 .mlp-allocate-noclass .mlp-allocate-q { display: block; color: var(--ink-soft); line-height: 1.5; max-width: 46ch; }
 
+/* WALK-A-069: an invisible, very short-lived sheet over the whole app while a prepare hands off
+   to its destination. It exists to catch ONE stray click — the second tap of a double-tap, landing
+   on a screen that replaced the button mid-press — so it is transparent, takes no pointer events
+   away from anything for longer than ~320ms, and sits above every other layer for that moment. */
+.handoff-shield { position: fixed; inset: 0; z-index: 9999; background: transparent; cursor: default; }
+
 .rpt-err { margin: 10px 2px 0; font-family: var(--f-body); font-size: 12px; line-height: 1.45; color: var(--clay); }
 
 .yp-export-msg { margin: 8px 2px 0; font-family: var(--f-body); font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); }

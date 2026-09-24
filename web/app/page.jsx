@@ -820,6 +820,19 @@ export default function Home() {
   // at all for five seconds, which is worse than either screen.
   const onPreparing = (desc) => {
     if (!desc) return false;
+    /* ★ SWALLOW THE SECOND TAP OF A DOUBLE-TAP (WALK-A-069, founder 2026-09-22). The prepare
+       itself cannot fire twice — the CTA disables and an inFlight ref fences it — but this
+       handoff navigates IN THE SAME TICK, so PrepareLesson unmounts instantly and the second
+       click of a fast double-tap arrives on a screen that was not there when she started
+       pressing. It hits whatever the freshly painted list has put under her finger, and she
+       lands in a lesson she never chose. The guards protected the ACTION; nothing protected the
+       CLICK TARGET across the handoff.
+       So the shield belongs on the DESTINATION, and it is one element here rather than a rule
+       in every card: both landings (My Lessons and, on the section path, My Classes) are covered
+       at once, and nothing in either list needs to know about it. Deliberately NOT a delayed
+       navigation — that only moves the window in which a stray click can land, and spends the
+       immediacy the 2026-08-06 handoff exists for. */
+    setHandoffShield(true);
     setGenerateEntry(null);
     setPreparingCard(desc);
     if (desc.subject) setSubject(desc.subject);
@@ -829,6 +842,16 @@ export default function Home() {
     setEditFlow(prepareReturn ? null : "lessonplans"); setTab("myplans");
     return true;
   };
+  /* One short-lived transparent layer over the app, ~320ms — a frame or two plus the human
+     double-click interval. It is cleared by the effect below on a timer that ALWAYS runs, so a
+     failed prepare or an unmount can never strand the app behind an invisible sheet. */
+  const [handoffShield, setHandoffShield] = useState(false);
+  useEffect(() => {
+    if (!handoffShield) return undefined;
+    const t = setTimeout(() => setHandoffShield(false), 320);
+    return () => clearTimeout(t);
+  }, [handoffShield]);
+
   // The serve failed. Do NOT simply pull the card: she is watching it, and a card that
   // vanishes silently reads as "I mis-tapped" (ARV-D-087 — the founder met exactly this on the
   // phone: "something seemed to flash for a micro sec but nothing readable"). Keep it, mark it
@@ -1729,6 +1752,12 @@ export default function Home() {
             </button>
           </div>
       </nav>
+
+      {/* ★ The handoff shield (WALK-A-069) — see onPreparing. Invisible, ~320ms, over everything,
+          so the second tap of a double-tap on "Prepare the lesson" cannot land on whichever card
+          the newly painted screen has put under her finger. Rendered LAST and above the tour, so
+          nothing can sit on top of it during its brief life. */}
+      {handoffShield && <div className="handoff-shield" aria-hidden="true" />}
 
       {/* First-run guided tour overlay — 17 guide-driven steps ("N of 17", Back on every one).
           Skip closes it for this session. */}

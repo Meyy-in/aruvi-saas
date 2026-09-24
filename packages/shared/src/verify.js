@@ -115,6 +115,15 @@ export function sectionStateMatches(states, sectionKey, want) {
   if (!want || want.chapter === null) return !row || !row.chapter;
   if (!row || row.chapter !== want.chapter) return false;
   if (typeof want.done === "boolean" && !!row.done !== want.done) return false;
+  /* ★ AND THE POINTER (WALK-A-080, 2026-09-24). Without it this check confirmed a mark-complete by
+     looking at every field the act did NOT change. Normalised because the two sides spell unit 0
+     differently: setUnitPointer stores it as NO key, the server as unit_index null — and a strict
+     compare would call that a mismatch and fight a write that landed perfectly. Only compared when
+     the caller states a unit, so older callers are untouched. */
+  if (want.unit !== undefined) {
+    const n = (v) => (v === null || v === undefined || v === "" ? 0 : Number(v));
+    if (n(row.unit_index) !== n(want.unit)) return false;
+  }
   return true;
 }
 

@@ -1629,8 +1629,8 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
 
             {open && !(s.grades || []).length && (
               <p className="fr-hint">You teach no class of {s.name} at the moment. Its lessons are
-                kept, and it stays here for as long as you subscribe to it — add a class under
-                Class in the &ldquo;+&rdquo; window to teach it again.</p>
+                kept, and it stays here for as long as you subscribe to it. To teach it again, add
+                a class under Class in the Add window from the bottom tool bar.</p>
             )}
 
             {open && (s.grades || []).map((g, gi) => {

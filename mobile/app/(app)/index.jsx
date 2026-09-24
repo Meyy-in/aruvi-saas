@@ -668,7 +668,7 @@ export default function Home() {
         ) : st.err ? (
           <Text style={[type.body, { color: t.danger, marginTop: 18 }]}>{st.err}</Text>
         ) : st.classes.length === 0 ? (
-          <Text style={[type.body, { color: t.ink_soft, marginTop: 14 }]}>No classes set up yet. Set up your teaching profile from the settings gear above to start planning.</Text>
+          <Text style={[type.body, { color: t.ink_soft, marginTop: 14 }]}>No classes set up yet. To start planning, add the classes you teach under Class in the Add window from the bottom tool bar.</Text>
         ) : (
           /* Banded (>1 subject) or the plain list she has always had. The CARD itself is one
              renderer either way — `card` — so the two paths can never drift apart. */

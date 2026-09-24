@@ -55,7 +55,7 @@ import { View, ScrollView, Pressable, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
-  annualBudgetPeriods, classNum, getJSON, largestRemainder, pad,
+  annualBudgetPeriods, classNum, genonPlanFilename, getJSON, largestRemainder, pad,
   postJSON, pretty,
 } from "@aruvi/shared/format";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
@@ -92,6 +92,7 @@ export default function Prepare() {
   const [genonChs, setGenonChs] = useState([]);
   const [canonMinutes, setCanonMinutes] = useState({});
   const [canonPeriods, setCanonPeriods] = useState({});
+  const [planSuffix, setPlanSuffix] = useState({});   // WALK-A-070 — see web PrepareLesson
   const [syllabusW, setSyllabusW] = useState(null);
   const [trialInfo, setTrialInfo] = useState(() => entitlementState().ent);
   const [busy, setBusy] = useState(false);
@@ -148,8 +149,9 @@ export default function Prepare() {
         setGenonChs(d.chapters || []);
         setCanonMinutes(d.canonical_minutes || {});
         setCanonPeriods(d.canonical_periods || {});
+        setPlanSuffix(d.plan_suffix || {});
       })
-      .catch(() => { if (live) { setGenonChs([]); setCanonMinutes({}); } });
+      .catch(() => { if (live) { setGenonChs([]); setCanonMinutes({}); setPlanSuffix({}); } });
     return () => { live = false; };
   }, [subject, grade, chTry]);
 
@@ -288,6 +290,17 @@ export default function Prepare() {
         && (p.prepared || attachedFiles.has(p.filename))),
     [plans, chapterNo, attachedFiles]);
 
+  /* WALK-A-070: grey "Prepare again" when a press would hand back a plan she already holds —
+     same chapter, same length (periods AND minutes), same canonical version. The reasoning
+     lives on web PrepareLesson's samePlanHeld; this is the same rule, kept in step. */
+  const samePlanHeld = useMemo(() => {
+    if (!chosenAlreadyPrepared || !chapterNo) return false;
+    const name = genonPlanFilename(chapterNo, rows, planSuffix[String(Number(chapterNo))]);
+    if (!name) return false;
+    return (plans || []).some((p) => p.filename === name && !p.archived
+      && (p.prepared || attachedFiles.has(p.filename)));
+  }, [chosenAlreadyPrepared, chapterNo, rows, planSuffix, plans, attachedFiles]);
+
   const committedTotal = committed.reduce((s, c) => s + c.periods, 0);
   const left = annualBudget != null ? annualBudget - committedTotal : null;
   const over = left != null && left < 0;
@@ -408,9 +421,9 @@ export default function Prepare() {
     inFlight.current = true;
     try { await runGenerate(); } finally { inFlight.current = false; }
   };
-  // Already prepared? Warn first — re-preparing replaces the tracked version.
+  // Already prepared? Warn first — a different length makes a SECOND plan (WALK-A-070).
   const onPrepareClick = () => {
-    if (!chosen) return;
+    if (!chosen || samePlanHeld) return;
     if (chosenAlreadyPrepared) { setWarnRegen(true); return; }
     doGenerate();
   };
@@ -580,16 +593,20 @@ export default function Prepare() {
             ) : null}
 
             <View style={ws.prep_savebar}>
-              <PrepareCta size="primary" disabled={!chosen} busy={busy} onPress={onPrepareClick}
+              <PrepareCta size="primary" disabled={!chosen || samePlanHeld} busy={busy} onPress={onPrepareClick}
                 label={busy ? "Building the lesson…"
                   : chosenAlreadyPrepared ? "Prepare again →" : "Prepare the lesson →"} />
               {busy ? (
                 <Text style={ws.prep_hint} accessibilityLiveRegion="polite">Working on it…</Text>
               ) : !chosen ? (
                 <Text style={ws.prep_hint}>Pick a chapter to continue.</Text>
+              ) : samePlanHeld ? (
+                <Text style={ws.prep_hint}>
+                  You already have this plan at {Number(periods) || 0} periods. Change the number of periods to prepare a second one.
+                </Text>
               ) : chosenAlreadyPrepared ? (
                 <Text style={ws.prep_hint}>
-                  Already prepared — preparing again replaces the tracked version.
+                  Already prepared. Preparing it again at a different length makes a second plan. Existing plans remain unaffected.
                 </Text>
               ) : null}
             </View>
@@ -600,7 +617,7 @@ export default function Prepare() {
       {/* ── re-prepare confirm ── */}
       <Sheet visible={!!warnRegen && !!chosen} onClose={() => setWarnRegen(false)} confirm
         kicker={`${pretty(subject)} · Class ${classNum(grade)}`} title="Prepare this chapter again?"
-        sub={chosen ? `You’ve already prepared “${chosen.chapter_title}” for this class. Preparing it again makes a fresh lesson plan — and for budget tracking, only this latest version will count.` : ""}>
+        sub={chosen ? `You’ve already prepared “${chosen.chapter_title}” for this class. Preparing it again at a different length makes a second plan — and for budget tracking, only this latest version will count.` : ""}>
         <View style={ws.ap_actions}>
           <Pressable onPress={() => setWarnRegen(false)} accessibilityRole="button"
             style={[ws.ap_btn, { borderColor: t.line }]}>

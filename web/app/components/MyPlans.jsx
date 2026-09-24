@@ -297,7 +297,14 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     let live = true;
     setLoading(true);
     fetchPlanView(pSub, pGrade, filename)
-      .then((d) => { if (live) setOpenPlan({ view: d.view, sectionKey }); })
+      .then((d) => {
+        if (!live) return;
+        // Same label rule as openLesson: her name for the section where she gave one.
+        const card = classes.find((c) => c.subjectSlug === pSub && c.gradeSlug === pGrade
+          && c.sectionTag === sectionTag);
+        setOpenPlan({ view: d.view, sectionKey,
+                      sectionLabel: (card && (card.sectionName || card.sectionTag)) || sectionTag || "" });
+      })
       .catch(() => {})
       .finally(() => { if (live) { setLoading(false); onConsumePending && onConsumePending(); } });
     return () => { live = false; };
@@ -400,7 +407,8 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     // Steps 11–13: the tracking lesson view is open (11 tracking · 12 the bookmark ·
     // 13 mark-complete); any other step closes it.
     if (tourStep === 11 || tourStep === 12 || tourStep === 13) {
-      if (!openPlan && !loading) openLesson(c.subjectSlug, c.gradeSlug, plan, sectionKey);
+      if (!openPlan && !loading) openLesson(c.subjectSlug, c.gradeSlug, plan, sectionKey,
+        c.sectionName || c.sectionTag);
     } else if (openPlan) setOpenPlan(null);
     // Steps 9 and 14: the "Track a chapter for this section" popup; any other step closes it.
     // (At 9 nothing is bound, so the just-generated lesson is IN the list — the hand points at
@@ -479,14 +487,18 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     );
   }
 
-  const openLesson = async (sSlug, gSlug, p, sectionKey) => {
+  /* `sectionLabel` is what SHE calls the section — her own name where she has given one
+     (the 2026-08-30 rename), the tag otherwise — carried into the lesson so the header can say
+     which class she is teaching it to (WALK-A-076). The KEY is still the tag, as everything
+     else is; this is display only. */
+  const openLesson = async (sSlug, gSlug, p, sectionKey, sectionLabel = "") => {
     setLoading(true);
     /* The view is kept on the device when it opens, and read back from there when the network
        is not (2026-09-18: Wi-Fi off → an unhandled "Failed to fetch"). A lesson never opened on
        this browser still cannot open offline — that is said, not thrown. */
     try {
       const view = (await fetchPlanView(sSlug, gSlug, p.filename)).view;
-      setOpenPlan({ view, sectionKey });
+      setOpenPlan({ view, sectionKey, sectionLabel });
     } catch (e) {
       window.alert(String(e && e.message) === "404" ? "This lesson could not be found."
         : "Couldn’t open this lesson — it hasn’t been saved on this device yet. Try again when you’re online.");
@@ -624,6 +636,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
 
   if (loading) return <div className="spin">Opening plan…</div>;
   if (openPlan) return <LessonView view={openPlan.view} sectionKey={openPlan.sectionKey}
+    sectionLabel={openPlan.sectionLabel || ""}
     tourUnit={tourStep === 11 || tourStep === 12 || tourStep === 13} onExit={() => setOpenPlan(null)} />;
 
   // "+" attach-a-lesson picker — a focused MODAL layered over the cards (not a separate screen),
@@ -855,7 +868,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
           <div className="slotrail dim" />
           <div className="slotbody">
             <div className="slot-title muted">No classes set up yet</div>
-            <div className="slot-meta">Set up your teaching profile from the settings gear above to start planning.</div>
+            <div className="slot-meta">To start planning, add the classes you teach under Class in the Add window from the bottom tool bar.</div>
           </div>
         </div>
       </div>
@@ -1240,7 +1253,8 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
           return (
             <div className={`sc-card ${status}`} key={i}
               data-tour={i === tourIdx ? "section-card-target" : undefined}
-              onClick={() => openLesson(c.subjectSlug, c.gradeSlug, plan, sectionKey)}>
+              onClick={() => openLesson(c.subjectSlug, c.gradeSlug, plan, sectionKey,
+                c.sectionName || c.sectionTag)}>
               <SectionTag c={c} />
               <div className="sc-body">
                 {/* Banded: the subject is overhead, so the kicker is just the chapter — and

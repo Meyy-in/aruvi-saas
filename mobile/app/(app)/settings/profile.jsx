@@ -221,8 +221,8 @@ export default function TeachingProfileScreen() {
                   {open && !(s.grades || []).length ? (
                     <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
                       You teach no class of {s.name} at the moment. Its lessons are kept, and it
-                      stays here for as long as you subscribe to it — add a class under Class in
-                      the “+” window to teach it again.
+                      stays here for as long as you subscribe to it. To teach it again, add a class
+                      under Class in the Add window from the bottom tool bar.
                     </Text>
                   ) : null}
 

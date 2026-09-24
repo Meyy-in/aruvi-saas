@@ -1599,7 +1599,10 @@ function SSFlowBody({ units, pointer, doneAll, onOpenUnit, gapNote }) {
  * unit (pine = taught · ochre = now · hairline = ahead), grouped under quiet mono
  * dividers from the plugin's Group tree. Tapping a card is NAVIGATION, never pointer
  * movement. `pointer` is the live unit index, or null (preview — no place-marker). */
-function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour }) {
+/* `sectionLabel` rides down from LessonView (WALK-A-076): the chapter-organisation page is still
+   the SAME section's lesson — she reaches it by "← Orgn." from a unit — so it carries the same
+   line. Empty for the read-only preview, which has no section. */
+function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour, sectionLabel = "" }) {
   /* Notes lock when the subscription lapses (founder, 2026-08-26). Asked here rather
      than threaded down as a prop: LessonView is reached from two surfaces by different
      routes, and the entitlement is one cheap cached read. Unknown → not locked; the
@@ -1846,6 +1849,15 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour 
             {String(lp.subject || "").replace(/_/g, " ")}
             {lp.grade ? `·${String(lp.grade).replace(/grade|class/gi, "").trim().toUpperCase()}` : ""}
             {lp.chapter_number ? `·Ch. ${String(lp.chapter_number).padStart(2, "0")}` : ""}
+            {/* ★ AND WHICH SECTION SHE IS TEACHING IT TO (WALK-A-076, founder 2026-09-22). One plan
+                is deliberately shared across sections — the picker offers the same chapter to 7A,
+                7B and 7C, and each keeps its own pointer and its own history against it — so the
+                DOCUMENT cannot say which class she is standing in front of. Only the card she
+                tapped knows, and that was dropped at the door: open the wrong card and she teaches
+                the right chapter against the wrong section's pointer with nothing on screen to
+                warn her. Shown ONLY when a section is bound, so the read-only preview reached from
+                My Lessons (05.15) never invents one. */}
+            {sectionLabel ? `·Section ${sectionLabel}` : ""}
           </span>
           <button className="back back-tr" data-tour={backTour} onClick={onBack}>← back</button>
         </div>
@@ -1965,7 +1977,7 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour 
   );
 }
 
-export default function LessonView({ view, sectionKey = "", onExit, preview = false, tourUnit = false }) {
+export default function LessonView({ view, sectionKey = "", sectionLabel = "", onExit, preview = false, tourUnit = false }) {
   const lp = view.lesson_plan;
   const units = useMemo(() => flattenUnits(lp), [lp]);
   // Dropped sections (founder 2026-08-01): a below-floor plan carries its unreached
@@ -2149,7 +2161,7 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
     return (
       <div data-tour={preview ? "preview-root" : undefined}>
         <ChapterOrg
-          lp={lp} units={units}
+          lp={lp} units={units} sectionLabel={sectionLabel}
           pointer={preview ? null : cur} doneAll={doneFlag}
           onOpenUnit={(n) => {
             // Navigation, never pointer movement. Tracking (My Classes): return to the paging
@@ -2250,6 +2262,15 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
             {String(lp.subject || "").replace(/_/g, " ")}
             {lp.grade ? `·${String(lp.grade).replace(/grade|class/gi, "").trim().toUpperCase()}` : ""}
             {lp.chapter_number ? `·Ch. ${String(lp.chapter_number).padStart(2, "0")}` : ""}
+            {/* ★ AND WHICH SECTION SHE IS TEACHING IT TO (WALK-A-076, founder 2026-09-22). One plan
+                is deliberately shared across sections — the picker offers the same chapter to 7A,
+                7B and 7C, and each keeps its own pointer and its own history against it — so the
+                DOCUMENT cannot say which class she is standing in front of. Only the card she
+                tapped knows, and that was dropped at the door: open the wrong card and she teaches
+                the right chapter against the wrong section's pointer with nothing on screen to
+                warn her. Shown ONLY when a section is bound, so the read-only preview reached from
+                My Lessons (05.15) never invents one. */}
+            {sectionLabel ? `·Section ${sectionLabel}` : ""}
           </span>
           <button className="back back-tr" data-tour="preview-back"
             onClick={showFullPlan ? () => setShowFullPlan(false) : () => setShowOrg(true)}>
@@ -2293,6 +2314,8 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
           {String(lp.subject || "").replace(/_/g, " ")}
           {lp.grade ? `·${String(lp.grade).replace(/grade|class/gi, "").trim().toUpperCase()}` : ""}
           {lp.chapter_number ? `·Ch. ${String(lp.chapter_number).padStart(2, "0")}` : ""}
+          {/* The tracking header carries it too — see headerContent above (WALK-A-076). */}
+          {sectionLabel ? `·Section ${sectionLabel}` : ""}
         </span>
         <button className="back back-tr" onClick={goOrg}>← Orgn.</button>
       </div>

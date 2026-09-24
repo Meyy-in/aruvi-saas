@@ -7,9 +7,52 @@
  * §2.4). Writes push a snapshot; loads reconcile the cache from the server.
  *
  * The three keys per section, so the naming can never drift between reader and writer: */
-import { API, withUser, getJSON } from "./format.js";
+import { API, withUser, getJSON, getUser } from "./format.js";
 import { storage } from "./storage.js";
 import { verifiedWrite, sectionStateMatches } from "./verify.js";
+
+/* ───────── THE PENDING MARK — a write that has not yet been CONFIRMED by the server ─────────
+ * (WALK-A-080, founder 2026-09-24.) Offline, she marked unit 1 of English IV ch 12 complete. The
+ * card showed it; she went back online; it was gone. Two faults, in order:
+ *   · the push failed and nothing was said — verifiedWrite reports 'unverified' when it cannot
+ *     prove anything either way, and this module only ever acted on 'mismatch';
+ *   · worse, the next reconcile PULLED THE SERVER'S OLDER STATE OVER HER DEVICE COPY. The server
+ *     never heard about her mark, so it answered with the old pointer, and the pull trusted it.
+ * That second one is the real loss: it is the one record the tracker exists to keep, destroyed
+ * in the place a teacher is most likely to be offline — a classroom.
+ *
+ * So every local write now leaves a PENDING MARK, cleared only when the server confirms it. The
+ * reconcile below treats a section with a pending mark as "hers, not yet sent": it does NOT adopt
+ * the server's state for it, and it pushes it again instead. The existing sync (mount, focus,
+ * visibility, every 20s) is therefore also the retry loop — nothing new has to run.
+ *
+ * ⚠️ WHOSE WRITE IS IT? These section keys are NOT tagged to a teacher, so on a shared browser a
+ * replay could push teacher A's unsaved marks into teacher B's account — the cross-account write
+ * CLAUDE.md warns about for the history ledger ("whenever a sync gains a push-back, ask whose rows
+ * it is pushing"). Each mark therefore carries its OWNER, and a mark belonging to anyone other than
+ * the signed-in teacher is DISCARDED, never pushed. Sign-out also sweeps the prefix. */
+const pendingKey = (sk) => `lu_pending_${sk}`;
+export const SECTION_PENDING_PREFIX = "lu_pending_";
+
+function readPending(sk) {
+  try {
+    const raw = storage.getItem(pendingKey(sk));
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    return p && typeof p === "object" ? p : null;
+  } catch { return null; }
+}
+function markPending(sk) {
+  try { storage.setItem(pendingKey(sk), JSON.stringify({ owner: getUser() || "", ts: Date.now() })); } catch {}
+}
+function clearPending(sk) {
+  try { storage.removeItem(pendingKey(sk)); } catch {}
+}
+/* True only for a mark THIS teacher left. Someone else's is not hers to send. */
+export function hasPendingSection(sk) {
+  const p = readPending(sk);
+  return !!(p && p.owner && p.owner === (getUser() || ""));
+}
 
 const chapterKey = (sk) => `current_chapter_${sk}`;
 const pointerKey = (sk) => `lu_pointer_${sk}`;
@@ -156,12 +199,20 @@ const pushQueues = new Map();   // sectionKey → { queued, chain }
 
 export function pushSectionState(sectionKey) {
   if (!sectionKey) return;
+  markPending(sectionKey);       // every local write is unconfirmed until the server says otherwise
   let q = pushQueues.get(sectionKey);
   if (!q) { q = { queued: false, chain: Promise.resolve() }; pushQueues.set(sectionKey, q); }
   if (q.queued) return;          // a push is already scheduled — it will snapshot the final state
   q.queued = true;
+  /* ★ WHOSE PUSH IS THIS? (WALK-A-080) A push can wait seconds behind one still retrying offline.
+     If she signs out and another teacher signs in meanwhile, running it would send this device's
+     copy — by then swept, so an EMPTY one, i.e. a DELETE — under the new teacher's sign-in. So
+     the push runs only for the teacher who made it. Hers is not lost: her pending mark went with
+     her caches at sign-out, and whatever the new teacher does marks its own. */
+  const owner = getUser() || "";
   q.chain = q.chain.then(() => {
     q.queued = false;            // from here a new call schedules a fresh push AFTER this one
+    if ((getUser() || "") !== owner) return undefined;
     return syncSectionNow(sectionKey);
   }).catch(() => {});
 }
@@ -169,22 +220,48 @@ export function pushSectionState(sectionKey) {
 function syncSectionNow(sectionKey) {
   const { chapter, unit, done } = readLocalSection(sectionKey);
   const bm = readLocalBookmark(sectionKey);
-  // Y, known upfront: this section tracks `chapter` and is (or is not) done — or, when there is
-  // no chapter, has NO row at all, which is what an unbind must produce.
-  const want = chapter ? { chapter, done: !!done } : { chapter: null };
+  /* The mark as it stood when THIS push began. If she writes again while it is in flight, the
+     mark's timestamp moves on — and this push must not clear a mark that describes a NEWER write
+     it did not carry. The queue will send that one next. */
+  const startedPending = readPending(sectionKey);
+  // Y, known upfront: this section tracks `chapter`, is (or is not) done, and stands at `unit` —
+  // or, when there is no chapter, has NO row at all, which is what an unbind must produce.
+  /* ★ THE POINTER IS PART OF THE CHECK NOW (WALK-A-080). It used to be { chapter, done } only —
+     so the read-after-write check reported on the fields a mark-complete does NOT change, and was
+     silent about the one it does. A pointer that landed wrong, or not at all, read back as "ok". */
+  const want = chapter ? { chapter, done: !!done, unit } : { chapter: null };
+  /* ★ DID THE REQUEST EVER REACH THE SERVER? A fetch that throws got no response at all — she is
+     offline, or the socket died. If the connection returns while the check's read is retrying,
+     that read SUCCEEDS and disagrees — not because the server refused her mark, but because the
+     mark never arrived. Treating that as 'mismatch' adopted the server's older state and erased
+     her mark: the very loss WALK-A-080 closes. So an unsent write never counts as a mismatch; the
+     mark stays and the next reconcile sends it. An HTTP refusal (a status) is a real answer and
+     keeps the old path — otherwise a write the server will never accept would freeze the
+     section against every other device. */
+  let unsent = false;
+  const send = (p) => p.catch((e) => { unsent = true; throw e; });
   const verify = (doWrite) => verifiedWrite({
     write: doWrite,
     read: () => getJSON("/section-state").then((d) => (d && d.states) || {}),
     expect: (states) => sectionStateMatches(states, sectionKey, want),
   }).then(({ status }) => {
+    /* 'ok'       → the server holds exactly what she wrote: the mark is spent.
+       'mismatch' → the write landed and the server STILL disagrees — its truth wins (the existing
+                    handler adopts it), and re-sending ours for ever would fight it.
+       'unverified' → we cannot tell. KEEP the mark: the next reconcile will send it again. */
+    if (unsent && status !== "ok") return;   // never arrived: keep the mark, adopt nothing
+    if (status === "ok" || status === "mismatch") {
+      const now = readPending(sectionKey);
+      if (!now || !startedPending || now.ts === startedPending.ts) clearPending(sectionKey);
+    }
     if (status === "mismatch" && onSectionMismatch) onSectionMismatch(sectionKey, want);
   });
   try {
     if (!chapter) {
-      return verify(() => fetch(`${API}/section-state/${encodeURIComponent(sectionKey)}`,
-        withUser({ method: "DELETE" })).then((r) => { if (!r.ok) throw new Error(String(r.status)); }));
+      return verify(() => send(fetch(`${API}/section-state/${encodeURIComponent(sectionKey)}`,
+        withUser({ method: "DELETE" }))).then((r) => { if (!r.ok) throw new Error(String(r.status)); }));
     }
-    return verify(() => fetch(`${API}/section-state`, withUser({
+    return verify(() => send(fetch(`${API}/section-state`, withUser({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -198,7 +275,7 @@ function syncSectionNow(sectionKey) {
         bookmark_unit: bm ? bm.unit : null,
         bookmark_phase: bm ? bm.phase : null,
       }),
-    })).then((r) => { if (!r.ok) throw new Error(String(r.status)); }));
+    }))).then((r) => { if (!r.ok) throw new Error(String(r.status)); }));
   } catch { return Promise.resolve(); }
 }
 
@@ -246,7 +323,7 @@ export function clearSectionState(subjectName, gradeRoman, tag) {
 }
 
 export function clearLocalSectionCache() {
-  const prefixes = ["current_chapter_", "lu_pointer_", "lu_done_", "lu_bookmark_"];
+  const prefixes = ["current_chapter_", "lu_pointer_", "lu_done_", "lu_bookmark_", SECTION_PENDING_PREFIX];
   let removed = 0;
   try {
     const doomed = [];
@@ -282,7 +359,17 @@ export async function pullSectionState(sectionKeys) {
   // intact. Per-section untrack from another device still propagates, because that case returns a
   // NON-empty payload (the other tracked sections are present) and the absent key is cleared below.
   const serverEmpty = Object.keys(states).length === 0;
+  const me = getUser() || "";
   (sectionKeys || []).forEach((sk) => {
+    /* ★ A SECTION WITH A PENDING WRITE IS NOT OVERWRITTEN (WALK-A-080). The server's answer for it
+       is, by definition, older than what she did on this device — so adopting it is exactly how
+       an offline mark-complete vanished on reconnect. Send ours again instead; the reconcile's own
+       timer is the retry. A mark left by ANOTHER teacher on this browser is discarded unsent. */
+    const pend = readPending(sk);
+    if (pend) {
+      if (pend.owner && pend.owner === me) { pushSectionState(sk); return; }
+      clearPending(sk);
+    }
     const st = states[sk];
     try {
       if (st && st.chapter) {

@@ -3150,8 +3150,17 @@ def genon_available(subject: str, grade: str) -> Dict[str, Any]:
     chs = data.genon_chapters(subject, grade)
     minutes: Dict[str, int] = {}
     periods: Dict[str, int] = {}
+    # plan_suffix (WALK-A-070, 2026-09-24): the tail of the filename a plan served NOW would
+    # carry — "_e{engine}_c{canonical version}.json". With it, Prepare can rebuild the exact
+    # name a press would produce (ch_NN_ + her duration matrix + this) and grey the button
+    # when she already holds that very plan: preparing again would hand back the same file.
+    # It moves on its own when the canonical is regenerated or the engine bumps, so the
+    # button comes back to life exactly when pressing it would yield something new.
+    suffix: Dict[str, str] = {}
     for ch in chs:
         c = data.load_genon_canonical(subject, grade, ch) or {}
+        if c:
+            suffix[str(ch)] = f"_e{data.GENON_ENGINE_VERSION}_c{data.canonical_version(c)}.json"
         row = (c.get("period_rows_snapshot") or [{}])[0]
         if row.get("duration") and row.get("count"):
             minutes[str(ch)] = int(row["duration"]) * int(row["count"])
@@ -3160,7 +3169,7 @@ def genon_available(subject: str, grade: str) -> Dict[str, Any]:
             # (which misfires on mixed-duration profiles: 600min/52avg rounded to 11).
             periods[str(ch)] = int(row["count"])
     return {"subject": subject, "grade": grade, "chapters": chs,
-            "canonical_minutes": minutes, "canonical_periods": periods}
+            "canonical_minutes": minutes, "canonical_periods": periods, "plan_suffix": suffix}
 
 
 @app.post("/genon/{subject}/{grade}/{chapter_number}/plan")

@@ -31,6 +31,7 @@ import { clearUser } from "./format.js";
 
 export const TEACHER_CACHE_PREFIXES = [
   "current_chapter_", "lu_pointer_", "lu_done_", "lu_bookmark_",
+  "lu_pending_",                 // unconfirmed section writes (WALK-A-080) — never another teacher's to send
   "section_history_",            // includes the owner stamp, section_history_owner
   "chapter_notes_",
   "aruvi_ask_bank",

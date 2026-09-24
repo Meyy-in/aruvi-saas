@@ -18,7 +18,18 @@ progress is made. A fresh session starts cold — this file is how context carri
 > **TeachingProfile.jsx** (rebuilt 2026-07-02: an ACCORDION — one subject open at a time — with
 > a MASTER EDIT toggle that reveals red dustbins per subject/class/section, "edit →" for the
 > numbers, and green add buttons; adds run through the first-run wheels from wheels.jsx;
-> NO whole-profile delete or redo — the profile is only edited at a point). The MyClasses.jsx
+> NO whole-profile delete or redo — the profile is only edited at a point).
+> ★ **SUPERSEDED — THE PROFILE IS NOW READ-ONLY (settled by the founder; recorded 2026-09-24,
+> WALK-A-060).** No master toggle, no pencils, no dustbins, and **no way to remove a subject
+> anywhere** (adding one is a purchase; the Add window has no Subject row). Every edit — add or
+> remove a class, sections, periods a week, budget — runs through **Add on the bottom nav**. A
+> subject whose classes are all removed stays listed, classless, with the line "You teach no class
+> of {Subject} at the moment… To teach it again, add a class under Class in the Add window from
+> the bottom tool bar." My Classes with no classes reads "No classes set up yet" / "To start
+> planning, add the classes you teach under Class in the Add window from the bottom tool bar."
+> Copy must say "the Add window from the bottom tool bar", never "the + window" or "the settings
+> gear". Every entry below describing the edit toggle, dustbins or subject removal is HISTORY.
+> The MyClasses.jsx
 > drill-down editor is RETIRED (dead code on disk, like SidebarNav.jsx and MyCalendar.jsx).
 > "+ Prepare Lesson" is a verb — an action inside both views, never a tab. The only
 > time-facts Aruvi keeps are NUMBERS (durations, periods/week — now asked directly and stored

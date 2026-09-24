@@ -749,3 +749,25 @@ export function projectReadiness(profile, activeIdx = 0) {
     budget: active.budget,
   };
 }
+
+
+/* ── the name a Prepare press would give its plan (WALK-A-070, 2026-09-24) ─────────────
+ * Mirrors api/data.py genon_plan_filename + norm_matrix EXACTLY: rows aggregated by duration,
+ * zero rows dropped, longest duration first, "{d}m{count}" joined by "-"; then the server's
+ * per-chapter suffix ("_e{engine}_c{canonical version}.json" from /genon/.../chapters).
+ * Returns "" when the suffix is unknown (an older API), so callers treat it as "can't tell"
+ * and leave the button live — the safe direction. */
+export function normMatrix(rows) {
+  const agg = {};
+  (rows || []).forEach((r) => {
+    const d = parseInt(r && r.duration, 10), c = parseInt(r && r.count, 10);
+    if (d > 0 && c > 0) agg[d] = (agg[d] || 0) + c;
+  });
+  return Object.keys(agg).map(Number).sort((a, b) => b - a).map((d) => `${d}m${agg[d]}`).join("-");
+}
+export function genonPlanFilename(chapterNumber, rows, suffix) {
+  const n = parseInt(chapterNumber, 10);
+  const m = normMatrix(rows);
+  if (!suffix || !Number.isFinite(n) || !m) return "";
+  return `ch_${String(n).padStart(2, "0")}_${m}${suffix}`;
+}

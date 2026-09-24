@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, suggestedPeriodsByChapter, fetchEntitlement } from "../lib/format";
+import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, suggestedPeriodsByChapter, fetchEntitlement, genonPlanFilename } from "../lib/format";
 import { readPlans } from "../lib/plans";
 import { verifiedWrite, planIsPrepared } from "../lib/verify";
 import { RollWheel, wheelChapterTitle } from "./wheels";
@@ -85,7 +85,8 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
    * cache, and a matrix equal to the canonical's own returns the certified plan untouched. */
   const [genonChs, setGenonChs] = useState([]);            // chapter numbers with a canonical
   const [canonMinutes, setCanonMinutes] = useState({});    // {chapter: canonical total minutes}
-  const [canonPeriods, setCanonPeriods] = useState({});    // {chapter: top canonical period COUNT}
+  const [canonPeriods, setCanonPeriods] = useState({});
+  const [planSuffix, setPlanSuffix] = useState({});        // {chapter: "_e{engine}_c{version}.json"} — WALK-A-070    // {chapter: top canonical period COUNT}
   // Re-entry guard, kept although a partition is free and instant: a second click during
   // an in-flight request would still double-register and can race the preview swap. The
   // ref blocks re-entry even if a click slips past the disabled button (modal path,
@@ -123,8 +124,8 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
     // hold serves this picker too (@aruvi/shared/plans, 2026-09-14).
     readPlans(`${subject}/${grade}`, setPlans).catch(() => setPlans([]));
     getJSON(`/genon/${subject}/${grade}/chapters`)
-      .then((d) => { setGenonChs(d.chapters || []); setCanonMinutes(d.canonical_minutes || {}); setCanonPeriods(d.canonical_periods || {}); })
-      .catch(() => { setGenonChs([]); setCanonMinutes({}); });
+      .then((d) => { setGenonChs(d.chapters || []); setCanonMinutes(d.canonical_minutes || {}); setCanonPeriods(d.canonical_periods || {}); setPlanSuffix(d.plan_suffix || {}); })
+      .catch(() => { setGenonChs([]); setCanonMinutes({}); setPlanSuffix({}); });
   }, [subject, grade, chTry]);
 
   // Is the deterministic (genon) path available for the chosen chapter?
@@ -305,6 +306,20 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
     [plans, chapterNo, attachedFiles]
   );
 
+  /* ★ WOULD A PRESS HAND BACK A PLAN SHE ALREADY HOLDS? (WALK-A-070, founder 2026-09-24)
+     A plan's name is chapter + length (periods AND minutes) + the canonical's version, so the
+     same three give the same file — "Prepare again" would deliver nothing new. Rebuild the name
+     a press would produce and look for it among her live plans. Unknown suffix (older API) →
+     "" → no match → the button stays live: the check only ever greys when it is SURE. An
+     ARCHIVED match stays live on purpose — preparing it again is how she brings it back. */
+  const samePlanHeld = useMemo(() => {
+    if (!chosenAlreadyPrepared || !chapterNo) return false;
+    const name = genonPlanFilename(chapterNo, rows, planSuffix[String(Number(chapterNo))]);
+    if (!name) return false;
+    return (plans || []).some((p) => p.filename === name && !p.archived
+      && (p.prepared || attachedFiles.has(p.filename)));
+  }, [chosenAlreadyPrepared, chapterNo, rows, planSuffix, plans, attachedFiles]);
+
   const committedTotal = committed.reduce((s, c) => s + c.periods, 0);
   // "Used" / "Available" reflect only what's ACTUALLY committed (already-prepared chapters),
   // NOT the chapter she's proposing now — that lives in the Suggestion box.
@@ -318,10 +333,10 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
   // await the mark so the popup's refetch sees `prepared` immediately. A chapter with NO
   // canonical cannot be prepared at all and says so (2026-08-10) — the stand-in preview that
   // used to keep testing unblocked is retired, because it concealed exactly this condition.
-  // Click handler: if this chapter is already prepared, warn first (re-preparing replaces the
-  // tracked version); otherwise prepare straight away.
+  // Click handler: if this chapter is already prepared, warn first (a different length makes a
+  // SECOND plan; nothing is replaced — WALK-A-070); otherwise prepare straight away.
   const onPrepareClick = () => {
-    if (!chosen) return;
+    if (!chosen || samePlanHeld) return;
     if (chosenAlreadyPrepared) { setWarnRegen(true); return; }
     doGenerate();
   };
@@ -644,7 +659,7 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
           {!busy && error ? <p className="prep-floor" role="alert">{error}</p> : null}
 
           <div className="savebar savebar-prep">
-            <button className="primary prepare-cta" disabled={!chosen || busy} onClick={onPrepareClick}>
+            <button className="primary prepare-cta" disabled={!chosen || busy || samePlanHeld} onClick={onPrepareClick}>
               {busy
                 ? <span className="prep-working"><span className="prep-spin" aria-hidden="true" />
                     Building the lesson…</span>
@@ -658,9 +673,11 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
                 </span>
               : !chosen
                 ? <span className="savebar-hint">Pick a chapter to continue.</span>
-                : chosenAlreadyPrepared
-                  ? <span className="savebar-hint">Already prepared — preparing again replaces the tracked version.</span>
-                  : null}
+                : samePlanHeld
+                  ? <span className="savebar-hint">You already have this plan at {Number(periods) || 0} periods. Change the number of periods to prepare a second one.</span>
+                  : chosenAlreadyPrepared
+                    ? <span className="savebar-hint">Already prepared. Preparing it again at a different length makes a second plan. Existing plans remain unaffected.</span>
+                    : null}
           </div>
         </>
       )}
@@ -674,8 +691,8 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
               <div className="ap-title">Prepare this chapter again?</div>
               <div className="ap-sub">
                 You&rsquo;ve already prepared &ldquo;{chosen.chapter_title}&rdquo; for this class.
-                Preparing it again makes a fresh lesson plan — and for budget tracking, only this
-                latest version will count.
+                Preparing it again at a different length makes a second plan — and for budget
+                tracking, only this latest version will count.
               </div>
             </div>
             <div className="ap-confirm-actions">
