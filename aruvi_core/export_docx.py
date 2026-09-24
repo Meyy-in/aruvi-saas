@@ -176,9 +176,11 @@ def _shaded_band(doc, hex_color, kicker, kicker_color, title, title_color, *, ti
         # English, maths secondary) is not the only one that reads as a bare italic line.
         _run(sp, "Learning outcome: ", bold=True, size=8, color=PINE, caps=True)
         _run(sp, subtitle, italic=True, size=8.5, color=BODY, font=SERIF)
-    # WALK-A-067 (b): "the spine's Learning Outcome is cramped — it needs one empty row after
-    # it" (founder). The old bare paragraph took the style's default size and read as nothing.
-    _spacer(doc, 12)
+        # WALK-A-067 (b): "the spine's Learning Outcome is cramped" — and the room belongs
+        # INSIDE the band (founder, 2026-09-24: "a space below LO within the spine box"), so
+        # the shading runs on under the LO line instead of stopping at it.
+        sp.paragraph_format.space_after = Pt(10)
+    _spacer(doc, 4)
     return t
 
 
