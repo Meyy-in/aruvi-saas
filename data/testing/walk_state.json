@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-24T15:42:02",
+ "updated_at": "2026-09-24T16:07:39",
  "items": {
   "04.19": {
    "ios": {
@@ -21,11 +21,11 @@
   },
   "01.11": {
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-24T08:38:28",
+    "at": "2026-09-24T15:55:57",
     "build": "Expo Go",
-    "comment": "✓ re-walked 2026-09-19: bar hides with the keyboard and returns (Support, Ask Meyy).\n✗ re-walk 2026-09-24 after WALK-A-044: the Support message box still hides behind the keyboard (founder, Android emulator). Amber until 044 is fixed."
+    "comment": "✓ re-walked 2026-09-19: bar hides with the keyboard and returns (Support, Ask Meyy).\n✗ re-walk 2026-09-24 after WALK-A-044: the Support message box still hides behind the keyboard (founder, Android emulator). Amber until 044 is fixed.\n✓ re-walked 2026-09-24 after WALK-A-044"
    },
    "ios": {
     "by": "Kumar",
@@ -1359,14 +1359,14 @@
     "by": "Kumar",
     "at": "2026-09-20T12:56:07",
     "build": "Expo Go (iPhone 16)",
-    "comment": "Re-walked after WALK-A-033 blocker fix: bar + rail visible, heading visible, document scrolls, accept → Subjects. 'Recording…' not seen (likely too quick). Jump boxes land with each point's title at the top (read top-down, as intended); on long points the tick is below the fold → WALK-A-034 (optional)."
+    "comment": "Re-walked after WALK-A-033 blocker fix: bar + rail visible, heading visible, document scrolls, accept → Subjects. 'Recording…' not seen (likely too quick). Jump boxes land with each point's title at the top (read top-down, as intended); on long points the tick is below the fold → WALK-A-034 (optional).\nNOTE 2026-09-24: an account that already signed the Agreement (9000000011/12, returned to the trial path) is not asked to sign again — consent is recorded once per account (founder: 'that's good')."
    },
    "and_emu": {
     "status": "pass",
     "by": "Kumar",
     "at": "2026-09-21T10:56:54",
     "build": "Expo Go (Pixel 7 API 34)",
-    "comment": "Dev build: Agreement heading visible at the top (A-033), jump boxes land on their ticks with the tick clear of the foot (A-034), and the foot clears the nav bar (A-046)."
+    "comment": "Dev build: Agreement heading visible at the top (A-033), jump boxes land on their ticks with the tick clear of the foot (A-034), and the foot clears the nav bar (A-046).\nNOTE 2026-09-24: an account that already signed the Agreement (9000000011/12, returned to the trial path) is not asked to sign again — consent is recorded once per account (founder: 'that's good')."
    }
   },
   "03.20": {
@@ -2374,7 +2374,7 @@
   {
    "id": "WALK-A-009",
    "opened": "2026-09-20T05:48:27",
-   "closed": "",
+   "closed": "2026-09-24T16:07:39",
    "feature": "03.27",
    "found_on": [
     "web"
@@ -2382,16 +2382,14 @@
    "applies_to": "both",
    "title": "Tour offer is lost if she leaves before answering it",
    "what": "After first run, browser Back left Meyy (WALK-A-008); Forward reloaded the app onto My Classes with NO tour offer, and 'Would you like to check your set-up?' popped instead. Cause: the offer is spent the moment it is SHOWN (POST /account/tour-offered sets tour_offered_at), and after a reload `tourSpent` reads that and `tourOfferedThisSession` has reset — so any reload, Back-and-Forward, closed tab or dropped connection between the offer appearing and her answering it removes the tour for good, and the first-run set-up check (meant to follow the tour) fires in its place. Founder decision: spend the offer on an ANSWER (Take the tour / Skip / ✕) rather than on display, or allow one re-offer after a reload. Check the phone for the same (app killed while the offer is up). Walk workaround used: clear tour_offered_at on 9000000002. FURTHER (same walk): after clearing tour_offered_at and reloading, the server was re-stamped at 05:50:30 — the offer was 'made' on reload — yet it was visible on NEITHER surface: the reload lands on My Classes, where the offer renders only while no section is bound (MyPlans !anyBound — never true after first run binds 9A), and it did not appear on My Lessons either. So the offer is spent while not on screen at all. Tour parked on 02 for this web cycle; walked on a second clean cycle. DECIDED (founder 2026-09-20): the offer is spent only when she ANSWERS (Show me how / Skip / ✕). [WEB re-walked green 2026-09-20; phone half pending]",
-   "fix": "Tour offer is spent on START (markTourOffered in startTour), not on display.\n[PORTED phone 2026-09-24T08:40:04] mobile lib/tour.js: startTour now spends the offer (spendTourOffer → POST /account/tour-offered); the display-time spend effects in My Classes (index.jsx) and My Lessons (lessons.jsx) are removed. Leaving before answering no longer loses the tour.\n[RE-WALKED ios + and_emu 2026-09-24] PASS: the tour invitation survives closing and reopening the app unanswered; starting the tour spends it.",
+   "fix": "Tour offer is spent on START (markTourOffered in startTour), not on display.\n[PORTED phone 2026-09-24T08:40:04] mobile lib/tour.js: startTour now spends the offer (spendTourOffer → POST /account/tour-offered); the display-time spend effects in My Classes (index.jsx) and My Lessons (lessons.jsx) are removed. Leaving before answering no longer loses the tour.\n[RE-WALKED ios + and_emu 2026-09-24] PASS: the tour invitation survives closing and reopening the app unanswered; starting the tour spends it.\n[RE-WALKED web 2026-09-24] PASS: the tour invitation survives a reload unanswered; starting the tour spends it.",
    "files": "web/app/page.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T08:51:31"
+   "at": "2026-09-24T16:07:39"
   },
   {
    "id": "WALK-A-010",
@@ -2441,7 +2439,7 @@
   {
    "id": "WALK-A-012",
    "opened": "2026-09-20T06:40:55",
-   "closed": "",
+   "closed": "2026-09-24T16:07:39",
    "feature": "X.17",
    "found_on": [
     "web"
@@ -2449,16 +2447,14 @@
    "applies_to": "both",
    "title": "Rejoining teacher's trial card says 3 chapters when fewer remain",
    "what": "After erase + rejoin, the server seeds the trial with the ledger's used chapters (_entitlement_of → '_earlier/1', so 2 left), but FirstRun's 'Your free trial' card prints trialInfo.trial_chapter_cap — 'covers any 3 chapters' — the CAP, not what she has left. A rejoiner is promised a chapter she does not have. Show the remaining count when it is below the cap (e.g. 'You have 2 of your 3 free chapters left'), cap wording otherwise. Check the phone's card. (Considered and WITHDRAWN by founder: 'Prepare my second lesson' — her earlier lesson was erased, so for her this IS the first lesson; the CTA stays.) [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — rejoin card says 'any 3 chapters' with 2 left. ✓ iPhone re-walk 2026-09-20: card reads '2 of 3 left'.",
-   "fix": "Trial card says 'You have N of your 3 free chapters left.' when fewer remain (trial_chapters_used). PHONE: trial card says 'You have N of your 3 free chapters left.' when fewer remain.\n[RE-WALKED and_emu 2026-09-24] PASS: 9000000009 erased (two gates, farewell readable, device cleared), reopened on CHOOSE; rejoined: 'You have 2 of your 3 free chapters left.' and into first run.",
+   "fix": "Trial card says 'You have N of your 3 free chapters left.' when fewer remain (trial_chapters_used). PHONE: trial card says 'You have N of your 3 free chapters left.' when fewer remain.\n[RE-WALKED and_emu 2026-09-24] PASS: 9000000009 erased (two gates, farewell readable, device cleared), reopened on CHOOSE; rejoined: 'You have 2 of your 3 free chapters left.' and into first run.\n[RE-WALKED web 2026-09-24] PASS: 9000000012 erased on web and rejoined: 'You have 2 of your 3 free chapters left.' and into first run.",
    "files": "web/app/components/FirstRun.jsx; mobile/app/first-run.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T08:51:31"
+   "at": "2026-09-24T16:07:39"
   },
   {
    "id": "WALK-A-013",
@@ -2555,7 +2551,7 @@
   {
    "id": "WALK-A-017",
    "opened": "2026-09-20T07:51:03",
-   "closed": "",
+   "closed": "2026-09-24T16:07:39",
    "feature": "T.13",
    "found_on": [
     "web"
@@ -2563,16 +2559,14 @@
    "applies_to": "both",
    "title": "Tour copy corrections",
    "what": "Running list of tour wording fixes (shared web/phone copy). (1) Step 10: 'You have successfully attached “{chapter}” for section {tag}.' → 'attached “{chapter}” TO section {tag}.' Note its next sentence 'Let us click it to see how tracking works.' is another click-instruction — see WALK-A-015. (2) Step 15: 'the same window shown in step 8' → 'step 9' (the picker is step 9 of 20). Better: avoid step numbers in copy ('the same window you used a moment ago') so a re-ordering can't make it wrong again. (3) Step 16 (Add): 'Add/amend sections, classes and/or subjects. Use this button to quickly add sections, classes or subjects…' — WRONG: the Add window has no Subject row (a subject is a purchase), and it DOES amend periods a week and the annual period budget. Reword to match its four rows: class · section · periods a week · annual period budget. (4) Step 17 (profile): remove the final clause '; removing a subject is the one thing done here.' — end at 'Changes are made with ‘Add’ at the foot of the screen.' (5) Step 18 (Ask Meyy): 'up to 100 questions across 5 categories' — the bank holds 119 Q&A pairs in 5 categories. Say 'over 100' or drop the number (it will drift every monthly refresh). [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
-   "fix": "Copy: 'to section', step 15 'the same window you used a moment ago', step 16 classes/sections/periods/budget, step 17 last clause removed, step 18 'over 100'. WEB GuidedTour only; phone copy at phone fix point. PHONE: same copy corrections as the web (to section, 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed, 'over 100').\n[RE-WALKED ios 2026-09-24] PASS: iPhone tour copy: 'to section', 'a moment ago', Add = classes/sections/periods/budget, 'over 100'.",
+   "fix": "Copy: 'to section', step 15 'the same window you used a moment ago', step 16 classes/sections/periods/budget, step 17 last clause removed, step 18 'over 100'. WEB GuidedTour only; phone copy at phone fix point. PHONE: same copy corrections as the web (to section, 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed, 'over 100').\n[RE-WALKED ios 2026-09-24] PASS: iPhone tour copy: 'to section', 'a moment ago', Add = classes/sections/periods/budget, 'over 100'.\n[RE-WALKED web 2026-09-24] PASS: web tour copy: 'to section', 'a moment ago', Add = classes/sections/periods/budget, 'over 100'.",
    "files": "web/app/components/GuidedTour.jsx; mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T08:51:31"
+   "at": "2026-09-24T16:07:39"
   },
   {
    "id": "WALK-A-018",
@@ -2623,7 +2617,7 @@
   {
    "id": "WALK-A-020",
    "opened": "2026-09-20T08:16:44",
-   "closed": "",
+   "closed": "2026-09-24T16:07:39",
    "feature": "03.32",
    "found_on": [
     "web"
@@ -2631,21 +2625,19 @@
    "applies_to": "both",
    "title": "First run offline: profile never saved, yet the shell opens",
    "what": "Cycle 3: first run completed with the network OFF at 'Prepare the lesson'. The shell opened (My Lessons with a failed card; My Classes with an empty 9A card) and she then prepared ch 4 successfully online from My Lessons. A reload (⌘R) put her back on 'Welcome to Meyy!' — first run again. So the profile write made at activation (POST /readiness, fired in the same tick as the handoff) failed offline, but the client moved her into the shell as if it had succeeded; the SS IX · 9A profile she saw existed only in the browser. Work done in that session (the prepared lesson) sits against an account with no profile. Fix: verify the activation write (the read-after-write verify used elsewhere) and, on failure, keep her in first run with a plain retry — never open the shell on an unsaved profile; or queue and retry the write. Check the phone. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): SAME fault — after an offline first run and a relaunch, 02's server profile is None. Port the pending-profile retry to the phone.",
-   "fix": "Unverified profile write kept as PENDING per user and retried (online event + 15s timer, ≤40) ; on load, if the server has no profile but a pending one exists, she stays in the shell and it is re-sent. PHONE (shared): an unverified profile write is kept as PENDING per teacher and retried (15s timer, ≤40) and re-sent on the next read that finds the server empty — she stays in the shell.\n[PHONE RE-WALK 2026-09-24, INCONCLUSIVE] 9000000012 (iPhone) and 9000000013 (Android): first run finished offline, back online ~30s, then the founder LOGGED OUT and back in (rather than closing and reopening) — both landed on 'Welcome to Meyy!'. Logging out sweeps READINESS_CACHE_PREFIX, which holds the pending profile, so this cannot tell 'never delivered' from 'delivered too late and then swept'. Re-walk with a close-and-reopen after ~60s online.\n[PHONE RE-WALK 2026-09-24, iPhone 9000000012, close-and-reopen] Landed on 'Welcome to Meyy!' again. NOT the 020 defect: both surfaces deliberately send a teacher back to first run until her FIRST LESSON exists (web page.jsx firstGenNeeded / phone lib/firstRun.js: ready + nothing prepared + nothing bound = never generated → first run; founder rule 2026-08-25, 'first run is how she learns to generate'). Offline, the first-run lesson failed, so nothing was prepared and first run is re-armed — the founder read it the same way ('perhaps only after running it will it create profile'). The step written for this re-walk was wrong for that case. The faithful re-walk of 020 is the original one: after reconnecting she stays in the app and gets her lesson (Try again on the failed card), THEN close-and-reopen must open My Classes with her class — i.e. the profile made offline did reach Meyy.\n[RE-WALKED ios + and_emu 2026-09-24] PASS (9000000012 iPhone, 9000000013 Android): first run finished offline → failed card; back online, Try again prepared the lesson; swiped away and reopened → My Classes with her class and lesson, profile in Settings. The offline profile reached Meyy.",
+   "fix": "Unverified profile write kept as PENDING per user and retried (online event + 15s timer, ≤40) ; on load, if the server has no profile but a pending one exists, she stays in the shell and it is re-sent. PHONE (shared): an unverified profile write is kept as PENDING per teacher and retried (15s timer, ≤40) and re-sent on the next read that finds the server empty — she stays in the shell.\n[PHONE RE-WALK 2026-09-24, INCONCLUSIVE] 9000000012 (iPhone) and 9000000013 (Android): first run finished offline, back online ~30s, then the founder LOGGED OUT and back in (rather than closing and reopening) — both landed on 'Welcome to Meyy!'. Logging out sweeps READINESS_CACHE_PREFIX, which holds the pending profile, so this cannot tell 'never delivered' from 'delivered too late and then swept'. Re-walk with a close-and-reopen after ~60s online.\n[PHONE RE-WALK 2026-09-24, iPhone 9000000012, close-and-reopen] Landed on 'Welcome to Meyy!' again. NOT the 020 defect: both surfaces deliberately send a teacher back to first run until her FIRST LESSON exists (web page.jsx firstGenNeeded / phone lib/firstRun.js: ready + nothing prepared + nothing bound = never generated → first run; founder rule 2026-08-25, 'first run is how she learns to generate'). Offline, the first-run lesson failed, so nothing was prepared and first run is re-armed — the founder read it the same way ('perhaps only after running it will it create profile'). The step written for this re-walk was wrong for that case. The faithful re-walk of 020 is the original one: after reconnecting she stays in the app and gets her lesson (Try again on the failed card), THEN close-and-reopen must open My Classes with her class — i.e. the profile made offline did reach Meyy.\n[RE-WALKED ios + and_emu 2026-09-24] PASS (9000000012 iPhone, 9000000013 Android): first run finished offline → failed card; back online, Try again prepared the lesson; swiped away and reopened → My Classes with her class and lesson, profile in Settings. The offline profile reached Meyy.\n[RE-WALKED web 2026-09-24] PASS: 9000000017: first run offline → failed card; online, Try again prepared; reload → My Classes with her class.",
    "files": "web/app/page.jsx; packages/shared/src/readiness.js",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T15:28:22"
+   "at": "2026-09-24T16:07:39"
   },
   {
    "id": "WALK-A-021",
    "opened": "2026-09-20T09:20:24",
-   "closed": "",
+   "closed": "2026-09-24T16:07:39",
    "feature": "03.16",
    "found_on": [
     "web"
@@ -2653,21 +2645,19 @@
    "applies_to": "both",
    "title": "Leaving the subscribe wizard strands her: number taken, only the trial door left",
    "what": "04 (new number): Choose → Subscribe → Create sign in → verify → subscribe wizard (trial offer window shown). She backed out of the wizard, then tried 'Create sign in' again: refused 'already in use' — verifying had already created the account. 'Already have an ID' then dropped her straight into the TRIAL first run. So a teacher who leaves the wizard for any reason can no longer reach the subscribe-from-the-front-door path; she becomes a trial account without choosing it. Options: don't create the account until the wizard completes (or treat an account with no consent + no entitlement activity as still 'new' at Create sign in); or when an existing, never-activated account signs in having picked Subscribe, resume the wizard. Also (founder to decide): the offer window defaults TRIAL (green) even though she had just picked the Subscribe card. ALSO: the trial-or-subscribe window re-appears every time she re-verifies after the wizard's ← Back (row 03.16 expects it once per session). [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): worse than web — wizard ← Back to OTP, then re-verify, drops her straight into the TRIAL first run (no wizard, no offer). The phone's verify must keep mode=subscribe for a `fresh` account. PHONE: confirmed stranded — Create sign in with never-activated 04 → 'already in use' (phone's idInUse ignores the server's `fresh`). PHONE: also Log out mid-wizard → next sign-in lands in TRIAL. ✓ re-walked 2026-09-20 on iPhone: mode persists, 04 accepted again, lands back in the wizard, trial window offered once.",
-   "fix": "SERVER: /onboarding/known returns `fresh` (no consent/profile/subscription/used chapter); web Create sign in treats a fresh account as new. Trial offer once per SESSION (sessionStorage). NEEDS RENDER DEPLOY. PHONE: Create sign in reads the server's `fresh` (never-activated) answer; the chosen door (trial/subscribe) survives a return to the login screen and is spent at onDone; the trial offer is once per session.\n[RE-WALKED and_emu 2026-09-24] PASS: after backing out, Create sign in with the same number is accepted (not 'already in use') and the window is offered again (also fine on the iPhone).",
+   "fix": "SERVER: /onboarding/known returns `fresh` (no consent/profile/subscription/used chapter); web Create sign in treats a fresh account as new. Trial offer once per SESSION (sessionStorage). NEEDS RENDER DEPLOY. PHONE: Create sign in reads the server's `fresh` (never-activated) answer; the chosen door (trial/subscribe) survives a return to the login screen and is spent at onDone; the trial offer is once per session.\n[RE-WALKED and_emu 2026-09-24] PASS: after backing out, Create sign in with the same number is accepted (not 'already in use') and the window is offered again (also fine on the iPhone).\n[RE-WALKED web 2026-09-24] PASS: after ← Back, Create sign in with the same number (9000000016) is accepted, not 'already in use'.",
    "files": "api/main.py, Login.jsx, SubscribeFlow.jsx; mobile/app/login.jsx, mobile/app/front-subscribe.jsx, mobile/components/SubscribeWizard.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T14:59:06"
+   "at": "2026-09-24T16:07:39"
   },
   {
    "id": "WALK-A-022",
    "opened": "2026-09-20T09:28:46",
-   "closed": "",
+   "closed": "2026-09-24T16:07:39",
    "feature": "03.17",
    "found_on": [
     "web"
@@ -2675,16 +2665,14 @@
    "applies_to": "both",
    "title": "About you: refuse a used email up front; City mandatory; mark required fields",
    "what": "Subscribe wizard, About-you step. (1) An email already on another account is refused only AFTER she completes the email verification — she is made to verify an address she can never use. Check 'already in use' FIRST (on entry / before sending any code), as the mobile check does on Create sign in. (2) Founder: City becomes MANDATORY (Save & continue gated on it; the server/profile record to match). (3) Mark every mandatory field with * — name, email, role, state, city; School name carries NO * so it reads as optional (its '(optional)' label can then go or stay — founder's call). Same form on the phone (and Settings › Personal profile shares the fields — keep consistent). [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed all three (no *, late email refusal, City optional). ✓ iPhone re-walk 2026-09-20: green.",
-   "fix": "Used email refused at 'Confirm this email →'; City mandatory; * on name/email/role/state/city (not school) — subscribe wizard and Settings › Personal profile. PHONE: * on name/email/role/state/city (not school), City mandatory, used email refused at 'Confirm this email →'.\n[RE-WALKED and_emu 2026-09-24] PASS: About you: * on name/email/role/state/city (not school); City mandatory; a used email refused at 'Confirm this email →' before any code.",
+   "fix": "Used email refused at 'Confirm this email →'; City mandatory; * on name/email/role/state/city (not school) — subscribe wizard and Settings › Personal profile. PHONE: * on name/email/role/state/city (not school), City mandatory, used email refused at 'Confirm this email →'.\n[RE-WALKED and_emu 2026-09-24] PASS: About you: * on name/email/role/state/city (not school); City mandatory; a used email refused at 'Confirm this email →' before any code.\n[RE-WALKED web 2026-09-24] PASS: About you: * on name/email/role/state/city (not school); City mandatory; used email refused at Confirm before any code.",
    "files": "SubscribeFlow.jsx, Settings.jsx, globals.css; mobile/components/SubscribeWizard.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T15:08:07"
+   "at": "2026-09-24T16:07:39"
   },
   {
    "id": "WALK-A-023",
@@ -2709,7 +2697,7 @@
   {
    "id": "WALK-A-024",
    "opened": "2026-09-20T11:25:30",
-   "closed": "",
+   "closed": "2026-09-24T16:00:20",
    "feature": "03.06",
    "found_on": [
     "ios"
@@ -2717,16 +2705,14 @@
    "applies_to": "both",
    "title": "OTP backspace: one press should step back AND clear the previous digit",
    "what": "iPhone: pressing Backspace on an empty OTP box moves focus to the previous box but leaves its digit; a second press clears it. Founder: a single Backspace on an empty box should move back and clear that digit. The web's otpKeyDown has the same two-press behaviour (focus only) — change both. ✓ Android re-walk 2026-09-21 (dev build): green.",
-   "fix": "BOTH: one Backspace on an empty OTP box steps back AND clears that digit.\n[RE-WALKED ios 2026-09-24] PASS: one Backspace on an empty OTP box steps back and clears that digit (iPhone).",
+   "fix": "BOTH: one Backspace on an empty OTP box steps back AND clears that digit.\n[RE-WALKED ios 2026-09-24] PASS: one Backspace on an empty OTP box steps back and clears that digit (iPhone).\n[RE-WALKED web 2026-09-24] PASS: one Backspace on an empty OTP box steps back and clears the digit.",
    "files": "web/app/components/Login.jsx (otpKeyDown) + mobile login OTP boxes; web/app/components/Login.jsx, mobile/components/OtpBoxes.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T14:58:22"
+   "at": "2026-09-24T16:00:20"
   },
   {
    "id": "WALK-A-025",
@@ -3092,7 +3078,7 @@
   {
    "id": "WALK-A-042",
    "opened": "2026-09-20T15:51:55",
-   "closed": "2026-09-24T14:59:06",
+   "closed": "2026-09-24T16:07:39",
    "feature": "03.16",
    "found_on": [
     "ios"
@@ -3100,19 +3086,19 @@
    "applies_to": "phone",
    "title": "Trial-or-subscribe window is a dead end — no way back to the sign-in",
    "what": "iPhone, front door: Subscribe → Create sign in → verify lands in the wizard with the trial-or-subscribe window on top. The window is a full-screen ground (zIndex 80) with only two answers, Trial and Subscribe. The wizard's own '← Back' sits beneath it, so tapping it does nothing at all, and the phone has no browser Back to fall back on. A teacher who reaches this window and changes her mind cannot leave it — she must buy a door to get out. The web escapes by browser Back; the phone has no such exit. ✓ iPhone re-walk 2026-09-20: green.",
-   "fix": "PHONE: the trial window carries its own '← Back' beneath the two answers — it cancels the wizard back to the sign-in — and Android's hardware Back does the same while the window is up. Backing out forgets `aruvi_trial_offer_seen`, so a genuine return asks again.\n[RE-WALKED and_emu 2026-09-24] PASS: '← Back' under the two answers returns to the sign-in screen; hardware Back does the same (also fine on the iPhone).",
+   "fix": "PHONE: the trial window carries its own '← Back' beneath the two answers — it cancels the wizard back to the sign-in — and Android's hardware Back does the same while the window is up. Backing out forgets `aruvi_trial_offer_seen`, so a genuine return asks again.\n[RE-WALKED and_emu 2026-09-24] PASS: '← Back' under the two answers returns to the sign-in screen; hardware Back does the same (also fine on the iPhone).\n[WEB HALF ADDED 2026-09-24T16:00:20] Founder, web: the trial-or-subscribe window had no Back — only the phone had been given one. web SubscribeFlow.jsx: '← Back' under the two answers; it forgets aruvi_trial_offer_seen (sessionStorage) and the per-mount flag, closes the window and calls onCancel (Login → the code screen, from which she can go back to sign in). .ob-offer-backlink in globals.css.\n[RE-WALKED web 2026-09-24] PASS: web trial window now has '← Back' under the two answers; it backs out and the window is offered again on return.",
    "files": "mobile/components/SubscribeWizard.jsx",
    "commit": "",
    "native_rebuild": false,
    "status": "closed",
    "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T14:59:06"
+   "at": "2026-09-24T16:07:39"
   },
   {
    "id": "WALK-A-043",
    "opened": "2026-09-20T16:09:15",
-   "closed": "",
+   "closed": "2026-09-24T15:55:57",
    "feature": "04.26",
    "found_on": [
     "ios"
@@ -3120,19 +3106,19 @@
    "applies_to": "phone",
    "title": "Delete window: the data preview opens behind the window",
    "what": "iPhone: Settings → Delete my account → 'erase' → the last-step window → 'Download my data first (Word)'. The document now previews rather than going straight to the share sheet (WALK-A-030), but the last-step window is a React Native Modal — its own native window — and the preview is a pushed ROUTE, so it renders beneath it. She sees the delete window still sitting there and never sees the document she was asked to keep. ✓ iPhone re-walk 2026-09-20: green. ✓ Android 2026-09-21: the window stands down and returns alone, tick unticked.",
-   "fix": "PHONE: the last-step window closes before the preview route is pushed and is restored on focus when she comes back, so the document is what she sees and the delete window alone remains behind it. The tick stays hers to give.",
+   "fix": "PHONE: the last-step window closes before the preview route is pushed and is restored on focus when she comes back, so the document is what she sees and the delete window alone remains behind it. The tick stays hers to give.\n[RE-WALKED 2026-09-24] PASS: iPhone: 'Download my data first (Word)' opens the Quick Look preview IN FRONT of the delete window. Android and web do not preview at all — by design: Android hands the file to an app, web downloads it (lib/download.js canPreview is iOS-only), so there is nothing to sit behind the window.",
    "files": "mobile/app/(app)/settings/index.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "closed",
    "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-20T16:22:47"
+   "at": "2026-09-24T15:55:57"
   },
   {
    "id": "WALK-A-044",
    "opened": "2026-09-20T16:16:51",
-   "closed": "",
+   "closed": "2026-09-24T15:55:57",
    "feature": "01.11",
    "found_on": [
     "ios"
@@ -3140,16 +3126,14 @@
    "applies_to": "phone",
    "title": "Support: the message box is cramped while its foot floats above the keyboard",
    "what": "iPhone, Settings → Support, with the keyboard up: the message box shows only three rows, and 'Send message' sits well above the top of the keyboard with dead space between them. The teacher is writing the one message that reaches a human through a three-line window while the screen has room to spare. Second look: growing the box alone overshot — scrolling to the END drove the top of the form under the bar. It stops at the 'Your message' label instead. ✓ iPhone re-walk 2026-09-20: green. ✓ iPhone sweep 2026-09-21: green.",
-   "fix": "PHONE: the Support message box grows from four rows to six while it holds focus, and focusing it wheels the screen so the 'Your message' label sits at the top — measured in window coordinates, so it works on either renderer.\n[RE-WALK FAIL and_emu 2026-09-24] Founder, Android emulator: tapping into the Support message box, it still HIDES BEHIND THE KEYBOARD. Back to open; fix at the phone fix point for this group.\n[FIXED phone 2026-09-24T15:30:34] The re-walk fail had a clear cause: automaticallyAdjustKeyboardInsets is iOS-only and under edge-to-edge Android does not shrink the window, so the Support scroller had no range past the keys and the scroll-to-'Your message' had nowhere to go. Now, on Android only, the content is padded by the keypad's MEASURED height while it is up (the WALK-A-053 answer that passed on the delete block), and the scroll to the label runs at 50/260/420ms. iOS unchanged.",
+   "fix": "PHONE: the Support message box grows from four rows to six while it holds focus, and focusing it wheels the screen so the 'Your message' label sits at the top — measured in window coordinates, so it works on either renderer.\n[RE-WALK FAIL and_emu 2026-09-24] Founder, Android emulator: tapping into the Support message box, it still HIDES BEHIND THE KEYBOARD. Back to open; fix at the phone fix point for this group.\n[FIXED phone 2026-09-24T15:30:34] The re-walk fail had a clear cause: automaticallyAdjustKeyboardInsets is iOS-only and under edge-to-edge Android does not shrink the window, so the Support scroller had no range past the keys and the scroll-to-'Your message' had nowhere to go. Now, on Android only, the content is padded by the keypad's MEASURED height while it is up (the WALK-A-053 answer that passed on the delete block), and the scroll to the label runs at 50/260/420ms. iOS unchanged.\n[RE-WALKED 2026-09-24] PASS: Android: Support message box grows, 'Your message' near the top, box and Send above the keyboard.",
    "files": "mobile/app/(app)/settings/support.jsx; mobile/theme/web.js",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "and_emu"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T15:30:34"
+   "at": "2026-09-24T15:55:57"
   },
   {
    "id": "WALK-A-045",
@@ -3284,7 +3268,7 @@
   {
    "id": "WALK-A-051",
    "opened": "2026-09-21T10:26:23",
-   "closed": "",
+   "closed": "2026-09-24T15:55:57",
    "feature": "03.32",
    "found_on": [
     "and_emu"
@@ -3292,14 +3276,14 @@
    "applies_to": "phone",
    "title": "Offline, the Prepare screen says the subject has no chapters",
    "what": "Pixel 7 in airplane mode, My Lessons → 'Prepare a new lesson': the screen drew normally and announced 'No chapter mappings for this subject & grade yet.' The chapters fetch had failed and the empty list was reported as an empty CATALOGUE — so a teacher is told Meyy does not cover Social Sciences Class 6 when in fact her phone is offline. The same two-states-for-three mistake the subject list made on the web. ✓ Android re-walk 2026-09-21: green. ✓ iPhone sweep 2026-09-21: green. WEB 2026-09-21: PrepareLesson.jsx had the identical fault — a failed /chapters left the list empty and the screen announced an empty catalogue. Fixed the same way, using the web's own `lgl-link` retry idiom (FirstRun already does exactly this for the subject list). ⚠️ ALSO PRESENT, NOT FIXED: web/app/components/Allocate.jsx says 'No chapter mappings for this subject & grade.' in two places on the same two-states-for-three reasoning. Left alone deliberately — that screen belongs to family 05, which has not been walked, and its data may arrive by a different route. Fix it when 05 is walked. ✓ Web 2026-09-21: the failure names itself with a Try again.",
-   "fix": "PHONE: the chapter list has three states — asking ('Loading chapters…'), failed ('We couldn’t load the chapters just now — check your connection and try again' with a Try again that refetches), and genuinely empty (the old sentence). The reason goes to the console, never to her. Check the web's prepare screen for the same shape.",
+   "fix": "PHONE: the chapter list has three states — asking ('Loading chapters…'), failed ('We couldn’t load the chapters just now — check your connection and try again' with a Try again that refetches), and genuinely empty (the old sentence). The reason goes to the console, never to her. Check the web's prepare screen for the same shape.\n[RE-WALKED 2026-09-24] PASS: offline, Prepare says it could not reach Meyy with Try again — not 'no chapters for this subject'.",
    "files": "mobile/app/(app)/prepare.jsx; web/app/components/PrepareLesson.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "closed",
    "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-21T12:36:09"
+   "at": "2026-09-24T15:55:57"
   },
   {
    "id": "WALK-A-052",
@@ -3983,7 +3967,7 @@
   {
    "id": "WALK-A-085",
    "opened": "2026-09-24T15:14:59",
-   "closed": "",
+   "closed": "2026-09-24T15:51:08",
    "feature": "03.32",
    "found_on": [
     "ios",
@@ -3992,19 +3976,19 @@
    "applies_to": "both",
    "title": "An unsent first-run profile: logging out loses it — and its retry timer keeps running into the NEXT teacher's session",
    "what": "Found 2026-09-24 while reading the code behind the WALK-A-020 phone re-walk. (1) The pending first-run profile lives under READINESS_CACHE_PREFIX, which sign-out sweeps (signout.js), so a teacher who finishes first run offline and logs out before it reaches Meyy loses her profile and meets first run again — the same sign-out gap WALK-A-080 left open for section marks. (2) WORSE: saveReadiness's retry is a module-level setTimeout chain (15s × up to 40 ≈ 10 minutes) holding HER subjects in its closure. clearReadiness() does not cancel it, so after a sign-out the next attempt POSTs her profile with WHOEVER is signed in by then — a cross-account write on a shared phone or browser, the exact failure the 080 owner stamp exists to prevent.",
-   "fix": "OPEN — fix at the group fix point. (2) is certain and small: cancel the retry timer in clearReadiness(), and stamp the pending profile with its owner so a replay only ever runs for the teacher who made it (the 080 pattern). (1) is the product question already open from 080: warn at sign-out when something has not reached Meyy yet.\n[FIXED shared + web 2026-09-24T15:30:34] (2) done: shared readiness.js — the retry is owner-stamped and fires only for the teacher who armed it, and clearReadiness() (run at every sign-out) cancels it; web page.jsx's own retry gets the same owner check and onSignOut clears it. Test packages/shared/test/readinessRetry.test.js (2 cases: cancelled at sign-out; a switched user without a sweep never receives her profile), mutation-checked — both fail with the guards removed. Shared suite 238/238. (1) — losing an UNSENT profile at sign-out — stays the open product question shared with WALK-A-080's sign-out warning.",
+   "fix": "OPEN — fix at the group fix point. (2) is certain and small: cancel the retry timer in clearReadiness(), and stamp the pending profile with its owner so a replay only ever runs for the teacher who made it (the 080 pattern). (1) is the product question already open from 080: warn at sign-out when something has not reached Meyy yet.\n[FIXED shared + web 2026-09-24T15:30:34] (2) done: shared readiness.js — the retry is owner-stamped and fires only for the teacher who armed it, and clearReadiness() (run at every sign-out) cancels it; web page.jsx's own retry gets the same owner check and onSignOut clears it. Test packages/shared/test/readinessRetry.test.js (2 cases: cancelled at sign-out; a switched user without a sweep never receives her profile), mutation-checked — both fail with the guards removed. Shared suite 238/238. (1) — losing an UNSENT profile at sign-out — stays the open product question shared with WALK-A-080's sign-out warning.\n[CLOSED 2026-09-24] Part (2) verified by readinessRetry.test.js (mutation-checked) — not stageable by hand without a cross-account test on a real phone. Part (1), losing an unsent profile at sign-out, is carried in the founder's decision list with WALK-A-080's sign-out warning.",
    "files": "packages/shared/src/readiness.js (scheduleRetry, clearReadiness, pending key); packages/shared/src/signout.js",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "closed",
    "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T15:30:34"
+   "at": "2026-09-24T15:51:08"
   },
   {
    "id": "WALK-A-086",
    "opened": "2026-09-24T15:42:02",
-   "closed": "",
+   "closed": "2026-09-24T15:51:01",
    "feature": "03.16",
    "found_on": [
     "ios",
@@ -4013,18 +3997,14 @@
    "applies_to": "both",
    "title": "A returning sign-in with no free chapters left and nothing set up walks the whole first run to a paywall",
    "what": "Founder, 2026-09-24, after 9000000010/11 (Subscribe → backed out at Pay) signed in again and landed on 'Welcome to Meyy!'. A returning sign-in is not asked for a plan and an account with no profile and no subscription is treated as a new trial teacher. FOUNDER'S RULING: with trial chapters left that is RIGHT ('forcing her through that channel without trying her trial will not be right'; serious payers complete Pay). But with the trial already used up she would walk the whole first run and meet the paywall only at 'Prepare the lesson'. The create path already avoids this (trial_remaining 0 → Subscribe with the reason); the sign-in path did not.",
-   "fix": "[FIXED api + web + phone 2026-09-24T15:42:02] /onboarding/verified now also returns `set_up` (a profile, a prepared lesson this year, or a non-trial subscription; a signed agreement does NOT count; unsure → true). Web Login.jsx and phone login.jsx: any verified sign-in with trial_remaining === 0 AND set_up === false goes to Subscribe with 'This mobile number has already used its free trial. Subscribe to keep using Meyy.' — the create path's own sentence. Everyone else unchanged: trial left → first run; set up (lessons/profile) → into her app, lapsed or not. An older API that omits set_up changes nothing. Verified with TestClient on scratch data: new account → remaining 3, set_up false; trial spent, nothing set up → 0/false (→ Subscribe); after a profile save → 0/true (→ app). NEEDS A RENDER DEPLOY.",
+   "fix": "[FIXED api + web + phone 2026-09-24T15:42:02] /onboarding/verified now also returns `set_up` (a profile, a prepared lesson this year, or a non-trial subscription; a signed agreement does NOT count; unsure → true). Web Login.jsx and phone login.jsx: any verified sign-in with trial_remaining === 0 AND set_up === false goes to Subscribe with 'This mobile number has already used its free trial. Subscribe to keep using Meyy.' — the create path's own sentence. Everyone else unchanged: trial left → first run; set up (lessons/profile) → into her app, lapsed or not. An older API that omits set_up changes nothing. Verified with TestClient on scratch data: new account → remaining 3, set_up false; trial spent, nothing set up → 0/false (→ Subscribe); after a profile save → 0/true (→ app). NEEDS A RENDER DEPLOY.\n[RE-WALKED ios 2026-09-24] PASS: 9000000009 (trial spent, erased, rejoined, backed out before Pay) signing in lands on Subscribe › About you with 'This mobile number has already used its free trial. Subscribe to keep using Meyy.'; 9000000010 (trial left) still goes to first run.\n[RE-WALKED and_emu + web 2026-09-24] PASS: spent-trial, nothing-set-up sign-in → Subscribe with the reason; a trial-left account still → first run.",
    "files": "api/main.py (onboarding_verified, _has_set_up), web/app/components/Login.jsx, mobile/app/login.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "web",
-    "ios",
-    "and_emu"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Kumar",
-   "at": "2026-09-24T15:42:02"
+   "at": "2026-09-24T15:51:01"
   }
  ]
 }

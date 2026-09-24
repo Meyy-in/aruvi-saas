@@ -384,6 +384,19 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             Subscribe
           </button>
         </div>
+        {/* ★ WALK-A-042 on the web (founder, 2026-09-24: "on the trial/subscribe window of web,
+            there is no back button"). The phone got its way out on 2026-09-20; the web's window
+            had only the two answers, so a teacher who had changed her mind had to pick one to
+            leave. ← Back cancels the wizard to the sign-in, as the wizard's own first-step Back
+            does, and forgets the once-per-session flag so a genuine return is asked again. */}
+        {onCancel ? (
+          <button className="fr-link ob-offer-backlink" onClick={() => {
+            try { window.sessionStorage.removeItem("aruvi_trial_offer_seen"); } catch {}
+            offeredRef.current = false;
+            setOfferTrial(false);
+            onCancel();
+          }}>← Back</button>
+        ) : null}
       </div>
     </div>
   ) : null;

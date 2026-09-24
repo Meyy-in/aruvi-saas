@@ -5504,3 +5504,6 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 .prep-tip .prep-tip-x { position: absolute; top: 4px; right: 6px; background: none; border: 0;
   color: var(--ink-soft); font-size: 13px; line-height: 1; padding: 4px; cursor: pointer; }
 .prep-tip .prep-tip-x:hover { color: var(--ink); }
+
+/* WALK-A-042 (web, 2026-09-24): the trial window's own way out, beneath the two answers. */
+.ob-offer-box .ob-offer-backlink { display: block; margin: 14px auto 0; }
