@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getJSON, pretty, pad, classNum, markPrepared, gradeSlug, bareChapterTitle } from "../lib/format";
 import { pullSectionState, bindSectionChapter, unbindSection } from "../lib/sectionState";
 import { readHistory, recordHistory, hasHistory, pullSectionHistory } from "../lib/sectionHistory";
@@ -311,15 +311,29 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   }, [pendingOpen, ready, onConsumePending]);
 
   // Return from Prepare-a-lesson launched FROM a section card: the chapter was just prepared, so
-  // AUTO-ATTACH it to that section (the card loads it directly — no popup). Refetch this class's
-  // plans first so the card can render the chapter title + progress rail. The sync hold above
+  // AUTO-ATTACH it to that section (the card loads it directly — no popup). The sync hold above
   // keeps the mount pull from clearing the fresh binding before its push lands.
-  useEffect(() => {
-    if (!pendingAttach || !ready) return;
+  /* ★ BIND FIRST, BEFORE THE FIRST PAINT (WALK-A-062, 2026-09-24). This used to refetch the
+     class's plans FIRST and bind in the fetch's .finally() — "so the card can render the title
+     and rail". But until the bind, the section has no chapter, so the card could only draw sand
+     ("Pick a chapter to begin") for exactly as long as the refetch took: the flash the founder
+     saw at the end of the prepare bar, and it got WORSE on a slow network. Now the binding is
+     written in a LAYOUT effect — after React commits, before the browser paints — so the very
+     first frame already has the chapter bound. `attachingKey` then holds that one card on the
+     existing "Loading your lesson…" line until the refetched list contains the new plan: the
+     old list, just invalidated, does not have it yet, and without the hold the card would fall
+     through to sand anyway. */
+  const [attachingKey, setAttachingKey] = useState(null);
+  const useBeforePaint = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+  useBeforePaint(() => {
+    if (!pendingAttach || !ready) return undefined;
     const { subject: pSub, grade: pGrade, sectionTag, filename } = pendingAttach;
-    if (!pSub || !pGrade || !sectionTag || !filename) { onConsumeAttach && onConsumeAttach(); return; }
+    if (!pSub || !pGrade || !sectionTag || !filename) { onConsumeAttach && onConsumeAttach(); return undefined; }
     const key = `${pSub}/${pGrade}`;
     const sectionKey = `${pSub}_${pGrade}_${sectionTag}`;
+    bindSectionChapter(sectionKey, filename);     // auto-attach: localStorage + server push
+    setAttachingKey(sectionKey);
+    setSyncTick((t) => t + 1);                    // re-read the cache → card shows the chapter
     let live = true;
     invalidatePlans(key);                         // a prepare just changed HER flags
     fetchPlans(key)
@@ -327,8 +341,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
       .catch(() => {})
       .finally(() => {
         if (!live) return;
-        bindSectionChapter(sectionKey, filename);   // auto-attach: localStorage + server push
-        setSyncTick((t) => t + 1);                  // re-read the cache → card shows the chapter
+        setAttachingKey(null);
         onConsumeAttach && onConsumeAttach();
       });
     return () => { live = false; };
@@ -647,8 +660,13 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     const { c, sectionKey } = attachFor;
     const gradePlans = plansByKey[`${c.subjectSlug}/${c.gradeSlug}`];
     // Only chapters SHE PREPARED (never raw library entries — /plans returns the whole shared
-    // library; My Lessons applies the same filter), excluding the chapter already bound to this
-    // section (e.g. the just-completed one) — she's here to pick a DIFFERENT chapter.
+    // library; My Lessons applies the same filter), excluding the chapter CURRENTLY bound to
+    // this section — she's here to pick a different one.
+    // ⚠️ THIS DOES NOT HIDE A JUST-COMPLETED CHAPTER, and that is deliberate (WALK-A-061,
+    // founder 2026-09-24, option c). moveOnFromCompleted clears the binding BEFORE this picker
+    // opens, so boundFile is null on that path and the finished chapter is listed. Re-tracking a
+    // finished chapter is a legitimate act (teaching it again, another term) and costs nothing,
+    // so the behaviour stays; this comment used to claim the opposite.
     // ARCHIVED plans are excluded too (founder, 2026-08-01): the archive box holds a plan
     // OUT of circulation — restore it in My Lessons first, then attach. (An attached plan
     // can never be archived, so the sibling-section pass-through below is unaffected.)
@@ -1135,7 +1153,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
              `file` is the tell: it says a chapter IS bound, so the card waits instead of
              claiming otherwise. The phone already did this ("no false 'pick a chapter' flashes
              on a real network", app/(app)/index.jsx); the web did not. */
-          if (!plan && file && gradePlans === undefined) {
+          if (!plan && file && (gradePlans === undefined || attachingKey === sectionKey)) {
             return (
               <div className="sc-card st-going" key={i}>
                 <SectionTag c={c} />

@@ -8,8 +8,9 @@
      "Stage None" phantom group must never appear for any subject.
   3. English split-chapter plans (single section) collapse the section wrapper:
      top-level groups are spines. Multi-section legacy plans keep section->spine.
-  4. LO is NEVER displayed in the LP (renderer rule — asserted here only as:
-     the data stays available for assessment linking, i.e. we don't destroy it).
+  4. The LO data is PRESERVED on the Period. (This rule used to read "LO is NEVER displayed in
+     the LP"; superseded — founder, 2026-09-22, WALK-A-067: the LO DOES show in the lesson plan.
+     What this file asserts is unchanged: the data is carried, for display and assessment alike.)
 
 Run:  ARUVI_DATA_DIR=$PWD/data/cloud/content python3 tests/test_lp_standard.py
 """
@@ -125,7 +126,7 @@ for s, g, fn, raw_periods, lp in views:
               all(grp.type == "section" for grp in lp.groups))
 
 # ── 4. LO data preserved (display suppression is the renderer's job) ───────────
-print("LO reserved for assessment:")
+print("LO data carried on the Period:")
 ss_p = next(p for s, g, fn, _, lp in views if s == "social_sciences"
             for p in walk_periods(lp.groups))
 check("SS learning_outcomes still carried on Period (data, not display)",

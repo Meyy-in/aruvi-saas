@@ -309,8 +309,10 @@ teacher → web (Next.js) → HTTP → FastAPI (api/) → aruvi_core (Python eng
   ("0–5"/"0-10"; `phases[]` vs `time_bands[]` — Science secondary uses time_bands) — always
   parse via `normalize.parse_minutes_band`, never re-split strings.
 - **Standard LP display rules (founder, 2026-07-09; tests: `tests/test_lp_standard.py`):**
-  (a) **LO is NEVER shown in a lesson plan** — reserved for assessment (data still carried:
-  `Period.learning_outcomes` / group meta, for the assessment link only). (b) **`Period.approach`**
+  (a) ~~LO is NEVER shown in a lesson plan~~ — **SUPERSEDED (founder, confirmed 2026-09-22,
+  WALK-A-067): the Learning Outcome DOES show in the lesson plan** — on the spine band and in the
+  period card, in the PDF and the Word document alike. The data is carried as before
+  (`Period.learning_outcomes` / group meta) and still links the assessment. (b) **`Period.approach`**
   is the ONE canonical "how do I run this?" line ("40 min · {approach}"): Science
   `pedagogical_approach` · Maths `pedagogical_method` · English joined `pedagogical_methods` ·
   TWAU `dominant_mode` SPELLED OUT ("Hands-on Investigation", never "HI"). SS now emits

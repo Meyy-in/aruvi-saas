@@ -156,6 +156,7 @@ def _shaded_band(doc, hex_color, kicker, kicker_color, title, title_color, *, ti
 
     `subtitle` prints one italic line under the title — the group's learning outcome on
     the lesson-plan bands (2026-08-23). Mirrors `.st-lo` in the two PDF stylesheets."""
+    _spacer(doc, 8)          # WALK-A-067: the band never butts against what precedes it
     t = doc.add_table(rows=1, cols=1)
     _no_borders(t)
     cell = t.cell(0, 0)
@@ -175,7 +176,9 @@ def _shaded_band(doc, hex_color, kicker, kicker_color, title, title_color, *, ti
         # English, maths secondary) is not the only one that reads as a bare italic line.
         _run(sp, "Learning outcome: ", bold=True, size=8, color=PINE, caps=True)
         _run(sp, subtitle, italic=True, size=8.5, color=BODY, font=SERIF)
-    doc.add_paragraph().paragraph_format.space_after = Pt(2)
+    # WALK-A-067 (b): "the spine's Learning Outcome is cramped — it needs one empty row after
+    # it" (founder). The old bare paragraph took the style's default size and read as nothing.
+    _spacer(doc, 12)
     return t
 
 
@@ -373,17 +376,33 @@ def _lp_card(doc, lo_items, materials, notes):
 def _lp_unit(doc, p, *, first_pedagogy, fallback_lo=""):
     meta = p.get("meta", {}) or {}
     dur = meta.get("duration_minutes")
-    head = _para(doc, space_before=8, space_after=2)
-    _run(head, f"Period {p.get('number')}  ", bold=True, size=10.5, color=INK)
+    # ★ THE PERIOD BAND (WALK-A-067 (a)). The PDF heads each period with a one-row band a step
+    # LIGHTER than the spine band above it (`.period-band`: #f4f2ee, 0.75pt #e2ddd2 top and
+    # bottom), pedagogy at its right end. Word printed plain lines, so a spine and its first
+    # period read as one block. Same band here: Period · duration · title · pedagogy.
+    _spacer(doc, 8)
+    band = doc.add_table(rows=1, cols=4)
+    _edge_borders(band, "E2DDD2", sz="6")
+    sec = doc.sections[0]
+    avail = (sec.page_width - sec.left_margin - sec.right_margin) / 914400.0
+    ped_in = round(avail * 0.26, 2); n_in = round(avail * 0.13, 2); d_in = round(avail * 0.10, 2)
+    _fixed_table(band, [n_in, d_in, round(avail - n_in - d_in - ped_in, 2), ped_in])
+    for j in range(4):
+        _bg(band.cell(0, j), "F4F2EE")
+        pj = band.cell(0, j).paragraphs[0]
+        pj.paragraph_format.space_before = Pt(3); pj.paragraph_format.space_after = Pt(3)
+    _run(band.cell(0, 0).paragraphs[0], f"Period {p.get('number')}", bold=True, size=10, color=INK)
     if dur:
-        _run(head, f"{dur} min   ", size=9, color=SOFT)
-    _run(head, p.get("title", ""), bold=True, size=10.5, color=INK, font=SERIF)
+        _run(band.cell(0, 1).paragraphs[0], f"{dur} min", size=9, color=SOFT)
+    _run(band.cell(0, 2).paragraphs[0], p.get("title", ""), bold=True, size=10, color=INK, font=SERIF)
     ped = p.get("approach") or ""
     if ped:
-        pp = _para(doc, space_after=2)
+        pp = band.cell(0, 3).paragraphs[0]
+        pp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         if first_pedagogy:
-            _run(pp, "Pedagogy: ", bold=True, size=10.5, color=INK)
-        _run(pp, ped, italic=True, size=10.5, color=SOFT)
+            _run(pp, "Pedagogy: ", bold=True, size=9, color=INK)
+        _run(pp, ped, italic=True, size=9, color=SOFT)
+    _spacer(doc, 4)
     # LO · Materials · Teacher notes now travel together as ONE labelled stack, in the
     # PDF's order (notes therefore move ABOVE the prepared visual aids, where they used
     # to sit below them). A period-level LO (SS, TWAU) fills the first row; fallback_lo
@@ -537,6 +556,46 @@ def _stimulus(doc, block):
         _run(_para(doc, space_after=2), "[figure — see the on-screen version]", italic=True, size=8, color=SOFT)
 
 
+def _edge_borders(table, color, sz="6", edges=("top", "bottom")):
+    """Only the named outer edges ruled; everything else open. For the one-row period band."""
+    b = OxmlElement("w:tblBorders")
+    for edge in ("top", "left", "bottom", "right", "insideH", "insideV"):
+        e = OxmlElement(f"w:{edge}")
+        if edge in edges:
+            e.set(qn("w:val"), "single"); e.set(qn("w:sz"), sz)
+            e.set(qn("w:space"), "0"); e.set(qn("w:color"), color)
+        else:
+            e.set(qn("w:val"), "nil")
+        b.append(e)
+    table._tbl.tblPr.append(b)
+
+
+def _spacer(doc, pts):
+    """An empty line of a KNOWN height. A bare doc.add_paragraph() takes the style's default
+    size, which is why the old spacers read as almost nothing (WALK-A-067)."""
+    sp = doc.add_paragraph()
+    sp.paragraph_format.space_before = Pt(0); sp.paragraph_format.space_after = Pt(0)
+    sp.paragraph_format.line_spacing = Pt(pts)
+    r = sp.add_run(""); r.font.size = Pt(max(1, pts - 2))
+    return sp
+
+
+def _rule_para(doc, color_hex, sz="6", space_before=9, space_after=6):
+    """A full-width thin rule as a paragraph bottom border — the Word twin of the PDF's
+    `.q-rule` (0.75pt, pine-grey) that closes every assessment question (WALK-A-067)."""
+    rp = doc.add_paragraph()
+    pf = rp.paragraph_format
+    pf.space_before = Pt(space_before); pf.space_after = Pt(space_after)
+    pf.line_spacing = Pt(1)
+    pPr = rp._p.get_or_add_pPr()
+    bdr = OxmlElement("w:pBdr")
+    bot = OxmlElement("w:bottom")
+    bot.set(qn("w:val"), "single"); bot.set(qn("w:sz"), sz)
+    bot.set(qn("w:space"), "1"); bot.set(qn("w:color"), color_hex)
+    bdr.append(bot); pPr.append(bdr)
+    return rp
+
+
 def _assess_item(doc, it, qn, include_answers):
     n = it.get("normalized") or {}
     lo = n.get("linked_lo") or it.get("implied_lo") or ""
@@ -610,6 +669,9 @@ def _assess_item(doc, it, qn, include_answers):
             _run(_para(doc, space_after=1), ln, size=9, color=BODY)
     if include_answers:
         _answer_block(doc, n)
+    # WALK-A-067 (c): the PDF closes every question with a thin pine-grey rule (`.q-rule`,
+    # 0.75pt #7fa091); Word had none, so questions ran into each other. Same rule, same colour.
+    _rule_para(doc, "7FA091", sz="6")
 
 
 def _answer_block(doc, n):

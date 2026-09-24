@@ -707,6 +707,8 @@ export default function Home() {
             section: tg.sectionKey, tag: tg.c.sectionTag } });
         }}
         plans={attachFor ? st.plansBySG[`${attachFor.c.subjectSlug}/${attachFor.c.gradeSlug}`] : null}
+        /* The CURRENT binding only — a just-completed chapter was already unbound, so it is
+           listed, deliberately (WALK-A-061, founder option c; see web MyPlans attachModal). */
         boundFile={attachFor ? readLocalSection(attachFor.sectionKey).chapter : null}
         alsoAttachable={attachFor ? boundFilesForGrade(attachFor.c.subjectSlug, attachFor.c.gradeSlug) : null}
         onAttach={attachChapter} onClose={() => { setAttachFor(null); setOpenPrior(null); }}

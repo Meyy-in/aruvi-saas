@@ -272,6 +272,14 @@ select, input[type="number"] {
   border-radius: 3px; padding: 7px 10px; color: var(--ink);
 }
 select:focus, input:focus { outline: none; border-color: var(--pine); }
+/* ★ THE HOUSE FOCUS RING (WALK-A-065, 2026-09-24). Blue is not in the palette, but anything
+   interactive WITHOUT its own focus rule fell back to Chrome's default blue ring — found by
+   chance on the My Lessons archive box in a founder screenshot. Rather than patch the one box,
+   this sets the ring for EVERYTHING: pine, 2px, clear of the edge. It is the lowest-specificity
+   focus rule in the file, so every element that already styles its own focus (.dd-btn,
+   .fr-wheel, inputs, …) keeps its own look. :focus-visible means keyboard focus, and the
+   browsers' own heuristics — a mouse click on a button does not draw it. */
+:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
 
 /* ── EVERY dropdown in Aruvi wears Aruvi (founder, 2026-08-27) ──────────────────
    Promoted from `.ob-field select`, which had this treatment alone since 2026-08-25
@@ -2111,6 +2119,9 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
    removed the instant you tap to close, so the tinge and border vanish immediately (not on a
    later click elsewhere). */
 .mlp2-archfolder.open { border-color:var(--pine); color:var(--pine); background:var(--tint-pine); }
+/* The box has its own border, so focus is shown on THAT (the .dd-btn idiom), not as a second ring
+   around it (WALK-A-065). */
+.mlp2-archfolder:focus-visible { outline: none; border-color: var(--pine); color: var(--pine); }
 .mlp2-archcount { font-family:var(--f-mono); font-size:11px; font-weight:600; letter-spacing:.02em; }
 
 /* Per-card Archive — an icon at the TOP-RIGHT corner of the card. Absolutely placed so it never
