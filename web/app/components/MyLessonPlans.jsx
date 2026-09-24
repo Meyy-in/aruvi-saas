@@ -610,6 +610,9 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
 
   const busyRef = useRef(false);
   busyRef.current = !!openPlan;
+  /* Held up while one of HER archive writes is still settling, so the revalidation below can
+     never pull the server's pre-archive answer back over a change she has just made. */
+  const archiveBusyRef = useRef(0);
   useEffect(() => {
     const keys = (taughtGradeObj ? taughtGradeObj.sections || [] : [])
       .map((s) => `${sSlug}_${gSlug}_${s.tag}`).filter(Boolean);
@@ -771,6 +774,7 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
      optimistic flag is put back to the truth and she is told; on "unverified" nothing is said
      and nothing is reverted, because we do not know that it failed. */
   const verifyArchive = (p, want, doWrite) => {
+    archiveBusyRef.current += 1;
     verifiedWrite({
       write: doWrite,
       read: () => getJSON("/plan-archive").then((d) => (d && (d.archived || d.plans)) || d || {}),
@@ -789,6 +793,7 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
          would pull the OLD truth back over the new optimistic flag — the exact bug, by the other
          door. On a mismatch the flag is put back below, so the cache and the screen agree either
          way. */
+      archiveBusyRef.current = Math.max(0, archiveBusyRef.current - 1);
       invalidatePlans(key);
       if (status === "ok") {
         setToast({ kind: "ok", text: want ? "Moved to Archive — find it in the box above."
@@ -865,6 +870,44 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
     const t = setTimeout(() => setToast(null), 3200);
     return () => clearTimeout(t);
   }, [toast]);
+
+  /* ★ THE LISTING IS RE-READ LIKE ANY OTHER FACT SHE CAN CHANGE ELSEWHERE (WALK-A-075,
+   * 2026-09-24). Attaching a chapter, moving the pointer and completing one all crossed between
+   * two devices in 3-10s because they live in section_state, which the effect above reconciles.
+   * ARCHIVING did not cross AT ALL, in either direction: the archived flag rides on the per-teacher
+   * /plans listing, and that listing is cached per key with ONE revalidation per session and an
+   * invalidation list that is, by design, LOCAL ONLY — "a prepare finished", "a chapter was
+   * attached", "her academic year cut over". Nothing invalidated it because ANOTHER DEVICE had
+   * changed something, and nothing polled it. She archived on her laptop and her phone went on
+   * showing the lesson on the shelf until something unrelated happened to clear the copy.
+   *
+   * ⚠️ It is a REVALIDATION, not an invalidation: fetchPlans(force) still sends If-None-Match, and
+   * the server answers an unchanged listing with a 200 {"unchanged": true} of a few hundred bytes
+   * (the 2026-09-16 workaround for Render turning our 304 into a 503). So the cost of asking every
+   * 20s is small, and the device copy is never thrown away — only confirmed.
+   *
+   * Deliberately its OWN effect rather than a line inside the section-state one: that effect
+   * returns early when the class has no sections, and archiving has nothing to do with sections. */
+  useEffect(() => {
+    if (!key) return undefined;
+    let live = true;
+    const revalidate = () => {
+      if (!live || busyRef.current || archiveBusyRef.current > 0) return;
+      fetchPlans(key, { force: true })
+        .then((plans) => { if (live) setPlansByKey((prev) => ({ ...prev, [key]: plans })); })
+        .catch(() => {});   // unreachable is not "she has none" — the stored copy stands
+    };
+    const onVis = () => { if (document.visibilityState === "visible") revalidate(); };
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("focus", revalidate);
+    const iv = setInterval(() => { if (document.visibilityState === "visible") revalidate(); }, 20000);
+    return () => {
+      live = false;
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("focus", revalidate);
+      clearInterval(iv);
+    };
+  }, [key]);
 
   // Publish the sticky frozen header's live height as --mlp2-frozen-h so the Year Plan's own head
   // (exec + tiles + column line) can stick RIGHT BELOW it — the plan then freezes down to the

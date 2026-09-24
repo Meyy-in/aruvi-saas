@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-24T02:21:51",
+ "updated_at": "2026-09-24T02:23:47",
  "items": {
   "04.19": {
    "ios": {
@@ -3474,18 +3474,18 @@
    "applies_to": "both",
    "title": "Archiving never reaches the other device — the archived flag rides on a listing nothing re-reads",
    "what": "Founder, web + real Android on one account, 2026-09-22: attach, unit pointer and chapter completion all cross between devices within 3-10s, but archiving a lesson on one device is never reflected on the other, in either direction.\n★ CAUSE. The two facts travel by different roads. The pointer and the binding live in section_state, which has its own periodic reconcile — that is why they arrive in seconds. The ARCHIVED flag does not: it rides on the per-teacher /plans listing, and that listing is cached per key by @aruvi/shared/plans with ONE revalidation per session. Its invalidation is explicit and, by design, LOCAL ONLY — the file's own note lists the triggers: 'a prepare finished', 'a chapter was attached', 'her academic year cut over'. Nothing invalidates it because ANOTHER DEVICE changed something, and nothing polls it. So device B keeps serving its own copy, with the pre-archive flags, until a prepare, an attach, a cutover, a sign-out or a cold start happens to clear it.\nThe row's contract promises three moments — within ~20s, on returning to the foreground, or on pull-to-refresh. Archiving honours none of them.\n⚠️ AND THE CHEAP FIX IS ALREADY BUILT. The listing carries an ETag and the server answers an unchanged listing with a 200 {\"unchanged\": true} body of a few hundred bytes (the 2026-09-16 workaround for Render turning our 304 into a 503). So revalidating is nearly free — what is missing is anything that asks.",
-   "fix": "OPEN. Smallest honest fix first, then the fuller one:\n(a) PULL-TO-REFRESH MUST INVALIDATE THE LISTING. The row names it as one of the three moments and it is the one a teacher reaches for deliberately. invalidatePlans(key) on that gesture, on both surfaces.\n(b) FOREGROUND TOO — returning to the app is the other promised moment, and on the phone it is the common one.\n(c) THEN THE PERIODIC PATH: piggyback an If-None-Match revalidation of the plans listing on the same timer that already reconciles section state, rather than adding a second poll. Given the unchanged answer is a few hundred bytes, the cost is small and the rule becomes simple — every fact the teacher can change on one device is re-read on the other within the same window.\nCheck the archive COUNT in the header moves with it, not just the card, and re-walk 05.16 after, since its counts were verified on a single device.",
+   "fix": "OPEN. Smallest honest fix first, then the fuller one:\n(a) PULL-TO-REFRESH MUST INVALIDATE THE LISTING. The row names it as one of the three moments and it is the one a teacher reaches for deliberately. invalidatePlans(key) on that gesture, on both surfaces.\n(b) FOREGROUND TOO — returning to the app is the other promised moment, and on the phone it is the common one.\n(c) THEN THE PERIODIC PATH: piggyback an If-None-Match revalidation of the plans listing on the same timer that already reconciles section state, rather than adding a second poll. Given the unchanged answer is a few hundred bytes, the cost is small and the rule becomes simple — every fact the teacher can change on one device is re-read on the other within the same window.\nCheck the archive COUNT in the header moves with it, not just the card, and re-walk 05.16 after, since its counts were verified on a single device.\n\n[FIXED web 2026-09-24T02:23:47] MyLessonPlans.jsx gains its own revalidation effect for the plans listing, on the same three moments the row promises: mount, foreground (visibilitychange + window focus) and a 20s tick while visible.\n· It is a REVALIDATION, not an invalidation — fetchPlans(force) still sends If-None-Match and an unchanged listing comes back as a 200 {\"unchanged\": true} of a few hundred bytes (the 2026-09-16 Render workaround), so asking every 20s is cheap and the device copy is confirmed rather than thrown away. A failed request keeps the stored copy: unreachable is not 'she has none'.\n· Its OWN effect, not a line inside the existing section-state sync: that one returns early when the class has no sections, and archiving has nothing to do with sections.\n· archiveBusyRef holds the poll off while one of HER archive writes is still settling, so a tick can never pull the server's pre-archive answer back over a change she has just made — the flicker this would otherwise have introduced.\n⚠️ SCOPE, deliberately not widened: My Classes (MyPlans.jsx) keeps its own plansByKey and is NOT revalidated here, so a lesson archived on another device can still be offered by the attach picker there until something else invalidates. Same one-line remedy, but it is outside 05.31's clause and belongs with the picker's own re-walk.\nPhone half owed. @babel/parser and check-tdz clean.",
    "files": "packages/shared/src/plans.js (invalidation triggers, fetchPlans/readPlans), web/app/components/MyLessonPlans.jsx, the section-state reconcile timer, mobile equivalents",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "web",
     "ios",
     "and_emu"
    ],
    "owner": "Claude",
-   "at": "2026-09-23T15:35:05"
+   "at": "2026-09-24T02:23:47"
   },
   {
    "id": "WALK-A-076",
