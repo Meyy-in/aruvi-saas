@@ -751,23 +751,21 @@ export function projectReadiness(profile, activeIdx = 0) {
 }
 
 
-/* ── the name a Prepare press would give its plan (WALK-A-070, 2026-09-24) ─────────────
- * Mirrors api/data.py genon_plan_filename + norm_matrix EXACTLY: rows aggregated by duration,
- * zero rows dropped, longest duration first, "{d}m{count}" joined by "-"; then the server's
- * per-chapter suffix ("_e{engine}_c{canonical version}.json" from /genon/.../chapters).
- * Returns "" when the suffix is unknown (an older API), so callers treat it as "can't tell"
- * and leave the button live — the safe direction. */
-export function normMatrix(rows) {
-  const agg = {};
-  (rows || []).forEach((r) => {
-    const d = parseInt(r && r.duration, 10), c = parseInt(r && r.count, 10);
-    if (d > 0 && c > 0) agg[d] = (agg[d] || 0) + c;
-  });
-  return Object.keys(agg).map(Number).sort((a, b) => b - a).map((d) => `${d}m${agg[d]}`).join("-");
-}
-export function genonPlanFilename(chapterNumber, rows, suffix) {
+/* ── the name a Prepare press WOULD land on (WALK-A-070, 2026-09-24) ─────────────────
+ * Asked of the server (POST /genon/{s}/{g}/{ch}/plan-name), never rebuilt here: the server
+ * reuses a chapter's own base plan when the length matches one of its variants, and otherwise
+ * keys the plan off the variant the serve actually built from — neither is knowable on the
+ * device. The first attempt rebuilt the name client-side and missed exactly those plans.
+ * Any failure (offline, older API, no chapter) returns "" — "can't tell" — so the caller
+ * leaves the button LIVE. It only ever greys when the server has said so. */
+export async function planNameFor(subject, grade, chapterNumber, rows) {
+  const clean = (rows || [])
+    .map((r) => ({ duration: Number(r && r.duration) || 0, count: Number(r && r.count) || 0 }))
+    .filter((r) => r.duration > 0 && r.count > 0);
   const n = parseInt(chapterNumber, 10);
-  const m = normMatrix(rows);
-  if (!suffix || !Number.isFinite(n) || !m) return "";
-  return `ch_${String(n).padStart(2, "0")}_${m}${suffix}`;
+  if (!subject || !grade || !Number.isFinite(n) || !clean.length) return "";
+  try {
+    const d = await postJSON(`/genon/${subject}/${grade}/${n}/plan-name`, { rows: clean }, 8000);
+    return (d && typeof d.filename === "string") ? d.filename : "";
+  } catch { return ""; }
 }

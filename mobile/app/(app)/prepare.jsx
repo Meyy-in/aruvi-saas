@@ -55,7 +55,7 @@ import { View, ScrollView, Pressable, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
-  annualBudgetPeriods, classNum, genonPlanFilename, getJSON, largestRemainder, pad,
+  annualBudgetPeriods, classNum, getJSON, largestRemainder, pad, planNameFor,
   postJSON, pretty,
 } from "@aruvi/shared/format";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
@@ -92,7 +92,6 @@ export default function Prepare() {
   const [genonChs, setGenonChs] = useState([]);
   const [canonMinutes, setCanonMinutes] = useState({});
   const [canonPeriods, setCanonPeriods] = useState({});
-  const [planSuffix, setPlanSuffix] = useState({});   // WALK-A-070 — see web PrepareLesson
   const [syllabusW, setSyllabusW] = useState(null);
   const [trialInfo, setTrialInfo] = useState(() => entitlementState().ent);
   const [busy, setBusy] = useState(false);
@@ -149,9 +148,8 @@ export default function Prepare() {
         setGenonChs(d.chapters || []);
         setCanonMinutes(d.canonical_minutes || {});
         setCanonPeriods(d.canonical_periods || {});
-        setPlanSuffix(d.plan_suffix || {});
       })
-      .catch(() => { if (live) { setGenonChs([]); setCanonMinutes({}); setPlanSuffix({}); } });
+      .catch(() => { if (live) { setGenonChs([]); setCanonMinutes({}); } });
     return () => { live = false; };
   }, [subject, grade, chTry]);
 
@@ -290,16 +288,23 @@ export default function Prepare() {
         && (p.prepared || attachedFiles.has(p.filename))),
     [plans, chapterNo, attachedFiles]);
 
-  /* WALK-A-070: grey "Prepare again" when a press would hand back a plan she already holds —
-     same chapter, same length (periods AND minutes), same canonical version. The reasoning
-     lives on web PrepareLesson's samePlanHeld; this is the same rule, kept in step. */
-  const samePlanHeld = useMemo(() => {
-    if (!chosenAlreadyPrepared || !chapterNo) return false;
-    const name = genonPlanFilename(chapterNo, rows, planSuffix[String(Number(chapterNo))]);
-    if (!name) return false;
-    return (plans || []).some((p) => p.filename === name && !p.archived
-      && (p.prepared || attachedFiles.has(p.filename)));
-  }, [chosenAlreadyPrepared, chapterNo, rows, planSuffix, plans, attachedFiles]);
+  /* WALK-A-070: grey "Prepare again" when a press would hand back a plan she already holds.
+     The server names the file (dry run, /plan-name); the reasoning lives on web
+     PrepareLesson's samePlanHeld — this is the same rule, kept in step. */
+  const [targetName, setTargetName] = useState("");
+  const rowsKey = rows.map((r) => `${r.duration}x${r.count}`).join(",");
+  useEffect(() => {
+    setTargetName("");
+    if (!chosenAlreadyPrepared || !chapterNo || !genonAvailable) return undefined;
+    let live = true;
+    const tm = setTimeout(() => {
+      planNameFor(subject, grade, chapterNo, rows).then((n) => { if (live) setTargetName(n); });
+    }, 250);
+    return () => { live = false; clearTimeout(tm); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chosenAlreadyPrepared, chapterNo, genonAvailable, subject, grade, rowsKey]);
+  const samePlanHeld = !!targetName && (plans || []).some((p) => p.filename === targetName
+    && !p.archived && (p.prepared || attachedFiles.has(p.filename)));
 
   const committedTotal = committed.reduce((s, c) => s + c.periods, 0);
   const left = annualBudget != null ? annualBudget - committedTotal : null;

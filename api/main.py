@@ -3150,17 +3150,8 @@ def genon_available(subject: str, grade: str) -> Dict[str, Any]:
     chs = data.genon_chapters(subject, grade)
     minutes: Dict[str, int] = {}
     periods: Dict[str, int] = {}
-    # plan_suffix (WALK-A-070, 2026-09-24): the tail of the filename a plan served NOW would
-    # carry — "_e{engine}_c{canonical version}.json". With it, Prepare can rebuild the exact
-    # name a press would produce (ch_NN_ + her duration matrix + this) and grey the button
-    # when she already holds that very plan: preparing again would hand back the same file.
-    # It moves on its own when the canonical is regenerated or the engine bumps, so the
-    # button comes back to life exactly when pressing it would yield something new.
-    suffix: Dict[str, str] = {}
     for ch in chs:
         c = data.load_genon_canonical(subject, grade, ch) or {}
-        if c:
-            suffix[str(ch)] = f"_e{data.GENON_ENGINE_VERSION}_c{data.canonical_version(c)}.json"
         row = (c.get("period_rows_snapshot") or [{}])[0]
         if row.get("duration") and row.get("count"):
             minutes[str(ch)] = int(row["duration"]) * int(row["count"])
@@ -3169,7 +3160,69 @@ def genon_available(subject: str, grade: str) -> Dict[str, Any]:
             # (which misfires on mixed-duration profiles: 600min/52avg rounded to 11).
             periods[str(ch)] = int(row["count"])
     return {"subject": subject, "grade": grade, "chapters": chs,
-            "canonical_minutes": minutes, "canonical_periods": periods, "plan_suffix": suffix}
+            "canonical_minutes": minutes, "canonical_periods": periods}
+
+
+def _genon_resolve(subject: str, grade: str, chapter_number: int, matrix, library):
+    """WHICH FILE a Prepare press lands on, for this matrix (WALK-A-070, 2026-09-24).
+    Extracted from genon_make_plan so the dry-run name endpoint and the real press share ONE
+    implementation of the rule — the identity rule first, then serve-and-key-off-variant_used.
+    A second copy of this rule is exactly the failure the e15 note below describes.
+    Returns {"identity": True, "filename", "canonical"} or
+            {"identity": False, "filename", "plan", "chosen"}.
+    Serve errors propagate (GenonDeclarationError / ServeError) for the caller to map."""
+    from aruvi_core.genon import serve_plan
+    total_periods = sum(c for _, c in matrix)
+    def _std_row(c) -> Dict[int, int]:
+        row = (c.get("period_rows_snapshot") or [{}])[0]
+        try:
+            return {int(row.get("duration", -1)): int(row.get("count", -2))}
+        except (TypeError, ValueError):
+            return {}
+
+    def _count(c) -> int:
+        row = (c.get("period_rows_snapshot") or [{}])[0]
+        try:
+            return int(row.get("count") or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    # ── identity rule (founder, 2026-07-25; generalised to the library 2026-07-31):
+    # a request whose matrix equals ANY variant's standard row IS that variant —
+    # register THAT file as prepared, save no copy.
+    agg: Dict[int, int] = {}
+    for d_, c_ in matrix:
+        agg[d_] = agg.get(d_, 0) + c_
+    canonical = next((c for c in library if agg == _std_row(c)), None)
+    if canonical is not None:
+        return {"identity": True, "filename": canonical["filename"], "canonical": canonical}
+
+    # ── the plan is a CACHE ENTRY, addressed by what determines its bytes ──────────
+    # (chapter, normalised matrix, CHOSEN VARIANT's version, engine version). The
+    # next-highest rule decides which variant keys the entry; a hit is served
+    # without serving again. Per-teacher visibility still comes from the register.
+    #
+    # ── THE KEY IS DERIVED FROM THE SERVE, NOT FROM A COPY OF ITS RULE (2026-08-06, e15).
+    # This used to recompute the next-highest canonical here — a second implementation of
+    # a selection rule that lives in serve.py. Case 1b broke that copy: when the exact-fit
+    # rescue fires, the plan is built from the canonical BELOW the request while this line
+    # still named the one above, so the entry was stamped with the version of a file its
+    # bytes do not come from. A later regeneration of the real base would then leave a
+    # stale entry keyed to an untouched stranger — ARV-D-034's exact failure class.
+    # Serving is selection and costs milliseconds (C11), so we serve FIRST and key the
+    # entry off `genon.variant_used`, which is the base the plan was actually built from
+    # after every rung of §0.4 has run. The cache still saves the WRITE, which is what it
+    # was ever protecting; it no longer pretends to know the answer before asking.
+    streams = data.load_genon_streams(subject, grade, chapter_number)
+    plan = serve_plan(streams, matrix)
+
+    base_count = (plan.get("genon") or {}).get("variant_used")
+    chosen = next((c for c in library if _count(c) == base_count), None)
+    if chosen is None:                       # never expected; fall back to the old rule
+        chosen = next((c for c in reversed(library) if _count(c) >= total_periods),
+                      library[0])
+    filename = data.genon_plan_filename(chapter_number, matrix, chosen)
+    return {"identity": False, "filename": filename, "plan": plan, "chosen": chosen}
 
 
 @app.post("/genon/{subject}/{grade}/{chapter_number}/plan")
@@ -3219,29 +3272,18 @@ def genon_make_plan(subject: str, grade: str, chapter_number: int, req: GenonPla
     # an unauthored chapter never triggers a paywall message; before any serving work.
     _check_entitlement(tenant_id, subject, grade, chapter_number)
 
-    def _std_row(c) -> Dict[int, int]:
-        row = (c.get("period_rows_snapshot") or [{}])[0]
-        try:
-            return {int(row.get("duration", -1)): int(row.get("count", -2))}
-        except (TypeError, ValueError):
-            return {}
+    try:
+        target = _genon_resolve(subject, grade, chapter_number, matrix, library)
+    except GenonDeclarationError as e:
+        # a library canonical is not declared: name the content problem instead of
+        # letting it escape as a bare 500 with nothing for anyone to read
+        raise HTTPException(status_code=500, detail=f"Canonical cannot be compiled: {e}")
+    except ServeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    def _count(c) -> int:
-        row = (c.get("period_rows_snapshot") or [{}])[0]
-        try:
-            return int(row.get("count") or 0)
-        except (TypeError, ValueError):
-            return 0
-
-    # ── identity rule (founder, 2026-07-25; generalised to the library 2026-07-31):
-    # a request whose matrix equals ANY variant's standard row IS that variant —
-    # register THAT file as prepared, save no copy.
-    agg: Dict[int, int] = {}
-    for d_, c_ in matrix:
-        agg[d_] = agg.get(d_, 0) + c_
-    canonical = next((c for c in library if agg == _std_row(c)), None)
-    if canonical is not None:
-        filename = canonical["filename"]
+    if target["identity"]:
+        canonical = target["canonical"]
+        filename = target["filename"]
         try:
             prepared_plans_repo.mark(tenant_id, user_id, year,
                                      _plan_key(subject, grade, filename), total_periods)
@@ -3258,38 +3300,7 @@ def genon_make_plan(subject: str, grade: str, chapter_number: int, req: GenonPla
             "seam_periods": [], "coverage_note": None,
         }
 
-    # ── the plan is a CACHE ENTRY, addressed by what determines its bytes ──────────
-    # (chapter, normalised matrix, CHOSEN VARIANT's version, engine version). The
-    # next-highest rule decides which variant keys the entry; a hit is served
-    # without serving again. Per-teacher visibility still comes from the register.
-    #
-    # ── THE KEY IS DERIVED FROM THE SERVE, NOT FROM A COPY OF ITS RULE (2026-08-06, e15).
-    # This used to recompute the next-highest canonical here — a second implementation of
-    # a selection rule that lives in serve.py. Case 1b broke that copy: when the exact-fit
-    # rescue fires, the plan is built from the canonical BELOW the request while this line
-    # still named the one above, so the entry was stamped with the version of a file its
-    # bytes do not come from. A later regeneration of the real base would then leave a
-    # stale entry keyed to an untouched stranger — ARV-D-034's exact failure class.
-    # Serving is selection and costs milliseconds (C11), so we serve FIRST and key the
-    # entry off `genon.variant_used`, which is the base the plan was actually built from
-    # after every rung of §0.4 has run. The cache still saves the WRITE, which is what it
-    # was ever protecting; it no longer pretends to know the answer before asking.
-    try:
-        streams = data.load_genon_streams(subject, grade, chapter_number)
-        plan = serve_plan(streams, matrix)
-    except GenonDeclarationError as e:
-        # a library canonical is not declared: name the content problem instead of
-        # letting it escape as a bare 500 with nothing for anyone to read
-        raise HTTPException(status_code=500, detail=f"Canonical cannot be compiled: {e}")
-    except ServeError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-    base_count = (plan.get("genon") or {}).get("variant_used")
-    chosen = next((c for c in library if _count(c) == base_count), None)
-    if chosen is None:                       # never expected; fall back to the old rule
-        chosen = next((c for c in reversed(library) if _count(c) >= total_periods),
-                      library[0])
-    filename = data.genon_plan_filename(chapter_number, matrix, chosen)
+    plan, chosen, filename = target["plan"], target["chosen"], target["filename"]
 
     # ── the edition stamp travels with the plan (§2.2, 2026-08-27) ────────────────
     # Read off `chosen` — the canonical this plan's bytes actually came from, after
@@ -3369,6 +3380,29 @@ def genon_make_plan(subject: str, grade: str, chapter_number: int, req: GenonPla
         **_serve_summary(g),
         "coverage_note": plan["result"].get("section_coverage_note"),
     }
+
+
+@app.post("/genon/{subject}/{grade}/{chapter_number}/plan-name")
+def genon_plan_name(subject: str, grade: str, chapter_number: int, req: GenonPlanRequest,
+                    identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """DRY RUN of a Prepare press (WALK-A-070, founder 2026-09-24): the filename it WOULD
+    land on, and nothing else — no save, no register, no trial count, no entitlement gate
+    (it hands out a name, not a lesson). Prepare greys "Prepare again" when this name is
+    already one of her live plans, because pressing would give her back the same file.
+    Same resolver as the real press, so the answer cannot drift from what a press does."""
+    from aruvi_core.genon import GenonDeclarationError, ServeError
+    _subject(subject)
+    matrix = [(r.duration, r.count) for r in req.rows if r.duration > 0 and r.count > 0]
+    if not matrix or sum(c for _, c in matrix) > 30:
+        return {"filename": None}
+    library = data.load_genon_library(subject, grade, chapter_number)
+    if not library:
+        return {"filename": None}
+    try:
+        target = _genon_resolve(subject, grade, chapter_number, matrix, library)
+    except (GenonDeclarationError, ServeError):
+        return {"filename": None}
+    return {"filename": target["filename"]}
 
 
 def _safe_name(s: str) -> str:

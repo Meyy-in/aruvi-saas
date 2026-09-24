@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, suggestedPeriodsByChapter, fetchEntitlement, genonPlanFilename } from "../lib/format";
+import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, suggestedPeriodsByChapter, fetchEntitlement, planNameFor } from "../lib/format";
 import { readPlans } from "../lib/plans";
 import { verifiedWrite, planIsPrepared } from "../lib/verify";
 import { RollWheel, wheelChapterTitle } from "./wheels";
@@ -85,8 +85,7 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
    * cache, and a matrix equal to the canonical's own returns the certified plan untouched. */
   const [genonChs, setGenonChs] = useState([]);            // chapter numbers with a canonical
   const [canonMinutes, setCanonMinutes] = useState({});    // {chapter: canonical total minutes}
-  const [canonPeriods, setCanonPeriods] = useState({});
-  const [planSuffix, setPlanSuffix] = useState({});        // {chapter: "_e{engine}_c{version}.json"} — WALK-A-070    // {chapter: top canonical period COUNT}
+  const [canonPeriods, setCanonPeriods] = useState({});    // {chapter: top canonical period COUNT}
   // Re-entry guard, kept although a partition is free and instant: a second click during
   // an in-flight request would still double-register and can race the preview swap. The
   // ref blocks re-entry even if a click slips past the disabled button (modal path,
@@ -124,8 +123,8 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
     // hold serves this picker too (@aruvi/shared/plans, 2026-09-14).
     readPlans(`${subject}/${grade}`, setPlans).catch(() => setPlans([]));
     getJSON(`/genon/${subject}/${grade}/chapters`)
-      .then((d) => { setGenonChs(d.chapters || []); setCanonMinutes(d.canonical_minutes || {}); setCanonPeriods(d.canonical_periods || {}); setPlanSuffix(d.plan_suffix || {}); })
-      .catch(() => { setGenonChs([]); setCanonMinutes({}); setPlanSuffix({}); });
+      .then((d) => { setGenonChs(d.chapters || []); setCanonMinutes(d.canonical_minutes || {}); setCanonPeriods(d.canonical_periods || {}); })
+      .catch(() => { setGenonChs([]); setCanonMinutes({}); });
   }, [subject, grade, chTry]);
 
   // Is the deterministic (genon) path available for the chosen chapter?
@@ -307,18 +306,26 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
   );
 
   /* ★ WOULD A PRESS HAND BACK A PLAN SHE ALREADY HOLDS? (WALK-A-070, founder 2026-09-24)
-     A plan's name is chapter + length (periods AND minutes) + the canonical's version, so the
-     same three give the same file — "Prepare again" would deliver nothing new. Rebuild the name
-     a press would produce and look for it among her live plans. Unknown suffix (older API) →
-     "" → no match → the button stays live: the check only ever greys when it is SURE. An
-     ARCHIVED match stays live on purpose — preparing it again is how she brings it back. */
-  const samePlanHeld = useMemo(() => {
-    if (!chosenAlreadyPrepared || !chapterNo) return false;
-    const name = genonPlanFilename(chapterNo, rows, planSuffix[String(Number(chapterNo))]);
-    if (!name) return false;
-    return (plans || []).some((p) => p.filename === name && !p.archived
-      && (p.prepared || attachedFiles.has(p.filename)));
-  }, [chosenAlreadyPrepared, chapterNo, rows, planSuffix, plans, attachedFiles]);
+     Same chapter + same length (periods AND minutes) + same source version = the same file, so
+     "Prepare again" would deliver nothing new. The SERVER names the file a press would land on
+     (a dry run, /plan-name) — the device cannot: at a variant's own length the press reuses the
+     chapter's base plan, and otherwise it keys off the variant the serve actually used. Any
+     doubt ("" — offline, older API) leaves the button live; it greys only on the server's word.
+     An ARCHIVED match stays live on purpose — preparing it again is how she brings it back. */
+  const [targetName, setTargetName] = useState("");
+  const rowsKey = rows.map((r) => `${r.duration}x${r.count}`).join(",");
+  useEffect(() => {
+    setTargetName("");
+    if (!chosenAlreadyPrepared || !chapterNo || !genonAvailable) return undefined;
+    let live = true;
+    const t = setTimeout(() => {
+      planNameFor(subject, grade, chapterNo, rows).then((n) => { if (live) setTargetName(n); });
+    }, 250);
+    return () => { live = false; clearTimeout(t); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chosenAlreadyPrepared, chapterNo, genonAvailable, subject, grade, rowsKey]);
+  const samePlanHeld = !!targetName && (plans || []).some((p) => p.filename === targetName
+    && !p.archived && (p.prepared || attachedFiles.has(p.filename)));
 
   const committedTotal = committed.reduce((s, c) => s + c.periods, 0);
   // "Used" / "Available" reflect only what's ACTUALLY committed (already-prepared chapters),
