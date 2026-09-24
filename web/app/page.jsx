@@ -10,6 +10,7 @@ import { invalidatePlans } from "./lib/plans";
 import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
 import { signOutAuth } from "./lib/auth";
+import { onSessionRefused } from "./lib/shared-setup";
 import { clearTeacherCaches, forgetDevice } from "@aruvi/shared/signout";
 import GenerateTab from "./components/GenerateTab";
 import MyPlans from "./components/MyPlans";
@@ -918,6 +919,16 @@ export default function Home() {
     forgetDevice();
   };
 
+  /* ★ A REFUSED SESSION ENDS THE SESSION, WHICHEVER CALL MET IT (WALK-A-077, 2026-09-24).
+     The 401 handler used to hang off the READINESS fetch alone, so whether an expired teacher
+     was signed out depended on which request happened to fail first — and the commonest one,
+     the plans listing, swallowed it and served her device copy instead. shared-setup.js now
+     notices a 401 from our API once, at the fetch, and this is where it lands. Declared before
+     onSignOut and registered in an effect below, because onSignOut is defined further down and
+     the handler must not capture a stale closure. */
+  const signOutRef = useRef(null);
+  useEffect(() => { onSessionRefused(() => { if (signOutRef.current) signOutRef.current(); }); }, []);
+
   const onSignOut = () => {
     setErased(false);
     clearUser(); setUserState("");
@@ -1239,6 +1250,8 @@ export default function Home() {
     else if (o === "profile") goProfile();
     else goClasses();
   };
+  signOutRef.current = onSignOut;
+
   const inSettingsBar = editFlow === "settings" || (editFlow === "profile" && profileViaSettings);
 
   /* ★ THE BROWSER'S BACK STAYS INSIDE MEYY (WALK-A-008, 2026-09-20). Every screen lives on one

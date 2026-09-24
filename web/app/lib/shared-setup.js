@@ -26,6 +26,57 @@ configure({
   accessToken,
 });
 
+/* ★ ONE PLACE WHERE A REFUSED SESSION IS NOTICED (WALK-A-077, 2026-09-24).
+ *
+ * A 401 is the server refusing this session; it is NOT a network failure. The rule was already
+ * written down in account.js ("never fall back to a cached identity for a refused one") and
+ * honoured there — but plans.js's catch treated a refusal exactly like being offline and
+ * returned the stored listing, and every other caller swallows its own error locally
+ * (`.catch(() => setPlans([]))`, seven of them). So a teacher whose session had expired went on
+ * reading her own device copy while every write failed silently, with nothing to tell her why
+ * her work was not saving. Walked and confirmed at 05.32.
+ *
+ * ⚠️ THE FIX DOES NOT BELONG IN THOSE CATCHES. There are 22 raw fetches in the components and 5
+ * more in the shared package; writing the rule into each is how one rule becomes twenty-seven
+ * and drifts — the mistake this codebase has already paid for three times (the 14-vs-19 defect,
+ * ppw_from_annual mirrored across two languages, and the Prepare/Year-Plan split of WALK-A-074).
+ * It is noticed ONCE, here, at the only point every call passes through: the fetch itself.
+ * The wrapper is installed beside the other seams for the same reason they are — this module is
+ * what the web supplies to shared code, and it runs before anything else does.
+ *
+ * Scope is deliberately narrow: only responses from OUR API base, so a 401 from Supabase's own
+ * token endpoint (which supabase-js handles by refreshing) can never sign her out. The handler
+ * is installed by the shell; until it is, a refusal is simply remembered and replayed on
+ * install, so a 401 during the very first paint is not lost. */
+let onRefused = null;
+let refusedBeforeInstall = false;
+
+export function onSessionRefused(fn) {
+  onRefused = fn;
+  if (refusedBeforeInstall && fn) { refusedBeforeInstall = false; fn(); }
+}
+
+if (typeof window !== "undefined" && !window.__meyyFetchWrapped) {
+  window.__meyyFetchWrapped = true;
+  const base =
+    (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") ||
+    `http://${window.location.hostname}:8000`;
+  const original = window.fetch.bind(window);
+  window.fetch = async (input, init) => {
+    const r = await original(input, init);
+    try {
+      const url = typeof input === "string" ? input : (input && input.url) || "";
+      if (r.status === 401 && base && url.startsWith(base)) {
+        if (onRefused) onRefused();
+        else refusedBeforeInstall = true;
+      }
+    } catch {
+      /* Never let the notice break the response it is riding on. */
+    }
+    return r;
+  };
+}
+
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 if (URL && KEY && typeof window !== "undefined") {

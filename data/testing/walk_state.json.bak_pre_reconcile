@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-24T02:00:35",
+ "updated_at": "2026-09-23T16:46:48",
  "items": {
   "04.19": {
    "ios": {
@@ -1649,8 +1649,8 @@
    "web": {
     "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-24T01:52:31",
-    "comment": "Attached lesson carries no archive icon. Archiving toasts 'Moved to Archive — find it in the box above.', the header count rises, the card leaves the shelf; inside, the left word reads 'Archive', cards say 'Archived' with a RESTORE button (screenshots taken, English · Class 3, count 7); Restore toasts 'Restored to your lessons.' and the count falls. Both empty states as specified.\nOFFLINE CLAUSE — the ROW IS WRONG, not the app. Offline, archive and restore both appear to succeed and nothing is said. That is deliberate: the pair goes through verifiedWrite (packages/shared/src/verify.js), which swallows the write error and treats the READ as the arbiter — offline the read fails too, so the status is 'unverified' and by design nothing is reverted and nothing is claimed ('we do not know that it failed'). The row's expected 'That didn't archive - it's still in your lessons.' fires only on a VERIFIED mismatch. MyLessonPlans.jsx:737 says so in as many words: 'this pair already reverted-and-toasted on a throw, which was the best behaviour in the app — but a throw is not the criterion.' The row text predates that change and needs amending on all three surfaces (the Android watch item carries the same stale expectation).\nThe real residual is filed as WALK-A-064: the act is silently LOST later.\nOPEN OBSERVATION: the open archive box shows a BLUE ring in the screenshots. The designed open state is pine border + pine ink + --tint-pine fill (globals.css:2113) and there is no blue in the palette, so this looks like Chrome's default focus ring — .mlp2-archfolder has no :focus-visible rule while globals.css styles focus in pine in at least eight other places. To be confirmed before it is raised.\n✓ re-walked 2026-09-24 after WALK-A-064 and WALK-A-078 (web): offline archive and restore now say one honest sentence each, in the plain paper box, clear of the bottom bar. Online toasts unchanged in wording and equally clear.",
+    "at": "2026-09-21T14:56:47",
+    "comment": "Attached lesson carries no archive icon. Archiving toasts 'Moved to Archive — find it in the box above.', the header count rises, the card leaves the shelf; inside, the left word reads 'Archive', cards say 'Archived' with a RESTORE button (screenshots taken, English · Class 3, count 7); Restore toasts 'Restored to your lessons.' and the count falls. Both empty states as specified.\nOFFLINE CLAUSE — the ROW IS WRONG, not the app. Offline, archive and restore both appear to succeed and nothing is said. That is deliberate: the pair goes through verifiedWrite (packages/shared/src/verify.js), which swallows the write error and treats the READ as the arbiter — offline the read fails too, so the status is 'unverified' and by design nothing is reverted and nothing is claimed ('we do not know that it failed'). The row's expected 'That didn't archive - it's still in your lessons.' fires only on a VERIFIED mismatch. MyLessonPlans.jsx:737 says so in as many words: 'this pair already reverted-and-toasted on a throw, which was the best behaviour in the app — but a throw is not the criterion.' The row text predates that change and needs amending on all three surfaces (the Android watch item carries the same stale expectation).\nThe real residual is filed as WALK-A-064: the act is silently LOST later.\nOPEN OBSERVATION: the open archive box shows a BLUE ring in the screenshots. The designed open state is pine border + pine ink + --tint-pine fill (globals.css:2113) and there is no blue in the palette, so this looks like Chrome's default focus ring — .mlp2-archfolder has no :focus-visible rule while globals.css styles focus in pine in at least eight other places. To be confirmed before it is raised.",
     "build": "web dev (localhost:3000 → Render)"
    }
   },
@@ -1667,8 +1667,8 @@
    "web": {
     "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T01:55:13",
-    "comment": "First walk of this row on any surface. MECHANICS PASS: 'Preparing…' shows, the file arrives named from the server (lesson-plan-grade-iii-english-ch13, assessment-grade-iii-english-ch13-answers, integrated-grade-iii-english-ch13-answers — never the report.pdf/report.docx fallback), every file opens correctly, the answers version carries the model responses and the plain Assessment does NOT. Offline gives the known alert('Couldn’t create the report.') — the documented web divergence, which still owes an in-window line. Back online, all fine.\nFAIL is on the WORD ARTEFACTS, which are not at PDF parity (→ WALK-A-067): the LP's period row has no lighter shade against the spine row, as the PDF does; the spine Learning Outcome sits cramped with no empty row after it; the Assessment has no thin rule separating one question from the next, as the PDF does; the integrated report carries all three gaps.\nAlso raised: the report FILENAME scheme, → WALK-A-066 (founder's proposal).\n✓ re-walked 2026-09-24 after WALK-A-079 (web): the offline download failure is now said IN the Reports window, above the buttons, with the window and her choices intact — the alert() is gone and the documented 'web owes the in-window line' divergence is closed. The Word-parity fail (WALK-A-067) and the filename scheme (WALK-A-066) still stand, so this row stays amber.",
+    "at": "2026-09-22T08:52:20",
+    "comment": "First walk of this row on any surface. MECHANICS PASS: 'Preparing…' shows, the file arrives named from the server (lesson-plan-grade-iii-english-ch13, assessment-grade-iii-english-ch13-answers, integrated-grade-iii-english-ch13-answers — never the report.pdf/report.docx fallback), every file opens correctly, the answers version carries the model responses and the plain Assessment does NOT. Offline gives the known alert('Couldn’t create the report.') — the documented web divergence, which still owes an in-window line. Back online, all fine.\nFAIL is on the WORD ARTEFACTS, which are not at PDF parity (→ WALK-A-067): the LP's period row has no lighter shade against the spine row, as the PDF does; the spine Learning Outcome sits cramped with no empty row after it; the Assessment has no thin rule separating one question from the next, as the PDF does; the integrated report carries all three gaps.\nAlso raised: the report FILENAME scheme, → WALK-A-066 (founder's proposal).",
     "build": "web dev (localhost:3000 → Render)"
    }
   },
@@ -1694,8 +1694,8 @@
    "web": {
     "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-24T02:00:35",
-    "comment": "The row's own clauses PASS: header 'Prepare a lesson plan' with '← back' returning to My Lessons, kicker '{Subject} · Class {n}', the 'Pick one chapter…' line; picking a chapter seeds the periods and shows the duration mix; − / + and typing all agree; both boundary sentences carry the chapter's real numbers and clear on return to range. Keyboard clause fine on web — placing the cursor in the chapter box draws a focus boundary round it and the up/down arrows then move the chapters.\nTWO FINDINGS in the no-class state, both outside this row's own clauses and both folded into WALK-A-068 with the founder's rule change: (1) with every class of a subject·stage deleted, the periods suggestion freezes at the flat 12; (2) in that state the class wheel offers every subscribed class, and narrows to the real one only once a class is added.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.",
+    "at": "2026-09-22T10:04:38",
+    "comment": "The row's own clauses PASS: header 'Prepare a lesson plan' with '← back' returning to My Lessons, kicker '{Subject} · Class {n}', the 'Pick one chapter…' line; picking a chapter seeds the periods and shows the duration mix; − / + and typing all agree; both boundary sentences carry the chapter's real numbers and clear on return to range. Keyboard clause fine on web — placing the cursor in the chapter box draws a focus boundary round it and the up/down arrows then move the chapters.\nTWO FINDINGS in the no-class state, both outside this row's own clauses and both folded into WALK-A-068 with the founder's rule change: (1) with every class of a subject·stage deleted, the periods suggestion freezes at the flat 12; (2) in that state the class wheel offers every subscribed class, and narrows to the real one only once a class is added.",
     "build": "web dev (localhost:3000 → Render)"
    }
   },
@@ -1703,8 +1703,8 @@
    "web": {
     "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-24T02:00:35",
-    "comment": "Suggestion shows Meyy's number with 'use', which snaps the value back, and swaps to ✓ 'matches the suggestion' when the two are equal, both ways; the 'i' explanation opens as a web popover. Budget box: Total periods in pine agreeing with Year Plan for the same subject·class, Used, Available — which turns clay and reads '−n' when over, and returns when brought back into range. 'Used ⓘ' opens 'Committed so far' with 'Ch NN · title · n' rows and 'Total committed - {n} periods' agreeing with both the rows and what is actually prepared for that pair; disabled on a subject·class with nothing committed.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.",
+    "at": "2026-09-22T10:13:14",
+    "comment": "Suggestion shows Meyy's number with 'use', which snaps the value back, and swaps to ✓ 'matches the suggestion' when the two are equal, both ways; the 'i' explanation opens as a web popover. Budget box: Total periods in pine agreeing with Year Plan for the same subject·class, Used, Available — which turns clay and reads '−n' when over, and returns when brought back into range. 'Used ⓘ' opens 'Committed so far' with 'Ch NN · title · n' rows and 'Total committed - {n} periods' agreeing with both the rows and what is actually prepared for that pair; disabled on a subject·class with nothing committed.",
     "build": "web dev (localhost:3000 → Render)"
    }
   },
@@ -1737,10 +1737,10 @@
   },
   "05.27": {
    "web": {
-    "status": "pass",
+    "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T01:40:15",
-    "comment": "Re-run 2026-09-22 on the ORDINARY path (new chapter, offline before tapping): the failed card renders correctly — 'Couldn't build the lesson plan right now. Try again in a moment.', two lines, with TRY AGAIN and DISMISS. That part of the row PASSES.\nThe first attempt hung instead: progress bar stuck 60+ seconds, no message, with the POST confirmed sent and failed in 112ms. NOT REPRODUCED on the re-run; founder's call is that it was an errata and not worth chasing. Recorded in WALK-A-071 with the full network and stack evidence in case it returns.\nFAIL STANDS for the RE-PREPARE path, which is certain from the code: showProposedCard and busyIdx both ignore preparing.failed, so a failure on a card that already exists at that duration has nowhere to be said and its in-place bar cannot end. Two one-line conditions, in WALK-A-071.\nSTILL OWED on re-walk: the hover title carrying the full sentence, whether the two visible lines suffice, Dismiss leaving a clean shelf after a reload, Try again failing again offline and succeeding online, and how long the card spins before it gives up (the web reference for the Android timeout).\nUNEXERCISED: 'No underlying chapter yet.' (no chapter without a canonical reachable on this account) and 'The lesson was built but didn't reach your lessons…' (needs the verify read to disagree with a successful write — not reachable by hand).\n✓ re-walked 2026-09-24 after WALK-A-071 (web): offline re-prepare of an already-prepared chapter — the existing card's bar now STOPS, the reason appears in place with TRY AGAIN and DISMISS beside it, no second card above, and the card keeps its own colour. Try again succeeds once back online; Dismiss returns the card to its ordinary state with the plan intact.\nSTILL UNEXERCISED on web: the hover title carrying the full sentence, and how long the card spins before it gives up (the reference figure for the Android TCP timeout). Plus the two unreachable states noted above ('No underlying chapter yet.' and 'built but didn't reach your lessons').",
+    "at": "2026-09-22T11:02:41",
+    "comment": "Re-run 2026-09-22 on the ORDINARY path (new chapter, offline before tapping): the failed card renders correctly — 'Couldn't build the lesson plan right now. Try again in a moment.', two lines, with TRY AGAIN and DISMISS. That part of the row PASSES.\nThe first attempt hung instead: progress bar stuck 60+ seconds, no message, with the POST confirmed sent and failed in 112ms. NOT REPRODUCED on the re-run; founder's call is that it was an errata and not worth chasing. Recorded in WALK-A-071 with the full network and stack evidence in case it returns.\nFAIL STANDS for the RE-PREPARE path, which is certain from the code: showProposedCard and busyIdx both ignore preparing.failed, so a failure on a card that already exists at that duration has nowhere to be said and its in-place bar cannot end. Two one-line conditions, in WALK-A-071.\nSTILL OWED on re-walk: the hover title carrying the full sentence, whether the two visible lines suffice, Dismiss leaving a clean shelf after a reload, Try again failing again offline and succeeding online, and how long the card spins before it gives up (the web reference for the Android timeout).\nUNEXERCISED: 'No underlying chapter yet.' (no chapter without a canonical reachable on this account) and 'The lesson was built but didn't reach your lessons…' (needs the verify read to disagree with a successful write — not reachable by hand).",
     "build": "web dev (localhost:3000 → Render)"
    }
   },
@@ -1748,8 +1748,8 @@
    "web": {
     "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T02:00:35",
-    "comment": "Columns 'Chapter' / 'Suggested periods' / 'Your plan' correct; suggestion column all numeric; Your plan shows a number, 'not yet', and — where the book is awaited; the note defaults open and carries its closing Ask Meyy sentence; the 2px rule and the closing hairline are both there.\nTHREE FINDINGS:\n(1) The row title repeats the chapter number — the tag already reads NN and the title then reads 'Chapter N: Title'. Founder: remove it. → WALK-A-072.\n(2) 'Used' in Prepare's budget box does not tally with Year Plan's plan column, and CHANGES as she rolls the chapter wheel. → WALK-A-073.\n(3) Suggestions disagree between the two screens by one period: social_sciences class 9 on profile 9000000003 — ch 5 is 22 in Prepare and 21 in Year Plan; ch 3 is 13 in Prepare and 12 in Year Plan. → WALK-A-074, cause found.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.\nRow stays amber: WALK-A-072 (the row title repeating 'Chapter N:' beside the NN tag) is still open.",
+    "at": "2026-09-22T12:26:19",
+    "comment": "Columns 'Chapter' / 'Suggested periods' / 'Your plan' correct; suggestion column all numeric; Your plan shows a number, 'not yet', and — where the book is awaited; the note defaults open and carries its closing Ask Meyy sentence; the 2px rule and the closing hairline are both there.\nTHREE FINDINGS:\n(1) The row title repeats the chapter number — the tag already reads NN and the title then reads 'Chapter N: Title'. Founder: remove it. → WALK-A-072.\n(2) 'Used' in Prepare's budget box does not tally with Year Plan's plan column, and CHANGES as she rolls the chapter wheel. → WALK-A-073.\n(3) Suggestions disagree between the two screens by one period: social_sciences class 9 on profile 9000000003 — ch 5 is 22 in Prepare and 21 in Year Plan; ch 3 is 13 in Prepare and 12 in Year Plan. → WALK-A-074, cause found.",
     "build": "web dev (localhost:3000 → Render)"
    }
   },
@@ -1871,7 +1871,7 @@
   {
    "id": "WALK-A-004",
    "opened": "2026-09-20T05:08:01",
-   "closed": "2026-09-24T01:25:56",
+   "closed": "",
    "feature": "03.07",
    "found_on": [
     "web"
@@ -1879,11 +1879,11 @@
    "applies_to": "both",
    "title": "Expired OTP: boxes stay live; 'Send a new code' only a link; mid-run Resend to go",
    "what": "Once the 60s code expires, Verify disappears but the six boxes still accept typing and paste — she can fill a code she can never submit. And 'Send a new code', now the only thing on offer, is a small lgl-link inside the quiet line. Founder: when expired, the boxes should not accept input, and 'Send a new code' should be a full-size button in Verify's place (same size as 'Verify & continue →'). Login.jsx's own comment already says 'sending a new code is the only thing on offer'. Check the phone's OTP screen for the same shape. ALSO (founder decision 2026-09-20): REMOVE the mid-run 'Resend' that appears at 0:30 left (otpCanResend / OTP_RESEND_LOCK_MS) — it can invalidate a code she is halfway through typing and saves at most 30s; the full-size 'Send a new code' at expiry is the only resend. Matches the row and Login.jsx's own 'NO Resend while it runs' comment. Check the phone for the same Resend. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): no mid-run Resend already; at expiry 'Send a new code' is still a small link — needs the full-size button + disabled boxes. ✓ Android re-walk 2026-09-21 (dev build): green.",
-   "fix": "Expired: boxes disabled (+ dimmed CSS), 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed (Login.jsx). Phone: at phone fix point. PHONE: expired code disables the boxes (dimmed) and 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed.\n\n[RECONCILED 2026-09-24T01:25:56] Closed by the post-family-05 reconciliation: every recheck surface (ios, web) carries an explicit re-walk note naming this amendment and reads PASS. Amber cleared.",
+   "fix": "Expired: boxes disabled (+ dimmed CSS), 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed (Login.jsx). Phone: at phone fix point. PHONE: expired code disables the boxes (dimmed) and 'Send a new code' is the full-size CTA in Verify's slot; mid-run Resend removed.",
    "files": "web/app/components/Login.jsx, globals.css; mobile/app/login.jsx, mobile/components/OtpBoxes.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios",
     "web"
@@ -1894,7 +1894,7 @@
   {
    "id": "WALK-A-005",
    "opened": "2026-09-20T05:19:46",
-   "closed": "2026-09-24T01:25:56",
+   "closed": "",
    "feature": "03.22",
    "found_on": [
     "web"
@@ -1902,11 +1902,11 @@
    "applies_to": "both",
    "title": "First-run wheels: roll continuously; keyboard arrows after on-screen ▲▼",
    "what": "(1) Founder: the first-run wheels should roll CONTINUOUSLY — past the last item back to the first — as My Lessons' Subject/Class wheels already do. RollWheel's loop mode is gated on `peek` ('the base wheel (FirstRun) is untouched'); extend it to first run (subject + class certainly; chapter wheel: founder to confirm, since wrapping hides where the chapter list ends). Phone wheels are ports — same change. (2) Web: ↑↓ keys step the wheel only when the wheel itself has focus; after clicking the on-screen ▲/▼ focus sits on the button and the keyboard arrows do nothing. Keep focus on the wheel after an arrow-button click (or let the buttons forward ↑↓). Also seen on the CLASS wheel (03.24). DECIDED (founder 2026-09-20): loop SUBJECT and CLASS wheels only; the chapter wheel keeps its ends. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): subject + class wheels confirmed non-looping. ANDROID: confirmed non-looping. ✓ Android re-walk 2026-09-21 (dev build): green. ✓ Android re-walk 2026-09-21: green. (Second half found the same day: the base wheel's ▲▼ targeted the middle copy's row, so wrapping from the last item scrolled BACKWARDS past every item between. It now rolls one row in the direction pressed, into the neighbouring copy, and the settle recentres invisibly — as `stepCycle` always did.) ✓ iPhone sweep part 2, 2026-09-21: no flash, loop both ways, wrap steps one row, tour steps 9 and 14→15 clean.",
-   "fix": "RollWheel `loop` prop; first run's Subject + Class loop (chapter keeps its ends); ▲▼ keep focus on the wheel (mousedown preventDefault + refocus). Phone: at phone fix point. PHONE: RollWheel takes a `loop` prop; first run's Subject + Class loop (chapter keeps its ends) and the ▲▼ wrap with them.\n\n[RECONCILED 2026-09-24T01:25:56] Closed by the post-family-05 reconciliation: every recheck surface (web) carries an explicit re-walk note naming this amendment and reads PASS. Amber cleared.",
+   "fix": "RollWheel `loop` prop; first run's Subject + Class loop (chapter keeps its ends); ▲▼ keep focus on the wheel (mousedown preventDefault + refocus). Phone: at phone fix point. PHONE: RollWheel takes a `loop` prop; first run's Subject + Class loop (chapter keeps its ends) and the ▲▼ wrap with them.",
    "files": "web/app/components/wheels.jsx, FirstRun.jsx; mobile/components/RollWheel.jsx, mobile/app/first-run.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "web"
    ],
@@ -2028,7 +2028,7 @@
   {
    "id": "WALK-A-011",
    "opened": "2026-09-20T06:39:24",
-   "closed": "2026-09-24T01:25:56",
+   "closed": "",
    "feature": "03.10",
    "found_on": [
     "web"
@@ -2036,11 +2036,11 @@
    "applies_to": "both",
    "title": "Create sign in: mobile field keeps the old number after Back",
    "what": "OTP screen (create path) → ← Back to Choose → 'Create sign in →' again: the OTP boxes and sent state reset correctly, but the mobile field still holds the number typed before. Row 03.03 expects an empty field. Founder decision 2026-09-20: CLEAR the mobile field whenever the create OTP screen is entered afresh. Check the phone for the same. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — field keeps the number. ✓ Android re-walk 2026-09-21: green.",
-   "fix": "'Create sign in' clears the mobile field, error and timer on every entry. PHONE: 'Create sign in' clears the mobile field, its error and the timer on every entry.\n\n[RECONCILED 2026-09-24T01:25:56] Closed by the post-family-05 reconciliation: every recheck surface (ios, web) carries an explicit re-walk note naming this amendment and reads PASS. Amber cleared.",
+   "fix": "'Create sign in' clears the mobile field, error and timer on every entry. PHONE: 'Create sign in' clears the mobile field, its error and the timer on every entry.",
    "files": "web/app/components/Login.jsx; mobile/app/login.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios",
     "web"
@@ -2074,7 +2074,7 @@
   {
    "id": "WALK-A-013",
    "opened": "2026-09-20T06:51:07",
-   "closed": "2026-09-24T01:25:56",
+   "closed": "",
    "feature": "T.01",
    "found_on": [
     "web"
@@ -2082,11 +2082,11 @@
    "applies_to": "both",
    "title": "Tour offer box doesn't read as something to click",
    "what": "The 'Let me show you around first' box (the whole box is the button) shows a '→' mark at its top-left but gives no explicit invitation — nothing tells the teacher to click the box to begin the tour. Make the call to action explicit and visibly a control (e.g. a real 'Show me how →' button/link styled as one, or 'Tap to start the tour'). Check the phone's nudge too. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): same as web — My Classes' nudge has 'Show me how →', My Lessons' has none. ANDROID: same. ✓ Android re-walk 2026-09-21: green.",
-   "fix": "'Show me how →' added to My Lessons' nudge; the CTA is now a solid pine button on both nudges. PHONE: TourOffer carries a filled 'Show me how →' pill on BOTH surfaces; sub-line matches the web's.\n\n[RECONCILED 2026-09-24T01:25:56] Closed by the post-family-05 reconciliation: every recheck surface (ios, web) carries an explicit re-walk note naming this amendment and reads PASS. Amber cleared.",
+   "fix": "'Show me how →' added to My Lessons' nudge; the CTA is now a solid pine button on both nudges. PHONE: TourOffer carries a filled 'Show me how →' pill on BOTH surfaces; sub-line matches the web's.",
    "files": "MyLessonPlans.jsx, MyPlans.jsx, globals.css; mobile/components/TourOffer.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios",
     "web"
@@ -2097,7 +2097,7 @@
   {
    "id": "WALK-A-014",
    "opened": "2026-09-20T06:51:07",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "T.02",
    "found_on": [
     "web"
@@ -2105,11 +2105,11 @@
    "applies_to": "both",
    "title": "Tour offer missing on My Classes; chapter pre-attached before the tour",
    "what": "(1) After first run the offer shows only on My Lessons. MyPlans renders it only while !anyBound, and first run now binds 9A, so My Classes never shows it — T.02 and 03.28 expect it on BOTH. Founder: it should be on both. (2) Founder: chapter 4 already shows ATTACHED to 9A on My Classes before the tour is taken or skipped; the tour's steps 8–10 teach attaching. Founder view: the binding should not precede the tour's resolution. ⚠️ Conflicts with the 2026-08-21/09-14 design (first run hands her a real bound card; tour steps 7–14 anchor on it; T.27 covers 'only lesson attached') — decide the intended order before fixing; if first run stops binding, re-check 03.28, the tour's demo binding and T.25 (Skip gives back her binding). DECIDED (founder 2026-09-20): KEEP first run's binding; fix only (1) — the offer shows on My Classes too. [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
-   "fix": "Offer shows on My Classes too (dropped !anyBound; page.jsx eligibility gates it). Nudge copy no longer says 'add it to a class' (first run binds). Binding kept per founder.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (ios, web) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "Offer shows on My Classes too (dropped !anyBound; page.jsx eligibility gates it). Nudge copy no longer says 'add it to a class' (first run binds). Binding kept per founder.",
    "files": "MyPlans.jsx, MyLessonPlans.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios",
     "web"
@@ -2120,7 +2120,7 @@
   {
    "id": "WALK-A-015",
    "opened": "2026-09-20T07:42:55",
-   "closed": "2026-09-24T01:25:56",
+   "closed": "",
    "feature": "T.09",
    "found_on": [
     "web"
@@ -2128,11 +2128,11 @@
    "applies_to": "both",
    "title": "Tour tells her to click (card, '+') but clicks do nothing — only Next advances",
    "what": "Step 6 tip reads 'Let us open the lesson' / 'click on the lesson card to open a particular lesson', while the tour advances only on Next — a teacher following the words clicks the card instead. Founder: reword so she is not led to click the card directly (e.g. 'Tapping a lesson card opens it. Press Next and we'll open this one for you.'). Same copy on the phone (GuidedTour steps are shared). Observed: clicking the card during step 6 does nothing at all (the tour blocks it), so she is told to do something that silently fails. SAME at step 8 (T.11): 'Click the + sign of that section card' — clicking '+' does nothing. Review EVERY step whose copy says click/tap: either make the click itself advance the tour (the natural choice where the tour then does exactly that action — steps 6 and 8), or reword to point at Next. Step 9 (T.12) likewise: 'Select a lesson plan…' — clicking the row does nothing; include it in the same review. DECIDED (founder 2026-09-20): her click DOES the step — clicking the card / '+' / row advances the tour exactly as Next does. [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
-   "fix": "`tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated. PHONE: `tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated.\n\n[RECONCILED 2026-09-24T01:25:56] Closed by the post-family-05 reconciliation: every recheck surface (ios, web) carries an explicit re-walk note naming this amendment and reads PASS. Amber cleared.",
+   "fix": "`tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated. PHONE: `tap: true` steps (6, 8, 9, 10) draw a hotspot over the target that advances exactly as Next; step 6/10 copy updated.",
    "files": "GuidedTour.jsx, globals.css; mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios",
     "web"
@@ -2143,7 +2143,7 @@
   {
    "id": "WALK-A-016",
    "opened": "2026-09-20T07:46:31",
-   "closed": "2026-09-24T01:25:56",
+   "closed": "",
    "feature": "T.10",
    "found_on": [
     "web"
@@ -2151,11 +2151,11 @@
    "applies_to": "both",
    "title": "Tour step 7 says 'section your section' — target section never reaches the tour",
    "what": "Step 7 tip: 'We will now attach this lesson to section your section from ‘My Classes’…'. Body is `…to section ${i.tag}…` and i.tag falls back to 'your section' (GuidedTour.jsx fallback) because tourInfo is null. tourInfo {tag, chapter} is supplied ONLY by MyPlans (My Classes) via onTourInfo — and since 2026-09-17 the tour opens and stays on My Lessons for steps 1–7, so MyPlans never reports the target before step 7 (and on web it may be unmounted). Fix: derive the tour's target section in page.jsx (it already knows the demo binding), not from MyPlans' render; and make the fallback read grammatically ('…attach this lesson to one of your sections…'). Check any later step that uses i.tag / i.chapter. Phone has the same copy and the same info plumbing — check. [WEB re-walked green 2026-09-20; phone half pending] ✓ Android re-walk 2026-09-21: green.",
-   "fix": "startTour seeds the target section tag from the profile; `sec()` fallback reads 'one of your sections'. PHONE: `sec()` fallback reads 'one of your sections'; step 9's title has a no-tag form.\n\n[RECONCILED 2026-09-24T01:25:56] Closed by the post-family-05 reconciliation: every recheck surface (ios, web) carries an explicit re-walk note naming this amendment and reads PASS. Amber cleared.",
+   "fix": "startTour seeds the target section tag from the profile; `sec()` fallback reads 'one of your sections'. PHONE: `sec()` fallback reads 'one of your sections'; step 9's title has a no-tag form.",
    "files": "page.jsx, GuidedTour.jsx; mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios",
     "web"
@@ -2189,7 +2189,7 @@
   {
    "id": "WALK-A-018",
    "opened": "2026-09-20T08:08:12",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "04.27",
    "found_on": [
     "web"
@@ -2197,11 +2197,11 @@
    "applies_to": "both",
    "title": "Ghost account: a request after erasure re-creates the account",
    "what": "Cycle 3: 02 erased from the web (farewell, Done → Choose all normal). 'Create sign in' with 9000000002 then refused: 'already in use'. The account record exists again, created 2026-09-20T08:04:56Z (moments after the erase), display_name = the number, consent {} — never signed up. Cause: _current_identity JIT-creates an Account for ANY authenticated request (api/main.py ~303–310); a request still carrying the erased teacher's session (a poll, a re-fetch, the farewell's own refresh, sign-out cleanup) lands after the erase and resurrects her. Timing-dependent — cycle 2's rejoin was clean. Consequences: 'Create sign in' refuses her; an empty account now holds her number; data-rights promise ('all your data deleted') is undercut by a recreated record. The trial was NOT reopened (entitlement seeded from the ledger: _earlier/1, _earlier/2). Fix directions: sign out/clear the session BEFORE the erase request returns control (client) and/or refuse JIT creation for a token whose account was erased after the token was issued (server: compare token iat with the erasure time, or keep a short-lived tombstone). Check the phone's delete flow. [WEB re-walked green 2026-09-20; phone half pending]",
-   "fix": "SERVER: Identity.issued_at (token iat); _current_identity refuses JIT creation for a token issued before the user's latest erasure (401 'This account was deleted…'). Header stub unaffected. Test added (test_supabase_auth). NEEDS RENDER DEPLOY.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu, ios, web) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "SERVER: Identity.issued_at (token iat); _current_identity refuses JIT creation for a token issued before the user's latest erasure (401 'This account was deleted…'). Header stub unaffected. Test added (test_supabase_auth). NEEDS RENDER DEPLOY.",
    "files": "api/main.py, aruvi_core/ports.py, aruvi_core/adapters/supabase_auth_provider.py, tests/test_supabase_auth.py",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu",
     "ios",
@@ -2213,7 +2213,7 @@
   {
    "id": "WALK-A-019",
    "opened": "2026-09-20T08:12:01",
-   "closed": "2026-09-24T01:25:56",
+   "closed": "",
    "feature": "03.32",
    "found_on": [
     "web"
@@ -2221,11 +2221,11 @@
    "applies_to": "both",
    "title": "Failed first lesson: message clipped, card looks attached, set-up check fires anyway",
    "what": "First run with the network off at Prepare (web, narrow width, dark theme). (1) The failed card clips its own sentence: 'Couldn't build the lesson plan right now. Try again in a…' — the one line that tells her what happened is cut; it must wrap in full. (2) The card keeps a clay left edge; the founder read it as 'attached'. A failed card should not borrow a lifecycle colour — give it a neutral or error treatment. (3) There is no retry on the card — only Dismiss; consider 'Try again' beside Dismiss (she chose the chapter, duration and periods already). (4) Visiting My Classes then raised 'Would you like to check your set-up?' — first run's one-shot fires because no tour is on offer (no lesson exists), so she is asked to audit a set-up before she has anything; hold the check until a first lesson exists (or until the tour resolves). Screenshot on file in the walk thread. (5) After dismissing the failure and preparing ch 4 successfully online, NO tour offer appeared (tour_offered_at still ''). Likely cause: tourEligible is computed ONCE, on [ready, user] (page.jsx ~124–139) from GET /section-state — the shell became ready while the network was off, the fetch failed → tourEligible null, and nothing recomputes it. So a teacher whose first lesson fails is never offered the tour in that session. Recompute eligibility when a plan lands (onPrepared) or on reconnect. [WEB re-walked green 2026-09-20; phone half pending] PHONE (iPhone walk): confirmed — clipped message, clay edge, no Try again; set-up popup did NOT fire on the phone. ✓ Android re-walk 2026-09-21: green. ⚠️ SECOND HALF, found on the web sweep 2026-09-21: the SECTION CARD in My Classes kept its old failed state — message plus Dismiss, no Try again. The My Lessons card and both phone cards had been fixed; this one was missed, so a first lesson that failed sent her back through chapter, duration and periods to retry a choice she had already made. ✓ Web 2026-09-21: Try again sits beside Dismiss on the section card and restores the lesson once the network is back.",
-   "fix": "Failed card: full sentence, neutral spine/edge, 'Try again' (re-serves the same descriptor incl. first-run bindKey); set-up check held while a lesson is preparing/failed or eligibility unknown; eligibility re-read when a plan lands. PHONE: failed card shows the full sentence, neutral edge + spine, and 'Try again' beside Dismiss; the serve is kept as a re-runnable closure in lib/preparing (first run and Prepare both pass it). Round 2 (live): the failed block stacks — full-width sentence, actions on one row beneath, at the end. WEB: the section card now carries Try again beside Dismiss, wired to the same `onRetryPrepare` the My Lessons card uses (it re-sends the descriptor, holds the same bar, and keeps first run's section binding). `.sc-prep-actions` already existed for the other card.\n\n[RECONCILED 2026-09-24T01:25:56] Closed by the post-family-05 reconciliation: every recheck surface (ios) carries an explicit re-walk note naming this amendment and reads PASS. Amber cleared.",
+   "fix": "Failed card: full sentence, neutral spine/edge, 'Try again' (re-serves the same descriptor incl. first-run bindKey); set-up check held while a lesson is preparing/failed or eligibility unknown; eligibility re-read when a plan lands. PHONE: failed card shows the full sentence, neutral edge + spine, and 'Try again' beside Dismiss; the serve is kept as a re-runnable closure in lib/preparing (first run and Prepare both pass it). Round 2 (live): the failed block stacks — full-width sentence, actions on one row beneath, at the end. WEB: the section card now carries Try again beside Dismiss, wired to the same `onRetryPrepare` the My Lessons card uses (it re-sends the descriptor, holds the same bar, and keeps first run's section binding). `.sc-prep-actions` already existed for the other card.",
    "files": "MyLessonPlans.jsx, page.jsx, FirstRun.jsx, globals.css; mobile/components/ProposedCard.jsx, mobile/lib/preparing.js, mobile/app/first-run.jsx, mobile/app/(app)/prepare.jsx, lessons.jsx, index.jsx; web/app/components/MyPlans.jsx; web/app/page.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios"
    ],
@@ -2351,7 +2351,7 @@
   {
    "id": "WALK-A-025",
    "opened": "2026-09-20T11:36:24",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.22",
    "found_on": [
     "ios"
@@ -2359,11 +2359,11 @@
    "applies_to": "phone",
    "title": "Phone first-run wheels too short; ▲▼ crowded",
    "what": "iPhone 16: the Subject, Class and Duration wheel boxes are too short for comfortable swiping, and the ▲/▼ pair sits too close together (also on the Chapter wheel). Founder: make them the CHAPTER box's height; space the arrows apart, but keep them clear of the box's top and bottom edges on the right. Label sizes are fine (minutes/periods match the chapter title). Phone only — web sizes are separate. ANDROID: same request (subject/class to chapter-box height). ✓ Android re-walk 2026-09-21 (dev build): green.",
-   "fix": "PHONE: Subject/Class/Duration/Periods wheels use the chapter box's height (92); the ▲▼ pair sits apart with air from the box's edges. Round 2: the large wheel label is 19px (was 17) so the minutes/periods words match the value they replace.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (ios) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: Subject/Class/Duration/Periods wheels use the chapter box's height (92); the ▲▼ pair sits apart with air from the box's edges. Round 2: the large wheel label is 19px (was 17) so the minutes/periods words match the value they replace.",
    "files": "mobile first-run wheel component (RollWheel port) + theme/web.js; mobile/app/first-run.jsx, mobile/components/RollWheel.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios"
    ],
@@ -2373,7 +2373,7 @@
   {
    "id": "WALK-A-026",
    "opened": "2026-09-20T11:36:24",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.26",
    "found_on": [
     "ios"
@@ -2381,11 +2381,11 @@
    "applies_to": "phone",
    "title": "Phone: periods 'Change' snaps back to the default",
    "what": "iPhone 16, chapter step: tapping Change on Estimated periods and moving the wheel restores the default immediately — the teacher cannot set periods at all (duration Change works). Likely a seeding effect overwriting the edited value (the 2026-08-21 web bug: guard with a periodsTouched ref, re-earned only on chapter change). Blocks setting 60×16 for 03.27. ANDROID: same — periods Change cannot be changed. ✓ Android re-walk 2026-09-21 (dev build): green.",
-   "fix": "PHONE: a re-pick of the SAME chapter is a no-op (the wheel re-commits on any layout shift, which was resetting periods and closing the editor); the wheel's parking effect no longer re-runs on every render.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (ios) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: a re-pick of the SAME chapter is a no-op (the wheel re-commits on any layout shift, which was resetting periods and closing the editor); the wheel's parking effect no longer re-runs on every render.",
    "files": "mobile first-run chapter step; mobile/app/first-run.jsx, mobile/components/RollWheel.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios"
    ],
@@ -2460,7 +2460,7 @@
   {
    "id": "WALK-A-030",
    "opened": "2026-09-20T11:58:49",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "04.26",
    "found_on": [
     "ios"
@@ -2468,11 +2468,11 @@
    "applies_to": "phone",
    "title": "Delete window's 'Download my data' skips the preview",
    "what": "iPhone 16: 'Download my data first (Word)' in the final delete window goes straight to the share sheet. Commit 1c9675fe made Word documents open in the preview first on iOS (Year Plan, reports, data export via settings/data.jsx, which uses canPreview + fetchDocument) — but settings/index.jsx's delete-window button still calls downloadDocument(dataExport) directly. Route it through the same preview path. ANDROID: same — goes straight to the app chooser. Note lib/download.js makes the preview iOS-ONLY by design (Android has no Quick Look; a .docx has no WebView renderer). Founder wants the document DISPLAYED first on both — needs a decision on how on Android (e.g. an in-app summary/preview screen, or open with the system viewer intent before offering share). iPhone re-walk 2026-09-20: the preview now happens, but behind the delete window → WALK-A-043. ✓ iPhone re-walk 2026-09-20: green. ANDROID 2026-09-21: the emulator has no .docx handler at all (query-activities: none), so openInViewer correctly falls through to the sheet. This cannot be proven on the emulator — it needs one run on a real handset with a document app installed.",
-   "fix": "PHONE: the delete window's export now SHOWS the document — Quick Look on iOS, the system VIEW intent on Android (expo-intent-launcher + content:// URI), share sheet only as the fallback.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: the delete window's export now SHOWS the document — Quick Look on iOS, the system VIEW intent on Android (expo-intent-launcher + content:// URI), share sheet only as the fallback.",
    "files": "mobile/app/(app)/settings/index.jsx, mobile/lib/download.js; mobile/lib/download.js, mobile/app/(app)/settings/index.jsx, mobile/package.json",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -2482,7 +2482,7 @@
   {
    "id": "WALK-A-031",
    "opened": "2026-09-20T12:22:40",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.17",
    "found_on": [
     "ios"
@@ -2490,11 +2490,11 @@
    "applies_to": "phone",
    "title": "Subscribe wizard: Save & continue hidden behind the keyboard",
    "what": "iPhone 16, About you: with the City field focused, the keyboard covers 'Save & continue →' — she must dismiss the keyboard to find it. Same family as WALK-A-001 (Support's Send). Keep the footer above the keyboard (KeyboardAvoidingView / scroll the CTA into view on focus).",
-   "fix": "About-you screen root is a KeyboardAvoidingView (padding on iOS) so the foot and 'Save & continue' stay above the keyboard. PHONE: About you lifts its foot above the keyboard (KeyboardAvoidingView) — done in the blocker fix.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (ios, and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "About-you screen root is a KeyboardAvoidingView (padding on iOS) so the foot and 'Save & continue' stay above the keyboard. PHONE: About you lifts its foot above the keyboard (KeyboardAvoidingView) — done in the blocker fix.",
    "files": "mobile/components/SubscribeWizard.jsx; mobile/components/SubscribeWizard.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios",
     "and_emu"
@@ -2505,7 +2505,7 @@
   {
    "id": "WALK-A-032",
    "opened": "2026-09-20T12:25:24",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.17",
    "found_on": [
     "ios"
@@ -2513,11 +2513,11 @@
    "applies_to": "phone",
    "title": "Phone State dropdown too tall",
    "what": "iPhone 16, About you: the State list (≈36 entries) opens nearly full-screen, covering the top and bottom of the screen. Cap its height (e.g. ~55–60% of the window) and scroll inside; keep it clear of the bar and the home indicator. Check Personal profile's State too. ANDROID: same. ✓ iPhone re-walk 2026-09-20: green.",
-   "fix": "PHONE: a dropdown list is capped at half the window height and scrolls inside.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: a dropdown list is capped at half the window height and scrolls inside.",
    "files": "mobile Dropdown component; mobile/components/Dropdown.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -2573,7 +2573,7 @@
   {
    "id": "WALK-A-035",
    "opened": "2026-09-20T13:22:27",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.03",
    "found_on": [
     "and_emu"
@@ -2581,11 +2581,11 @@
    "applies_to": "phone",
    "title": "Android: hardware Back does nothing — front door, first run AND the app shell",
    "what": "Pixel 7 emulator (API 34): on the OTP screen and on sign-in, the system Back (◁ or edge swipe) does nothing — the screen stays. These are one route with a `screen` state (login.jsx), so Back is swallowed. It should do exactly what the on-screen '← Back' does (OTP → Choose on create / → sign-in on returning; sign-in → Choose; privacy → where she came from), and exit the app only from Choose. Use BackHandler in login.jsx (and the first-run steps: Back = '← Back', Welcome = exit). Also the /privacy route (03.14, 03.15): hardware Back does nothing there either. WIDER: also dead on first-run Welcome and inside the app (My Lessons). Decide the shell's rule like the web's WALK-A-008: close an open lesson/sheet, then Settings, then other tab → My Classes, then exit. ⚠️ ROOT CAUSE (2026-09-21): the handlers were never the problem. Android 13+ dispatches Back through onBackInvokedCallback, and React Native only listens for the LEGACY event; react-native-screens has not integrated the new path, so with predictive back enabled RN never receives the press at all. Expo Go is a separate app with its own manifest and cannot be changed from here — which is why our BackHandler AND expo-router's own route-pop are both dead on the emulator (Privacy Notice, 03.14). Expo's own build config defaults `android:enableOnBackInvokedCallback` to FALSE, so a real Meyy build gets the legacy path and the handlers work. NOT WALKABLE IN EXPO GO: every Back row must be walked on a development build. `android.predictiveBackGestureEnabled: false` is now pinned in app.json so this cannot drift. ✅ SETTLED 2026-09-21: the handlers were RIGHT all along. On the development build `adb shell input keyevent 4` from the mobile-number screen returns to the chooser exactly as written. What failed for twenty attempts was the EMULATOR'S DELIVERY of the press — the Pixel 7 image runs gesture navigation and a mouse-dragged edge swipe does not register as a back gesture. Walk Back rows with the emulator set to 3-button navigation (Settings → System → Gestures → System navigation), or with `adb shell input keyevent 4`. The predictive-back reading above still stands as the reason a real build is required: Expo Go cannot be trusted for Back at all.",
-   "fix": "PHONE (Android): BackHandler on the login screens (otp → choose/sign-in, sign-in → choose, choose → exit), on first run's steps, on /privacy, and in the app shell (close a window, pop the stack, other tab → My Classes, else exit).\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE (Android): BackHandler on the login screens (otp → choose/sign-in, sign-in → choose, choose → exit), on first run's steps, on /privacy, and in the app shell (close a window, pop the stack, other tab → My Classes, else exit).",
    "files": "mobile/app/login.jsx (+ first-run.jsx); mobile/app/login.jsx, first-run.jsx, privacy.jsx, app/(app)/_layout.jsx; mobile/app.json (predictiveBackGestureEnabled: false)",
    "commit": "",
    "native_rebuild": true,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -2595,7 +2595,7 @@
   {
    "id": "WALK-A-036",
    "opened": "2026-09-20T13:57:34",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.06",
    "found_on": [
     "and_emu"
@@ -2603,11 +2603,11 @@
    "applies_to": "phone",
    "title": "Android: 'Verify & continue' half-hidden under the pinned foot with the keyboard up",
    "what": "Pixel 7 emulator, create OTP screen with the number pad open: the Verify button is cut in half by the fixed foot ('← Back' band) sitting above the keyboard. The scroll area must end ABOVE the foot (bottom padding = foot height) and the CTA be scrolled into view when the boxes are focused. Android resizes the window, so KeyboardAvoidingView 'padding' is not the tool there. See screenshot in the walk thread. ✓ Android re-walk 2026-09-21 (dev build): green.",
-   "fix": "PHONE (Android): more bottom slack under the keypad and a second scroll-to-end once the resize settles, so Verify clears the foot.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (ios) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE (Android): more bottom slack under the keypad and a second scroll-to-end once the resize settles, so Verify clears the foot.",
    "files": "mobile/app/login.jsx; mobile/app/login.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios"
    ],
@@ -2637,7 +2637,7 @@
   {
    "id": "WALK-A-038",
    "opened": "2026-09-20T14:02:42",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.27",
    "found_on": [
     "and_emu"
@@ -2645,11 +2645,11 @@
    "applies_to": "phone",
    "title": "Android first run: blank 'Loading…' instead of the preparing card",
    "what": "Pixel 7 emulator (Expo Go, tunnel): after 'Prepare the lesson →' the app showed an empty screen with 'Loading…' for an unusually long time, then the lesson card appeared all at once — the preparing card with its progress bar never showed. On the iPhone the handoff showed the card and bar. Suspect the handoff lands on the shell before the module-level preparing store is read (router.replace + (app) gate loading readiness on a slower device), so the gate's 'Loading…' covers the whole wait. The shell should open immediately on My Lessons with the preparing card, whatever the device speed. ✓ Android re-walk 2026-09-21 (dev build): green.",
-   "fix": "PHONE: My Lessons draws the preparing card from the descriptor even before the profile/listing reads resolve, so the wait is never hidden behind 'Loading your lessons…'.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (ios) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: My Lessons draws the preparing card from the descriptor even before the profile/listing reads resolve, so the wait is never hidden behind 'Loading your lessons…'.",
    "files": "mobile first-run handoff (preparing store) + app/(app)/_layout.jsx gate; mobile/app/(app)/lessons.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios"
    ],
@@ -2659,7 +2659,7 @@
   {
    "id": "WALK-A-039",
    "opened": "2026-09-20T14:34:21",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "T.26",
    "found_on": [
     "and_emu"
@@ -2667,11 +2667,11 @@
    "applies_to": "phone",
    "title": "Android: set-up check doesn't rise after tour Done until a tab switch",
    "what": "Pixel 7 emulator: ending the tour with Done left her on My Classes with no 'Would you like to check your set-up?'. It rose only after switching to My Lessons and back. Its trigger evidently depends on a screen-focus/dependency change that Done does not cause on Android (the iPhone raised it after Skip). Make the tour's end itself queue the check (as the web's finishTour does). ✓ Android re-walk 2026-09-21: green.",
-   "fix": "PHONE: the tour's END raises the set-up check directly (a focus effect never fired on Done, which is why it needed a tab switch).\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (ios) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: the tour's END raises the set-up check directly (a focus effect never fired on Done, which is why it needed a tab switch).",
    "files": "mobile shell (tour finish → set-up check); mobile/app/(app)/index.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "ios"
    ],
@@ -2681,7 +2681,7 @@
   {
    "id": "WALK-A-040",
    "opened": "2026-09-20T14:53:23",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.17",
    "found_on": [
     "and_emu"
@@ -2689,11 +2689,11 @@
    "applies_to": "phone",
    "title": "About you: Save lights up while School is still below the fold",
    "what": "Pixel 7 emulator: once State is chosen, 'Save & continue' enables; City is just visible and School name sits below the fold. A teacher may tap Save without ever seeing the School field. With City mandatory (WALK-A-022) Save will wait for City — but School should still be seen: e.g. scroll the next field into view when a dropdown closes, or keep the whole form on screen above the frozen foot. iPhone re-walk 2026-09-20: the scroll-after-State is NOT enough — City comes into view but School name still sits behind the 'Save & continue' foot. Founder: once State is chosen, City AND School should both show above the foot. Likely the scroller has no bottom padding for the frozen foot. iPhone re-walk 2026-09-20, second look: the State list was never the cause — the whole form is visible once Role and State are answered. It is the KEYBOARD: focusing City lifts the foot to just under it, and 'Save & continue' then sits squarely over School. She fills in her city never knowing a school was asked for. ✓ iPhone re-walk 2026-09-20: green. ANDROID 2026-09-21: the same fault in its Android form — the wizard's KeyboardAvoidingView lifted on iOS only, so under edge-to-edge the keypad covered City and School outright and the form could not be completed. It lifts on both now.",
-   "fix": "PHONE: focusing City or School scrolls the tail of the form clear of the lifted foot (twice — the keyboard is still rising on the first pass). The State scroll stays as a no-op safety net.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: focusing City or School scrolls the tail of the form clear of the lifted foot (twice — the keyboard is still rising on the first pass). The State scroll stays as a no-op safety net.",
    "files": "mobile/components/SubscribeWizard.jsx (KeyboardAvoidingView behavior)",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -2812,7 +2812,7 @@
   {
    "id": "WALK-A-046",
    "opened": "2026-09-21T07:08:33",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.03",
    "found_on": [
     "and_emu"
@@ -2820,11 +2820,11 @@
    "applies_to": "phone",
    "title": "Pinned feet sit under the Android navigation bar",
    "what": "Pixel 7, with the emulator switched to 3-button navigation: the sign-in screen's foot sits straight under ◁ ◯ ▢, so 'Already have an ID? Sign in' cannot be pressed — the press lands on the system bar. Edge-to-edge is mandatory from Android 16, so the app owns that space and must give the bar its room. The gesture pill is thin enough that every foot LOOKED right until the walk switched navigation modes; a great many Android teachers use the three buttons. ✓ iPhone sweep 2026-09-21: green.",
-   "fix": "PHONE: every pinned foot adds the safe-area bottom inset — login's Wrap, the subscribe wizard's three feet, the Agreement's foot, and first-run's scroll tail. The bottom nav already did this.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: every pinned foot adds the safe-area bottom inset — login's Wrap, the subscribe wizard's three feet, the Agreement's foot, and first-run's scroll tail. The bottom nav already did this.",
    "files": "mobile/app/login.jsx; mobile/app/first-run.jsx; mobile/components/SubscribeWizard.jsx; mobile/components/Agreement.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -2834,7 +2834,7 @@
   {
    "id": "WALK-A-047",
    "opened": "2026-09-21T07:18:43",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.06",
    "found_on": [
     "and_emu"
@@ -2842,11 +2842,11 @@
    "applies_to": "phone",
    "title": "Android: the keypad covers the sign-in screen's pinned foot",
    "what": "Pixel 7 dev build: with the OTP keypad up, the sign-in screen's pinned foot stayed at the bottom of the screen and the keys drew over it, so the app's own '← Back' could not be seen or pressed. The KeyboardAvoidingView lifted on iOS only — `undefined` on Android was right while the window resized for the keypad, but under mandatory edge-to-edge the IME simply draws over the app and nothing resizes. (Not to be confused with Android replacing ◁ with the ⌄ dismiss-keyboard chevron while the IME is open — that is the system's own behaviour and correct.) ✓ iPhone sweep 2026-09-21: green.",
-   "fix": "PHONE: the sign-in Wrap lifts on both surfaces (behavior=\"padding\"), so the foot rides the keyboard.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: the sign-in Wrap lifts on both surfaces (behavior=\"padding\"), so the foot rides the keyboard.",
    "files": "mobile/app/login.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -2900,7 +2900,7 @@
   {
    "id": "WALK-A-050",
    "opened": "2026-09-21T10:22:50",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "T.12",
    "found_on": [
     "and_emu"
@@ -2908,11 +2908,11 @@
    "applies_to": "phone",
    "title": "Tour cards that arrive with a sheet are late, and 14→15 jumps",
    "what": "Pixel 7 dev build: every other card appears at once; step 9 leaves the teacher looking at a dimmed screen with no tip for roughly two seconds. Step 9 is one of the two drawn over a Sheet, so the wait is probably the sheet opening before the tip can measure its anchor — the `settled` gate added for WALK-A-028 will not release until the anchor stops moving. Not seen on iPhone. ✓ Step 9 is prompt after the faster backoff. STILL OPEN: the 14 → 15 transition is delayed and JUMPY — the card arrives late and settles rather than appearing in place. 15 is `place: \"over\"`, whose tip position does not depend on the ring at all, so the settle cannot be the tip re-placing itself: suspect the sheet beneath it animating in while `settled` has already released the card at 450ms. Next: hold `settled` until the ring has actually measured on steps whose anchor lives inside a sheet, rather than on a fixed timer. ✓ 2026-09-21: step 9 prompt, 14 → 15 arrives in place once `settled` waits for the ring instead of a timer. RESIDUAL (minor, polish): the attach sheet's own 'track a chapter for this section' card bobs once before settling — that is the WINDOW beneath the tip, not the tip. ✓ iPhone sweep part 2, 2026-09-21: no flash, loop both ways, wrap steps one row, tour steps 9 and 14→15 clean.",
-   "fix": "PHONE: the anchor retry backoff was 220 · 720 · 1220 — far too patient for a target that arrives with a fading Modal. Six tries at 110 + n×220 reach further in under half the time, and a genuinely absent anchor still gives up in about a second and a half.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "PHONE: the anchor retry backoff was 220 · 720 · 1220 — far too patient for a target that arrives with a fading Modal. Six tries at 110 + n×220 reach further in under half the time, and a genuinely absent anchor still gives up in about a second and a half.",
    "files": "mobile/components/GuidedTour.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -3054,7 +3054,7 @@
   {
    "id": "WALK-A-057",
    "opened": "2026-09-21T10:56:54",
-   "closed": "2026-09-24T01:25:21",
+   "closed": "",
    "feature": "03.18",
    "found_on": [
     "and_emu"
@@ -3062,11 +3062,11 @@
    "applies_to": "both",
    "title": "The trial-spent notice stays up through the whole wizard",
    "what": "Pixel 7: 'This mobile number has already used its free trial. Subscribe to keep using Meyy.' is pinned above every screen of the subscribe wizard, pushing the step rail down and eating room on a form that already struggles for it with the keypad up. It explains why she is here — once. ✓ iPhone sweep 2026-09-21: green.",
-   "fix": "BOTH: the notice shows until she starts answering (any field filled), then goes and does not come back in this wizard. Founder's rule: once she has started entering her details she has accepted the answer, and repeating it is nagging. WEB NOT DONE YET, deliberately: there the notice is passed in as `chrome` from Login.jsx and lives OUTSIDE SubscribeFlow, so hiding it on first entry means giving SubscribeFlow the notice as its own prop — a change to the chrome contract, not a one-liner, and the web's screen does not lose the step rail to it the way a phone does. Worth doing for consistency, at a moment when the web is being touched anyway.\n\n[RECONCILED 2026-09-24T01:25:21] Closed by the post-family-05 reconciliation: every recheck surface (and_emu) has since been walked afresh and recorded PASS, with the pass dated after this amendment's own fix. Amber cleared.",
+   "fix": "BOTH: the notice shows until she starts answering (any field filled), then goes and does not come back in this wizard. Founder's rule: once she has started entering her details she has accepted the answer, and repeating it is nagging. WEB NOT DONE YET, deliberately: there the notice is passed in as `chrome` from Login.jsx and lives OUTSIDE SubscribeFlow, so hiding it on first entry means giving SubscribeFlow the notice as its own prop — a change to the chrome contract, not a one-liner, and the web's screen does not lose the step rail to it the way a phone does. Worth doing for consistency, at a moment when the web is being touched anyway.",
    "files": "mobile/components/SubscribeWizard.jsx; web SubscribeFlow equivalent (to match)",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
+   "status": "fixed-awaiting-rewalk",
    "recheck": [
     "and_emu"
    ],
@@ -3218,17 +3218,18 @@
    "applies_to": "both",
    "title": "An offline archive or restore reports success and is silently lost afterwards",
    "what": "Founder, web 2026-09-21: with the network offline, archiving and restoring both work on screen and toast success. Correct as far as verifiedWrite goes — it will not claim a failure it cannot prove — but the consequence is not benign. The optimistic flag is local only, the POST never reached the server, and archivePlan/restorePlan call invalidatePlans(key) regardless, so the next fetch once she is back online pulls the server's pre-archive truth and the card reappears in Your lessons. She archived seven lessons on a school bus with no signal, was told each one moved, and finds them all back with no explanation. 'Say nothing when we cannot prove failure' is right; 'say SUCCESS when we cannot prove success' is the part that misleads.",
-   "fix": "OPEN — founder's to decide, roughly in ascending cost: (a) word the unverified case honestly — on status 'unverified' replace the success toast with something like 'Saved on this device — we couldn't reach Meyy to confirm it', so she is not told a thing happened that may not have; (b) block the act while the app knows it is offline (navigator.onLine / a failed heartbeat) and say so; (c) queue the write and replay it when the connection returns, which is the only option that actually keeps her work and the only one that costs new machinery. Note this is not specific to the archive — every verifiedWrite caller has the same unverified-success shape, so whichever wording is chosen should be decided once and applied across them rather than patched here. Row 05.16's offline expectation and its Android watch note must be rewritten in the same pass.\n\nCLAUDE'S RECOMMENDATION 2026-09-21, asked directly: a fix IS due, but disabling-when-offline is the weaker half and should not be the whole of it. The signal for 'offline' is navigator.onLine, which is false only when the OS reports no interface — it is TRUE on the common Indian school case, a phone or laptop joined to a wifi network whose uplink is dead or captive. So a disable-on-offline guard blocks the narrow airplane-mode case (the one the walk row tests) and lets through the case teachers actually meet, where she would still be told 'Moved to Archive' and still lose it. Order of work: (a) FIRST make the unverified case speak honestly — that covers every way the write can fail to land, however the network is broken, and it is a wording change; (b) THEN add the offline guard if wanted, as a courtesy that saves her the attempt when the OS is certain; (c) queueing and replay only if teachers turn out to work offline in earnest, which rows 05.31/05.32 will tell us. Decide the wording once for all verifiedWrite callers.\n\n★ THE PATTERN TO COPY ALREADY EXISTS IN THE PRODUCT (found at 05.30, 2026-09-22). The Year Plan Word export handles exactly this case well: offline it prints, under the totals row, 'Couldn't download the year plan. Couldn't reach Meyy just now. Tap the arrow to try again.' — an in-window line rather than an alert, naming the failure, naming the control to retry, and distinguishing an unreachable server from a 404 or a 501. That is the shape the report download (05.18) and the archive (this amendment) both owe. Do not invent new wording: take this one as the template, since a teacher should meet one voice for 'the network did not answer' wherever she meets it.\n\n[FIXED web 2026-09-24T01:40:44] Option (a), the honest wording, as recommended. MyLessonPlans.jsx verifyArchive now handles status 'unverified' explicitly, BEFORE the mismatch branch: nothing is reverted (the verdict 'we do not know that it failed' stands), but the cheerful toast is replaced with 'Archived on this device — we couldn't reach Meyy to confirm it.' / 'Restored on this device — we couldn't reach Meyy to confirm it.' Wording follows the Year Plan export's offline line, the one place in the product that already does this well.\nNOT DONE, and deliberately: (b) blocking the act when navigator.onLine is false, and (c) queue and replay. (b) would block airplane mode and let through the case teachers actually meet — a wifi with a dead uplink, where onLine is true; (c) is real machinery and should wait for evidence from rows 05.31/05.32 that teachers work offline in earnest.\n⚠️ OTHER verifiedWrite CALLERS STILL SAY SUCCESS ON 'unverified' — this fixes the archive pair only. The sentence above is now the template; apply it to the rest (the readiness save, the prepared-plan mark, section state) in one pass rather than inventing wording each time.\nPhone half owed. Verified: @babel/parser clean.\n[RE-WALKED web 2026-09-24] PASS, with two changes made during the re-walk (see WALK-A-078): one message instead of two, and the plain paper box. Wording as shipped: 'Archived here, but not saved to Meyy — check your connection.' / 'Restored here, but not saved to Meyy — check your connection.'\n★ OPEN PRODUCT QUESTION, founder's: he wants it to read 'Archived. Will be updated on Meyy server once connection is established.' That is the better sentence and the right destination, but it is a PROMISE OF A REPLAY the app does not keep — there is no queue, and invalidatePlans means the next successful fetch pulls the server's pre-archive truth back over her change, so the lesson reappears unexplained. Two routes: (A) build the queue-and-replay — unconfirmed writes held in device storage, retried when a request next succeeds or the app foregrounds, the listing refreshed only after; one sitting of real work in the shared layer, serving both surfaces and every other write that can fail offline, and it also answers 05.32's offline story. (B) keep today's honest wording. Recommendation: A, as its own piece after this fix list is cleared — not squeezed between two copy fixes. Undecided as of 2026-09-24.",
+   "fix": "OPEN — founder's to decide, roughly in ascending cost: (a) word the unverified case honestly — on status 'unverified' replace the success toast with something like 'Saved on this device — we couldn't reach Meyy to confirm it', so she is not told a thing happened that may not have; (b) block the act while the app knows it is offline (navigator.onLine / a failed heartbeat) and say so; (c) queue the write and replay it when the connection returns, which is the only option that actually keeps her work and the only one that costs new machinery. Note this is not specific to the archive — every verifiedWrite caller has the same unverified-success shape, so whichever wording is chosen should be decided once and applied across them rather than patched here. Row 05.16's offline expectation and its Android watch note must be rewritten in the same pass.\n\nCLAUDE'S RECOMMENDATION 2026-09-21, asked directly: a fix IS due, but disabling-when-offline is the weaker half and should not be the whole of it. The signal for 'offline' is navigator.onLine, which is false only when the OS reports no interface — it is TRUE on the common Indian school case, a phone or laptop joined to a wifi network whose uplink is dead or captive. So a disable-on-offline guard blocks the narrow airplane-mode case (the one the walk row tests) and lets through the case teachers actually meet, where she would still be told 'Moved to Archive' and still lose it. Order of work: (a) FIRST make the unverified case speak honestly — that covers every way the write can fail to land, however the network is broken, and it is a wording change; (b) THEN add the offline guard if wanted, as a courtesy that saves her the attempt when the OS is certain; (c) queueing and replay only if teachers turn out to work offline in earnest, which rows 05.31/05.32 will tell us. Decide the wording once for all verifiedWrite callers.\n\n★ THE PATTERN TO COPY ALREADY EXISTS IN THE PRODUCT (found at 05.30, 2026-09-22). The Year Plan Word export handles exactly this case well: offline it prints, under the totals row, 'Couldn't download the year plan. Couldn't reach Meyy just now. Tap the arrow to try again.' — an in-window line rather than an alert, naming the failure, naming the control to retry, and distinguishing an unreachable server from a 404 or a 501. That is the shape the report download (05.18) and the archive (this amendment) both owe. Do not invent new wording: take this one as the template, since a teacher should meet one voice for 'the network did not answer' wherever she meets it.",
    "files": "web/app/components/MyLessonPlans.jsx (archivePlan/restorePlan/verifyArchive), packages/shared/src/verify.js, docs/walk_tracker.html (row 05.16)",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "open",
    "recheck": [
+    "web",
     "ios",
     "and_emu"
    ],
    "owner": "Kumar",
-   "at": "2026-09-24T01:52:31"
+   "at": "2026-09-21T14:56:47"
   },
   {
    "id": "WALK-A-065",
@@ -3383,17 +3384,18 @@
    "applies_to": "both",
    "title": "A failed RE-PREPARE has nowhere to be said (certain); plus one unreproduced hang on the ordinary path",
    "what": "Founder, web 2026-09-22: with DevTools OFFLINE set before tapping, a prepare's progress bar sticks and NO failure ever appears — 60+ seconds, no reason, no Dismiss, no Try again.\n★ PATH RESOLVED 2026-09-22: THE ORDINARY ONE. The founder confirms Elections ch 07 was new and NO 'Prepare this chapter again?' window ever appeared, so onPrepareClick called doGenerate() directly. (The PrepareLesson.jsx:677 frame in the stack is therefore misleading — most likely a stale dev bundle after a long next-dev session, so treat source line numbers from that trace as approximate.) That makes this the COMMON path, not a corner: with no matching card, matchIdx is -1, showProposedCard is true, ProposedCard is mounted (it drew the bar he watched) and its failed variant is computed from preparing.failed on every render. For the bar to persist, preparing.failed must never have become true — so onPrepareError did not fire, or did not fire with what the card reads. SEVERITY: on web, a prepare that fails appears to tell the teacher NOTHING, ever. Superseded reading: The founder states the chapter (Elections ch 07) was NEW and not previously prepared, which would take the ordinary path. But the stack trace's outermost frame is PrepareLesson.jsx:677 — the 'Prepare again' button inside the regenerate confirm window; a new chapter cannot reach it, since chosenAlreadyPrepared would be false and onPrepareClick calls doGenerate() directly (line 319). Most likely the chapter HAD been prepared earlier in the same session (05.24's single-tap test used one), making this the re-prepare path after all. TO SETTLE: did the button read 'Prepare the lesson →' or 'Prepare again →', and did a 'Prepare this chapter again?' window appear first? If a window appeared it is the re-prepare path and the diagnosis below is the whole of it. If not, the fault is further up — onPrepareError not firing, or ProposedCard's failed variant not rendering — and it would affect EVERY prepare failure rather than one path, which is materially worse.\n★ THE DIAGNOSIS BELOW REMAINS A CERTAIN, SEPARATE CODE DEFECT for the RE-PREPARE and identity-serve path — it is simply not what the founder hit. Fix both. The founder's stack trace was the giveaway: postJSON @ format.js:194 ← PrepareLesson.jsx:370 ← :325 ← :677 — line 677 is the 'Prepare again' button in the regenerate confirm window. The POST did go out and failed in 112ms with ERR_INTERNET_DISCONNECTED (every request rejects in ~100-250ms offline), so runGenerate's catch ran and onPrepareError fired correctly; page.jsx:837 set preparingCard = {...desc, failed:true, message}. The message then had nowhere to go:\n  · MyLessonPlans:906 sets showProposedCard = showProposed && matchIdx < 0. matchIdx (line 901) finds an existing card with the SAME chapter and the SAME duration label — which is exactly what a re-prepare or an identity serve produces. On a match the proposed card is deliberately NOT drawn (ARV-D-066: it was showing her lesson twice) and the real card is marked busy instead. But that condition does not consider preparing.failed, so on failure the proposed card is still suppressed — and ProposedCard's failed variant is the ONLY place the reason, Dismiss and Try again exist.\n  · The existing card's busy flag is `pi === busyIdx` (line 1036) with busyIdx = matchIdx >= 0 ? 0 : -1 (line 916). preparing stays non-null after a failure, so the match still holds and the card stays busy FOR EVER — the stuck progress bar.\nSo both halves of the failure contract are lost on this one path: no terminal state, and no message. Every piece of machinery works; the two conditions that route it were written for the success case only.\n⚠ SCOPE: the ordinary path (a chapter with no matching card) draws a real ProposedCard and its failed variant should work — UNVERIFIED, because the founder's offline-first attempt happened to be a re-prepare. That test is still owed and decides whether this is one path or all of them.\n★ STILL THE THIRD MEMBER OF A FAMILY. WALK-A-064 (offline archive reports success) and 05.18's offline download (a browser alert instead of an in-window line) come of the same root: no single honest account of 'the network did not answer'. Worth one piece of work, not three patches.\n★ WHAT HAS BEEN RULED OUT BY READING, so the fix point does not repeat it: the POST does leave and does reject fast (the 'plan' row, (failed) fetch, 112ms, ERR_INTERNET_DISCONNECTED — so postJSON's 45s abort is irrelevant); runGenerate's catch builds the message and calls onPrepareError (PrepareLesson.jsx ~391-412); its finally clears only PrepareLesson's OWN local state, not the shell's card; GenerateTab DOES forward onPrepareError to PrepareLesson (GenerateTab.jsx:127); page.jsx's handler sets preparingCard = {...desc, failed:true, message} (page.jsx:837); ProposedCard recomputes `failed` from the prop on every render (MyLessonPlans.jsx:250). Every link reads correct, which is why this needs a breakpoint rather than more reading.\n\n★ RE-RUN 2026-09-22: THE ORDINARY PATH WORKS. The founder repeated the offline-first test and the failed card rendered correctly — 'Couldn't build the lesson plan right now. Try again in a moment.' (the generic fallback, correct for a network failure with no server detail), clamped to two lines, with TRY AGAIN and DISMISS. Screenshot in the session. So onPrepareError, the prop chain and ProposedCard's failed variant are all sound on the common path. The earlier 60s+ hang is therefore NOT REPRODUCED — founder's disposition: 'might have been an errata, don't think we need to bother about it.' Agreed and recorded as such: one occurrence, full network and stack evidence retained above, nobody to go hunting. If it recurs, the instrumentation step in the fix is the way in.\n★ WHAT REMAINS TO FIX IS THE RE-PREPARE PATH, and it is certain from the code rather than from a session: showProposedCard (MyLessonPlans.jsx:906) and busyIdx (:916) both ignore preparing.failed, so on a matched card (any re-prepare, and every identity serve) a failure has no home and the in-place bar cannot end — the same symptom the founder chased, reachable deliberately rather than by accident.",
-   "fix": "OPEN — scope reduced to the certain defect. Two conditions:\n(a) busyIdx must be -1 when preparing.failed (or busy must test !preparing.failed), so a failed re-prepare stops its in-place progress bar instead of spinning for ever.\n(b) showProposedCard must let a FAILED descriptor through on a matched card — or the reason plus Dismiss and Try again must render in place on that card. ARV-D-066's duplicate worry does not apply to a failure (a failed card reads nothing like a finished one), and the failed variant is the only home those two buttons have. Rendering in place is truer to ARV-D-066's own principle and is the better answer; letting the card through is the immediate one.\n(c) Worth keeping regardless: give the preparing card its own ceiling so it always reaches a terminal state even if no rejection arrives — the phone needs it more than the web, since Android reports network loss on a long TCP timeout rather than immediately. This is also the only thing that would have saved the unreproduced hang above.\nNOT NEEDED ANY MORE: the instrumentation hunt for the ordinary path — it works. Keep the ruled-out list above only in case the hang returns.\nTO RE-WALK after (a)/(b): trigger a failure on a RE-PREPARE (offline, a chapter that already has a card at that duration) and confirm the bar ends and the reason appears.\n\n[FIXED web 2026-09-24T01:37:18] MyLessonPlans.jsx: the matched card's single `busy` flag is split into `matchedHere` (this card is the one being re-prepared), `failedHere` (matchedHere && preparing.failed) and `busy` (matchedHere && !failedHere). The progress bar therefore ENDS on a failure, and the slot it occupied now carries the reason in full with Try again beside Dismiss — the same two actions ProposedCard offers, which were previously unreachable on this path. Rendering IN PLACE rather than letting the suppressed proposed card through is truer to ARV-D-066's own principle: the feedback stays where she is already looking, and she is still never shown her lesson twice.\n⚠️ DELIBERATELY NOT styled with sc-proposed / sc-proposed-failed. Those neutralise the edge and the spine, which is right for a card that never became a plan — but this card IS her plan and it is untouched; only the re-prepare of it failed. It keeps its own status colour.\nPhone half still owed. Verified: @babel/parser clean.\n[RE-WALKED web 2026-09-24] PASS. Web cell closed; ios and and_emu still owed.",
+   "fix": "OPEN — scope reduced to the certain defect. Two conditions:\n(a) busyIdx must be -1 when preparing.failed (or busy must test !preparing.failed), so a failed re-prepare stops its in-place progress bar instead of spinning for ever.\n(b) showProposedCard must let a FAILED descriptor through on a matched card — or the reason plus Dismiss and Try again must render in place on that card. ARV-D-066's duplicate worry does not apply to a failure (a failed card reads nothing like a finished one), and the failed variant is the only home those two buttons have. Rendering in place is truer to ARV-D-066's own principle and is the better answer; letting the card through is the immediate one.\n(c) Worth keeping regardless: give the preparing card its own ceiling so it always reaches a terminal state even if no rejection arrives — the phone needs it more than the web, since Android reports network loss on a long TCP timeout rather than immediately. This is also the only thing that would have saved the unreproduced hang above.\nNOT NEEDED ANY MORE: the instrumentation hunt for the ordinary path — it works. Keep the ruled-out list above only in case the hang returns.\nTO RE-WALK after (a)/(b): trigger a failure on a RE-PREPARE (offline, a chapter that already has a card at that duration) and confirm the bar ends and the reason appears.",
    "files": "web/app/components/MyLessonPlans.jsx (showProposedCard ~906, matchIdx ~901, busyIdx ~916, busy ~1036, ProposedCard ~241), web/app/page.jsx (onPrepareError ~837), web/app/components/PrepareLesson.jsx (runGenerate catch ~391-416), mobile equivalents",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "open",
    "recheck": [
+    "web",
     "ios",
     "and_emu"
    ],
    "owner": "Claude",
-   "at": "2026-09-24T01:37:18"
+   "at": "2026-09-22T10:51:23"
   },
   {
    "id": "WALK-A-072",
@@ -3450,17 +3452,18 @@
    "applies_to": "both",
    "title": "Prepare and Year Plan disagree by one period — two implementations of one distribution, differing in how placeholder chapters are bucketed",
    "what": "Founder, web 2026-09-22, social_sciences class 9 on 9000000003: ch 5 suggested 22 in Prepare and 21 in Year Plan; ch 3 suggested 13 in Prepare and 12 in Year Plan.\n★ CAUSE FOUND. Both screens distribute the SAME budget by chapter weight with the SAME largest-remainder helper, but over DIFFERENT BUCKET SETS:\n  · YearPlan.jsx:145-150 keeps every chapter the API returns, placeholders included (it only marks them `awaited`), and calls largestRemainder(budget, weights) with ONE BUCKET PER CHAPTER.\n  · PrepareLesson.jsx:104 FILTERS placeholders out of `chapters` ('Book awaited', nothing to generate from), then at :202-215 reconstructs the missing syllabus weight as a SINGLE synthetic bucket — missing = syllabus_total_weight − sum(listed weights) — distributes over [...listed, missing] and discards the bucket.\nThe two are algebraically equal only if largest-remainder were invariant under AGGREGATING buckets, and it is not: the leftover whole periods go to the largest fractional remainders, and three placeholders with remainders of 0.4 each behave quite differently from one bucket with a remainder of 1.2. So the two screens hand out the same total to different rows, and a chapter can differ by 1. Nothing is 'wrong' arithmetically in either — they are answering slightly different questions and both call the answer 'suggested periods'.\n★ THIS IS THE THIRD TIME THIS CODEBASE HAS BEEN BITTEN BY ONE ARITHMETIC WRITTEN TWICE: the 2026-08-21 first-run defect (Year Plan said 14 where the chapter step said 19), ppw_from_annual mirrored across JS and Python, and the Year Plan Word export, whose design note says the client must post its own model precisely because 'the day the two drift she holds a Word document contradicting the screen she exported it from'. The drift is now on screen, between two panes.\n★ WHY THE FOUNDER REQUIRES THIS FIXED (2026-09-22), and it is the clearest statement of the harm: 'the system shows its own suggestion and then adds saying we will return one period as it is excess!' Because Prepare suggests 22 where the Year Plan basis says 21, its own boundary message then fires against its own recommendation — she is offered a number and told in the same breath that one period of it is surplus and will go back to her budget. Two panes disagreeing by one period is a rounding curiosity; a single pane contradicting itself in consecutive sentences is a product that looks like it cannot count. Fix required, not optional.",
-   "fix": "OPEN — ONE IMPLEMENTATION, called by both. Add a single helper beside largestRemainder and annualBudgetPeriods in packages/shared/src/format.js — e.g. suggestedPeriodsByChapter(chapters, budget) — that distributes across ALL chapters INDIVIDUALLY, placeholders included (the Year Plan basis, which is the honest one: a placeholder chapter genuinely holds its own share of the year). Prepare then filters placeholders out for DISPLAY only, after the distribution, and keeps its floor-at-1 if still wanted. Delete Prepare's missing-bucket reconstruction; the syllabus_total_weight guard it exists for is no longer needed once the placeholder rows themselves are in the distribution, and the guard's own comment says it was only for 'the case the API could not supply the placeholder rows'.\nTHEN PIN IT WITH A TEST, in the spirit of test_note_matches_the_panes_own_words: assert that for a given chapter list and budget the per-chapter suggestion is identical whichever screen asks. A shared helper without a test drifts again the first time one caller filters something.\nCheck the same basis against the API's own recommended_periods: sum(recommended_periods) == annual_budget_periods by construction, so where her budget equals the calibrated total the suggestion should equal the master plan's per-chapter figure exactly — a free correctness check on the new helper, and the one the 2026-08-21 defect was fixed by.\nFix alongside WALK-A-073; Used, Available and both suggestion columns must end up reading from one arithmetic.\n\n[FIXED web 2026-09-24T01:58:05] ONE implementation, as specified.\n· packages/shared/src/format.js gains suggestedPeriodsByChapter(chapters, budget) — largestRemainder over ALL chapters INDIVIDUALLY, placeholders included.\n· PrepareLesson.jsx now keeps the API's FULL list in new state `allChapters` (the picker keeps its filtered `chapters`) and calls the helper over it. Its synthetic missing-weight bucket is deleted, and `sumW` is retired with it — the denominator is the whole syllabus by construction now that every placeholder is a bucket of its own, so the founder's 2026-07-25 rule survives without a separate term. `syllabusW` is kept as the completeness check; nothing divides by it.\n· YearPlan.jsx calls the same helper. Its behaviour is unchanged — per-chapter buckets is what it already did — so this fix moves PREPARE onto Year Plan's basis, which is the honest one.\n· packages/shared/test/suggestedPeriods.test.js pins it: the two call sites agree chapter for chapter; the budget is conserved exactly; a book-awaited chapter still takes its share (and the other chapters are NOT inflated); empty inputs yield no suggestion rather than zeros. The first test asserts the defect itself — that aggregating the placeholders is NOT the same apportionment.\n⚠️ THE TEST'S WEIGHTS WERE FOUND BY SEARCH, NOT CHOSEN. The first example I wrote agreed by luck, which is exactly why this defect survived: most weight sets DO agree, and the founder met it on two chapters out of a syllabus. If that case is ever 'tidied' into rounder numbers the test will pass while proving nothing.\nShared suite green: 223/223. @babel/parser clean on all three files.\n[RE-WALKED web 2026-09-24] PASS. Founder checked social_sciences class 9 — ch 5 and ch 3 now read the same on Prepare and on Year Plan, and Prepare no longer fires its boundary message against its own recommendation. Other subject·class pairs spot-checked unmoved. ios and and_emu still owed (shared-package change).",
+   "fix": "OPEN — ONE IMPLEMENTATION, called by both. Add a single helper beside largestRemainder and annualBudgetPeriods in packages/shared/src/format.js — e.g. suggestedPeriodsByChapter(chapters, budget) — that distributes across ALL chapters INDIVIDUALLY, placeholders included (the Year Plan basis, which is the honest one: a placeholder chapter genuinely holds its own share of the year). Prepare then filters placeholders out for DISPLAY only, after the distribution, and keeps its floor-at-1 if still wanted. Delete Prepare's missing-bucket reconstruction; the syllabus_total_weight guard it exists for is no longer needed once the placeholder rows themselves are in the distribution, and the guard's own comment says it was only for 'the case the API could not supply the placeholder rows'.\nTHEN PIN IT WITH A TEST, in the spirit of test_note_matches_the_panes_own_words: assert that for a given chapter list and budget the per-chapter suggestion is identical whichever screen asks. A shared helper without a test drifts again the first time one caller filters something.\nCheck the same basis against the API's own recommended_periods: sum(recommended_periods) == annual_budget_periods by construction, so where her budget equals the calibrated total the suggestion should equal the master plan's per-chapter figure exactly — a free correctness check on the new helper, and the one the 2026-08-21 defect was fixed by.\nFix alongside WALK-A-073; Used, Available and both suggestion columns must end up reading from one arithmetic.",
    "files": "packages/shared/src/format.js (new shared helper beside largestRemainder ~ annualBudgetPeriods), web/app/components/YearPlan.jsx (~140-153), web/app/components/PrepareLesson.jsx (~104, ~175-215), mobile equivalents, tests/",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "open",
    "recheck": [
+    "web",
     "ios",
     "and_emu"
    ],
    "owner": "Claude",
-   "at": "2026-09-24T02:00:35"
+   "at": "2026-09-22T12:26:19"
   },
   {
    "id": "WALK-A-075",
@@ -3522,61 +3525,18 @@
    "applies_to": "both",
    "title": "A refused session (401) is swallowed as if it were a network failure, so an expired teacher keeps using the app",
    "what": "Founder, web 2026-09-22: with every request carrying a token the server rejects, the app does not end the session or return to sign-in — it carries on normally. The API is behaving correctly (GET /readiness without a bearer returns 401 'Sign in to continue.', confirming the deployed service runs in supabase mode and ignores the legacy X-Aruvi-User header).\n★ CAUSE. Whether a 401 signs her out depends entirely on WHICH call happens to fail, and the most common one swallows it. packages/shared/src/plans.js fetchPlans throws on any non-ok status and then catches with: 'Offline, CORS, a 5xx — the stored copy stands, unmarked, so the next mount tries again … if (stored && stored.plans) return stored.plans'. A 401 is none of those things, but it takes the same branch, so a teacher with a cached listing — which is every returning teacher — sees her lessons as usual and the refusal is invisible. Rolling the subject wheel is exactly this path, which is why the test looked like nothing happened.\n★ AND THE RULE IS ALREADY WRITTEN DOWN IN THIS CODEBASE, one module away. packages/shared/src/account.js states it in its own comment: '⚠️ A 401 is the server REFUSING this session, not a network failure — never fall back to a cached identity for a refused one. Everything else keeps what we hold', and implements it as `if (String(e.message) === \"401\") throw e;`. page.jsx:529 then signs her out on that throw. So the contract exists and is correct; plans.js simply does not honour it, and the other cached fetchers need checking for the same omission.\nCONSEQUENCE: a teacher whose session has expired goes on using a half-working app — reads come from her device copy, every write silently fails — until she happens to touch the one path that propagates the refusal. That is worse than being signed out, because nothing tells her why her work is not saving.",
-   "fix": "OPEN. (a) Adopt account.js's rule in plans.js: rethrow on 401 rather than falling back to the stored copy, so the refusal reaches page.jsx's handler. (b) AUDIT EVERY OTHER CACHED FETCHER for the same swallow — readiness, section-state, section-history, entitlement, the Ask Meyy bank — the rule should be stated once and applied everywhere, not repeated by hand in six catches. The cleanest shape is a single helper that classifies a failure as 'refused' versus 'unreachable', which is the same distinction WALK-A-064, WALK-A-071 and 05.18's offline download all need for their own reasons; consider doing all of it in one piece of work. (c) On the phone the same audit applies, and the row's divergence note says the phone handles 401 on the screen while the web handles it at page level — check both end up signing out.\nTEST NOTE for the re-walk, so the next person does not lose an hour: mangling the stored token does NOT work (supabase-js keeps the live session in memory). Patch window.fetch to rewrite the Authorization header instead, and make sure throttling is OFF — an offline browser makes every outcome look like success from cache.\n\n[FIXED web 2026-09-24T01:30:42] Done in ONE place rather than in the catches. shared-setup.js — the module that installs the web's seams for the shared package, and runs before anything else — now wraps window.fetch once and notices a 401 from OUR API base; it exports onSessionRefused(fn) for the shell to register a handler. page.jsx registers it in an effect and keeps signOutRef pointed at the live onSignOut, so whichever request meets the refusal, the session ends and she lands on sign-in.\nWHY NOT IN plans.js: that rethrow was written first and REVERTED. There are 22 raw fetches in the web components and 5 more in the shared package, and each caller swallows its own error (`.catch(() => setPlans([]))`), so a rethrow would only have produced an empty shelf and the rule would have had to be repeated 27 times — the drift this codebase has already paid for three times (14-vs-19, ppw_from_annual across two languages, and WALK-A-074's own split). Consequently the 'audit every other cached fetcher' item is now MOOT for the session-refusal purpose: any 401 from the API signs her out regardless of which call met it.\nTwo deliberate narrowings: only responses from our own API base count, so a 401 from Supabase's token endpoint (which supabase-js handles by refreshing) can never sign her out; and a refusal arriving before the shell has registered its handler is remembered and replayed on registration, so a 401 during the first paint is not lost.\nSTILL OWED — THE PHONE HALF: the same wrapper belongs in mobile/lib/boot.js, which installs the phone's seams for the same reason. Not done yet; the phone keeps the old behaviour until it is.\nVerified: @babel/parser clean on page.jsx, shared-setup.js and plans.js (reverted to original).",
+   "fix": "OPEN. (a) Adopt account.js's rule in plans.js: rethrow on 401 rather than falling back to the stored copy, so the refusal reaches page.jsx's handler. (b) AUDIT EVERY OTHER CACHED FETCHER for the same swallow — readiness, section-state, section-history, entitlement, the Ask Meyy bank — the rule should be stated once and applied everywhere, not repeated by hand in six catches. The cleanest shape is a single helper that classifies a failure as 'refused' versus 'unreachable', which is the same distinction WALK-A-064, WALK-A-071 and 05.18's offline download all need for their own reasons; consider doing all of it in one piece of work. (c) On the phone the same audit applies, and the row's divergence note says the phone handles 401 on the screen while the web handles it at page level — check both end up signing out.\nTEST NOTE for the re-walk, so the next person does not lose an hour: mangling the stored token does NOT work (supabase-js keeps the live session in memory). Patch window.fetch to rewrite the Authorization header instead, and make sure throttling is OFF — an offline browser makes every outcome look like success from cache.",
    "files": "packages/shared/src/plans.js (fetchPlans catch ~155-160), packages/shared/src/account.js (the rule, ~fetchAccount), web/app/page.jsx (~529), readiness.js / entitlement.js / sectionState.js / sectionHistory.js / ask-aruvi/bank.js, mobile equivalents",
    "commit": "",
    "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
+   "status": "open",
    "recheck": [
     "web",
     "ios",
     "and_emu"
    ],
    "owner": "Claude",
-   "at": "2026-09-24T01:30:42"
-  },
-  {
-   "id": "WALK-A-078",
-   "opened": "2026-09-24T01:44:46",
-   "closed": "",
-   "feature": "05.16",
-   "found_on": [
-    "web"
-   ],
-   "applies_to": "both",
-   "title": "The My Lessons toast sits behind the bottom nav and wears an alarm colour",
-   "what": "Founder, web 2026-09-24, while re-walking WALK-A-064: the 'we couldn't reach Meyy to confirm it' note appeared in an ORANGE box, low on the screen and partly HIDDEN BEHIND THE BOTTOM BAR — so the sentence shown precisely because something went wrong was the one she could not read.\nPre-existing, not introduced by that fix: .mlp2-toast was pinned at a flat bottom:22px, and .mlp2-toast.block was clay on clay. The mismatch toasts ('That didn't archive…') have always had it; the new unverified wording simply made it common enough to notice.\nOn the colour, the founder's reading is right and worth keeping as a rule: nothing has gone wrong with her LESSON — we merely could not reach the server — so an alarm colour is the wrong register. Meyy says difficult things in its ordinary voice.",
-   "fix": "[FIXED web 2026-09-24T01:44:46] globals.css: bottom is now calc(var(--bnav-h, 0px) + 22px), using the same live term .aa-scrim uses to stop above the bar (page.jsx publishes --bnav-h, and 0px wherever the bar is not rendered, so one expression is correct on every screen including Settings). And .mlp2-toast.block now wears the ordinary ink box with the house line — the two kinds are told apart by their WORDS, not by an alarm colour.\n⚠️ CHECK THE SIBLING: .mc-toast (My Classes, globals.css ~1891) is pinned at a flat bottom:26px and has the same defect by construction. Not touched here — it needs its own look, since it is the pine toast rather than the ink one. The phone's toasts are positioned above the bar already (the 05.16 divergence note says so) but should be checked against this.\n[RE-WALKED web 2026-09-24] PASS. Also done in the same pass, both from the founder looking at it: the toast is PLAIN PAPER with ink text and a hairline, not the inverted ink slab (that read as a system alert dropped on her desk); and there is now ONE message per act, not two — the optimistic 'Moved to Archive' used to fire immediately and then be contradicted a moment later by the unverified line, so the toast now waits the few hundred ms for the verdict and is said once. The card still moves instantly, which is the feedback that matters.\n⚠️ A MISTAKE WORTH KEEPING: the intermediate version set `.mlp2-toast.block{background:var(--ink)}` while the base rule had just become `color:var(--ink)` — ink on ink, so the box went black and the sentence disappeared into it. Found by the founder on sight. The variant now carries no override at all; the file warns that a future variant must set the PAIR or neither.",
-   "files": "web/app/globals.css (.mlp2-toast ~2244, .mlp2-toast.block; .mc-toast ~1891 still owed)",
-   "commit": "",
-   "native_rebuild": false,
-   "status": "fixed-awaiting-rewalk",
-   "recheck": [
-    "ios",
-    "and_emu"
-   ],
-   "owner": "Claude",
-   "at": "2026-09-24T01:52:31"
-  },
-  {
-   "id": "WALK-A-079",
-   "opened": "2026-09-24T01:53:58",
-   "closed": "2026-09-24T01:55:13",
-   "feature": "05.18",
-   "found_on": [
-    "web"
-   ],
-   "applies_to": "web",
-   "title": "The Reports window reported failure in a browser alert() — the last of the network-honesty set",
-   "what": "Recorded at 05.18 as the web's documented divergence and left standing: the Reports download reported every failure with alert(\"Couldn't create the report.\"), and the row's own note said 'web owes the in-window line'. It is the fourth member of the family with WALK-A-064, 071 and 077 — the app had no honest, consistent account of a request that did not succeed.\nAn alert is the wrong instrument three times over: it covers the very window she is working in, it cannot be styled, and on a phone it is a system slab that reads as though Meyy itself has crashed. It also flattened every cause into one sentence — the Support `metaErr` defect in miniature.",
-   "fix": "[FIXED web 2026-09-24T01:53:58] MyLessonPlans.jsx ReportsModal: an `err` state, cleared on each press and rendered as a line ABOVE the footer buttons so it pushes them down rather than covering her choices. Causes are told apart, exactly as the Year Plan export has done since 2026-08-30: a fetch that never reached anyone says 'Couldn't reach Meyy just now — check your connection' (the only case where that is honest); a 404 says the server doesn't have that report yet (it needs restarting); a 501 says it can't build Word documents yet; and any other 4xx carries the API's OWN `detail`, which is written for her (the ARV-D-088 rule) — 5xx detail stays hidden because it is engine talk. No auto-clear: she must not look away and lose the sentence. New CSS `.rpt-err`, clay ink on the house surface.\n⚠️ TWO alert()s REMAIN elsewhere and should go the same way in the copy pass: Allocate.jsx:428 (the allocation report) and MyPlans.jsx:491 (opening a lesson). Not touched here — each needs its own home for the line, and neither is in family 05's path.\n[RE-WALKED web 2026-09-24] PASS — the failure is said in the window, not in an alert. Web-only amendment, so closed.",
-   "files": "web/app/components/MyLessonPlans.jsx (ReportsModal download + render), web/app/globals.css (.rpt-err)",
-   "commit": "",
-   "native_rebuild": false,
-   "status": "closed",
-   "recheck": [],
-   "owner": "Claude",
-   "at": "2026-09-24T01:55:13"
+   "at": "2026-09-23T16:46:48"
   }
  ]
 }

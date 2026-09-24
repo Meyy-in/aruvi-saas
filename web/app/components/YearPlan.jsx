@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { API, annualBudgetPeriods, getJSON, largestRemainder, pad, withUser } from "../lib/format";
+import { API, annualBudgetPeriods, getJSON, suggestedPeriodsByChapter, pad, withUser } from "../lib/format";
 import { fetchPlans } from "../lib/plans";
 
 /* ───────── YearPlan — the whole teaching year for ONE subject·class, at a glance ─────────
@@ -142,13 +142,14 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onAlloc
 
     // Suggested per chapter: distribute the budget by weight; fall back to the calibrated
     // per-chapter recommendation when weights or budget are unavailable.
-    const weights = chs.map((c) => (typeof c.weight === "number" && c.weight > 0 ? c.weight : 0));
-    const wSum = weights.reduce((a, b) => a + b, 0);
-    const sugByCh = {};
-    if (budget && wSum > 0) {
-      const dist = largestRemainder(budget, weights);
-      chs.forEach((c, i) => { sugByCh[c.chapter_number] = dist[i]; });
-    } else {
+    /* ★ THE SAME DISTRIBUTION PREPARE USES (WALK-A-074, 2026-09-24). It was written out here and
+       again, differently, on the Prepare screen — which filtered placeholders out and rebuilt
+       their weight as one synthetic bucket — and the two disagreed by a period on real chapters.
+       One helper now, over the full chapter list; this pane's behaviour is unchanged, since
+       giving every chapter its own bucket is what it already did. */
+    const sugByCh = suggestedPeriodsByChapter(chs, budget);
+    if (!Object.keys(sugByCh).length) {
+      // No budget, or no weights: fall back to the calibrated per-chapter recommendation.
       chs.forEach((c) => { sugByCh[c.chapter_number] = c.recommended_periods ?? null; });
     }
 

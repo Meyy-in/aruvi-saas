@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, largestRemainder, fetchEntitlement } from "../lib/format";
+import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, suggestedPeriodsByChapter, fetchEntitlement } from "../lib/format";
 import { readPlans } from "../lib/plans";
 import { verifiedWrite, planIsPrepared } from "../lib/verify";
 import { RollWheel, wheelChapterTitle } from "./wheels";
@@ -92,16 +92,24 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
   // keyboard, double-fire).
   const inFlight = useRef(false);
   const [syllabusW, setSyllabusW] = useState(null);        // FULL syllabus weight (master plan)
+  const [allChapters, setAllChapters] = useState([]);      // incl. "Book awaited" — the distribution's buckets
 
   // Load chapters (+ effort weight + NCF estimate) and saved plans for the scope.
   useEffect(() => {
     setStep("chapter"); setChapterNo(""); setView(null); setError(""); setNote("");
-    setChapters([]); setPlans([]); setShowInfo(false); setShowBreakdown(false); setWarnRegen(false);
+    setChapters([]); setAllChapters([]); setPlans([]); setShowInfo(false); setShowBreakdown(false); setWarnRegen(false);
     setChLoad("");
     getJSON(`/subjects/${subject}/${grade}/chapters`)
       // placeholder:true = budgeted but unpublished ("Book awaited"). Nothing to generate from,
       // so it never enters this picker; the Year Plan is where those rows live (2026-08-06).
-      .then((d) => { setChapters((d.chapters || []).filter((c) => !c.placeholder)); setSyllabusW(d.syllabus_total_weight || null); setChLoad("ok"); })
+      .then((d) => {
+        const all = d.chapters || [];
+        // ★ The FULL list — placeholders included — is what the budget is distributed across
+        // (WALK-A-074). The picker still shows only what can be generated from.
+        setAllChapters(all);
+        setChapters(all.filter((c) => !c.placeholder));
+        setSyllabusW(d.syllabus_total_weight || null); setChLoad("ok");
+      })
       /* ★ THREE STATES, NOT TWO (WALK-A-051, found on the phone 2026-09-21 and true here too).
          An empty list means "she has none". A FAILED fetch also left it empty, and this screen
          then announced "No chapter mappings for this subject & grade yet" — telling a teacher
@@ -109,7 +117,7 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
          reason goes to the console, never to her. */
       .catch((e) => {
         console.warn("[meyy] /chapters failed:", (e && e.message) || e);
-        setChapters([]); setSyllabusW(null); setChLoad("fail");
+        setChapters([]); setAllChapters([]); setSyllabusW(null); setChLoad("fail");
       });
     // The listing comes from the shared store, so the copy My Classes / My Lessons already
     // hold serves this picker too (@aruvi/shared/plans, 2026-09-14).
@@ -172,10 +180,11 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
   // allocation plan (includes placeholder chapters with no content yet — founder rule,
   // 2026-07-25), falling back to the listed chapters' sum only when no master plan exists.
   // Dividing by the listed sum alone inflates every suggestion until the full book lands.
-  const sumW = useMemo(
-    () => Number(syllabusW) || chapters.reduce((s, c) => s + (Number(c.weight) || 0), 0),
-    [syllabusW, chapters]
-  );
+  /* ⚠️ `sumW` is RETIRED (WALK-A-074, 2026-09-24). It existed to rebuild the syllabus denominator
+     when the placeholder rows were filtered out of `chapters`; the distribution now runs over
+     `allChapters`, where those rows are present, so the denominator is the whole syllabus by
+     construction. `syllabusW` is kept — it is still read from the API and is the check that the
+     list is complete — but nothing divides by it any more. */
 
   // Aruvi's suggested periods for a chapter: its effort-index SHARE of the teacher's OWN annual
   // budget — the same basis Allocate uses. NCF is deliberately NOT used here (2026-07-08): by the
@@ -199,20 +208,18 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
   // founder's 2026-07-25 rule (divide by the FULL syllabus, never the listed subset, or every
   // suggestion inflates until the books ship) is preserved by construction rather than by a
   // separate denominator.
-  const sugByChapter = useMemo(() => {
-    const out = {};
-    if (annualBudget == null || !chapters.length) return out;
-    const ws = chapters.map((c) => (Number(c.weight) > 0 ? Number(c.weight) : 0));
-    const listed = ws.reduce((a, b) => a + b, 0);
-    if (listed <= 0) return out;
-    // Guard for the case the API could not supply the placeholder rows: apportion across the
-    // listed chapters PLUS one synthetic bucket carrying the syllabus weight they don't cover,
-    // then discard it. With a complete list the bucket is 0 and this is a plain apportionment.
-    const missing = Math.max(0, (Number(sumW) || listed) - listed);
-    const dist = largestRemainder(annualBudget, missing > 0 ? [...ws, missing] : ws);
-    chapters.forEach((c, i) => { out[c.chapter_number] = dist[i] > 0 ? dist[i] : 1; });
-    return out;
-  }, [chapters, annualBudget, sumW]);
+  /* ★ ONE DISTRIBUTION, SHARED WITH YEAR PLAN (WALK-A-074, 2026-09-24). This used to rebuild the
+     missing placeholder weight as a SINGLE synthetic bucket and discard it — which is not the same
+     apportionment as giving each placeholder its own bucket, because largest-remainder hands the
+     leftover periods to the largest fractions. Year Plan did the latter, this screen the former,
+     and they differed by a period on real chapters (SS IX ch 5: 22 here, 21 there). Both now call
+     `suggestedPeriodsByChapter` over the FULL chapter list, so the two panes cannot disagree.
+     The founder's 2026-07-25 rule still holds by construction: the denominator is the whole
+     syllabus, because every placeholder is in the list rather than summarised into one bucket. */
+  const sugByChapter = useMemo(
+    () => suggestedPeriodsByChapter(allChapters, annualBudget),
+    [allChapters, annualBudget]
+  );
 
   const suggestionFor = (c) => {
     if (!c) return DEFAULT_PERIODS;
@@ -230,7 +237,7 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
     if (!c) return;
     setPeriods(suggestionFor(c));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chapterNo, chapters, annualBudget, sumW]);
+  }, [chapterNo, chapters, annualBudget, allChapters]);
 
   /* ★ ONE control on this page (founder, 2026-07-26): a period stepper, nothing else. The
    * duration matrix the server needs is DERIVED from that number — her declared lengths, in the

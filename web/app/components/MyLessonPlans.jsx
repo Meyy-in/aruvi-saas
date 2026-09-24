@@ -108,6 +108,7 @@ function ReportModal({ sSlug, gSlug, filename, onClose }) {
   const [answers, setAnswers] = useState(false);
   const [fmt, setFmt] = useState("pdf");
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");     // the failure, said in the window — see download()
   const showAnswers = comp === "assessment" || comp === "integrated";
 
   const buildUrl = (format) => {
@@ -124,10 +125,18 @@ function ReportModal({ sSlug, gSlug, filename, onClose }) {
   // (the Web Share file API). There is no http workaround that both avoids the trap AND shares the
   // file — that trade-off is enforced by iOS.
   const download = async () => {
-    setBusy(true);
+    setBusy(true); setErr("");
     try {
       const resp = await fetch(buildUrl(fmt), withUser({ method: "GET" }));
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      if (!resp.ok) {
+        /* A 4xx carries `detail` written FOR HER (the ARV-D-088 rule); 5xx detail is engine talk
+           and is deliberately not surfaced — the status alone is thrown and the catch words it. */
+        let detail = "";
+        if (resp.status < 500) {
+          try { const b = await resp.json(); detail = (b && b.detail) || ""; } catch {}
+        }
+        throw new Error(detail || String(resp.status));
+      }
       const blob = await resp.blob();
       const cd = resp.headers.get("content-disposition") || "";
       const m = cd.match(/filename="([^"]+)"/);
@@ -139,7 +148,25 @@ function ReportModal({ sSlug, gSlug, filename, onClose }) {
       setTimeout(() => URL.revokeObjectURL(u), 8000);
       onClose();
     } catch (e) {
-      alert(`Couldn't create the report.\n\n${e?.message || "Is the Meyy engine running on :8000?"}`);
+      /* ★ SAID IN THE WINDOW, NOT IN AN alert() (WALK-A-064's family, 2026-09-24). An alert covers
+         the very window she is working in, cannot be styled, and on a phone is a system slab that
+         reads as though Meyy itself has crashed. The Year Plan export settled this shape on
+         2026-08-30 and this follows it exactly: say WHAT went wrong — a server that has no such
+         route needs restarting, a server that refused is a different matter, and a fetch that
+         never reached anyone is the only case where "couldn't reach Meyy" is the honest sentence
+         — and leave it said, with no auto-clear, so she does not look away and lose it. The next
+         press resets it. Note the 4xx `detail` is the API's own wording, written for her. */
+      console.error("[report]", e);
+      const msg = String((e && e.message) || "");
+      setErr(
+        /^Failed to fetch/i.test(msg) || !msg
+          ? "Couldn’t reach Meyy just now — check your connection."
+          : msg === "404"
+            ? "This Meyy server doesn’t have that report yet."
+            : msg === "501"
+              ? "This Meyy server can’t build Word documents yet."
+              : msg
+      );
     } finally { setBusy(false); }
   };
 
@@ -185,6 +212,10 @@ function ReportModal({ sSlug, gSlug, filename, onClose }) {
           <button type="button" className={`rpt-fmt-btn${fmt === "pdf" ? " on" : ""}`} onClick={() => setFmt("pdf")}>PDF</button>
           <button type="button" className={`rpt-fmt-btn${fmt === "docx" ? " on" : ""}`} onClick={() => setFmt("docx")}>Word</button>
         </div>
+
+        {/* The failure sits ABOVE the buttons and pushes them down — never over the choices she
+            has just made, and never an alert() covering the window itself. */}
+        {err ? <p className="rpt-err" role="alert">{err}</p> : null}
 
         <div className="rpt-foot">
           <button className="rpt-btn" onClick={onClose} type="button">Cancel</button>
@@ -719,6 +750,34 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
          door. On a mismatch the flag is put back below, so the cache and the screen agree either
          way. */
       invalidatePlans(key);
+      if (status === "ok") {
+        setToast({ kind: "ok", text: want ? "Moved to Archive — find it in the box above."
+                                          : "Restored to your lessons." });
+        return;
+      }
+      /* ★ SAY NOTHING WHEN WE CANNOT PROVE FAILURE — BUT NEVER SAY SUCCESS EITHER (WALK-A-064,
+         2026-09-24). "unverified" means the write may or may not have landed: offline, the POST
+         and the read both died. The optimistic flag was already set and a cheerful "Moved to
+         Archive" toast already shown, so she was told a thing had happened that may not have.
+         And it will not merely be unconfirmed — archivePlan/restorePlan call invalidatePlans
+         above regardless, so the next fetch pulls the server's pre-archive truth and the lesson
+         reappears with no explanation. She archived seven lessons on a bus with no signal, was
+         told each one moved, and finds them all back.
+         The verdict "we do not know that it failed" is right and is kept: nothing is reverted.
+         What changes is the SENTENCE — it now says what we actually know. Wording follows the
+         Year Plan export's offline line, which is the one place in the product that already does
+         this well: name the failure, name what it means, and leave her a way on. */
+      if (status === "unverified") {
+        /* ⚠️ THIS SENTENCE MUST NOT PROMISE A REPLAY. The founder's preferred wording — "will be
+           updated on Meyy once connection is established" — is the right wording for behaviour
+           the app does not yet have: there is no queue, and invalidatePlans above means the next
+           successful fetch pulls the server's pre-archive truth back over her change. Until a
+           replay exists, this says only what is true. */
+        setToast({ kind: "block",
+                   text: want ? "Archived here, but not saved to Meyy — check your connection."
+                              : "Restored here, but not saved to Meyy — check your connection." });
+        return;
+      }
       if (status !== "mismatch") return;
       setArchivedFlag(p.filename, !want);
       setToast({ kind: "block",
@@ -733,7 +792,12 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
     // reached from the UI. No warning path: attachment simply removes the affordance.
     if (isAttached(p)) return;
     setArchivedFlag(p.filename, true);
-    setToast({ kind: "ok", text: "Moved to Archive — find it in the box above." });
+    /* ★ ONE MESSAGE, NOT TWO (founder, 2026-09-24). The optimistic "Moved to Archive" used to
+       fire here and then, offline, be replaced a moment later by "we couldn't confirm it" — she
+       read two notices about one act and the second contradicted the first. The CARD already
+       moves instantly (setArchivedFlag above), which is the feedback that matters, so the
+       sentence can wait the few hundred milliseconds for the verdict and then be said once.
+       verifyArchive now owns every toast for this pair. */
     // READ-AFTER-WRITE (area 3). This pair already reverted-and-toasted on a throw, which was
     // the best behaviour in the app — but a throw is not the criterion: the archive may have
     // landed with the response lost. Y = "this plan IS in the archive"; Y′ = GET /plan-archive.
@@ -747,7 +811,7 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
   const restorePlan = (p, e) => {
     if (e) e.stopPropagation();
     setArchivedFlag(p.filename, false);
-    setToast({ kind: "ok", text: "Restored to your lessons." });
+    /* One message, said once the verdict is in — see archivePlan above. */
     verifyArchive(p, false, () => fetch(`${API}/plan-archive`, withUser({
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -1033,10 +1097,26 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
           {showProposedCard ? <ProposedCard preparing={preparing} onDismiss={onDismissPrepareError} onRetry={onRetryPrepare} /> : null}
           {ordered.map((p, pi) => {
             const { completed, live } = statusFor(p);
-            const busy = pi === busyIdx;          // this card IS the one being re-prepared
+            /* ★ A FAILED RE-PREPARE HAS TO BE SAID SOMEWHERE (WALK-A-071, 2026-09-24).
+               `busy` used to be true for the matched card whether the run was still going or had
+               already failed — and `preparing` stays non-null on a failure — so the progress bar
+               span for ever and the reason never appeared anywhere: the proposed card, which is
+               the ONLY home of the message, Try again and Dismiss, is deliberately suppressed
+               when an existing card matches (ARV-D-066, so she is not shown her lesson twice).
+               Both halves of the failure contract were lost on this one path. The split below
+               ends the bar and gives the reason the same slot the bar occupied — which is truer
+               to ARV-D-066's own principle than letting a second card through would be: the
+               feedback stays exactly where she is already looking. */
+            const matchedHere = pi === busyIdx;   // this card IS the one being re-prepared
+            const failedHere = matchedHere && !!(preparing && preparing.failed);
+            const busy = matchedHere && !failedHere;
             const cls = (effView === "archived"
               ? "mlp2-arch"
               : live.length ? "st-going" : completed.length ? "st-done" : "mlp2-shelf")
+              /* ⚠️ NOT sc-proposed / sc-proposed-failed on a failure. Those classes neutralise the
+                 edge and the spine, which is right for a card that never became a plan — but this
+                 card IS her plan and it is untouched; only the re-preparing of it failed. It keeps
+                 its own status colour, and the sentence below says what happened. */
               + (busy ? " sc-proposed" : "");
             // The guided tour's target card (the just-generated lesson). Steps 4/5 ring its
             // report/archive buttons — tagged only on this card and only at the matching step.
@@ -1076,6 +1156,26 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
                         Preparing your {(preparing.rows || []).reduce((a, r) => a + (Number(r.count) || 0), 0)}{" "}
                         {(preparing.rows || []).reduce((a, r) => a + (Number(r.count) || 0), 0) === 1
                           ? "period" : "periods"} lesson plan…
+                      </span>
+                    </div>
+                  ) : failedHere ? (
+                    /* The same block ProposedCard shows for a failure, in the slot the progress
+                       bar was using. WALK-A-019's rule holds here too: the sentence is shown IN
+                       FULL, and "Try again" sits beside Dismiss because she has already chosen
+                       the chapter, the duration and the periods. */
+                    <div className="sc-prep sc-prep-failed">
+                      <span className="sc-prep-note">
+                        {preparing.message || "Couldn’t build the lesson plan right now. Try again in a moment."}
+                      </span>
+                      <span className="sc-prep-actions">
+                        {onRetryPrepare && (
+                          <button type="button" className="sc-prep-dismiss"
+                                  onClick={(e) => { e.stopPropagation(); onRetryPrepare(preparing); }}
+                                  aria-label="Try preparing this lesson again">Try again</button>
+                        )}
+                        <button type="button" className="sc-prep-dismiss"
+                                onClick={(e) => { e.stopPropagation(); onDismissPrepareError(); }}
+                                aria-label="Dismiss this failed lesson">Dismiss</button>
                       </span>
                     </div>
                   ) : effView === "archived" ? (

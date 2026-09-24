@@ -608,6 +608,46 @@ export function largestRemainder(total, weights) {
   return out;
 }
 
+/* ───────── ONE distribution of her year across the chapters (WALK-A-074, 2026-09-24) ─────────
+ *
+ * ★ WHY THIS EXISTS. Prepare and Year Plan both answer "how many periods does Aruvi suggest for
+ * this chapter?", both from her annual budget, both by effort weight, both through
+ * largestRemainder — and they DISAGREED BY ONE PERIOD (social_sciences IX: ch 5 suggested 22 on
+ * Prepare and 21 on Year Plan; ch 3, 13 against 12). Not a rounding curiosity: Prepare then fired
+ * its own boundary message against its own recommendation, so the founder was offered 22 and told
+ * in the same breath that one period of it was surplus and would return to her budget. A pane
+ * contradicting itself in consecutive sentences reads as a product that cannot count.
+ *
+ * ★ THE CAUSE WAS THE BUCKET SET, NOT THE MATHS. Year Plan keeps every chapter the API returns —
+ * placeholders included, marked "Book awaited" — and gives each its own bucket. Prepare FILTERS
+ * placeholders out of its picker (there is nothing to generate from), then reconstructed their
+ * weight as ONE synthetic bucket from syllabus_total_weight, distributed over [...listed, missing]
+ * and discarded it. Those two are equal only if largest-remainder were invariant under AGGREGATING
+ * buckets, and it is not: the leftover whole periods go to the largest fractional remainders, and
+ * three placeholders carrying 0.4 each behave nothing like one bucket carrying 1.2.
+ *
+ * ★ SO THE RULE IS: distribute across ALL chapters INDIVIDUALLY, placeholders and all. A chapter
+ * whose book has not shipped still holds its share of her year — that is why the API budgets it —
+ * and a screen that cannot show it simply filters it out AFTERWARDS. Callers display what they
+ * like; they no longer each decide what the denominator is.
+ *
+ * ⚠️ This is the third time one arithmetic written twice has cost this codebase: the 2026-08-21
+ * first-run defect (Year Plan said 14 where the chapter step said 19), ppw_from_annual mirrored
+ * across JS and Python, and now this. The pattern is always the same — two callers, one formula,
+ * a quiet difference in the inputs. Keep it here, and keep the test that pins the two together.
+ */
+export function suggestedPeriodsByChapter(chapters, budget) {
+  const out = {};
+  const list = Array.isArray(chapters) ? chapters : [];
+  const b = Number(budget);
+  if (!b || b <= 0 || !list.length) return out;
+  const weights = list.map((c) => (Number(c && c.weight) > 0 ? Number(c.weight) : 0));
+  if (weights.reduce((a, w) => a + w, 0) <= 0) return out;
+  const dist = largestRemainder(b, weights);
+  list.forEach((c, i) => { out[c.chapter_number] = dist[i]; });
+  return out;
+}
+
 /* Annual budget in PERIODS for a subject·grade, read from the CANONICAL readiness.subjects[]
  * (not the active-subject projection). Mirrors Readiness.computeBudget / Allocate's copy so the
  * Prepare screen's budget meter and Allocate agree. budget is { gradeIdx: {method, value} }:

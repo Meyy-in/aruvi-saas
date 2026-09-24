@@ -2236,14 +2236,30 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
 .sc-card.mlp2-arch .sc-title { color:var(--ink-soft); }
 
 /* Transient confirmation / block message. Bottom-centre, non-blocking, auto-dismissed. */
+/* ★ IT HAS TO CLEAR THE BOTTOM NAV (founder, 2026-09-24, walking WALK-A-064). At a flat 22px
+   the toast sat partly BEHIND the bar — a sentence she is being shown precisely because
+   something went wrong was the one she could not read. `--bnav-h` is published live by page.jsx
+   (0px wherever the bar is not rendered), which is the same term .aa-scrim uses to stop above
+   it, so one expression is correct on every screen. */
 .mlp2-toast {
-  position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+  position:fixed; left:50%; bottom:calc(var(--bnav-h, 0px) + 22px); transform:translateX(-50%);
   max-width:min(90vw, 420px); z-index:40;
   font-family:var(--f-body); font-size:13.5px; line-height:1.35; text-align:center;
-  padding:11px 18px; border-radius:11px; border:1px solid var(--line);
-  background:var(--ink); color:var(--paper); box-shadow:0 6px 22px rgba(0,0,0,.18);
+  padding:11px 18px; border-radius:11px; border:1px solid var(--edge);
+  /* ★ PLAIN PAPER, NOT A BLACK SLAB (founder, 2026-09-24). Ink-on-paper inverted read as a
+     system alert dropped onto her desk; the house surface is paper with a hairline, and the
+     toast is a note from Meyy like anything else. Contrast comes from the shadow and the edge,
+     not from inverting the page. */
+  background:var(--paper-2); color:var(--ink); box-shadow:0 6px 22px rgba(0,0,0,.14);
 }
-.mlp2-toast.block { background:var(--clay); border-color:var(--clay); }
+/* ★ AND THERE IS NO SECOND SKIN (founder, 2026-09-24). It was clay on clay, which made "we
+   couldn't confirm it" read as an alarm — the wrong register, since nothing has gone wrong with
+   her LESSON; we merely could not reach the server. Meyy says difficult things in its ordinary
+   voice, so `.block` now carries NO override at all and wears the base paper box, told apart by
+   its WORDS alone.
+   ⚠️ The intermediate version of this rule set only `background:var(--ink)` and left the colour
+   to the base rule — which by then was `color:var(--ink)` too, so the box went black and the
+   sentence vanished into it. If a variant is ever reintroduced here, set the PAIR or neither. */
 
 @media (max-width: 600px) {
   .mlp .lvl-title { font-size:23px; }
@@ -4899,6 +4915,10 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 /* The export's only words — under the totals row, and only while there is something to say.
    Not `position: absolute`: it must PUSH the note down, because a message that overlaps the
    prose beneath it is unreadable on exactly the narrow screen it matters on. */
+/* The Reports window says a failure in the window, on the Year Plan export's pattern
+   (WALK-A-064's family, 2026-09-24) — clay ink on the house surface, above the buttons. */
+.rpt-err { margin: 10px 2px 0; font-family: var(--f-body); font-size: 12px; line-height: 1.45; color: var(--clay); }
+
 .yp-export-msg { margin: 8px 2px 0; font-family: var(--f-body); font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); }
 .yp-export-msg.bad { color: var(--clay); }
 
