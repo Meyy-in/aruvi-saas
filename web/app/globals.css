@@ -5498,3 +5498,9 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
    day a confirm is written inline — not the thing keeping today's four alive. */
 .tp-window-card .tp > .fr-link { display: none; }
 .tp-window-card .tp .fr-foot > .fr-link:not(.fr-center) { display: none; }
+
+/* WALK-A-082 (2026-09-24): the Suggestion note closes from its own ✕, top right. */
+.prep-tip { padding-right: 30px !important; }
+.prep-tip .prep-tip-x { position: absolute; top: 4px; right: 6px; background: none; border: 0;
+  color: var(--ink-soft); font-size: 13px; line-height: 1; padding: 4px; cursor: pointer; }
+.prep-tip .prep-tip-x:hover { color: var(--ink); }

@@ -628,6 +628,9 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
                   </div>
                   {showInfo && (
                     <div className="prep-tip" role="note">
+                      {/* WALK-A-082: close where she is reading, as the phone does. */}
+                      <button type="button" className="prep-tip-x" aria-label="Close this note"
+                        onClick={() => setShowInfo(false)}>✕</button>
                       Meyy shares your annual budget for this class across its chapters by each
                       chapter&rsquo;s effort index — heavier chapters get more periods. It&rsquo;s a
                       starting point, so you can change it freely.

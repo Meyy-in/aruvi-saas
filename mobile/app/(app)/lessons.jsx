@@ -150,6 +150,9 @@ export default function MyLessons() {
      pane instead, so she never leaves it and the exception it needed is gone with it. */
   const [pane, setPane] = useState("lessons");
   const [toast, setToast] = useState(null);         // { kind: "ok" | "block", text } | null
+  // Archive/restore writes still settling — the listing revalidation below waits for them
+  // (WALK-A-075), or a read that overtook the POST would pull the old flag back over the new one.
+  const archiveBusyRef = useRef(0);
   const [tick, setTick] = useState(0);              // bumped after a section-state sync → re-read
   const [prep, setPrep] = useState({ descriptor: null, paywall: "" });
   useEffect(() => subscribePreparing(setPrep), []);
@@ -457,6 +460,27 @@ export default function MyLessons() {
     return () => { live = false; sub.remove(); clearInterval(iv); };
   }, [sSlug, gSlug, taughtGradeObj]);
 
+  /* ★ THE LISTING IS RE-READ LIKE ANY OTHER FACT SHE CAN CHANGE ELSEWHERE (WALK-A-075, ported
+     from the web 2026-09-24). The archived flag rides on the cached /plans listing, whose
+     invalidations are LOCAL ONLY — so an archive made on another device never arrived here.
+     A REVALIDATION, not an invalidation: fetchPlans(force) sends If-None-Match and an unchanged
+     listing answers {"unchanged": true}, so asking every 20s is cheap and the copy is never
+     thrown away. Held while a lesson is open over this screen, and while an archive write here
+     is still settling. Its own effect: the one above returns early for a class with no sections. */
+  useEffect(() => {
+    if (!key) return undefined;
+    let live = true;
+    const revalidate = () => {
+      if (!live || busyRef.current || archiveBusyRef.current > 0) return;
+      fetchPlans(key, { force: true })
+        .then((rows) => { if (live) setPlansByKey((prev) => ({ ...prev, [key]: rows })); })
+        .catch(() => {});   // unreachable is not "she has none" — the stored copy stands
+    };
+    const sub = AppState.addEventListener("change", (st) => { if (st === "active") revalidate(); });
+    const iv = setInterval(() => { if (AppState.currentState === "active") revalidate(); }, 20000);
+    return () => { live = false; sub.remove(); clearInterval(iv); };
+  }, [key]);
+
   // Returning from a lesson: re-read the local section cache so the status lines are current.
   useFocusEffect(useCallback(() => { busyRef.current = false; setTick((n) => n + 1); }, []));
 
@@ -518,6 +542,7 @@ export default function MyLessons() {
      READ-AFTER-WRITE: a throw is not the criterion — the archive may have landed with the
      response lost. Y = "this plan IS in the archive"; Y′ = GET /plan-archive. */
   const verifyArchive = (p, want, doWrite) => {
+    archiveBusyRef.current += 1;
     verifiedWrite({
       write: doWrite,
       read: () => getJSON("/plan-archive").then((d) => (d && (d.archived || d.plans)) || d || {}),
@@ -531,7 +556,23 @@ export default function MyLessons() {
          overtook it would pull the old truth back over the new flag. On a mismatch the flag is
          put back below, so cache and screen agree either way. The twin note in the web's
          MyLessonPlans says the same. */
+      archiveBusyRef.current = Math.max(0, archiveBusyRef.current - 1);
       invalidatePlans(key);
+      /* ★ ONE MESSAGE, AND ONLY WHAT WE KNOW (WALK-A-064 / 078, the web's rule ported). The toast
+         used to say "Moved to Archive" at once, before the write was checked — so offline she was
+         told it had moved, and on reconnect the lesson came back with no explanation. Now the
+         toast waits for the verdict (a few hundred ms; the card itself still moves instantly). */
+      if (status === "ok") {
+        setToast({ kind: "ok", text: want ? "Moved to Archive — find it in the box above."
+                                          : "Restored to your lessons." });
+        return;
+      }
+      if (status === "unverified") {
+        setToast({ kind: "block",
+                   text: want ? "Archived here, but not saved to Meyy — check your connection."
+                              : "Restored here, but not saved to Meyy — check your connection." });
+        return;
+      }
       if (status !== "mismatch") return;
       setArchivedFlag(p.filename, !want);
       setToast({
@@ -539,13 +580,12 @@ export default function MyLessons() {
         text: want ? "That didn’t archive — it’s still in your lessons."
                    : "That didn’t restore — it’s still archived.",
       });
-    }).catch(() => {});
+    }).catch(() => { archiveBusyRef.current = Math.max(0, archiveBusyRef.current - 1); });
   };
 
   const archivePlan = (p) => {
     if (isAttached(p)) return;   // safety only — the icon is never rendered for an attached plan
     setArchivedFlag(p.filename, true);
-    setToast({ kind: "ok", text: "Moved to Archive — find it in the box above." });
     verifyArchive(p, true, () => fetch(`${API}/plan-archive`, withUser({
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -555,7 +595,6 @@ export default function MyLessons() {
 
   const restorePlan = (p) => {
     setArchivedFlag(p.filename, false);
-    setToast({ kind: "ok", text: "Restored to your lessons." });
     verifyArchive(p, false, () => fetch(`${API}/plan-archive`, withUser({
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -850,7 +889,7 @@ export default function MyLessons() {
               <PlanCard key={p.filename} p={p} archived={effView === "archived"}
                 tourStep={pi === 0 ? tourNow.step : 0}
                 status={statusFor(p)} attached={isAttached(p)} sSlug={sSlug} gSlug={gSlug}
-                busy={pi === busyIdx ? preparing : null} onDismissBusy={clearPreparing}
+                busy={pi === busyIdx ? preparing : null} onDismissBusy={clearPreparing} onRetryBusy={retryPreparing}
                 onOpen={() => openLesson(p)}
                 onArchive={() => archivePlan(p)} onRestore={() => restorePlan(p)} />
             ))}
@@ -990,10 +1029,14 @@ export default function MyLessons() {
       {toast ? (
         <View style={[ws.mlp2_toast, {
           bottom: BNAV_H + insets.bottom + 16,
-          backgroundColor: toast.kind === "block" ? t.clay : t.ink,
-          borderColor: toast.kind === "block" ? t.clay : t.line,
+          /* WALK-A-078 (founder, 2026-09-24): plain paper with a hairline, the house surface — not
+             a black slab, and not clay for "we couldn't confirm it", which read as an alarm when
+             nothing had gone wrong with her lesson. Told apart by its WORDS alone. */
+          backgroundColor: t.paper_2, borderColor: t.edge,
+          shadowColor: "#000", shadowOpacity: 0.14, shadowRadius: 11, shadowOffset: { width: 0, height: 6 },
+          elevation: 4,
         }]} accessibilityLiveRegion="polite">
-          <Text style={[ws.mlp2_toast_t, { color: t.paper }]}>{toast.text}</Text>
+          <Text style={[ws.mlp2_toast_t, { color: t.ink }]}>{toast.text}</Text>
         </View>
       ) : null}
     </View>
@@ -1023,7 +1066,7 @@ export default function MyLessons() {
    ⚠️ The folder's year IS the stamp for its rows — they were fetched under it, so the server's
    `lp_year_display` is absent by construction and the caller supplies it. */
 function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
-                   onDismissBusy, onOpen, onArchive, onRestore, priorYear, tourStep }) {
+                   onDismissBusy, onRetryBusy, onOpen, onArchive, onRestore, priorYear, tourStep }) {
   /* Only the tour's own card claims these names, and each only on the step that rings it. */
   const cardRef = useTourAnchor(tourStep === 3 || tourStep === 6 ? "lesson-first" : null);
   const archiveRef = useTourAnchor(tourStep === 5 ? "lesson-archive" : null);
@@ -1078,7 +1121,9 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
             /* Re-preparing THIS plan: the progress line takes the status line's place on the card
                she is already looking at, rather than a second card appearing above it
                (ARV-D-066). Same component as the proposed card, so the two cannot drift. */
-            <ProposedCard preparing={busy} onDismiss={onDismissBusy} bare />
+            /* WALK-A-071 (phone half): a FAILED re-prepare already ends its bar and says why here;
+               it now also offers Try again beside Dismiss, as the web's in-place failure does. */
+            <ProposedCard preparing={busy} onDismiss={onDismissBusy} onRetry={onRetryBusy} bare />
           ) : archived ? (
             <Text style={ws.mlp2_ready}>Archived</Text>
           ) : completed.length || live.length ? (

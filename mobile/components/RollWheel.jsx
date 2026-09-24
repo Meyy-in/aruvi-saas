@@ -93,6 +93,16 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
   const foundIdx = items.findIndex((it) => String(it.id) === String(value));
   if (foundIdx >= 0) lastIdx.current = foundIdx;
   const selIdx = foundIdx >= 0 ? foundIdx : Math.min(lastIdx.current, Math.max(0, N - 1));
+  /* ★ THE STARTING OFFSET IS READ ONCE (WALK-A-081, founder 2026-09-24, iPhone only: on a
+     two-class wheel the ▼ "goes from 6 to 6, passing 7"). `contentOffset` was computed from the
+     CURRENT pick on every render. Android applies that prop only when the scroller is created;
+     iOS re-applies it whenever it changes — so on the iPhone every commit also teleported the
+     box, on top of the ▼'s own animated roll, and the two fought. It is only ever meant to be the
+     STARTING place (WALK-A-049); every later move is the park/follow effects' job. */
+  const startOffset = useRef(null);
+  if (startOffset.current == null) {
+    startOffset.current = { x: 0, y: ((peek || loopProp) && N > 1 ? N + selIdx : selIdx) * rowPx };
+  }
   const rendered = loop
     ? Array.from({ length: 3 * N }, (_, i) => ({ ...items[i % N], _k: i }))
     : items.map((it, i) => ({ ...it, _k: i }));
@@ -252,6 +262,11 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
      so the wrap reads as a continuation rather than a jump back up. */
   const stepCycle = () => {
     if (!N) return;
+    /* WALK-A-081: ONE STEP AT A TIME. While a roll we started is still travelling, a second ▼
+       (a double tap, or a press the platform delivers twice) would compute its target from the
+       NEW pick and roll one row further — on a two-item wheel that is straight back to where she
+       started. The roll lands in ~300ms (or the 700ms safety timer lands it), then ▼ is live. */
+    if (pending.current != null) return;
     const next = (selIdx + 1) % N;
     mine.current = String(items[next].id);   // ours, so the follow effect leaves the roll alone
     onChange(String(items[next].id));
@@ -262,6 +277,7 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
      pick is committed before the box moves, for the same reason the ▼ does it. */
   const step = (dir) => {
     if (!N) return;
+    if (pending.current != null) return;   // one step at a time — see stepCycle (WALK-A-081)
     // Looping wheels wrap at the ends (WALK-A-005); the rest clamp, as the web's stepScroll does.
     const next = loop ? ((selIdx + dir) % N + N) % N
                       : Math.min(N - 1, Math.max(0, selIdx + dir));
@@ -288,7 +304,7 @@ export function RollWheel({ items, value, onChange, ariaLabel, rowPx = WHEEL_ROW
            FIRST ITEM — and only then jumped to the pick: English, then the subject she chose,
            on every rebuild of the screen. `contentOffset` is applied as the scroller is created,
            so there is no first frame to get wrong. The effect stays, for every later correction. */
-        contentOffset={{ x: 0, y: (loop ? N + selIdx : selIdx) * rowPx }}
+        contentOffset={startOffset.current}
         snapToInterval={rowPx}
         /* WALK-A-037 (founder, 2026-09-20): on Android a flick raced past several rows. "fast"
            is 0.9; 0.8 stops the fling nearer the finger, so one flick moves about one row. iOS

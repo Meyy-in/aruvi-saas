@@ -573,7 +573,14 @@ export default function Prepare() {
                 230px-wide absolute tip anchored to a 152px column has nowhere to go on a phone
                 without covering the figures it explains. Same words, same trigger. */}
             {showInfo ? (
-              <View style={[ws.prep_tip, { backgroundColor: t.paper_2, borderColor: t.line }]}>
+              <View style={[ws.prep_tip, { backgroundColor: t.paper_2, borderColor: t.line, paddingRight: 34 }]}>
+                {/* WALK-A-082 (founder, 2026-09-24): a ✕ at the top right, so the note closes
+                    where she is reading it instead of hunting for the small 'i' again. */}
+                <Pressable onPress={() => setShowInfo(false)} hitSlop={10} accessibilityRole="button"
+                  accessibilityLabel="Close this note"
+                  style={{ position: "absolute", top: 6, right: 8, padding: 4 }}>
+                  <Text style={[ws.prep_tip_t, { color: t.ink_soft, fontSize: 14, lineHeight: 16 }]}>✕</Text>
+                </Pressable>
                 <Text style={ws.prep_tip_t}>
                   Meyy shares your annual budget for this class across its chapters by each
                   chapter’s effort index — heavier chapters get more periods. It’s a starting

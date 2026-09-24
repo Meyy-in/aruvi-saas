@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-24T08:32:21",
+ "updated_at": "2026-09-24T07:41:08",
  "items": {
   "04.19": {
    "ios": {
@@ -1508,20 +1508,6 @@
     "at": "2026-09-21T13:14:34",
     "comment": "Greeting, sub-line, one card per subject-class-section in profile order, graph rule — all as specified. Divergence resolved: the whole greeting row (title + sub-line) shows once a chapter is bound, and there is NO temporary foot (no entitlement line, no Auto/Light/Dark) on web.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.02": {
@@ -1531,20 +1517,6 @@
     "at": "2026-09-21T14:50:00",
     "comment": "(a) PASS. Repeated hard reloads as a teacher with bound classes: no welcome copy at any point, not one frame; held under Slow 4G too — the page takes 5–6s and still shows nothing before the server answers. The bindingsKnown gate holds.\n(b) PASS, by a different route than the row describes. 'Remove every subject' is impossible — a subject cannot be removed anywhere (WALK-A-060). The empty state was reached instead on 9000000004 by removing every CLASS of its only subject, and My Classes then showed exactly 'No classes set up yet' / 'Set up your teaching profile from the settings gear above to start planning.'\n⚠ That second line is now STALE INSTRUCTION: the settings gear opens a read-only profile view, and a class is added under Add on the bottom nav. Folded into WALK-A-060 as a copy fix.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:56:38",
-    "comment": "PASS (founder, phone pass 2026-09-24). (a) new account 9000000009 (added as a Supabase test number): first run ends with the first chapter ALREADY attached (green card, 1/3 trial chapters used), so My Classes correctly greets her ('Good …, {name}!' / 'Continue where you left off with every class.') and offers the tour; the pre-attach 'Your classes are ready' state is not reached from first run on the phone. (b) walked at WALK-A-060: 'No classes set up yet' + the Add-window line, and the profile's classless-subject line.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:56:38",
-    "comment": "PASS (founder, phone pass 2026-09-24). (a) new account 9000000009 (added as a Supabase test number): first run ends with the first chapter ALREADY attached (green card, 1/3 trial chapters used), so My Classes correctly greets her ('Good …, {name}!' / 'Continue where you left off with every class.') and offers the tour; the pre-attach 'Your classes are ready' state is not reached from first run on the phone. (b) walked at WALK-A-060: 'No classes set up yet' + the Add-window line, and the profile's classless-subject line.",
-    "build": "dev build"
    }
   },
   "05.03": {
@@ -1554,20 +1526,6 @@
     "at": "2026-09-21T13:45:59",
     "comment": "Multi-subject: mono uppercase subject heading over each run, banded cards read 'Ch 4' with no subject in the kicker, unattached banded cards carry no kicker line. Single-subject: no headings at all. Renamed section: class number alone with her name in fine print beneath ('3' over 'Rose', never '3A'), profile chip keeps tag-first; the binding survived the rename. Rename done through Add — the Settings profile is a read-only view.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.04": {
@@ -1577,20 +1535,6 @@
     "at": "2026-09-21T13:59:45",
     "comment": "Kicker, title and sub-line all as specified. Cold cache forced by clearing the aruvi_plans_* localStorage keys and throttling to Slow 3G: 'Loading lessons…' shows while the fetch is out and the list never flashes the 'No other lessons prepared…' copy before the rows arrive. Rows read 'Ch. NN: Title ›' with a duration line; list caps at ~2 visible rows and scrolls inside the window. ✕, click outside and Escape all dismiss. NOT EXERCISED: the collapsed prior-year section — this account has no previous academic year, so it is correctly absent rather than confirmed present. Same gap applies to the '{year} version' edition chip on a row. Both belong to 05.11/05.19 and need an account with a rolled year.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.05": {
@@ -1600,20 +1544,6 @@
     "at": "2026-09-21T14:04:37",
     "comment": "Sheet closes on the tap and the card turns green at once: tag, kicker '{Subject} · Ch N', chapter title, unit rail with unit 1 ochre and the rest faint, − button present. Sibling pass-through respected. On Slow 3G the freshly-bound card reads 'Loading your lesson…', never 'Pick a chapter to begin'. Held steady for ~30s — no sand→green→sand flicker as the reconcile landed.\nNOTED (no cost, founder): after a section COMPLETES a chapter, that completed chapter is still offered in the same section's picker. → WALK-A-061.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T07:46:48",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.06": {
@@ -1623,20 +1553,6 @@
     "at": "2026-09-21T14:09:35",
     "comment": "Whole card is the tap target on web — tag, title and blank area all open the lesson, scoped to that section. Advanced one learning unit and returned: the rail reads unit 1 pine, unit 2 ochre, the rest faint ticks, already updated on arrival with no reload. Kicker and title still name the same chapter, and the rail survives a page reload, so the pointer reached the server.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.07": {
@@ -1646,20 +1562,6 @@
     "at": "2026-09-21T14:13:26",
     "comment": "Confirm window reads 'Stop tracking this chapter?' with '{tag} will stop tracking \"Ch. NN: Title\". It will be available to track again for this section.' 'Keep tracking' leaves the card untouched — still green, same chapter, rail still 1 pine / 2 ochre, not reset. 'Stop tracking' returns it to the sand 'Pick a chapter to begin' state and the chapter is offered again in that section's picker. The history glyph appears on the card (a unit had been taught before the untrack) and the sand state survives a reload, so the untrack reached the server.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.08": {
@@ -1669,20 +1571,6 @@
     "at": "2026-09-21T14:17:18",
     "comment": "Taught a chapter to its last unit and marked it complete. Card reads 'Complete' above a + (− is gone), rail fully pine. Tapping + does all three in one action: records the chapter completed in history, frees the slot, opens the attach picker immediately. Closing the picker leaves the sand 'Pick a chapter to begin' card carrying a history glyph.\nNOTE: the founder saw only 'Complete' above the + — no visible 'Finish with this chapter and track the next' text. Correct: that string is the button's aria-label (MyPlans.jsx:1276), not visible copy, and no title attribute is set on any of the three round buttons, so there is no hover tooltip by design. The phone passes the same string as its accessibilityLabel (mobile/app/(app)/index.jsx:1005), so the surfaces agree — read the same way on the phone pass rather than as a fail.\nWALK-A-061 reproduced here as expected: the just-completed chapter is still offered in the picker that the + opens.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.09": {
@@ -1692,20 +1580,6 @@
     "at": "2026-09-21T14:20:43",
     "comment": "Popup reads 'Section history' / 'Where each chapter stands for this section.' Rows 'Ch. NN: title' with Ongoing / Completed / Untracked pills and a mini rail; the 05.08 chapter shows Completed, the 05.07 one Untracked with its rail at the single unit taught. Attaching a chapter and teaching one unit puts it on top as Ongoing. All three negatives hold: a chapter untracked with zero units leaves no row, a section with no history shows no glyph in any card state, and the 'No chapters taught yet.' copy is unreachable through the UI because the glyph is correctly hidden when empty. The glyph never fires the card's own open-lesson target.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.10": {
@@ -1715,20 +1589,6 @@
     "at": "2026-09-21T14:26:04",
     "comment": "Picker foot reads 'Need a chapter you don't have yet?' with 'Prepare a new lesson →'. Prepare opens already scoped to that subject and class — no subject or class question. The wait is in place on the Prepare screen with no dashed preparing card anywhere (the documented web divergence). Lands on My Classes, not My Lessons, with the originating section already green on the new chapter; the binding survives a reload. Browser Back from there leaves the app to a blank tab — correct, rule 4 of the WALK-A-008 Back contract (My Classes with nothing open).\nNOTED: a one-frame sand-grey flash on the card before it turns green. → WALK-A-062.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.11": {
@@ -1765,20 +1625,6 @@
     "at": "2026-09-21T14:28:53",
     "comment": "Subjects A–Z with The World Around Us by its full label, classes as 'Class {n}', wheels at 2:1, a single option renders as a static box. A non-default pair survives leaving the tab and a full close-and-reopen of the browser, and the screen never comes up on a blank class. Keyboard stepping works on web (the documented divergence): arrows move row to row, rest exactly on a row, and commit as a drag does.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:42",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24.",
-    "build": "dev build"
    }
   },
   "05.14": {
@@ -1788,20 +1634,6 @@
     "at": "2026-09-21T14:43:19",
     "comment": "Walked on 9000000004 (Science·middle, its only class deleted). My Lessons offers 6/7/8 on the Class wheel, rests on Class 6 and shows 'There are no lesson plans prepared for Science · Class 6 yet.'; My Classes says 'No classes set up yet'; the teaching profile says 'You teach no class of Science at the moment. Its lessons are kept, and it stays here for as long as you subscribe to it — add a class under Class in the \"+\" window to teach it again.'\nFOUNDER RULING 2026-09-21, and this is the record of it: this is correct behaviour. The My Lessons drop-down is a way of ORGANISING her lesson plans, not proof that she has classes. A teacher may use Meyy for lesson plans alone and never track a section, so holding LPs with no class set up is a normal state. The 'why' belongs in the teaching profile, where the subject lives, and the profile says it correctly. My Classes' 'No classes set up yet' and the full class wheel are answers to different questions, not a contradiction. The em-dash / '{Subject} has no classes in your profile…' branch in My Lessons therefore only covers the in-flight case (held classes not yet fetched) — it is not the state this row was reaching for. WALK-A-063 closed, no defect.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:03:43",
-    "comment": "PASS (founder, phone pass 2026-09-24) on *04 Science: wheel VI + VII (classes with lessons), the reminder sentence replaces Prepare, Year Plan does not hang.",
-    "build": "dev build"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:31:34",
-    "comment": "FAIL (founder, 2026-09-24): everything on the row reads right on *04 Science, but the class wheel's ▼ goes 'from 6 to 6 avoiding 7' — VII cannot be reached with the arrow (drag works). → WALK-A-081, open, for the phone fix point.\n✓ re-walked 2026-09-24 after WALK-A-081",
-    "build": "Expo Go"
    }
   },
   "05.15": {
@@ -1811,20 +1643,6 @@
     "at": "2026-09-21T14:50:00",
     "comment": "Cards sit on plain paper with no status tint (the deliberate split from My Classes' tinted cards): chapter-number tag, title clamped to 2 lines, duration line, and status reading 'Ready to teach' or the 'Completed … · Teaching now …' form, agreeing with what My Classes says for the same sections. Spine colours follow the plan's standing. No '{year} version' chip, correctly, as the account has no prior edition. Tapping a card opens the lesson READ-ONLY — no mark-complete, no bookmark, no pointer movement, and nothing in My Classes moved afterwards. Empty shelf reads 'There are no lesson plans prepared for {Subject} · Class {n} yet.'\nNOT EXERCISED: the no-profile copy 'No subjects set up yet. Finish setup in My Classes to see your lessons here.' It needs a profile with NO SUBJECT at all. A subject cannot be removed (WALK-A-060), so on any account past first run the state is unreachable — it belongs to the pre-first-run window. Park with the year-dependent rows.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "dev build"
    }
   },
   "05.16": {
@@ -1834,20 +1652,6 @@
     "at": "2026-09-24T01:52:31",
     "comment": "Attached lesson carries no archive icon. Archiving toasts 'Moved to Archive — find it in the box above.', the header count rises, the card leaves the shelf; inside, the left word reads 'Archive', cards say 'Archived' with a RESTORE button (screenshots taken, English · Class 3, count 7); Restore toasts 'Restored to your lessons.' and the count falls. Both empty states as specified.\nOFFLINE CLAUSE — the ROW IS WRONG, not the app. Offline, archive and restore both appear to succeed and nothing is said. That is deliberate: the pair goes through verifiedWrite (packages/shared/src/verify.js), which swallows the write error and treats the READ as the arbiter — offline the read fails too, so the status is 'unverified' and by design nothing is reverted and nothing is claimed ('we do not know that it failed'). The row's expected 'That didn't archive - it's still in your lessons.' fires only on a VERIFIED mismatch. MyLessonPlans.jsx:737 says so in as many words: 'this pair already reverted-and-toasted on a throw, which was the best behaviour in the app — but a throw is not the criterion.' The row text predates that change and needs amending on all three surfaces (the Android watch item carries the same stale expectation).\nThe real residual is filed as WALK-A-064: the act is silently LOST later.\nOPEN OBSERVATION: the open archive box shows a BLUE ring in the screenshots. The designed open state is pine border + pine ink + --tint-pine fill (globals.css:2113) and there is no blue in the palette, so this looks like Chrome's default focus ring — .mlp2-archfolder has no :focus-visible rule while globals.css styles focus in pine in at least eight other places. To be confirmed before it is raised.\n✓ re-walked 2026-09-24 after WALK-A-064 and WALK-A-078 (web): offline archive and restore now say one honest sentence each, in the plain paper box, clear of the bottom bar. Online toasts unchanged in wording and equally clear.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "dev build"
    }
   },
   "05.17": {
@@ -1857,43 +1661,15 @@
     "at": "2026-09-22T08:05:46",
     "comment": "First walk of this row on any surface. Title 'Reports', sub 'Create a report of this lesson or its assessment.'; three single-select options with 'Lesson Plan' default; 'Include answers / model responses' appears only under Assessment and the combined option and comes up unticked; PDF default with Word beside it; footer Cancel plus a download button whose label follows the chosen format. Cancel closes with nothing downloaded, as do Escape and a click outside. An archived card carries no report icon.\nCLARIFICATION for the row text: once she ticks 'Include answers', the tick is RETAINED while that window stays open — switching option away and back keeps it — and is clean again for another lesson's Reports window. Read as correct: the row's '(unticked)' describes first appearance, and clearing a deliberate tick on a toggle would silently lose her choice. Row 05.17 should say 'unticked on first appearance, retained while the window is open'.\nNOT EXERCISED: the no-report-icon negative on a re-preparing (.sc-proposed) card — needs a prepare in flight; row 05.25 passes through that state and will cover it.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "dev build"
    }
   },
   "05.18": {
    "web": {
-    "status": "pass",
+    "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T07:41:28",
-    "comment": "First walk of this row on any surface. MECHANICS PASS: 'Preparing…' shows, the file arrives named from the server (lesson-plan-grade-iii-english-ch13, assessment-grade-iii-english-ch13-answers, integrated-grade-iii-english-ch13-answers — never the report.pdf/report.docx fallback), every file opens correctly, the answers version carries the model responses and the plain Assessment does NOT. Offline gives the known alert('Couldn’t create the report.') — the documented web divergence, which still owes an in-window line. Back online, all fine.\nFAIL is on the WORD ARTEFACTS, which are not at PDF parity (→ WALK-A-067): the LP's period row has no lighter shade against the spine row, as the PDF does; the spine Learning Outcome sits cramped with no empty row after it; the Assessment has no thin rule separating one question from the next, as the PDF does; the integrated report carries all three gaps.\nAlso raised: the report FILENAME scheme, → WALK-A-066 (founder's proposal).\n✓ re-walked 2026-09-24 after WALK-A-079 (web): the offline download failure is now said IN the Reports window, above the buttons, with the window and her choices intact — the alert() is gone and the documented 'web owes the in-window line' divergence is closed. The Word-parity fail (WALK-A-067) and the filename scheme (WALK-A-066) still stand, so this row stays amber.\n✓ re-walked 2026-09-24 after WALK-A-066\n✓ re-walked 2026-09-24 after WALK-A-067\n✓ re-walked 2026-09-24 after WALK-A-079",
+    "at": "2026-09-24T01:55:13",
+    "comment": "First walk of this row on any surface. MECHANICS PASS: 'Preparing…' shows, the file arrives named from the server (lesson-plan-grade-iii-english-ch13, assessment-grade-iii-english-ch13-answers, integrated-grade-iii-english-ch13-answers — never the report.pdf/report.docx fallback), every file opens correctly, the answers version carries the model responses and the plain Assessment does NOT. Offline gives the known alert('Couldn’t create the report.') — the documented web divergence, which still owes an in-window line. Back online, all fine.\nFAIL is on the WORD ARTEFACTS, which are not at PDF parity (→ WALK-A-067): the LP's period row has no lighter shade against the spine row, as the PDF does; the spine Learning Outcome sits cramped with no empty row after it; the Assessment has no thin rule separating one question from the next, as the PDF does; the integrated report carries all three gaps.\nAlso raised: the report FILENAME scheme, → WALK-A-066 (founder's proposal).\n✓ re-walked 2026-09-24 after WALK-A-079 (web): the offline download failure is now said IN the Reports window, above the buttons, with the window and her choices intact — the alert() is gone and the documented 'web owes the in-window line' divergence is closed. The Word-parity fail (WALK-A-067) and the filename scheme (WALK-A-066) still stand, so this row stays amber.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:07:10",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24 (05.16/05.18 also exercised at WALK-A-064/075/066/067).",
-    "build": "dev build"
    }
   },
   "05.20": {
@@ -1903,20 +1679,6 @@
     "at": "2026-09-22T09:42:45",
     "comment": "The two words sit side by side with a '/' between them, live word inked with a clay underline, resting word in soft ink (not pine). Switching inks the other and moves the underline. The archive box shows on the lessons pane only and returns when she comes back to it. The pane is not remembered: leaving to My Classes and returning, and a full page reload, both reopen on 'Your lessons'. Under scroll on the Year plan pane the subject/class header stays frozen with the column header sticky beneath it — the web behaviour the phone will be compared against, where that header scrolls with the table.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:13:23",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:13:23",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.",
-    "build": "dev build"
    }
   },
   "05.21": {
@@ -1926,20 +1688,6 @@
     "at": "2026-09-22T09:45:01",
     "comment": "Active subscription half PASSES: 'Need a chapter you don't have yet?' with the clay-to-ochre 'Prepare a new lesson →' CTA, the SVG gradient rendering as a gradient (the web reference for the Android emulator check); tapping it opens Prepare scoped to whatever pair the wheels are sitting on, re-checked after rolling the wheels to a different subject·class, so it follows the wheels rather than remembering the last scope.\nLAPSED HALF PARKED: needs an account whose subscription has lapsed (bar not rendered at all, Year Plan budget pencil inert). The session brief §5 already lists the paywall/lapsed states as skipped pending enforcement plus a CLI revoke, and revoking on 9000000003 would pull the shared account out from under the remaining rows. Walk it with 05.26's paywall clause, which carries the same dependency — one entitlement sitting, on a throwaway account.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:13:23",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:13:23",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.",
-    "build": "dev build"
    }
   },
   "05.22": {
@@ -1949,20 +1697,6 @@
     "at": "2026-09-24T02:00:35",
     "comment": "The row's own clauses PASS: header 'Prepare a lesson plan' with '← back' returning to My Lessons, kicker '{Subject} · Class {n}', the 'Pick one chapter…' line; picking a chapter seeds the periods and shows the duration mix; − / + and typing all agree; both boundary sentences carry the chapter's real numbers and clear on return to range. Keyboard clause fine on web — placing the cursor in the chapter box draws a focus boundary round it and the up/down arrows then move the chapters.\nTWO FINDINGS in the no-class state, both outside this row's own clauses and both folded into WALK-A-068 with the founder's rule change: (1) with every class of a subject·stage deleted, the periods suggestion freezes at the flat 12; (2) in that state the class wheel offers every subscribed class, and narrows to the real one only once a class is added.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:13:23",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:13:23",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.",
-    "build": "dev build"
    }
   },
   "05.23": {
@@ -1972,20 +1706,6 @@
     "at": "2026-09-24T02:00:35",
     "comment": "Suggestion shows Meyy's number with 'use', which snaps the value back, and swaps to ✓ 'matches the suggestion' when the two are equal, both ways; the 'i' explanation opens as a web popover. Budget box: Total periods in pine agreeing with Year Plan for the same subject·class, Used, Available — which turns clay and reads '−n' when over, and returns when brought back into range. 'Used ⓘ' opens 'Committed so far' with 'Ch NN · title · n' rows and 'Total committed - {n} periods' agreeing with both the rows and what is actually prepared for that pair; disabled on a subject·class with nothing committed.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:32:21",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.\n✓ re-walked 2026-09-24 after WALK-A-082",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:32:21",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.21: active half only; the lapsed half stays parked with 05.26.\n✓ re-walked 2026-09-24 after WALK-A-082",
-    "build": "dev build"
    }
   },
   "05.24": {
@@ -1995,43 +1715,15 @@
     "at": "2026-09-24T02:52:14",
     "comment": "SINGLE-TAP PATH walked and correct in substance: the wheels steer to that subject and class; the preparing card appears at the head of the list carrying the real chapter title and duration line from inception, holds ~3–4s with its progress bar, and resolves IN PLACE — 'Ready to teach' replacing the preparing line in the same card, no jump.\nROW-TEXT CORRECTIONS: (1) the row expects the BUTTON to read 'Building the lesson…' / 'Working on it…'. Those states exist (PrepareLesson.jsx:641-650) but are effectively UNOBSERVABLE on this path, because onPreparing navigates away in the same tick — the same mechanism as WALK-A-069. What she sees is the card's line, 'Preparing your {x} period lesson plan…' (MyLessonPlans.jsx:279). The row should quote that. (2) 'about 5 s' vs the 3–4s observed: PREPARING_MS is 5000 counted from the request start, so a fast serve leaves ~4s of visible bar. Within tolerance.\nOPEN QUESTION RESOLVED at 05.25, 2026-09-22: the preparing card carries NO archive or report icons and reads CLAY — the .sc-proposed treatment is rendering as designed. The icons the founder first described were on the RESOLVED card, which is correct. No finding.\nFAIL stands on the double-tap guard, → WALK-A-069: the second click lands on the newly painted My Lessons list and opens an unrelated lesson. Prepare itself fires once (disabled + inFlight ref), and Back shows the new lesson correctly at the top.\n✓ re-walked 2026-09-24 after WALK-A-069 (web): a hard double-tap on the prepare CTA now lands on the preparing card, not inside another lesson; the same holds on the section-card path; single taps are unaffected; and the shield lifts after a failed prepare.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.24's double-tap guard also walked at WALK-A-069.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.24's double-tap guard also walked at WALK-A-069.",
-    "build": "dev build"
    }
   },
   "05.25": {
    "web": {
-    "status": "pass",
+    "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T07:41:28",
-    "comment": "CTA reads 'Prepare again →' with the hint 'Already prepared - preparing again replaces the tracked version.'; confirm window 'Prepare this chapter again?' with Cancel / 'Prepare again'; Cancel does nothing.\nFAIL → WALK-A-070. Regenerating the same chapter with DIFFERENT periods leaves TWO plans for that chapter, contradicting the row's 'no duplicate card is added'. With the SAME periods only one remains — the previously existing plan — and an attached lesson is unaffected. Both behaviours also contradict the hint's promise to REPLACE the tracked version: nothing is replaced in either case.\nBusy bar shows IN PLACE on the existing card during the regenerate and the card is not tappable while busy — both clauses pass.\nOWED CHECK DONE: with a chapter attached and prepared again at a different period count, the section card KEEPS the original duration's plan — the binding does not follow the new one. And a NEW section is offered BOTH durations to choose from in the picker.\nCUTOVER QUESTION (founder) ANSWERED FROM THE CODE: her prepared register is year-scoped — prepared_plans_repo.load_all(tenant_id, user_id, year) — so after a cutover the new year's register is empty and chosenAlreadyPrepared is false; the CTA correctly reads 'Prepare the lesson →' rather than 'Prepare again'. The founder's expectation is right. ONE CAVEAT: chosenAlreadyPrepared is `p.prepared || attachedFiles.has(p.filename)`, and _auto_roll_year CARRIES the section bindings into the new year until she starts fresh — so a chapter still attached from last year's cohort would read as already prepared even with an empty register for the new year. Belongs to the parked 05.12; noted there.\n✓ re-walked 2026-09-24 after WALK-A-070",
+    "at": "2026-09-22T10:38:06",
+    "comment": "CTA reads 'Prepare again →' with the hint 'Already prepared - preparing again replaces the tracked version.'; confirm window 'Prepare this chapter again?' with Cancel / 'Prepare again'; Cancel does nothing.\nFAIL → WALK-A-070. Regenerating the same chapter with DIFFERENT periods leaves TWO plans for that chapter, contradicting the row's 'no duplicate card is added'. With the SAME periods only one remains — the previously existing plan — and an attached lesson is unaffected. Both behaviours also contradict the hint's promise to REPLACE the tracked version: nothing is replaced in either case.\nBusy bar shows IN PLACE on the existing card during the regenerate and the card is not tappable while busy — both clauses pass.\nOWED CHECK DONE: with a chapter attached and prepared again at a different period count, the section card KEEPS the original duration's plan — the binding does not follow the new one. And a NEW section is offered BOTH durations to choose from in the picker.\nCUTOVER QUESTION (founder) ANSWERED FROM THE CODE: her prepared register is year-scoped — prepared_plans_repo.load_all(tenant_id, user_id, year) — so after a cutover the new year's register is empty and chosenAlreadyPrepared is false; the CTA correctly reads 'Prepare the lesson →' rather than 'Prepare again'. The founder's expectation is right. ONE CAVEAT: chosenAlreadyPrepared is `p.prepared || attachedFiles.has(p.filename)`, and _auto_roll_year CARRIES the section bindings into the new year until she starts fresh — so a chapter still attached from last year's cohort would read as already prepared even with an empty register for the new year. Belongs to the parked 05.12; noted there.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "dev build"
    }
   },
   "05.26": {
@@ -2050,43 +1742,15 @@
     "at": "2026-09-24T01:40:15",
     "comment": "Re-run 2026-09-22 on the ORDINARY path (new chapter, offline before tapping): the failed card renders correctly — 'Couldn't build the lesson plan right now. Try again in a moment.', two lines, with TRY AGAIN and DISMISS. That part of the row PASSES.\nThe first attempt hung instead: progress bar stuck 60+ seconds, no message, with the POST confirmed sent and failed in 112ms. NOT REPRODUCED on the re-run; founder's call is that it was an errata and not worth chasing. Recorded in WALK-A-071 with the full network and stack evidence in case it returns.\nFAIL STANDS for the RE-PREPARE path, which is certain from the code: showProposedCard and busyIdx both ignore preparing.failed, so a failure on a card that already exists at that duration has nowhere to be said and its in-place bar cannot end. Two one-line conditions, in WALK-A-071.\nSTILL OWED on re-walk: the hover title carrying the full sentence, whether the two visible lines suffice, Dismiss leaving a clean shelf after a reload, Try again failing again offline and succeeding online, and how long the card spins before it gives up (the web reference for the Android timeout).\nUNEXERCISED: 'No underlying chapter yet.' (no chapter without a canonical reachable on this account) and 'The lesson was built but didn't reach your lessons…' (needs the verify read to disagree with a successful write — not reachable by hand).\n✓ re-walked 2026-09-24 after WALK-A-071 (web): offline re-prepare of an already-prepared chapter — the existing card's bar now STOPS, the reason appears in place with TRY AGAIN and DISMISS beside it, no second card above, and the card keeps its own colour. Try again succeeds once back online; Dismiss returns the card to its ordinary state with the plan intact.\nSTILL UNEXERCISED on web: the hover title carrying the full sentence, and how long the card spins before it gives up (the reference figure for the Android TCP timeout). Plus the two unreachable states noted above ('No underlying chapter yet.' and 'built but didn't reach your lessons').",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24: offline failure → failed card with the reason, Try again + Dismiss (walked at WALK-A-071). 'No underlying chapter yet.' NOT REACHABLE — every chapter on the wheel has a library. Android failure time not recorded (founder cannot recall; no long spin noticed).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24: offline failure → failed card with the reason, Try again + Dismiss (walked at WALK-A-071). 'No underlying chapter yet.' NOT REACHABLE — every chapter on the wheel has a library. Android failure time not recorded (founder cannot recall; no long spin noticed).",
-    "build": "dev build"
    }
   },
   "05.28": {
    "web": {
-    "status": "pass",
+    "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T07:41:28",
-    "comment": "Columns 'Chapter' / 'Suggested periods' / 'Your plan' correct; suggestion column all numeric; Your plan shows a number, 'not yet', and — where the book is awaited; the note defaults open and carries its closing Ask Meyy sentence; the 2px rule and the closing hairline are both there.\nTHREE FINDINGS:\n(1) The row title repeats the chapter number — the tag already reads NN and the title then reads 'Chapter N: Title'. Founder: remove it. → WALK-A-072.\n(2) 'Used' in Prepare's budget box does not tally with Year Plan's plan column, and CHANGES as she rolls the chapter wheel. → WALK-A-073.\n(3) Suggestions disagree between the two screens by one period: social_sciences class 9 on profile 9000000003 — ch 5 is 22 in Prepare and 21 in Year Plan; ch 3 is 13 in Prepare and 12 in Year Plan. → WALK-A-074, cause found.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.\nRow stays amber: WALK-A-072 (the row title repeating 'Chapter N:' beside the NN tag) is still open.\n✓ re-walked 2026-09-24 after WALK-A-072\n✓ re-walked 2026-09-24 after WALK-A-074",
+    "at": "2026-09-24T02:00:35",
+    "comment": "Columns 'Chapter' / 'Suggested periods' / 'Your plan' correct; suggestion column all numeric; Your plan shows a number, 'not yet', and — where the book is awaited; the note defaults open and carries its closing Ask Meyy sentence; the 2px rule and the closing hairline are both there.\nTHREE FINDINGS:\n(1) The row title repeats the chapter number — the tag already reads NN and the title then reads 'Chapter N: Title'. Founder: remove it. → WALK-A-072.\n(2) 'Used' in Prepare's budget box does not tally with Year Plan's plan column, and CHANGES as she rolls the chapter wheel. → WALK-A-073.\n(3) Suggestions disagree between the two screens by one period: social_sciences class 9 on profile 9000000003 — ch 5 is 22 in Prepare and 21 in Year Plan; ch 3 is 13 in Prepare and 12 in Year Plan. → WALK-A-074, cause found.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.\nRow stays amber: WALK-A-072 (the row title repeating 'Chapter N:' beside the NN tag) is still open.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "dev build"
    }
   },
   "05.29": {
@@ -2096,20 +1760,6 @@
     "at": "2026-09-23T15:17:56",
     "comment": "The pencil on the totals row opens the budget editor for exactly this subject and class — neither pick screen is shown (the 'exact' portal scope). Saving returns to the Year plan pane and the suggested column and the note both follow the new budget; cancelling also returns to the Year plan pane with the figure unchanged. The pencil sits in the label cell without dragging the totals row's numbers out of alignment with the chapter rows. Budget moved 145 → 140 and back to 145 (English, Class III); original value restored.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.24's double-tap guard also walked at WALK-A-069.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.24's double-tap guard also walked at WALK-A-069.",
-    "build": "dev build"
    }
   },
   "05.30": {
@@ -2119,66 +1769,24 @@
     "at": "2026-09-23T15:22:07",
     "comment": "'Preparing your Word document…' appears under the totals row; the file arrives as year-plan-class-iii-english.docx and opens correctly — the table and nothing else, totals saying what the pane said, the closing Ask Meyy sentence present in full, em-dash for a missing value. Offline it says, under the totals row: 'Couldn't download the year plan. Couldn't reach Meyy just now. Tap the arrow to try again.' — the in-window line the row asks for. Works again once back online.\nBudget for English III was moved 145 → 140 and restored to 145 during 05.29; the pane is back at its original figure.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.24's double-tap guard also walked at WALK-A-069.",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:16:30",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.24's double-tap guard also walked at WALK-A-069.",
-    "build": "dev build"
    }
   },
   "05.31": {
    "web": {
-    "status": "pass",
+    "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T07:41:28",
-    "comment": "Walked web + a real Android device on one account. THREE OF FOUR SYNC WELL, faster than the row's ~20s: attaching a chapter reflected in under 10s, marking a unit complete in under 5s, completing a chapter in under 3s.\nFAIL: ARCHIVING does not reflect on the other device in EITHER direction. → WALK-A-075, cause found.\nFounder observation while walking: a lesson opened from My Classes carries no section context once she is inside it. → WALK-A-076.\n✓ re-walked 2026-09-24 after WALK-A-075 (web): the plans listing is now revalidated on mount, on foreground and on a 20s tick, so archiving crosses between two sessions of the same account in both directions. Verified with a normal and an incognito window rather than a second device.\nRow stays amber: WALK-A-076 (a lesson opened from My Classes never says which section) is still open.\n✓ re-walked 2026-09-24 after WALK-A-076 (web): a lesson opened from My Classes now carries '·Section {her name or tag}' in the kicker, on the unit header, the tracking header and the chapter-organisation page; opened from My Lessons it shows none.\n✓ re-walked 2026-09-24 after WALK-A-075\n✓ re-walked 2026-09-24 after WALK-A-076",
+    "at": "2026-09-24T02:52:14",
+    "comment": "Walked web + a real Android device on one account. THREE OF FOUR SYNC WELL, faster than the row's ~20s: attaching a chapter reflected in under 10s, marking a unit complete in under 5s, completing a chapter in under 3s.\nFAIL: ARCHIVING does not reflect on the other device in EITHER direction. → WALK-A-075, cause found.\nFounder observation while walking: a lesson opened from My Classes carries no section context once she is inside it. → WALK-A-076.\n✓ re-walked 2026-09-24 after WALK-A-075 (web): the plans listing is now revalidated on mount, on foreground and on a 20s tick, so archiving crosses between two sessions of the same account in both directions. Verified with a normal and an incognito window rather than a second device.\nRow stays amber: WALK-A-076 (a lesson opened from My Classes never says which section) is still open.\n✓ re-walked 2026-09-24 after WALK-A-076 (web): a lesson opened from My Classes now carries '·Section {her name or tag}' in the kicker, on the unit header, the tracking header and the chapter-organisation page; opened from My Lessons it shows none.",
     "build": "web dev (localhost:3000 → Render) + Android device"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "dev build"
    }
   },
   "05.32": {
    "web": {
-    "status": "pass",
+    "status": "fail",
     "by": "Kumar",
-    "at": "2026-09-24T07:41:28",
-    "comment": "(1) KILL AND REOPEN — PASS. Closing the tab and reopening paints the last-known cards immediately from the device copy, then refreshes.\n(2) OFFLINE REOPEN — STRUCTURALLY INAPPLICABLE ON WEB, not a fail. The app is SERVED from localhost:3000, so with the network off a reload cannot fetch the app itself and Chrome shows ERR_INTERNET_DISCONNECTED before any Meyy code runs. Starting offline is a phone-only capability unless the web gains a service worker — a product decision, not a defect. Walked instead as 'go offline with the page already loaded and navigate inside the app': opening a lesson whose body is not cached gives 'Couldn't open this plan … not stored on device'.\nSTILL OWED on re-walk: the SHELF copy for an uncached subject·class ('Couldn't reach Meyy right now.') without tapping a card, and the My Classes clause that a bound card with no cached listing reads 'Loading your lesson…' and never the false 'Pick a chapter to begin'.\n(3) BACK ONLINE — PASS, all three panes recover without a manual reload.\n(4) EXPIRED SESSION — FAIL. → WALK-A-077. With window.fetch patched to send a token the server rejects, the API does answer 401 (verified directly: GET /readiness with no bearer returns 401 {\"detail\":\"Sign in to continue.\"}, so auth IS enforced and the deployed service is correctly in supabase mode), but the app carries on as normal and never reaches sign-in.\nTwo earlier inconclusive attempts, recorded so they are not repeated: mangling the stored token does nothing because supabase-js holds the live session IN MEMORY; and a run that appeared to show 'everything works' was made with the browser still offline, so no request reached the server at all.\n✓ re-walked 2026-09-24 after WALK-A-077\n✓ re-walked 2026-09-24 after WALK-A-080",
+    "at": "2026-09-23T16:46:48",
+    "comment": "(1) KILL AND REOPEN — PASS. Closing the tab and reopening paints the last-known cards immediately from the device copy, then refreshes.\n(2) OFFLINE REOPEN — STRUCTURALLY INAPPLICABLE ON WEB, not a fail. The app is SERVED from localhost:3000, so with the network off a reload cannot fetch the app itself and Chrome shows ERR_INTERNET_DISCONNECTED before any Meyy code runs. Starting offline is a phone-only capability unless the web gains a service worker — a product decision, not a defect. Walked instead as 'go offline with the page already loaded and navigate inside the app': opening a lesson whose body is not cached gives 'Couldn't open this plan … not stored on device'.\nSTILL OWED on re-walk: the SHELF copy for an uncached subject·class ('Couldn't reach Meyy right now.') without tapping a card, and the My Classes clause that a bound card with no cached listing reads 'Loading your lesson…' and never the false 'Pick a chapter to begin'.\n(3) BACK ONLINE — PASS, all three panes recover without a manual reload.\n(4) EXPIRED SESSION — FAIL. → WALK-A-077. With window.fetch patched to send a token the server rejects, the API does answer 401 (verified directly: GET /readiness with no bearer returns 401 {\"detail\":\"Sign in to continue.\"}, so auth IS enforced and the deployed service is correctly in supabase mode), but the app carries on as normal and never reaches sign-in.\nTwo earlier inconclusive attempts, recorded so they are not repeated: mangling the stored token does nothing because supabase-js holds the live session IN MEMORY; and a run that appeared to show 'everything works' was made with the browser still offline, so no request reached the server at all.",
     "build": "web dev (localhost:3000 → Render)"
-   },
-   "ios": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "Expo Go"
-   },
-   "and_emu": {
-    "status": "pass",
-    "by": "Kumar",
-    "at": "2026-09-24T08:24:03",
-    "comment": "PASS on iPhone and Android (founder), phone pass 2026-09-24. 05.25: grey bar/hint/confirm/Cancel also at WALK-A-070, confirm → second card at the new length. 05.31: archive also at WALK-A-075. 05.32: the 401 clause verified by code review (WALK-A-077).",
-    "build": "dev build"
    }
   }
  },
@@ -3936,43 +3544,24 @@
   {
    "id": "WALK-A-081",
    "opened": "2026-09-24T05:34:11",
-   "closed": "2026-09-24T08:31:34",
+   "closed": "",
    "feature": "05.22",
    "found_on": [
     "ios"
    ],
    "applies_to": "ios",
    "title": "iPhone: the My Lessons class wheel's ▼ rolls past the next class and back to the first when there are two classes",
-   "what": "Founder, iPhone, 2026-09-24, during the 068 phone re-walk on *04 (Science: VI and VII on the class wheel). Pressing the ▼ on the class wheel goes 'from 6 to 6 quickly passing 7' — the box rolls through VII and lands back on VI. Android is fine on the same account and screen. Not a blocker: the class can still be chosen by dragging.\nNOTES FOR THE FIX POINT: the class wheel is a looping peek RollWheel (mobile/components/RollWheel.jsx), rendered as three copies of the list. With N=2 a one-row ▼ from the middle copy lands on the adjacent copy's rows, so any second step — a doubled onPress, an iOS momentum/snap event after the programmatic scrollTo, or the settle rounding one row further — reads as the first item again. Check first whether it happens on ANY two-item looping wheel on the iPhone (e.g. a subject with two classes on *03), which would make it a RollWheel/iOS fault rather than anything 068 changed; 068 did not touch the wheel itself.\nRE-SEEN 2026-09-24 at 05.14 on the iPhone (same account, same wheel). 05.13's wheels on *03 passed on the iPhone, so it is not every wheel — the two-item looping class wheel is the case.",
-   "fix": "[FIXED phone 2026-09-24T08:25:00, phone fix point] RollWheel.jsx, two changes, both iOS-relevant and harmless on Android: (1) contentOffset is now the STARTING offset only (a ref computed on first render). It was recomputed from the current pick on every render; Android applies that prop only at creation, iOS re-applies it on change — so on the iPhone each commit also teleported the box on top of the ▼'s animated roll. (2) ONE STEP AT A TIME: stepCycle/step ignore a press while a roll we started is still pending (cleared on arrival or by the 700ms safety timer). A second press computing its target from the new pick rolls one row further — on a two-item looping wheel, straight back to the start: the exact '6 → 7 → 6' symptom. Not reproducible here; the founder's iPhone is the check.\n[RE-WALKED ios + and_emu 2026-09-24] PASS: *04 Science ▼ steps 6→7→6→7 one class per press; *03 class and subject wheels likewise; three quick taps never skip; Android unchanged. The first re-walk read as a fail because the iPhone had not yet loaded the fix; a temporary [wheel] log added to diagnose it showed the corrected roll (144 → 216, commit VII, no second move) on the very next reload. Logging removed; RollWheel.jsx and lessons.jsx verified identical to their pre-diagnostic state.",
+   "what": "Founder, iPhone, 2026-09-24, during the 068 phone re-walk on *04 (Science: VI and VII on the class wheel). Pressing the ▼ on the class wheel goes 'from 6 to 6 quickly passing 7' — the box rolls through VII and lands back on VI. Android is fine on the same account and screen. Not a blocker: the class can still be chosen by dragging.\nNOTES FOR THE FIX POINT: the class wheel is a looping peek RollWheel (mobile/components/RollWheel.jsx), rendered as three copies of the list. With N=2 a one-row ▼ from the middle copy lands on the adjacent copy's rows, so any second step — a doubled onPress, an iOS momentum/snap event after the programmatic scrollTo, or the settle rounding one row further — reads as the first item again. Check first whether it happens on ANY two-item looping wheel on the iPhone (e.g. a subject with two classes on *03), which would make it a RollWheel/iOS fault rather than anything 068 changed; 068 did not touch the wheel itself.",
+   "fix": "OPEN — recorded mid phone pass; fix at the phone fix point (not a blocker).",
    "files": "mobile/components/RollWheel.jsx (stepCycle, rollTo, onSettle, loop)",
    "commit": "",
    "native_rebuild": false,
-   "status": "closed",
-   "recheck": [],
-   "owner": "Claude",
-   "at": "2026-09-24T08:31:34"
-  },
-  {
-   "id": "WALK-A-082",
-   "opened": "2026-09-24T08:13:23",
-   "closed": "2026-09-24T08:32:21",
-   "feature": "05.23",
-   "found_on": [
-    "ios",
-    "and_emu"
+   "status": "open",
+   "recheck": [
+    "ios"
    ],
-   "applies_to": "phone",
-   "title": "Prepare: the Suggestion 'i' explanation has no ✕ — it closes only by tapping 'i' again",
-   "what": "Founder, iPhone + Android, 2026-09-24 (phone pass, 05.23 otherwise PASS): 'when i is pressed, provide an x on top right to exit the screen directly without having to press i again.' On the phone the explanation renders as a line under the columns and the only way to dismiss it is to find and tap the small 'i' a second time.",
-   "fix": "OPEN — founder's request: a ✕ at the top right of the explanation that closes it. Fix at the phone fix point. (Web shows it as a popover; check it closes on an outside click and add the same ✕ there if it does not, for parity.)\n[FIXED phone + web 2026-09-24T08:25:00] Phone prepare.jsx: a ✕ (hitSlop 10, 'Close this note') at the top right of the Suggestion note; the text keeps clear of it. Web PrepareLesson.jsx: the popover had no close either (only the 'i' toggled it), so the same ✕ is added for parity (.prep-tip-x).\n[RE-WALKED ios + and_emu + web 2026-09-24] PASS: the ✕ sits top right of the Suggestion note, text clear of it, closes the note; 'i' still toggles.",
-   "files": "mobile/app/(app)/prepare.jsx (Suggestion 'i' explanation); web/app/components/PrepareLesson.jsx (popover, parity check)",
-   "commit": "",
-   "native_rebuild": false,
-   "status": "closed",
-   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-24T08:32:21"
+   "at": "2026-09-24T05:34:11"
   }
  ]
 }

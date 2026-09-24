@@ -37,11 +37,25 @@ import AskMeyy from "../../components/AskMeyy";
 import GuidedTour from "../../components/GuidedTour";
 import { useTour, tourNext, tourBack, tourSkip, useTourOverlayHost } from "../../lib/tour";
 import { closeAsk, subscribeAsk, toggleAsk } from "../../lib/ask";
+import { onSessionRefused } from "../../lib/boot";
+import { endSession } from "../../lib/session";
 
 export default function AppLayout() {
   const { t } = useTheme();
   const router = useRouter();
   const pathname = usePathname() || "/";
+  /* WALK-A-077: ANY 401 from our API while she is signed in ends the session through the one
+     door — noticed once at the fetch (lib/boot), whichever screen or shared call made it. A ref
+     guard, because several calls in flight can all come back refused at once. */
+  const refusedRef = useRef(false);
+  useEffect(() => onSessionRefused(() => {
+    if (refusedRef.current) return;
+    /* Already signed out on this device (e.g. the erasure farewell, which clears the session and
+       must stay on screen to be read): a 401 then is the expected echo, not a refusal to act on. */
+    if (!getUser()) return;
+    refusedRef.current = true;
+    endSession(router, "401 (any call — lib/boot)");
+  }), [router]);
   /* A document opened from Settings (an invoice, her data export) rides `from: "settings"` so the
      preview lights nothing in the bar, as Settings itself does. */
   const fromSettings = useGlobalSearchParams().from === "settings";

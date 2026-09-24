@@ -46,6 +46,36 @@ setStorage(kv);
 export const API_URL = (process.env.EXPO_PUBLIC_API_URL || "").replace(/\/+$/, "");
 configure({ apiBase: API_URL || "http://localhost:8000", accessToken });
 
+/* ★ A REFUSED SESSION IS NOTICED ONCE, AT THE FETCH (WALK-A-077, the web's shared-setup.js rule,
+ * ported 2026-09-24). A 401 from our API means the server no longer accepts this sign-in. Four
+ * screens here already end the session on it, but every other call — shared code included —
+ * swallowed it as if it were a network failure, so a refused teacher kept working on a screen
+ * that could save nothing. Noticed here, where every call passes, and handed to the ONE door
+ * (lib/session) by the signed-in shell, which registers the handler.
+ * Deliberately narrower than the web's: NO replay. The web shell is mounted from the first paint;
+ * this shell mounts only after sign-in, so a 401 remembered from the login screen would be
+ * replayed the moment she got in — signing her straight back out. Unregistered = not signed in =
+ * nothing to end. Scope is our API base only, so a 401 from Supabase's token endpoint (which
+ * supabase-js answers by refreshing) never counts. */
+let onRefused = null;
+export function onSessionRefused(fn) {
+  onRefused = fn;
+  return () => { if (onRefused === fn) onRefused = null; };
+}
+const API_BASE = API_URL || "http://localhost:8000";
+if (!globalThis.__meyyFetchWrapped && typeof globalThis.fetch === "function") {
+  globalThis.__meyyFetchWrapped = true;
+  const original = globalThis.fetch.bind(globalThis);
+  globalThis.fetch = async (input, init) => {
+    const r = await original(input, init);
+    try {
+      const url = typeof input === "string" ? input : (input && input.url) || "";
+      if (r && r.status === 401 && url.startsWith(API_BASE) && onRefused) onRefused();
+    } catch { /* never let the notice break the response it rides on */ }
+    return r;
+  };
+}
+
 const URL = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
 const KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
 export const supabase = URL && KEY
