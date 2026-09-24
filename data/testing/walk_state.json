@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-24T16:07:39",
+ "updated_at": "2026-09-24T16:11:08",
  "items": {
   "04.19": {
    "ios": {
@@ -3348,7 +3348,7 @@
   {
    "id": "WALK-A-055",
    "opened": "2026-09-21T10:48:38",
-   "closed": "",
+   "closed": "2026-09-24T16:11:08",
    "feature": "03.32",
    "found_on": [
     "and_emu"
@@ -3356,23 +3356,19 @@
    "applies_to": "all",
    "title": "A trial chapter was counted for a lesson the teacher never received",
    "what": "Pixel 7, 04: the trial ledger recorded chapters_used 3 (spent: false — a genuine count) while My Lessons held only TWO lesson plans at the moment of erasure. One chapter of a three-chapter trial was spent on nothing she can see. The likely author is the airplane-mode test itself: the POST sat queued while the radio was off, the founder turned it back on to press Try again, the queued serve then reached the server, which generated and counted it — and the client had already abandoned it at the 45s deadline (WALK-A-052), so its plan never reached her listing and its chapter was never refunded. A LOST RESPONSE MUST NOT COST A CHAPTER. Note the existing mitigation only half covers this: re-serving the SAME chapter is free, so a retry on the same chapter is safe — but a serve whose response is lost, followed by a different chapter, costs two. Unproven, and it cannot be re-run on this account (erased): reproduce with a server-side log of which chapter each count belongs to, then compare against her listing.",
-   "fix": "To decide: (a) the count belongs to a DELIVERED plan — count on the read-back, not on generation; or (b) an idempotency key per prepare attempt so a retry of the same attempt can never count twice and an abandoned one can be reconciled; and (c) the client should retry the same chapter rather than offering a fresh pick after a failure. Founder to weigh: this is a teacher's free trial, so erring towards not counting is the honest default.",
+   "fix": "To decide: (a) the count belongs to a DELIVERED plan — count on the read-back, not on generation; or (b) an idempotency key per prepare attempt so a retry of the same attempt can never count twice and an abandoned one can be reconciled; and (c) the client should retry the same chapter rather than offering a fresh pick after a failure. Founder to weigh: this is a teacher's free trial, so erring towards not counting is the honest default.\n[CLOSED — FOUNDER DECISION 2026-09-24] 'Ignore' — not pursued in this walk. Reopen only if it recurs.",
    "files": "api/main.py (_count_trial_chapter and the serve); packages/shared/src/format.js; mobile/app/(app)/prepare.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
-   "recheck": [
-    "and_emu",
-    "ios",
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "founder",
-   "at": "2026-09-21T10:48:38"
+   "at": "2026-09-24T16:11:08"
   },
   {
    "id": "WALK-A-056",
    "opened": "2026-09-21T10:54:20",
-   "closed": "",
+   "closed": "2026-09-24T16:11:08",
    "feature": "03.17",
    "found_on": [
     "and_emu"
@@ -3380,18 +3376,14 @@
    "applies_to": "all",
    "title": "The email-in-use check makes her wait about five seconds",
    "what": "Pixel 7: at 'Confirm this email →' the wizard sits on 'Checking…' for roughly five seconds before refusing an address already in use. The check is honest and the wording is right (WALK-A-022 put it up front, which was the improvement) — but five seconds of nothing, at the moment she is being told she cannot use her own email, reads as a broken screen. Worth measuring whether this is the API's cold start or the lookup itself before choosing a fix.",
-   "fix": "To decide once measured: if it is the cold start, nothing to fix in the client beyond keeping the spinner honest; if the lookup itself is slow, it wants an index or a cheaper existence check. Either way the screen should say what it is doing rather than only that it is busy.",
+   "fix": "To decide once measured: if it is the cold start, nothing to fix in the client beyond keeping the spinner honest; if the lookup itself is slow, it wants an index or a cheaper existence check. Either way the screen should say what it is doing rather than only that it is busy.\n[CLOSED — FOUNDER DECISION 2026-09-24] 'Ignore' — not pursued in this walk. Reopen only if it recurs.",
    "files": "api (the id-in-use lookup); mobile/components/SubscribeWizard.jsx; web SubscribeFlow equivalent",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
-   "recheck": [
-    "and_emu",
-    "ios",
-    "web"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-21T10:54:20"
+   "at": "2026-09-24T16:11:08"
   },
   {
    "id": "WALK-A-057",
@@ -3438,7 +3430,7 @@
   {
    "id": "WALK-A-059",
    "opened": "2026-09-21T12:04:10",
-   "closed": "",
+   "closed": "2026-09-24T16:11:08",
    "feature": "03.27",
    "found_on": [
     "and_emu"
@@ -3446,16 +3438,14 @@
    "applies_to": "phone",
    "title": "Hard crash handing over from first run to My Lessons",
    "what": "Pixel 7 dev build: after the first lesson is generated in first run, the app dies with the new architecture's mounting error — 'addViewAt: failed to insert view [976] into parent [444] at index 18 — The specified child already has a parent.' Dismiss does not recover it; only a force-stop does. Three runs in a row. It appeared with the WALK-A-049 hoist (Foot/Cta/BackLink/Frame moved to module scope in first-run.jsx) and at exactly the moment first run tears down while `router.replace('/lessons')` mounts the preparing card. Two of my attempts to claim the tour overlay host earlier (render body, then useLayoutEffect) crashed the same way and were reverted, which suggests the real subject is something being reparented during that handover rather than any one of those changes. ✓ 2026-09-21: with the hoist reverted, first run and the handover to My Lessons run clean. The crash's real subject is still unknown — it is the hoist that is parked, not the bug that is fixed. ✓ iPhone sweep part 2, 2026-09-21: no flash, loop both ways, wrap steps one row, tour steps 9 and 14→15 clean.",
-   "fix": "HELD OFF: the hoist is reverted, so first run is back to the shape it had when 03.27 passed this morning. The flash it was fixing is fixed at its own source instead — the wheel takes its starting offset as `contentOffset` rather than parking a frame late, so a remount costs a wasted rebuild but shows nothing wrong. STILL TO DO: find why that handover reparents a view at all. The hoist is real waste and worth restoring once it is understood — but not blind.",
+   "fix": "HELD OFF: the hoist is reverted, so first run is back to the shape it had when 03.27 passed this morning. The flash it was fixing is fixed at its own source instead — the wheel takes its starting offset as `contentOffset` rather than parking a frame late, so a remount costs a wasted rebuild but shows nothing wrong. STILL TO DO: find why that handover reparents a view at all. The hoist is real waste and worth restoring once it is understood — but not blind.\n[CLOSED — FOUNDER DECISION 2026-09-24] 'Ignore' — not pursued in this walk. Reopen only if it recurs.",
    "files": "mobile/app/first-run.jsx; mobile/components/RollWheel.jsx; mobile/components/AttachSheet.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
-   "recheck": [
-    "and_emu"
-   ],
+   "status": "closed",
+   "recheck": [],
    "owner": "Claude",
-   "at": "2026-09-21T12:04:10"
+   "at": "2026-09-24T16:11:08"
   },
   {
    "id": "WALK-A-060",
