@@ -1,12 +1,16 @@
 """The names of the files Meyy hands a teacher (WALK-A-066, founder-approved 2026-09-24).
 
-    LP-{class}-{Subject}-{chapter}                  the lesson plan
-    Assess-{class}-{Subject}-{chapter}              the assessment
-    Assess-Answers-{class}-{Subject}-{chapter}      … with answers
-    LP-Assess-{class}-{Subject}-{chapter}           the integrated report
-    LP-Assess-Answers-{class}-{Subject}-{chapter}   … with answers
+    {Subject}-{class}-LP-{chapter}                  the lesson plan
+    {Subject}-{class}-Assess-{chapter}              the assessment
+    {Subject}-{class}-Assess-Answers-{chapter}      … with answers
+    {Subject}-{class}-LP-Assess-{chapter}           the integrated report
+    {Subject}-{class}-LP-Assess-Answers-{chapter}   … with answers
     … -Unit {n}                                     integrated, scoped to one unit
-    YearPlan-{class}-{Subject}                      the Year Plan
+    {Subject}-{class}-YearPlan                      the Year Plan
+
+★ SUBJECT FIRST (founder, same day, revising his own kind-first draft): "when teacher indexes
+it all class and subject will come together" — a sorted folder groups by subject, then class,
+then document type, then chapter.
 
 WHY THE CHAPTER NAME AND NOT ITS NUMBER: English chapters are split into their sections, so the
 number no longer says what she is holding, and she searches her files by chapter NAME.
@@ -105,8 +109,8 @@ def report_filename(kind: str, answers: bool, grade: str, subject: str, chapter_
     fallback = f"Ch {chapter_number}" if chapter_number not in (None, "") else "Chapter"
     name = chapter_label(chapter_title, fallback)
     u = f"-Unit {unit}" if (kind == "integrated" and unit is not None) else ""
-    return f"{prefix}-{class_label(grade)}-{subject_label(subject)}-{name}{u}.{ext}"
+    return f"{subject_label(subject)}-{class_label(grade)}-{prefix}-{name}{u}.{ext}"
 
 
 def year_plan_filename(grade: str, subject: str) -> str:
-    return f"YearPlan-{class_label(grade)}-{subject_label(subject)}.docx"
+    return f"{subject_label(subject)}-{class_label(grade)}-YearPlan.docx"
