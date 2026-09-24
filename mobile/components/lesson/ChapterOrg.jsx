@@ -17,10 +17,14 @@ import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
 import { BAR_CONTENT_H } from "../Bar";
 
-export const kickerOf = (lp) =>
+/* `sectionLabel` (WALK-A-076): a lesson opened from a My Classes card says WHICH section it is
+   being taught to — her own name for it where she gave one, else the tag. Same line as the web's
+   LessonView kicker: "english·III·Ch. 03·Section VANAM". Omitted from My Lessons (no section). */
+export const kickerOf = (lp, sectionLabel = "") =>
   String(lp.subject || "").replace(/_/g, " ")
   + (lp.grade ? `·${String(lp.grade).replace(/grade|class/gi, "").trim().toUpperCase()}` : "")
-  + (lp.chapter_number ? `·Ch. ${String(lp.chapter_number).padStart(2, "0")}` : "");
+  + (lp.chapter_number ? `·Ch. ${String(lp.chapter_number).padStart(2, "0")}` : "")
+  + (sectionLabel ? `·Section ${sectionLabel}` : "");
 
 function sectionTitleOnly(label) {
   if (!label) return label;
@@ -367,7 +371,7 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
   );
 }
 
-export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack }) {
+export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, sectionLabel = "" }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   /* ★ THE PAGE OPENS ON THE UNIT SHE IS TEACHING (web parity, added 2026-09-17). The web has
@@ -493,7 +497,7 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
     <View style={{ flex: 1, backgroundColor: t.paper }}>
       <View style={[ws.co_stick, { paddingHorizontal: 18 }]}>
         <View style={ws.co_topbar}>
-          <Text style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp)}</Text>
+          <Text style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp, sectionLabel)}</Text>
           <Pressable onPress={onBack} hitSlop={8}><Text style={ws.back_tr}>← back</Text></Pressable>
         </View>
         <View style={ws.co_head}>

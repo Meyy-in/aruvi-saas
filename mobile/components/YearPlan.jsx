@@ -53,7 +53,7 @@ import { useEffect, useMemo, useState } from "react";
 import { View, Pressable } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
-import { annualBudgetPeriods, bareChapterTitle, getJSON, largestRemainder, pad } from "@aruvi/shared/format";
+import { annualBudgetPeriods, bareChapterTitle, getJSON, pad, suggestedPeriodsByChapter } from "@aruvi/shared/format";
 import { useRouter } from "expo-router";
 import { canPreview, downloadDocument, fetchDocument, yearPlanExport } from "../lib/download";
 import { fetchPlans } from "@aruvi/shared/plans";
@@ -144,13 +144,10 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
     let budget = annualBudgetPeriods(readiness, sSlug, gSlug);
     if (!budget) budget = recSum || null;
 
-    const weights = chs.map((c) => (typeof c.weight === "number" && c.weight > 0 ? c.weight : 0));
-    const wSum = weights.reduce((a, b) => a + b, 0);
-    const sugByCh = {};
-    if (budget && wSum > 0) {
-      const dist = largestRemainder(budget, weights);
-      chs.forEach((c, i) => { sugByCh[c.chapter_number] = dist[i]; });
-    } else {
+    // WALK-A-074: the ONE shared distribution Prepare also uses, so the two never disagree.
+    const sugByCh = suggestedPeriodsByChapter(chs, budget);
+    if (!Object.keys(sugByCh).length) {
+      // No budget, or no weights: fall back to the calibrated per-chapter recommendation.
       chs.forEach((c) => { sugByCh[c.chapter_number] = c.recommended_periods ?? null; });
     }
 

@@ -55,8 +55,8 @@ import { View, ScrollView, Pressable, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "../../components/Text";
 import {
-  annualBudgetPeriods, classNum, getJSON, largestRemainder, pad, planNameFor,
-  postJSON, pretty,
+  annualBudgetPeriods, classNum, getJSON, pad, planNameFor,
+  postJSON, pretty, suggestedPeriodsByChapter,
 } from "@aruvi/shared/format";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
@@ -86,6 +86,7 @@ export default function Prepare() {
 
   const [readiness, setReadiness] = useState(() => cachedReadiness());
   const [chapters, setChapters] = useState([]);
+  const [allChapters, setAllChapters] = useState([]);   // incl. "Book awaited" — the distribution's buckets (WALK-A-074)
   const [chapterNo, setChapterNo] = useState("");
   const [periods, setPeriods] = useState(DEFAULT_PERIODS);
   const [plans, setPlans] = useState(() => cachedPlans(`${subject}/${grade}`) || []);
@@ -131,7 +132,12 @@ export default function Prepare() {
     getJSON(`/subjects/${subject}/${grade}/chapters`)
       .then((d) => {
         if (!live) return;
-        setChapters((d.chapters || []).filter((c) => !c.placeholder));
+        const all = d.chapters || [];
+        // ★ The FULL list — placeholders included — is what the budget is distributed across
+        // (WALK-A-074, same as web PrepareLesson). The picker still shows only what can be
+        // generated from.
+        setAllChapters(all);
+        setChapters(all.filter((c) => !c.placeholder));
         setSyllabusW(d.syllabus_total_weight || null);
         setChLoad("ok");
       })
@@ -139,7 +145,7 @@ export default function Prepare() {
         /* The reason goes to the console, never to her — `getJSON` has already retried the
            transients, so anything arriving here has earned a sentence she can act on. */
         console.warn("[meyy] /chapters failed:", (e && e.message) || e);
-        if (live) { setChapters([]); setSyllabusW(null); setChLoad("fail"); }
+        if (live) { setChapters([]); setAllChapters([]); setSyllabusW(null); setChLoad("fail"); }
       });
     fetchPlans(`${subject}/${grade}`).then((r) => { if (live) setPlans(r); }).catch(() => {});
     getJSON(`/genon/${subject}/${grade}/chapters`)
@@ -192,28 +198,13 @@ export default function Prepare() {
   const annualBudget = useMemo(
     () => annualBudgetPeriods(readiness, subject, grade), [readiness, subject, grade]);
 
-  /* Denominator of each chapter's share: the FULL syllabus weight from the master plan (it
-     INCLUDES placeholder chapters with no content yet — founder, 2026-07-25), falling back to the
-     listed chapters' sum only when no master plan exists. Dividing by the listed sum alone
-     inflates every suggestion until the full book lands. */
-  const sumW = useMemo(
-    () => Number(syllabusW) || chapters.reduce((s, c) => s + (Number(c.weight) || 0), 0),
-    [syllabusW, chapters]);
-
-  const sugByChapter = useMemo(() => {
-    const out = {};
-    if (annualBudget == null || !chapters.length) return out;
-    const wts = chapters.map((c) => (Number(c.weight) > 0 ? Number(c.weight) : 0));
-    const listed = wts.reduce((a, b) => a + b, 0);
-    if (listed <= 0) return out;
-    /* Guard for the case the API could not supply the placeholder rows: apportion across the
-       listed chapters PLUS one synthetic bucket carrying the syllabus weight they don't cover,
-       then discard it. With a complete list the bucket is 0 and this is a plain apportionment. */
-    const missing = Math.max(0, (Number(sumW) || listed) - listed);
-    const dist = largestRemainder(annualBudget, missing > 0 ? [...wts, missing] : wts);
-    chapters.forEach((c, i) => { out[c.chapter_number] = dist[i] > 0 ? dist[i] : 1; });
-    return out;
-  }, [chapters, annualBudget, sumW]);
+  /* ★ ONE DISTRIBUTION, SHARED WITH THE YEAR PLAN (WALK-A-074, founder 2026-09-24). This pane
+     used to apportion across the LISTED chapters plus one synthetic bucket for the unlisted
+     weight, while the Year Plan gave every chapter its own bucket — and the two disagreed by a
+     period on real chapters (SS IX ch 5: 22 here, 21 on the Year Plan). Both now call
+     suggestedPeriodsByChapter over the FULL list, placeholders included. */
+  const sugByChapter = useMemo(
+    () => suggestedPeriodsByChapter(allChapters, annualBudget), [allChapters, annualBudget]);
 
   const suggestionFor = (c) => {
     if (!c) return DEFAULT_PERIODS;
@@ -228,7 +219,7 @@ export default function Prepare() {
     const c = chapters.find((x) => String(x.chapter_number) === String(chapterNo));
     if (c) setPeriods(suggestionFor(c));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chapterNo, chapters, annualBudget, sumW]);
+  }, [chapterNo, chapters, annualBudget, allChapters]);
 
   /* ★ MEMOISED, and the wheel does not work without it. RollWheel reparks the box on `[items]`;
      a list rebuilt inline is a new identity on EVERY render, so the effect fired on every render

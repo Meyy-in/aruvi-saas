@@ -18,7 +18,7 @@ import { type } from "../../theme/type";
 export default function Lesson() {
   const { t } = useTheme();
   const router = useRouter();
-  const { subject, grade, filename, section, tour } = useLocalSearchParams();
+  const { subject, grade, filename, section, tour, sectionLabel } = useLocalSearchParams();
   const sectionKey = section ? `${subject}_${grade}_${section}` : "";
   const [state, setState] = useState({ loading: true, data: null, err: "" });
 
@@ -64,6 +64,7 @@ export default function Lesson() {
     );
   }
   return <LessonView view={state.data.view} meta={state.data.meta} sectionKey={sectionKey}
+    sectionLabel={sectionLabel ? String(sectionLabel) : ""}
     tourUnit={tour === "1"} onExit={() => router.back()} />;
 }
 

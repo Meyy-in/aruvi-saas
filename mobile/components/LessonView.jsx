@@ -302,7 +302,7 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
   );
 }
 
-export default function LessonView({ view, sectionKey = "", onExit, preview = false, tourUnit = false }) {
+export default function LessonView({ view, sectionKey = "", sectionLabel = "", onExit, preview = false, tourUnit = false }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const lp = view.lesson_plan;
@@ -424,7 +424,8 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
          the ring had nothing to measure on exactly the plan a new teacher is shown. */
       <View ref={rootTourRef} collapsable={false} style={{ flex: 1, backgroundColor: t.paper }}>
         <ChapterOrg lp={lp} units={units} pointer={tracking ? cur : null} doneAll={tracking && doneFlag}
-          onOpenUnit={(n) => { setPreviewAt(n); setShowOrg(false); }} onBack={onExit} />
+          onOpenUnit={(n) => { setPreviewAt(n); setShowOrg(false); }} onBack={onExit}
+          sectionLabel={sectionLabel} />
       </View>
     );
   }
@@ -451,7 +452,7 @@ export default function LessonView({ view, sectionKey = "", onExit, preview = fa
   const header = (
     <View style={ws.lv_hd}>
       <View style={ws.co_topbar}>
-        <Text style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp)}</Text>
+        <Text style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp, sectionLabel)}</Text>
         <Pressable onPress={goOrg} hitSlop={8}><Text style={ws.back_tr}>← Orgn.</Text></Pressable>
       </View>
       <Text style={ws.lv_title}>

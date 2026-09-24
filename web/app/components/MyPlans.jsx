@@ -114,6 +114,14 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     return () => window.removeEventListener("aruvi:back", onBack);
   }, [openPlan]);
   const [loading, setLoading] = useState(false);
+  /* A lesson that will not open is SAID IN THE WINDOW, not in a browser alert() (the 079 rule,
+     2026-09-24): same paper toast and the same sentences My Lessons uses for the same failure. */
+  const [openErr, setOpenErr] = useState("");
+  useEffect(() => {
+    if (!openErr) return undefined;
+    const t = setTimeout(() => setOpenErr(""), 6000);   // a long sentence: time to read it
+    return () => clearTimeout(t);
+  }, [openErr]);
   const [setupStarted, setSetupStarted] = useState(false); // 2a welcome → grid flow gate
   const [attachFor, setAttachFor] = useState(null); // { c, sectionKey } — "+" track-a-chapter picker
   const [untrackFor, setUntrackFor] = useState(null); // { c, sectionKey, plan } — "−" untrack confirm
@@ -513,7 +521,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
       const view = (await fetchPlanView(sSlug, gSlug, p.filename)).view;
       setOpenPlan({ view, sectionKey, sectionLabel });
     } catch (e) {
-      window.alert(String(e && e.message) === "404" ? "This lesson could not be found."
+      setOpenErr(String(e && e.message) === "404" ? "This lesson could not be found."
         : "Couldn’t open this lesson — it hasn’t been saved on this device yet. Try again when you’re online.");
     } finally { setLoading(false); }
   };
@@ -1124,6 +1132,9 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
           to come back to it after a trip through the teaching profile. The "+" below just asks
           for it.) */}
 
+      {openErr ? (
+        <div className="mlp2-toast block" role="alert" onClick={() => setOpenErr("")}>{openErr}</div>
+      ) : null}
       {attachModal}
       {untrackModal}
       {historyModal}

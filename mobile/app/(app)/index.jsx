@@ -278,7 +278,9 @@ export default function Home() {
 
 
   const openAttached = (c, plan) => router.push({ pathname: "/lesson",
-    params: { subject: c.subjectSlug, grade: c.gradeSlug, filename: plan.filename, section: c.sectionTag } });
+    params: { subject: c.subjectSlug, grade: c.gradeSlug, filename: plan.filename, section: c.sectionTag,
+              // WALK-A-076: her name for the section where she gave one — display only
+              sectionLabel: c.sectionName || c.sectionTag } });
 
   /* ── the "+" / "−" binding (Track D step 4) — the web's MyPlans handlers, verbatim in effect.
      Every write goes through @aruvi/shared, so the phone and the web agree on disk and on the
