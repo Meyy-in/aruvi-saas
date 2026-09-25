@@ -18,7 +18,7 @@
  * teacher-notes <details> is a Pressable that toggles. Everything else — order, labels, copy,
  * which field feeds which row — is the web's. */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, StyleSheet, AppState } from "react-native";
+import { View, ScrollView, Pressable, StyleSheet, AppState, useWindowDimensions } from "react-native";
 import { Text } from "./Text";
 import { parseBold } from "@aruvi/shared/format";
 import {
@@ -101,15 +101,91 @@ function MaterialPanel({ ws, t, u }) {
   );
 }
 function AidTable({ ws, t, table }) {
+  /* ★ ONE WIDTH PER COLUMN, NOT PER CELL (WALK-A-098, founder 2026-09-25: "the prepared table
+     columns are misaligned compared to web" — Science VI ch 02 unit 21). Each cell was a Text
+     with only a minWidth, so every ROW sized its own columns to its own words and the grid
+     broke. A browser table sizes a column once, from all its cells; this does the same by
+     content weight: the longest entry in each column (header counted a little wider for the
+     spaced mono caps), clamped so a short column stays readable and a long one wraps rather
+     than running off. When the columns fit the screen they stretch to fill it, as the web's
+     width:100% does; when they don't, the horizontal scroll carries the rest. */
+  const { width: winW } = useWindowDimensions();
+  const header = table.header || [];
+  const rows = table.rows || [];
+  const nCols = Math.max(header.length, ...rows.map((r) => r.length), 0);
+  const widths = (() => {
+    const raw = Array.from({ length: nCols }, (_, c) => {
+      const longest = Math.max(String(header[c] || "").length * 1.35,
+        ...rows.map((r) => String(r[c] == null ? "" : r[c]).length));
+      return Math.max(88, Math.min(240, Math.round(longest * 6.4) + 22));
+    });
+    const room = winW - 36 - 28;                // body's 18px sides + the material box's 13px padding + border
+    const sum = raw.reduce((a, b) => a + b, 0);
+    /* ★ UP TO FOUR COLUMNS ALWAYS FIT THE SCREEN (WALK-A-098 third pass: Android would not
+       scroll a wider-than-screen table sideways, so the last column of Science VI ch 02 unit 21
+       was out of reach). Rather than depend on the sideways scroll, a table of ≤4 columns is
+       shared out across the screen by the same content weights — the long column gets the
+       most room and its text wraps — with a 64px floor. Only wider tables still scroll. */
+    if (sum > 0 && (sum < room || nCols <= 4)) {
+      const fit = raw.map((w) => Math.max(64, Math.floor((w * room) / sum)));
+      const over = fit.reduce((a, b) => a + b, 0) - room;
+      if (over > 0) { const k = fit.indexOf(Math.max(...fit)); fit[k] -= over; }
+      return fit;
+    }
+    return raw;
+  })();
+  /* ★ THE CONTENT WIDTH IS STATED, NOT INFERRED (WALK-A-098, Android: "swiping left does not bring
+     the last column"). iOS sized the scroll content from the rows; Android's horizontal
+     ScrollView cut it short, so the third column of Science VI ch 02 unit 21 could not be
+     reached. The content container now carries the exact sum of the column widths, the caption
+     wraps inside it rather than setting its own width, and the scrollbar stays visible on
+     Android so a teacher can see there is more to the right. */
+  const total = widths.reduce((a, b) => a + b, 0);
+  /* ★ WIDER THAN FOUR COLUMNS → STACKED CARDS (founder, 2026-09-25, option (b)). Seven columns
+     cannot share a phone's width, and the sideways scroll that carried them failed on Android.
+     Each row becomes a small card: the first column as its heading, every other column as a
+     "HEADER  value" line — an empty cell shows a blank rule, because on a template the blank IS
+     the content (the pupils fill it in). Phone only; the web keeps its grid. */
+  if (nCols > 4) {
+    return (
+      <View style={{ marginTop: 6 }}>
+        {table.caption ? <Text style={ws.uv_va_cap}>{table.caption}</Text> : null}
+        {rows.map((row, ri) => (
+          <View key={ri} style={{ borderWidth: 1, borderColor: t.line, borderRadius: 8,
+            paddingVertical: 8, paddingHorizontal: 10, marginTop: ri ? 8 : 2, backgroundColor: t.paper_2 }}>
+            <Text style={[ws.cn_title, { marginTop: 0, fontSize: 14.5, lineHeight: 19 }]}>
+              {String(row[0] == null || row[0] === "" ? "—" : row[0])}
+            </Text>
+            {Array.from({ length: nCols - 1 }, (_, k) => k + 1).map((ci) => {
+              const v = row[ci] == null ? "" : String(row[ci]);
+              return (
+                <View key={ci} style={{ flexDirection: "row", alignItems: "flex-start", marginTop: 4, columnGap: 8 }}>
+                  <Text style={[ws.uv_va_th, { paddingTop: 2, paddingLeft: 0, paddingRight: 0, paddingBottom: 0, width: "42%" }]}>
+                    {header[ci] || ""}
+                  </Text>
+                  {v ? (
+                    <Text style={[ws.uv_va_td, { flex: 1, padding: 0 }]}>{v}</Text>
+                  ) : (
+                    <View style={{ flex: 1, borderBottomWidth: 1, borderBottomColor: t.line, height: 16 }} />
+                  )}
+                </View>
+              );
+            })}
+          </View>
+        ))}
+      </View>
+    );
+  }
   return (
     /* The web's `.uv-va-table`, measured at 390px (2026-09-18): it was a boxed table with a sunk
        header and the assessment's overview type; the web draws a RULED one. */
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 6 }}>
-      <View>
-        {table.caption ? <Text style={ws.uv_va_cap}>{table.caption}</Text> : null}
+    <ScrollView horizontal nestedScrollEnabled showsHorizontalScrollIndicator persistentScrollbar
+      style={{ marginTop: 6 }} contentContainerStyle={{ width: total }}>
+      <View style={{ width: total }}>
+        {table.caption ? <Text style={[ws.uv_va_cap, { width: Math.min(total, winW - 36) }]}>{table.caption}</Text> : null}
         <View style={{ flexDirection: "row", borderBottomWidth: 1, borderBottomColor: t.ink }}>
           {(table.header || []).map((h, i) => (
-            <Text key={i} style={[ws.uv_va_th, s.cell, i === 0 ? { paddingLeft: 0 }
+            <Text key={i} style={[ws.uv_va_th, { width: widths[i] }, i === 0 ? { paddingLeft: 0 }
               : { borderLeftWidth: 1, borderLeftColor: t.line }]}>{h}</Text>
           ))}
         </View>
@@ -117,7 +193,7 @@ function AidTable({ ws, t, table }) {
           <View key={ri} style={{ flexDirection: "row",
             borderBottomWidth: ri < all.length - 1 ? 1 : 0, borderBottomColor: t.line }}>
             {row.map((c, ci) => (
-              <Text key={ci} style={[ws.uv_va_td, s.cell, ci === 0 ? { paddingLeft: 0 }
+              <Text key={ci} style={[ws.uv_va_td, { width: widths[ci] }, ci === 0 ? { paddingLeft: 0 }
                 : { borderLeftWidth: 1, borderLeftColor: t.line }]}>{c}</Text>
             ))}
           </View>
@@ -125,6 +201,17 @@ function AidTable({ ws, t, table }) {
       </View>
     </ScrollView>
   );
+}
+
+/* WALK-A-088 (phone half) — the web's boldPointers: every "(see material…)" / "(see visual
+   aid…)" bracket is bold wherever it sits in the teacher notes, not only a leading
+   "Refer to Prepared Table…". Returns an array of strings and bold <Text>s. */
+const MATERIAL_POINTER = /(\(see (?:materials?|visual aids?)\b[^)]*\))/gi;
+function boldPointers(text, style) {
+  if (!text) return text;
+  const parts = String(text).split(MATERIAL_POINTER);
+  if (parts.length === 1) return text;
+  return parts.map((p, i) => (i % 2 === 1 ? <Text key={i} style={style}>{p}</Text> : p));
 }
 
 /* ── Lesson: the notes ribbon → the phase spine (with the bookmark) → homework ── */
@@ -164,7 +251,7 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
           </Pressable>
           {notesOpen ? (
             <Text style={ws.uv_tnotes_p}>
-              {notesLead ? <Text style={ws.uv_tnotes_ref}>{notesLead} </Text> : null}{notesLead ? notesRest : notes}
+              {notesLead ? <Text style={ws.uv_tnotes_ref}>{notesLead} </Text> : null}{boldPointers(notesLead ? notesRest : notes, ws.uv_tnotes_ref)}
             </Text>
           ) : null}
         </View>
@@ -302,7 +389,8 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
   );
 }
 
-export default function LessonView({ view, sectionKey = "", sectionLabel = "", onExit, preview = false, tourUnit = false }) {
+export default function LessonView({ view, sectionKey = "", sectionLabel = "", onExit, preview = false, tourUnit = false,
+                                     teaching = [], onOpenTeaching = null }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const lp = view.lesson_plan;
@@ -423,7 +511,7 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
          chapter she has not started opens on the map, not on a unit — without the anchor here
          the ring had nothing to measure on exactly the plan a new teacher is shown. */
       <View ref={rootTourRef} collapsable={false} style={{ flex: 1, backgroundColor: t.paper }}>
-        <ChapterOrg lp={lp} units={units} pointer={tracking ? cur : null} doneAll={tracking && doneFlag}
+        <ChapterOrg lp={lp} units={units} dropped={droppedUnits} pointer={tracking ? cur : null} doneAll={tracking && doneFlag}
           onOpenUnit={(n) => { setPreviewAt(n); setShowOrg(false); }} onBack={onExit}
           sectionLabel={sectionLabel} />
       </View>
@@ -458,6 +546,28 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
         <Text fixed style={[ws.kicker, { flex: 1 }]} numberOfLines={1}>{kickerOf(lp, sectionLabel)}</Text>
         <Pressable onPress={goOrg} hitSlop={8}><Text style={ws.back_tr}>← Orgn.</Text></Pressable>
       </View>
+      {/* WALK-A-090 (phone half): on a My Lessons unit page only (no section = preview), the
+          sections teaching this chapter as solid pills — "Teaching now  A → B → …", one Meyy
+          hue each (pine · clay · ochre · dark pine), each opening that section's own lesson on
+          its current unit. Same rule and look as the web's .lv-secs. No sections → no row. */}
+      {!tracking && teaching.length && onOpenTeaching ? (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", columnGap: 6, rowGap: 6, marginBottom: 9 }}>
+          <Text fixed style={{ fontFamily: ws.kicker.fontFamily, fontSize: 10, letterSpacing: 0.6, color: t.ink_soft, marginRight: 2 }}>Teaching now</Text>
+          {teaching.map((s, i) => {
+            const hue = [t.pine, t.clay, t.ochre, t.pine_d][i % 4];
+            return (
+              <Pressable key={s.tag} onPress={() => onOpenTeaching(s.tag, s.label)}
+                accessibilityRole="button" accessibilityLabel={`Open this lesson for section ${s.label}, where the class is now`}
+                style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", columnGap: 6, backgroundColor: hue,
+                  borderRadius: 999, paddingVertical: 6, paddingLeft: 12, paddingRight: 11, opacity: pressed ? 0.85 : 1,
+                  shadowColor: hue, shadowOpacity: 0.3, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 2 })}>
+                <Text fixed style={{ fontFamily: ws.kicker.fontFamily, fontSize: 11, letterSpacing: 0.9, color: "#fff", textTransform: "uppercase" }}>{s.label}</Text>
+                <Text fixed style={{ fontFamily: ws.kicker.fontFamily, fontSize: 11, color: "#fff", opacity: 0.85 }}>→</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
       <Text style={ws.lv_title}>
         <Text style={ws.lv_unum}>{inDropped ? "✦ " : `${previewAt + 1}.`}</Text>  {pu.title}
       </Text>

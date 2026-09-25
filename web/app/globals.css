@@ -4021,11 +4021,17 @@ button.prepare-cta.is-held:disabled::before, .prepare-cta.is-held:disabled::befo
 .cn-x { all: unset; cursor: pointer; color: var(--ink-soft); font-size: 14px; padding: 4px; line-height: 1; }
 .cn-x:hover { color: var(--clay); }
 .cn-paper { border: none; resize: none; width: 100%; box-sizing: border-box; height: 232px;
-  background: repeating-linear-gradient(to bottom, transparent 0 31px, var(--line) 31px 32px);
+  /* Plain paper (WALK-A-093, founder 2026-09-25): no ruled lines, 14/21 — more of the note in
+     view. At phone width it stays 16px (see the ≤600px block): iOS Safari zooms the page on a
+     focused field under 16px. */
+  /* WALK-A-097: light rules back — ONE per line, the pitch equal to the line height and offset
+     by the top padding, so each rule is the foot of its own line box. `local` so they scroll
+     with the writing. */
   background-color: var(--paper-2);
-  background-attachment: local;
-  font-family: var(--f-body); font-size: 16px; line-height: 32px; color: var(--ink);
-  padding: 5px 22px 0; letter-spacing: .1px; }
+  background-image: repeating-linear-gradient(to bottom, transparent 0 20px, var(--line) 20px 21px);
+  background-position: 0 10px; background-attachment: local;
+  font-family: var(--f-body); font-size: 14px; line-height: 21px; color: var(--ink);
+  padding: 10px 22px; letter-spacing: .1px; }
 .cn-paper:focus { outline: none; }
 .cn-paper::placeholder { color: #b3ab9c; opacity: 1; font-style: italic; font-size: 13px; }
 .cn-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -4582,7 +4588,8 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 .sup-addmail { margin-top: 10px; display: inline-block; }
 
 @media (max-width: 600px) {
-  .cn-paper { height: 204px; }
+  .cn-paper { height: 204px; font-size: 16px; line-height: 23px;
+    background-image: repeating-linear-gradient(to bottom, transparent 0 22px, var(--line) 22px 23px); }
   .cn-foot { flex-wrap: wrap; }
   .cn-foot-l { gap: 10px; }
   .sup-ref { font-size: 19px; }
@@ -5526,3 +5533,21 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 .lv-sec:hover { transform:translateY(-1px); box-shadow:0 2px 0 rgba(0,0,0,.12), 0 5px 12px color-mix(in srgb, var(--h) 35%, transparent); }
 .lv-sec:active { transform:translateY(0); }
 .lv-sec:focus-visible { outline:2px solid var(--h); outline-offset:2px; }
+
+/* WALK-A-092 — the child-privacy warning folded behind a small red link beside the kicker. */
+.cn-kline { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.cn-privlink { all:unset; cursor:pointer; font-family:var(--f-mono); font-size:9.5px; letter-spacing:.04em;
+  color:#d63a2f; text-decoration:underline; text-underline-offset:2px; }
+.cn-privlink:focus-visible { outline:2px solid #d63a2f; outline-offset:2px; border-radius:2px; }
+
+/* WALK-A-099 — dropped units at the foot of Chapter Organization: own heading, ✦ not a number,
+   no status or time, a quieter card so nothing reads as scheduled. */
+.co-dropped { margin-top: 22px; padding-top: 12px; border-top: 1px solid var(--line); }
+.co-dropped-sub { font-family: var(--f-body); font-style: italic; font-size: 12.5px; color: var(--ink-soft); margin: 2px 0 8px; }
+.co-card.dropped { background-color: transparent; border-style: dashed; }
+.co-card.dropped .co-num { color: var(--ink-soft); font-style: normal; }
+.co-card.dropped .co-utitle { color: var(--ink-soft); }
+.co-dropped-head { all: unset; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.co-dropped-head .co-chev { color: var(--ink-soft); display: inline-flex; transition: transform .15s; }
+.co-dropped-head .co-chev.open { transform: rotate(180deg); }
+.co-dropped-head:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; border-radius: 2px; }

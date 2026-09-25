@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-25T12:08:10",
+  "updated_at": "2026-09-25T16:03:59",
   "items": {
     "04.19": {
       "ios": {
@@ -2188,6 +2188,20 @@
         "at": "2026-09-25T08:30:14",
         "comment": "Section card with no unit taught → brief loading, then Chapter Organization (not a unit): kicker, ← back top right, chapter title, '{n} Learning Units  N × M min' meta — as specified. The kicker now also carries 'Section {x}' (the section label added by WALK-A-076); spec text predates it.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "'Opening the lesson…' then Chapter Organization: kicker with Section, ← back top right, title, units × minutes line; Android brand bar clear of the status bar.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "'Opening the lesson…' then Chapter Organization: kicker with Section, ← back top right, title, units × minutes line; Android brand bar clear of the status bar.",
+        "build": "dev build"
       }
     },
     "06.02": {
@@ -2197,6 +2211,20 @@
         "at": "2026-09-25T08:30:14",
         "comment": "DevTools Network → Offline, tapped a section card: NOT silent — the web now says 'Couldn't open the lesson… not saved on this device… try again when online' and stays on the list (the 2026-09-18 offline change). Back to No throttling: stays on the list, no auto-retry. Q20's 'web fails silently and still owes an answer' is answered; passes on the better behaviour. Phone copy ('Couldn't load this lesson right now.') differs — compare at the phone walk.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "Airplane mode, uncached lesson → error screen 'Couldn't load this lesson right now.' with ‹ Back to the list; fails fast. Android hardware Back returns to the list too. Network back → opens (the emulator needs a few seconds to reconnect after airplane mode). Copy differs from the web's ('…not saved on this device… try again when online') — founder to decide.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "Airplane mode, uncached lesson → error screen 'Couldn't load this lesson right now.' with ‹ Back to the list; fails fast. Android hardware Back returns to the list too. Network back → opens (the emulator needs a few seconds to reconnect after airplane mode). Copy differs from the web's ('…not saved on this device… try again when online') — founder to decide.",
+        "build": "dev build"
       }
     },
     "06.03": {
@@ -2206,6 +2234,20 @@
         "at": "2026-09-25T08:30:14",
         "comment": "Started section opens straight on its current unit; the My Lessons preview opens on Chapter Organization with no tick rail, no bookmark, no Mark-complete.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "Started section opens on its current unit; My Lessons preview opens on Chapter Organization with no rail, bookmark or Mark complete.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "Started section opens on its current unit; My Lessons preview opens on Chapter Organization with no rail, bookmark or Mark complete.",
+        "build": "dev build"
       }
     },
     "06.04": {
@@ -2215,6 +2257,20 @@
         "at": "2026-09-25T08:30:14",
         "comment": "Header (kicker, title, meta, tick rail, clay hairline, axis legend) stays frozen while cards scroll; taught ticks pine, current ochre, rest pale.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "Frozen header while cards scroll; taught ticks pine, current ochre, rest pale; Android: no jitter, last card clears the bottom bar and gesture bar.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:26:36",
+        "comment": "Frozen header while cards scroll; taught ticks pine, current ochre, rest pale; Android: no jitter, last card clears the bottom bar and gesture bar.",
+        "build": "dev build"
       }
     },
     "06.05": {
@@ -2224,6 +2280,20 @@
         "at": "2026-09-25T08:37:22",
         "comment": "Groups open one at a time: opens on the group holding the current unit; another head closes the first; re-tap closes all; chevron rotates 180°; unit numbers chapter-wide; no unit count on Science/SS heads; SS heads smaller whole-sentence competencies, truncated while closed.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Groups open one at a time: opens on the current unit's group; another head closes the first; re-tap closes all; chevron flips; chapter-wide unit numbers; no count on Science/SS heads.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Groups open one at a time: opens on the current unit's group; another head closes the first; re-tap closes all; chevron flips; chapter-wide unit numbers; no count on Science/SS heads.",
+        "build": "dev build"
       }
     },
     "06.06": {
@@ -2233,6 +2303,20 @@
         "at": "2026-09-25T08:37:22",
         "comment": "Cards: '{n}.' + title (≤2 lines) + '✓ taught' / 'now' (ochre border) / '{n} min', with →. Tapping a future unit opens it to read; on return the rail and 'now' card are unchanged (pointer not moved).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Cards '✓ taught' / 'now' (ochre border) / '{n} min' with →; a future unit opens to read; rail and now card unchanged on return.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Cards '✓ taught' / 'now' (ochre border) / '{n} min' with →; a future unit opens to read; rail and now card unchanged on return.",
+        "build": "dev build"
       }
     },
     "06.07": {
@@ -2242,6 +2326,20 @@
         "at": "2026-09-25T08:37:22",
         "comment": "Long chapter with the pointer deep in the list: org page arrives scrolled with the 'now' card centred, once per open; no re-jump while scrolling.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Long chapter, pointer deep: org page opens with the now card centred, once; no re-jump while scrolling.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Long chapter, pointer deep: org page opens with the now card centred, once; no re-jump while scrolling.",
+        "build": "dev build"
       }
     },
     "06.08": {
@@ -2251,6 +2349,20 @@
         "at": "2026-09-25T08:37:22",
         "comment": "Maths preparatory: flat list with 'Units' legend in a fixed-height scrolling window with bottom fade; chapter head, rail and Notes tab stay on screen.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Maths preparatory: flat 'Units' list in a fixed-height scrolling window with fade; chapter head, rail, Notes tab stay; Android scrolls inside the window.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:32:51",
+        "comment": "Maths preparatory: flat 'Units' list in a fixed-height scrolling window with fade; chapter head, rail, Notes tab stay; Android scrolls inside the window.",
+        "build": "dev build"
       }
     },
     "06.09": {
@@ -2260,6 +2372,20 @@
         "at": "2026-09-25T08:43:28",
         "comment": "SS map: units (NN + short title, '—' with no edges) left, competency codes with tier and ink dots right, ribbons between; hint shows unfocused; legend 'The map' scrolls with page. Unit tap focuses/dims + popup 'NN · title · N min →'; competency tap shows full text; '→' opens the unit.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:41:22",
+        "comment": "SS map: units/competencies with ribbons meeting their rows; tap focuses/dims with popup; competency full text; → opens the unit.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:41:22",
+        "comment": "SS map: units/competencies with ribbons meeting their rows; tap focuses/dims with popup; competency full text; → opens the unit.",
+        "build": "dev build"
       }
     },
     "06.10": {
@@ -2269,6 +2395,20 @@
         "at": "2026-09-25T08:43:28",
         "comment": "Notes tab opens the centred notebook: kicker 'Chapter notes', chapter title, 'Subject · IX', clay privacy warning, ✕, ruled paper with guide placeholder; textarea autofocused.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:41:22",
+        "comment": "Notes window opens below the brand bar with kicker, title, 'Subject · IX', privacy warning, ✕, ruled paper; no autofocus; placeholder regular (RN limit).",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T14:41:22",
+        "comment": "Notes window opens below the brand bar with kicker, title, 'Subject · IX', privacy warning, ✕, ruled paper; no autofocus; placeholder regular (RN limit).",
+        "build": "dev build"
       }
     },
     "06.11": {
@@ -2276,8 +2416,22 @@
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-25T08:43:28",
-        "comment": "Button (now labelled 'Dictate' with a mic) only focuses the paper; counter '{n} / 500 words'; Save closes; reopening shows the saved text. Founder: the button is misleading and redundant — the cursor can be placed by tapping on both surfaces and the phone keyboard has its own voice input → WALK-A-087 (remove it). ✓ re-walked 2026-09-25 after WALK-A-087",
+        "comment": "Button (now labelled 'Dictate' with a mic) only focuses the paper; counter '{n} / 500 words'; Save closes; reopening shows the saved text. Founder: the button is misleading and redundant — the cursor can be placed by tapping on both surfaces and the phone keyboard has its own voice input → WALK-A-087 (remove it). ✓ re-walked 2026-09-25 after WALK-A-087 ✓ re-walked 2026-09-25 after WALK-A-097 (rules under each line).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:01:50",
+        "comment": "Write/dictate via the keyboard mic, counter, Save closes, reopening shows the text. ✓ re-walked 2026-09-25 after WALK-A-091 (Save above the keyboard), WALK-A-087 (Dictate gone), WALK-A-092 (privacy link). ✓ re-walked 2026-09-25 after WALK-A-097 (rules under each line).",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:01:50",
+        "comment": "Write/dictate via the keyboard mic, counter, Save closes, reopening shows the text. ✓ re-walked 2026-09-25 after WALK-A-091 (Save above the keyboard), WALK-A-087 (Dictate gone), WALK-A-092 (privacy link). ✓ re-walked 2026-09-25 after WALK-A-097 (rules under each line).",
+        "build": "dev build"
       }
     },
     "06.12": {
@@ -2287,6 +2441,20 @@
         "at": "2026-09-25T08:43:28",
         "comment": "At 500 the counter turns clay and growing edits are refused (edits/deletes work); saving empty text deletes the note — placeholder back on reopen.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:01:50",
+        "comment": "Counter turns clay at 500 and refuses growth; clearing and saving deletes the note on this device. ✓ re-walked 2026-09-25 after WALK-A-091. Cross-device deletion → WALK-A-094.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:01:50",
+        "comment": "Counter turns clay at 500 and refuses growth; clearing and saving deletes the note on this device. ✓ re-walked 2026-09-25 after WALK-A-091. Cross-device deletion → WALK-A-094.",
+        "build": "dev build"
       }
     },
     "06.14": {
@@ -2296,6 +2464,20 @@
         "at": "2026-09-25T08:43:37",
         "comment": "PARKED — needs a lapsed account; walked in the expired-subscription session (with 05.26, the lapsed half of 05.21, 048).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pending",
+        "by": "Kumar",
+        "at": "2026-09-25T14:43:47",
+        "comment": "PARKED — expired-subscription session.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pending",
+        "by": "Kumar",
+        "at": "2026-09-25T14:43:47",
+        "comment": "PARKED — expired-subscription session.",
+        "build": "dev build"
       }
     },
     "06.13": {
@@ -2303,8 +2485,22 @@
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-25T08:52:17",
-        "comment": "Web half: same note from a second section of the chapter (one note per chapter per year); with DevTools Offline the reopened note still shows. Phone → web half owed at the phone walk.",
+        "comment": "Web half: same note from a second section of the chapter (one note per chapter per year); with DevTools Offline the reopened note still shows. Phone → web half owed at the phone walk. ✓ re-walked 2026-09-25 after WALK-A-094 and WALK-A-096.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:07:55",
+        "comment": "Saved on one device → shows on the others on reopening Notes; cleared on one → empty on the others; offline shows the cached note. ✓ re-walked 2026-09-25 after WALK-A-094 and WALK-A-096.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:07:55",
+        "comment": "Saved on one device → shows on the others on reopening Notes; cleared on one → empty on the others; offline shows the cached note. ✓ re-walked 2026-09-25 after WALK-A-094 and WALK-A-096.",
+        "build": "dev build"
       }
     },
     "06.15": {
@@ -2314,6 +2510,20 @@
         "at": "2026-09-25T08:52:17",
         "comment": "Header kicker + '← Orgn.', '{n}. {title}'; tabs Overview · Material · Lesson (· Assess when items); opens on Lesson; active tab clay with 2px underline; header + tabs frozen, panel scrolls; ← Orgn. returns.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:24:50",
+        "comment": "Header kicker + ← Orgn., '{n}. {title}'; tabs with Assess only when items; opens on Lesson; clay active tab; header + tabs frozen; ← Orgn. (and Android Back) returns.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:24:50",
+        "comment": "Header kicker + ← Orgn., '{n}. {title}'; tabs with Assess only when items; opens on Lesson; clay active tab; header + tabs frozen; ← Orgn. (and Android Back) returns.",
+        "build": "dev build"
       }
     },
     "06.16": {
@@ -2323,6 +2533,20 @@
         "at": "2026-09-25T08:52:17",
         "comment": "Overview ledger rows and empty line; Material bullets, prepared table (caption, mono header, ink rule, source note) / prepared text, and the 'Nothing to prepare' line. No LO on screen — it shows only in the PDF/Word exports, which is the WALK-A-067 rule.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:43:11",
+        "build": "Expo Go",
+        "comment": "Overview rows; 'Nothing to prepare'; no LO. ✓ re-walked 2026-09-25 after WALK-A-098: ≤4-column prepared tables fit the screen with aligned columns (Sci VI ch 02 u21), wider tables as stacked cards with blank lines for empty cells."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:43:11",
+        "build": "dev build",
+        "comment": "Overview rows; 'Nothing to prepare'; no LO. ✓ re-walked 2026-09-25 after WALK-A-098: ≤4-column prepared tables fit the screen with aligned columns (Sci VI ch 02 u21), wider tables as stacked cards with blank lines for empty cells."
       }
     },
     "06.17": {
@@ -2332,6 +2556,20 @@
         "at": "2026-09-25T08:58:07",
         "comment": "Teacher-notes ribbon open by default with '–', closed → one-line italic teaser, 'Refer to Prepared Table…' lead bold; phases with minutes in the left rail, no rule under the last; Homework block with kicker. The '**bold** runs' clause is unreachable — no homework in the library carries bold markup. Other pointer phrasings ('(see materials)' etc.) not bold → WALK-A-088. ✓ re-walked 2026-09-25 after WALK-A-088",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:24:50",
+        "comment": "Ribbon open by default and collapses to a teaser; 'Refer to Prepared Table…' bold; minutes in the rail, no rule under the last phase; Homework on Sci VI ch 01 u2. '(see materials)' not yet bold on the phone → WALK-A-088 phone half. ✓ re-walked 2026-09-25 after WALK-A-088: '(see materials)' bold.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:24:50",
+        "comment": "Ribbon open by default and collapses to a teaser; 'Refer to Prepared Table…' bold; minutes in the rail, no rule under the last phase; Homework on Sci VI ch 01 u2. '(see materials)' not yet bold on the phone → WALK-A-088 phone half. ✓ re-walked 2026-09-25 after WALK-A-088: '(see materials)' bold.",
+        "build": "dev build"
       }
     },
     "06.18": {
@@ -2339,8 +2577,22 @@
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-25T09:12:24",
-        "comment": "Clay strip 'Unit n / N', '‹ Chapter org.' on unit 1, each page lands at the top on Lesson; last unit disabled, or 'Dropped sections →' on Sci VI ch 06 (6 units, below its lowest canonical): 'Dropped n / M', ✦ titles, self-study line, '← Back to unit 6', no bookmark or Mark-complete.",
+        "comment": "Clay strip 'Unit n / N', '‹ Chapter org.' on unit 1, each page lands at the top on Lesson; last unit disabled, or 'Dropped sections →' on Sci VI ch 06 (6 units, below its lowest canonical): 'Dropped n / M', ✦ titles, self-study line, '← Back to unit 6', no bookmark or Mark-complete. ✓ re-walked 2026-09-25 after WALK-A-099.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:24:50",
+        "comment": "'Unit n / N' strip, '‹ Chapter org.' on unit 1, each page at the top; Sci VI ch 06 (6 units) → 'Dropped sections →', ✦ pages, self-study line, no bookmark/Mark complete. Founder suggestion: list dropped units on the org page → WALK-A-099. ✓ re-walked 2026-09-25 after WALK-A-099: dropped units listed (folded) at the foot of Chapter Organization.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:24:50",
+        "comment": "'Unit n / N' strip, '‹ Chapter org.' on unit 1, each page at the top; Sci VI ch 06 (6 units) → 'Dropped sections →', ✦ pages, self-study line, no bookmark/Mark complete. Founder suggestion: list dropped units on the org page → WALK-A-099. ✓ re-walked 2026-09-25 after WALK-A-099: dropped units listed (folded) at the foot of Chapter Organization.",
+        "build": "dev build"
       }
     },
     "06.19": {
@@ -2350,6 +2602,20 @@
         "at": "2026-09-25T09:12:24",
         "comment": "Arrow drags and steps with ↑/↓, snaps to the centre of the nearest phase's minutes and stays; absent on other units, previews and dropped pages. Founder: the phone's light tint when the bookmark moves would be welcome on web too → WALK-A-089. ✓ re-walked 2026-09-25 after WALK-A-089",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Press-and-hold arms the arrow (ring + pine tint that follows it), screen frozen while held, snaps to the phase's minutes on release; absent on other units, previews and dropped pages.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Press-and-hold arms the arrow (ring + pine tint that follows it), screen frozen while held, snaps to the phase's minutes on release; absent on other units, previews and dropped pages.",
+        "build": "dev build"
       }
     },
     "06.20": {
@@ -2359,6 +2625,20 @@
         "at": "2026-09-25T09:12:24",
         "comment": "Web half: bookmark on phase 3 survives a reload. Web ↔ phone half owed at the phone walk.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Bookmark on phase 3 survives killing the app; phone adopts the web's phase on foreground; web adopts the phone's on window focus.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Bookmark on phase 3 survives killing the app; phone adopts the web's phase on foreground; web adopts the phone's on window focus.",
+        "build": "dev build"
       }
     },
     "06.21": {
@@ -2368,6 +2648,20 @@
         "at": "2026-09-25T09:12:24",
         "comment": "Green card (white ✓ on filled green disc · 'Unit complete' · bordered '↺ Undo'); Undo restores the button and pointer; kept → next unit current with the bookmark on the first phase, org rail and My Classes card advance by one; button absent on Overview/Material/Assess and non-current units. Note (founder, accepted): after Undo the bookmark returns to the unit's FIRST phase, not the phase it was on — fine, she re-reads where she is.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Green 'Unit complete' card with ✓ disc and ↺ Undo; Undo restores the button and pointer (bookmark to phase 1, as agreed); kept → next unit current, rail and My Classes card advance.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Green 'Unit complete' card with ✓ disc and ↺ Undo; Undo restores the button and pointer (bookmark to phase 1, as agreed); kept → next unit current, rail and My Classes card advance.",
+        "build": "dev build"
       }
     },
     "06.22": {
@@ -2377,6 +2671,20 @@
         "at": "2026-09-25T11:24:24",
         "comment": "Last unit reads 'Mark chapter complete'; tapped → clay-tinted card '✓ Chapter complete' · '↺ Reopen'; My Classes card clay; reopening lands on the unit, not the org page; Reopen restores the button and the green teaching-now card.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Last unit 'Mark chapter complete' → clay '✓ Chapter complete' · '↺ Reopen'; My Classes card clay; reopening lands on the unit; Reopen restores the button and the green card.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:52:27",
+        "comment": "Last unit 'Mark chapter complete' → clay '✓ Chapter complete' · '↺ Reopen'; My Classes card clay; reopening lands on the unit; Reopen restores the button and the green card.",
+        "build": "dev build"
       }
     },
     "06.23": {
@@ -2386,6 +2694,20 @@
         "at": "2026-09-25T11:24:24",
         "comment": "Web half: Reopen + Undo below the last unit → card green, not clay; pointer and not-complete state hold across a reload. Second-device half owed at the phone walk.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "Reopen + Undo below the last unit → card green on the phone and on the web after reload; pointer and not-complete state survive killing the app.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "Reopen + Undo below the last unit → card green on the phone and on the web after reload; pointer and not-complete state survive killing the app.",
+        "build": "dev build"
       }
     },
     "06.24": {
@@ -2395,6 +2717,20 @@
         "at": "2026-09-25T11:24:24",
         "comment": "Units without items show three tabs; >1 item → pager '← Previous · Question n / N · Next →' under the unit tabs, Previous disabled on the first; paging resets to the item's Overview; pager + item tabs stay put while the item scrolls.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "Three tabs without items; pager under the tabs with Previous disabled on the first; paging resets to Overview; pager + item tabs frozen.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "Three tabs without items; pager under the tabs with Previous disabled on the first; paging resets to Overview; pager + item tabs frozen.",
+        "build": "dev build"
       }
     },
     "06.25": {
@@ -2404,6 +2740,20 @@
         "at": "2026-09-25T11:24:24",
         "comment": "Overview: Competency · bold 'Learning outcome' + text · Section · Question type in full words · Cognitive demand; 'Q{n}.' pine italic beside the first words; Answer/Inclusivity only when populated; 'Question →', 'Answer →', 'Next question →' ride the last row and go where they say.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "Overview rows as specified; 'Q{n}.' pine italic on its own line (RN has no float — named divergence); Answer/Inclusivity only when populated; forward links work.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "Overview rows as specified; 'Q{n}.' pine italic on its own line (RN has no float — named divergence); Answer/Inclusivity only when populated; forward links work.",
+        "build": "dev build"
       }
     },
     "06.26": {
@@ -2413,6 +2763,20 @@
         "at": "2026-09-25T11:51:46",
         "comment": "Question tab class-facing: MCQ options without ticks; True/False statements only (English); compound items with their own A–D lists per sub-question (English IX ch 05 listening item) and SS-style grouping; open task (Science) with What to produce ticks, scaffold lines, collapsible Reading this task; no strong/weak markers.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "MCQ no tick; True/False statements only; compound (English IX ch 05 listening) per-sub-question A–D; open task (Sci VI ch 01 u3) with What to produce ticks, scaffold, ▸/▾ Reading this task; no strong/weak markers.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T15:56:55",
+        "comment": "MCQ no tick; True/False statements only; compound (English IX ch 05 listening) per-sub-question A–D; open task (Sci VI ch 01 u3) with What to produce ticks, scaffold, ▸/▾ Reading this task; no strong/weak markers.",
+        "build": "dev build"
       }
     },
     "06.27": {
@@ -2422,6 +2786,20 @@
         "at": "2026-09-25T11:51:46",
         "comment": "Passage/prose in the green box; diagram full width with readable labels (Maths IX ch 02 u10); number line with axis, ticks, labels, arrows + instruction (Maths VI ch 03 u4); tables with caption above and source note below; word bank headerless (Maths VIII ch 10 u8); listening cue block with pine rule, equaliser and 'Listening passage — p. 263, read aloud'.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "Passage in green box; diagram (Maths IX ch 02 u10) full width with readable labels; number line (Maths VI ch 03 u4); table caption/source note and word bank (Maths VIII ch 10 u8); listening cue (English IX ch 05) with pine rule, equaliser and ref.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "Passage in green box; diagram (Maths IX ch 02 u10) full width with readable labels; number line (Maths VI ch 03 u4); table caption/source note and word bank (Maths VIII ch 10 u8); listening cue (English IX ch 05) with pine rule, equaliser and ref.",
+        "build": "dev build"
       }
     },
     "06.28": {
@@ -2431,6 +2809,20 @@
         "at": "2026-09-25T11:51:46",
         "comment": "MCQ Correct answer '✓' (Q1/Q2 tags on compound) + What each choice reveals; Choice pill popup 'Question N · Choice X' with ✕ top-left, closes on ✕ and backdrop; True/False Answer key rows; per-type answer headings; match pairs 'left → right'.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "MCQ Correct answer ✓ (Q1/Q2 on compound) + choice reveals; Choice pill popup with ✕ top-left, closes on ✕ and backdrop (pine for the web's assess green — named); True/False Answer key; per-type answer headings; match pairs left → right.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "MCQ Correct answer ✓ (Q1/Q2 on compound) + choice reveals; Choice pill popup with ✕ top-left, closes on ✕ and backdrop (pine for the web's assess green — named); True/False Answer key; per-type answer headings; match pairs left → right.",
+        "build": "dev build"
       }
     },
     "06.29": {
@@ -2440,6 +2832,20 @@
         "at": "2026-09-25T11:51:46",
         "comment": "Inclusivity: Support / Stretch / Challenge bold and title-cased, maths on separate rows; legacy item card as specified.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "Support / Stretch / Challenge bold, title-cased; maths on separate rows.",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "Support / Stretch / Challenge bold, title-cased; maths on separate rows.",
+        "build": "dev build"
       }
     },
     "06.30": {
@@ -2449,6 +2855,20 @@
         "at": "2026-09-25T12:05:10",
         "comment": "Dark theme (≤600px) pass over org page, a unit (tabs, pager, bookmark), notes foot row, Assess pager, done cards and the Teaching now pills — nothing overlaps, truncates or loses contrast; browser zoom 120% likewise. Empty-plan half: no unit-less plan exists in the library.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "Dark + Text size Larger (1.2×): org page (incl. folded Dropped units), unit tabs/pager/bookmark, notes (privacy link, rules, Save row), Assess pager, done cards, stacked and fitted tables — nothing overlaps or truncates. Empty-plan half not reachable (no unit-less plan in the library).",
+        "build": "Expo Go"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T16:03:59",
+        "comment": "Dark + Text size Larger (1.2×): org page (incl. folded Dropped units), unit tabs/pager/bookmark, notes (privacy link, rules, Save row), Assess pager, done cards, stacked and fitted tables — nothing overlaps or truncates. Empty-plan half not reachable (no unit-less plan in the library).",
+        "build": "dev build"
       }
     }
   },
@@ -4269,7 +4689,7 @@
     {
       "id": "WALK-A-087",
       "opened": "2026-09-25T08:43:28",
-      "closed": "",
+      "closed": "2026-09-25T15:01:50",
       "feature": "06.11",
       "found_on": [
         "web"
@@ -4277,22 +4697,19 @@
       "applies_to": "both",
       "title": "Remove the Dictate (mic) button from chapter notes",
       "what": "Founder, 2026-09-25: the button (renamed Speak → Dictate on 2026-09-17) only puts the cursor in the writing area. On the web that is a near no-op; on the phone tapping the paper does the same and the keyboard's own mic does the dictation. A mic in Meyy still suggests Meyy is listening. Remove it on both surfaces; the word counter keeps the left of the footer.",
-      "fix": "[FIXED web 2026-09-25T12:06:01] The Dictate (cn-speak) button and its CSS are removed from the notes foot; the word counter holds the left. The textarea still autofocuses on open. Phone half owed (ChapterOrg.jsx cn_speak + MicIcon, web.js cn_speak*).\n[RE-WALKED web 2026-09-25] PASS: no mic button; counter left, Save right; paper autofocused.",
+      "fix": "[FIXED web 2026-09-25T12:06:01] The Dictate (cn-speak) button and its CSS are removed from the notes foot; the word counter holds the left. The textarea still autofocuses on open. Phone half owed (ChapterOrg.jsx cn_speak + MicIcon, web.js cn_speak*).\n[RE-WALKED web 2026-09-25] PASS: no mic button; counter left, Save right; paper autofocused.\n[FIXED phone 2026-09-25T14:48:15] Done with 091 (same foot): the Dictate Pressable and MicIcon are removed from ChapterOrg.jsx; the counter holds the left of the foot.\n[RE-WALKED ios + and_emu 2026-09-25] PASS: no Dictate button in the notes foot.",
       "files": "web/app/components/LessonView.jsx (cn-speak), web/app/globals.css (.cn-speak*), mobile/components/lesson/ChapterOrg.jsx (cn_speak, MicIcon), mobile/theme/web.js (cn_speak*)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "ios",
-        "and_emu"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-25T08:43:28"
     },
     {
       "id": "WALK-A-088",
       "opened": "2026-09-25T08:52:17",
-      "closed": "",
+      "closed": "2026-09-25T15:43:11",
       "feature": "06.17",
       "found_on": [
         "web"
@@ -4300,15 +4717,12 @@
       "applies_to": "both",
       "title": "Bold every material pointer in teacher notes, not only 'Refer to Prepared Table…'",
       "what": "Founder, 2026-09-25: the bold is matched only on a leading 'Refer to Prepared Table…' sentence (LessonView POINTER regex, web + phone). Most notes point differently — Science VI ch 02: '…are ready to use (see materials).' Library survey of teacher_notes: '(see material: …)', '(see materials)', '(see visual aid: …)', '(see visual aids)', '(see materials and visual aids)' — ~91 notes. Make the pointer bold wherever it sits, keeping the existing lead rule.",
-      "fix": "[FIXED web 2026-09-25T12:06:01] LessonPanel: new boldPointers() bolds every '(see material…/materials…/visual aid(s)…)' bracket anywhere in the teacher notes (same .uv-tnotes-ref weight), after the unchanged leading 'Refer to Prepared Table…' rule. Regex verified on the four library shapes. Phone half owed (mobile/components/LessonView.jsx).\n[RE-WALKED web 2026-09-25] PASS: '(see materials)' bold in Science VI ch 02; leading 'Refer to Prepared Table…' still bold.",
+      "fix": "[FIXED web 2026-09-25T12:06:01] LessonPanel: new boldPointers() bolds every '(see material…/materials…/visual aid(s)…)' bracket anywhere in the teacher notes (same .uv-tnotes-ref weight), after the unchanged leading 'Refer to Prepared Table…' rule. Regex verified on the four library shapes. Phone half owed (mobile/components/LessonView.jsx).\n[RE-WALKED web 2026-09-25] PASS: '(see materials)' bold in Science VI ch 02; leading 'Refer to Prepared Table…' still bold.\n[FIXED phone 2026-09-25T15:24:50] mobile/components/LessonView.jsx: same MATERIAL_POINTER + boldPointers() as the web, applied to the notes paragraph after the leading 'Refer to Prepared Table…' rule.\n[RE-WALKED ios, and_emu 2026-09-25] PASS",
       "files": "web/app/components/LessonView.jsx (LessonPanel POINTER), mobile/components/LessonView.jsx (POINTER)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "ios",
-        "and_emu"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-25T08:52:17"
     },
@@ -4343,7 +4757,7 @@
       "applies_to": "both",
       "title": "My Lessons unit page names the classes teaching the chapter, as capsules that open each class's lesson",
       "what": "Founder, 2026-09-25: the My Lessons preview and a class's own lesson look identical, so a teacher reading the preview goes looking for her bookmark and Mark complete. Decision (option A of docs/mockups/lesson-preview-section-capsules.html): on My Lessons UNIT pages only (not the org page), under the kicker, kicker-sized capsules for every section the chapter is attached to and not finished (not-yet-begun included, completed excluded), one Meyy hue each (pine · clay · ochre · dark pine); tapping opens that section's lesson on its current unit. The unit title moves down a row. No attached section → no row.",
-      "fix": "[FIXED web 2026-09-25T09:31:05] LessonView gains `teaching`/`onOpenTeaching` and renders `.lv-secs` in the preview unit header (preview && !showFullPlan). MyLessonPlans builds the list from readLocalSection (same source as statusFor's 'Teaching now'), label = her section name or the tag, profile order, and calls page.jsx onOpenSection(…, {unit:true}) — the existing deep-link — which now carries `unit` through pendingOpen to MyPlans, and LessonView lands on the current unit (the tourUnit override) instead of the org page. CSS .lv-sec-1..4 via color-mix on --paper so dark follows. check-tdz clean. Phone half owed.\n[AMENDED web 2026-09-25T09:35:22] Founder: the kicker already names the class, so capsules show the SECTION only (her name for it, else the letter) with a small 'Teaching now' label at the left (founder's wording; was 'Click for section') (.lv-secs-lab, 10px mono ink-soft). Same label on the phone.\n[AMENDED web 2026-09-25T09:37:51] Capsule style → option 1 of docs/mockups/lesson-preview-capsule-styles.html (founder): solid pill in the section's hue, white letter + '→', lifts on hover.\n[RE-WALKED web 2026-09-25] PASS: solid pills only on My Lessons unit pages, each opens its section on the current unit; absent on Chapter Organization and with no attached section; Science IX ch 02 shows all its attached sections. Web half done; phone half owed.",
+      "fix": "[FIXED web 2026-09-25T09:31:05] LessonView gains `teaching`/`onOpenTeaching` and renders `.lv-secs` in the preview unit header (preview && !showFullPlan). MyLessonPlans builds the list from readLocalSection (same source as statusFor's 'Teaching now'), label = her section name or the tag, profile order, and calls page.jsx onOpenSection(…, {unit:true}) — the existing deep-link — which now carries `unit` through pendingOpen to MyPlans, and LessonView lands on the current unit (the tourUnit override) instead of the org page. CSS .lv-sec-1..4 via color-mix on --paper so dark follows. check-tdz clean. Phone half owed.\n[AMENDED web 2026-09-25T09:35:22] Founder: the kicker already names the class, so capsules show the SECTION only (her name for it, else the letter) with a small 'Teaching now' label at the left (founder's wording; was 'Click for section') (.lv-secs-lab, 10px mono ink-soft). Same label on the phone.\n[AMENDED web 2026-09-25T09:37:51] Capsule style → option 1 of docs/mockups/lesson-preview-capsule-styles.html (founder): solid pill in the section's hue, white letter + '→', lifts on hover.\n[RE-WALKED web 2026-09-25] PASS: solid pills only on My Lessons unit pages, each opens its section on the current unit; absent on Chapter Organization and with no attached section; Science IX ch 02 shows all its attached sections. Web half done; phone half owed.\n[FIXED phone 2026-09-25T16:04:40] lessons.jsx openLesson passes `teaching` (attached, not finished; section-only label) as a JSON param; lesson.jsx parses it and hands LessonView `teaching` + `onOpenTeaching` (router.push to /lesson with that section and unit=1, which lands on the current unit like the tour flag). LessonView renders 'Teaching now' + solid pills (pine · clay · ochre · dark pine, white letter + →) in the unit header only when not tracking. Back from the class's lesson returns to the preview.",
       "files": "web/app/components/LessonView.jsx, web/app/components/MyLessonPlans.jsx, web/app/components/MyPlans.jsx, web/app/page.jsx, web/app/globals.css",
       "commit": "",
       "native_rebuild": false,
@@ -4354,6 +4768,218 @@
       ],
       "owner": "Kumar",
       "at": "2026-09-25T09:31:05"
+    },
+    {
+      "id": "WALK-A-091",
+      "opened": "2026-09-25T14:41:22",
+      "closed": "2026-09-25T15:01:50",
+      "feature": "06.11",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Chapter notes: the keyboard covers the Save row (fully on Android, half on iPhone)",
+      "what": "Founder, 2026-09-25, phone walk 06.11: typing a note raises the keyboard over the notes window's foot. Android: Save completely hidden; iPhone: Save only half visible. Likely cause (ChapterOrg.jsx ChapterNotesModal): the Modal is statusBarTranslucent and the KeyboardAvoidingView has behavior undefined on Android, so nothing shrinks the sheet; on iOS the tall header (title, class, privacy warning) plus the paper's 128px minHeight leave the foot below the keyboard's top edge. Fix at the phone fix point; the foot must sit fully above the keyboard on both. Android also: 06.12 (500-word cap, delete by saving empty) could not be walked at all — Save unreachable, paste not exercisable in the emulator.",
+      "fix": "[FIXED phone 2026-09-25T14:48:15] Fixed mid-walk as a blocker (founder: Android could not save a note at all). ChapterNotesModal: KeyboardAvoidingView removed; the keyboard's height is read from its own events (iOS keyboardWillShow/Hide, Android keyboardDidShow/Hide) and given back as the container's paddingBottom, minus any amount the window itself already shrank (so an Android device that does resize is never padded twice). With the keyboard up the scrim's foot padding drops 20 → 8. cn_paper_wrap minHeight 128 → 96 so the sheet gives before the foot. JS only — no native rebuild. check-tdz clean.\n[RE-WALKED ios + and_emu 2026-09-25] PASS: Save row wholly above the keyboard on both phones.",
+      "files": "mobile/components/lesson/ChapterOrg.jsx (ChapterNotesModal), mobile/theme/web.js (cn_modal / cn_paper_wrap)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T14:41:22"
+    },
+    {
+      "id": "WALK-A-092",
+      "opened": "2026-09-25T14:49:36",
+      "closed": "2026-09-25T15:01:50",
+      "feature": "06.10",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "Chapter notes: fold the child-privacy sentence behind a small red '(Privacy warning)' link beside the kicker",
+      "what": "Founder, 2026-09-25: the always-open privacy paragraph costs the writing area its room (sharpest with the keyboard up). Put it behind a link reading '(Privacy warning)', red, smaller than the kicker, next to 'Chapter notes'; the sentence itself is unchanged. All three surfaces.",
+      "fix": "[FIXED web + phone 2026-09-25T14:49:36] Web LessonView ChapterNotesModal: .cn-kline row = kicker + button.cn-privlink (9.5px mono, #d63a2f, underlined, aria-expanded) toggling the existing .cn-warn sentence under the class line. Phone ChapterOrg ChapterNotesModal: same row (Pressable, accessibilityState expanded), same toggle. Sentence text untouched. check-tdz clean.\n[RE-WALKED ios + and_emu 2026-09-25] PASS: '(Privacy warning)' link opens and closes the sentence on web, iPhone and Android.",
+      "files": "web/app/components/LessonView.jsx, web/app/globals.css, mobile/components/lesson/ChapterOrg.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T14:49:36"
+    },
+    {
+      "id": "WALK-A-093",
+      "opened": "2026-09-25T14:54:11",
+      "closed": "2026-09-25T15:07:55",
+      "feature": "06.11",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "Chapter notes: drop the ruled lines; smaller type, tighter leading (all surfaces)",
+      "what": "Founder, 2026-09-25: on the web the note text sits just above each rule; on iPhone and Android it sits on the line (the 2026-09-17 lift of 4px was not enough). The 9px lift did not align either. Founder's decision: get rid of the lines, reduce the font and the line spacing so more of the note fits.",
+      "fix": "[FIXED phone 2026-09-25T14:54:11] mobile/theme/web.js: CN_TEXT_LIFT 4 → 9; since padding cannot go negative, the lift past the web's 5px is a negative marginTop on the TextInput (rules are separate absolute Views and do not move); includeFontPadding false (Android's extra ascent padding). JS only.\n[REPLACED 2026-09-25T15:01:42] Ruled lines removed on web (.cn-paper gradient) and phone (cn_rule Views). Type 16/32 → 14/21 on the phone and web desktop; web ≤600px keeps 16px (23px leading) because iOS Safari zooms on focused fields under 16px. CN_TEXT_LIFT retired (0). JS/CSS only.\n[RE-WALKED web + ios + and_emu 2026-09-25] PASS",
+      "files": "mobile/theme/web.js (cn_paper, CN_TEXT_LIFT)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T14:54:11"
+    },
+    {
+      "id": "WALK-A-094",
+      "opened": "2026-09-25T15:01:42",
+      "closed": "2026-09-25T15:07:55",
+      "feature": "06.13",
+      "found_on": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "A chapter note emptied and saved on one device comes back on the others",
+      "what": "Founder, 2026-09-25: clearing all the text and saving does not reach other devices; changing it to even one letter does. Cause: emptying deletes the note on the server, and on the other device's next open the reconcile found no server copy but a cached one — and treated it as a pre-server (legacy) note, lifting it back up. Deletion was undone by every other device that had it cached.",
+      "fix": "[FIXED web + phone 2026-09-25T15:01:42] A per-note `{notesKey}__synced` marker is set when this device sees the note on the server or saves it there successfully. On open, no server copy + a cached copy: synced → deleted elsewhere, so the cache is cleared and the paper shows empty; never synced → the one-time legacy lift, as before. Same code on web LessonView and phone ChapterOrg. Markers are new, so a device must open the note once (seeing it on the server) before a deletion elsewhere can clear it.\n[RE-WALKED web + ios + and_emu 2026-09-25] PASS",
+      "files": "web/app/components/LessonView.jsx, mobile/components/lesson/ChapterOrg.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T15:01:42"
+    },
+    {
+      "id": "WALK-A-095",
+      "opened": "2026-09-25T15:03:37",
+      "closed": "2026-09-25T15:07:55",
+      "feature": "06.10",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Chapter notes guide text (the grey five lines) is spaced differently on Android than on iPhone",
+      "what": "Founder, 2026-09-25, after WALK-A-093: the grey guide lines in an empty note are not spaced on Android as they are on the iPhone. Cause: the guide was the TextInput placeholder; Android ignores lineHeight for placeholders.",
+      "fix": "[FIXED phone 2026-09-25T15:03:37] The placeholder prop is gone; the guide (or the read-only 'No notes were written…') is an absolutely positioned Text with the same cn_paper style in #b3ab9c, shown while the note is empty, pointerEvents none so taps reach the input. JS only.\n[RE-WALKED web + ios + and_emu 2026-09-25] PASS",
+      "files": "mobile/components/lesson/ChapterOrg.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T15:03:37"
+    },
+    {
+      "id": "WALK-A-096",
+      "opened": "2026-09-25T15:04:55",
+      "closed": "2026-09-25T15:07:55",
+      "feature": "06.13",
+      "found_on": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "A note saved on one device shows on another only after leaving the chapter and coming back",
+      "what": "Founder, 2026-09-25: after saving a note on one device, the other device had to close Notes, go back to the section card, reopen the lesson and open Notes to see it. The reconcile with the server ran only when the chapter page mounted.",
+      "fix": "[FIXED web + phone 2026-09-25T15:04:55] The reconcile is now `syncNote()`; it runs on mount AND every time the Notes tab is tapped (`openNotes`), which opens the window once the server has answered, or after 1.5s on the cached copy if it has not. A window already open does not change under her while she types — reopening is the refresh point.\n[RE-WALKED web + ios + and_emu 2026-09-25] PASS",
+      "files": "web/app/components/LessonView.jsx, mobile/components/lesson/ChapterOrg.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T15:04:55"
+    },
+    {
+      "id": "WALK-A-097",
+      "opened": "2026-09-25T15:08:13",
+      "closed": "2026-09-25T15:11:41",
+      "feature": "06.11",
+      "found_on": [
+        "web",
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "Chapter notes: bring back a light rule under each line",
+      "what": "Founder, 2026-09-25: plain paper (093) reads dull; put a light line below each line of writing.",
+      "fix": "[FIXED web + phone 2026-09-25T15:08:13] Rules at the TEXT'S OWN PITCH: one per line box (21px; 23px on the web ≤600px), offset by the 10px top padding, colour --line. Web: repeating-linear-gradient with background-position 0 10px, attachment local. Phone: absolute cn_rule Views at PAD_T + LH*(i+1) − 1, LH/PAD_T read from cn_paper so they cannot drift. Leading is now 7px (was 16), which is why the old seating difference between engines no longer lifts text onto the rule.\n[WEB PASS 2026-09-25] Founder: web rules neatly placed.\n[PHONE SECOND PASS 2026-09-25T15:10:00] Founder: on the phones the computed 21px grid drifts off the writing ('random'). Now measured: a hidden mirror Text with cn_paper style and the same words reports its line boxes via onTextLayout; a rule goes under each (padding added when the platform reports from the text origin), and the measured pitch continues down the empty paper.\n[RE-WALKED web + ios + and_emu 2026-09-25] PASS: a light rule under each written line, aligned all the way down on all three.",
+      "files": "web/app/globals.css, mobile/components/lesson/ChapterOrg.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T15:08:13"
+    },
+    {
+      "id": "WALK-A-098",
+      "opened": "2026-09-25T15:24:50",
+      "closed": "2026-09-25T15:43:11",
+      "feature": "06.16",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Phone prepared tables: columns misaligned (each row sizes its own columns)",
+      "what": "Founder, 2026-09-25: Science VI ch 02 unit 21 — the prepared table's columns do not line up on the phone as they do on the web. AidTable gave each cell only a minWidth of 110, so every row sized its columns to its own words.",
+      "fix": "[FIXED phone 2026-09-25T15:24:50] AidTable computes ONE width per column from content weight (longest entry, header ×1.35 for spaced mono caps, ×6.4px +22, clamped 88–240) and applies it to every cell in that column; when the total fits the screen it stretches to fill (the web's width:100%), otherwise the horizontal scroll carries it. s.cell minWidth retired.\n[SECOND PASS 2026-09-25T15:35:13] iPhone good; Android could not scroll to the third column of Sci VI ch 02 u21. Content container and inner View now carry width = Σ column widths; caption wraps within the visible width; horizontal scrollbar visible (persistentScrollbar on Android); nestedScrollEnabled.\n[THIRD PASS 2026-09-25T15:38:39] Android still could not reach the 3rd column. Tables of ≤4 columns now always FIT the screen: content-weighted widths shared across the available width (64px floor, the long column wraps), so no sideways scroll is needed. Available width corrected to exclude the material box's padding + border (it had been 28px too wide). Wider tables (e.g. the 7-column Sci VI ch 02 template) still scroll — founder to decide on a stacked layout for those.\n[FOURTH PASS 2026-09-25T15:42:02] Founder chose option (b): on the phone a prepared table wider than four columns renders as stacked cards — first column as the card's heading (display face), each other column as a 'HEADER  value' line (header in the table's mono caps, 42% width); an empty cell draws a blank rule, since on a template the blank is the content. No sideways scroll anywhere. Phone only; web keeps its grid (a named divergence).\n[RE-WALKED ios, and_emu 2026-09-25] PASS",
+      "files": "mobile/components/LessonView.jsx (AidTable)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T15:24:50"
+    },
+    {
+      "id": "WALK-A-099",
+      "opened": "2026-09-25T15:24:50",
+      "closed": "2026-09-25T15:43:11",
+      "feature": "06.18",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "List dropped units on Chapter Organization under a 'Dropped units' heading",
+      "what": "Founder, 2026-09-25: dropped units (a below-floor plan's self-study units) do not appear on the org page at all — reachable only by paging past the last unit. Show them under a 'Dropped units' heading, without serial numbers, one card per unit; still never tracked; internal treatment unchanged.",
+      "fix": "[FIXED web + phone 2026-09-25T15:24:50] ChapterOrg gains `dropped` (LessonView's droppedUnits). At the foot of the map, after every layout branch: kicker 'Dropped units', italic 'For self-study · not scheduled', then a quiet dashed card per unit with ✦ instead of a number, title, →, and no status/time; tap → onOpenUnit(units.length + j), the same dropped page the strip reaches. No pointer, ticks or completion touch them.\n[AMENDED web + phone 2026-09-25T15:29:01] Founder: fold it. The heading is now a toggle — 'Dropped units (N)' with a chevron — closed by default; the self-study line and the cards show only when opened.\n[RE-WALKED web, ios, and_emu 2026-09-25] PASS",
+      "files": "web/app/components/LessonView.jsx, web/app/globals.css (.co-dropped*, .co-card.dropped), mobile/components/lesson/ChapterOrg.jsx, mobile/components/LessonView.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T15:24:50"
+    },
+    {
+      "id": "WALK-A-100",
+      "opened": "2026-09-25T15:26:43",
+      "closed": "2026-09-25T15:43:11",
+      "feature": "05.01",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "My Classes section card: show the plan's duration next to 'Ch {x}' in the kicker",
+      "what": "Founder, 2026-09-25: beside 'CH {x}' on the section card, add the duration × periods in the same font, colour and size.",
+      "fix": "[FIXED web + phone 2026-09-25T15:26:43] The kicker appends ' · {duration_label}' — the server's own label from /plans (api/data.py duration_label, e.g. '40 min × 12' or '40 min × 10 · 30 min × 4'), the same string the My Lessons card prints — in both the banded ('Ch 4 · …') and unbanded ('Science · Ch 4 · …') kickers. No label → nothing added.\n[RE-WALKED web, ios, and_emu 2026-09-25] PASS",
+      "files": "web/app/components/MyPlans.jsx, mobile/app/(app)/index.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-25T15:26:43"
     }
   ]
 }

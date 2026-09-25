@@ -7,7 +7,7 @@
  * accordion of groups. Tapping a unit card opens it (navigation only; the pointer is unmoved).
  * Chapter notes ride the shared plan-notes helpers — server authoritative, device cache. */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, Modal, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, ScrollView, Pressable, Modal, StyleSheet, Keyboard, Platform } from "react-native";
 import { Text, TextInput } from "../Text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
@@ -244,17 +244,6 @@ function UnitRow({ ws, i, u, st, edges, dimmed, open, rule, pad2, onOpenUnit, on
 }
 
 /* ── the notes modal ── */
-function MicIcon({ color }) {
-  return (
-    <Svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={color}
-      strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <Rect x={9} y={2} width={6} height={12} rx={3} />
-      <Path d="M5 11a7 7 0 0 0 14 0" />
-      <Path d="M12 18v4M8 22h8" />
-    </Svg>
-  );
-}
-
 /* ───────── Chapter notes — the web's .cn-* window (aligned 2026-09-14) ─────────
  * A CENTRED CARD over a dimmed page. It was a pageSheet sliding up from the foot, which is a
  * different object to the hand even before any styling: the web's is a 468-wide modal you tap
@@ -271,14 +260,67 @@ const RULE_H = 32;
 function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave, onClose, readOnly }) {
   const insets = useSafeAreaInsets();
   const [text, setText] = useState(initial || "");
+  const [showWarn, setShowWarn] = useState(false);   // WALK-A-092: the warning behind a link
   const [paperH, setPaperH] = useState(0);      // the visible sheet
   const [contentH, setContentH] = useState(0);  // how far the writing actually runs
   const ref = useRef(null);
+  /* ★ THE KEYBOARD IS MEASURED, NOT AVOIDED (WALK-A-091, founder 2026-09-25: "the keyboard covers
+     Save" — fully on Android, half on the iPhone; on Android a note could not be saved at all).
+     This used KeyboardAvoidingView, which did nothing on Android (behavior undefined, and this
+     Modal is statusBarTranslucent, so the window is not resized for the keyboard either) and on
+     iOS left the foot short by the scrim's own 20px bottom padding. Now the keyboard's height is
+     read from its own events and given back as bottom padding, so the card — flex: 1 under its
+     cap, head and foot flexShrink: 0 — ends exactly at the keyboard's top edge and the SHEET is
+     what gives. If Android DOES resize the window (a device with adjustResize honoured inside a
+     Modal), the container's own height has already shrunk by that much, and only the difference
+     is padded — never both. */
+  const [kb, setKb] = useState(0);            // keyboard height, 0 when down
+  const baseH = useRef(0);                    // container height with the keyboard down
+  const [curH, setCurH] = useState(0);        // container height now
+  useEffect(() => {
+    const show = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hide = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const s1 = Keyboard.addListener(show, (e) => setKb((e && e.endCoordinates && e.endCoordinates.height) || 0));
+    const s2 = Keyboard.addListener(hide, () => setKb(0));
+    return () => { s1.remove(); s2.remove(); };
+  }, []);
+  const shrunk = baseH.current && curH ? Math.max(0, baseH.current - curH) : 0;
+  const kbPad = Math.max(0, kb - shrunk);
   const wc = cnWordCount(text);
   const change = (v) => { if (cnWordCount(v) > CN_CAP && cnWordCount(v) > wc) return; setText(v); };
 
   // Enough rules to cover whichever is taller — the sheet, or the writing running past it.
-  const ruled = Math.ceil(Math.max(paperH, contentH) / RULE_H) + 1;
+  /* ★ THE RULES ARE BACK, AT THE TEXT'S OWN PITCH (WALK-A-097, founder 2026-09-25: "put a light
+     line below each line … it looks a bit dull otherwise"). The old rules failed because they
+     sat on a 32px grid under 16px type with 16px of leading, and the two engines seat glyphs
+     differently inside that much leading. Now the pitch IS the line height (21) and the leading
+     is only 7px, so each rule is the bottom edge of its own line box — under the descenders on
+     both platforms — starting after the same paddingTop the text starts after. */
+  const LH = (ws.cn_paper && ws.cn_paper.lineHeight) || 21;
+  const PAD_T = (ws.cn_paper && ws.cn_paper.paddingTop) || 10;
+  /* ★ MEASURED, NOT COMPUTED (WALK-A-097 second pass, founder: "on mobile [the lines are] random
+     in relation to text lines"). A multiline TextInput does not reliably space its lines at the
+     lineHeight it is given — iOS's text view and Android's EditText each apply it their own way —
+     so a grid at `LH` drifts off the writing line by line. A hidden Text with the SAME style and
+     the SAME words reports where each of its lines actually falls (onTextLayout); a rule goes
+     under each of those, and past the last written line the measured pitch carries on down the
+     empty paper. Text and TextInput share the platform's line breaking, which is what makes the
+     mirror's lines the input's lines. */
+  const [mLines, setMLines] = useState([]);
+  const lineFeet = (() => {
+    if (!mLines.length) return [];
+    // onTextLayout reports y from the text's own origin on some platforms and from the view's
+    // (padding included) on others; a first line starting near 0 means the padding is not in it.
+    const off = mLines[0].y < PAD_T / 2 ? PAD_T : 0;
+    return mLines.map((l) => off + l.y + l.height);
+  })();
+  const pitch = lineFeet.length > 1 ? (lineFeet[lineFeet.length - 1] - lineFeet[0]) / (lineFeet.length - 1) : LH;
+  const ruleTops = (() => {
+    const tops = lineFeet.length ? lineFeet.slice() : [PAD_T + LH];
+    const floor = Math.max(paperH, contentH) + pitch;
+    while (tops[tops.length - 1] + pitch < floor) tops.push(tops[tops.length - 1] + pitch);
+    return tops;
+  })();
 
   return (
     /* ★ IT OPENS BELOW THE BAR (founder, 2026-09-14). The window covered the top bar, and the
@@ -296,19 +338,37 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
        named in the component that makes it. **Do not "fix" either surface to match the other
        without asking again.** */
     <Modal visible transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
-      <KeyboardAvoidingView style={{ flex: 1, paddingTop: insets.top + BAR_CONTENT_H }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <Pressable style={ws.cn_scrim} onPress={onClose}>
+      <View style={{ flex: 1, paddingTop: insets.top + BAR_CONTENT_H, paddingBottom: kbPad }}
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          if (!kb && h > baseH.current) baseH.current = h;   // the keyboard-down height
+          setCurH(h);
+        }}>
+        {/* With the keyboard up the scrim's 20px foot padding is the gap that hid half of Save
+            on the iPhone; the card may sit close to the keyboard instead. */}
+        <Pressable style={[ws.cn_scrim, kb ? { paddingBottom: 8 } : null]} onPress={onClose}>
           <Pressable style={[ws.cn_modal, { backgroundColor: t.paper, borderColor: t.line }]} onPress={() => {}}>
             <View style={[ws.cn_head, { borderBottomColor: t.line_soft }]}>
               <View style={{ flex: 1 }}>
-                <Text style={ws.kicker}>Chapter notes</Text>
+                {/* WALK-A-092 (founder, 2026-09-25): the child-privacy sentence folds behind a small
+                    red "(Privacy warning)" beside the kicker — the room goes to the writing. */}
+                <View style={{ flexDirection: "row", alignItems: "baseline", flexWrap: "wrap", columnGap: 8 }}>
+                  <Text style={ws.kicker}>Chapter notes</Text>
+                  <Pressable onPress={() => setShowWarn((v) => !v)} hitSlop={8}
+                    accessibilityRole="button" accessibilityState={{ expanded: showWarn }}
+                    accessibilityLabel="Privacy warning">
+                    <Text style={{ fontFamily: ws.cn_sg.fontFamily, fontSize: 9.5, letterSpacing: 0.4,
+                      color: "#d63a2f", textDecorationLine: "underline" }}>(Privacy warning)</Text>
+                  </Pressable>
+                </View>
                 <Text style={ws.cn_title}>{chapterTitle}</Text>
                 {subjectGrade ? <Text style={ws.cn_sg}>{subjectGrade}</Text> : null}
-                <Text style={[ws.cn_scope, ws.cn_warn, { borderTopColor: t.line }]}>
-                  Private data like name, age of child must not be recorded. Meyy reserves
-                  right to delete if entered.
-                </Text>
+                {showWarn ? (
+                  <Text style={[ws.cn_scope, ws.cn_warn, { borderTopColor: t.line }]}>
+                    Private data like name, age of child must not be recorded. Meyy reserves
+                    right to delete if entered.
+                  </Text>
+                ) : null}
               </View>
               <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel="Close">
                 <Text style={ws.cn_x}>✕</Text>
@@ -318,18 +378,36 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
             <View style={ws.cn_paper_wrap} onLayout={(e) => setPaperH(e.nativeEvent.layout.height)}>
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={{ minHeight: paperH }}>
-                  {Array.from({ length: ruled }).map((_, i) => (
-                    <View key={i} pointerEvents="none" style={[ws.cn_rule, { top: RULE_H * (i + 1) - 1 }]} />
+                  {ruleTops.map((top, i) => (
+                    <View key={i} pointerEvents="none" style={[ws.cn_rule, { top: Math.round(top) - 1 }]} />
                   ))}
+                  {/* The mirror: invisible, untouchable, same style and words as the input. A
+                      trailing zero-width space keeps a final empty line (after Return) counted. */}
+                  <Text pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants"
+                    onTextLayout={(e) => setMLines(e.nativeEvent.lines || [])}
+                    style={[ws.cn_paper, { position: "absolute", top: 0, left: 0, right: 0, opacity: 0 }]}>
+                    {(text || (readOnly ? "No notes were written for this chapter." : CN_GUIDE)) + "\u200b"}
+                  </Text>
                   {/* No autoFocus: the window opens whole — the child-privacy rule is readable
                       before the keyboard covers half the screen — and the sheet only gives up
-                      its room once she taps to write. "Dictate" focuses it too. */}
+                      its room once she taps to write. */}
                   <TextInput ref={ref} multiline scrollEnabled={false}
                     editable={!readOnly} value={text} onChangeText={change}
                     onContentSizeChange={(e) => setContentH(e.nativeEvent.contentSize.height)}
-                    placeholder={readOnly ? "No notes were written for this chapter." : CN_GUIDE}
-                    placeholderTextColor="#b3ab9c" textAlignVertical="top"
+                    textAlignVertical="top"
                     style={[ws.cn_paper, { minHeight: paperH }]} />
+                  {/* ★ THE GUIDE IS DRAWN, NOT A PLACEHOLDER (WALK-A-095, founder 2026-09-25: the
+                      grey guide lines were spaced differently on Android than on the iPhone).
+                      Android lays out a TextInput's placeholder with its own leading and ignores
+                      lineHeight; iOS honours it. A Text with the SAME cn_paper style, sitting
+                      exactly where the writing starts, spaces identically on both — and it is
+                      pointerEvents none, so a tap still lands in the input underneath. */}
+                  {!text ? (
+                    <Text pointerEvents="none"
+                      style={[ws.cn_paper, { position: "absolute", top: 0, left: 0, right: 0, color: "#b3ab9c" }]}>
+                      {readOnly ? "No notes were written for this chapter." : CN_GUIDE}
+                    </Text>
+                  ) : null}
                 </View>
               </ScrollView>
             </View>
@@ -343,21 +421,9 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
               ) : (
                 <>
                   <View style={ws.cn_foot_l}>
-                    {/* ★ IT WAS CALLED "Speak", AND IT DOES NOT LISTEN (founder, 2026-09-17,
-                        answering Q18). All this control has ever done — on BOTH surfaces — is
-                        put the cursor in the writing area; the dictation is the KEYBOARD's, on
-                        its own mic key. The founder kept the behaviour and renamed the button,
-                        which is the honest half: a mic labelled "Speak" promises that Meyy is
-                        listening, and a teacher who speaks at it and finds nothing written
-                        learns that this app's buttons cannot be taken at their word.
-                        ⚠️ The accessibility label says what actually happens, because a screen
-                        reader user gets no keyboard-mic affordance from the icon. */}
-                    <Pressable onPress={() => ref.current && ref.current.focus()} style={ws.cn_speak}
-                      accessibilityRole="button"
-                      accessibilityLabel="Start writing — then use your keyboard's mic to dictate">
-                      <MicIcon color={t.ink_soft} />
-                      <Text style={ws.cn_speak_t}>Dictate</Text>
-                    </Pressable>
+                    {/* The "Dictate" button is GONE (WALK-A-087, founder 2026-09-25). It only put the
+                        cursor in the paper — tapping the paper does that — and the dictation is the
+                        keyboard's own mic. A mic inside Meyy promised that Meyy was listening. */}
                     <Text style={[ws.cn_count, wc >= CN_CAP && ws.cn_count_over]}>{wc} / {CN_CAP} words</Text>
                   </View>
                   <Pressable onPress={() => onSave(text)} style={ws.cn_save}><Text style={ws.cn_save_t}>Save</Text></Pressable>
@@ -366,12 +432,12 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
             </View>
           </Pressable>
         </Pressable>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
 
-export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, sectionLabel = "" }) {
+export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, sectionLabel = "", dropped = [] }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   /* ★ THE PAGE OPENS ON THE UNIT SHE IS TEACHING (web parity, added 2026-09-17). The web has
@@ -401,32 +467,60 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
     } catch { revealedRef.current = false; }
   };
   const [notesLocked, setNotesLocked] = useState(false);
+  const [droppedOpen, setDroppedOpen] = useState(false);   // WALK-A-099: folded until tapped
   useEffect(() => { let live = true; fetchEntitlement().then((e) => { if (live && e) setNotesLocked(!!e.lapsed); }).catch(() => {}); return () => { live = false; }; }, []);
 
   const notesKey = userKey(`chapter_notes_${lp.subject}_${lp.grade}_${lp.chapter_title || ""}`);
+
+  const syncedKey = `${notesKey}__synced`;   // WALK-A-094
   const noteChapter = lp.chapter_number ? String(lp.chapter_number) : (lp.chapter_title || "");
   const [noteText, setNoteText] = useState("");
   const [notesOpen, setNotesOpen] = useState(false);
-  useEffect(() => {
+  /* WALK-A-096 — the reconcile runs whenever the Notes tab opens, not only on mount (see the
+     web's LessonView for the full note). */
+  const syncNote = () => {
     let cached = ""; try { cached = storage.getItem(notesKey) || ""; } catch {}
-    setNoteText(cached);
-    let dead = false;
-    fetchPlanNotes().then((notes) => {
+    const dead = false;
+    return fetchPlanNotes().then((notes) => {
       if (dead || notes === null) return;
       const srv = notes[planNoteKey(lp.subject, lp.grade, noteChapter)];
       if (srv && typeof srv.text === "string") {
         setNoteText(srv.text);
         try { if (srv.text.trim()) storage.setItem(notesKey, srv.text); else storage.removeItem(notesKey); } catch {}
+        try { storage.setItem(syncedKey, "1"); } catch {}
       } else if (cached.trim()) {
-        savePlanNote(lp.subject, lp.grade, noteChapter, cached);
+        /* WALK-A-094 — see the web's LessonView: a note this device has already seen on the
+           server (or saved there) and the server no longer holds was DELETED elsewhere. Only a
+           never-synced, pre-server note is lifted up. */
+        let synced = false;
+        try { synced = storage.getItem(syncedKey) === "1"; } catch {}
+        if (synced) {
+          setNoteText("");
+          try { storage.removeItem(notesKey); } catch {}
+        } else {
+          savePlanNote(lp.subject, lp.grade, noteChapter, cached).then((res) => {
+            if (res && res.ok) { try { storage.setItem(syncedKey, "1"); } catch {} }
+          });
+        }
       }
     });
-    return () => { dead = true; };
+  };
+  useEffect(() => {
+    let c = ""; try { c = storage.getItem(notesKey) || ""; } catch {}
+    setNoteText(c);
+    syncNote();
   }, [notesKey]);
+  const openNotes = () => {
+    let opened = false;
+    const go = () => { if (!opened) { opened = true; setNotesOpen(true); } };
+    const tm = setTimeout(go, 1500);
+    syncNote().catch(() => {}).finally(() => { clearTimeout(tm); go(); });
+  };
   const saveNote = (v) => {
     setNoteText(v);
     try { if (v.trim()) storage.setItem(notesKey, v); else storage.removeItem(notesKey); } catch {}
     savePlanNote(lp.subject, lp.grade, noteChapter, v).then((res) => {
+      if (res && res.ok) { try { storage.setItem(syncedKey, "1"); } catch {} }
       if (res && res.stale && res.note && typeof res.note.text === "string") {
         setNoteText(res.note.text);
         try { if (res.note.text.trim()) storage.setItem(notesKey, res.note.text); else storage.removeItem(notesKey); } catch {}
@@ -487,7 +581,7 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
         : mathsFlat ? <AxisRow ws={ws} name="Units" blurb="one continuous run of learning units in the textbook's own teaching order — the activity-led, play-way flow the NCF asks of the preparatory stage. Tap a unit to open it." />
         : axisTypes.map((ty) => <AxisRow key={ty} ws={ws} name={AXIS_INFO[ty][0]} blurb={`${AXIS_INFO[ty][1]} Click each card to access units underneath.`} />)}
       </View>
-      <Pressable onPress={() => setNotesOpen(true)} accessibilityLabel={hasNote ? "Chapter notes — edit" : "Chapter notes — add"} style={ws.co_notetab}>
+      <Pressable onPress={openNotes} accessibilityLabel={hasNote ? "Chapter notes — edit" : "Chapter notes — add"} style={ws.co_notetab}>
         <Text style={[ws.co_notetab_label, { transform: [{ rotate: "-90deg" }], width: 58, textAlign: "center" }]}>Notes</Text>
       </Pressable>
     </View>
@@ -582,6 +676,32 @@ export default function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, on
             </View>
           );
         })}
+        {/* WALK-A-099 — dropped units listed at the foot of the map (see the web's ChapterOrg). */}
+        {dropped.length ? (
+          <View style={{ marginTop: 22, paddingTop: 12, borderTopWidth: 1, borderTopColor: t.line }}>
+            {/* Folded by default (founder, 2026-09-25): one tap reveals them. */}
+            <Pressable onPress={() => setDroppedOpen((v) => !v)} accessibilityRole="button"
+              accessibilityState={{ expanded: droppedOpen }}
+              style={{ flexDirection: "row", alignItems: "center", columnGap: 8, paddingVertical: 4 }}>
+              <Text style={ws.kicker}>{`Dropped units (${dropped.length})`}</Text>
+              <Svg viewBox="0 0 24 24" width={12} height={12} fill="none" stroke={t.ink_soft}
+                strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+                style={{ transform: [{ rotate: droppedOpen ? "180deg" : "0deg" }] }}>
+                <Path d="M6 9l6 6 6-6" />
+              </Svg>
+            </Pressable>
+            {droppedOpen ? <Text style={[ws.cn_scope, { marginBottom: 8 }]}>For self-study · not scheduled</Text> : null}
+            {droppedOpen && dropped.map((p, j) => (
+              <Pressable key={`d${j}`} onPress={() => onOpenUnit(units.length + j)}
+                style={[ws.co_card, { backgroundColor: "transparent", borderStyle: "dashed" }]}>
+                <Text style={[ws.co_num, { color: t.ink_soft, fontStyle: "normal" }]}>✦</Text>
+                <Text style={[ws.co_utitle, { color: t.ink_soft }]} numberOfLines={2}>{p.title || "Dropped unit"}</Text>
+                <View style={ws.co_side} />
+                <Text style={ws.co_go}>→</Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
         </View>
       </ScrollView>
       {notesOpen ? (

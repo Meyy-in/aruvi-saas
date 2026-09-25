@@ -24,7 +24,7 @@ const UP = "uppercase";
 
 /* How far the notes' writing is lifted out of its line box to clear the rule beneath it — see
    `cn_paper`. 4px at a 32px pitch; raise it if the jotting still reads as sitting ON the line. */
-const CN_TEXT_LIFT = 4;
+const CN_TEXT_LIFT = 0;   // retired with the ruled lines (WALK-A-093) — nothing to lift the text off
 
 export function webStyles(t, scheme = "light") {
   const cream = "#f3efe6";                 // --bar-ink / cream on pine (both themes)
@@ -806,7 +806,7 @@ export function webStyles(t, scheme = "light") {
        The web sets .cn-paper to a fixed 232px, 204px at phone width; that is this number. */
     /* flex: 1 so it takes the slack, minHeight so it stays writable when the keyboard is up and
        the slack is small. The web's fixed 204 is the value it lands on with room to spare. */
-    cn_paper_wrap:   { flex: 1, minHeight: 128, backgroundColor: t.paper_2 },
+    cn_paper_wrap:   { flex: 1, minHeight: 96, backgroundColor: t.paper_2 },   // 128 → 96 (WALK-A-091): the sheet gives before the foot does
     cn_rule:         { position: "absolute", left: 0, right: 0, height: 1, backgroundColor: t.line },
     /* ★ THE WRITING SITS ABOVE THE RULE, NOT ON IT (founder, 2026-09-17: "the jotting in the
        chapter notes sits on the horizontal line — it should be a tad higher").
@@ -821,9 +821,11 @@ export function webStyles(t, scheme = "light") {
        ⚠️ The compensation is on the PADDING, so the text rises within a band whose rule stays at
        the band's foot. Moving the RULES down instead would have restored this gap by stealing
        it from the line below. `CN_TEXT_LIFT` is the one number to turn if it still reads low. */
-    cn_paper:        { fontFamily: F.body(400), fontSize: 16, lineHeight: 32, letterSpacing: 0.1,
-                       color: t.ink, backgroundColor: "transparent",
-                       paddingTop: 5 - CN_TEXT_LIFT, paddingHorizontal: 22, paddingBottom: 0 },
+    /* WALK-A-093 (founder 2026-09-25): plain paper, no rules — 14/21 instead of 16 on a 32px
+       ruled pitch, so more of the note fits above the keyboard. Same on all three surfaces. */
+    cn_paper:        { fontFamily: F.body(400), fontSize: 14, lineHeight: 21, letterSpacing: 0.1,
+                       color: t.ink, backgroundColor: "transparent", includeFontPadding: false,
+                       paddingTop: 10, paddingHorizontal: 22, paddingBottom: 10 },
     cn_foot:         { flexDirection: "row", alignItems: "center", justifyContent: "space-between",
                        columnGap: 12, paddingTop: 12, paddingHorizontal: 22, paddingBottom: 16,
                        borderTopWidth: 1, flexShrink: 0 },

@@ -1289,9 +1289,12 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
               <div className="sc-body">
                 {/* Banded: the subject is overhead, so the kicker is just the chapter — and
                     nothing at all when the plan carries no chapter number. */}
+                {/* WALK-A-100 (founder, 2026-09-25): the plan's duration rides the kicker, same
+                    face and colour — "Ch 4 · 40 min × 12" — the server's own duration_label, so
+                    it reads exactly as the My Lessons card does. Absent label → nothing added. */}
                 {banded
-                  ? (plan.chapter_number ? <span className="sc-kicker">Ch {plan.chapter_number}</span> : null)
-                  : <span className="sc-kicker">{pretty(c.subjectSlug)}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}</span>}
+                  ? (plan.chapter_number ? <span className="sc-kicker">Ch {plan.chapter_number}{plan.duration_label ? ` · ${plan.duration_label}` : ""}</span> : null)
+                  : <span className="sc-kicker">{pretty(c.subjectSlug)}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}{plan.duration_label ? ` · ${plan.duration_label}` : ""}</span>}
                 <div className="sc-title" title={plan.chapter_title}>{plan.chapter_title}</div>
                 {/* ★ YEAR STAMP (founder, 2026-08-26). A chapter she carried forward from an
                     earlier academic year says so, in small print, on the card she teaches

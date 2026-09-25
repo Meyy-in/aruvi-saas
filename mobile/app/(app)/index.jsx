@@ -966,12 +966,13 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
         {/* Banded: the subject is overhead, so the kicker is just the chapter — and nothing
             at all when the plan carries no chapter number. */}
         {banded
-          ? (plan.chapter_number ? <Text style={ws.sc_kicker}>{`Ch ${plan.chapter_number}`}</Text> : null)
+          ? (plan.chapter_number ? <Text style={ws.sc_kicker}>{`Ch ${plan.chapter_number}`}{plan.duration_label ? ` · ${plan.duration_label}` : ""}</Text> : null)
           : (
             <Text style={ws.sc_kicker}>
-              {c.subjectName}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}
+              {c.subjectName}{plan.chapter_number ? ` · Ch ${plan.chapter_number}` : ""}{plan.duration_label ? ` · ${plan.duration_label}` : ""}
             </Text>
           )}
+        {/* WALK-A-100 — the plan's duration rides the kicker (see the web's MyPlans). */}
         <Text style={ws.sc_title} numberOfLines={2}>{plan.chapter_title}</Text>
         {/* ★ A PLAN SHE BROUGHT FORWARD KEEPS SAYING SO (app. 05 row B23). The server returns
             `lp_year_display` ONLY when the edition differs from the year she is teaching in, so

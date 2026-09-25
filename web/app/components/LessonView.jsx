@@ -1302,6 +1302,7 @@ function cnSubjectGrade(lp) {
 function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClose,
                              readOnly = false }) {
   const [text, setText] = useState(initial || "");
+  const [showWarn, setShowWarn] = useState(false);   // WALK-A-092: the warning behind a link
   const taRef = useRef(null);
   useEffect(() => { if (!readOnly) taRef.current?.focus(); }, [readOnly]);
   const wc = cnWordCount(text);
@@ -1322,7 +1323,15 @@ function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClos
       <div className="cn-modal" onClick={(e) => e.stopPropagation()}>
         <div className="cn-head">
           <div className="cn-head-t">
-            <div className="kicker kicker-soft">Chapter notes</div>
+            {/* ★ THE CHILD-PRIVACY WARNING SITS BEHIND A LINK (WALK-A-092, founder 2026-09-25: "we
+                need that space for chapter notes"). A small red "(Privacy warning)" beside the
+                kicker is always visible where she writes; the founder's sentence opens under it
+                on a tap and closes the same way. Same words, same place — only folded. */}
+            <div className="cn-kline">
+              <span className="kicker kicker-soft">Chapter notes</span>
+              <button type="button" className="cn-privlink" aria-expanded={showWarn}
+                onClick={() => setShowWarn((v) => !v)}>(Privacy warning)</button>
+            </div>
             <div className="cn-title">{chapterTitle}</div>
             {subjectGrade ? <div className="cn-sg">{subjectGrade}</div> : null}
             {/* ★ THE TWO SCOPE LINES ARE GONE (founder, 2026-09-14, from the phone): the window
@@ -1339,10 +1348,12 @@ function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClos
                 writes right after class, which is exactly the moment she might name a
                 child. Aruvi holds these on the server, so the boundary has to be stated
                 where she types, not buried in a policy page. Wording is the founder's. */}
-            <div className="cn-scope cn-warn">
-              Private data like name, age of child must not be recorded. Meyy reserves
-              right to delete if entered.
-            </div>
+            {showWarn ? (
+              <div className="cn-scope cn-warn">
+                Private data like name, age of child must not be recorded. Meyy reserves
+                right to delete if entered.
+              </div>
+            ) : null}
           </div>
           <button className="cn-x" aria-label="Close" onClick={onClose}>✕</button>
         </div>
@@ -1620,12 +1631,13 @@ function SSFlowBody({ units, pointer, doneAll, onOpenUnit, gapNote }) {
 /* `sectionLabel` rides down from LessonView (WALK-A-076): the chapter-organisation page is still
    the SAME section's lesson — she reaches it by "← Orgn." from a unit — so it carries the same
    line. Empty for the read-only preview, which has no section. */
-function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour, sectionLabel = "" }) {
+function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour, sectionLabel = "", dropped = [] }) {
   /* Notes lock when the subscription lapses (founder, 2026-08-26). Asked here rather
      than threaded down as a prop: LessonView is reached from two surfaces by different
      routes, and the entitlement is one cheap cached read. Unknown → not locked; the
      server is the authority either way. */
   const [notesLocked, setNotesLocked] = useState(false);
+  const [droppedOpen, setDroppedOpen] = useState(false);   // WALK-A-099: folded until clicked
   useEffect(() => {
     let live = true;
     fetchEntitlement().then((e) => { if (live && e) setNotesLocked(!!e.lapsed); })
@@ -1645,17 +1657,21 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour,
   // landed is stranded. On save: cache + POST; a 409 (stale write from another device) adopts
   // the server's newer copy instead of clobbering it (§2.4 — timestamp, not history).
   const notesKey = userKey(`chapter_notes_${lp.subject}_${lp.grade}_${lp.chapter_title || ""}`);
+  const syncedKey = `${notesKey}__synced`;   // WALK-A-094
   // The server key uses the chapter NUMBER (stable identity); title only as a fallback for
   // plans without one. Must stay in sync with api/main.py's _note_key.
   const noteChapter = lp.chapter_number ? String(lp.chapter_number) : (lp.chapter_title || "");
   const [noteText, setNoteText] = useState("");
   const [notesOpen, setNotesOpen] = useState(false);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  /* ★ ASK THE SERVER EVERY TIME THE NOTES OPEN, NOT ONLY WHEN THE PAGE MOUNTS (WALK-A-096,
+     founder 2026-09-25: a note saved on one device only appeared on another after leaving the
+     chapter and coming back). `syncNote` is the whole reconcile; the mount effect runs it, and
+     so does the Notes tab before it opens the window (see `openNotes`). */
+  const syncNote = () => {
+    if (typeof window === "undefined") return Promise.resolve();
     const cached = window.localStorage.getItem(notesKey) || "";
-    setNoteText(cached);
-    let dead = false;
-    fetchPlanNotes().then((notes) => {
+    const dead = false;
+    return fetchPlanNotes().then((notes) => {
       if (dead || notes === null) return;          // server unreachable → keep the cache
       const srv = notes[planNoteKey(lp.subject, lp.grade, noteChapter)];
       if (srv && typeof srv.text === "string") {
@@ -1664,13 +1680,43 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour,
           if (srv.text.trim()) window.localStorage.setItem(notesKey, srv.text);
           else window.localStorage.removeItem(notesKey);
         } catch {}
+        try { window.localStorage.setItem(syncedKey, "1"); } catch {}
       } else if (cached.trim()) {
-        savePlanNote(lp.subject, lp.grade, noteChapter, cached);  // one-time legacy lift
+        /* ★ A NOTE THE SERVER HAS NO LONGER IS A DELETED NOTE (WALK-A-094, founder 2026-09-25:
+           "if all text is removed in one device and saved, that does not reflect in all
+           devices"). Emptying a note deletes it on the server (§2.4), and this branch then
+           took the other device's cached copy for a pre-server note and LIFTED IT BACK UP —
+           so a deletion never reached a second device; any non-empty edit did, because then
+           the server had an answer. The lift was only ever for notes written before notes had
+           a server (2026-08-22). `syncedKey` records that this device has seen this note on
+           the server or saved it there; once set, absence means deleted and the cache goes. */
+        let synced = false;
+        try { synced = window.localStorage.getItem(syncedKey) === "1"; } catch {}
+        if (synced) {
+          setNoteText("");
+          try { window.localStorage.removeItem(notesKey); } catch {}
+        } else {
+          savePlanNote(lp.subject, lp.grade, noteChapter, cached).then((res) => {   // one-time legacy lift
+            if (res && res.ok) { try { window.localStorage.setItem(syncedKey, "1"); } catch {} }
+          });
+        }
       }
     });
-    return () => { dead = true; };
+  };
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setNoteText(window.localStorage.getItem(notesKey) || "");
+    syncNote();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notesKey]);
+  /* Open after the server answers, so the window shows the latest copy; if it has not answered
+     within 1.5s (a slow or absent network) open on the cached copy rather than keep her waiting. */
+  const openNotes = () => {
+    let opened = false;
+    const go = () => { if (!opened) { opened = true; setNotesOpen(true); } };
+    const t = setTimeout(go, 1500);
+    syncNote().catch(() => {}).finally(() => { clearTimeout(t); go(); });
+  };
   const saveNote = (t) => {
     setNoteText(t);
     if (typeof window !== "undefined") {
@@ -1678,6 +1724,7 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour,
       else window.localStorage.removeItem(notesKey);
     }
     savePlanNote(lp.subject, lp.grade, noteChapter, t).then((res) => {
+      if (res && res.ok) { try { window.localStorage.setItem(syncedKey, "1"); } catch {} }
       if (res && res.stale && res.note && typeof res.note.text === "string") {
         // Another device wrote a fresher note — adopt it, never overwrite it.
         setNoteText(res.note.text);
@@ -1848,7 +1895,7 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour,
           the paragraph height); always the solid ochre fill. */}
       <button
         className="co-notetab"
-        onClick={() => setNotesOpen(true)}
+        onClick={openNotes}
         aria-label={hasNote ? "Chapter notes — edit" : "Chapter notes — add"}
         title={hasNote ? noteText.trim() : "Chapter notes"}
       >
@@ -1979,6 +2026,39 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour,
           </div>
         );
       })}
+      {/* ★ DROPPED UNITS ARE LISTED ON THE MAP (WALK-A-099, founder 2026-09-25: "dropped units do
+          not show at all in the org — bring it there under heading dropped units but without
+          serial number"). A below-floor plan hands its unreached units over for self-study
+          (founder 2026-08-01) and they were reachable only by paging past the last unit. They
+          now sit under their own heading at the foot of the map: ✦ in place of a number, no
+          status, no time — nothing that could read as scheduled — and a tap opens the same
+          dropped page the strip reaches. Never tracked: no pointer, no ticks, no completion. */}
+      {dropped.length ? (
+        <div className="co-dropped">
+          {/* Folded by default (founder, 2026-09-25): one click reveals them. */}
+          <button type="button" className="co-dropped-head" aria-expanded={droppedOpen}
+            onClick={() => setDroppedOpen((v) => !v)}>
+            <span className="kicker kicker-soft co-dropped-k">Dropped units ({dropped.length})</span>
+            <span className={`co-chev${droppedOpen ? " open" : ""}`} aria-hidden="true">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.5 4.5L6 8l3.5-3.5" />
+              </svg>
+            </span>
+          </button>
+          {droppedOpen ? <>
+          <div className="co-dropped-sub">For self-study · not scheduled</div>
+          <div className="co-list">
+            {dropped.map((p, j) => (
+              <div className="co-card dropped" key={`d${j}`} onClick={() => onOpenUnit(units.length + j)}>
+                <span className="co-num">✦</span>
+                <div className="co-body"><div className="co-utitle">{p.title || "Dropped unit"}</div></div>
+                <span className="co-go" aria-hidden="true">→</span>
+              </div>
+            ))}
+          </div>
+          </> : null}
+        </div>
+      ) : null}
       {/* Chapter Notes now lives in the axis gutter above (the notebook popup still opens
           from there — arch-plan §I-bis; moved out of the page foot 2026-07-14). */}
       {notesOpen ? (
@@ -2180,7 +2260,7 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
     return (
       <div data-tour={preview ? "preview-root" : undefined}>
         <ChapterOrg
-          lp={lp} units={units} sectionLabel={sectionLabel}
+          lp={lp} units={units} sectionLabel={sectionLabel} dropped={droppedUnits}
           pointer={preview ? null : cur} doneAll={doneFlag}
           onOpenUnit={(n) => {
             // Navigation, never pointer movement. Tracking (My Classes): return to the paging
