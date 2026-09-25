@@ -497,7 +497,13 @@ export default function MyLessons() {
      WITHOUT a section is exactly what `lesson.jsx` reads as preview. */
   const openLesson = (p) => {
     busyRef.current = true;
-    router.push({ pathname: "/lesson", params: { subject: sSlug, grade: gSlug, filename: p.filename } });
+    /* WALK-A-090: hand the preview the sections teaching this chapter (attached, not finished —
+       the card's own "Teaching now"), labelled by section only (her name for it, else the letter). */
+    const teaching = (taughtGradeObj ? taughtGradeObj.sections || [] : [])
+      .filter((s) => { const st = readLocalSection(`${sSlug}_${gSlug}_${s.tag}`); return st.chapter && st.chapter === p.filename && !st.done; })
+      .map((s) => ({ tag: s.tag, label: s.name || s.sec || String(s.tag || "").replace(/^[0-9]+/, "") || s.tag }));
+    router.push({ pathname: "/lesson", params: { subject: sSlug, grade: gSlug, filename: p.filename,
+      teaching: JSON.stringify(teaching) } });
   };
 
   /* Exhaustive per-section state for one chapter: which sections completed it, which are on it

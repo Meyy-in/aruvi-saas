@@ -18,7 +18,10 @@ import { type } from "../../theme/type";
 export default function Lesson() {
   const { t } = useTheme();
   const router = useRouter();
-  const { subject, grade, filename, section, tour, sectionLabel } = useLocalSearchParams();
+  const { subject, grade, filename, section, tour, sectionLabel, teaching, unit } = useLocalSearchParams();
+  // WALK-A-090: the sections teaching this chapter, handed over by My Lessons (preview only).
+  let teachingList = [];
+  try { teachingList = teaching ? JSON.parse(String(teaching)) : []; } catch { teachingList = []; }
   const sectionKey = section ? `${subject}_${grade}_${section}` : "";
   const [state, setState] = useState({ loading: true, data: null, err: "" });
 
@@ -65,7 +68,10 @@ export default function Lesson() {
   }
   return <LessonView view={state.data.view} meta={state.data.meta} sectionKey={sectionKey}
     sectionLabel={sectionLabel ? String(sectionLabel) : ""}
-    tourUnit={tour === "1"} onExit={() => router.back()} />;
+    tourUnit={tour === "1" || unit === "1"} onExit={() => router.back()}
+    teaching={section ? [] : teachingList}
+    onOpenTeaching={(tag, label) => router.push({ pathname: "/lesson",
+      params: { subject, grade, filename, section: tag, sectionLabel: label || tag, unit: "1" } })} />;
 }
 
 const st = StyleSheet.create({ center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 30 } });
