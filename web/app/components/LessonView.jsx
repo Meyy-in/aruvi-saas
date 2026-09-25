@@ -175,7 +175,7 @@ function MaterialPanel({ u }) {
  * Positioning is measured, not hard-coded: it anchors to each phase's .uv-ph-time centre
  * (offsetTop within the position:relative .uv-phases), so it lands exactly beside the minutes
  * whatever the phase text wraps to. */
-function PhaseBookmark({ phaseCount, phase, onMove }) {
+function PhaseBookmark({ phaseCount, phase, onMove, onOver = null }) {
   const elRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [top, setTop] = useState(null);   // px within .uv-phases; null until first measure
@@ -206,6 +206,13 @@ function PhaseBookmark({ phaseCount, phase, onMove }) {
     e.stopPropagation();
     try { elRef.current?.setPointerCapture?.(e.pointerId); } catch {}
     setDragging(true);
+    if (onOver) onOver(phase);   // WALK-A-089: light the row she starts on
+  };
+  // The phase whose time cell is nearest a y — the snap target, and the row that lights up.
+  const nearest = (c, y) => {
+    let best = 0, bestD = Infinity;
+    c.forEach((cy, i) => { const d = Math.abs(cy - y); if (d < bestD) { bestD = d; best = i; } });
+    return best;
   };
   const onMoveDrag = (e) => {
     if (!dragging) return;
@@ -213,7 +220,9 @@ function PhaseBookmark({ phaseCount, phase, onMove }) {
     const c = timeCentres();
     if (!wrap || !c.length) return;
     const y = e.clientY - wrap.getBoundingClientRect().top;
-    setTop(Math.max(c[0], Math.min(c[c.length - 1], y)));   // clamp to the spine
+    const clamped = Math.max(c[0], Math.min(c[c.length - 1], y));   // clamp to the spine
+    setTop(clamped);
+    if (onOver) onOver(nearest(c, clamped));   // the highlight FOLLOWS the arrow
   };
   const endDrag = (e) => {
     if (!dragging) return;
@@ -225,6 +234,7 @@ function PhaseBookmark({ phaseCount, phase, onMove }) {
       if (best !== phase) onMove(best);
     }
     setDragging(false);
+    if (onOver) onOver(null);   // it goes when she lets go
     try { elRef.current?.releasePointerCapture?.(e.pointerId); } catch {}
   };
   // Keyboard nudge — focus the arrow, then ↑/↓ to step it phase by phase.
@@ -261,8 +271,26 @@ function PhaseBookmark({ phaseCount, phase, onMove }) {
   );
 }
 
+/* WALK-A-088 (founder, 2026-09-25): the pointer to the Material tab is bold WHEREVER it sits,
+   not only as a leading "Refer to Prepared Table…". The library points in a bracket far more
+   often — "(see materials)", "(see material: '…')", "(see visual aid: …)", "(see visual aids)",
+   "(see materials and visual aids)" — ~91 notes, Science VI ch 02 among them. Matched, not
+   marked up, for the reason the POINTER comment gives: teacher_notes stays plain text. */
+const MATERIAL_POINTER = /(\(see (?:materials?|visual aids?)\b[^)]*\))/gi;
+function boldPointers(text) {
+  if (!text) return text;
+  const parts = String(text).split(MATERIAL_POINTER);
+  if (parts.length === 1) return text;
+  return parts.map((p, i) => (i % 2 === 1
+    ? <strong key={i} className="uv-tnotes-ref">{p}</strong> : p));
+}
+
 function LessonPanel({ u, bookmark = null }) {
   const phases = (u.phases || []).filter((ph) => ph.text || ph.label);
+  /* WALK-A-089 (founder, 2026-09-25): while the bookmark is being dragged, the phase row it is
+     over lights up in the pine tint — the phone's `uv_phase_arm`, same colour, same bleed. Less
+     needed with a mouse than under a thumb, but it is the same answer on both surfaces. */
+  const [overPhase, setOverPhase] = useState(null);
   const notes = u.teacher_notes?.length ? u.teacher_notes.join(" ") : null;
   // THE MATERIAL POINTER IS BOLD (founder, 2026-08-20). A re-authored closing unit keeps
   // its problems and worked solutions in the Material tab, and its notes open by saying
@@ -296,7 +324,7 @@ function LessonPanel({ u, bookmark = null }) {
           <p>
             {notesLead ? <strong className="uv-tnotes-ref">{notesLead}</strong> : null}
             {notesLead ? " " : null}
-            {notesLead ? notesRest : notes}
+            {boldPointers(notesLead ? notesRest : notes)}
           </p>
         </details>
       ) : null}
@@ -311,12 +339,14 @@ function LessonPanel({ u, bookmark = null }) {
               phaseCount={phases.length}
               phase={Math.min(bookmark.phase, phases.length - 1)}
               onMove={bookmark.onMove}
+              onOver={setOverPhase}
             />
           ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
             return (
-              <div className="uv-phase" key={i} data-tour={i === 0 ? "lesson-phase-1" : undefined}>
+              <div className={`uv-phase${overPhase === i ? " uv-phase-arm" : ""}`} key={i}
+                data-tour={i === 0 ? "lesson-phase-1" : undefined}>
                 <div className="uv-ph-time">
                   <span className="uv-ph-n">{mins != null ? mins : (ph.label || "—")}</span>
                   {mins != null ? <span className="uv-ph-u">min</span> : null}
@@ -1335,23 +1365,11 @@ function ChapterNotesModal({ chapterTitle, subjectGrade, initial, onSave, onClos
         ) : (
         <div className="cn-foot">
           <div className="cn-foot-l">
-            {/* ★ RENAMED FROM "Speak" (founder, 2026-09-17, answering Q18). It never listened:
-                it focuses the writing area, and the dictation belongs to the operating system's
-                own mic. ⚠️ On the WEB that leaves the button close to a no-op — focusing a
-                textarea offers a desktop user nothing, and there is no keyboard mic to point
-                at. Recorded, not resolved: whether it should exist here at all is a separate
-                call from what it should be called. */}
-            <button className="cn-speak" onClick={() => taRef.current?.focus()}
-              aria-label="Start writing — then use your system's dictation to speak">
-              <svg className="cn-speak-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="9" y="2" width="6" height="12" rx="3" />
-                <path d="M5 11a7 7 0 0 0 14 0" />
-                <line x1="12" y1="18" x2="12" y2="22" />
-                <line x1="8" y1="22" x2="16" y2="22" />
-              </svg>
-              Dictate
-            </button>
+            {/* The "Dictate" button is GONE (WALK-A-087, founder 2026-09-25). It was "Speak" until
+                2026-09-17 and never listened: all it did was put the cursor in the paper, which
+                clicking the paper already does, and dictation is the operating system's own mic.
+                A mic inside Meyy still promised that Meyy was listening. The counter keeps the
+                left of the foot. */}
             <span className={`cn-count${wc >= CN_CAP ? " over" : ""}`}>{wc} / {CN_CAP} words</span>
           </div>
           <button className="cn-save" onClick={() => onSave(text)}>Save</button>

@@ -4031,11 +4031,6 @@ button.prepare-cta.is-held:disabled::before, .prepare-cta.is-held:disabled::befo
 .cn-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 12px 22px 16px; border-top: 1px solid var(--line-soft); }
 .cn-foot-l { display: flex; align-items: center; gap: 14px; }
-.cn-speak { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
-  border: 1px solid var(--line); border-radius: 20px; padding: 6px 12px; color: var(--ink-soft);
-  font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; }
-.cn-speak:hover { border-color: var(--ink-soft); }
-.cn-speak-mic { width: 13px; height: 13px; flex: none; }
 .cn-count { font-family: var(--f-mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-soft); }
 .cn-count.over { color: var(--clay); }
 .cn-save { all: unset; cursor: pointer; background: var(--pine); color: var(--paper);
@@ -4672,6 +4667,8 @@ select option { background-color: var(--field-bg); color: var(--ink); }
 /* 2026-09-13 — no rule under the LAST phase: the bottom nav's 1 px --edge (the same weight)
    is the only line at the foot, so the spine ends on the bar's edge rather than doubling it. */
 .uv-phase:last-child { border-bottom: 0; }
+/* WALK-A-089 — the row the dragged bookmark is over (the phone's uv_phase_arm). */
+.uv-phase.uv-phase-arm { background-color: var(--tint-pine); border-radius: 6px; margin: 0 -8px; padding-left: 8px; padding-right: 8px; }
 .uv-ph-time { text-align: left; }
 .uv-ph-n { display: block; font-family: var(--f-mono); font-size: 16px; font-weight: 600;
   color: var(--pine); line-height: 1.1; }

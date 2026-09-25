@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-25T09:41:40",
+  "updated_at": "2026-09-25T12:08:10",
   "items": {
     "04.19": {
       "ios": {
@@ -2276,7 +2276,7 @@
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-25T08:43:28",
-        "comment": "Button (now labelled 'Dictate' with a mic) only focuses the paper; counter '{n} / 500 words'; Save closes; reopening shows the saved text. Founder: the button is misleading and redundant — the cursor can be placed by tapping on both surfaces and the phone keyboard has its own voice input → WALK-A-087 (remove it).",
+        "comment": "Button (now labelled 'Dictate' with a mic) only focuses the paper; counter '{n} / 500 words'; Save closes; reopening shows the saved text. Founder: the button is misleading and redundant — the cursor can be placed by tapping on both surfaces and the phone keyboard has its own voice input → WALK-A-087 (remove it). ✓ re-walked 2026-09-25 after WALK-A-087",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -2330,7 +2330,7 @@
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-25T08:58:07",
-        "comment": "Teacher-notes ribbon open by default with '–', closed → one-line italic teaser, 'Refer to Prepared Table…' lead bold; phases with minutes in the left rail, no rule under the last; Homework block with kicker. The '**bold** runs' clause is unreachable — no homework in the library carries bold markup. Other pointer phrasings ('(see materials)' etc.) not bold → WALK-A-088.",
+        "comment": "Teacher-notes ribbon open by default with '–', closed → one-line italic teaser, 'Refer to Prepared Table…' lead bold; phases with minutes in the left rail, no rule under the last; Homework block with kicker. The '**bold** runs' clause is unreachable — no homework in the library carries bold markup. Other pointer phrasings ('(see materials)' etc.) not bold → WALK-A-088. ✓ re-walked 2026-09-25 after WALK-A-088",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -2348,7 +2348,7 @@
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-25T09:12:24",
-        "comment": "Arrow drags and steps with ↑/↓, snaps to the centre of the nearest phase's minutes and stays; absent on other units, previews and dropped pages. Founder: the phone's light tint when the bookmark moves would be welcome on web too → WALK-A-089.",
+        "comment": "Arrow drags and steps with ↑/↓, snaps to the centre of the nearest phase's minutes and stays; absent on other units, previews and dropped pages. Founder: the phone's light tint when the bookmark moves would be welcome on web too → WALK-A-089. ✓ re-walked 2026-09-25 after WALK-A-089",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -2367,6 +2367,87 @@
         "by": "Kumar",
         "at": "2026-09-25T09:12:24",
         "comment": "Green card (white ✓ on filled green disc · 'Unit complete' · bordered '↺ Undo'); Undo restores the button and pointer; kept → next unit current with the bookmark on the first phase, org rail and My Classes card advance by one; button absent on Overview/Material/Assess and non-current units. Note (founder, accepted): after Undo the bookmark returns to the unit's FIRST phase, not the phase it was on — fine, she re-reads where she is.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.22": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:24:24",
+        "comment": "Last unit reads 'Mark chapter complete'; tapped → clay-tinted card '✓ Chapter complete' · '↺ Reopen'; My Classes card clay; reopening lands on the unit, not the org page; Reopen restores the button and the green teaching-now card.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.23": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:24:24",
+        "comment": "Web half: Reopen + Undo below the last unit → card green, not clay; pointer and not-complete state hold across a reload. Second-device half owed at the phone walk.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.24": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:24:24",
+        "comment": "Units without items show three tabs; >1 item → pager '← Previous · Question n / N · Next →' under the unit tabs, Previous disabled on the first; paging resets to the item's Overview; pager + item tabs stay put while the item scrolls.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.25": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:24:24",
+        "comment": "Overview: Competency · bold 'Learning outcome' + text · Section · Question type in full words · Cognitive demand; 'Q{n}.' pine italic beside the first words; Answer/Inclusivity only when populated; 'Question →', 'Answer →', 'Next question →' ride the last row and go where they say.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.26": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:51:46",
+        "comment": "Question tab class-facing: MCQ options without ticks; True/False statements only (English); compound items with their own A–D lists per sub-question (English IX ch 05 listening item) and SS-style grouping; open task (Science) with What to produce ticks, scaffold lines, collapsible Reading this task; no strong/weak markers.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.27": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:51:46",
+        "comment": "Passage/prose in the green box; diagram full width with readable labels (Maths IX ch 02 u10); number line with axis, ticks, labels, arrows + instruction (Maths VI ch 03 u4); tables with caption above and source note below; word bank headerless (Maths VIII ch 10 u8); listening cue block with pine rule, equaliser and 'Listening passage — p. 263, read aloud'.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.28": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:51:46",
+        "comment": "MCQ Correct answer '✓' (Q1/Q2 tags on compound) + What each choice reveals; Choice pill popup 'Question N · Choice X' with ✕ top-left, closes on ✕ and backdrop; True/False Answer key rows; per-type answer headings; match pairs 'left → right'.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.29": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T11:51:46",
+        "comment": "Inclusivity: Support / Stretch / Challenge bold and title-cased, maths on separate rows; legacy item card as specified.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "06.30": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-25T12:05:10",
+        "comment": "Dark theme (≤600px) pass over org page, a unit (tabs, pager, bookmark), notes foot row, Assess pager, done cards and the Teaching now pills — nothing overlaps, truncates or loses contrast; browser zoom 120% likewise. Empty-plan half: no unit-less plan exists in the library.",
         "build": "web dev (localhost:3000 → Render)"
       }
     }
@@ -4196,12 +4277,15 @@
       "applies_to": "both",
       "title": "Remove the Dictate (mic) button from chapter notes",
       "what": "Founder, 2026-09-25: the button (renamed Speak → Dictate on 2026-09-17) only puts the cursor in the writing area. On the web that is a near no-op; on the phone tapping the paper does the same and the keyboard's own mic does the dictation. A mic in Meyy still suggests Meyy is listening. Remove it on both surfaces; the word counter keeps the left of the footer.",
-      "fix": "",
+      "fix": "[FIXED web 2026-09-25T12:06:01] The Dictate (cn-speak) button and its CSS are removed from the notes foot; the word counter holds the left. The textarea still autofocuses on open. Phone half owed (ChapterOrg.jsx cn_speak + MicIcon, web.js cn_speak*).\n[RE-WALKED web 2026-09-25] PASS: no mic button; counter left, Save right; paper autofocused.",
       "files": "web/app/components/LessonView.jsx (cn-speak), web/app/globals.css (.cn-speak*), mobile/components/lesson/ChapterOrg.jsx (cn_speak, MicIcon), mobile/theme/web.js (cn_speak*)",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
-      "recheck": [],
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
       "owner": "Kumar",
       "at": "2026-09-25T08:43:28"
     },
@@ -4216,19 +4300,22 @@
       "applies_to": "both",
       "title": "Bold every material pointer in teacher notes, not only 'Refer to Prepared Table…'",
       "what": "Founder, 2026-09-25: the bold is matched only on a leading 'Refer to Prepared Table…' sentence (LessonView POINTER regex, web + phone). Most notes point differently — Science VI ch 02: '…are ready to use (see materials).' Library survey of teacher_notes: '(see material: …)', '(see materials)', '(see visual aid: …)', '(see visual aids)', '(see materials and visual aids)' — ~91 notes. Make the pointer bold wherever it sits, keeping the existing lead rule.",
-      "fix": "",
+      "fix": "[FIXED web 2026-09-25T12:06:01] LessonPanel: new boldPointers() bolds every '(see material…/materials…/visual aid(s)…)' bracket anywhere in the teacher notes (same .uv-tnotes-ref weight), after the unchanged leading 'Refer to Prepared Table…' rule. Regex verified on the four library shapes. Phone half owed (mobile/components/LessonView.jsx).\n[RE-WALKED web 2026-09-25] PASS: '(see materials)' bold in Science VI ch 02; leading 'Refer to Prepared Table…' still bold.",
       "files": "web/app/components/LessonView.jsx (LessonPanel POINTER), mobile/components/LessonView.jsx (POINTER)",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
-      "recheck": [],
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
       "owner": "Kumar",
       "at": "2026-09-25T08:52:17"
     },
     {
       "id": "WALK-A-089",
       "opened": "2026-09-25T09:12:24",
-      "closed": "",
+      "closed": "2026-09-25T12:08:10",
       "feature": "06.19",
       "found_on": [
         "web"
@@ -4236,11 +4323,11 @@
       "applies_to": "web",
       "title": "Web bookmark: show the phone's light highlight when it is moved",
       "what": "Founder, 2026-09-25: on the phone moving the bookmark shows a light tint (press-and-hold ring + tint). The web only lifts it with scale + shadow. Not essential on web, but worth having for parity.",
-      "fix": "",
+      "fix": "[FIXED web 2026-09-25T12:06:01] PhaseBookmark reports the phase it is over (onOver) on pointer-down, every move and release; LessonPanel lights that row with .uv-phase-arm (tint-pine, 6px radius, 8px bleed — the phone's uv_phase_arm). Goes on release. Web only.\n[RE-WALKED web 2026-09-25] PASS: the row under the dragged arrow tints pine and follows it; clears on release.",
       "files": "web/app/components/LessonView.jsx (PhaseBookmark), web/app/globals.css",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-25T09:12:24"
