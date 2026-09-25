@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-25T09:31:05",
+  "updated_at": "2026-09-25T09:41:40",
   "items": {
     "04.19": {
       "ios": {
@@ -4256,13 +4256,14 @@
       "applies_to": "both",
       "title": "My Lessons unit page names the classes teaching the chapter, as capsules that open each class's lesson",
       "what": "Founder, 2026-09-25: the My Lessons preview and a class's own lesson look identical, so a teacher reading the preview goes looking for her bookmark and Mark complete. Decision (option A of docs/mockups/lesson-preview-section-capsules.html): on My Lessons UNIT pages only (not the org page), under the kicker, kicker-sized capsules for every section the chapter is attached to and not finished (not-yet-begun included, completed excluded), one Meyy hue each (pine · clay · ochre · dark pine); tapping opens that section's lesson on its current unit. The unit title moves down a row. No attached section → no row.",
-      "fix": "[FIXED web 2026-09-25T09:31:05] LessonView gains `teaching`/`onOpenTeaching` and renders `.lv-secs` in the preview unit header (preview && !showFullPlan). MyLessonPlans builds the list from readLocalSection (same source as statusFor's 'Teaching now'), label = her section name or the tag, profile order, and calls page.jsx onOpenSection(…, {unit:true}) — the existing deep-link — which now carries `unit` through pendingOpen to MyPlans, and LessonView lands on the current unit (the tourUnit override) instead of the org page. CSS .lv-sec-1..4 via color-mix on --paper so dark follows. check-tdz clean. Phone half owed.\n[AMENDED web 2026-09-25T09:35:22] Founder: the kicker already names the class, so capsules show the SECTION only (her name for it, else the letter) with a small 'Teaching now' label at the left (founder's wording; was 'Click for section') (.lv-secs-lab, 10px mono ink-soft). Same label on the phone.\n[AMENDED web 2026-09-25T09:37:51] Capsule style → option 1 of docs/mockups/lesson-preview-capsule-styles.html (founder): solid pill in the section's hue, white letter + '→', lifts on hover.",
+      "fix": "[FIXED web 2026-09-25T09:31:05] LessonView gains `teaching`/`onOpenTeaching` and renders `.lv-secs` in the preview unit header (preview && !showFullPlan). MyLessonPlans builds the list from readLocalSection (same source as statusFor's 'Teaching now'), label = her section name or the tag, profile order, and calls page.jsx onOpenSection(…, {unit:true}) — the existing deep-link — which now carries `unit` through pendingOpen to MyPlans, and LessonView lands on the current unit (the tourUnit override) instead of the org page. CSS .lv-sec-1..4 via color-mix on --paper so dark follows. check-tdz clean. Phone half owed.\n[AMENDED web 2026-09-25T09:35:22] Founder: the kicker already names the class, so capsules show the SECTION only (her name for it, else the letter) with a small 'Teaching now' label at the left (founder's wording; was 'Click for section') (.lv-secs-lab, 10px mono ink-soft). Same label on the phone.\n[AMENDED web 2026-09-25T09:37:51] Capsule style → option 1 of docs/mockups/lesson-preview-capsule-styles.html (founder): solid pill in the section's hue, white letter + '→', lifts on hover.\n[RE-WALKED web 2026-09-25] PASS: solid pills only on My Lessons unit pages, each opens its section on the current unit; absent on Chapter Organization and with no attached section; Science IX ch 02 shows all its attached sections. Web half done; phone half owed.",
       "files": "web/app/components/LessonView.jsx, web/app/components/MyLessonPlans.jsx, web/app/components/MyPlans.jsx, web/app/page.jsx, web/app/globals.css",
       "commit": "",
       "native_rebuild": false,
       "status": "fixed-awaiting-rewalk",
       "recheck": [
-        "web"
+        "ios",
+        "and_emu"
       ],
       "owner": "Kumar",
       "at": "2026-09-25T09:31:05"
