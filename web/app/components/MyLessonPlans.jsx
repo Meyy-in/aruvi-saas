@@ -318,7 +318,7 @@ function ProposedCard({ preparing, onDismiss, onRetry }) {
   );
 }
 
-export default function MyLessonPlans({ readiness, onAllocate, tourStep, preparing,
+export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, tourStep, preparing,
                                         onStartTour, tourActive, onDismissPrepareError, onRetryPrepare, lapsed,
                                         yearInfo, onScope, onEditYearBudget, paneIntent,
                                         heldScopes, onTourArchivable }) {
@@ -950,7 +950,24 @@ export default function MyLessonPlans({ readiness, onAllocate, tourStep, prepari
     // READ-ONLY preview. The old "Attach to a class" CTA + section chooser are RETIRED
     // (2026-07-06): attaching happens ONLY via the "+" on a My Classes section card → the
     // track-a-chapter window — one true way, and the tour teaches exactly that.
-    return <LessonView view={openPlan.view} onExit={() => setOpenPlan(null)} preview />;
+    /* ★ WHICH CLASSES ARE TEACHING THIS CHAPTER, AS DOORS (WALK-A-090, founder 2026-09-25). The
+       preview and a class's own lesson are the same document on screen, so a teacher reading
+       here goes looking for her bookmark and Mark complete and finds neither. The unit page now
+       names every section this chapter is ATTACHED to and not yet finished — a bound chapter is
+       being taught from unit 1 (2026-09-14), so not-yet-begun counts, completed does not — and
+       each capsule opens that section's own lesson on its current unit. Same source as the
+       card's "Teaching now" line (`statusFor`), so the two cannot disagree. */
+    const teaching = (taughtGradeObj ? taughtGradeObj.sections || [] : [])
+      .filter((s) => {
+        const st = readLocalSection(`${sSlug}_${gSlug}_${s.tag}`);
+        return st.chapter && st.chapter === openPlan.plan.filename && !st.done;
+      })
+      /* The kicker already names the class, so a capsule says only the SECTION — her own name
+         for it where she gave one, else the letter (founder, 2026-09-25). */
+      .map((s) => ({ tag: s.tag, label: s.name || s.sec || String(s.tag || "").replace(/^[0-9]+/, "") || s.tag }));
+    return <LessonView view={openPlan.view} onExit={() => setOpenPlan(null)} preview
+      teaching={onOpenSection ? teaching : []}
+      onOpenTeaching={(tag) => onOpenSection(sSlug, gSlug, tag, openPlan.plan, { unit: true })} />;
   }
 
   if (!current) {

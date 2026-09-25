@@ -1977,7 +1977,8 @@ function ChapterOrg({ lp, units, pointer, doneAll, onOpenUnit, onBack, backTour,
   );
 }
 
-export default function LessonView({ view, sectionKey = "", sectionLabel = "", onExit, preview = false, tourUnit = false }) {
+export default function LessonView({ view, sectionKey = "", sectionLabel = "", onExit, preview = false, tourUnit = false,
+                                     teaching = [], onOpenTeaching = null }) {
   const lp = view.lesson_plan;
   const units = useMemo(() => flattenUnits(lp), [lp]);
   // Dropped sections (founder 2026-08-01): a below-floor plan carries its unreached
@@ -2277,6 +2278,21 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
             {showFullPlan ? "← back" : "← Orgn."}
           </button>
         </div>
+        {/* WALK-A-090 (founder, 2026-09-25): on a My Lessons unit page only — never the org page,
+            never a class's own lesson (showFullPlan is that view's read-only mode) — the classes
+            teaching this chapter, as capsules at the kicker's size, one Meyy hue each, in profile
+            order. Each opens that class's lesson on its current unit. No classes → no row. */}
+        {preview && !showFullPlan && teaching.length && onOpenTeaching ? (
+          <div className="lv-secs" role="group" aria-label="Sections teaching this chapter">
+            <span className="lv-secs-lab">Teaching now</span>
+            {teaching.map((t, i) => (
+              <button key={t.tag} type="button" className={`lv-sec lv-sec-${(i % 4) + 1}`}
+                onClick={() => onOpenTeaching(t.tag)}
+                aria-label={`Open this lesson for section ${t.label}, where the class is now`}>
+                {t.label}<span className="lv-sec-arrow" aria-hidden="true">→</span></button>
+            ))}
+          </div>
+        ) : null}
         <div className="lv-title lv-title-full"><span className="lv-unum">{inDropped ? "✦ " : `${previewAt + 1}.`}</span>{pu.title}
           {inDropped ? <div className="uv-durline">Dropped section · for self-study · not scheduled</div> : null}</div>
       </div>

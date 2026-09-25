@@ -299,7 +299,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   // Uses the request's OWN subject/grade (My Week is no longer scoped to one subject·grade).
   useEffect(() => {
     if (!pendingOpen || !ready) return;
-    const { subject: pSub, grade: pGrade, sectionTag, filename } = pendingOpen;
+    const { subject: pSub, grade: pGrade, sectionTag, filename, unit: landOnUnit } = pendingOpen;
     if (!pSub || !pGrade || !filename) { onConsumePending && onConsumePending(); return; }
     const sectionKey = `${pSub}_${pGrade}_${sectionTag}`;
     let live = true;
@@ -310,7 +310,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
         // Same label rule as openLesson: her name for the section where she gave one.
         const card = classes.find((c) => c.subjectSlug === pSub && c.gradeSlug === pGrade
           && c.sectionTag === sectionTag);
-        setOpenPlan({ view: d.view, sectionKey,
+        setOpenPlan({ view: d.view, sectionKey, landOnUnit: !!landOnUnit,
                       sectionLabel: (card && (card.sectionName || card.sectionTag)) || sectionTag || "" });
       })
       .catch(() => {})
@@ -658,7 +658,8 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   if (loading) return <div className="spin">Opening plan…</div>;
   if (openPlan) return <LessonView view={openPlan.view} sectionKey={openPlan.sectionKey}
     sectionLabel={openPlan.sectionLabel || ""}
-    tourUnit={tourStep === 11 || tourStep === 12 || tourStep === 13} onExit={() => setOpenPlan(null)} />;
+    tourUnit={tourStep === 11 || tourStep === 12 || tourStep === 13 || !!openPlan.landOnUnit}
+    onExit={() => setOpenPlan(null)} />;
 
   // "+" attach-a-lesson picker — a focused MODAL layered over the cards (not a separate screen),
   // scoped to ONE subject·class. Lists chapters already prepared for that subject·grade (tap =

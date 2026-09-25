@@ -909,10 +909,11 @@ export default function Home() {
   // From My Lesson Plans → Track: deep-link into My Week to open a SECTION's pointer-enabled
   // plan (grade-level reads, section-level acts). Scope the tab, leave the library, and stash
   // a pending-open hint that MyPlans consumes on mount.
-  const onOpenSection = (subjectSlug, gradeSlug, sectionTag, plan) => {
+  const onOpenSection = (subjectSlug, gradeSlug, sectionTag, plan, opts = {}) => {
     if (subjectSlug) setSubject(subjectSlug);
     if (gradeSlug) setGrade(gradeSlug);
-    setPendingOpen({ subject: subjectSlug, grade: gradeSlug, sectionTag, filename: plan && plan.filename });
+    setPendingOpen({ subject: subjectSlug, grade: gradeSlug, sectionTag, filename: plan && plan.filename,
+                     unit: !!opts.unit });
     setEditFlow(null);
     setTab("myplans");
   };

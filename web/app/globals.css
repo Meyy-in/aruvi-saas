@@ -5507,3 +5507,25 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 
 /* WALK-A-042 (web, 2026-09-24): the trial window's own way out, beneath the two answers. */
 .ob-offer-box .ob-offer-backlink { display: block; margin: 14px auto 0; }
+
+
+/* ── WALK-A-090 — classes teaching this chapter, on a My Lessons unit page (founder, 2026-09-25).
+   Option 1 of docs/mockups/lesson-preview-capsule-styles.html (founder): SOLID pills in one Meyy
+   hue per section (pine · clay · ochre · dark pine, cycling), white letter + "→", lifting on hover
+   so they read as buttons, not tags. Tapping opens that section's own lesson on its current unit. */
+.lv-secs { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 9px; }
+.lv-secs { align-items:center; }
+.lv-secs-lab { font-family:var(--f-mono); font-size:10px; letter-spacing:.06em; color:var(--ink-soft); margin-right:2px; }
+.lv-sec { --h:var(--pine); font-family:var(--f-mono); font-size:11px; font-weight:600; letter-spacing:.08em;
+  text-transform:uppercase; line-height:1; color:#fff; background-color:var(--h); border:0; cursor:pointer;
+  padding:6px 11px 6px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+  box-shadow:0 1px 0 rgba(0,0,0,.12), 0 2px 6px color-mix(in srgb, var(--h) 30%, transparent);
+  transition:transform .12s ease, box-shadow .12s ease; }
+.lv-sec-arrow { opacity:.85; font-weight:500; }
+.lv-sec-1 { --h:var(--pine); }
+.lv-sec-2 { --h:var(--clay); }
+.lv-sec-3 { --h:var(--ochre); }
+.lv-sec-4 { --h:var(--pine-d); }
+.lv-sec:hover { transform:translateY(-1px); box-shadow:0 2px 0 rgba(0,0,0,.12), 0 5px 12px color-mix(in srgb, var(--h) 35%, transparent); }
+.lv-sec:active { transform:translateY(0); }
+.lv-sec:focus-visible { outline:2px solid var(--h); outline-offset:2px; }
