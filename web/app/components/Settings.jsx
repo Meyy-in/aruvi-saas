@@ -100,13 +100,48 @@ function PersonalProfile({ onSaved }) {
     }).catch(() => {});
   }, []);
 
+  /* ★ THE EMAIL CHANGE MUST NOT SILENTLY EVAPORATE (founder, 2026-09-26, live: "email
+     when changed using 'change' after saving switches back to old mail"). The change was
+     committed only by pressing Verify; a teacher who typed the address twice and pressed
+     Save got the OLD address saved and the new one dropped. Now (a) two matching entries
+     verify themselves, as the subscribe wizard's do, and (b) Save folds in a pending
+     change whose two entries match — it never saves an unconfirmed one. Returns the
+     address to save, or null when the pending change must be fixed first. */
+  const verifyPending = async () => {
+    if (emailStage !== "confirm") return email;
+    if (!EMAIL_OK(email2)
+        || email2.trim().toLowerCase() !== emailNew.trim().toLowerCase()) {
+      setEmailErr("The two entries don't match — try again."); setEmail2("");
+      return null;
+    }
+    setEmailBusy(true);
+    const taken = await idInUse(emailNew, acct && acct.account_id);
+    setEmailBusy(false);
+    if (taken) {
+      setEmailErr(EMAIL_TAKEN); setEmail2(""); setEmailStage("enter");
+      return null;
+    }
+    const v = emailNew.trim();
+    setEmail(v); setEmailStage("ok"); setEmailErr("");
+    return v;
+  };
+
+  useEffect(() => {
+    if (emailStage !== "confirm" || emailBusy || !EMAIL_OK(email2)) return;
+    if (email2.trim().toLowerCase() !== emailNew.trim().toLowerCase()) return;
+    verifyPending();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email2, emailNew, emailStage]);
+
   const save = async () => {
     setBusy(true); setNote("");
+    const mail = await verifyPending();
+    if (mail === null) { setBusy(false); return; }
     try {
       const r = await fetch(`${API}/account`, withUser({
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, role, state: stateName, city, school,
+        body: JSON.stringify({ name, email: mail, role, state: stateName, city, school,
                                whatsapp: wa }),
       }));
       /* The SERVER'S OWN SENTENCE on a 4xx (2026-08-26) — a 409 here means the address
@@ -178,20 +213,7 @@ function PersonalProfile({ onSaved }) {
           {/* Told at VERIFY, not at Save — the twin of the checkout check. */}
           <button type="button" className="fr-link"
             disabled={!EMAIL_OK(email2) || emailBusy}
-            onClick={async () => {
-              if (email2.trim().toLowerCase() !== emailNew.trim().toLowerCase()) {
-                setEmailErr("The two entries don't match — try again."); setEmail2("");
-                return;
-              }
-              setEmailBusy(true);
-              const taken = await idInUse(emailNew, acct && acct.account_id);
-              setEmailBusy(false);
-              if (taken) {
-                setEmailErr(EMAIL_TAKEN); setEmail2(""); setEmailStage("enter");
-                return;
-              }
-              setEmail(emailNew.trim()); setEmailStage("ok"); setEmailErr("");
-            }}>
+            onClick={verifyPending}>
             {emailBusy ? "Checking…" : "Verify →"}
           </button>
         </>
