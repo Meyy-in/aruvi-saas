@@ -54,14 +54,14 @@ test("a class with no sections recorded still teaches one", () => {
   assert.equal(gradePpw({ periods_per_week: 4 }), 4);
 });
 
-/* ★ A CLASS SHARED BETWEEN SUBJECTS IS ONE CLASS. She stands in one Class 6; a profile that
-   told her she had two would be counting her timetable rather than her school. Sections are
-   counted the same way, by their tag — 6A is 6A whichever subject she takes it for. */
-test("classes and sections are counted as sets across subjects, not summed per subject", () => {
+/* ★ A CLASS SHARED BETWEEN SUBJECTS IS ONE CLASS. She stands in one Class 6.
+   ★ A SECTION SHARED BETWEEN SUBJECTS IS TWO TEACHING LOADS (WALK-A-101): 6A for English and
+   6A for Maths are counted separately. */
+test("classes are a set across subjects; sections are counted per subject", () => {
   const s = profileStats(SUBJECTS);
   assert.equal(s.subjects, 2);
   assert.equal(s.classes, 3, "iii, iv, vi — vi is shared and counts once");
-  assert.equal(s.sections, 5, "3A 3B 3C 4A 6A — 6A is shared and counts once");
+  assert.equal(s.sections, 6, "English 3A 3B 3C 4A 6A + Maths 6A — 6A counts once per subject");
   assert.equal(s.ppw, 31, "15 + 5 + 5 for English, 6 for Maths");
 });
 
@@ -123,4 +123,22 @@ test("classCards walks the whole subject in record order, and a missing index is
                    ["Class 3", "Class 4", "Class 6"]);
   assert.equal(classCard(SUBJECTS[0], 9), null);
   assert.deepEqual(classCards(null), []);
+});
+
+/* WALK-A-101 — the founder's own worked example. SS in Classes 6/7/8 with 3, 4 and 5 sections,
+   then Science added for the same five Class 8 sections: 12 + 5 = 17, not 12. */
+test("the same sections under a second subject add to the count", () => {
+  const secs = (g, n) => Array.from({ length: n }, (_, i) =>
+    ({ sec: "ABCDE"[i], tag: `${g}${"ABCDE"[i]}` }));
+  const ss = { name: "Social Sciences", grades: [
+    { grade: "vi", periods_per_week: 6, sections: secs(6, 3) },
+    { grade: "vii", periods_per_week: 6, sections: secs(7, 4) },
+    { grade: "viii", periods_per_week: 6, sections: secs(8, 5) },
+  ] };
+  assert.equal(profileStats([ss]).sections, 12);
+  const sci = { name: "Science", grades: [{ grade: "viii", periods_per_week: 6, sections: secs(8, 5) }] };
+  const s = profileStats([ss, sci]);
+  assert.equal(s.sections, 17);
+  assert.equal(s.classes, 3, "Class 8 is still one class");
+  assert.equal(s.subjects, 2);
 });

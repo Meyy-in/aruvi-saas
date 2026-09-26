@@ -300,9 +300,13 @@ export const secCount = (g) => ((g && g.sections) || []).length || 1;
 export const gradePpw = (g) => ((g && g.periods_per_week) || 0) * secCount(g);
 export const subjectPpw = (s) => (((s && s.grades) || []).reduce((a, g) => a + gradePpw(g), 0));
 
-/* The four headline tiles. Classes and sections are counted as SETS across subjects: a teacher
-   who takes Class 6 for both Science and Maths stands in one Class 6, and a profile that told
-   her she had two would be counting her timetable rather than her school. */
+/* The four headline tiles. CLASSES are counted as a SET across subjects: a teacher who takes
+   Class 6 for both Science and Maths stands in one Class 6.
+   ★ SECTIONS ARE COUNTED PER SUBJECT (founder, 2026-09-26, WALK-A-101). 8A taken for Social
+   Science and again for Science is two teaching loads — two plans, two budgets, two sets of
+   lessons — so it counts twice. The key carries the subject; within one subject a section
+   still counts once. (SS in 6/7/8 with 3+4+5 sections = 12; add Science for the same five
+   Class 8 sections = 17, not 12.) */
 export function profileStats(subjects) {
   const canon = subjects || [];
   const classSet = new Set();
@@ -310,7 +314,7 @@ export function profileStats(subjects) {
   let ppw = 0;
   canon.forEach((s) => ((s.grades) || []).forEach((g) => {
     classSet.add(classNum(g.grade));
-    (g.sections || []).forEach((x) => secSet.add(`${classNum(g.grade)}${secLetter(x)}`));
+    (g.sections || []).forEach((x) => secSet.add(`${s.name}|${classNum(g.grade)}${secLetter(x)}`));
     ppw += gradePpw(g);
   }));
   return { subjects: canon.length, classes: classSet.size, sections: secSet.size, ppw };

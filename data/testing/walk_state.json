@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-25T16:10:22",
+  "updated_at": "2026-09-26T15:21:36",
   "items": {
     "04.19": {
       "ios": {
@@ -2870,6 +2870,42 @@
         "comment": "Dark + Text size Larger (1.2×): org page (incl. folded Dropped units), unit tabs/pager/bookmark, notes (privacy link, rules, Save row), Assess pager, done cards, stacked and fitted tables — nothing overlaps or truncates. Empty-plan half not reachable (no unit-less plan in the library).",
         "build": "dev build"
       }
+    },
+    "02.02": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:21:36",
+        "comment": "Re-walk after WALK-A-101: tiles match the profile (Sections counted per subject).",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.01": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:21:36",
+        "comment": "Frozen bar '⚙ Teaching profile' + ✕; no heading/pencil/Done/back; ✕ returns to Settings.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.03": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:21:36",
+        "comment": "One subject open at a time, tinted band + clay spine, caret ▾/▸, header pinned on web.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.04": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:21:36",
+        "comment": "Class card: renamed sections show her name only; per-section periods; annual budget; nothing editable. Two-period-length case not present on this profile.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
     }
   },
   "gate": {
@@ -4977,6 +5013,29 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-25T15:26:43"
+    },
+    {
+      "id": "WALK-A-101",
+      "opened": "2026-09-26T15:18:35",
+      "closed": "",
+      "feature": "02.02",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Teaching profile 'Sections' tile: count sections per subject, not as one set across subjects",
+      "what": "Founder, 2026-09-26: a section taught for two subjects is two teaching loads. SS in 6/7/8 with 3+4+5 sections = 12; add Science for the same five Class 8 sections = 17, not 12. On 9000000003 the tile should read 19 (English 6 + Maths 4 + Science 7 + SS 2); the old code gave 15 (Maths 6A/9A and SS 9A/9B merged with other subjects' sections). Classes stay a set across subjects.",
+      "fix": "[FIXED shared 2026-09-26T15:18:35] packages/shared/src/profile.js profileStats: the section key now carries the subject name (`${s.name}|${class}${letter}`). Test updated (shared 6A now counts once per subject) and the founder's 12+5=17 example added; 239/239 shared tests pass. One shared function feeds web TeachingProfile.jsx and mobile settings/profile.jsx, so all three surfaces need a re-walk of 02.02.\n[RE-WALKED web 2026-09-26] PASS",
+      "files": "packages/shared/src/profile.js, packages/shared/test/profileView.test.js",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "Kumar",
+      "at": "2026-09-26T15:18:35"
     }
   ]
 }
