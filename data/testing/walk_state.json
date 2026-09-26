@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-26T15:21:36",
+  "updated_at": "2026-09-26T15:39:05",
   "items": {
     "04.19": {
       "ios": {
@@ -2906,6 +2906,78 @@
         "comment": "Class card: renamed sections show her name only; per-section periods; annual budget; nothing editable. Two-period-length case not present on this profile.",
         "build": "web dev (localhost:3000 → Render)"
       }
+    },
+    "02.05": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:26:39",
+        "comment": "No dustbin, pencil or remove control on any subject row or class card; profile is view-only.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.06": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:26:39",
+        "comment": "Dashed '+ add a subject' row opens the SubscribeFlow wizard; no subject wheel; backing out returns to the profile unchanged.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.08": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:26:39",
+        "comment": "Add from My Classes and My Lessons: four rows (Class · Section · Periods a week · Annual period budget) + ✕, no Subject row; ✕ and scrim close it, tab untouched.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.09": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:27:24",
+        "comment": "Multi-subject half: 'In which subject?' with hint, then 'Which class?' rows 'Class {n}' ›, '← Back' footer on web. Single-subject/single-class half (screens skipped) still to walk on a trial account.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.10": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:33:08",
+        "comment": "After a Periods save and a Section cancel, back on the starting tab with the four-row window up again; never lands on the profile.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.11": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:33:08",
+        "comment": "Kicker, hint, pre-ticked enrolled classes, Save never disabled; new class arrives as one Section A card with 40 min periods, periods/week and annual budget, no further questions.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.12": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-09-26T15:36:02",
+        "comment": "Add › Class › Science (holds middle + secondary): 6 and 9 ticked, 7 and 8 not shown between them, while the note says 'Your subscription covers what's shown here' — she reads it as not eligible for 7/8. Cause: shared clusterOrder drops unchosen rows between lowest and highest pick. → WALK-A-102 Stage filter itself correct: Social Sciences (secondary only) offered Classes 9 and 10 only, with the subscription note. Trial half still to walk.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.13": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-26T15:39:05",
+        "comment": "Confirm names the class, sections and 'Your lessons stay in the library.'; Keep it re-ticks; Yes, remove deletes the cards, lessons stay in My Lessons. Walked on Science Class 6 (6B, 6C) — removed.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
     }
   },
   "gate": {
@@ -5036,6 +5108,26 @@
       ],
       "owner": "Kumar",
       "at": "2026-09-26T15:18:35"
+    },
+    {
+      "id": "WALK-A-102",
+      "opened": "2026-09-26T15:36:02",
+      "closed": "",
+      "feature": "02.12",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Pick wheel hides unticked classes between two ticked ones; with the subscription note she reads them as not covered",
+      "what": "Founder, 2026-09-26: Science enrolled in 6 and 9 (holds middle + secondary). The class wheel shows 6 and 9 ticked with 7 and 8 hidden between them. The note 'Your subscription covers what's shown here…' then tells her she is not eligible for 7/8, though she is. The only way to reach 7/8 is to untick 9 — which in manage mode is a removal. DECISION (founder, 2026-09-26): ONLY in the Add window's class wheel (Add › Class, manage mode), do not group ticked classes — natural order, ticks in place. Everywhere else (first run, + add-a-subject classes, sections, durations, subjects) keeps the clustering as is.",
+      "fix": "",
+      "files": "web/app/components/TeachingProfile.jsx (classes screen, manageC → PickWheel cluster={false}); phone equivalent in mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "open",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-26T15:36:02"
     }
   ]
 }

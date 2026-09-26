@@ -40,13 +40,17 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   secret, refused otherwise; events logged to `state/whatsapp_inbox/`; a "STOP" withdraws the
   opt-in). Chats are answered in the Business app (coexistence) — not turned into support cases.
   **Welcome template wording (founder-approved 2026-09-26; submit in WhatsApp Manager as
-  `meyy_welcome`, Utility, English, one variable):** "Hello {{1}}, welcome to Meyy! This is our
-  support chat — we reply to messages only, not calls. Send us your questions or feedback here
-  anytime and we'll get back to you." It echoes the Business app's GREETING message ("Thank you
+  `meyy_welcome`, Utility, English, one NUMBER variable, sample "Kumar"):** "Hello {{1}}, your
+  Meyy subscription is now active. This chat is your support line for your account — we reply to
+  messages only, not calls. Message us here with any questions about your lesson plans." (The
+  first wording, "welcome to Meyy! …", was flagged by Meta as MARKETING; declined — marketing
+  would break the "never marketing on WhatsApp" promise, can be muted, and costs more — so it
+  was re-worded to tie to her account, which is what Utility requires.) It echoes the Business app's GREETING message ("Thank you
   for contacting Meyy! We reply to messages only, not calls…"), which today already acts as the
   welcome, because the tap-to-chat buttons make her message first. Meta setup status: founder's
   Facebook login created + 2FA on; business portfolio ("Meyy OPC Private Limited" — Meta forbids
-  brackets) pending Meta's new-account wait. Sending-number choice (second SIM · partner
+  brackets) created; developer app "Meyy" created; test number claimed; Meta's sample template delivered to
+  the founder's phone; `meyy_welcome` submitted for review (2026-09-26). Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.
   `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
   template's document header (`WhatsAppTemplate.document`).
