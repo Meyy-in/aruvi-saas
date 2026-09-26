@@ -4,7 +4,8 @@ Tests for the WhatsApp support channel (2026-09-26).
   1. OPT-IN IS STORED, AND EMAIL BECOMES OPTIONAL. A WhatsApp checkout with no email
      activates, stores the opt-in, and still sends the founder his sales log.
   2. THE WELCOME GOES ONCE. Checkout sends the approved template with her first name;
-     adding it again never greets her twice, and the app can never switch it OFF.
+     adding it again never greets her twice; it can be switched off only while an email
+     is on record, and an email can be cleared only while WhatsApp is on (one channel, always).
   3. THE WEBHOOK IS AUTHENTICATED. The GET handshake checks the verify token; an unsigned
      POST is refused (it can switch an opt-in off); a signed STOP withdraws the opt-in.
   4. THE CLOUD PAYLOAD HAS META'S SHAPE — pinned without a network.
@@ -74,9 +75,11 @@ def test_whatsapp_checkout_without_email_welcomes_once_and_logs_for_founder():
         # the founder's log went although she has no email, and names WhatsApp
         assert any("WhatsApp: YES" in s.text for s in sent), [s.subject for s in sent]
         h = {"X-Aruvi-User": "9800000101"}
-        # ONE-WAY: the app cannot switch it off
+        # AT LEAST ONE CHANNEL: no email on record → WhatsApp cannot be switched off
         off = c.post("/account/whatsapp", headers=h, json={"enabled": False})
-        assert off.status_code == 400
+        assert off.status_code == 409
+        off2 = c.post("/account", headers=h, json={"whatsapp": False})
+        assert off2.status_code == 409 and "at least one way" in off2.json()["detail"]
         assert c.get("/account", headers=h).json()["whatsapp"] is True
         # adding again never greets her twice
         again = c.post("/account/whatsapp", headers=h, json={"enabled": True}).json()
@@ -94,6 +97,22 @@ def test_support_meta_reports_whatsapp_only_when_opted_in_and_it_can_be_added_la
     assert meta["whatsapp"] is False and meta["whatsapp_number"]
     assert c.post("/account/whatsapp", headers=h, json={"enabled": True}).status_code == 200
     assert c.get("/support", headers=h).json()["whatsapp"] is True
+
+
+def test_one_channel_always_in_personal_profile():
+    m, c = _client()
+    h = {"X-Aruvi-User": "9800000104"}
+    _subscribe(c, "9800000104", whatsapp=True)
+    # adding an email opens the way off — in the SAME save or later
+    r = c.post("/account", headers=h, json={"email": "t9800000104@example.com", "whatsapp": False})
+    assert r.status_code == 200, r.text
+    a = c.get("/account", headers=h).json()
+    assert a["whatsapp"] is False and a["email"] == "t9800000104@example.com"
+    # and now the email cannot be cleared, because it is her only channel
+    assert c.post("/account", headers=h, json={"email": ""}).status_code == 409
+    # switching WhatsApp back on is always allowed, and then the email may go
+    assert c.post("/account", headers=h, json={"whatsapp": True}).status_code == 200
+    assert c.post("/account", headers=h, json={"email": ""}).status_code == 200
 
 
 def test_webhook_handshake_and_signature():

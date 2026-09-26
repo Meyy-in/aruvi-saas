@@ -5566,3 +5566,5 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 .ob-wa-hello { margin-top: 8px; }
 .sup-wa { margin-top: 12px; }
 .sup-wa-num { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); }
+/* Personal profile's WhatsApp row — the email view's field shape with a switch at the end. */
+.pp-wa-txt { flex: 1 1 auto; min-width: 0; font-size: 13px; line-height: 1.35; }

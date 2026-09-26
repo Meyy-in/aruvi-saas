@@ -2221,6 +2221,19 @@ class AccountUpdate(BaseModel):
     state: Optional[str] = None
     city: Optional[str] = None
     school: Optional[str] = None
+    # The WhatsApp support choice (2026-09-26) — lives in Personal profile beside the
+    # email it trades off against. See _ONE_CHANNEL.
+    whatsapp: Optional[bool] = None
+
+
+# ★ AT LEAST ONE CHANNEL, ALWAYS (founder, 2026-09-26). A subscriber must keep a way for
+# Meyy to reach her — invoices when she pays, legal and privacy notices — so WhatsApp can
+# be switched OFF only while an email is on record, and an email can be cleared only while
+# WhatsApp is on. She may leave either channel; she may not leave both. (Replying STOP on
+# WhatsApp is the one exception — Meta's policy — and is honoured by the webhook.)
+_ONE_CHANNEL = ("Meyy needs at least one way to reach you — for your invoices and for "
+                "legal and privacy notices. Add an email address first, then you can "
+                "switch WhatsApp off.")
 
 
 @app.get("/account")
@@ -2298,21 +2311,18 @@ class WhatsAppPref(BaseModel):
 @app.post("/account/whatsapp")
 def set_whatsapp(req: WhatsAppPref,
                  identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
-    """ADD WhatsApp support after checkout (2026-09-26). One-way — see below."""
+    """Switch WhatsApp support on or off (2026-09-26) — off only while an email is on
+    record (_ONE_CHANNEL). The web uses POST /account from Personal profile; this route
+    stays for the phone app and scripts."""
     tenant_id, user_id = identity
     a = account_repo.load(tenant_id, user_id)
     if a is None:
         raise HTTPException(status_code=404, detail="No account.")
-    # ★ ONE-WAY (founder, 2026-09-26): the app adds WhatsApp, it never removes it — a
-    #   subscriber who chose it as her channel must keep a channel to Meyy. The only way
-    #   off is replying STOP on WhatsApp itself (the webhook), which Meta's own policy
-    #   requires a business to honour.
-    if not req.enabled:
-        raise HTTPException(status_code=400, detail=(
-            "WhatsApp support can't be switched off in the app. "
-            "Write to us on WhatsApp if you need help with it."))
-    _set_whatsapp(a, True)
-    welcome = _wa_welcome(a, a.phone or user_id)
+    # Off only while an email is on record — at least one channel, always (_ONE_CHANNEL).
+    if not req.enabled and not (a.email or "").strip():
+        raise HTTPException(status_code=409, detail=_ONE_CHANNEL)
+    _set_whatsapp(a, bool(req.enabled))
+    welcome = _wa_welcome(a, a.phone or user_id) if req.enabled else {"status": "skipped"}
     account_repo.save(a)
     return {"whatsapp": bool(req.enabled),
             "whatsapp_at": (a.notify or {}).get("whatsapp_at", ""),
@@ -2409,9 +2419,20 @@ def update_account(req: AccountUpdate,
         raise HTTPException(status_code=404, detail="No account.")
     if req.name is not None:
         a.display_name = req.name.strip() or a.display_name
+    had_channel = bool((a.email or "").strip()) or bool((a.notify or {}).get("whatsapp"))
     if req.email is not None:
         _guard_email_not_taken(req.email, a.account_id)
         a.email = req.email.strip()
+    if req.whatsapp is not None:
+        was_on = bool((a.notify or {}).get("whatsapp"))
+        if bool(req.whatsapp) != was_on:
+            _set_whatsapp(a, bool(req.whatsapp))
+            if req.whatsapp:
+                _wa_welcome(a, a.phone or user_id)
+    # Checked on the RESULT, so no order of fields can slip past it — and only against an
+    # account that HAD a channel, so a record from before the rule can still save its name.
+    if had_channel and not (a.email or "").strip() and not (a.notify or {}).get("whatsapp"):
+        raise HTTPException(status_code=409, detail=_ONE_CHANNEL)
     if req.role is not None:
         a.role = req.role.strip()
     if req.state is not None:

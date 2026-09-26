@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { API, withUser, fetchEntitlement, getJSON, pretty, idInUse, errDetail,
-         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN, waLink, mobileWords, WHATSAPP_DISPLAY,
+         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN, waLink, mobileWords,
          fmtValidity, scopeRows, subsFromEntitlement } from "../lib/format";
 import ThemeToggle from "./ThemeToggle";
 import Agreement from "./Agreement";
@@ -83,10 +83,17 @@ function PersonalProfile({ onSaved }) {
   const [emailBusy, setEmailBusy] = useState(false);   // the "already in use" round-trip
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
+  /* WhatsApp support (2026-09-26) lives HERE, beside the email it trades off against —
+     one door onto the choice. ★ AT LEAST ONE CHANNEL, ALWAYS (founder): she can switch
+     WhatsApp off only while a CONFIRMED email is on the form, because Meyy must be able to
+     reach a paying customer for invoices and legal/privacy notices. Without an email the
+     switch stays on, locked, and says why. The server enforces the same rule (409). */
+  const [wa, setWa] = useState(false);
   useEffect(() => {
     fetch(`${API}/account`, withUser()).then((r) => (r.ok ? r.json() : null)).then((a) => {
       if (!a) return;
       setAcct(a);
+      setWa(!!a.whatsapp);
       setName(a.display_name || ""); setRole(a.role || ""); setStateName(a.state || "");
       setCity(a.city || ""); setSchool(a.school_name || ""); setEmail(a.email || "");
       setEmailStage(a.email ? "ok" : "enter");
@@ -99,7 +106,8 @@ function PersonalProfile({ onSaved }) {
       const r = await fetch(`${API}/account`, withUser({
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, role, state: stateName, city, school }),
+        body: JSON.stringify({ name, email, role, state: stateName, city, school,
+                               whatsapp: wa }),
       }));
       /* The SERVER'S OWN SENTENCE on a 4xx (2026-08-26) — a 409 here means the address
          belongs to another account, and "try again" is advice that can never work for
@@ -188,6 +196,33 @@ function PersonalProfile({ onSaved }) {
           </button>
         </>
       )}
+
+      {/* WhatsApp support — see the state note above. `hasMail` is the CONFIRMED email on
+          this form (an address mid-change does not count until Verify completes). */}
+      {(() => {
+        const hasMail = emailStage === "ok" && !!String(email || "").trim();
+        const locked = wa && !hasMail;
+        return (
+          <div className="login-field ob-field">
+            <span>WhatsApp support</span>
+            <div className="ob-email-view pp-wa">
+              <span className="pp-wa-txt">{wa
+                ? <>On — Meyy support on WhatsApp from your sign-in number</>
+                : <>Off</>}</span>
+              <label className="set-switch">
+                <input type="checkbox" checked={wa} disabled={locked || busy}
+                  onChange={(e) => setWa(e.target.checked)}
+                  aria-label="Use WhatsApp for Meyy support" />
+              </label>
+            </div>
+            {locked && (
+              <p className="ob-quiet">To switch WhatsApp off, add an email address above
+                first — Meyy needs at least one way to reach you for your invoices and for
+                legal and privacy notices.</p>
+            )}
+          </div>
+        );
+      })()}
 
       <label className="login-field ob-field"><span>Role <span className="ob-req" aria-hidden="true">*</span></span>
         <Dropdown value={role} onChange={setRole} options={ROLES}
@@ -417,8 +452,7 @@ function SupportForm({ onOpenProfile, onAsk }) {
       {hasWa && (
         <button className="set-bigcard sup-wa" onClick={openWa}>
           <span className="set-bigtext"><span className="set-biglab">Chat on WhatsApp</span>
-            <span className="set-bigsub">Message Meyy support at{" "}
-              <span className="sup-wa-num">{WHATSAPP_DISPLAY}</span></span></span>
+            <span className="set-bigsub">Message Meyy support</span></span>
           <span className="set-chev">›</span>
         </button>
       )}
@@ -580,28 +614,13 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
   const [marketing, setMarketing] = useState(null);   // null = not yet known
   const [mktBusy, setMktBusy] = useState(false);
   const [mktNote, setMktNote] = useState("");
-  /* WhatsApp support (2026-09-26) — ONE-WAY: a subscriber who said No at checkout can ADD it
-     here; nobody can switch it OFF (founder, same day). She chose WhatsApp knowingly as her
-     channel to Meyy, often INSTEAD of email; switching it off would leave a paying customer
-     with no channel at all, and Meyy does not answer mail from addresses that are not on
-     her profile (anonymous mail is how abuse and privacy breaches arrive). This is a
-     service relationship she entered, not an unsolicited mailing with an unsubscribe.
-     Rendered only once KNOWN; hidden on trial — the channel is a subscriber's. */
-  const [waOn, setWaOn] = useState(null);
-  const [waBusy, setWaBusy] = useState(false);
-  const [waNote, setWaNote] = useState("");
-  const [acctEmail, setAcctEmail] = useState("");
 
   useEffect(() => {
     let live = true;
     fetch(`${API}/account`, withUser())
       .then((r) => (r.ok ? r.json() : null))
       .then((a) => {
-        if (live && a) {
-          setMarketing(!!a.marketing_email);
-          setWaOn(!!a.whatsapp);
-          setAcctEmail(a.email || "");
-        }
+        if (live && a) setMarketing(!!a.marketing_email);
       })
       .catch(() => {});
     return () => { live = false; };
@@ -631,31 +650,6 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       setMktNote("Couldn't save that just now — try again.");
     } finally {
       setMktBusy(false);
-    }
-  };
-
-  const addWa = async () => {
-    if (waBusy || waOn) return;
-    setWaBusy(true); setWaNote("");
-    try {
-      const r = await fetch(`${API}/account/whatsapp`, withUser({
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ enabled: true }),
-      }));
-      if (!r.ok) {
-        setWaNote(await errDetail(r, "Couldn't save that just now — try again."));
-        return;
-      }
-      const res = await r.json().catch(() => ({}));
-      setWaOn(true);
-      setWaNote(res && res.welcome_status === "sent"
-        ? `Added — we've sent a welcome to your WhatsApp from ${WHATSAPP_DISPLAY}.`
-        : `Added — you can now reach us on WhatsApp at ${WHATSAPP_DISPLAY} from Support.`);
-    } catch {
-      setWaNote("Couldn't save that just now — try again.");
-    } finally {
-      setWaBusy(false);
     }
   };
 
@@ -1107,17 +1101,6 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       </div>
       )}
       {mktNote && <p className="set-hint">{mktNote}</p>}
-      {/* Only for a subscriber WITHOUT WhatsApp: one tap adds it. Once on, there is no row
-          here at all — the channel lives in Support, and it has no off switch (see above). */}
-      {!trial && waOn === false && (
-      <button className="set-bigcard" disabled={waBusy} onClick={addWa}>
-        <span className="set-bigtext"><span className="set-biglab">Add WhatsApp support</span>
-          <span className="set-bigsub">Reach Meyy support on WhatsApp from your sign-in
-            number — service messages only, never marketing</span></span>
-        <span className="set-chev">{waBusy ? "…" : "+"}</span>
-      </button>
-      )}
-      {waNote && <p className="set-hint">{waNote}</p>}
 
       {/* Legal — its own card, per the agreement's own placement promise (see the
           `legal` view above). Shown on trial too. */}

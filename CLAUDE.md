@@ -11,7 +11,7 @@ Opt-in second support channel on the Meyy WhatsApp Business number (+91 93637 95
 `api/config.WHATSAPP_NUMBER` ↔ `@aruvi/shared/format` `WHATSAPP_NUMBER` — move one, move the other).
 **On the sign-in mobile only** (OTP-verified, no second-number field). **Service only, never
 marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.notify`
-{`whatsapp`, `whatsapp_at`, `whatsapp_version`}; `POST /account/whatsapp` ADDS only (one-way, below);
+{`whatsapp`, `whatsapp_at`, `whatsapp_version`}; `POST /account {whatsapp}` (Personal profile) and `POST /account/whatsapp` switch it, subject to the one-channel rule below;
 `GET /account` and `GET /support` return it; export lists it.
 - **Subscribe › About you:** "Support on WhatsApp?" Yes/No, neither preselected, asked BEFORE email.
   Yes ⇒ email becomes optional (a half-typed email still blocks). `profileKnown` accepts
@@ -22,12 +22,14 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   and says "WhatsApp: YES — send the welcome to …".
 - **Settings › Support:** opted-in ⇒ "Chat on WhatsApp" card under Ask Meyy. Opted-in AND no email
   ⇒ the email form is replaced by "add an email to use email support; meanwhile use WhatsApp".
-  ★ **ONE-WAY — NO OFF SWITCH (founder, same day).** She chose WhatsApp knowingly as her channel
-  to Meyy (often instead of email); switching it off would leave a paying customer with no channel,
-  and Meyy does not answer mail from addresses not on her profile (abuse / privacy risk). Settings
-  home shows "Add WhatsApp support" ONLY to a subscriber who said No; once on, no row at all.
-  `POST /account/whatsapp {enabled:false}` → 400. The ONLY way off is replying STOP on WhatsApp
-  (webhook) — kept because Meta's policy requires honouring opt-out requests.
+  ★ **AT LEAST ONE CHANNEL, ALWAYS (founder, same day — supersedes a one-way rule held for an
+  hour).** Meyy must reach a paying customer (invoices, legal/privacy notices), and does not answer
+  mail from addresses not on her profile. So the WhatsApp switch lives in **Settings › Personal
+  profile** beside the email (one door; the Settings-home row is gone): she can switch WhatsApp OFF
+  only while a CONFIRMED email is on the form, and an email can be cleared only while WhatsApp is
+  on. Server enforces it on the RESULT of `POST /account` (and `/account/whatsapp`) → 409
+  `_ONE_CHANNEL`; accounts that had no channel before the rule are not blocked from saving.
+  Replying STOP on WhatsApp (webhook) is the one exception — Meta policy.
 - **API WIRED (same day):** `WhatsAppClient` port + `FileWhatsApp` (dev → `state/whatsapp_outbox/`) +
   `CloudWhatsApp` (Graph `/{phone_number_id}/messages`, template sends only). Chosen at startup like
   the Notifier: Cloud only when `ARUVI_WA_TOKEN` + `ARUVI_WA_PHONE_NUMBER_ID` are set. Welcome =
