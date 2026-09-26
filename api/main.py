@@ -16,7 +16,7 @@ import json
 from datetime import date, datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel
@@ -52,6 +52,9 @@ from aruvi_core.adapters.document_backend import slug as _doc_slug  # noqa: E402
 from aruvi_core.adapters.year_cutover_file import YearCutoverFileImpl
 from aruvi_core.adapters.file_notifier import FileNotifier
 from aruvi_core.adapters.smtp_notifier import SmtpNotifier
+from aruvi_core.adapters.file_whatsapp import FileWhatsApp
+from aruvi_core.adapters.cloud_whatsapp import CloudWhatsApp
+from aruvi_core.ports import WhatsAppTemplate
 from aruvi_core.ports import EmailMessage
 from api import mail_templates
 from aruvi_core.ports import (Account, AcademicYear, Attachment, ConsentRecord,
@@ -205,6 +208,18 @@ trial_ledger = TrialLedgerFileImpl(state, config.TRIAL_LEDGER_KEY or config.TRIA
                                    config.TRIAL_LEDGER_DAYS)
 if not config.TRIAL_LEDGER_KEY:
     print("[aruvi] trial ledger: DEV KEY in use — set ARUVI_TRIAL_LEDGER_KEY on any real deployment")
+
+# The WhatsApp client (2026-09-26): Meta's Cloud API only when BOTH the token and the
+# phone-number id are set; otherwise the file outbox — the Notifier's own rule, one seam.
+if config.WA_TOKEN and config.WA_PHONE_NUMBER_ID:
+    wa_client = CloudWhatsApp(config.WA_TOKEN, config.WA_PHONE_NUMBER_ID, config.WA_API_VERSION)
+    print(f"[aruvi] whatsapp: CLOUD API ({config.WA_API_VERSION}) — welcome messages WILL send")
+else:
+    wa_client = FileWhatsApp(config.STATE_DIR)
+    print("[aruvi] whatsapp: FILE OUTBOX — nothing sends. Unset: "
+          + ", ".join(n for n, v in (("ARUVI_WA_TOKEN", config.WA_TOKEN),
+                                     ("ARUVI_WA_PHONE_NUMBER_ID", config.WA_PHONE_NUMBER_ID))
+                      if not v))
 
 # The Notifier: real SMTP only when the founder has set all three credentials in the
 # environment; otherwise the file outbox, so the preview never needs a mail account and
@@ -2223,7 +2238,80 @@ def get_account(identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
             "tour_offered_at": a.tour_offered_at,
             # The optional marketing choice (v0.4), so Settings can show and change it.
             "marketing_email": bool((a.notify or {}).get("marketing_email")),
-            "marketing_email_at": (a.notify or {}).get("marketing_email_at", "")}
+            "marketing_email_at": (a.notify or {}).get("marketing_email_at", ""),
+            # The WhatsApp support opt-in (2026-09-26) — on the SIGN-IN mobile, never a
+            # second number, so there is no number field to return beside it.
+            "whatsapp": bool((a.notify or {}).get("whatsapp")),
+            "whatsapp_at": (a.notify or {}).get("whatsapp_at", "")}
+
+
+def _set_whatsapp(a: Any, enabled: bool) -> None:
+    """Record the WhatsApp opt-in on the account's `notify` (the slot ports.Account has
+    reserved for it since Step 0). Same shape as the marketing choice: a flag, WHEN, and
+    against which agreement version — and turning it off clears the date, because an
+    opt-in date beside a false flag is a record that contradicts itself."""
+    now = datetime.now(timezone.utc).isoformat()
+    notify = dict(a.notify or {})
+    notify["whatsapp"] = bool(enabled)
+    notify["whatsapp_at"] = now if enabled else ""
+    notify["whatsapp_version"] = (legal.current_version() if enabled else "")
+    a.notify = notify
+
+
+def _wa_e164(mobile: str) -> str:
+    """The sign-in id (a 10-digit Indian national number) as WhatsApp wants it: digits,
+    country code first, no "+". Anything already carrying 91 + 10 digits passes through."""
+    d = "".join(c for c in str(mobile or "") if c.isdigit())
+    if len(d) == 12 and d.startswith("91"):
+        return d
+    return ("91" + d[-10:]) if len(d) >= 10 else ""
+
+
+def _wa_welcome(a: Any, mobile: str) -> Dict[str, Any]:
+    """Send the WhatsApp welcome ONCE per account (2026-09-26). Called when the opt-in is
+    turned on — at checkout or later in Settings. `whatsapp_welcomed_at` makes it
+    once-ever: a re-subscribe or a toggle off-and-on must not greet her twice. Only a real
+    send or a dev outbox write stamps it, so a Meta error leaves the door open for the
+    next opt-in (and the founder's log says the welcome is still owed). Never raises;
+    the CALLER saves the account."""
+    notify = dict(a.notify or {})
+    if not notify.get("whatsapp"):
+        return {"status": "skipped", "reason": "not opted in"}
+    if notify.get("whatsapp_welcomed_at"):
+        return {"status": "skipped", "reason": "already welcomed"}
+    first = (str(a.display_name or "").strip().split() or [""])[0]
+    if not first or first.isdigit():
+        first = "there"                       # "Hello there" beats "Hello 9876543210"
+    res = wa_client.send_template(WhatsAppTemplate(
+        to=_wa_e164(mobile), template=config.WA_WELCOME_TEMPLATE,
+        language=config.WA_TEMPLATE_LANG, params=[first]))
+    if res.get("status") in ("sent", "written"):
+        notify["whatsapp_welcomed_at"] = datetime.now(timezone.utc).isoformat()
+        a.notify = notify
+    return res
+
+
+class WhatsAppPref(BaseModel):
+    enabled: bool
+
+
+@app.post("/account/whatsapp")
+def set_whatsapp(req: WhatsAppPref,
+                 identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """Turn WhatsApp support on or off (2026-09-26). Never gated, for the same reason
+    the marketing switch is not: withdrawing must be as easy as agreeing was (DPDP §6).
+    Turning it off when she has NO email is allowed — she is warned on screen that her
+    only written channel is then support@ from her own mail app, never blocked."""
+    tenant_id, user_id = identity
+    a = account_repo.load(tenant_id, user_id)
+    if a is None:
+        raise HTTPException(status_code=404, detail="No account.")
+    _set_whatsapp(a, req.enabled)
+    welcome = _wa_welcome(a, a.phone or user_id) if req.enabled else {"status": "skipped"}
+    account_repo.save(a)
+    return {"whatsapp": bool(req.enabled),
+            "whatsapp_at": (a.notify or {}).get("whatsapp_at", ""),
+            "welcome_status": welcome.get("status", "skipped")}
 
 
 class MarketingPref(BaseModel):
@@ -2329,6 +2417,76 @@ def update_account(req: AccountUpdate,
         a.school_name = req.school.strip()
     account_repo.save(a)
     return {"status": "saved"}
+
+
+# ── WhatsApp webhook (2026-09-26) ─────────────────────────────────────────────
+# Meta calls this for every inbound message and every delivery status on the Meyy number.
+# Configure it in the Meta app: Callback URL = {API}/whatsapp/webhook, Verify token =
+# ARUVI_WA_VERIFY_TOKEN, subscribe to the `messages` field. It does three things only:
+#   * VERIFY — the GET handshake Meta performs once when the URL is saved.
+#   * AUTHENTICATE — every POST carries X-Hub-Signature-256 (HMAC-SHA256 of the raw body
+#     under the app secret); an unsigned or mis-signed POST is refused, because this route
+#     can switch a teacher's opt-in off and must not be drivable by anyone on the internet.
+#   * LOG + HONOUR "STOP" — events are appended to STATE_DIR/whatsapp_inbox/{date}.jsonl
+#     (the founder answers chats in the Business app — coexistence — so the app does NOT
+#     turn each message into a support case), and a message that is exactly STOP turns
+#     her WhatsApp opt-in off: withdrawal as easy as the consent (DPDP §6).
+def _wa_log(event: Dict[str, Any]) -> None:
+    try:
+        from pathlib import Path
+        d = Path(config.STATE_DIR) / "whatsapp_inbox"
+        d.mkdir(parents=True, exist_ok=True)
+        with open(d / f"{datetime.now(timezone.utc).date().isoformat()}.jsonl", "a",
+                  encoding="utf-8") as fh:
+            fh.write(json.dumps({"at": datetime.now(timezone.utc).isoformat(), **event}) + "\n")
+    except Exception:                                  # noqa: BLE001
+        pass
+
+
+@app.get("/whatsapp/webhook")
+def whatsapp_webhook_verify(request: Request):
+    q = request.query_params
+    if (config.WA_VERIFY_TOKEN and q.get("hub.mode") == "subscribe"
+            and q.get("hub.verify_token") == config.WA_VERIFY_TOKEN):
+        return Response(content=q.get("hub.challenge", ""), media_type="text/plain")
+    raise HTTPException(status_code=403, detail="Verification failed.")
+
+
+@app.post("/whatsapp/webhook")
+async def whatsapp_webhook(request: Request) -> Dict[str, Any]:
+    import hmac
+    raw = await request.body()
+    if not config.WA_APP_SECRET:
+        raise HTTPException(status_code=503, detail="WhatsApp webhook not configured.")
+    sig = request.headers.get("X-Hub-Signature-256", "")
+    want = "sha256=" + hmac.new(config.WA_APP_SECRET.encode(), raw, hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(sig, want):
+        raise HTTPException(status_code=401, detail="Bad signature.")
+    try:
+        body = json.loads(raw or b"{}")
+    except ValueError:
+        return {"status": "ignored"}
+    for entry in body.get("entry") or []:
+        for change in entry.get("changes") or []:
+            value = change.get("value") or {}
+            for st in value.get("statuses") or []:
+                _wa_log({"kind": "status", "id": st.get("id"), "status": st.get("status"),
+                         "to": st.get("recipient_id"),
+                         "errors": st.get("errors") or []})
+            for m in value.get("messages") or []:
+                sender = str(m.get("from") or "")
+                text = ((m.get("text") or {}).get("body") or "").strip()
+                _wa_log({"kind": "message", "from": sender, "type": m.get("type"),
+                         "text": text[:1000]})
+                if text.upper() == "STOP":
+                    uid = sender[-10:]
+                    a = account_repo.load(uid, uid) if uid else None
+                    if a is not None and (a.notify or {}).get("whatsapp"):
+                        _set_whatsapp(a, False)
+                        account_repo.save(a)
+                        _wa_log({"kind": "opt_out", "user": uid})
+    # Always 200 once authenticated — a non-2xx makes Meta retry the same event for days.
+    return {"status": "ok"}
 
 
 # ── Support (2026-08-27) ───────────────────────────────────────────────────────
@@ -2464,6 +2622,11 @@ def list_support_requests(identity: tuple = Depends(_current_identity)) -> Dict[
             "billing_reply_days": config.SUPPORT_BILLING_REPLY_DAYS,
             "email": (acct.email if acct else "") or "",
             "address": config.SUPPORT_ADDRESS,
+            # WhatsApp is offered on this screen ONLY to a teacher who opted in.
+            "whatsapp": bool(acct and (acct.notify or {}).get("whatsapp")),
+            "whatsapp_number": config.WHATSAPP_NUMBER,
+            # Her sign-in mobile, so the tap-to-chat note can say who is writing.
+            "mobile": (acct.phone if acct and acct.phone else user_id),
             "requests": [
         {"reference": r.reference, "category": r.category,
          "label": r.category_label or mail_templates.support_category_label(r.category),
@@ -2923,6 +3086,9 @@ class CheckoutRequest(BaseModel):
     scopes: List[str]          # ["social_sciences/middle", ...] — the cart
     name: str = ""
     email: str = ""            # double-confirmed client-side (founder, 2026-08-25)
+    # The WhatsApp opt-in, asked on About-you (2026-09-26). None = not asked (an older
+    # client, or the known-profile skip) — leaves the stored choice untouched.
+    whatsapp: Optional[bool] = None
     role: str = ""
     state: str = ""
     city: str = ""
@@ -2935,7 +3101,9 @@ def _send_subscription_confirmation(to: str, name: str, scopes: List[str],
                                     scope_valid_until: Dict[str, str] = None,
                                     added: List[str] = None,
                                     invoice: Optional[Invoice] = None,
-                                    invoice_pdf: Optional[bytes] = None
+                                    invoice_pdf: Optional[bytes] = None,
+                                    whatsapp: bool = False,
+                                    wa_welcome_status: str = "skipped"
                                     ) -> Dict[str, Any]:
     """Send the activation confirmation. NEVER raises and never blocks the answer the
     teacher is waiting for: a mail server having a bad minute must not turn a successful
@@ -2944,8 +3112,10 @@ def _send_subscription_confirmation(to: str, name: str, scopes: List[str],
     A teacher who gave no email simply gets no mail — the app already shows her the
     subscription on screen. With MAIL_BCC_FOUNDER on, the founder gets his own copy,
     which is his sales log until invoicing exists."""
-    if not (to or "").strip():
-        return {"status": "skipped", "reason": "no email on the account"}
+    # ★ NO EMAIL NO LONGER MEANS NO SALES LOG (2026-09-26). A WhatsApp customer may have
+    # no email at all; returning early here used to skip the founder's copy too, and his
+    # copy is the only place he learns there is a welcome to send on WhatsApp.
+    has_to = bool((to or "").strip())
     body = mail_templates.subscription_confirmation(
         name=name, scopes=list(scopes or []), amount_inr=amount_inr,
         valid_until=valid_until, mobile=mobile,
@@ -2962,19 +3132,31 @@ def _send_subscription_confirmation(to: str, name: str, scopes: List[str],
         attachments.append(Attachment(
             filename=f"Meyy-invoice-{invoice.number.replace('/', '-')}.pdf",
             content=invoice_pdf, mime_type="application/pdf"))
-    result = notifier.send(EmailMessage(
-        to=to.strip(), subject=body["subject"], text=body["text"],
-        html=body.get("html", ""),
-        reply_to=config.MAIL_REPLY_TO, attachments=list(attachments),
-        inline=mail_templates.inline_images()))
+    result = {"status": "skipped", "reason": "no email on the account"}
+    if has_to:
+        result = notifier.send(EmailMessage(
+            to=to.strip(), subject=body["subject"], text=body["text"],
+            html=body.get("html", ""),
+            reply_to=config.MAIL_REPLY_TO, attachments=list(attachments),
+            inline=mail_templates.inline_images()))
     if config.MAIL_BCC_FOUNDER and config.MAIL_FROM \
-            and config.MAIL_FROM.strip().lower() != to.strip().lower():
+            and config.MAIL_FROM.strip().lower() != (to or "").strip().lower():
         # The founder's copy is a SALES LOG, so it leads with who bought — and stays
         # plain text on purpose: a log is read as a list, not as a designed page.
+        # The WhatsApp line is his to-do until the Business API sends the welcome itself.
+        if not whatsapp:
+            wa_line = "WhatsApp: no\n"
+        elif wa_welcome_status == "sent":
+            wa_line = f"WhatsApp: YES — welcome SENT via the API to +{_wa_e164(mobile)}\n"
+        else:
+            wa_line = (f"WhatsApp: YES — welcome NOT sent automatically ({wa_welcome_status}); "
+                       f"send it by hand to +{_wa_e164(mobile)}\n")
         notifier.send(EmailMessage(
             to=config.MAIL_FROM,
-            subject=f"[Aruvi] New subscription — {name or mobile}",
-            text=f"To: {to}\nMobile: {mobile}\n\n" + body["text"],
+            subject=(f"[Aruvi] New subscription — {name or mobile}"
+                     + (" · WhatsApp" if whatsapp else "")),
+            text=(f"To: {to or '(no email — WhatsApp only)' if whatsapp else to or '(no email)'}\n"
+                  f"Mobile: {mobile}\n{wa_line}\n" + body["text"]),
             reply_to=config.MAIL_REPLY_TO, attachments=list(attachments)))
     return result
 
@@ -3025,6 +3207,8 @@ def onboarding_checkout(req: CheckoutRequest,
         acct.state = req.state.strip()
         acct.city = req.city.strip()
         acct.school_name = req.school.strip()
+        if req.whatsapp is not None:
+            _set_whatsapp(acct, req.whatsapp)
         account_repo.save(acct)
     # ADDITIVE (founder, 2026-08-26 — reported live: "I purchased science middle and
     # secondary, then added English middle, and the English addition overwrote the
@@ -3073,6 +3257,15 @@ def onboarding_checkout(req: CheckoutRequest,
         except Exception:                              # noqa: BLE001
             invoice = None
 
+    # The WhatsApp welcome (2026-09-26) — before the mail, so the founder's sales log can
+    # say whether it went or is still his to send by hand.
+    wa_welcome = {"status": "skipped"}
+    if acct is not None and (acct.notify or {}).get("whatsapp"):
+        try:
+            wa_welcome = _wa_welcome(acct, acct.phone or user_id)
+            account_repo.save(acct)
+        except Exception as e:                         # noqa: BLE001
+            wa_welcome = {"status": "error", "error": str(e)}
     mail = _send_subscription_confirmation(
         to=(req.email or (acct.email if acct else "") or "").strip(),
         name=(req.name or (acct.display_name if acct else "") or "").strip(),
@@ -3080,8 +3273,18 @@ def onboarding_checkout(req: CheckoutRequest,
         amount_inr=amount, valid_until=result.get("valid_until") or "", mobile=user_id,
         scope_valid_until=result.get("scope_valid_until") or {},
         added=scopes,
-        invoice=invoice, invoice_pdf=invoice_pdf)
+        invoice=invoice, invoice_pdf=invoice_pdf,
+        whatsapp=bool(acct and (acct.notify or {}).get("whatsapp")),
+        wa_welcome_status=wa_welcome.get("status", "skipped"))
+    wa_on = bool(acct and (acct.notify or {}).get("whatsapp"))
     return {"status": "active", "scopes": held,
+            # The WhatsApp opt-in as STORED, so the done screen offers the hello only to a
+            # teacher who actually has it on — not to one whose request merely said so.
+            "whatsapp": wa_on,
+            "whatsapp_number": config.WHATSAPP_NUMBER if wa_on else "",
+            # "sent" only when Meta accepted it — the done screen then says "we've sent you
+            # a welcome" instead of asking her to say hello first.
+            "whatsapp_welcome": wa_welcome.get("status", "skipped"),
             "valid_until": result.get("valid_until"),
             "scope_valid_until": result.get("scope_valid_until") or {},
             "added": scopes,

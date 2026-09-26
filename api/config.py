@@ -155,6 +155,24 @@ SMTP_PASSWORD = os.environ.get("ARUVI_SMTP_PASSWORD", "")
 # support case is delivered. Sender identity (MAIL_FROM) stays separate: Gmail rewrites
 # a From it does not own, so the SMTP account keeps sending and this address receives.
 SUPPORT_ADDRESS = os.environ.get("ARUVI_SUPPORT_ADDRESS", "").strip() or "support@meyy.in"
+
+# ★ THE WHATSAPP SUPPORT NUMBER (founder, 2026-09-26). A second support channel, OPT-IN at
+# subscription: the Meyy WhatsApp Business number, in international form with no "+" (the
+# shape wa.me links take). Mirrors WHATSAPP_NUMBER in @aruvi/shared/format — move one, move
+# the other. Service only, never marketing (privacy notice §9, agreement §K).
+WHATSAPP_NUMBER = os.environ.get("ARUVI_WHATSAPP_NUMBER", "").strip() or "919363795723"
+# ── WhatsApp Cloud API (2026-09-26) — all four empty = dev: sends go to the file outbox.
+# TOKEN is a SYSTEM-USER token (permanent); PHONE_NUMBER_ID is Meta's id for the number,
+# not the number. WELCOME_TEMPLATE must exist and be APPROVED in WhatsApp Manager, with ONE
+# body variable {{1}} = the teacher's first name. VERIFY_TOKEN is any string you also type
+# into the webhook config in the Meta app; APP_SECRET verifies each webhook POST's signature.
+WA_TOKEN = os.environ.get("ARUVI_WA_TOKEN", "").strip()
+WA_PHONE_NUMBER_ID = os.environ.get("ARUVI_WA_PHONE_NUMBER_ID", "").strip()
+WA_API_VERSION = os.environ.get("ARUVI_WA_API_VERSION", "").strip() or "v25.0"
+WA_WELCOME_TEMPLATE = os.environ.get("ARUVI_WA_WELCOME_TEMPLATE", "").strip() or "meyy_welcome"
+WA_TEMPLATE_LANG = os.environ.get("ARUVI_WA_TEMPLATE_LANG", "").strip() or "en"
+WA_VERIFY_TOKEN = os.environ.get("ARUVI_WA_VERIFY_TOKEN", "").strip()
+WA_APP_SECRET = os.environ.get("ARUVI_WA_APP_SECRET", "").strip()
 # The address mail is SENT from — the SMTP account itself unless overridden.
 MAIL_FROM = os.environ.get("ARUVI_MAIL_FROM", "").strip() or SMTP_USER or "kumar.radhakrishnan2@gmail.com"
 # ★ THE SENDER'S NAME (founder, 2026-09-04). Mail composed in Gmail arrives as

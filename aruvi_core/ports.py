@@ -563,6 +563,31 @@ class EmailMessage:
     inline: List["Attachment"] = field(default_factory=list)
 
 
+# ── WhatsApp (2026-09-26) ────────────────────────────────────────────────────────
+# The second outbound channel, OPT-IN at subscription, on the teacher's sign-in mobile. A
+# business may message a WhatsApp user first ONLY with a Meta-APPROVED TEMPLATE (free-form
+# text is allowed only inside the 24h window she opens by writing to us), so the port speaks
+# in templates, not in free text: `template` is the approved name, `params` fill its body's
+# {{1}}, {{2}}… in order. `document` (optional) is a header attachment {link, filename} —
+# the seam the invoice will use once the PDF has a fetchable URL.
+@dataclass
+class WhatsAppTemplate:
+    to: str                                   # E.164 digits, no "+": "919876543210"
+    template: str                             # approved template name, e.g. "meyy_welcome"
+    language: str = "en"
+    params: List[str] = field(default_factory=list)
+    document: Dict[str, str] = field(default_factory=dict)   # {link, filename} or {}
+
+
+@runtime_checkable
+class WhatsAppClient(Protocol):
+    """Port over WhatsApp sends. FileWhatsApp (dev) writes to STATE_DIR/whatsapp_outbox;
+    CloudWhatsApp calls Meta's Cloud API. Same contract as Notifier: `send_template` MUST
+    NOT raise — a subscription never fails because WhatsApp was slow — and returns
+    {"status": "sent"|"written"|"skipped"|"error", ...}."""
+    def send_template(self, msg: "WhatsAppTemplate") -> Dict[str, Any]: ...
+
+
 @runtime_checkable
 class Notifier(Protocol):
     """Port over outbound teacher notifications (administrative_architecture.md §6).

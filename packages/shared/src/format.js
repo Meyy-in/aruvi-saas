@@ -249,6 +249,24 @@ export const STATES = ["Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delh
  * web; one copy now. */
 export const EMAIL_OK = (e) => /^\S+@\S+\.\S+$/.test((e || "").trim());
 
+/* ── WhatsApp support (founder, 2026-09-26) ──
+ * The Meyy WhatsApp Business number, international form without "+" (what wa.me takes).
+ * Mirrors api/config.WHATSAPP_NUMBER — move one, move the other. It is OPT-IN at subscription
+ * and on the teacher's SIGN-IN mobile only. Service only, never marketing.
+ * `waLink(text)` builds a tap-to-chat link: she starts the chat, which is the unambiguous opt-in
+ * and opens WhatsApp's 24-hour reply window, and the prefilled text tells the founder who is
+ * writing without her having to type it. */
+export const WHATSAPP_NUMBER = "919363795723";
+export const WHATSAPP_DISPLAY = "+91 93637 95723";
+export const waLink = (text = "", number = WHATSAPP_NUMBER) =>
+  `https://wa.me/${String(number || WHATSAPP_NUMBER).replace(/\D/g, "")}` +
+  (text ? `?text=${encodeURIComponent(text)}` : "");
+/* "98765 43210" from whatever shape the sign-in id arrives in — for "on +91 98765 43210". */
+export const mobileWords = (m) => {
+  const d = String(m || "").replace(/\D/g, "").slice(-10);
+  return d.length === 10 ? `+91 ${d.slice(0, 5)} ${d.slice(5)}` : String(m || "");
+};
+
 export const EMAIL_TAKEN =
   "This email is already in use by another Meyy account. Use a different address.";
 /* ★ Founder, 2026-08-26, re-confirmed 2026-09-16 (Q21b): this screen CREATES a sign-in, so its

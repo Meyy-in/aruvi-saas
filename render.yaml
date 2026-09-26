@@ -84,6 +84,14 @@ services:
         sync: false
       - key: ARUVI_SMTP_PASSWORD
         sync: false
+      - key: ARUVI_WA_TOKEN
+        sync: false
+      - key: ARUVI_WA_PHONE_NUMBER_ID
+        sync: false
+      - key: ARUVI_WA_VERIFY_TOKEN
+        sync: false
+      - key: ARUVI_WA_APP_SECRET
+        sync: false
       - key: ARUVI_MAIL_FROM
         sync: false
       - key: ARUVI_SUPPORT_ADDRESS

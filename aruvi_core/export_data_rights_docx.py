@@ -146,6 +146,14 @@ def build_export_docx(payload: Dict[str, Any]) -> bytes:
                      "You can turn this off at any time in Settings."))
     else:
         rows.append(("Marketing emails", "No — you have not opted in."))
+    # The WhatsApp support opt-in (2026-09-26) — stated either way, like the row above.
+    if _notify.get("whatsapp"):
+        _when = str(_notify.get("whatsapp_at") or "")[:10]
+        rows.append(("WhatsApp support",
+                     f"Yes — on your sign-in mobile{', chosen on ' + _when if _when else ''}. "
+                     "Service messages only, never marketing. You can turn this off in Settings."))
+    else:
+        rows.append(("WhatsApp support", "No — you have not opted in."))
     # Which Privacy Notice she was shown (2026-09-04). Not a consent — the notice is
     # given, never signed — so it is stated as a fact about the record and, unlike the
     # agreement row above, it is erased with her account.

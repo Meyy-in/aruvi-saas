@@ -5,6 +5,38 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ---
 
+## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
+
+Opt-in second support channel on the Meyy WhatsApp Business number (+91 93637 95723;
+`api/config.WHATSAPP_NUMBER` ↔ `@aruvi/shared/format` `WHATSAPP_NUMBER` — move one, move the other).
+**On the sign-in mobile only** (OTP-verified, no second-number field). **Service only, never
+marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.notify`
+{`whatsapp`, `whatsapp_at`, `whatsapp_version`}; `POST /account/whatsapp` toggles (ungated);
+`GET /account` and `GET /support` return it; export lists it.
+- **Subscribe › About you:** "Support on WhatsApp?" Yes/No, neither preselected, asked BEFORE email.
+  Yes ⇒ email becomes optional (a half-typed email still blocks). `profileKnown` accepts
+  `email || whatsapp`. Checkout sends `whatsapp` (null on the known-profile skip = unchanged).
+- **Done screen** (WhatsApp customers only): "Say hello on WhatsApp" wa.me tap-to-chat with a
+  prefilled note — SHE starts the chat (opt-in proof + opens the 24h window); founder replies with
+  the welcome from the Business app. Founder sales-log mail now goes even with no customer email
+  and says "WhatsApp: YES — send the welcome to …".
+- **Settings › Support:** opted-in ⇒ "Chat on WhatsApp" card under Ask Meyy. Opted-in AND no email
+  ⇒ the email form is replaced by "add an email to use email support; meanwhile use WhatsApp".
+  **Settings home:** "WhatsApp support" switch (hidden on trial); turning off with no email warns, never blocks.
+- **API WIRED (same day):** `WhatsAppClient` port + `FileWhatsApp` (dev → `state/whatsapp_outbox/`) +
+  `CloudWhatsApp` (Graph `/{phone_number_id}/messages`, template sends only). Chosen at startup like
+  the Notifier: Cloud only when `ARUVI_WA_TOKEN` + `ARUVI_WA_PHONE_NUMBER_ID` are set. Welcome =
+  approved template `meyy_welcome` ({{1}} = first name), sent ONCE per account
+  (`notify.whatsapp_welcomed_at`) at checkout or when toggled on; done screen says "we've sent a
+  welcome" when Meta accepted it, else falls back to the tap-to-chat hello. Webhook
+  `GET/POST /whatsapp/webhook` (verify token handshake; HMAC `X-Hub-Signature-256` under the app
+  secret, refused otherwise; events logged to `state/whatsapp_inbox/`; a "STOP" withdraws the
+  opt-in). Chats are answered in the Business app (coexistence) — not turned into support cases.
+  `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
+  template's document header (`WhatsAppTemplate.document`).
+- **Owed:** privacy notice update naming WhatsApp/Meta as a processor (versioned — a consent bump
+  re-prompts everyone; batch it); mobile app (`mobile/app/(app)/settings/support.jsx`, subscribe flow).
+
 ## 0. CURRENT DIRECTION — mobile-first, progressive acquisition (2026-07-01) ★ READ FIRST
 
 > ★★ **AMENDED 2026-07-02 — THE CALENDAR PURGE (overrides every day/week reference below and

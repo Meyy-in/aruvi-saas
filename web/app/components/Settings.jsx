@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { API, withUser, fetchEntitlement, getJSON, pretty, idInUse, errDetail,
-         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN,
+         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN, waLink, mobileWords, WHATSAPP_DISPLAY,
          fmtValidity, scopeRows, subsFromEntitlement } from "../lib/format";
 import ThemeToggle from "./ThemeToggle";
 import Agreement from "./Agreement";
@@ -223,7 +223,13 @@ function PersonalProfile({ onSaved }) {
 
 /* ── Settings › Support (2026-08-27) ──────────────────────────────────────────────
  *
- * EMAIL IS THE ONLY SUPPORT CHANNEL. No phone, no WhatsApp, no chat. That single
+ * ★ AMENDED 2026-09-26 — WHATSAPP IS NOW A SECOND CHANNEL, OPT-IN. A teacher who said Yes
+ * to WhatsApp at subscription sees a "Chat on WhatsApp" card under Ask Meyy. If she ALSO has
+ * no email, the email form is replaced by a plain note — add an email to use email support,
+ * meanwhile use WhatsApp — because a form whose reply cannot reach her is a dead end dressed
+ * as a door. Everything below still describes the EMAIL channel, which is unchanged.
+ *
+ * EMAIL WAS THE ONLY SUPPORT CHANNEL. No phone, no WhatsApp, no chat. That single
  * constraint shapes every decision on this screen, because email's one failure mode is
  * SILENCE — a teacher who writes and hears nothing writes again, or gives up on the
  * product rather than on the message.
@@ -319,6 +325,13 @@ function SupportForm({ onOpenProfile, onAsk }) {
   // Three states, not two: has one · known to have none · we could not ask.
   const emailKnown = !!meta && !metaErr;
   const hasEmail = emailKnown && !!meta.email;
+  // WhatsApp only for a teacher who opted in — and only when we KNOW she did.
+  const hasWa = emailKnown && !!meta.whatsapp;
+  const waOnly = hasWa && !hasEmail;
+  const openWa = () => {
+    const note = `Hello Meyy, I need help. My sign-in number is ${mobileWords(meta && meta.mobile)}.`;
+    window.open(waLink(note, meta && meta.whatsapp_number), "_blank", "noopener");
+  };
 
   const send = async () => {
     if (!text.trim() || busy) return;
@@ -398,7 +411,34 @@ function SupportForm({ onOpenProfile, onAsk }) {
         <span className="set-chev">›</span>
       </button>
 
-      {/* 2 · the form */}
+      {/* 1b · WhatsApp — opted-in teachers only. For a WhatsApp-only teacher (no email) this
+          IS the written channel, so it is said as such and the email form below gives way
+          to the add-email note. */}
+      {hasWa && (
+        <button className="set-bigcard sup-wa" onClick={openWa}>
+          <span className="set-bigtext"><span className="set-biglab">Chat on WhatsApp</span>
+            <span className="set-bigsub">Message Meyy support at{" "}
+              <span className="sup-wa-num">{WHATSAPP_DISPLAY}</span></span></span>
+          <span className="set-chev">›</span>
+        </button>
+      )}
+
+      {waOnly && (
+        <div className="set-group">
+          <div className="set-cap">Email support</div>
+          <div className="set-card set-card-pad">
+            <p className="set-plan-txt">To use email support, first add an email address to
+              your account — our replies need somewhere to go. Meanwhile, you can reach us on
+              WhatsApp above.</p>
+            <button className="fr-link sup-addmail"
+              onClick={() => onOpenProfile && onOpenProfile()}>
+              Add an email address →</button>
+          </div>
+        </div>
+      )}
+
+      {/* 2 · the form — not for a WhatsApp-only teacher (see 1b) */}
+      {!waOnly && (
       <div className="set-group">
         <div className="set-cap">Write to us</div>
         <div className="set-card set-card-pad">
@@ -472,6 +512,7 @@ function SupportForm({ onOpenProfile, onAsk }) {
             onClick={send}>{busy ? "Sending…" : "Send message"}</button>
         </div>
       </div>
+      )}
 
       {/* ★ THE "YOUR EARLIER MESSAGES" LIST IS GONE (founder, 2026-09-04). It listed
              category · reference · date and opened nothing — a row that cannot be
@@ -539,12 +580,25 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
   const [marketing, setMarketing] = useState(null);   // null = not yet known
   const [mktBusy, setMktBusy] = useState(false);
   const [mktNote, setMktNote] = useState("");
+  /* WhatsApp support (2026-09-26) — the withdrawal (and late-grant) half of the opt-in asked
+     at subscription. Same rules as Marketing emails: rendered only once KNOWN, saved on tap,
+     optimistic with rollback. Hidden on trial — the channel is a subscriber's. */
+  const [waOn, setWaOn] = useState(null);
+  const [waBusy, setWaBusy] = useState(false);
+  const [waNote, setWaNote] = useState("");
+  const [acctEmail, setAcctEmail] = useState("");
 
   useEffect(() => {
     let live = true;
     fetch(`${API}/account`, withUser())
       .then((r) => (r.ok ? r.json() : null))
-      .then((a) => { if (live && a) setMarketing(!!a.marketing_email); })
+      .then((a) => {
+        if (live && a) {
+          setMarketing(!!a.marketing_email);
+          setWaOn(!!a.whatsapp);
+          setAcctEmail(a.email || "");
+        }
+      })
       .catch(() => {});
     return () => { live = false; };
   }, [syncTick]);
@@ -573,6 +627,38 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       setMktNote("Couldn't save that just now — try again.");
     } finally {
       setMktBusy(false);
+    }
+  };
+
+  const saveWa = async (next) => {
+    const prev = waOn;
+    setWaOn(next); setWaBusy(true); setWaNote("");
+    try {
+      const r = await fetch(`${API}/account/whatsapp`, withUser({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: next }),
+      }));
+      if (!r.ok) {
+        setWaOn(prev);
+        setWaNote(await errDetail(r, "Couldn't save that just now — try again."));
+        return;
+      }
+      /* Turning it off with no email on file is ALLOWED, and said: she is warned, never
+         blocked — withdrawal must not be conditional on anything. */
+      const res = await r.json().catch(() => ({}));
+      setWaNote(next
+        ? (res && res.welcome_status === "sent"
+          ? `Saved — we've sent a welcome to your WhatsApp from ${WHATSAPP_DISPLAY}.`
+          : `Saved — you can now reach us on WhatsApp at ${WHATSAPP_DISPLAY}.`)
+        : (acctEmail
+          ? "Saved — WhatsApp support is off. Email support is unchanged."
+          : "Saved — WhatsApp support is off. With no email on your account, write to us at support@meyy.in from your own mail, or add an email in Personal profile."));
+    } catch {
+      setWaOn(prev);
+      setWaNote("Couldn't save that just now — try again.");
+    } finally {
+      setWaBusy(false);
     }
   };
 
@@ -1024,6 +1110,19 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       </div>
       )}
       {mktNote && <p className="set-hint">{mktNote}</p>}
+      {!trial && waOn !== null && (
+      <div className="set-bigcard set-bigcard-static">
+        <span className="set-bigtext"><span className="set-biglab">WhatsApp support</span>
+          <span className="set-bigsub">Reach Meyy support on WhatsApp from your sign-in
+            number — service messages only, never marketing</span></span>
+        <label className="set-switch">
+          <input type="checkbox" checked={waOn} disabled={waBusy}
+            onChange={(e) => saveWa(e.target.checked)}
+            aria-label="Use WhatsApp for Meyy support" />
+        </label>
+      </div>
+      )}
+      {waNote && <p className="set-hint">{waNote}</p>}
 
       {/* Legal — its own card, per the agreement's own placement promise (see the
           `legal` view above). Shown on trial too. */}

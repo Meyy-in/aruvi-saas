@@ -14,7 +14,8 @@ import { dateWords as consentDateWords } from "../lib/legalmd";
 /* ⚠️ Imported AND re-exported: `export … from` alone serves importers without binding the names
  * in this module's own scope, and the email path below calls EMAIL_TAKEN (the PPW_CHOICES /
  * setupKey lesson, third sighting). */
-import { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK } from "../lib/format";
+import { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK,
+         waLink, mobileWords, WHATSAPP_DISPLAY } from "../lib/format";
 /* ⚠️ ROLES/STATES/EMAIL_OK moved to @aruvi/shared/format on 2026-09-16 — the phone's
    Personal profile needed them and could otherwise only RETYPE them. Re-exported so
    this module's own call sites (and Settings', which imports them from here) are
@@ -116,7 +117,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
      subscriber adding a subject met a personal-details form for one frame — a form she never
      asked for, which then vanished. The entry screen is a DECISION and cannot be painted before
      it is made. */
-  const [screen, setScreen] = useState(null);      // null | about | agreement | cart | pay
+  const [screen, setScreen] = useState(null);      // null | about | agreement | cart | pay | done
   const [profileKnown, setProfileKnown] = useState(null);
   const [offerTrial, setOfferTrial] = useState(false);  // the front-door Trial/Subscribe ask
   const offeredRef = useRef(false);                     // …asked once per session, not per screen
@@ -144,6 +145,14 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
   const schoolRef = useRef(null);   // scrolled into view when she leaves City
   const [emailErr, setEmailErr] = useState("");
   const [emailBusy, setEmailBusy] = useState(false);   // the "already in use" round-trip
+  /* ★ WHATSAPP SUPPORT — ASKED, NEVER ASSUMED (founder, 2026-09-26). null = not yet
+     answered; the step cannot continue until she picks one, and neither answer is
+     preselected: a consent that arrives already ticked is not one (DPDP §6). It is on her
+     SIGN-IN mobile only — already OTP-verified, so there is no second number to mistype.
+     Saying Yes makes EMAIL OPTIONAL: WhatsApp then carries support (and, once the Business
+     API is wired, the invoice), so an email is no longer the only way back to her. */
+  const [wa, setWa] = useState(null);
+  const [done, setDone] = useState(null);            // the checkout answer, for the done screen
   const [role, setRole] = useState("");
   const [stateName, setStateName] = useState("");
   const [city, setCity] = useState("");
@@ -181,11 +190,15 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         const looksReal = nm && !/^\d+$/.test(nm);           // a number is not a name
         if (looksReal) setName(nm);
         if (a.email) { setEmail(a.email); setEmailStage("ok"); }
+        // Prefill only a YES: `false` is also what an account that was never asked reads as.
+        if (a.whatsapp === true) setWa(true);
         if (a.role) setRole(a.role);
         if (a.state) setStateName(a.state);
         if (a.city) setCity(a.city);
         if (a.school_name) setSchool(a.school_name);
-        setProfileKnown(!!(looksReal && a.email && a.role && a.state));
+        /* A WhatsApp customer with no email is a COMPLETE profile — email is optional for
+           her by design, so its absence must not re-open About-you on every re-subscribe. */
+        setProfileKnown(!!(looksReal && (a.email || a.whatsapp) && a.role && a.state));
       })
       .catch(() => { if (live) setProfileKnown(false); });
     return () => { live = false; };
@@ -274,7 +287,12 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
       const r = await fetch(`${API}/onboarding/checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders(userId) },
-        body: JSON.stringify({ scopes: cartScopes, name, email: email.trim(),
+        /* An email still mid-confirmation is NOT sent — only a verified one (`ok`). With
+           WhatsApp on, a blank or abandoned email simply means none. `whatsapp` is null on
+           the known-profile skip, which the server reads as "leave the stored choice". */
+        body: JSON.stringify({ scopes: cartScopes, name,
+                               email: emailStage === "ok" ? email.trim() : "",
+                               whatsapp: wa,
                                role, state: stateName, city, school }),
       });
       /* ★ THE SERVER'S OWN SENTENCE (2026-08-26). This used to throw the status code
@@ -303,6 +321,14 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         setPayBusy(false);
         return;
       }
+      const out = await r.json().catch(() => ({}));
+      /* ★ THE HELLO (founder, 2026-09-26). A teacher who chose WhatsApp gets ONE more
+         screen: a tap-to-chat with Meyy's number. SHE starts the chat — until the Business
+         API is wired that is the only way a welcome can reach her without the founder
+         messaging a stranger first, and a chat she opened is WhatsApp's own proof of
+         opt-in. Everyone else goes straight in, exactly as before. Keyed on the SERVER's
+         stored answer, not on `wa`. */
+      if (out && out.whatsapp) { setDone(out); setPayBusy(false); setScreen("done"); return; }
       onDone && onDone(userId);
     } catch {
       setPayErr("Couldn't complete the activation. Try again in a moment.");
@@ -419,16 +445,40 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
           <label className="login-field ob-field"><span>Your name <span className="ob-req" aria-hidden="true">*</span></span>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" /></label>
 
-          {/* Email — double-blind confirm (see the state note above). */}
+          {/* WhatsApp — asked BEFORE email, because its answer decides whether email is
+              required. Two plain answers, neither preselected. */}
+          <div className="login-field ob-field ob-wa" role="group" aria-labelledby="ob-wa-q">
+            <span id="ob-wa-q">Support on WhatsApp? <span className="ob-req" aria-hidden="true">*</span></span>
+            <p className="ob-wa-sub">Reach Meyy support on WhatsApp from{" "}
+              <strong>{mobileWords(userId)}</strong>, your sign-in number. Service messages
+              only — never marketing. You can turn it off any time in Settings.</p>
+            <div className="ob-wa-opts">
+              <button type="button" className={`ob-wa-opt ${wa === true ? "on" : ""}`}
+                aria-pressed={wa === true} onClick={() => setWa(true)}>Yes, add WhatsApp</button>
+              <button type="button" className={`ob-wa-opt ${wa === false ? "on" : ""}`}
+                aria-pressed={wa === false} onClick={() => setWa(false)}>No, thanks</button>
+            </div>
+          </div>
+
+          {/* Email — double-blind confirm (see the state note above). Optional once she
+              has said Yes to WhatsApp; required otherwise (it is then her only channel). */}
           {emailStage === "enter" && (
             <>
-              <label className="login-field ob-field"><span>Email <span className="ob-req" aria-hidden="true">*</span></span>
+              <label className="login-field ob-field"><span>{wa === true
+                ? <>Email <span className="ob-opt">(optional)</span></>
+                : <>Email <span className="ob-req" aria-hidden="true">*</span></>}</span>
                 <input type="email" inputMode="email" autoComplete="off" value={email}
                   ref={emailRef}
                   onChange={(e) => { setEmail(e.target.value); setEmailErr(""); }}
                   placeholder="Enter your email" /></label>
               {/* The taken-address message lands HERE — the stage the fix belongs to. */}
               {emailErr && <p className="ob-err" role="alert">{emailErr}</p>}
+              {/* With WhatsApp on, an unconfirmed address is dropped, not a blocker — say so,
+                  or she will think what she typed was saved. */}
+              {wa === true && email.trim() && (
+                <p className="ob-quiet">Optional — confirm it to add it to your account, or
+                  continue without it.</p>
+              )}
               {EMAIL_OK(email) && (
                 <button type="button" className="fr-link ob-email-next" disabled={emailBusy}
                   onClick={async () => {
@@ -507,8 +557,14 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             <input type="text" value={school} onChange={(e) => setSchool(e.target.value)} placeholder="Enter your school name" /></label>
         </div>
         <div className="ob-foot">
+          {/* Email gate (founder, 2026-09-26): with WhatsApp ON, email is IGNORED — optional
+              means optional, so nothing she has or hasn't typed there can hold her back. Only
+              a CONFIRMED address is ever sent (doCheckout), so a half-typed one is simply
+              dropped. With WhatsApp off, a confirmed email is required as before. */}
           <button className="primary fr-cta"
-            disabled={!name.trim() || emailStage !== "ok" || !role || !stateName || !city.trim()}
+            disabled={!name.trim() || wa === null
+              || (wa !== true && emailStage !== "ok")
+              || !role || !stateName || !city.trim()}
             onClick={() => setScreen("agreement")}>Save &amp; continue →</button>
           <button className="fr-link" onClick={() => onCancel && onCancel()}>← Back</button>
         </div>
@@ -668,6 +724,49 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         </div>
 
         {trialModal}
+      </div>
+    );
+  }
+
+  /* ── Done — ONLY for a teacher who chose WhatsApp (see doCheckout) ── */
+  if (screen === "done") {
+    const welcomed = !!(done && done.whatsapp_welcome === "sent");
+    const hello = `Hello Meyy! I've just subscribed. My sign-in number is ${mobileWords(userId)}`
+      + (name.trim() ? ` — ${name.trim()}.` : ".");
+    return (
+      <div className="ob-wrap">
+        {chrome}
+        <div className="ob-body">
+          <h1 className="ob-title">You&rsquo;re subscribed</h1>
+          {/* Two shapes, keyed on what the SERVER did (2026-09-26): once the Cloud API is
+              live the welcome has already gone out, so she is told so and the button only
+              opens the chat; until then (or if Meta refused) SHE says hello first — the
+              only way a first message can reach her without the API. */}
+          {welcomed ? (
+            <p className="ob-sub">We&rsquo;ve sent a welcome message to your WhatsApp on{" "}
+              <strong>{mobileWords(userId)}</strong>. Message us there whenever you need help.</p>
+          ) : (
+            <p className="ob-sub">One last thing — say hello to Meyy on WhatsApp, so our chat is
+              there when you need help.</p>
+          )}
+          {/* A button, not an <a>: the house `.primary` look is scoped to buttons. */}
+          <button className="primary fr-cta ob-wa-hello" onClick={() => {
+            window.open(waLink(welcomed ? "" : hello, done && done.whatsapp_number),
+              "_blank", "noopener");
+          }}>{welcomed ? "Open WhatsApp" : "Say hello on WhatsApp"}</button>
+          <p className="ob-quiet">{welcomed
+            ? <>Meyy&rsquo;s number is {WHATSAPP_DISPLAY}. </>
+            : <>Opens a chat with Meyy ({WHATSAPP_DISPLAY}) with a short note ready to send. </>}
+            {done && done.invoice_number
+              ? (emailStage === "ok"
+                ? "Your invoice is on its way by email and is always in Settings › Subscription."
+                : "Your invoice is always in Settings › Subscription.")
+              : ""}</p>
+        </div>
+        <div className="ob-foot">
+          <button className="fr-link" onClick={() => onDone && onDone(userId)}>
+            Continue to Meyy →</button>
+        </div>
       </div>
     );
   }
