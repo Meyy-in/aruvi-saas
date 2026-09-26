@@ -2298,16 +2298,21 @@ class WhatsAppPref(BaseModel):
 @app.post("/account/whatsapp")
 def set_whatsapp(req: WhatsAppPref,
                  identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
-    """Turn WhatsApp support on or off (2026-09-26). Never gated, for the same reason
-    the marketing switch is not: withdrawing must be as easy as agreeing was (DPDP §6).
-    Turning it off when she has NO email is allowed — she is warned on screen that her
-    only written channel is then support@ from her own mail app, never blocked."""
+    """ADD WhatsApp support after checkout (2026-09-26). One-way — see below."""
     tenant_id, user_id = identity
     a = account_repo.load(tenant_id, user_id)
     if a is None:
         raise HTTPException(status_code=404, detail="No account.")
-    _set_whatsapp(a, req.enabled)
-    welcome = _wa_welcome(a, a.phone or user_id) if req.enabled else {"status": "skipped"}
+    # ★ ONE-WAY (founder, 2026-09-26): the app adds WhatsApp, it never removes it — a
+    #   subscriber who chose it as her channel must keep a channel to Meyy. The only way
+    #   off is replying STOP on WhatsApp itself (the webhook), which Meta's own policy
+    #   requires a business to honour.
+    if not req.enabled:
+        raise HTTPException(status_code=400, detail=(
+            "WhatsApp support can't be switched off in the app. "
+            "Write to us on WhatsApp if you need help with it."))
+    _set_whatsapp(a, True)
+    welcome = _wa_welcome(a, a.phone or user_id)
     account_repo.save(a)
     return {"whatsapp": bool(req.enabled),
             "whatsapp_at": (a.notify or {}).get("whatsapp_at", ""),

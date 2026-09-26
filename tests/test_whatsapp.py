@@ -4,7 +4,7 @@ Tests for the WhatsApp support channel (2026-09-26).
   1. OPT-IN IS STORED, AND EMAIL BECOMES OPTIONAL. A WhatsApp checkout with no email
      activates, stores the opt-in, and still sends the founder his sales log.
   2. THE WELCOME GOES ONCE. Checkout sends the approved template with her first name;
-     toggling off and on again never greets her twice.
+     adding it again never greets her twice, and the app can never switch it OFF.
   3. THE WEBHOOK IS AUTHENTICATED. The GET handshake checks the verify token; an unsigned
      POST is refused (it can switch an opt-in off); a signed STOP withdraws the opt-in.
   4. THE CLOUD PAYLOAD HAS META'S SHAPE — pinned without a network.
@@ -73,9 +73,12 @@ def test_whatsapp_checkout_without_email_welcomes_once_and_logs_for_founder():
         assert msg["to"] == "919800000101" and msg["params"] == ["Priya"]
         # the founder's log went although she has no email, and names WhatsApp
         assert any("WhatsApp: YES" in s.text for s in sent), [s.subject for s in sent]
-        # toggling off and on never greets her twice
         h = {"X-Aruvi-User": "9800000101"}
-        c.post("/account/whatsapp", headers=h, json={"enabled": False})
+        # ONE-WAY: the app cannot switch it off
+        off = c.post("/account/whatsapp", headers=h, json={"enabled": False})
+        assert off.status_code == 400
+        assert c.get("/account", headers=h).json()["whatsapp"] is True
+        # adding again never greets her twice
         again = c.post("/account/whatsapp", headers=h, json={"enabled": True}).json()
         assert again["welcome_status"] == "skipped"
         assert len(_outbox(m)) == before + 1
@@ -83,11 +86,14 @@ def test_whatsapp_checkout_without_email_welcomes_once_and_logs_for_founder():
         m.notifier.send = orig
 
 
-def test_support_meta_reports_whatsapp_only_when_opted_in():
+def test_support_meta_reports_whatsapp_only_when_opted_in_and_it_can_be_added_later():
     m, c = _client()
-    _subscribe(c, "9800000102", whatsapp=False, email="")
-    meta = c.get("/support", headers={"X-Aruvi-User": "9800000102"}).json()
+    h = {"X-Aruvi-User": "9800000102"}
+    _subscribe(c, "9800000102", whatsapp=False, email="x9800000102@example.com")
+    meta = c.get("/support", headers=h).json()
     assert meta["whatsapp"] is False and meta["whatsapp_number"]
+    assert c.post("/account/whatsapp", headers=h, json={"enabled": True}).status_code == 200
+    assert c.get("/support", headers=h).json()["whatsapp"] is True
 
 
 def test_webhook_handshake_and_signature():

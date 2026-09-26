@@ -580,9 +580,13 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
   const [marketing, setMarketing] = useState(null);   // null = not yet known
   const [mktBusy, setMktBusy] = useState(false);
   const [mktNote, setMktNote] = useState("");
-  /* WhatsApp support (2026-09-26) — the withdrawal (and late-grant) half of the opt-in asked
-     at subscription. Same rules as Marketing emails: rendered only once KNOWN, saved on tap,
-     optimistic with rollback. Hidden on trial — the channel is a subscriber's. */
+  /* WhatsApp support (2026-09-26) — ONE-WAY: a subscriber who said No at checkout can ADD it
+     here; nobody can switch it OFF (founder, same day). She chose WhatsApp knowingly as her
+     channel to Meyy, often INSTEAD of email; switching it off would leave a paying customer
+     with no channel at all, and Meyy does not answer mail from addresses that are not on
+     her profile (anonymous mail is how abuse and privacy breaches arrive). This is a
+     service relationship she entered, not an unsolicited mailing with an unsubscribe.
+     Rendered only once KNOWN; hidden on trial — the channel is a subscriber's. */
   const [waOn, setWaOn] = useState(null);
   const [waBusy, setWaBusy] = useState(false);
   const [waNote, setWaNote] = useState("");
@@ -630,32 +634,25 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
     }
   };
 
-  const saveWa = async (next) => {
-    const prev = waOn;
-    setWaOn(next); setWaBusy(true); setWaNote("");
+  const addWa = async () => {
+    if (waBusy || waOn) return;
+    setWaBusy(true); setWaNote("");
     try {
       const r = await fetch(`${API}/account/whatsapp`, withUser({
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ enabled: next }),
+        body: JSON.stringify({ enabled: true }),
       }));
       if (!r.ok) {
-        setWaOn(prev);
         setWaNote(await errDetail(r, "Couldn't save that just now — try again."));
         return;
       }
-      /* Turning it off with no email on file is ALLOWED, and said: she is warned, never
-         blocked — withdrawal must not be conditional on anything. */
       const res = await r.json().catch(() => ({}));
-      setWaNote(next
-        ? (res && res.welcome_status === "sent"
-          ? `Saved — we've sent a welcome to your WhatsApp from ${WHATSAPP_DISPLAY}.`
-          : `Saved — you can now reach us on WhatsApp at ${WHATSAPP_DISPLAY}.`)
-        : (acctEmail
-          ? "Saved — WhatsApp support is off. Email support is unchanged."
-          : "Saved — WhatsApp support is off. With no email on your account, write to us at support@meyy.in from your own mail, or add an email in Personal profile."));
+      setWaOn(true);
+      setWaNote(res && res.welcome_status === "sent"
+        ? `Added — we've sent a welcome to your WhatsApp from ${WHATSAPP_DISPLAY}.`
+        : `Added — you can now reach us on WhatsApp at ${WHATSAPP_DISPLAY} from Support.`);
     } catch {
-      setWaOn(prev);
       setWaNote("Couldn't save that just now — try again.");
     } finally {
       setWaBusy(false);
@@ -1110,17 +1107,15 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       </div>
       )}
       {mktNote && <p className="set-hint">{mktNote}</p>}
-      {!trial && waOn !== null && (
-      <div className="set-bigcard set-bigcard-static">
-        <span className="set-bigtext"><span className="set-biglab">WhatsApp support</span>
+      {/* Only for a subscriber WITHOUT WhatsApp: one tap adds it. Once on, there is no row
+          here at all — the channel lives in Support, and it has no off switch (see above). */}
+      {!trial && waOn === false && (
+      <button className="set-bigcard" disabled={waBusy} onClick={addWa}>
+        <span className="set-bigtext"><span className="set-biglab">Add WhatsApp support</span>
           <span className="set-bigsub">Reach Meyy support on WhatsApp from your sign-in
             number — service messages only, never marketing</span></span>
-        <label className="set-switch">
-          <input type="checkbox" checked={waOn} disabled={waBusy}
-            onChange={(e) => saveWa(e.target.checked)}
-            aria-label="Use WhatsApp for Meyy support" />
-        </label>
-      </div>
+        <span className="set-chev">{waBusy ? "…" : "+"}</span>
+      </button>
       )}
       {waNote && <p className="set-hint">{waNote}</p>}
 

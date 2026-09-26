@@ -451,7 +451,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             <span id="ob-wa-q">Support on WhatsApp? <span className="ob-req" aria-hidden="true">*</span></span>
             <p className="ob-wa-sub">Reach Meyy support on WhatsApp from{" "}
               <strong>{mobileWords(userId)}</strong>, your sign-in number. Service messages
-              only — never marketing. You can turn it off any time in Settings.</p>
+              only — never marketing.</p>
             <div className="ob-wa-opts">
               <button type="button" className={`ob-wa-opt ${wa === true ? "on" : ""}`}
                 aria-pressed={wa === true} onClick={() => setWa(true)}>Yes, add WhatsApp</button>

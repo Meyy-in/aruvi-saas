@@ -151,7 +151,7 @@ def build_export_docx(payload: Dict[str, Any]) -> bytes:
         _when = str(_notify.get("whatsapp_at") or "")[:10]
         rows.append(("WhatsApp support",
                      f"Yes — on your sign-in mobile{', chosen on ' + _when if _when else ''}. "
-                     "Service messages only, never marketing. You can turn this off in Settings."))
+                     "Service messages only, never marketing."))
     else:
         rows.append(("WhatsApp support", "No — you have not opted in."))
     # Which Privacy Notice she was shown (2026-09-04). Not a consent — the notice is
