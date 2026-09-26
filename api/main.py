@@ -2297,7 +2297,8 @@ def _wa_welcome(a: Any, mobile: str) -> Dict[str, Any]:
         first = "there"                       # "Hello there" beats "Hello 9876543210"
     res = wa_client.send_template(WhatsAppTemplate(
         to=_wa_e164(mobile), template=config.WA_WELCOME_TEMPLATE,
-        language=config.WA_TEMPLATE_LANG, params=[first]))
+        language=config.WA_TEMPLATE_LANG,
+        params=[first] if config.WA_WELCOME_NAME_PARAM else []))
     if res.get("status") in ("sent", "written"):
         notify["whatsapp_welcomed_at"] = datetime.now(timezone.utc).isoformat()
         a.notify = notify

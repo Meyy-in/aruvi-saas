@@ -17,3 +17,6 @@ Read `docs/walk_session_brief.md` and `docs/walk_handoff_family06.md` first; thi
 
 ## Next
 Family 02 — profile & the Add window (30 rows: Profile view · Add window & pick screens · Classes · Sections · Wheels · Periods & durations · Annual budget · Set-up check & sync). Web first on 9000000003; rows needing a trial (02.07, 02.12a, 02.14 trial half) use an expendable trial number (9000000004 or a fresh 0NN); 02.26 needs a new subject-stage grant; 02.30 is lapsed → park with the expired-subscription session.
+
+## Added 2026-09-26 — WhatsApp support in the walk
+Five rows, family 04, group "WhatsApp support": **04.33** Subscribe's WhatsApp question (decides whether email is required) · **04.34** the post-checkout hello screen · **04.35** Personal profile switch (at least one channel always) · **04.36** Support's "Chat on WhatsApp" card · **04.37** WhatsApp-only teacher's add-email box. 04.18 and 04.21 now point to them. All three surfaces; 04.34/04.36 are NATIVE (they hand off to the WhatsApp app — needs the real-Android column). ⚠️ The phone has NO WhatsApp support yet: its port is owed before family 04's phone walk.

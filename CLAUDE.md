@@ -39,6 +39,15 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   `GET/POST /whatsapp/webhook` (verify token handshake; HMAC `X-Hub-Signature-256` under the app
   secret, refused otherwise; events logged to `state/whatsapp_inbox/`; a "STOP" withdraws the
   opt-in). Chats are answered in the Business app (coexistence) — not turned into support cases.
+  **Welcome template wording (founder-approved 2026-09-26; submit in WhatsApp Manager as
+  `meyy_welcome`, Utility, English, one variable):** "Hello {{1}}, welcome to Meyy! This is our
+  support chat — we reply to messages only, not calls. Send us your questions or feedback here
+  anytime and we'll get back to you." It echoes the Business app's GREETING message ("Thank you
+  for contacting Meyy! We reply to messages only, not calls…"), which today already acts as the
+  welcome, because the tap-to-chat buttons make her message first. Meta setup status: founder's
+  Facebook login created + 2FA on; business portfolio ("Meyy OPC Private Limited" — Meta forbids
+  brackets) pending Meta's new-account wait. Sending-number choice (second SIM · partner
+  coexistence · full migration) still OPEN.
   `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
   template's document header (`WhatsAppTemplate.document`).
 - **Owed:** privacy notice update naming WhatsApp/Meta as a processor (versioned — a consent bump

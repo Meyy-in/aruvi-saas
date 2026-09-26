@@ -1309,14 +1309,32 @@ export default function Home() {
   const shellUp = !!(user && ready && !firstGenNeeded);
   useEffect(() => {
     if (!shellUp || typeof window === "undefined") return undefined;
-    try { window.history.pushState({ meyy: 1 }, ""); } catch {}
+    /* The sentinel is pushed ONCE and never re-pushed from inside popstate (2026-09-26). Chrome
+       marks an entry pushed without a user gesture as "skippable" and Back jumps over it — so
+       re-pushing in the handler made the FIRST Back work and the SECOND leave the app (Teaching
+       profile → Settings → out, instead of → My Classes). Instead we step FORWARD onto the entry
+       we just left: no new entry, nothing to skip. The popstate that forward() itself fires is
+       swallowed by a FLAG, never by reading history.state — a state test ignored every leftover
+       sentinel entry in the stack (a hot reload, a remount), so Back "did nothing" until she had
+       clicked through them all. With the flag, ANY traversal we did not start is a Back.
+       Verified live in Chrome + Next 14.2: three rapid Backs = three levels, with leftovers. */
+    let selfNav = false, selfTimer = null;
+    const expectOwn = () => {
+      selfNav = true; clearTimeout(selfTimer);
+      selfTimer = setTimeout(() => { selfNav = false; }, 1000);   // never let a lost event wedge Back
+    };
+    let onSentinel = false;
+    try { onSentinel = !!(window.history.state && window.history.state.meyy); } catch {}
+    if (!onSentinel) { try { window.history.pushState({ meyy: 1 }, ""); } catch {} }
     const onPop = () => {
+      if (selfNav) { selfNav = false; clearTimeout(selfTimer); return; }   // our own forward/back
       const handled = backRef.current ? backRef.current() : false;
-      if (handled) { try { window.history.pushState({ meyy: 1 }, ""); } catch {} }
+      expectOwn();
+      if (handled) { try { window.history.forward(); } catch {} }
       else { try { window.history.back(); } catch {} }
     };
     window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
+    return () => { clearTimeout(selfTimer); window.removeEventListener("popstate", onPop); };
   }, [shellUp]);
   /* What the bar says (2026-09-03): the chosen item's own card name, verbatim — the
      same words she tapped — so the bar reads as the card she opened. The teaching

@@ -171,6 +171,10 @@ WA_PHONE_NUMBER_ID = os.environ.get("ARUVI_WA_PHONE_NUMBER_ID", "").strip()
 WA_API_VERSION = os.environ.get("ARUVI_WA_API_VERSION", "").strip() or "v25.0"
 WA_WELCOME_TEMPLATE = os.environ.get("ARUVI_WA_WELCOME_TEMPLATE", "").strip() or "meyy_welcome"
 WA_TEMPLATE_LANG = os.environ.get("ARUVI_WA_TEMPLATE_LANG", "").strip() or "en"
+# Whether the welcome template takes the first name as {{1}}. Set to 0 only to smoke-test
+# with Meta's built-in `hello_world` template (no variables, language en_US).
+WA_WELCOME_NAME_PARAM = os.environ.get("ARUVI_WA_WELCOME_NAME_PARAM", "1").strip().lower() in (
+    "1", "true", "yes", "on")
 WA_VERIFY_TOKEN = os.environ.get("ARUVI_WA_VERIFY_TOKEN", "").strip()
 WA_APP_SECRET = os.environ.get("ARUVI_WA_APP_SECRET", "").strip()
 # The address mail is SENT from — the SMTP account itself unless overridden.
