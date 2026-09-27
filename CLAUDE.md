@@ -50,7 +50,10 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   welcome, because the tap-to-chat buttons make her message first. Meta setup status: founder's
   Facebook login created + 2FA on; business portfolio ("Meyy OPC Private Limited" — Meta forbids
   brackets) created; developer app "Meyy" created; test number claimed; Meta's sample template delivered to
-  the founder's phone; `meyy_welcome` submitted for review (2026-09-26). Sending-number choice (second SIM · partner
+  the founder's phone; `meyy_welcome` submitted for review (2026-09-26). 2026-09-27: permanent SYSTEM-USER token
+  (`meyy_backend`, Admin, Meyy app + Test WABA assigned, never expires) set as ARUVI_WA_TOKEN on
+  Render; ARUVI_WA_PHONE_NUMBER_ID = the TEST number's id; Render logs "CLOUD API … WILL send".
+  Template still in review. Webhook not yet configured. Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.
   `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
   template's document header (`WhatsAppTemplate.document`).

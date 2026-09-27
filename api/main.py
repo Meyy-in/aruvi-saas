@@ -2488,6 +2488,10 @@ async def whatsapp_webhook(request: Request) -> Dict[str, Any]:
     sig = request.headers.get("X-Hub-Signature-256", "")
     want = "sha256=" + hmac.new(config.WA_APP_SECRET.encode(), raw, hashlib.sha256).hexdigest()
     if not hmac.compare_digest(sig, want):
+        # Logged (never the body — it is unauthenticated) so a mis-set app secret is visible
+        # in the inbox file rather than only as a 401 in a log view that scrolls away.
+        _wa_log({"kind": "rejected", "reason": "bad signature" if sig else "unsigned",
+                 "bytes": len(raw)})
         raise HTTPException(status_code=401, detail="Bad signature.")
     try:
         body = json.loads(raw or b"{}")
