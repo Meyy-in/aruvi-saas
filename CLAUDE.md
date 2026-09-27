@@ -53,7 +53,14 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   the founder's phone; `meyy_welcome` submitted for review (2026-09-26). 2026-09-27: permanent SYSTEM-USER token
   (`meyy_backend`, Admin, Meyy app + Test WABA assigned, never expires) set as ARUVI_WA_TOKEN on
   Render; ARUVI_WA_PHONE_NUMBER_ID = the TEST number's id; Render logs "CLOUD API … WILL send".
-  Template still in review. Webhook not yet configured. Sending-number choice (second SIM · partner
+  Template still in review. Webhook configured + verified (VERIFY_TOKEN/APP_SECRET on Render,
+  `messages` subscribed, WABA→app `subscribed_apps` POSTed); Meta's dashboard Test lands in
+  `state/whatsapp_inbox/`, but REAL inbound messages do not arrive while the app is in
+  Development mode → going Live. Rejected (bad-signature) webhook POSTs are now logged to the
+  inbox file too. **Public privacy page `GET /privacy`** (api/public_pages.py — renders the
+  current privacy_policy_v*.md as HTML, strips `[AT LAUNCH: …]` notes; `[value]` blanks such as
+  the registered office still show and must be filled before real launch) is the privacy-policy
+  URL Meta requires for Live. Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.
   `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
   template's document header (`WhatsAppTemplate.document`).

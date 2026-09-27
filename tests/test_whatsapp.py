@@ -133,6 +133,15 @@ def test_webhook_handshake_and_signature():
     assert c.get("/account", headers={"X-Aruvi-User": "9800000103"}).json()["whatsapp"] is False
 
 
+def test_public_privacy_page_is_open_html_without_drafting_notes():
+    m, c = _client()
+    r = c.get("/privacy")                      # no X-Aruvi-User — must be public
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
+    assert "Meyy (OPC) Private Limited" in r.text and "<h1>" in r.text
+    assert "AT LAUNCH" not in r.text           # founder's drafting notes never go public
+    assert "<script" not in r.text.lower()
+
+
 def test_cloud_payload_shape():
     p = CloudWhatsApp.payload(WhatsAppTemplate(
         to="x", template="meyy_welcome", params=["Priya"],

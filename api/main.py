@@ -2172,6 +2172,20 @@ def get_legal_privacy(version: Optional[str] = None) -> Dict[str, Any]:
         raise HTTPException(status_code=503, detail=str(exc))
 
 
+@app.get("/privacy", include_in_schema=False)
+def public_privacy_page():
+    """The CURRENT Privacy Notice as a public HTML page (2026-09-26) — the privacy-policy
+    URL Meta requires before the WhatsApp app can go Live (Meyy has no website yet). Open,
+    no identity; same source file as Settings › Legal. See api/public_pages.py."""
+    from fastapi.responses import HTMLResponse
+    from . import public_pages
+    try:
+        doc = legal.load_privacy_document()
+    except legal.ConsentDocumentError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    return HTMLResponse(public_pages.privacy_page(doc))
+
+
 @app.get("/legal/privacy/status")
 def get_legal_privacy_status(identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
     """Which version she has been shown against which is current — WITHOUT the document.
