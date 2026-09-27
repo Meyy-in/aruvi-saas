@@ -142,6 +142,18 @@ def test_public_privacy_page_is_open_html_without_drafting_notes():
     assert "<script" not in r.text.lower()
 
 
+def test_account_level_webhook_events_are_logged():
+    m, c = _client()
+    body = json.dumps({"entry": [{"changes": [{"field": "message_template_status_update",
+        "value": {"event": "APPROVED", "message_template_name": "meyy_welcome"}}]}]}).encode()
+    sig = "sha256=" + hmac.new(b"test-secret", body, hashlib.sha256).hexdigest()
+    assert c.post("/whatsapp/webhook", content=body,
+                  headers={"X-Hub-Signature-256": sig}).status_code == 200
+    d = os.path.join(m.config.STATE_DIR, "whatsapp_inbox")
+    text = "".join(open(os.path.join(d, f)).read() for f in os.listdir(d))
+    assert "message_template_status_update" in text and "APPROVED" in text
+
+
 def test_cloud_payload_shape():
     p = CloudWhatsApp.payload(WhatsAppTemplate(
         to="x", template="meyy_welcome", params=["Priya"],

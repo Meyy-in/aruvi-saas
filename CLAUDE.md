@@ -60,7 +60,13 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   inbox file too. **Public privacy page `GET /privacy`** (api/public_pages.py — renders the
   current privacy_policy_v*.md as HTML, strips `[AT LAUNCH: …]` notes; `[value]` blanks such as
   the registered office still show and must be filled before real launch) is the privacy-policy
-  URL Meta requires for Live. Sending-number choice (second SIM · partner
+  URL Meta requires for Live. App PUBLISHED (Live) 2026-09-27 with that URL; app subscription
+  verified active (object whatsapp_business_account, `messages` among fields) — yet real inbound
+  messages to the TEST number still never arrive (known test-number quirk). RECEIVING PARKED until
+  the real number is connected. Account-level webhook events (e.g. `message_template_status_update`)
+  are now logged to the inbox file too — the template verdict landing there doubles as proof
+  that Meta's delivery reaches us. NEXT: template Active → welcome test with the founder's
+  personal mobile (a verified test recipient) → Part 2 number decision. Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.
   `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
   template's document header (`WhatsAppTemplate.document`).

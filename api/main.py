@@ -2514,6 +2514,13 @@ async def whatsapp_webhook(request: Request) -> Dict[str, Any]:
     for entry in body.get("entry") or []:
         for change in entry.get("changes") or []:
             value = change.get("value") or {}
+            field = change.get("field") or ""
+            if field and field != "messages":
+                # Account-level events (template approved/rejected, quality, number name…)
+                # are logged whole but trimmed — they carry no customer data, and a template
+                # verdict landing here is also proof that Meta's delivery reaches us.
+                _wa_log({"kind": field, "value": json.dumps(value)[:1500]})
+                continue
             for st in value.get("statuses") or []:
                 _wa_log({"kind": "status", "id": st.get("id"), "status": st.get("status"),
                          "to": st.get("recipient_id"),
