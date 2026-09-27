@@ -728,6 +728,8 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                  rule — it is the site of the swallowed-Mathematics defect and was not part of
                  that reversal. */
               <PickWheel options={classOptions} selected={pickedGrades}
+                cluster={false /* WALK-A-102 (founder, 2026-09-26): the Add window's class wheel keeps
+                  natural order — grouping 6 and 9 hid 7 and 8 beside the subscription note. */}
                 onToggle={(g) => setPickedGrades((a) => (a.includes(g) ? a.filter((x) => x !== g) : [...a, g]))}
                 ariaLabel={`Classes for ${pretty(subject)}`} labelFor={(g) => `Class ${classNum(g)}`}>
                 {/* "Save", not "Continue" (founder, 2026-08-27): the word states whether anything
@@ -772,6 +774,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                  holding A and R hides B…Q inside the cluster until R is unticked. */
               <PickWheel options={SECTION_LETTERS} selected={picked}
                 onToggle={(x) => setPicked((a) => (a.includes(x) ? a.filter((y) => y !== x) : [...a, x]))}
+                onClearAll={() => setPicked([])}
                 ariaLabel="Sections" labelFor={(x) => `${classNum(grade)}${x}`}
                 leadingHeader="Section" trailingHeader="customize"
                 summaryFor={(x) => secSummary(grade, x, secNames)}
@@ -828,8 +831,9 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             </Text>
             {draft ? (
               <PickWheel options={DURATION_CHOICES} selected={durations} onToggle={toggleDuration}
+                onClearAll={() => setDraft((prev) => ({ ...prev, durations: [] })) /* WALK-A-104; Save waits for a tick */}
                 ariaLabel="Period durations" labelFor={(d) => `${d} min`}
-                initialScrollTo={durations[0]}
+                initialScrollTo={durations[0] || DEFAULT_DURATION}
                 leadingHeader={multi ? "Duration" : null}
                 trailingHeader={multi ? "Periods / week" : null}
                 summaryFor={multi ? (d) => `${d} min × ${splitMap[d] || 0}` : null}
@@ -858,8 +862,8 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                   </View>
                 ) : null}
                 {/* Step 2 of 2 — the lengths AND their split, so this is where it saves. */}
-                <Pressable onPress={saveNumbers} disabled={saving} accessibilityRole="button"
-                  style={[ws.fr_cta, { backgroundColor: saving ? t.paper_sunk : t.pine }]}>
+                <Pressable onPress={saveNumbers} disabled={saving || !durations.length} accessibilityRole="button"
+                  style={[ws.fr_cta, { backgroundColor: (saving || !durations.length) ? t.paper_sunk : t.pine }]}>
                   {saving ? <ActivityIndicator size="small" color={t.ink_soft} />
                           : <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Save</Text>}
                 </Pressable>
@@ -988,7 +992,12 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
           title={`Remove ${secConfirm.join(", ")}?`}
           sub={`${secConfirm.length === 1 ? "Its card and bookmark" : "Their cards and bookmarks"} will be removed. Your lessons stay in the library.`}>
           <View style={ws.ap_actions}>
-            <Pressable onPress={() => setSecConfirm(null)} accessibilityRole="button"
+            <Pressable onPress={() => {
+                /* WALK-A-103 (founder, 2026-09-27): "Keep it" re-ticks, as it does for classes. */
+                const back = secConfirm.map((tag) => tag.replace(/^\d+/, ""));
+                setPicked((a) => [...new Set([...(a || []), ...back])].sort());
+                setSecConfirm(null);
+              }} accessibilityRole="button"
               style={[ws.ap_btn, { borderColor: t.line }]}>
               <Text style={[ws.ap_btn_label, { color: t.ink }]}>
                 Keep {secConfirm.length === 1 ? "it" : "them"}

@@ -58,7 +58,7 @@ const a11yLabel = (label, on) => `${label}${on ? " (selected)" : ""}`;
 
 export default function PickWheel({
   options, selected, onToggle, labelFor, initialScrollTo, ariaLabel, children,
-  summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor, cluster = true,
+  summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor, cluster = true, onClearAll,
 }) {
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -199,6 +199,14 @@ export default function PickWheel({
               <Text style={ws.pw_summary_empty}>Nothing chosen yet — tap the rows above</Text>
             )}
           </Text>
+        ) : null}
+        {/* WALK-A-104 (founder, 2026-09-27): clustering drops the unticked rows between her lowest
+            and highest pick, so "Untick all" lets her start over. Only where the caller passes it. */}
+        {onClearAll && chosen.length > 0 ? (
+          <Pressable onPress={onClearAll} accessibilityRole="button" hitSlop={8}
+            style={{ marginTop: 8, alignSelf: "flex-start" }}>
+            <Text style={[ws.pw_summary, { color: t.pine_d, textDecorationLine: "underline" }]}>Untick all</Text>
+          </Pressable>
         ) : null}
       </View>
 
