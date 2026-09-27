@@ -134,7 +134,7 @@ const Pencil = ({ size = 14 }) => (
  * "{subject}/{stage}"). */
 const stageOfRoman = stageOfGrade;   // lib/format is the web's ONE copy of the mapping
 
-export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, heldScopes, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome }) {
+export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, heldScopes, trial, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome }) {
   /* `heldScopes` is what she has BOUGHT, and it decides one thing only: whether a subject
      survives losing its last class (`subjectSurvivesEmpty`). It is NOT `paidScopes`, which is a
      display filter and says "no limit" while enforcement is off — see @aruvi/shared/format. */
@@ -456,7 +456,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
       return {
         title: `Remove Class ${classNum(g.grade)} from ${sub.name}?`,
         body: `${tags} — their cards and bookmarks — will be removed.${last ? (subjectSurvivesEmpty(heldScopes, sub.name)
-          ? ` It is the last class — ${sub.name} itself stays, with no classes, for as long as you subscribe to it.`
+          ? ` It is the last class — ${sub.name} itself stays, with no classes, ${trial ? "so the lessons you made in it stay in My Lessons" : "for as long as you subscribe to it"}.` /* WALK-A-114 */
           : ` It is the last class — ${sub.name} goes with it.`) : ""} Your lessons stay in the library.`,
         cta: `Yes, remove Class ${classNum(g.grade)}`,
       };
@@ -1178,7 +1178,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
               <div className="fr-modal">
                 <h2 className="fr-q">Remove {names} from {draft.name}?</h2>
                 <p className="fr-hint">{tags} — their cards and bookmarks — will be removed.{allGone ? (subjectSurvivesEmpty(heldScopes, draft.name)
-                  ? ` No class is left — ${draft.name} itself stays, with no classes, for as long as you subscribe to it.`
+                  ? ` No class is left — ${draft.name} itself stays, with no classes, ${trial ? "so the lessons you made in it stay in My Lessons" : "for as long as you subscribe to it"}.` /* WALK-A-114 */
                   : ` No class is left — ${draft.name} goes with it.`) : ""} Your lessons stay in the library.</p>
                 <button type="button" className="tp-remove-confirm" onClick={applyClassChanges}>Yes, remove {names}</button>
                 {/* "Keep it" re-ticks the classes she was about to remove — same rule as
@@ -1634,7 +1634,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
 
             {open && !(s.grades || []).length && (
               <p className="fr-hint">You teach no class of {s.name} at the moment. Its lessons are
-                kept, and it stays here for as long as you subscribe to it. To teach it again, add
+                kept, and it stays here{trial ? "" : " for as long as you subscribe to it"}. To teach it again, add
                 a class under Class in the Add window from the bottom tool bar.</p>
             )}
 

@@ -1009,7 +1009,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             kicker={pretty(subject)}
             title={`Remove ${names} from ${pretty(subject)}?`}
             sub={`${tags} — their cards and bookmarks — will be removed.${allGone ? (subjectSurvivesEmpty(heldScopes, subject)
-              ? ` No class is left — ${pretty(subject)} itself stays, with no classes, for as long as you subscribe to it.`
+              ? ` No class is left — ${pretty(subject)} itself stays, with no classes, ${entitlementState().trial ? "so the lessons you made in it stay in My Lessons" : "for as long as you subscribe to it"}.` /* WALK-A-114 */
               : ` No class is left — ${pretty(subject)} goes with it.`) : ""} Your lessons stay in the library.`}>
             <View style={ws.ap_actions}>
               {/* "Keep them" re-ticks what she was about to remove, rather than abandoning the

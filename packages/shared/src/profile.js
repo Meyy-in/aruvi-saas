@@ -170,9 +170,11 @@ export const goalWord = (goal) => GOAL_WORD[goal] || "sections";
  *
  * ★ THE LINE IS OWNERSHIP, NOT USE (founder’s answer, 2026-09-17: "only a live paid scope").
  * A subject she bought is hers until the subscription ends, whether or not she teaches a class
- * of it this term — so it stays, with no classes, and the doors back stay open. A TRIAL subject
- * still goes: she owns nothing, and a trial artifact that could never be removed would be the
- * "detached plans" defect made permanent.
+ * of it this term — so it stays, with no classes, and the doors back stay open.
+ * ★ AND A TRIAL SUBJECT SHE HAS GENERATED IN (WALK-A-114, founder 2026-09-27, reversing the
+ * earlier "a trial subject still goes"): walked, the trial teacher lost her spent-chapter lesson
+ * from My Lessons with no way back. `heldScopesOf` now counts the subject·stages named in her
+ * `trial_chapters`, so the same rule keeps them. A trial subject she never generated in still goes.
  * ⚠️ Read `heldScopesOf`, never `paidScopesOf` — the latter is a display filter and says "no
  * limit" while enforcement is off, which is every teacher in the beta. See format.js.
  * ⚠️ An unreachable entitlement yields NO held scopes, so the old cascade stands. That is the

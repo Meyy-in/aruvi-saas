@@ -562,8 +562,23 @@ export function subsFromEntitlement(e, invoices = null) {
  * ⚠️ LIVE scopes, like everything else here — the server derives them and the client compares no
  * dates. `e.scopes` is the fallback for an older API, and on that path an expired scope can
  * still be counted; that is the same trade every other reader of this field makes. */
+/* ★ …EXCEPT WHAT SHE HAS SPENT A TRIAL CHAPTER ON (WALK-A-114, founder 2026-09-27). Walked on two
+ * trial accounts: unticking the last class took English out of the profile, and with it the
+ * lesson she had spent a trial chapter on vanished from My Lessons — behind a warning that had
+ * just said "Your lessons stay in the library" — and "+ add a subject" leads only to Subscribe,
+ * so there was no way back. A subject-stage she has generated in on trial is therefore HERS for
+ * this rule, exactly as a paid one: it survives with no classes and her lessons stay in reach.
+ * The "*" licence itself still owns nothing — only the subject·stages named in
+ * `trial_chapters` ("english/iii/1" → "english/preparatory") are counted. */
 export function heldScopesOf(e) {
-  if (!e || e.status === "trial") return [];
+  if (!e) return [];
+  if (e.status === "trial") {
+    return [...new Set((e.trial_chapters || []).map((c) => {
+      const [subj, grade] = String(c || "").split("/");
+      const stage = grade ? stageOfGrade(grade) : null;
+      return subj && stage ? `${subj}/${stage}` : null;
+    }).filter(Boolean))];
+  }
   const live = Array.isArray(e.live_scopes) ? e.live_scopes : (e.scopes || []);
   return live.filter((s) => s && s !== "*");
 }

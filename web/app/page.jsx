@@ -1621,7 +1621,7 @@ export default function Home() {
                 <button className="ap-close" aria-label="Close" onClick={goPortalHome}>✕</button>
                 <TeachingProfile readiness={readiness} onChange={setReadiness}
                   onBack={goPortalHome} lapsed={entLapsed} paidScopes={paidScopes}
-                  heldScopes={heldScopes}
+                  heldScopes={heldScopes} trial={entTrial}
                   autoAddClassSubject={null} onConsumeAutoAdd={() => {}}
                   portalIntent={profilePortal} onConsumePortal={() => setProfilePortal(null)}
                   portalScope={profilePortalScope}
@@ -1660,7 +1660,7 @@ export default function Home() {
             <div className="editflow" data-tour="profile-root">
               <TeachingProfile readiness={readiness} onChange={setReadiness}
                 onBack={null} lapsed={entLapsed} paidScopes={paidScopes}
-                heldScopes={heldScopes}
+                heldScopes={heldScopes} trial={entTrial}
                 autoAddClassSubject={profileAutoAdd} onConsumeAutoAdd={() => setProfileAutoAdd(null)}
                 portalIntent={null} onConsumePortal={() => setProfilePortal(null)}
                 portalScope={null}

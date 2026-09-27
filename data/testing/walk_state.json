@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-27T08:24:42",
+  "updated_at": "2026-09-27T09:10:36",
   "items": {
     "04.19": {
       "ios": {
@@ -3036,22 +3036,22 @@
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-26T15:27:24",
-        "comment": "Multi-subject half: 'In which subject?' with hint, then 'Which class?' rows 'Class {n}' ›, '← Back' footer on web. Single-subject/single-class half (screens skipped) still to walk on a trial account.",
+        "at": "2026-09-27T08:32:26",
+        "comment": "Multi-subject half: 'In which subject?' with hint, then 'Which class?' rows 'Class {n}' ›, '← Back' footer on web. Single-subject/single-class half (screens skipped) still to walk on a trial account. Trial half (9000000013, English, one class): Add › Section skips both pick screens and opens the sections editor.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T06:55:06",
-        "comment": "Subject then class pick screens; ← corner, no footer link; Android Back steps class → subject.",
+        "at": "2026-09-27T08:32:26",
+        "comment": "Subject then class pick screens; ← corner, no footer link; Android Back steps class → subject. Trial half (9000000015, English, one class): Add › Section skips both pick screens and opens the sections editor.",
         "build": "Expo Go (LAN)"
       },
       "and_emu": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T06:55:06",
-        "comment": "Subject then class pick screens; ← corner, no footer link; Android Back steps class → subject.",
+        "at": "2026-09-27T08:32:26",
+        "comment": "Subject then class pick screens; ← corner, no footer link; Android Back steps class → subject. Trial half (9000000011, English, one class): Add › Section skips both pick screens and opens the sections editor.",
         "build": "Expo Go (LAN)"
       }
     },
@@ -3106,21 +3106,21 @@
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-27T06:30:36",
-        "comment": "Re-walk after WALK-A-102: Add › Class › Science lists 6–10 in natural order, ticks in place, 7 and 8 visible. Stage filter correct (SS secondary → 9, 10). Trial half still to walk.",
+        "comment": "Re-walk after WALK-A-102: Add › Class › Science lists 6–10 in natural order, ticks in place, 7 and 8 visible. Stage filter correct (SS secondary → 9, 10). Trial half still to walk. Trial half (9000000013): every English class across stages, no subscription note.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T06:55:06",
-        "comment": "Re-walk WALK-A-102: Science 6–10 in natural order, 9 ticked, 7/8 visible, subscription note. Trial half still to walk.",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Re-walk WALK-A-102: Science 6–10 in natural order, 9 ticked, 7/8 visible, subscription note. Trial half still to walk. Trial half (9000000013 on iPhone): every English class, no subscription note.",
         "build": "Expo Go (LAN)"
       },
       "and_emu": {
         "status": "pass",
         "by": "Kumar",
         "at": "2026-09-27T06:55:06",
-        "comment": "Re-walk WALK-A-102: Science 6–10 in natural order, 9 ticked, 7/8 visible, subscription note. Trial half still to walk.",
+        "comment": "Re-walk WALK-A-102: Science 6–10 in natural order, 9 ticked, 7/8 visible, subscription note. Trial half still to walk. Trial half (9000000011): every English class across stages, no subscription note.",
         "build": "Expo Go (LAN)"
       }
     },
@@ -3151,22 +3151,22 @@
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T05:23:48",
-        "comment": "Subscriber half (Social Sciences): confirm reads '{subject} itself stays, with no classes'; subject stays empty in the profile, not removable. Trial half still to walk.",
+        "at": "2026-09-27T09:07:18",
+        "comment": "Subscriber half (Social Sciences): confirm reads '{subject} itself stays, with no classes'; subject stays empty in the profile, not removable. Trial half still to walk. Trial half (9000000013): subject goes as specified, but My Lessons empties (spent-chapter lesson unreachable) and Android also loses Add; web keeps a useless Add. → WALK-A-114 Re-walk after WALK-A-114 (9000000013, profile restored): trial confirm line shown, English stays with no classes, lesson still in My Lessons, Add stays. Confirmed again after a clean web rebuild (rm -rf web/.next): the first web re-walk had run a stale build of @aruvi/shared.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T07:31:13",
-        "comment": "Subscriber half (SS): 'itself stays, with no classes'; subject stays empty. Trial half still to walk.",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Subscriber half (SS): 'itself stays, with no classes'; subject stays empty. Trial half still to walk. Trial half (9000000013 on iPhone, re-walk WALK-A-114): trial confirm line, English stays with no classes, lesson stays in My Lessons, Add stays.",
         "build": "Expo Go (LAN)"
       },
       "and_emu": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T07:31:13",
-        "comment": "Subscriber half (SS): 'itself stays, with no classes'; subject stays empty. Trial half still to walk.",
+        "at": "2026-09-27T08:51:05",
+        "comment": "Subscriber half (SS): 'itself stays, with no classes'; subject stays empty. Trial half still to walk. Trial half (9000000011): subject goes as specified, but My Lessons empties (spent-chapter lesson unreachable) and Android also loses Add; web keeps a useless Add. → WALK-A-114 Re-walk after WALK-A-114 (9000000011, profile restored): trial confirm line shown, English stays with no classes, lesson still in My Lessons, Add stays.",
         "build": "Expo Go (LAN)"
       }
     },
@@ -3513,6 +3513,52 @@
         "at": "2026-09-27T08:03:29",
         "comment": "Airplane-mode save kept and re-sent after reconnect; spinner ends, sheet closable, Back works.",
         "build": "Expo Go (LAN)"
+      }
+    },
+    "02.07": {
+      "web": {
+        "status": "blocked",
+        "by": "Kumar",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Not reachable since WALK-A-114: a trial subject with a generated lesson no longer empties the profile. Needs a trial that has never generated (fresh number through first run without generating), or park.",
+        "build": ""
+      },
+      "ios": {
+        "status": "blocked",
+        "by": "Kumar",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Not reachable since WALK-A-114: a trial subject with a generated lesson no longer empties the profile. Needs a trial that has never generated (fresh number through first run without generating), or park.",
+        "build": ""
+      },
+      "and_emu": {
+        "status": "blocked",
+        "by": "Kumar",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Not reachable since WALK-A-114: a trial subject with a generated lesson no longer empties the profile. Needs a trial that has never generated (fresh number through first run without generating), or park.",
+        "build": ""
+      }
+    },
+    "02.30": {
+      "web": {
+        "status": "parked",
+        "by": "Kumar",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Lapsed account — parked with the expired-subscription session (with 048, 06.14).",
+        "build": ""
+      },
+      "ios": {
+        "status": "parked",
+        "by": "Kumar",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Lapsed account — parked with the expired-subscription session (with 048, 06.14).",
+        "build": ""
+      },
+      "and_emu": {
+        "status": "parked",
+        "by": "Kumar",
+        "at": "2026-09-27T09:10:36",
+        "comment": "Lapsed account — parked with the expired-subscription session (with 048, 06.14).",
+        "build": ""
       }
     }
   },
@@ -5885,6 +5931,27 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-27T08:22:58"
+    },
+    {
+      "id": "WALK-A-114",
+      "opened": "2026-09-27T08:43:11",
+      "closed": "2026-09-27T09:10:36",
+      "feature": "02.14",
+      "found_on": [
+        "web",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "Trial: removing the last class of a subject she has generated in strands her lessons — keep the subject, as for a subscriber",
+      "what": "Founder, 2026-09-27, trial accounts 011 (Android) and 013 (web): unticking the last class removed English; My Lessons then read 'No subjects set up yet…' and the lesson she had spent a trial chapter on was out of reach (the server keeps the lesson — only the class's allocation register is cleared). The confirm had said 'Your lessons stay in the library.' Android also dropped the Add button (ready = no subjects); the web kept Add, with nothing to act on. A subscriber (015) is unaffected: the subject stays with no classes. DECISION: a subject she has spent a trial chapter in stays, like a paid one.",
+      "fix": "[FIXED 2026-09-27T08:43:11] shared format.js heldScopesOf(): for a trial, returns the subject·stages named in trial_chapters ('english/iii/1' → 'english/preparatory'); the '*' licence still owns nothing. subjectSurvivesEmpty (web TeachingProfile, phone ProfileEditor) therefore keeps such a subject with no classes, so its lessons stay in My Lessons and Add stays on both surfaces. A trial subject she never generated in still goes. Test aid: aruvi-scripts/restore_profile_from_backup.py puts a profile back from the nightly snapshot. Copy (draft, founder to approve): for a trial the remove-class confirm ends '… itself stays, with no classes, so the lessons you made in it stay in My Lessons.' and the empty-subject note drops 'for as long as you subscribe to it' (web TeachingProfile via new `trial` prop from page.jsx; phone ProfileEditor + settings/profile via entitlementState().trial). Subscriber wording unchanged.\n[RE-WALKED web, and_emu 2026-09-27] PASS. Trial copy approved in use. iPhone trial half not walked (015 is subscribed) — same shared/phone code as Android.\n[RE-WALKED ios 2026-09-27] PASS (9000000013).",
+      "files": "packages/shared/src/format.js, packages/shared/src/profile.js (comment), aruvi-scripts/restore_profile_from_backup.py, web/app/page.jsx, web/app/components/TeachingProfile.jsx, mobile/components/ProfileEditor.jsx, mobile/app/(app)/settings/profile.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T08:43:11"
     }
   ]
 }
