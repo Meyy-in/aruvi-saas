@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-26T15:39:05",
+  "updated_at": "2026-09-27T06:30:36",
   "items": {
     "04.19": {
       "ios": {
@@ -2963,10 +2963,10 @@
     },
     "02.12": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-26T15:36:02",
-        "comment": "Add › Class › Science (holds middle + secondary): 6 and 9 ticked, 7 and 8 not shown between them, while the note says 'Your subscription covers what's shown here' — she reads it as not eligible for 7/8. Cause: shared clusterOrder drops unchosen rows between lowest and highest pick. → WALK-A-102 Stage filter itself correct: Social Sciences (secondary only) offered Classes 9 and 10 only, with the subscription note. Trial half still to walk.",
+        "at": "2026-09-27T06:30:36",
+        "comment": "Re-walk after WALK-A-102: Add › Class › Science lists 6–10 in natural order, ticks in place, 7 and 8 visible. Stage filter correct (SS secondary → 9, 10). Trial half still to walk.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -2976,6 +2976,150 @@
         "by": "Kumar",
         "at": "2026-09-26T15:39:05",
         "comment": "Confirm names the class, sections and 'Your lessons stay in the library.'; Keep it re-ticks; Yes, remove deletes the cards, lessons stay in My Lessons. Walked on Science Class 6 (6B, 6C) — removed.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.14": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:23:48",
+        "comment": "Subscriber half (Social Sciences): confirm reads '{subject} itself stays, with no classes'; subject stays empty in the profile, not removable. Trial half still to walk.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.15": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:23:48",
+        "comment": "Refilled Social Sciences Class 9: Section A with defaults, card in My Classes, no set-up check window.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.16": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:23:48",
+        "comment": "Sections editor: kicker, hint, 9A pre-ticked, Section column header; Save disabled at zero ticks; 9B/9C added as cards; Sections and Periods/week tiles rose.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.17": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:23:48",
+        "comment": "Custom name capped at 8 ('Rosemary'); summary '9B (Rosemary)'; My Classes fine print and profile chip show the name; bookmark untouched; clearing restores the tag.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.18": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:30:36",
+        "comment": "Re-walk after WALK-A-103: Keep it re-ticks the section.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.19": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:30:36",
+        "comment": "Re-walk after WALK-A-104: 'Untick all' appears under the Chosen line and clears the sections wheel.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.20": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:38:52",
+        "comment": "Kicker, heading, hint, 1–14 wheel, Continue to period lengths. No Cancel link under Continue — founder: not needed; expectation revised.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.21": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:30:36",
+        "comment": "Re-walk after WALK-A-104/105: second length ticks without a crash; Untick all clears, Save disabled until a length is ticked, then saves.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.22": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:43:35",
+        "comment": "Two lengths: headers and hint shown, shortest absorbs the remainder, other capped at the total, sum always the weekly total; summary and profile card show the split. Also covers the two-period-length half of 02.04.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.23": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:43:35",
+        "comment": "Budget editor: kicker, heading, − / + around the field, 'periods / year', opens on stored budget, never below 1, spinner then returns, no method tabs. No Cancel link — founder: not needed; expectation revised.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.24": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:43:35",
+        "comment": "Weeks caption recomputes; Meyy recommendation line (with NCF norm when different); pencil → periods wheel → lengths → back to budget.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.25": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T05:43:35",
+        "comment": "Year Plan TOTAL PERIODS pencil opens that class's budget directly; Save returns to the Year Plan pane; totals and per-chapter suggestions re-distribute.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.26": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:17:30",
+        "comment": "Granted social_sciences/middle via entitlement.py: new subject-stage got a default class; 'Would you like to check your set-up?' raised once, limited to the new stage's class; not asked again on the other tab or reload.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.27": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:17:30",
+        "comment": "Added a section: My Classes card, My Lessons selectable, Prepare durations match (two-length split confirmed in the generated plan), profile tiles updated — no refresh.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.28": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:17:30",
+        "comment": "Web half: renamed section and changed budget survive a reload. Cross-device half with the phone pass.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "02.29": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:30:36",
+        "comment": "Re-walk after WALK-A-106: offline save of 9E, back online, 20 s, reload — 9E is on the server.",
         "build": "web dev (localhost:3000 → Render)"
       }
     }
@@ -5120,14 +5264,103 @@
       "applies_to": "both",
       "title": "Pick wheel hides unticked classes between two ticked ones; with the subscription note she reads them as not covered",
       "what": "Founder, 2026-09-26: Science enrolled in 6 and 9 (holds middle + secondary). The class wheel shows 6 and 9 ticked with 7 and 8 hidden between them. The note 'Your subscription covers what's shown here…' then tells her she is not eligible for 7/8, though she is. The only way to reach 7/8 is to untick 9 — which in manage mode is a removal. DECISION (founder, 2026-09-26): ONLY in the Add window's class wheel (Add › Class, manage mode), do not group ticked classes — natural order, ticks in place. Everywhere else (first run, + add-a-subject classes, sections, durations, subjects) keeps the clustering as is.",
-      "fix": "",
-      "files": "web/app/components/TeachingProfile.jsx (classes screen, manageC → PickWheel cluster={false}); phone equivalent in mobile/components/ProfileEditor.jsx",
+      "fix": "[FIXED 2026-09-27T06:26:23] Add window class wheel passes cluster={false}: web TeachingProfile.jsx classes screen (manage mode only, cluster={!manageC}); phone ProfileEditor.jsx class step. First run, add-a-subject, sections, durations and subjects keep clustering.\n[RE-WALKED web 2026-09-27] PASS",
+      "files": "web/app/components/TeachingProfile.jsx, mobile/components/ProfileEditor.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
-      "recheck": [],
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
       "owner": "Kumar",
       "at": "2026-09-26T15:36:02"
+    },
+    {
+      "id": "WALK-A-103",
+      "opened": "2026-09-27T05:38:52",
+      "closed": "",
+      "feature": "02.18",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Remove a section: 'Keep it' should re-tick the section, as it does for classes",
+      "what": "Founder, 2026-09-27: after 'Keep it' on the section-removal warning, the section stays unticked. It should be ticked again, matching the class wheel (02.13).",
+      "fix": "[FIXED 2026-09-27T06:26:23] 'Keep it/them' on the remove-section confirm re-ticks the removed letters, then closes (web + phone), matching the classes confirm.\n[RE-WALKED web 2026-09-27] PASS",
+      "files": "web/app/components/TeachingProfile.jsx, mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "Kumar",
+      "at": "2026-09-27T05:38:52"
+    },
+    {
+      "id": "WALK-A-104",
+      "opened": "2026-09-27T05:38:52",
+      "closed": "",
+      "feature": "02.19",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Sections and period-length wheels: add an 'Untick all' control below the wheel",
+      "what": "Founder, 2026-09-27: ticking non-contiguous sections (e.g. 9A, 9F, 9R — Indian schools run many sections) hides the unticked ones in between, and reaching them means unticking picks one by one. Rather than show every row (as decided for the Add class wheel, WALK-A-102), give an 'Untick all' option below the wheel so she can start over. Same on the period-length wheel (02.21). Clustering stays on these wheels.",
+      "fix": "[FIXED 2026-09-27T06:26:23] PickWheel (web wheels.jsx, phone PickWheel.jsx) takes an optional onClearAll and shows an 'Untick all' link under the Chosen line when something is ticked. Passed only by the Add window's Edit sections and period-length editors. Durations: Untick all empties the list and Save is disabled until one length is ticked; the weekly total is kept for the re-tick. Clustering unchanged on those wheels.\n[RE-WALKED web 2026-09-27] PASS",
+      "files": "web/app/components/wheels.jsx, web/app/components/TeachingProfile.jsx, mobile/components/PickWheel.jsx, mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "ios",
+        "and_emu"
+      ],
+      "owner": "Kumar",
+      "at": "2026-09-27T05:38:52"
+    },
+    {
+      "id": "WALK-A-105",
+      "opened": "2026-09-27T05:38:52",
+      "closed": "2026-09-27T05:39:31",
+      "feature": "02.21",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Period-length wheel crashes when a second duration is ticked (web)",
+      "what": "ReferenceError: _get is not defined at web/app/components/wheels.jsx:478 (PpwSplitCell). The helper moved to packages/shared/src/ppw.js in Track D 5d F2 as a private const; wheels.jsx kept calling it. Blocker — fixed mid-walk.",
+      "fix": "[FIXED web 2026-09-27T05:38:52] Shared ppw.js now exports it as `ppwAt` (private `_get` aliases it); wheels.jsx imports ppwAt from ../lib/ppw. No other orphaned helpers found in web/app. Shared tests 239/239.\n[RE-WALKED web 2026-09-27] PASS",
+      "files": "packages/shared/src/ppw.js, web/app/components/wheels.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T05:38:52"
+    },
+    {
+      "id": "WALK-A-106",
+      "opened": "2026-09-27T06:22:46",
+      "closed": "2026-09-27T06:30:36",
+      "feature": "02.29",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web",
+      "title": "Web Add-window edits made offline are shown as saved, never retried, and lost on reload",
+      "what": "TeachingProfile.persist() updates the view optimistically and runs one verifiedWrite; offline it comes back 'unverified', which is silent AND has no pending copy or retry. The change lives only in the tab; a reload drops it. First run (page.jsx verifyReadiness) and the phone (shared saveReadiness) both keep an unverified profile as PENDING and re-send it (timer, 'online' event, next load). The web Add window was never given that path.",
+      "fix": "[FIXED 2026-09-27T06:26:23] TeachingProfile.persist now saves through shared saveReadiness (as the phone's ProfileEditor does): same verdicts, and an unverified (offline) write is kept as PENDING and re-sent every 15 s while the tab is open (up to 40 tries). Unverified stays silent; a verified mismatch re-syncs and shows the banner. Known limit: a reload before the retry lands does not re-send an edit to a non-empty server profile (shared fetchReadiness only adopts pending when the server is empty).\n[RE-WALKED web 2026-09-27] PASS",
+      "files": "web/app/components/TeachingProfile.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T06:22:46"
     }
   ]
 }

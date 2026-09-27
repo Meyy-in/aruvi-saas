@@ -38,7 +38,10 @@ const _durs = (durations) => {
   const a = (durations || []).map(Number).filter((n) => n > 0);
   return a.length ? a : [DEFAULT_DURATION];
 };
-const _get = (map, d) => Number((map || {})[d] ?? (map || {})[String(d)]) || 0;
+/* Periods a week stored at one duration; the key may be a number or a string. Exported since
+ * WALK-A-105: web wheels.jsx (PpwSplitCell) was still calling `_get` after the move to shared. */
+export const ppwAt = (map, d) => Number((map || {})[d] ?? (map || {})[String(d)]) || 0;
+const _get = ppwAt;
 
 /* Which duration carries the remainder. The stored `anchor` wins whenever it is still one of
  * the current durations; otherwise fall back to the duration holding the largest count (right

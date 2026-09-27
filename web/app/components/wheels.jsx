@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ppwAt } from "../lib/ppw";
 
 // Shared offscreen canvas for text measurement (auto-fit). One per module — cheap, never in DOM.
 let _fitCanvas = null;
@@ -283,7 +284,7 @@ import { clusterOrder } from "../lib/pick";
 export { clusterOrder };
 
 export function PickWheel({ options, selected, onToggle, labelFor, initialScrollTo, ariaLabel, children,
-                            summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor,
+                            summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor, onClearAll,
                             cluster = true }) {
   const wheelRef = useRef(null);
   /* Bounds and the ▲▼ cue key off the VISIBLE list, not `options`: clustering drops the unchosen
@@ -384,6 +385,13 @@ export function PickWheel({ options, selected, onToggle, labelFor, initialScroll
               : <span className="fr-pick-summary-empty">Nothing chosen yet — tap the rows above</span>}
           </p>
         )}
+        {/* WALK-A-104 (founder, 2026-09-27): clustering drops the unticked rows between her lowest
+            and highest pick (9A … 9F … 9R), so reaching a middle one meant unticking picks one by
+            one. "Untick all" lets her start over. Offered only where the caller passes onClearAll
+            — the Add window's sections and period-length editors. */}
+        {onClearAll && chosen.length > 0 && (
+          <button type="button" className="fr-link" style={{ marginTop: 6, alignSelf: "flex-start" }} onClick={onClearAll}>Untick all</button>
+        )}
       </div>
       {showCue && (
         // Bare arrows beside the wheel — no bordered/background box around them, just the two
@@ -475,7 +483,7 @@ export function PpwSplitCell({ duration, selected, map, total, isAnchor, onSet, 
   }, [open]);
 
   if (!show || !selected) return null;
-  const v = _get(map, duration);
+  const v = ppwAt(map, duration);
   if (isAnchor) return <span className="fr-ppw-num">{v}</span>;
 
   const choices = Array.from({ length: (Number(total) || 0) + 1 }, (_, i) => i);

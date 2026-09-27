@@ -9,6 +9,7 @@ import { SEC_NAME_MAX, secLetter, secName, cleanSecName, secObj, namesFromSectio
          PER_CLASS_GOALS, GOAL_WORD, subjectSurvivesEmpty, setGradeNumbers,
          portalGradeIdxs as sharedGradeIdxs } from "../lib/profile";
 import { verifiedWrite, readinessFingerprint } from "../lib/verify";
+import { saveReadiness } from "../lib/readiness";
 /* `pushSectionState` left with `clearSectionState`, which was its only caller here. */
 import { clearSectionState } from "../lib/sectionState";
 import { RollWheel, PickWheel, PpwTotalWheel, PpwSplitCell, normPpw, ppwMapSum, ppwAnchor,
@@ -375,23 +376,17 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     //
     // cascade:true stays, and is unrelated to this: every destructive edit here is already
     // behind its own scoped confirm, so the server's 409 guard would be a second ask.
-    const want = readinessFingerprint(subjectsOut);
-    verifiedWrite({
-      write: () => fetch(`${API}/readiness`, withUser({
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subjects: subjectsOut, cascade: true }),
-      })).then((r) => { if (!r.ok) throw new Error(String(r.status)); }),
-      read: () => getJSON("/readiness").then((d) => (d && d.readiness) || d || {}),
-      expect: (y) => readinessFingerprint(y.subjects) === want,
-    }).then(({ status, actual }) => {
-      if (status !== "mismatch") return;          // ok → silence; unverified → silence
-      // Y′ is the truth. Telling her AND leaving her edit on screen would recreate the exact
-      // divergence this check exists to catch, so the view is re-synced to what is actually
-      // stored — she sees the real state and the sentence that explains it.
-      onChange && onChange(projectReadiness({ subjects: (actual && actual.subjects) || [] }));
+    /* WALK-A-106 (2026-09-27): through the SHARED `saveReadiness` — the phone's ProfileEditor has
+       saved this way since Track D. Same read-after-write verdicts, plus the one thing this screen
+       lacked: an unverified write (offline) is kept as PENDING for this teacher and re-sent every
+       15 s while the tab is open, instead of living only in the tab and vanishing on reload.
+       "unverified" still says nothing to her; only a verified mismatch speaks. */
+    saveReadiness(subjectsOut).then(({ status, profile }) => {
+      if (status !== "mismatch") return;          // ok → silence; unverified → silence, retried
+      // Y′ is the truth: re-sync the view to what is actually stored, and say so.
+      onChange && onChange(projectReadiness({ subjects: (profile && profile.subjects) || [] }));
       setSaveFailed(true);
-    });
+    }).catch(() => {});
   };
 
   /* ── granular removals (each behind its scoped confirm) ── */
@@ -1146,6 +1141,9 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             reversal. */}
         {options.length > 0 && (
           <PickWheel options={options} selected={picked} onToggle={toggle}
+            cluster={!manageC /* WALK-A-102 (founder, 2026-09-26): in the ADD WINDOW only, classes stay
+              in natural order with ticks in place — grouping 6 and 9 hid 7 and 8, and beside the
+              subscription note she read them as not covered. Every other wheel keeps clustering. */}
             ariaLabel={`Classes for ${draft.name}`} labelFor={(g) => `Class ${classNum(g)}`}>
             {/* ★ "Save", not "Continue", in manage mode (founder, 2026-08-27): the word states
                 whether anything follows. Manage ENDS here now — the tick applies and the window
@@ -1390,7 +1388,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
         {/* ★ REVERSED 2026-08-29 (founder, knowingly): clusters again — picked sections gather
             adjacent on top (6C + 6E side by side, 6F… below), accepting the recorded cost that
             a class holding A and R hides B…Q inside the cluster until R is unticked. */}
-        <PickWheel options={SECTION_LETTERS} selected={picked} onToggle={toggle}
+        <PickWheel options={SECTION_LETTERS} selected={picked} onToggle={toggle} onClearAll={() => setPicked([])}
           ariaLabel="Sections" labelFor={(s) => `${classNum(g.grade)}${s}`}
           leadingHeader="Section" trailingHeader="customize"
           summaryFor={(s) => secSummary(g.grade, s, secNames)}
@@ -1408,7 +1406,13 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
               <h2 className="fr-q">Remove {secConfirm.removed.join(", ")}?</h2>
               <p className="fr-hint">{secConfirm.removed.length === 1 ? "Its card and bookmark" : "Their cards and bookmarks"} will be removed. Your lessons stay in the library.</p>
               <button type="button" className="tp-remove-confirm" onClick={applyEditSections}>Yes, remove {secConfirm.removed.join(", ")}</button>
-              <button type="button" className="fr-link fr-center" onClick={() => setSecConfirm(null)}>Keep {secConfirm.removed.length === 1 ? "it" : "them"}</button>
+              <button type="button" className="fr-link fr-center" onClick={() => {
+                /* WALK-A-103 (founder, 2026-09-27): "Keep it" MEANS keep it — re-tick the sections
+                   she was about to remove, the same rule as the classes confirm. */
+                const back = secConfirm.removed.map((t) => t.replace(/^\d+/, ""));
+                setPicked((a) => [...new Set([...a, ...back])].sort());
+                setSecConfirm(null);
+              }}>Keep {secConfirm.removed.length === 1 ? "it" : "them"}</button>
             </div>
           </div>
         )}
@@ -1447,7 +1451,8 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             ? `Split your ${total} periods between the lengths — ${anchor} min takes whatever is left over.`
             : "If more than one duration, select multiple."}</p>
           <PickWheel options={DURATION_CHOICES} selected={g.durations} onToggle={toggle}
-            ariaLabel="Period durations" labelFor={(d) => `${d} min`} initialScrollTo={g.durations[0]}
+            onClearAll={() => updNum({ durations: [] }) /* WALK-A-104: start over; Save waits for a tick */}
+            ariaLabel="Period durations" labelFor={(d) => `${d} min`} initialScrollTo={g.durations[0] || DEFAULT_DURATION}
             leadingHeader={multi ? "Duration" : null}
             trailingHeader={multi ? "Periods / week" : null}
             summaryFor={multi ? (d) => `${d} min × ${map[d] || 0}` : null}
@@ -1456,7 +1461,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
                 isAnchor={d === anchor} onSet={setCount} show={multi} />
             )}>
             {/* Step 2 of 2 — the lengths and their split together, so this is where it saves. */}
-            <button type="button" className="primary fr-cta"
+            <button type="button" className="primary fr-cta" disabled={!g.durations.length}
               onClick={() => { updNum({ ppw_by_duration: map, ppw_anchor: anchor, periods_per_week: total }); saveEditNums(); }}>
               Save
             </button>
