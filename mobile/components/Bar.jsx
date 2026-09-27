@@ -20,7 +20,7 @@ import { Text } from "./Text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MeyyMark from "./MeyyMark";
 import { getUser } from "@aruvi/shared/format";
-import { cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
+import { cachedFirstName, fetchAccount, accountFirstName, subscribeAccount } from "@aruvi/shared/account";
 import GearIcon from "./GearIcon";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -79,8 +79,10 @@ export default function Bar({ user = getUser(), onSettings = null, gear = true }
   useEffect(() => {
     if (!user) { setName(""); return; }
     let live = true;
-    fetchAccount().then((a) => { if (live) setName(accountFirstName(a)); }).catch(() => {});
-    return () => { live = false; };
+    const read = () => fetchAccount().then((a) => { if (live) setName(accountFirstName(a)); }).catch(() => {});
+    read();
+    const off = subscribeAccount(read);   // WALK-A-122: a saved name reaches the bar at once
+    return () => { live = false; off(); };
   }, [user]);
 
   return (

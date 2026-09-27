@@ -88,8 +88,9 @@ export default function ProfilePortal({ mode = "change", sub, values, onPick, on
             {check
               ? (sub || <>Meyy started you off with its own suggested set-up. You can change any of
                   it — or leave it and carry on teaching.</>)
-              : <>Each item changes only itself — pick another for the next. Your lessons always
-                  stay in the library.</>}
+              /* WALK-A-118 (founder 2026-09-27): say what the rows DO. The old line argued with
+                 the retired vertical flow, where one row ran through all the others. */
+              : <>Pick a row to change that part of your teaching profile.</>}
           </div>
         </div>
         <div className="ap-list">

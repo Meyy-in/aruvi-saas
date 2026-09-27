@@ -89,6 +89,17 @@ export default function AppLayout() {
   /* What the open edit needs from the window's chrome — today just its ← , which exists only on
      the duration step. Reported up by the editor, because the Sheet is owned here. */
   const [editChrome, setEditChrome] = useState(null);
+  /* ★ THE FULL PROFILE RETURNS TO THE WINDOW (WALK-A-119, founder 2026-09-27). Opened from the
+     four-row window's footer, the profile is a visit FROM that window, so its ✕ (router.back) —
+     or hardware Back — landing on the screen she opened it from raises the window again, as
+     the web does. Going anywhere else (a bottom-nav tab, another Settings item) drops it. */
+  const profileWinRef = useRef(null);
+  useEffect(() => {
+    const r = profileWinRef.current;
+    if (!r || pathname.startsWith("/settings/profile")) return;
+    profileWinRef.current = null;
+    if (pathname === r.from && r.win) setPortalWin(r.win);
+  }, [pathname]);
   useEffect(() => subscribePortal((p) => {
     setWin(p.win); setEdit(p.edit); setPick(p.pick); setScope(p.scope); setPickBack(p.pickBack);
   }), []);
@@ -306,7 +317,11 @@ export default function AppLayout() {
   /* ★ WHILE ASK MEYY IS OPEN IT CARRIES THE CLAY AND NOTHING ELSE DOES — the web's
      `activeNav === "classes" && !askOpen`. The bar answers "where are you", and while the panel
      is up she is in the panel; two lit items would be the bar disagreeing with itself. */
+  /* ★ ADD LIGHTS WHILE ITS WINDOW IS UP (WALK-A-117, founder 2026-09-27) — the four-row window,
+     its pick screens and the editor it swaps in are all what ADD opened, so ADD carries the clay
+     and the screen beneath loses it (the web's `navWin`). Ask Meyy still wins. */
   const active = askOpen ? "ask"
+    : (win || edit || pick) ? "add"
     : (inSettings || (pathname.startsWith("/preview") && fromSettings)) ? null
     /* `/preview` is a report OF a lesson, reached from a My Lessons card, so it keeps that
        item lit — she has not left the repository, she is looking at something it made. */
@@ -473,7 +488,12 @@ export default function AppLayout() {
                  the view beneath it, and its own note says closing is "her explicit act". Here
                  the window is a `Modal`, which floats above every route — navigate under it and
                  she gets the profile she cannot see. Same destination, one extra act. */
-              onOpenProfile={() => { setPortalWin(null); router.navigate("/settings/profile"); }} />
+              onOpenProfile={() => {
+                // WALK-A-119: remember the window and where she was, so leaving the profile
+                // back to that screen puts the window up again (the effect below).
+                profileWinRef.current = { win, from: pathname };
+                setPortalWin(null); router.navigate("/settings/profile");
+              }} />
           )}
         </Sheet>
       ) : null}

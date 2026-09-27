@@ -60,7 +60,7 @@ import {
 } from "@aruvi/shared/format";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
-import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
+import { cachedPlans, fetchPlans, invalidatePlans, confirmListed } from "@aruvi/shared/plans";
 import { readLocalSection, bindSectionChapter } from "@aruvi/shared/sectionState";
 import { verifiedWrite, planIsPrepared } from "@aruvi/shared/verify";
 import { startPreparing, clearPreparing, failPreparing, paywallPreparing } from "../../lib/preparing";
@@ -380,7 +380,14 @@ export default function Prepare() {
       /* Her flags just moved, so the shared listing must be re-read rather than re-used — the
          same rule every other prepare path follows. Invalidate BEFORE clearing: My Lessons
          refetches on the clear, and it must not be served the copy that predates this plan. */
-      invalidatePlans(`${subject}/${grade}`);
+      /* WALK-A-120 (2026-09-27): a FORCED re-read replaces the invalidate — it keeps the stored
+         copy, so an offline answer still paints what she had — and the card comes down only once
+         her list carries the lesson. Otherwise it stays, failed, with Try again (which re-runs
+         this closure; the serve answers at once for a plan she already holds). */
+      if (!(await confirmListed(`${subject}/${grade}`, resp.filename))) {
+        failPreparing("To see your lesson, tap Try again once you’re connected.");
+        return;
+      }
       /* ★ IT SETTLES ATTACHED (founder, same report). She opened the picker for THIS section and
          asked for a chapter that does not exist yet; making her pick it again out of a list, on
          a screen she is already standing on, is a question whose answer she has already given.

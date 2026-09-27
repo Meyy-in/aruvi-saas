@@ -35,6 +35,20 @@ export const ACCOUNT_CACHE_PREFIX = "aruvi_account_";
 let mem = null;
 let inflight = null;
 
+/* ★ WHO SHOWS HER NAME IS TOLD WHEN IT CHANGES (WALK-A-122, 2026-09-27). The phone's bar and
+ * greeting each read the account ONCE per sign-in, so a Personal-profile save that invalidated
+ * the store changed nothing on screen: the bar kept the old name until a relaunch, and the
+ * greeting only caught up when My Classes happened to remount. They now subscribe; an
+ * invalidation tells them, and they re-read. Returns an unsubscribe. */
+const listeners = new Set();
+export function subscribeAccount(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+function notify() {
+  listeners.forEach((fn) => { try { fn(); } catch { /* a listener's failure is its own */ } });
+}
+
 const storeKey = () => userKey(ACCOUNT_CACHE_PREFIX);
 
 function hydrate() {
@@ -112,6 +126,7 @@ export function invalidateAccount() {
   mem = null;
   inflight = null;
   try { storage.removeItem(storeKey()); } catch {}
+  notify();
 }
 
 /* Sign-out. The prefix sweep in signout.js catches storage; this clears the memory copy, which

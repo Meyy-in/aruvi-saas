@@ -129,6 +129,19 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   const [, setSyncTick] = useState(0); // bumped after a server pull so cards re-read the refreshed cache
   // plans for EVERY subject·grade the teacher handles, keyed `${subjectSlug}/${gradeSlug}`.
   const [plansByKey, setPlansByKey] = useState({});
+  /* ★ THE WAITING CARD IS BROUGHT INTO VIEW (WALK-A-121, founder 2026-09-27). Back from a
+     section's "+", she landed at the TOP of My Classes while the card showing her lesson being
+     prepared could be far below (9000000003). The list keeps its order — subjects stay banded,
+     nothing jumps — and the screen scrolls to that card, ONCE per prepare (keyed on the
+     descriptor), so a re-render or the failed state never yanks her back if she has scrolled. */
+  const waitScrolledRef = useRef("");
+  const bringWaitingIntoView = (key) => (el) => {
+    if (!el || waitScrolledRef.current === key) return;
+    waitScrolledRef.current = key;
+    requestAnimationFrame(() => {
+      try { el.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { /* old engines */ }
+    });
+  };
   /* Last year's lessons INSIDE the "+" picker (founder, 2026-08-26). A teacher who taught
      Ch 5 last June should be able to teach it again this June without regenerating it —
      the plan is shared library content and was never year-scoped; only her attachment to
@@ -1203,7 +1216,8 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
                is about to be filled is an invitation to a collision. */
             if (waiting) {
               return (
-                <div className="sc-card st-new sc-proposed" key={i} aria-live="polite">
+                <div className="sc-card st-new sc-proposed" key={i} aria-live="polite"
+                     ref={bringWaitingIntoView(`${c.subjectSlug}|${c.gradeSlug}|${c.sectionTag}|${preparingCard.chapterNo}`)}>
                   <SectionTag c={c} />
                   <div className="sc-body">
                     {banded ? null : <span className="sc-kicker">{pretty(c.subjectSlug)}</span>}

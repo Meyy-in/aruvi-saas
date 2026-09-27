@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getJSON, postJSON, markPrepared, pad, pretty, ROMAN, annualBudgetPeriods, suggestedPeriodsByChapter, fetchEntitlement, planNameFor } from "../lib/format";
-import { readPlans } from "../lib/plans";
+import { readPlans, confirmListed } from "../lib/plans";
 import { verifiedWrite, planIsPrepared } from "../lib/verify";
 import { RollWheel, wheelChapterTitle } from "./wheels";
 import ViewModelView from "./ViewModelView";
@@ -70,6 +70,10 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
   // teacher happened to warm is still her first sight of it, and gets the full wait. That
   // makes the pause a property of her experience rather than of our infrastructure.
   const PREPARING_MS = 5000;
+  /* WALK-A-120 — the serve succeeded but her list could not be refreshed (the network dropped
+     in between). The lesson IS hers; Try again re-asks (the serve answers at once for a plan
+     she already holds) and the card lands when the list does. Wording: founder, 2026-09-27. */
+  const NOT_SHOWN_YET = "To see your lesson, tap Try again once you’re connected.";
   const [preparing, setPreparing] = useState(null);   // { chapterTitle, periods, durations } | null
   const [showInfo, setShowInfo] = useState(false);         // effort-index explainer popover
   const [showBreakdown, setShowBreakdown] = useState(false); // committed-chapters popup
@@ -413,7 +417,14 @@ export default function PrepareLesson({ subject, grade, readiness, onNavigate, o
             "The lesson was built but didn’t reach your lessons — please prepare it again.");
         });
         await holdPreparing(startedAt, !!resp.already_yours);
-        if (onPrepared) { onPrepared({ subject, grade, filename: resp.filename, chapterNo }); return; }
+        if (onPrepared) {
+          // WALK-A-120: the card comes down only once her list really carries the lesson.
+          if (!(await confirmListed(`${subject}/${grade}`, resp.filename))) {
+            if (onPrepareError) onPrepareError(descriptor, NOT_SHOWN_YET);
+            return;
+          }
+          onPrepared({ subject, grade, filename: resp.filename, chapterNo }); return;
+        }
         // No return handler → show the freshly adapted plan.
         setStep("preview");
         if (resp.coverage_note) setNote(resp.coverage_note);

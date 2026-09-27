@@ -127,7 +127,7 @@ export default function BottomNav({ active = null, onClasses, onLessons, onAdd, 
         {/* The standing "+" portal — "what would you like to change?" An expired subscription
             hides it (§2.5 as amended; the server 402s regardless). */}
         {showAdd && (
-          <Item Icon={AddIcon} label="Add" onPress={onAdd} tour="grow-add"
+          <Item Icon={AddIcon} label="Add" active={active === "add"} onPress={onAdd} tour="grow-add"
             hint="Add or change subjects, classes, or sections" />
         )}
         {/* ★ IT LIGHTS LIKE A PLACE WHILE THE PANEL IS UP (6c) — `active === "ask"`, the web's

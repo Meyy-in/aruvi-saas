@@ -1563,15 +1563,10 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             <button className="back back-tr" onClick={onBack}>← back</button>
           </div>
         )}
-        <div className="tp-hd">
-          <div>
-            <h1 className="lvl-title">Your teaching profile</h1>
-            <div className="tp-hd-spacer" aria-hidden="true"></div>
-          </div>
-          {/* The pencil stood here until 2026-09-16 — see the note on `editing` above for why it
-              went and what went with it. Nothing replaces it: the add row below shows on its own,
-              and this header is now a title. */}
-        </div>
+        {/* ★ NO HEADING (WALK-A-116, founder 2026-09-27). The frozen Settings bar already reads
+            "⚙ Teaching profile"; a "Your teaching profile" title under it named the screen twice
+            and pushed the table down. The phone never had one. (The pencil that shared this
+            header went 2026-09-16.) */}
 
         {canon.length === 0 && (
           /* ⚠️ The invitation only holds while there is something to accept it with. A LAPSED

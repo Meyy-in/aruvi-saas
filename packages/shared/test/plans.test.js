@@ -9,6 +9,7 @@ import { setStorage, storage } from "../src/storage.js";
 import { setUser, clearUser } from "../src/format.js";
 import {
   cachedPlans, fetchPlans, invalidatePlans, notePlansYear, clearPlans, PLANS_CACHE_PREFIX,
+  confirmListed,
 } from "../src/plans.js";
 
 /* A storage that survives between the sub-tests, standing in for localStorage / MMKV. */
@@ -165,4 +166,34 @@ test("a failed request with nothing stored rejects, so the caller can show its e
   globalThis.fetch = async () => { throw new Error("offline"); };
   await assert.rejects(() => fetchPlans("maths/iv"));
   globalThis.fetch = good;
+});
+
+/* WALK-A-120: the preparing card comes down only when her list really carries the lesson. */
+test("confirmListed: true once the fresh listing names the file", async () => {
+  reset();
+  await fetchPlans("english/iii");
+  plans = [...plans, { filename: "ch_02.json", prepared: true }]; etag = '"v2"';
+  assert.equal(await confirmListed("english/iii", "ch_02.json"), true);
+});
+
+test("confirmListed: false when the refresh fails, and the stored copy survives", async () => {
+  reset();
+  await fetchPlans("english/iii");
+  const real = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error("offline"); };
+  try {
+    assert.equal(await confirmListed("english/iii", "ch_02.json"), false);
+    assert.deepEqual(cachedPlans("english/iii").map((p) => p.filename), ["ch_01.json"]);
+  } finally { globalThis.fetch = real; }
+});
+
+test("confirmListed: a library plan listed but NOT prepared is not confirmed (the offline case)", async () => {
+  reset();
+  plans = [{ filename: "ch_01.json", prepared: false }, { filename: "ch_02.json", prepared: false }];
+  await fetchPlans("english/iii");
+  const real = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error("offline"); };
+  try {
+    assert.equal(await confirmListed("english/iii", "ch_02.json"), false);
+  } finally { globalThis.fetch = real; }
 });

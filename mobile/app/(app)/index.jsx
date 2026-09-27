@@ -20,7 +20,7 @@ import { markGenerated } from "../../lib/firstRun";
 import { CutoverOffer, CutoverDone } from "../../components/YearNudge";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
 import { cachedReadiness, fetchReadiness, subscribeReadiness } from "@aruvi/shared/readiness";
-import { cachedAccount, cachedFirstName, fetchAccount, accountFirstName } from "@aruvi/shared/account";
+import { cachedAccount, cachedFirstName, fetchAccount, accountFirstName, subscribeAccount } from "@aruvi/shared/account";
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, tourOfferOpen,
@@ -604,8 +604,28 @@ export default function Home() {
     }, SETUP_CHECK_DELAY_MS);
     return () => clearTimeout(id);
   }, [tourRunning, tourOnOffer, st.classes]));
+  /* ★ THE WAITING CARD IS BROUGHT INTO VIEW (WALK-A-121, founder 2026-09-27 — the web's
+     `bringWaitingIntoView`). Back from a section's "+", the card preparing her lesson may be far
+     down the list; the order stays (bands, no jumping) and the scroller moves to it ONCE per
+     prepare, so a re-render or the failed state never pulls her back after she has scrolled. */
+  const scrollRef = useRef(null);
+  const waitCardRef = useRef(null);
+  const waitScrolledRef = useRef("");
+  const onWaitLayout = () => {
+    if (!preparing) return;
+    const key = `${preparing.subject}|${preparing.grade}|${preparing.section}|${preparing.chapterNo}`;
+    if (waitScrolledRef.current === key) return;
+    const sv = scrollRef.current, el = waitCardRef.current;
+    if (!sv || !el) return;
+    waitScrolledRef.current = key;
+    try {
+      const inner = sv.getInnerViewRef ? sv.getInnerViewRef() : sv;
+      el.measureLayout(inner, (x, y) => sv.scrollTo({ y: Math.max(0, y - 96), animated: true }), () => {});
+    } catch (e) { /* measuring is best-effort; the card is still on the list */ }
+  };
   const card = (c, banded, idx) => (
     <ClassCard key={c.sectionKey} c={c} banded={banded}
+      waitRef={waitCardRef} onWaitLayout={onWaitLayout}
       tourAdd={tourTarget && c.sectionKey === tourTarget.sectionKey
                && (tourNow.step === 8 || tourNow.step === 14)}
       tourTarget={tourTarget && c.sectionKey === tourTarget.sectionKey && tourNow.step === 10}
@@ -662,7 +682,7 @@ export default function Home() {
       ) : null}
       {/* The header sits outside the scroller, so it takes main's 26px top padding with it and
           the scroller must not repeat it — otherwise the card list starts 26px too low. */}
-      <ScrollView contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
+      <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
         refreshControl={<RefreshControl refreshing={false} onRefresh={() => load({ force: true })} tintColor={t.pine} />}>
 
         {st.loading ? (
@@ -745,8 +765,10 @@ function DashHead({ classes, plansBySG, user, bindingsKnown, tourPending }) {
   const [fromAccount, setFromAccount] = useState(() => cachedFirstName());
   useEffect(() => {
     let live = true;
-    fetchAccount().then((a) => { if (live) setFromAccount(accountFirstName(a)); }).catch(() => {});
-    return () => { live = false; };
+    const read = () => fetchAccount().then((a) => { if (live) setFromAccount(accountFirstName(a)); }).catch(() => {});
+    read();
+    const off = subscribeAccount(read);   // WALK-A-122: the greeting follows a saved name at once
+    return () => { live = false; off(); };
   }, [user]);
   const rawId = (user || "").trim();
   const firstName = fromAccount || (/^\d+$/.test(rawId) ? "" : rawId);
@@ -794,7 +816,7 @@ function DashHead({ classes, plansBySG, user, bindingsKnown, tourPending }) {
  * theme/web.js under sc_*; the web's 11px graph rule is the one thing not ported (RN has no
  * repeating gradient) — the card keeps its fill, which is what carries the status anyway. */
 function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, onAttach, onUntrack,
-                     onMoveOn, onHistory, tourAdd, tourTarget, demoDone }) {
+                     onMoveOn, onHistory, tourAdd, tourTarget, demoDone, waitRef, onWaitLayout }) {
   /* ⚠️ ONLY THE TOUR'S OWN CARD carries these, and only on the step that rings them — the web
      stamps its `data-tour` conditionally for the same reason. Put them on every card and
      `measureAnchor` returns whichever mounted first, which is rarely the one she is looking at. */
@@ -869,6 +891,7 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
     return (
       <View style={[ws.sc_card, ws.sc_proposed,
         { backgroundColor: t.card_new, borderColor: t.card_new_edge }]}
+        ref={waitRef} onLayout={onWaitLayout}
         accessibilityLiveRegion="polite">
         <CardGrid color={t.card_grid} />
         <View style={[ws.sc_spine, { backgroundColor: t.clay }]} />

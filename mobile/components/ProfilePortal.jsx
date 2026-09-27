@@ -56,7 +56,7 @@ export function portalChrome(mode = "change", sub) {
     title: check ? "Would you like to check your set-up?" : "What would you like to change?",
     sub: check
       ? (sub || "Meyy started you off with its own suggested set-up. You can change any of it — or leave it and carry on teaching.")
-      : "Each item changes only itself — pick another for the next. Your lessons always stay in the library.",
+      : "Pick a row to change that part of your teaching profile.",   // WALK-A-118, as the web
   };
 }
 

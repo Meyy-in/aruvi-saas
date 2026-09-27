@@ -166,6 +166,25 @@ export function fetchPlans(key, { force = false } = {}) {
   return p;
 }
 
+/* ★ IS THE LESSON SHE JUST PREPARED ACTUALLY IN HER LIST? (WALK-A-120, 2026-09-27).
+ * A serve can succeed and the listing that should carry it fail to refresh — the network drops
+ * in the seconds between. The prepare paths used to clear the preparing card on the serve alone,
+ * so she was left with neither the card nor the lesson. They now ask this first: a FORCED
+ * re-read (the stored copy is kept, never dropped, so an offline answer still paints what she
+ * had), true only when the listing names `filename` AS PREPARED. Never throws. */
+export async function confirmListed(key, filename) {
+  if (!key || !filename) return false;
+  try {
+    const plans = await fetchPlans(key, { force: true });
+    /* ⚠️ `prepared`, not mere presence (re-walk 2026-09-27): the listing carries every plan in
+       the LIBRARY, hers or not, so a variant the library already held is in the stale list too
+       — flagged unprepared. Presence alone passed offline and brought the card down anyway. */
+    return Array.isArray(plans) && plans.some((p) => p && p.filename === filename && !!p.prepared);
+  } catch {
+    return false;
+  }
+}
+
 /* Paint-then-refresh in one call, for the screens that keep the listing in state.
  * `onPlans` is called immediately with the stored copy when there is one (so the first render
  * after it is already populated), and again with the server's answer if it differs. Returns the

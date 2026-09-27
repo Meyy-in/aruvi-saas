@@ -6,7 +6,7 @@ import { verifiedWrite, readinessFingerprint } from "./lib/verify";
 import { setSectionMismatchHandler, pullSectionState, clearLocalSectionCache,
          readLocalSection, bindSectionChapter, unbindSection } from "./lib/sectionState";
 import { cachedPlans } from "@aruvi/shared/plans";
-import { invalidatePlans } from "./lib/plans";
+import { invalidatePlans, confirmListed } from "./lib/plans";
 import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
 import { signOutAuth } from "./lib/auth";
@@ -880,7 +880,13 @@ export default function Home() {
       .then(async (resp) => {
         await new Promise((res) => setTimeout(res, Math.max(0, 5000 - (Date.now() - startedAt))));
         markPrepared(desc.subject, desc.grade, resp.filename);
-        invalidatePlans(`${desc.subject}/${desc.grade}`);
+        // WALK-A-120: a FORCED re-read that keeps the stored copy (invalidating dropped it, so an
+        // offline retry left My Lessons with nothing), and the card comes down only once the
+        // list carries the lesson.
+        if (!(await confirmListed(`${desc.subject}/${desc.grade}`, resp.filename))) {
+          onPrepareError(again, "To see your lesson, tap Try again once you’re connected.");
+          return;
+        }
         if (desc.bindKey) bindSectionChapter(desc.bindKey, resp.filename);
         onPrepared({ subject: desc.subject, grade: desc.grade, filename: resp.filename });
       })
@@ -1214,6 +1220,7 @@ export default function Home() {
   // privacy note below can open Legal ON the notice; the gear always opens the agreement.
   const [legalDoc, setLegalDoc] = useState("agreement");
   const goSettings = () => {
+    fullProfileWinRef.current = null;
     if (editFlow !== "settings" && !profileViaSettings) settingsOriginRef.current = editFlow;
     setProfileViaSettings(false); setSettingsView("home"); setLegalDoc("agreement");
     setEditFlow("settings"); setTab("myplans"); setGenerateEntry(null);
@@ -1246,7 +1253,13 @@ export default function Home() {
     goSettings(); setSettingsView("legal"); setLegalDoc("privacy");
     stampPrivacySeen("updated_note_read");
   };
+  /* ★ WALK-A-119 (founder 2026-09-27): the profile opened from the ADD WINDOW's footer is a
+     visit FROM THAT WINDOW, so its ✕ puts the window back (over the tab she was on) — the
+     portal's "exit by the door you came in". Holds `{ win }` only on that path; the list's own
+     Teaching profile row and the gear both clear it, so they close exactly as before. */
+  const fullProfileWinRef = useRef(null);
   const openProfileFromSettings = () => {
+    fullProfileWinRef.current = null;
     setProfileViaSettings(true); setProfileAutoAdd(null); setProfilePortal(null); setProfilePortalScope(null);
     setEditFlow("profile"); setTab("myplans"); setGenerateEntry(null);
   };
@@ -1264,6 +1277,14 @@ export default function Home() {
     if (erased) { onSignOut(); return; }
     // The teaching profile is reached THROUGH the list, so it closes back to it (it renders
     // under editFlow "profile", which is why this branch restores editFlow as well).
+    if (editFlow === "profile" && profileViaSettings && fullProfileWinRef.current) {
+      const w = fullProfileWinRef.current; fullProfileWinRef.current = null;
+      setProfileViaSettings(false); setSettingsView("home");
+      const o = settingsOriginRef.current;
+      if (o === "lessonplans") goLessons(); else goClasses();
+      setPortalWin(w);
+      return;
+    }
     if (editFlow === "profile" && profileViaSettings) {
       setProfileViaSettings(false); setSettingsView("home"); setLegalDoc("agreement");
       setEditFlow("settings"); setTab("myplans"); setGenerateEntry(null);
@@ -1452,6 +1473,10 @@ export default function Home() {
   // (settings) view lights neither; everything else — home cards, Generate — reads as My Classes.
   const activeNav = editFlow === "lessonplans" ? "lessons"
     : (editFlow === "profile" || editFlow === "settings") ? "none" : "classes";
+  /* ★ ADD LIGHTS WHILE ITS WINDOW IS UP (WALK-A-117, founder 2026-09-27). The four-row window
+     (either mood) is what ADD opens, so while it is up ADD carries the clay and the tab beneath
+     loses it — the Ask Meyy rule, applied to the other thing the bar opens. */
+  const navWin = !!portalWin && !askOpen;
 
   // Still restoring from localStorage — render nothing for a beat (no login flash).
   if (user === null) return null;
@@ -1731,14 +1756,14 @@ export default function Home() {
             {/* Lapsed hides My Classes — tracking is a productivity tool she has let go;
                 the reading room is My Lessons (§2.5 as amended). */}
             {!entLapsed && (
-            <button className={`bnav-item ${activeNav === "classes" && !askOpen ? "active" : ""}`}
+            <button className={`bnav-item ${activeNav === "classes" && !askOpen && !navWin ? "active" : ""}`}
               onClick={() => { setAskOpen(false); goClasses(); }}
               data-tour="nav-classes">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></svg>
               <span>My Classes</span>
             </button>
             )}
-            <button className={`bnav-item ${activeNav === "lessons" && !askOpen ? "active" : ""}`}
+            <button className={`bnav-item ${activeNav === "lessons" && !askOpen && !navWin ? "active" : ""}`}
               onClick={() => { setAskOpen(false); goLessons(); }}
               data-tour="nav-lessons">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4z" /><path d="M15 4v5h5M8 13h8M8 17h6" /></svg>
@@ -1751,7 +1776,7 @@ export default function Home() {
                 it here instead. Its glyph is the ringed plus with four dots ("grow in every
                 direction", founder 2026-07-06). */}
             {ready && !entLapsed && (
-            <button className="bnav-item" data-tour="grow-add"
+            <button className={`bnav-item ${navWin ? "active" : ""}`} data-tour="grow-add"
               onClick={() => { setAskOpen(false); setPortalWin({ mode: "change" }); }}
               aria-label="Add or change subjects, classes, or sections" title="Add or change what you teach">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1803,7 +1828,7 @@ export default function Home() {
         <ProfilePortal mode={portalWin.mode} sub={setupCheckSub} values={setupCheckValues}
           onPick={(kind) => onProfilePortal(kind)}
           onClose={() => setPortalWin(null)}
-          onOpenProfile={() => { setPortalWin(null); openFullProfile(); }} />
+          onOpenProfile={() => { const w = portalWin; setPortalWin(null); openFullProfile(); fullProfileWinRef.current = w; }} />
       )}
 
       {/* Ask Aruvi Q&A — full-screen deterministic helpline (browse + keyword search). */}
