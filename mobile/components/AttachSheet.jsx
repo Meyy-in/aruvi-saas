@@ -24,10 +24,11 @@
  *   · last year's lessons (`.ap-prior`) — it needs the year record the phone does not read yet.
  * Neither changes the shape of the modal, so both drop in without moving anything.
  */
-import { useEffect, useMemo } from "react";
-import { View, Modal, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform }
+import { useEffect, useMemo, useRef, useState } from "react";
+import { View, Modal, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions }
   from "react-native";
 import { Text } from "./Text";
+import { BAR_CONTENT_H } from "./Bar";
 import PrepareCta from "./PrepareCta";
 import { pretty, classNum, pad, bareChapterTitle } from "@aruvi/shared/format";
 import { readHistory } from "@aruvi/shared/sectionHistory";
@@ -91,9 +92,41 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
     setTourOverlayHost("sheet");
     return () => setTourOverlayHost(null);
   }, [ownsTour]);
+  /* ★ WITH THE KEYBOARD UP, THE WINDOW FITS WHAT IS LEFT AND SCROLLS ITS HEADER AWAY (WALK-A-108,
+     founder 2026-09-27: naming a section hid Save; "unfreeze the kickers above"). The card was
+     capped at 82% of the whole screen, so with the keyboard up its content still "fitted" and
+     nothing could scroll — the kicker, heading and hint sat frozen while Save was under the
+     keyboard. Now a scrolling sheet is capped to the space ABOVE the keyboard, and when the
+     keyboard opens it scrolls to the end: the header slides up out of view, the wheel she is
+     typing in and the Save under it stay on screen. Nothing moves when the keyboard is down. */
+  const scrollRef = useRef(null);
+  const [kbH, setKbH] = useState(0);
+  const { height: winH } = useWindowDimensions();
+  useEffect(() => {
+    if (!scroll || !visible) return undefined;
+    const showE = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideE = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const a = Keyboard.addListener(showE, (e) => {
+      setKbH((e && e.endCoordinates && e.endCoordinates.height) || 0);
+      setTimeout(() => scrollRef.current && scrollRef.current.scrollToEnd({ animated: true }), 80);
+    });
+    const b = Keyboard.addListener(hideE, () => setKbH(0));
+    return () => { a.remove(); b.remove(); };
+  }, [scroll, visible]);
+  const kbCap = scroll && kbH > 0
+    ? { maxHeight: Math.max(200, winH - kbH - Math.max(20, (insets.top || 0) + 12) - 20) }
+    : null;
+  /* ★ A SCROLLING WINDOW HANGS FROM UNDER THE APP BAR AND USES THE HEIGHT BELOW IT (WALK-A-113,
+     founder 2026-09-27, iPhone: Add › Class hid its Save under an 82% cap, centred). Its top sits
+     just under the brand bar — so it never covers it (WALK-A-112) — and it may run down to the
+     safe area at the foot, so the class list, its note and Save fit without scrolling. Confirms
+     and the four-row menu keep the centred card. */
+  const hangTop = (insets.top || 0) + BAR_CONTENT_H + 8;
+  const hang = scroll && !confirm && !kbCap;
+  const hangCap = hang ? { maxHeight: winH - hangTop - Math.max(20, (insets.bottom || 0) + 12) } : null;
   const body = scroll
     ? (
-      <ScrollView style={ws.ap_scrollbody} contentContainerStyle={ws.ap_scrollpad}
+      <ScrollView ref={scrollRef} style={ws.ap_scrollbody} contentContainerStyle={ws.ap_scrollpad}
         keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {children}
       </ScrollView>
@@ -105,8 +138,9 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
       {/* Tapping the ground closes, as the web's overlay onClick does; the card stops it. */}
       <KeyboardAvoidingView style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <View style={[ws.ap_overlay, { paddingTop: Math.max(20, (insets.top || 0) + 12),
-                                     paddingBottom: Math.max(20, (insets.bottom || 0) + 12) }]}>
+      <View style={[ws.ap_overlay, { paddingTop: hang ? hangTop : Math.max(20, (insets.top || 0) + 12),
+                                     paddingBottom: Math.max(20, (insets.bottom || 0) + 12) },
+                    hang && { justifyContent: "flex-start" }]}>
         {/* ★ THE GROUND IS A SIBLING BEHIND THE CARD, NEVER ITS PARENT (founder, 2026-09-15:
             "the 'How many periods a week' window of Add button does not allow wheeling up and
             down the numbers. The arrow of course works").
@@ -141,7 +175,7 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
           onPress={onClose} accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants" />
         <View ref={tourRef} collapsable={false}
-          style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall,
+          style={[ws.ap_modal, confirm && ws.ap_confirm, scroll && ws.ap_modal_tall, hangCap, kbCap,
                       { backgroundColor: t.paper, borderColor: t.line }]}>
           {/* ⚠️ SKIPPED ENTIRELY when a window brings its own heading. `.ap-head` is the WINDOW's
               header — an ochre kicker over a 21px title — and it is right for a window whose

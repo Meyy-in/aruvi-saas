@@ -29,6 +29,7 @@
  *   scrolls. A stepper was the other candidate and was rejected: at a 14-period week, setting 7
  *   would have been seven taps where this is one.
  */
+import { useRef } from "react";
 import { Pressable } from "react-native";
 import { Text } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
@@ -37,6 +38,7 @@ import { useWebStyles } from "../theme/web";
 export default function PpwSplitCell({ duration, selected, map, isAnchor, onOpen, open, show }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const ref = useRef(null);
 
   // Nothing at all on an unticked row, or while only one length is in play: the column only earns
   // its space once a second length is ticked.
@@ -47,7 +49,12 @@ export default function PpwSplitCell({ duration, selected, map, isAnchor, onOpen
 
   const answered = v > 0;
   return (
-    <Pressable onPress={() => onOpen(open ? null : duration)}
+    /* WALK-A-111: opening reports this cell's window rect, so the drop-down is drawn right under
+       it inside the editor — not a strip at the foot, and never a second window. */
+    <Pressable ref={ref} collapsable={false} onPress={() => {
+        if (open || !ref.current) { onOpen(null); return; }
+        ref.current.measureInWindow((x, y, w, h) => onOpen({ d: duration, x, y, w, h }));
+      }}
       accessibilityRole="button"
       accessibilityLabel={`Periods a week at ${duration} minutes: ${v}`}
       accessibilityState={{ expanded: !!open }}

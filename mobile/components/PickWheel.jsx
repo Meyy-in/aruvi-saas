@@ -58,13 +58,17 @@ const a11yLabel = (label, on) => `${label}${on ? " (selected)" : ""}`;
 
 export default function PickWheel({
   options, selected, onToggle, labelFor, initialScrollTo, ariaLabel, children,
-  summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor, cluster = true, onClearAll,
+  summaryLabel = true, trailing, trailingHeader, leadingHeader, summaryFor, cluster = true, onClearAll, rows,
 }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const ref = useRef(null);
   const row = ws.PW_ROW;
   const hasTrail = !!(trailing && trailingHeader);
+  /* `rows` (optional) overrides how many rows the window shows — 4 by default, 5 with a trailing
+     column. WALK-A-112: the phone's Edit sections window asks for 3, so the card stays clear of
+     the app bar on the iPhone. */
+  const fixedH = rows ? { height: rows * row } : null;
 
   /* Where the scroller actually is, in rows. Tracked from onScroll because a DRAG moves it
      without going through the arrows — assuming the last programmatic target would make the
@@ -121,7 +125,7 @@ export default function PickWheel({
   const chosen = (options || []).filter((o) => (selected || []).includes(o));
   const summary = chosen
     .map((o) => (summaryFor ? summaryFor(o) : labelFor ? labelFor(o) : String(o))).join(", ");
-  const showCue = ordered.length > 4;
+  const showCue = ordered.length > (rows || 4);
 
   const Check = ({ on }) => (
     <View style={[ws.pw_check, on
@@ -144,7 +148,7 @@ export default function PickWheel({
         ) : null}
 
         <ScrollView ref={ref}
-          style={[ws.pw_wheel, hasTrail && ws.pw_wheel_trail,
+          style={[ws.pw_wheel, hasTrail && ws.pw_wheel_trail, fixedH,
             { borderColor: t.line_soft, backgroundColor: t.paper_2 }]}
           snapToInterval={row} decelerationRate="fast" scrollEventThrottle={16}
           onScroll={(e) => { at.current = Math.round(e.nativeEvent.contentOffset.y / row); }}
@@ -192,26 +196,28 @@ export default function PickWheel({
         {children}
 
         {summaryLabel ? (
-          <Text style={[ws.pw_summary, { color: t.ink_soft }]} accessibilityLiveRegion="polite">
-            {chosen.length ? (
-              <>Chosen ({chosen.length}): <Text style={[ws.pw_summary_b, { color: t.pine_d }]}>{summary}</Text></>
-            ) : (
-              <Text style={ws.pw_summary_empty}>Nothing chosen yet — tap the rows above</Text>
-            )}
-          </Text>
-        ) : null}
-        {/* WALK-A-104 (founder, 2026-09-27): clustering drops the unticked rows between her lowest
-            and highest pick, so "Untick all" lets her start over. Only where the caller passes it. */}
-        {onClearAll && chosen.length > 0 ? (
-          <Pressable onPress={onClearAll} accessibilityRole="button" hitSlop={8}
-            style={{ marginTop: 8, alignSelf: "flex-start" }}>
-            <Text style={[ws.pw_summary, { color: t.pine_d, textDecorationLine: "underline" }]}>Untick all</Text>
-          </Pressable>
+          /* WALK-A-109 (founder, 2026-09-27): "Untick all" at the RIGHT END of the Chosen row — one
+             row shorter, so the iPhone window does not push it below the fold. WALK-A-104: offered
+             only where the caller passes onClearAll. */
+          <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12 }}>
+            <Text style={[ws.pw_summary, { color: t.ink_soft, flex: 1 }]} accessibilityLiveRegion="polite">
+              {chosen.length ? (
+                <>Chosen ({chosen.length}): <Text style={[ws.pw_summary_b, { color: t.pine_d }]}>{summary}</Text></>
+              ) : (
+                <Text style={ws.pw_summary_empty}>Nothing chosen yet — tap the rows above</Text>
+              )}
+            </Text>
+            {onClearAll && chosen.length > 0 ? (
+              <Pressable onPress={onClearAll} accessibilityRole="button" hitSlop={8}>
+                <Text style={[ws.pw_summary, { color: t.pine_d, textDecorationLine: "underline" }]}>Untick all</Text>
+              </Pressable>
+            ) : null}
+          </View>
         ) : null}
       </View>
 
       {showCue ? (
-        <View style={[ws.pw_arrows, hasTrail && ws.pw_arrows_trail]}>
+        <View style={[ws.pw_arrows, hasTrail && ws.pw_arrows_trail, fixedH]}>
           <Pressable onPress={() => step(-1)} accessibilityRole="button" accessibilityLabel="Scroll up"
             style={ws.pw_arrow_btn} hitSlop={4}>
             <Text style={[ws.pw_arrow_t, { color: t.pine }]}>▲</Text>

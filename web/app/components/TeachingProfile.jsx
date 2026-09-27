@@ -1256,7 +1256,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     if (classStep === "durations") {
       const toggle = (d) => updGrade({
         durations: g.durations.includes(d)
-          ? (g.durations.length > 1 ? g.durations.filter((x) => x !== d) : g.durations)
+          ? g.durations.filter((x) => x !== d) /* WALK-A-110: the last length may be unticked; Save waits */
           : [...g.durations, d].sort((x, y) => x - y),
       });
       /* She has just stated the size of her week, so the split belongs HERE as a second column —
@@ -1285,7 +1285,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
               <PpwSplitCell duration={d} selected={on} map={map} total={total}
                 isAnchor={d === anchor} onSet={setCount} show={multi} />
             )}>
-            <button type="button" className="primary fr-cta" onClick={() => {
+            <button type="button" className="primary fr-cta" disabled={!g.durations.length} onClick={() => {
               updGrade({ ppw_by_duration: map, ppw_anchor: anchor, periods_per_week: total });
               setClassStep("budget");
             }}>Continue</button>
@@ -1428,7 +1428,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
     if (step === "duration") {
       const toggle = (d) => updNum({
         durations: g.durations.includes(d)
-          ? (g.durations.length > 1 ? g.durations.filter((x) => x !== d) : g.durations)
+          ? g.durations.filter((x) => x !== d) /* WALK-A-110: the last length may be unticked; Save waits */
           : [...g.durations, d].sort((x, y) => x - y),
       });
       /* This screen is only ever reached THROUGH the periods/week total (the standalone duration

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-27T06:30:36",
+  "updated_at": "2026-09-27T08:24:42",
   "items": {
     "04.19": {
       "ios": {
@@ -2878,6 +2878,20 @@
         "at": "2026-09-26T15:21:36",
         "comment": "Re-walk after WALK-A-101: tiles match the profile (Sections counted per subject).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "Tiles match web (Sections per subject, 21). Android first showed 16 — stale bundle; after reload 21. WALK-A-101 re-walk.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "Tiles match web (Sections per subject, 21). Android first showed 16 — stale bundle; after reload 21. WALK-A-101 re-walk.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.01": {
@@ -2887,6 +2901,20 @@
         "at": "2026-09-26T15:21:36",
         "comment": "Frozen bar '⚙ Teaching profile' + ✕; no heading/pencil/Done/back; ✕ returns to Settings.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "Frozen bar, ✕ to Settings list; Android Back behaves like ✕.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "Frozen bar, ✕ to Settings list; Android Back behaves like ✕.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.03": {
@@ -2896,6 +2924,20 @@
         "at": "2026-09-26T15:21:36",
         "comment": "One subject open at a time, tinted band + clay spine, caret ▾/▸, header pinned on web.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "One subject open at a time, band + clay spine, ▾/▸; header travels with the list (phone divergence).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "One subject open at a time, band + clay spine, ▾/▸; header travels with the list (phone divergence).",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.04": {
@@ -2905,6 +2947,20 @@
         "at": "2026-09-26T15:21:36",
         "comment": "Class card: renamed sections show her name only; per-section periods; annual budget; nothing editable. Two-period-length case not present on this profile.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "Class card as specified; columns stack; named chips; nothing tappable.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "Class card as specified; columns stack; named chips; nothing tappable.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.05": {
@@ -2914,6 +2970,20 @@
         "at": "2026-09-26T15:26:39",
         "comment": "No dustbin, pencil or remove control on any subject row or class card; profile is view-only.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "No delete control; long-press does nothing.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "No delete control; long-press does nothing.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.06": {
@@ -2923,6 +2993,20 @@
         "at": "2026-09-26T15:26:39",
         "comment": "Dashed '+ add a subject' row opens the SubscribeFlow wizard; no subject wheel; backing out returns to the profile unchanged.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "'+ add a subject' opens /subscribe, no subject wheel; back returns to the profile unchanged.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:43:50",
+        "comment": "'+ add a subject' opens /subscribe, no subject wheel; back returns to the profile unchanged.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.08": {
@@ -2932,6 +3016,20 @@
         "at": "2026-09-26T15:26:39",
         "comment": "Add from My Classes and My Lessons: four rows (Class · Section · Periods a week · Annual period budget) + ✕, no Subject row; ✕ and scrim close it, tab untouched.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Four-row window in one Sheet, ✕ and scrim close; Android Back closes the Sheet; foot clears the gesture bar.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Four-row window in one Sheet, ✕ and scrim close; Android Back closes the Sheet; foot clears the gesture bar.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.09": {
@@ -2941,6 +3039,20 @@
         "at": "2026-09-26T15:27:24",
         "comment": "Multi-subject half: 'In which subject?' with hint, then 'Which class?' rows 'Class {n}' ›, '← Back' footer on web. Single-subject/single-class half (screens skipped) still to walk on a trial account.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Subject then class pick screens; ← corner, no footer link; Android Back steps class → subject.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Subject then class pick screens; ← corner, no footer link; Android Back steps class → subject.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.10": {
@@ -2950,6 +3062,20 @@
         "at": "2026-09-26T15:33:08",
         "comment": "After a Periods save and a Section cancel, back on the starting tab with the four-row window up again; never lands on the profile.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "After a save and after a cancel she lands on the four-row window. Periods a week → Continue → duration screen → Save → four-row window.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "After a save and after a cancel she lands on the four-row window. Periods a week → Continue → duration screen → Save → four-row window.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.11": {
@@ -2959,6 +3085,20 @@
         "at": "2026-09-26T15:33:08",
         "comment": "Kicker, hint, pre-ticked enrolled classes, Save never disabled; new class arrives as one Section A card with 40 min periods, periods/week and annual budget, no further questions.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Add class as specified; re-walk WALK-A-113: window hangs under the app bar, Save visible without scrolling.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Add class as specified; re-walk WALK-A-113: window hangs under the app bar, Save visible without scrolling.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.12": {
@@ -2968,6 +3108,20 @@
         "at": "2026-09-27T06:30:36",
         "comment": "Re-walk after WALK-A-102: Add › Class › Science lists 6–10 in natural order, ticks in place, 7 and 8 visible. Stage filter correct (SS secondary → 9, 10). Trial half still to walk.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Re-walk WALK-A-102: Science 6–10 in natural order, 9 ticked, 7/8 visible, subscription note. Trial half still to walk.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Re-walk WALK-A-102: Science 6–10 in natural order, 9 ticked, 7/8 visible, subscription note. Trial half still to walk.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.13": {
@@ -2977,6 +3131,20 @@
         "at": "2026-09-26T15:39:05",
         "comment": "Confirm names the class, sections and 'Your lessons stay in the library.'; Keep it re-ticks; Yes, remove deletes the cards, lessons stay in My Lessons. Walked on Science Class 6 (6B, 6C) — removed.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Remove class: confirm names class and sections, Keep it re-ticks, Yes removes cards, lessons stay; Android Back acts as Keep it.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T06:55:06",
+        "comment": "Remove class: confirm names class and sections, Keep it re-ticks, Yes removes cards, lessons stay; Android Back acts as Keep it.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.14": {
@@ -2986,6 +3154,20 @@
         "at": "2026-09-27T05:23:48",
         "comment": "Subscriber half (Social Sciences): confirm reads '{subject} itself stays, with no classes'; subject stays empty in the profile, not removable. Trial half still to walk.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:31:13",
+        "comment": "Subscriber half (SS): 'itself stays, with no classes'; subject stays empty. Trial half still to walk.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:31:13",
+        "comment": "Subscriber half (SS): 'itself stays, with no classes'; subject stays empty. Trial half still to walk.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.15": {
@@ -2995,6 +3177,20 @@
         "at": "2026-09-27T05:23:48",
         "comment": "Refilled Social Sciences Class 9: Section A with defaults, card in My Classes, no set-up check window.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:31:13",
+        "comment": "Refilled SS Class 9: Section A defaults, card appears, no set-up window.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:31:13",
+        "comment": "Refilled SS Class 9: Section A defaults, card appears, no set-up window.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.16": {
@@ -3004,6 +3200,20 @@
         "at": "2026-09-27T05:23:48",
         "comment": "Sections editor: kicker, hint, 9A pre-ticked, Section column header; Save disabled at zero ticks; 9B/9C added as cards; Sections and Periods/week tiles rose.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-107: kicker on one row (Android step-down).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-107: kicker on one row (Android step-down).",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.17": {
@@ -3013,6 +3223,20 @@
         "at": "2026-09-27T05:23:48",
         "comment": "Custom name capped at 8 ('Rosemary'); summary '9B (Rosemary)'; My Classes fine print and profile chip show the name; bookmark untouched; clearing restores the tag.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-108: with the keyboard up the window scrolls the header away; Save reachable under the wheel.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-108: with the keyboard up the window scrolls the header away; Save reachable under the wheel.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.18": {
@@ -3022,15 +3246,43 @@
         "at": "2026-09-27T06:30:36",
         "comment": "Re-walk after WALK-A-103: Keep it re-ticks the section.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:31:13",
+        "comment": "Re-walk WALK-A-103: Keep it re-ticks; Yes removes card, lesson stays; Android Back = Keep it.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:31:13",
+        "comment": "Re-walk WALK-A-103: Keep it re-ticks; Yes removes card, lesson stays; Android Back = Keep it.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.19": {
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T06:30:36",
-        "comment": "Re-walk after WALK-A-104: 'Untick all' appears under the Chosen line and clears the sections wheel.",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-109: Untick all at the right end of the Chosen row.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-104/109/112: Untick all on the Chosen row; 3-row sections wheel; window clears the app bar.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-104/109/112: Untick all on the Chosen row; 3-row sections wheel; window clears the app bar.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.20": {
@@ -3040,24 +3292,66 @@
         "at": "2026-09-27T05:38:52",
         "comment": "Kicker, heading, hint, 1–14 wheel, Continue to period lengths. No Cancel link under Continue — founder: not needed; expectation revised.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Periods a week wheel as specified; no Cancel, ✕ only; settled value saved.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Periods a week wheel as specified; no Cancel, ✕ only; settled value saved.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.21": {
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T06:30:36",
-        "comment": "Re-walk after WALK-A-104/105: second length ticks without a crash; Untick all clears, Save disabled until a length is ticked, then saves.",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-110: last length can be unticked; Save disabled until one is ticked.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-104/110: Untick all; last length unticks; Save disabled until one is ticked.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-104/110: Untick all; last length unticks; Save disabled until one is ticked.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.22": {
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T05:43:35",
-        "comment": "Two lengths: headers and hint shown, shortest absorbs the remainder, other capped at the total, sum always the weekly total; summary and profile card show the split. Also covers the two-period-length half of 02.04.",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-111: drop-down offers 1 … X−1; shortest keeps ≥ 1.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-109/111: drop-down under the cell, 1 … X−1; closes on outside tap; Untick all visible.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:24:42",
+        "comment": "Re-walk WALK-A-109/111: drop-down under the cell, 1 … X−1; closes on outside tap; Untick all visible.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.23": {
@@ -3067,6 +3361,20 @@
         "at": "2026-09-27T05:43:35",
         "comment": "Budget editor: kicker, heading, − / + around the field, 'periods / year', opens on stored budget, never below 1, spinner then returns, no method tabs. No Cancel link — founder: not needed; expectation revised.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Budget editor as specified; number pad clears Save; clamping; first-tap Save.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Budget editor as specified; number pad clears Save; clamping; first-tap Save.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.24": {
@@ -3076,6 +3384,20 @@
         "at": "2026-09-27T05:43:35",
         "comment": "Weeks caption recomputes; Meyy recommendation line (with NCF norm when different); pencil → periods wheel → lengths → back to budget.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Weeks caption recomputes; recommendation line; pencil round trip; pencil hit area fine.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Weeks caption recomputes; recommendation line; pencil round trip; pencil hit area fine.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.25": {
@@ -3085,6 +3407,20 @@
         "at": "2026-09-27T05:43:35",
         "comment": "Year Plan TOTAL PERIODS pencil opens that class's budget directly; Save returns to the Year Plan pane; totals and per-chapter suggestions re-distribute.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Editor opens over the Year Plan for that class; Year Plan repaints; Back closes only the editor.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T07:45:02",
+        "comment": "Editor opens over the Year Plan for that class; Year Plan repaints; Back closes only the editor.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.26": {
@@ -3094,6 +3430,20 @@
         "at": "2026-09-27T06:17:30",
         "comment": "Granted social_sciences/middle via entitlement.py: new subject-stage got a default class; 'Would you like to check your set-up?' raised once, limited to the new stage's class; not asked again on the other tab or reload.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Set-up check asked once per device for the new subject-stage; not re-asked after a cold start.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Set-up check asked once per device for the new subject-stage; not re-asked after a cold start.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.27": {
@@ -3103,6 +3453,20 @@
         "at": "2026-09-27T06:17:30",
         "comment": "Added a section: My Classes card, My Lessons selectable, Prepare durations match (two-length split confirmed in the generated plan), profile tiles updated — no refresh.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Added section reflected in My Classes, My Lessons, Prepare and tiles without restart.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Added section reflected in My Classes, My Lessons, Prepare and tiles without restart.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.28": {
@@ -3112,6 +3476,20 @@
         "at": "2026-09-27T06:17:30",
         "comment": "Web half: renamed section and changed budget survive a reload. Cross-device half with the phone pass.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Section name and budget survive force-quit, no empty flash; the web shows the same after one load.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Section name and budget survive force-quit, no empty flash; the web shows the same after one load.",
+        "build": "Expo Go (LAN)"
       }
     },
     "02.29": {
@@ -3121,6 +3499,20 @@
         "at": "2026-09-27T06:30:36",
         "comment": "Re-walk after WALK-A-106: offline save of 9E, back online, 20 s, reload — 9E is on the server.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Airplane-mode save kept and re-sent after reconnect; spinner ends, sheet closable, Back works.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-27T08:03:29",
+        "comment": "Airplane-mode save kept and re-sent after reconnect; spinner ends, sheet closable, Back works.",
+        "build": "Expo Go (LAN)"
       }
     }
   },
@@ -5233,7 +5625,7 @@
     {
       "id": "WALK-A-101",
       "opened": "2026-09-26T15:18:35",
-      "closed": "",
+      "closed": "2026-09-27T06:43:50",
       "feature": "02.02",
       "found_on": [
         "web"
@@ -5241,22 +5633,19 @@
       "applies_to": "both",
       "title": "Teaching profile 'Sections' tile: count sections per subject, not as one set across subjects",
       "what": "Founder, 2026-09-26: a section taught for two subjects is two teaching loads. SS in 6/7/8 with 3+4+5 sections = 12; add Science for the same five Class 8 sections = 17, not 12. On 9000000003 the tile should read 19 (English 6 + Maths 4 + Science 7 + SS 2); the old code gave 15 (Maths 6A/9A and SS 9A/9B merged with other subjects' sections). Classes stay a set across subjects.",
-      "fix": "[FIXED shared 2026-09-26T15:18:35] packages/shared/src/profile.js profileStats: the section key now carries the subject name (`${s.name}|${class}${letter}`). Test updated (shared 6A now counts once per subject) and the founder's 12+5=17 example added; 239/239 shared tests pass. One shared function feeds web TeachingProfile.jsx and mobile settings/profile.jsx, so all three surfaces need a re-walk of 02.02.\n[RE-WALKED web 2026-09-26] PASS",
+      "fix": "[FIXED shared 2026-09-26T15:18:35] packages/shared/src/profile.js profileStats: the section key now carries the subject name (`${s.name}|${class}${letter}`). Test updated (shared 6A now counts once per subject) and the founder's 12+5=17 example added; 239/239 shared tests pass. One shared function feeds web TeachingProfile.jsx and mobile settings/profile.jsx, so all three surfaces need a re-walk of 02.02.\n[RE-WALKED web 2026-09-26] PASS\n[RE-WALKED ios, and_emu 2026-09-27] PASS",
       "files": "packages/shared/src/profile.js, packages/shared/test/profileView.test.js",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "ios",
-        "and_emu"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-26T15:18:35"
     },
     {
       "id": "WALK-A-102",
       "opened": "2026-09-26T15:36:02",
-      "closed": "",
+      "closed": "2026-09-27T06:55:06",
       "feature": "02.12",
       "found_on": [
         "web"
@@ -5264,22 +5653,19 @@
       "applies_to": "both",
       "title": "Pick wheel hides unticked classes between two ticked ones; with the subscription note she reads them as not covered",
       "what": "Founder, 2026-09-26: Science enrolled in 6 and 9 (holds middle + secondary). The class wheel shows 6 and 9 ticked with 7 and 8 hidden between them. The note 'Your subscription covers what's shown here…' then tells her she is not eligible for 7/8, though she is. The only way to reach 7/8 is to untick 9 — which in manage mode is a removal. DECISION (founder, 2026-09-26): ONLY in the Add window's class wheel (Add › Class, manage mode), do not group ticked classes — natural order, ticks in place. Everywhere else (first run, + add-a-subject classes, sections, durations, subjects) keeps the clustering as is.",
-      "fix": "[FIXED 2026-09-27T06:26:23] Add window class wheel passes cluster={false}: web TeachingProfile.jsx classes screen (manage mode only, cluster={!manageC}); phone ProfileEditor.jsx class step. First run, add-a-subject, sections, durations and subjects keep clustering.\n[RE-WALKED web 2026-09-27] PASS",
+      "fix": "[FIXED 2026-09-27T06:26:23] Add window class wheel passes cluster={false}: web TeachingProfile.jsx classes screen (manage mode only, cluster={!manageC}); phone ProfileEditor.jsx class step. First run, add-a-subject, sections, durations and subjects keep clustering.\n[RE-WALKED web 2026-09-27] PASS\n[RE-WALKED ios, and_emu 2026-09-27] PASS",
       "files": "web/app/components/TeachingProfile.jsx, mobile/components/ProfileEditor.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "ios",
-        "and_emu"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-26T15:36:02"
     },
     {
       "id": "WALK-A-103",
       "opened": "2026-09-27T05:38:52",
-      "closed": "",
+      "closed": "2026-09-27T07:31:13",
       "feature": "02.18",
       "found_on": [
         "web"
@@ -5287,22 +5673,19 @@
       "applies_to": "both",
       "title": "Remove a section: 'Keep it' should re-tick the section, as it does for classes",
       "what": "Founder, 2026-09-27: after 'Keep it' on the section-removal warning, the section stays unticked. It should be ticked again, matching the class wheel (02.13).",
-      "fix": "[FIXED 2026-09-27T06:26:23] 'Keep it/them' on the remove-section confirm re-ticks the removed letters, then closes (web + phone), matching the classes confirm.\n[RE-WALKED web 2026-09-27] PASS",
+      "fix": "[FIXED 2026-09-27T06:26:23] 'Keep it/them' on the remove-section confirm re-ticks the removed letters, then closes (web + phone), matching the classes confirm.\n[RE-WALKED web 2026-09-27] PASS\n[RE-WALKED ios, and_emu 2026-09-27] PASS",
       "files": "web/app/components/TeachingProfile.jsx, mobile/components/ProfileEditor.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "ios",
-        "and_emu"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-27T05:38:52"
     },
     {
       "id": "WALK-A-104",
       "opened": "2026-09-27T05:38:52",
-      "closed": "",
+      "closed": "2026-09-27T08:24:42",
       "feature": "02.19",
       "found_on": [
         "web"
@@ -5310,15 +5693,12 @@
       "applies_to": "both",
       "title": "Sections and period-length wheels: add an 'Untick all' control below the wheel",
       "what": "Founder, 2026-09-27: ticking non-contiguous sections (e.g. 9A, 9F, 9R — Indian schools run many sections) hides the unticked ones in between, and reaching them means unticking picks one by one. Rather than show every row (as decided for the Add class wheel, WALK-A-102), give an 'Untick all' option below the wheel so she can start over. Same on the period-length wheel (02.21). Clustering stays on these wheels.",
-      "fix": "[FIXED 2026-09-27T06:26:23] PickWheel (web wheels.jsx, phone PickWheel.jsx) takes an optional onClearAll and shows an 'Untick all' link under the Chosen line when something is ticked. Passed only by the Add window's Edit sections and period-length editors. Durations: Untick all empties the list and Save is disabled until one length is ticked; the weekly total is kept for the re-tick. Clustering unchanged on those wheels.\n[RE-WALKED web 2026-09-27] PASS",
+      "fix": "[FIXED 2026-09-27T06:26:23] PickWheel (web wheels.jsx, phone PickWheel.jsx) takes an optional onClearAll and shows an 'Untick all' link under the Chosen line when something is ticked. Passed only by the Add window's Edit sections and period-length editors. Durations: Untick all empties the list and Save is disabled until one length is ticked; the weekly total is kept for the re-tick. Clustering unchanged on those wheels.\n[RE-WALKED web 2026-09-27] PASS\n[RE-WALKED and_emu, ios 2026-09-27] PASS",
       "files": "web/app/components/wheels.jsx, web/app/components/TeachingProfile.jsx, mobile/components/PickWheel.jsx, mobile/components/ProfileEditor.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "ios",
-        "and_emu"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-27T05:38:52"
     },
@@ -5361,6 +5741,150 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-27T06:22:46"
+    },
+    {
+      "id": "WALK-A-107",
+      "opened": "2026-09-27T07:31:13",
+      "closed": "2026-09-27T08:24:42",
+      "feature": "02.16",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Phone sections editor: the '{subject} · Class N · sections' kicker wraps to two rows",
+      "what": "Founder, 2026-09-27: on the phone the kicker runs to two lines even at small text size. It must sit on ONE row, immediately above 'Edit sections of Class {x}'.",
+      "fix": "[FIXED 2026-09-27T08:07:39] Phone editor kicker is one line (numberOfLines 1, shrinks to 70% if needed), directly above the heading.\n[RE-FIX 2026-09-27T08:14:17] Android clipped '· SECTIONS' (adjustsFontSizeToFit is iOS-only in practice). Replaced with an onTextLayout step-down: size and tracking shrink 5% at a time (to 70%) until the kicker is one line; resets when the kicker text changes.\n[RE-WALKED ios, and_emu 2026-09-27] PASS",
+      "files": "mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T07:31:13"
+    },
+    {
+      "id": "WALK-A-108",
+      "opened": "2026-09-27T07:31:13",
+      "closed": "2026-09-27T08:24:42",
+      "feature": "02.17",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Phone sections editor: Save is not displayed while customising a section name",
+      "what": "Founder, 2026-09-27, iPhone and Android: with the name box in use only the sections wheel shows; the Save button is not visible, so she cannot save the name.",
+      "fix": "[FIXED 2026-09-27T08:16:43] Founder rejected Save-above-the-wheel as unaesthetic ('unfreeze the kickers above'). Reverted. Now the shared Sheet (AttachSheet.jsx), when it scrolls and the keyboard is up, caps its height to the space above the keyboard and scrolls to the end: the kicker/heading/hint slide up out of view and the wheel + Save stay on screen. No change with the keyboard down. Applies to every scrolling editor window on the phone.\n[RE-WALKED ios, and_emu 2026-09-27] PASS",
+      "files": "mobile/components/AttachSheet.jsx (Sheet), mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T07:31:13"
+    },
+    {
+      "id": "WALK-A-109",
+      "opened": "2026-09-27T07:31:13",
+      "closed": "2026-09-27T08:24:42",
+      "feature": "02.19",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "both",
+      "title": "'Untick all' on the same row as 'Chosen (n)', right-aligned, everywhere",
+      "what": "Founder, 2026-09-27: on the iPhone the Edit sections window opens with the Chosen line and 'Untick all' hidden below the fold. Put 'Untick all' at the right end of the Chosen row on every wheel that offers it (web and phone) to shorten the window.",
+      "fix": "[FIXED 2026-09-27T08:07:39] 'Untick all' now sits at the right end of the 'Chosen (n)' row on both PickWheels (web wheels.jsx, phone PickWheel.jsx).\n[RE-WALKED web, ios, and_emu 2026-09-27] PASS",
+      "files": "web/app/components/wheels.jsx, mobile/components/PickWheel.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T07:31:13"
+    },
+    {
+      "id": "WALK-A-110",
+      "opened": "2026-09-27T07:45:02",
+      "closed": "2026-09-27T08:24:42",
+      "feature": "02.21",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "Period lengths: allow unticking the only length; Save disabled until at least one is ticked",
+      "what": "Founder, 2026-09-27: like the other wheels, the single remaining duration (e.g. 40 min) may be unticked; Save stays disabled until she ticks at least one. All surfaces (web Add window + phone ProfileEditor; first run/add-class duration screens too — 'this is on all formats').",
+      "fix": "[FIXED 2026-09-27T08:07:39] The last period length can be unticked (web add-class and Add-window duration screens, phone ProfileEditor); Save/Continue disabled at zero lengths; weekly total kept for the re-tick. (First run's duration is a single-choice roll wheel — not affected.)\n[RE-WALKED web, ios, and_emu 2026-09-27] PASS",
+      "files": "web/app/components/TeachingProfile.jsx, mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T07:45:02"
+    },
+    {
+      "id": "WALK-A-111",
+      "opened": "2026-09-27T07:47:06",
+      "closed": "2026-09-27T08:24:42",
+      "feature": "02.22",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "both",
+      "title": "Split cell: a drop-down in the row's own cell, choices 1 … X−1 (X = weekly total)",
+      "what": "Founder, 2026-09-27: replace the phone's 0…total strip at the foot of the editor with a drop-down of numbers in the same cell where the number is set, offering 1 to X−1 so every ticked length gets at least one period and the shortest keeps the rest. Must NOT be a second window (the earlier modal-over-Sheet defect): an in-place list anchored to the cell inside the editor. Range applies to the web listbox too (today 0…total). With 3+ lengths the ceiling is X minus the other set lengths minus 1, so the shortest always keeps ≥ 1.",
+      "fix": "[FIXED 2026-09-27T08:07:39] Shared ppw.js: splitChoices(map, d) → 1 … X − others − 1; setPpwSplit ceiling now leaves the shortest ≥ 1 (3 new tests, 242/242). Web PpwSplitCell listbox uses splitChoices. Phone: the foot strip is gone; PpwSplitCell reports its window rect and ProfileEditor draws an absolutely-placed drop-down right under the cell inside the duration step (flips above near the bottom; a clear layer behind closes it) — no second window.\n[RE-WALKED web, ios, and_emu 2026-09-27] PASS",
+      "files": "packages/shared/src/ppw.js, packages/shared/test/ppwSplitChoices.test.js, web/app/components/wheels.jsx, mobile/components/PpwSplitCell.jsx, mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T07:47:06"
+    },
+    {
+      "id": "WALK-A-112",
+      "opened": "2026-09-27T08:21:09",
+      "closed": "2026-09-27T08:24:42",
+      "feature": "02.19",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone Edit sections window runs over the app's top bar — show fewer rows",
+      "what": "Founder, 2026-09-27: on the iPhone the Edit sections window is tall enough to cover the app's brand bar. Show fewer section rows.",
+      "fix": "[FIXED 2026-09-27T08:21:09] Phone PickWheel takes an optional `rows`; the Add window's sections wheel shows 3 rows (was 5 with the customize column). Arrows and the ▲▼ cue follow it.\n[RE-WALKED ios, and_emu 2026-09-27] PASS",
+      "files": "mobile/components/PickWheel.jsx, mobile/components/ProfileEditor.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T08:21:09"
+    },
+    {
+      "id": "WALK-A-113",
+      "opened": "2026-09-27T08:22:58",
+      "closed": "2026-09-27T08:24:42",
+      "feature": "02.11",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone Add › Class: Save not visible — let the window extend downward",
+      "what": "Founder, 2026-09-27, iPhone: in Add › Class the window stops short (82% cap, centred) and Save is out of view. It can extend lower to show Save.",
+      "fix": "[FIXED 2026-09-27T08:22:58] Sheet (AttachSheet.jsx): a scrolling, non-confirm window now hangs from just under the app bar (safe-area top + BAR_CONTENT_H + 8) and may run down to the safe area at the foot, instead of the centred 82% cap. Never covers the brand bar (with WALK-A-112). Confirms and the four-row menu unchanged; the keyboard cap (WALK-A-108) still wins while the keyboard is up.\n[RE-WALKED ios, and_emu 2026-09-27] PASS",
+      "files": "mobile/components/AttachSheet.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-27T08:22:58"
     }
   ]
 }

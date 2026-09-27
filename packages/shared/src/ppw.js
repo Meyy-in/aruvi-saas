@@ -88,8 +88,24 @@ export const setPpwSplit = (durations, map, anchor, d, v) => {
   if (Number(d) === a) return base;
   const total = ppwMapSum(base);
   const fixed = durs.reduce((s, x) => (x === a || x === Number(d) ? s : s + base[x]), 0);
-  const n = Math.min(Math.max(0, Math.round(Number(v) || 0)), Math.max(0, total - fixed));
+  // WALK-A-111: the shortest length keeps at least one period, so the ceiling is total − fixed − 1.
+  const n = Math.min(Math.max(0, Math.round(Number(v) || 0)), Math.max(0, total - fixed - 1));
   return { ...base, [Number(d)]: n, [a]: total - fixed - n };
+};
+
+/* WALK-A-111 (founder, 2026-09-27): the numbers offered for ONE non-anchor length — 1 … X−1 with
+ * two lengths (X = the weekly total), and in general 1 … X − (the other set lengths) − 1, so every
+ * ticked length gets at least one period and the shortest keeps at least one. The anchor is the
+ * lowest ticked length (lowestDuration). Returns [] for the anchor itself or when nothing fits. */
+export const splitChoices = (map, d) => {
+  const keys = Object.keys(map || {}).map(Number).filter((x) => x > 0);
+  if (!keys.length) return [];
+  const a = Math.min(...keys);
+  if (Number(d) === a) return [];
+  const total = ppwMapSum(map);
+  const fixed = keys.reduce((acc, x) => (x === a || x === Number(d) ? acc : acc + _get(map, x)), 0);
+  const ceil = total - fixed - 1;
+  return ceil >= 1 ? Array.from({ length: ceil }, (_, i) => i + 1) : [];
 };
 
 /* Change the SIZE of the week (the one control that legitimately moves the total). The split of

@@ -61,8 +61,8 @@
  * who has just amended one item is exactly the person most likely to want the next" (founder,
  * 2026-08-27). Closing that window stays her own explicit act.
  */
-import { useEffect, useMemo, useState } from "react";
-import { View, Pressable, TextInput, ScrollView, ActivityIndicator } from "react-native";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { View, Pressable, TextInput, ScrollView, ActivityIndicator, Keyboard } from "react-native";
 import { Text } from "./Text";
 import {
   ROMAN, allowedStagesFor, classNum, fetchEntitlement, fetchSupportedGrades, getJSON,
@@ -75,7 +75,7 @@ import {
 } from "@aruvi/shared/profile";
 import { clearSectionState } from "@aruvi/shared/sectionState";
 import {
-  DEFAULT_DURATION, DEFAULT_PPW, DURATION_CHOICES, PPW_CHOICES, lowestDuration, normPpw,
+  DEFAULT_DURATION, DEFAULT_PPW, DURATION_CHOICES, PPW_CHOICES, lowestDuration, normPpw, splitChoices,
   ppwMapSum, setPpwSplit, setPpwTotal,
 } from "@aruvi/shared/ppw";
 import { rekeyBudget } from "@aruvi/shared/budget";
@@ -211,7 +211,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   const [classConfirm, setClassConfirm] = useState(null);
   /* Which length's split strip is showing, if any. Lifted OUT of the cell (2026-09-15): the cell
      used to own a Sheet, and once the editor became a window that was a window over a window. */
-  const [splitOpen, setSplitOpen] = useState(null);
+  const [kickerScale, setKickerScale] = useState(1);   // WALK-A-107 — steps down until the kicker is one row
+  const [splitOpen, setSplitOpen] = useState(null);   // { d, x, y, w, h } of the tapped cell, window coords
+  const durBoxRef = useRef(null);
+  const [durBox, setDurBox] = useState(null);          // the duration step's own window rect
+  const openSplit = (cell) => {
+    if (!cell || !durBoxRef.current) { setSplitOpen(null); return; }
+    durBoxRef.current.measureInWindow((x, y, w, h) => { setDurBox({ x, y, w, h }); setSplitOpen(cell); });
+  };
   useEffect(() => {
     if (picked || !gradeRec) return;
     setPicked((gradeRec.sections || []).map(secLetter));
@@ -554,12 +561,13 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
     const next = setPpwSplit(prev.durations, splitMap, anchor, d, v);
     return { ...prev, ppw_by_duration: next, periods_per_week: ppwMapSum(next) };
   });
-  /* ⚠️ THE LAST LENGTH CANNOT BE UNTICKED. A class with no period length is not a shorter answer,
-     it is an unanswerable record — every figure downstream (the mix line, the budget's weeks
-     reading, the serve's duration matrix) is derived from it. */
+  /* ★ THE LAST LENGTH MAY BE UNTICKED (WALK-A-110, founder 2026-09-27), like every other wheel —
+     but a class with no period length is still never SAVED: Save is disabled at zero, because
+     every figure downstream (the mix line, the budget's weeks reading, the serve's duration
+     matrix) is derived from it. The weekly total is held in the draft for the re-tick. */
   const toggleDuration = (d) => setDraft((prev) => {
     const has = prev.durations.includes(d);
-    if (has && prev.durations.length === 1) return prev;
+    // WALK-A-110: the last length may be unticked too; Save stays disabled until one is ticked.
     const durs = has ? prev.durations.filter((x) => x !== d)
       : [...prev.durations, d].sort((a, b) => a - b);
     const a2 = lowestDuration(durs);
@@ -569,6 +577,19 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
   });
 
   const bump = (d) => setValue((v) => clampPeriods((Number(v) || 0) + d));
+
+  /* The sections step's Save — ⚠️ disabled at ZERO sections (a class with no sections cascades the
+     whole class away, a different act from this screen's). It stays under the wheel; with the
+     keyboard up the WINDOW scrolls the header away to bring it into view (Sheet, WALK-A-108). */
+  const secSave = (
+    <Pressable onPress={() => { Keyboard.dismiss(); requestSections(); }}
+      disabled={saving || !(picked && picked.length)}
+      accessibilityRole="button" accessibilityState={{ disabled: !(picked && picked.length) }}
+      style={[ws.fr_cta, { backgroundColor: (saving || !(picked && picked.length)) ? t.paper_sunk : t.pine }]}>
+      {saving ? <ActivityIndicator size="small" color={t.ink_soft} />
+              : <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Save</Text>}
+    </Pressable>
+  );
 
   /* ★ THE KICKER IS THE WINDOW'S, NOT A HEADING INSIDE IT. `Sheet` already draws a kicker above
      its title, so the screen's own `.kicker` line is handed up rather than repeated — a window
@@ -590,6 +611,8 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
     : `${pretty(subject)} · Class ${classNum(grade)} · ${
       step === "ppw" ? "periods / week" : step === "duration" ? "duration"
         : step === "section" ? "sections" : "annual budget"}`;
+  // A new kicker text starts again at full size; onTextLayout steps it down only if it wraps.
+  useEffect(() => { setKickerScale(1); }, [kicker]);
 
   /* ★ THE CORNERS DO THE NAVIGATION (founder, 2026-09-15). ✕ closes, from every step; ← appears
      only on `duration`, which is the one step reached THROUGH another and so the only one with a
@@ -638,7 +661,14 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             over this line. */}
         {/* The kicker clears the ← whenever one is drawn — its own step's, or the journey's
             (the layout's `hasBack`, for an editor reached through a pick screen). */}
-        <Text style={[ws.kicker, ws.tp_kicker_pad, (stepBack || hasBack) && { paddingLeft: 34 }]}>{kicker}</Text>
+        <Text onTextLayout={(e) => {
+            /* WALK-A-107: ONE row. `adjustsFontSizeToFit` is iOS-only in practice — Android clipped
+               "· SECTIONS" off the end — so step the size and tracking down until it fits. */
+            if (e.nativeEvent.lines.length > 1 && kickerScale > 0.7) setKickerScale((k) => Math.round((k - 0.05) * 100) / 100);
+          }}
+          style={[ws.kicker, ws.tp_kicker_pad, (stepBack || hasBack) && { paddingLeft: 34 },
+                  kickerScale < 1 && { fontSize: 10.5 * kickerScale, lineHeight: 16.275 * kickerScale,
+                                       letterSpacing: 1.89 * kickerScale * kickerScale }]}>{kicker}</Text>
 
         {step === "subject" ? (
           <>
@@ -775,6 +805,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
               <PickWheel options={SECTION_LETTERS} selected={picked}
                 onToggle={(x) => setPicked((a) => (a.includes(x) ? a.filter((y) => y !== x) : [...a, x]))}
                 onClearAll={() => setPicked([])}
+                rows={3 /* WALK-A-112: fewer rows so the window clears the app bar */}
                 ariaLabel="Sections" labelFor={(x) => `${classNum(grade)}${x}`}
                 leadingHeader="Section" trailingHeader="customize"
                 summaryFor={(x) => secSummary(grade, x, secNames)}
@@ -785,12 +816,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                 {/* ⚠️ Save is disabled at ZERO sections. A class with no sections is not a smaller
                     class — removing the last one cascades the whole class away on the web, and that
                     is a different, more destructive act than the one this screen is for. */}
-                <Pressable onPress={requestSections} disabled={saving || !picked.length}
-                  accessibilityRole="button" accessibilityState={{ disabled: !picked.length }}
-                  style={[ws.fr_cta, { backgroundColor: (saving || !picked.length) ? t.paper_sunk : t.pine }]}>
-                  {saving ? <ActivityIndicator size="small" color={t.ink_soft} />
-                          : <Text style={[ws.fr_cta_t, ws.fr_cta_ink]}>Save</Text>}
-                </Pressable>
+                {secSave}
               </PickWheel>
             ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
 
@@ -821,7 +847,7 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
             </View>
           </>
         ) : step === "duration" ? (
-          <>
+          <View ref={durBoxRef} collapsable={false} style={{ position: "relative" }}>
             <Text style={ws.fr_q}>How long are the periods?</Text>
             {saveFail}
             <Text style={[ws.fr_hint, { color: t.ink_soft }]}>
@@ -840,27 +866,8 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
                 trailing={(d, on) => (
                   <PpwSplitCell duration={d} selected={on} map={splitMap}
                     isAnchor={d === anchor} show={multi}
-                    open={splitOpen === d} onOpen={setSplitOpen} />
+                    open={!!splitOpen && splitOpen.d === d} onOpen={openSplit} />
                 )}>
-                {/* The chosen length's 0…total strip, inline under the wheel rather than in a
-                    second window. It names the length because by the time she reaches it the row
-                    she tapped may have scrolled out of sight. */}
-                {splitOpen != null ? (
-                  <View style={[ws.ppw_strip, { borderTopColor: t.line_soft }]}>
-                    <Text style={[ws.ppw_strip_k, { color: t.ink_soft }]}>{splitOpen} min</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}
-                      keyboardShouldPersistTaps="handled">
-                      {Array.from({ length: weekTotal + 1 }, (_, n) => n).map((n) => (
-                        <Pressable key={n} onPress={() => { setSplit(splitOpen, n); setSplitOpen(null); }}
-                          accessibilityRole="button" accessibilityState={{ selected: n === (splitMap[splitOpen] || 0) }}
-                          accessibilityLabel={`${n} periods a week at ${splitOpen} minutes`}
-                          style={[ws.ppw_opt, n === (splitMap[splitOpen] || 0) && { backgroundColor: t.pine }]}>
-                          <Text style={[ws.ppw_opt_t, { color: n === (splitMap[splitOpen] || 0) ? t.paper_2 : t.ink }]}>{n}</Text>
-                        </Pressable>
-                      ))}
-                    </ScrollView>
-                  </View>
-                ) : null}
                 {/* Step 2 of 2 — the lengths AND their split, so this is where it saves. */}
                 <Pressable onPress={saveNumbers} disabled={saving || !durations.length} accessibilityRole="button"
                   style={[ws.fr_cta, { backgroundColor: (saving || !durations.length) ? t.paper_sunk : t.pine }]}>
@@ -870,7 +877,43 @@ export default function ProfileEditor({ intent = "budget", subject = "", grade =
               </PickWheel>
             ) : <ActivityIndicator style={{ marginTop: 28 }} color={t.pine} />}
 
-          </>
+            {/* WALK-A-111 (founder, 2026-09-27): the split's drop-down, drawn IN the editor right under
+                the tapped cell — 1 … X−1 (the shortest length keeps at least one). An absolutely
+                placed list inside this step's own view, never a second window (the modal-over-Sheet
+                defect). A clear layer behind it closes it on any tap elsewhere. */}
+            {splitOpen && durBox ? (() => {
+              const opts = splitChoices(splitMap, splitOpen.d);
+              const ROW = 40, listH = Math.min(opts.length, 5) * ROW + 8, listW = 76;
+              const below = splitOpen.y - durBox.y + splitOpen.h + 4;
+              const top = below + listH > durBox.h ? Math.max(0, splitOpen.y - durBox.y - listH - 4) : below;
+              const left = Math.max(0, Math.min(durBox.w - listW, splitOpen.x - durBox.x + splitOpen.w - listW));
+              const cur = splitMap[splitOpen.d] || 0;
+              return (
+                <>
+                  <Pressable onPress={() => setSplitOpen(null)} accessibilityElementsHidden
+                    importantForAccessibility="no-hide-descendants"
+                    style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 20 }} />
+                  <View style={{ position: "absolute", top, left, width: listW, maxHeight: listH, zIndex: 21,
+                                 elevation: 6, borderRadius: 8, borderWidth: 1, borderColor: t.line,
+                                 backgroundColor: t.paper_2, paddingVertical: 4,
+                                 shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 8, shadowOffset: { width: 0, height: 3 } }}>
+                    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled"
+                      showsVerticalScrollIndicator={opts.length > 5}>
+                      {opts.map((n) => (
+                        <Pressable key={n} onPress={() => { setSplit(splitOpen.d, n); setSplitOpen(null); }}
+                          accessibilityRole="button" accessibilityState={{ selected: n === cur }}
+                          accessibilityLabel={`${n} periods a week at ${splitOpen.d} minutes`}
+                          style={{ height: ROW, alignItems: "center", justifyContent: "center",
+                                   backgroundColor: n === cur ? t.pine : "transparent" }}>
+                          <Text style={[ws.ppw_opt_t, { color: n === cur ? t.paper_2 : t.ink }]}>{n}</Text>
+                        </Pressable>
+                      ))}
+                    </ScrollView>
+                  </View>
+                </>
+              );
+            })() : null}
+          </View>
         ) : (
         <>
         {/* No sub-hint (founder, 2026-08-27). It restated the heading in longer words, and the

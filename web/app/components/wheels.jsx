@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ppwAt } from "../lib/ppw";
+import { ppwAt, splitChoices } from "../lib/ppw";
 
 // Shared offscreen canvas for text measurement (auto-fit). One per module — cheap, never in DOM.
 let _fitCanvas = null;
@@ -379,18 +379,21 @@ export function PickWheel({ options, selected, onToggle, labelFor, initialScroll
         </div>
         {children}
         {summaryLabel && (
-          <p className="fr-pick-summary" role="status" aria-live="polite">
-            {chosen.length
-              ? <>Chosen ({chosen.length}): <b>{summary}</b></>
-              : <span className="fr-pick-summary-empty">Nothing chosen yet — tap the rows above</span>}
-          </p>
-        )}
-        {/* WALK-A-104 (founder, 2026-09-27): clustering drops the unticked rows between her lowest
-            and highest pick (9A … 9F … 9R), so reaching a middle one meant unticking picks one by
-            one. "Untick all" lets her start over. Offered only where the caller passes onClearAll
-            — the Add window's sections and period-length editors. */}
-        {onClearAll && chosen.length > 0 && (
-          <button type="button" className="fr-link" style={{ marginTop: 6, alignSelf: "flex-start" }} onClick={onClearAll}>Untick all</button>
+          /* WALK-A-109 (founder, 2026-09-27): "Untick all" sits at the RIGHT END of the Chosen row,
+             not on a line of its own — one row shorter, so it is not pushed below the fold. */
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+            <p className="fr-pick-summary" role="status" aria-live="polite" style={{ flex: 1, minWidth: 0 }}>
+              {chosen.length
+                ? <>Chosen ({chosen.length}): <b>{summary}</b></>
+                : <span className="fr-pick-summary-empty">Nothing chosen yet — tap the rows above</span>}
+            </p>
+            {/* WALK-A-104: clustering drops the unticked rows between her picks, so she can start
+                over. Offered only where the caller passes onClearAll. */}
+            {onClearAll && chosen.length > 0 && (
+              <button type="button" className="fr-link" style={{ flex: "none", margin: 0, whiteSpace: "nowrap" }}
+                onClick={onClearAll}>Untick all</button>
+            )}
+          </div>
         )}
       </div>
       {showCue && (
@@ -486,7 +489,7 @@ export function PpwSplitCell({ duration, selected, map, total, isAnchor, onSet, 
   const v = ppwAt(map, duration);
   if (isAnchor) return <span className="fr-ppw-num">{v}</span>;
 
-  const choices = Array.from({ length: (Number(total) || 0) + 1 }, (_, i) => i);
+  const choices = splitChoices(map, duration);   // WALK-A-111: 1 … X−1, the shortest keeps ≥ 1
   const toggle = (e) => {
     e.stopPropagation();
     if (open) { setOpen(false); return; }
