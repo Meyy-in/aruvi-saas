@@ -129,6 +129,19 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   const [, setSyncTick] = useState(0); // bumped after a server pull so cards re-read the refreshed cache
   // plans for EVERY subject·grade the teacher handles, keyed `${subjectSlug}/${gradeSlug}`.
   const [plansByKey, setPlansByKey] = useState({});
+  /* ★ MY CLASSES OPENS FULLY LOADED (WALK-A-115, founder 2026-09-27: "it should come fully
+     loaded as it gives a professional image"). After a sign-in the device copy of her lesson
+     lists is gone (Log out sweeps it), so every class she is teaching used to paint as a
+     "Loading your lesson…" card and fill a moment later — a screen visibly assembling itself.
+     The cards now wait, together, behind one quiet line until every list a BOUND card needs has
+     answered; then they appear complete. Capped (HOLD_MS) so a slow or unreachable server never
+     strands her: past it the cards show as they are, which is the old behaviour, card by card. */
+  const HOLD_MS = 6000;
+  const [holdExpired, setHoldExpired] = useState(false);
+  useEffect(() => {
+    const id = setTimeout(() => setHoldExpired(true), HOLD_MS);
+    return () => clearTimeout(id);
+  }, []);
   /* ★ THE WAITING CARD IS BROUGHT INTO VIEW (WALK-A-121, founder 2026-09-27). Back from a
      section's "+", she landed at the TOP of My Classes while the card showing her lesson being
      prepared could be far below (9000000003). The list keeps its order — subjects stay banded,
@@ -1120,7 +1133,9 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
 
       {/* Banded (>1 subject) or the plain list she has always had. The CARD itself is one
           renderer either way — `renderCard` — so the two paths can never drift apart. */}
-      {banded ? (
+      {listsPendingNow() ? (
+        <div className="spin" aria-live="polite">Loading your classes…</div>
+      ) : banded ? (
         <div className="sc-bands">
           {bands.map((b) => (
             <div className="sc-band" key={b.slug}>
@@ -1161,6 +1176,19 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
      "Ch 4", and an unattached card carries no kicker at all rather than an empty line.
      A function DECLARATION, deliberately: it is hoisted, so it can sit below the return where
      it does not push 90 lines of card markup between the reader and the shape of the screen. */
+  /* WALK-A-115 — true while a card with a chapter bound to it is still waiting for its list.
+     Unbound cards need nothing from the server, so they never hold the screen. */
+  function listsPendingNow() {
+    if (holdExpired) return false;
+    /* Re-walk 2026-09-27: after a sign-in the BINDINGS are swept too, so for a beat no card is
+       bound, nothing is "pending", and the cards flashed plain before the reconcile bound them.
+       An empty local binding cache is not an answer until the server has given one — the
+       `bindingsKnown` rule — so the hold waits for that as well. (A device that still holds
+       bindings, i.e. a relaunch, is not held for it and paints at once.) */
+    if (!bindingsKnown) return true;
+    return classes.some((c) => plansByKey[`${c.subjectSlug}/${c.gradeSlug}`] === undefined
+      && !!currentChapterFile(`${c.subjectSlug}_${c.gradeSlug}_${c.sectionTag}`));
+  }
   function renderCard(c, i) {
           const sectionKey = `${c.subjectSlug}_${c.gradeSlug}_${c.sectionTag}`;
           const gradePlans = plansByKey[`${c.subjectSlug}/${c.gradeSlug}`];

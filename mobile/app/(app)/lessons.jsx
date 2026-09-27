@@ -221,8 +221,16 @@ export default function MyLessons() {
   /* Subject in focus (by display name); class in focus (uppercase Roman). RESTORE the last choice;
      fall back to the first taught subject/class on a first ever visit. A stale saved class is
      harmless — the validation effect below snaps it back. */
-  const [activeSubject, setActiveSubject] = useState("");
-  const [activeGrade, setActiveGrade] = useState("");
+  /* ★ SEEDED FROM STORAGE AT FIRST RENDER (WALK-A-123, 2026-09-27). The bar's `navigate` pops
+     this screen off the stack, so every return REMOUNTS it — and it used to mount with "" here.
+     A RollWheel whose value is not in its list tells the parent (its items effect), and a
+     CHILD's effect runs before the parent's: so the subject wheel reported its first item,
+     `onSubject` wrote that over the saved choice, and the seeding effect below then restored…
+     the value just overwritten. She came back to the wheels as they were before her change.
+     Starting from the saved pair means the wheel mounts on a value it holds, says nothing, and
+     the validation effect still snaps back a stale one. */
+  const [activeSubject, setActiveSubject] = useState(() => lsGet(LS_SUBJECT) || "");
+  const [activeGrade, setActiveGrade] = useState(() => lsGet(LS_CLASS) || "");
 
   // True while a lesson is open over this screen — read by the section sync below.
   const busyRef = useRef(false);

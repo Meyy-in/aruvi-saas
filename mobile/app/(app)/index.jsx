@@ -609,6 +609,26 @@ export default function Home() {
      down the list; the order stays (bands, no jumping) and the scroller moves to it ONCE per
      prepare, so a re-render or the failed state never pulls her back after she has scrolled. */
   const scrollRef = useRef(null);
+  /* ★ MY CLASSES OPENS FULLY LOADED (WALK-A-115, founder 2026-09-27 — the web's twin). After a
+     sign-in the device copy of her lesson lists is gone, so each class she teaches used to paint
+     as "Loading your lesson…" and fill a beat later. The cards now wait together behind the
+     "Loading your classes…" line until every list a BOUND card needs has answered, then appear
+     complete. Capped at HOLD_MS so a slow or unreachable server never strands her — past it
+     the cards show as they are (each still says it is loading, the old behaviour). */
+  const HOLD_MS = 6000;
+  const [holdExpired, setHoldExpired] = useState(false);
+  useEffect(() => {
+    const id = setTimeout(() => setHoldExpired(true), HOLD_MS);
+    return () => clearTimeout(id);
+  }, []);
+  /* Re-walk 2026-09-27: a sign-in sweeps the BINDINGS too, so until the reconcile lands no card
+     is bound and the cards flashed plain in between. An empty binding cache is not an answer
+     until the server gives one (`bindingsKnown`); a device still holding bindings paints at once. */
+  const anyBoundLocal = st.classes.some((c) => !!readLocalSection(c.sectionKey).chapter);
+  const listsPending = !holdExpired && !st.loading && !st.err && st.classes.length > 0 && (
+    (!anyBoundLocal && !bindingsKnown)
+    || st.classes.some((c) =>
+      !!readLocalSection(c.sectionKey).chapter && !st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`]));
   const waitCardRef = useRef(null);
   const waitScrolledRef = useRef("");
   const onWaitLayout = () => {
@@ -685,7 +705,7 @@ export default function Home() {
       <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
         refreshControl={<RefreshControl refreshing={false} onRefresh={() => load({ force: true })} tintColor={t.pine} />}>
 
-        {st.loading ? (
+        {st.loading || listsPending ? (
           <View style={s.loading}><ActivityIndicator color={t.pine} /><Text style={[type.small, { color: t.ink_soft, marginLeft: 10 }]}>Loading your classes…</Text></View>
         ) : st.err ? (
           <Text style={[type.body, { color: t.danger, marginTop: 18 }]}>{st.err}</Text>

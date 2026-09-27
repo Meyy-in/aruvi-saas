@@ -1,7 +1,7 @@
 {
  "version": 1,
  "walk": "meyy-three-surface-walk",
- "updated_at": "2026-09-27T15:18:21",
+ "updated_at": "2026-09-27T15:31:40",
  "items": {
   "04.19": {
    "ios": {
@@ -3570,24 +3570,24 @@
   },
   "01.01": {
    "web": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-27T13:07:57",
-    "comment": "Login itself comes up directly, but after sign-in My Classes paints its section cards EMPTY first and fills them a moment later. Heaviest on 9000000003 (the biggest profile). → WALK-A-115\nWALK-A-115 closed as by design (founder 2026-09-27): Login itself appears directly; the post-sign-in 'Loading your lesson…' cards are deliberate.\nRe-opened with WALK-A-115 (founder 2026-09-27): must open fully loaded on every surface.",
+    "at": "2026-09-27T15:31:40",
+    "comment": "Login itself comes up directly, but after sign-in My Classes paints its section cards EMPTY first and fills them a moment later. Heaviest on 9000000003 (the biggest profile). → WALK-A-115\nWALK-A-115 closed as by design (founder 2026-09-27): Login itself appears directly; the post-sign-in 'Loading your lesson…' cards are deliberate.\nRe-opened with WALK-A-115 (founder 2026-09-27): must open fully loaded on every surface.\n✓ re-walked 2026-09-27 after WALK-A-115: sign-in shows only 'Loading your classes…', then every card complete; a relaunch paints at once.",
     "build": "web dev (localhost:3000 → Render)"
    },
    "ios": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-27T13:07:57",
-    "comment": "Login comes up directly, but after sign-in My Classes shows its section cards unfilled for a moment before they load. Founder: it must open fully loaded — professional image. → WALK-A-115 (reopened)",
+    "at": "2026-09-27T15:31:40",
+    "comment": "Login comes up directly, but after sign-in My Classes shows its section cards unfilled for a moment before they load. Founder: it must open fully loaded — professional image. → WALK-A-115 (reopened)\n✓ re-walked 2026-09-27 after WALK-A-115: sign-in shows only 'Loading your classes…', then every card complete; a relaunch paints at once.",
     "build": "Expo Go (LAN)"
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-27T13:07:57",
-    "comment": "Login comes up directly, but after sign-in My Classes shows its section cards unfilled for a moment before they load. Founder: it must open fully loaded — professional image. → WALK-A-115 (reopened)",
+    "at": "2026-09-27T15:31:40",
+    "comment": "Login comes up directly, but after sign-in My Classes shows its section cards unfilled for a moment before they load. Founder: it must open fully loaded — professional image. → WALK-A-115 (reopened)\n✓ re-walked 2026-09-27 after WALK-A-115: sign-in shows only 'Loading your classes…', then every card complete; a relaunch paints at once.",
     "build": "Expo Go (LAN)"
    }
   },
@@ -3665,14 +3665,21 @@
     "status": "pass",
     "by": "Kumar",
     "at": "2026-09-27T11:18:48",
-    "comment": "Name change updates the bar without sign-out; number-only fallback OK. Note: on the subscribed account the name cannot be cleared — Save is disabled without a name (and city) in Personal profile, by design.",
+    "comment": "Name change updates the bar without sign-out; number-only fallback OK. Note: on the subscribed account the name cannot be cleared — Save is disabled without a name (and city) in Personal profile, by design.\n✓ re-checked 2026-09-27 with WALK-A-122: the bar name updates on save.",
     "build": "web dev (localhost:3000 → Render)"
    },
    "ios": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-27T13:23:46",
-    "comment": "After changing the first name in Personal profile: the My Classes greeting does not update at once on return, and the name above 'Log out' on the bar does not change at all. → WALK-A-122",
+    "at": "2026-09-27T15:29:19",
+    "comment": "✓ after WALK-A-122: a saved first name reaches the bar and the greeting at once.",
+    "build": "Expo Go (LAN)"
+   },
+   "and_emu": {
+    "status": "pass",
+    "by": "Kumar",
+    "at": "2026-09-27T15:29:19",
+    "comment": "✓ after WALK-A-122: a saved first name reaches the bar and the greeting at once.",
     "build": "Expo Go (LAN)"
    }
   },
@@ -3777,17 +3784,17 @@
     "build": "web dev (localhost:3000 → Render)"
    },
    "ios": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-27T13:34:52",
-    "comment": "Crossing My Lessons → My Classes → My Lessons reverts the subject/class wheels to what they were before she changed them. → WALK-A-123",
+    "at": "2026-09-27T15:29:19",
+    "comment": "✓ after WALK-A-123: My Lessons keeps the chosen subject/class across tab crossings.",
     "build": "Expo Go (LAN)"
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-27T13:34:52",
-    "comment": "Crossing My Lessons → My Classes → My Lessons reverts the subject/class wheels to what they were before she changed them. → WALK-A-123",
+    "at": "2026-09-27T15:29:19",
+    "comment": "✓ after WALK-A-123: My Lessons keeps the chosen subject/class across tab crossings.",
     "build": "Expo Go (LAN)"
    }
   },
@@ -3853,10 +3860,10 @@
     "build": "Expo Go (LAN)"
    },
    "and_emu": {
-    "status": "fail",
+    "status": "pass",
     "by": "Kumar",
-    "at": "2026-09-27T14:54:48",
-    "comment": "Returns to the four-row window (WALK-A-119 ✓ functionally), but the transition back is jumpy. → WALK-A-124",
+    "at": "2026-09-27T15:29:19",
+    "comment": "✓ after WALK-A-124: X returns to the four-row window smoothly.",
     "build": "Expo Go (LAN)"
    }
   },
@@ -6503,7 +6510,7 @@
   {
    "id": "WALK-A-115",
    "opened": "2026-09-27T11:18:48",
-   "closed": "",
+   "closed": "2026-09-27T15:31:40",
    "feature": "01.01",
    "found_on": [
     "web",
@@ -6513,14 +6520,14 @@
    "applies_to": "both",
    "title": "My Classes paints empty section cards, then fills them — heavy on 9000000003",
    "what": "Founder, web 2026-09-27: after sign-in (and on cold launch into the shell) My Classes first shows its section cards blank, then populates them. Most noticeable on 9000000003, the largest profile. The row expects no glimpse of an unfinished screen. To investigate at the web fix point: which fetch the cards wait on (readiness vs section state vs plans) and whether they can hold until it answers or paint from the device copy.",
-   "fix": "[CLOSED — FOUNDER DECISION 2026-09-27] By design. The cards are not blank: each bound class shows 'Loading your lesson…' (st-going) while its lesson list arrives — deliberate since 2026-09-14, so a taught class never flashes 'Pick a chapter'. Seen only after a fresh SIGN-IN, because Log out sweeps the device copy of the lists; a relaunch without logging out paints at once (01.04 pass). 003 is heaviest because it has the most subject·class lists to fetch from Render. Options not taken: chapter number shown at once from the binding; one server call for all lists.\n[REOPENED — FOUNDER 2026-09-27, on the phones] The flash of unfilled cards must go on EVERY surface: My Classes should open fully loaded, 'as it gives a professional image'. Proposed: hold the plain 'Loading your classes…' screen until every plan list the bound cards need has arrived, then paint all cards complete; cap the wait (a few seconds) so a slow server never strands her. Web + phone, at the phone fix point.",
-   "files": "web/app/components/MyPlans.jsx, web/app/page.jsx (to confirm)",
+   "fix": "[CLOSED — FOUNDER DECISION 2026-09-27] By design. The cards are not blank: each bound class shows 'Loading your lesson…' (st-going) while its lesson list arrives — deliberate since 2026-09-14, so a taught class never flashes 'Pick a chapter'. Seen only after a fresh SIGN-IN, because Log out sweeps the device copy of the lists; a relaunch without logging out paints at once (01.04 pass). 003 is heaviest because it has the most subject·class lists to fetch from Render. Options not taken: chapter number shown at once from the binding; one server call for all lists.\n[REOPENED — FOUNDER 2026-09-27, on the phones] The flash of unfilled cards must go on EVERY surface: My Classes should open fully loaded, 'as it gives a professional image'. Proposed: hold the plain 'Loading your classes…' screen until every plan list the bound cards need has arrived, then paint all cards complete; cap the wait (a few seconds) so a slow server never strands her. Web + phone, at the phone fix point.\n[FIXED 2026-09-27T15:21:36] Web MyPlans.jsx + phone (app)/index.jsx: while any card with a BOUND chapter is still waiting for its lesson list, the whole list is held behind one 'Loading your classes…' line, then all cards appear complete. Unbound cards never hold it; a failed fetch releases it; capped at 6 s (past it the cards show as before, each saying it is loading).\n[RE-WALK 2026-09-27] FAIL: web + iPhone flashed plain cards before 'Loading your classes…'; Android showed Loading, then plain cards, then filled. CAUSE: sign-in sweeps the section BINDINGS too, so until the reconcile lands no card is bound and nothing counted as pending. [FIXED 2026-09-27T15:29:19] the hold also waits for the bindings to be known (bindingsKnown) when the device holds none; a relaunch with bindings on the device paints at once.\n[RE-WALKED web, ios, and_emu 2026-09-27] PASS.",
+   "files": "web/app/components/MyPlans.jsx; mobile/app/(app)/index.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
+   "status": "closed",
    "recheck": [],
    "owner": "Kumar",
-   "at": "2026-09-27T13:07:57"
+   "at": "2026-09-27T15:21:36"
   },
   {
    "id": "WALK-A-116",
@@ -6645,7 +6652,7 @@
   {
    "id": "WALK-A-122",
    "opened": "2026-09-27T13:23:46",
-   "closed": "",
+   "closed": "2026-09-27T15:29:19",
    "feature": "01.07",
    "found_on": [
     "ios"
@@ -6653,19 +6660,19 @@
    "applies_to": "both",
    "title": "A saved first name does not reach the bar (and the greeting only later)",
    "what": "Founder, iPhone 2026-09-27: Settings › Personal profile, change the first name, save, back to My Classes — the greeting does not show the new name at once, and the name above 'Log out' on the top bar never changes. Founder asks the web be checked too for the bar half (web 01.07 had passed on the greeting). Expected: bar and greeting both update on save, without signing out.",
-   "fix": "",
-   "files": "mobile/app/(app)/_layout.jsx (bar name), mobile/app/(app)/index.jsx (greeting), shared account.js; web page.jsx entSyncTick /account refetch",
+   "fix": "[FIXED 2026-09-27T15:21:36] Shared account.js: subscribeAccount(); invalidateAccount() (called on a Personal-profile save and after subscribe) now notifies. Phone Bar.jsx and the My Classes greeting subscribe and re-read /account at once. +2 tests (247 green). Web was already wired (onAccountSaved → entSyncTick → /account) — re-check the bar there too, as founder asked.\n[RE-WALKED 2026-09-27] PASS.",
+   "files": "packages/shared/src/account.js; packages/shared/test/accountNotify.test.js; mobile/components/Bar.jsx; mobile/app/(app)/index.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
+   "status": "closed",
    "recheck": [],
    "owner": "Kumar",
-   "at": "2026-09-27T13:23:46"
+   "at": "2026-09-27T15:21:36"
   },
   {
    "id": "WALK-A-123",
    "opened": "2026-09-27T13:34:52",
-   "closed": "",
+   "closed": "2026-09-27T15:29:19",
    "feature": "01.13",
    "found_on": [
     "ios",
@@ -6674,19 +6681,19 @@
    "applies_to": "phone",
    "title": "Phone My Lessons forgets the subject/class she chose when she crosses tabs",
    "what": "Founder, phones 2026-09-27: on My Lessons change the subject or class, go to My Classes and back — the wheels are back on the subject/class they showed before the change. Expected (row 01.13, and as on the web): the screen returns as she left it, choice and scroll kept.",
-   "fix": "",
-   "files": "mobile/app/(app)/lessons.jsx (wheel state / remembered scope)",
+   "fix": "[FIXED 2026-09-27T15:21:36] CAUSE: the bar's navigate pops My Lessons, so each return REMOUNTS it with activeSubject ''. The subject RollWheel (a child — its effect runs before the parent's) reported its first item as the value, onSubject wrote that over the saved choice, and the seeding effect then read back the overwritten value. FIX (lessons.jsx): activeSubject/activeGrade are seeded from storage at first render, so the wheels mount on values they hold and say nothing.\n[RE-WALKED 2026-09-27] PASS.",
+   "files": "mobile/app/(app)/lessons.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
+   "status": "closed",
    "recheck": [],
    "owner": "Kumar",
-   "at": "2026-09-27T13:34:52"
+   "at": "2026-09-27T15:21:36"
   },
   {
    "id": "WALK-A-124",
    "opened": "2026-09-27T14:54:48",
-   "closed": "",
+   "closed": "2026-09-27T15:29:19",
    "feature": "01.16",
    "found_on": [
     "and_emu"
@@ -6694,14 +6701,14 @@
    "applies_to": "phone",
    "title": "Android: return from the full profile to the four-row window is jumpy",
    "what": "Founder, Android emulator 2026-09-27: ADD › 'Want to see your full teaching profile?' › X lands correctly on the four-row window, but the transition jumps. iPhone is smooth. Likely the window's Modal fading in while the stack's back animation is still running (WALK-A-119 raises it on the pathname change); wait for the transition to end before raising it.",
-   "fix": "",
-   "files": "mobile/app/(app)/_layout.jsx (profileWinRef effect)",
+   "fix": "[FIXED 2026-09-27T15:21:36] (app)/_layout.jsx: on Android the window is raised 320 ms after the route returns (after the stack's back animation), not in the same frame; iOS unchanged. A timer, since the native stack does not register an InteractionManager interaction.\n[RE-WALKED 2026-09-27] PASS.",
+   "files": "mobile/app/(app)/_layout.jsx",
    "commit": "",
    "native_rebuild": false,
-   "status": "open",
+   "status": "closed",
    "recheck": [],
    "owner": "Kumar",
-   "at": "2026-09-27T14:54:48"
+   "at": "2026-09-27T15:21:36"
   }
  ]
 }

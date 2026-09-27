@@ -9,7 +9,7 @@
  * the class cards, a lesson opened from them — reads as My Classes; Settings lights neither
  * and hides the bar entirely (its screen arrives in step 6). */
 import { useEffect, useRef, useState } from "react";
-import { AppState, BackHandler, View } from "react-native";
+import { AppState, BackHandler, Platform, View } from "react-native";
 import { Redirect, Stack, useGlobalSearchParams, useRouter, usePathname } from "expo-router";
 import { getJSON, getUser, postJSON } from "@aruvi/shared/format";
 import { pullSectionState, setSectionMismatchHandler } from "@aruvi/shared/sectionState";
@@ -98,7 +98,14 @@ export default function AppLayout() {
     const r = profileWinRef.current;
     if (!r || pathname.startsWith("/settings/profile")) return;
     profileWinRef.current = null;
-    if (pathname === r.from && r.win) setPortalWin(r.win);
+    if (pathname !== r.from || !r.win) return;
+    /* WALK-A-124 (Android, 2026-09-27): raised in the same frame, the window's Modal faded in
+       while the stack's back animation was still sliding the profile away — a visible jump. Wait
+       for that transition (~300 ms) to finish. A timer, not InteractionManager: the native stack
+       does not register its animation as an interaction, so that would fire at once. iOS was
+       already smooth and keeps its immediate raise. */
+    const id = setTimeout(() => setPortalWin(r.win), Platform.OS === "android" ? 320 : 0);
+    return () => clearTimeout(id);
   }, [pathname]);
   useEffect(() => subscribePortal((p) => {
     setWin(p.win); setEdit(p.edit); setPick(p.pick); setScope(p.scope); setPickBack(p.pickBack);
