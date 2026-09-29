@@ -229,6 +229,18 @@ export default function SettingsHome() {
     const hidden = Keyboard.addListener("keyboardDidHide", () => setKbH(0));
     return () => { shown.remove(); hidden.remove(); };
   }, []);
+  /* ★ PAD ONLY WHAT THE KEYPAD ACTUALLY COVERS (WALK-A-147, founder 2026-09-29, Pixel 7: the
+     delete box "sits on the top of the screen leaving large space empty below"). Where Android
+     DOES resize the window for the keypad (API 34 here; Expo Go's adjustResize), the scroller
+     has already shrunk by the keypad's height, and padding by it AGAIN left a keypad-sized blank
+     under the block — the iPhone's double-inset of 2026-09-21, reached on Android. The
+     scroller's own height is watched: whatever it lost to the keypad is subtracted, so a window
+     that resized is padded only the small remainder and one that did not (edge-to-edge) is
+     padded in full. ChapterOrg's notes window has used this rule since WALK-A-091. */
+  const baseH = useRef(0);
+  const [curH, setCurH] = useState(0);
+  const shrunk = baseH.current && curH ? Math.max(0, baseH.current - curH) : 0;
+  const kbPad = Math.max(0, kbH - shrunk);
 
   /* WALK-A-043: she left this screen holding the last-step window open, to read her data. Put it
      back exactly as it was the moment she returns — the tick stays hers to give. */
@@ -295,7 +307,12 @@ export default function SettingsHome() {
          2026-09-21, iPhone sweep). Android gets nothing from that prop, which is why it needed
          the measurement in the first place. */
       contentContainerStyle={[ws.main, { paddingTop: 12 },
-                              Platform.OS === "android" && kbH ? { paddingBottom: kbH + 24 } : null]}
+                              Platform.OS === "android" && kbH ? { paddingBottom: kbPad + 24 } : null]}
+      onLayout={(e) => {
+        const h = e.nativeEvent.layout.height;
+        if (!kbH && h > baseH.current) baseH.current = h;   // the keypad-down height
+        setCurH(h);
+      }}
       keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* ✅ LIVE AS OF 6d — the accordion, read-only. What she can CHANGE is the bar's "+";
           this is where she reads what she has told Meyy she teaches. */}

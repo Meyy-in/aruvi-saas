@@ -22,7 +22,15 @@ export default function TextSizeToggle() {
   const ws = useWebStyles();
   const cur = ORDER.includes(textSize) ? textSize : "system";
   return (
+    /* ★ THE VALUE HOLDS STILL (WALK-A-149, founder 2026-09-29: "the field jumps up and down for
+       each change"). It was centred in a card whose words grow with the very setting it changes,
+       and its WIDTH changed with the word, so the card's text re-wrapped too. Now it sits in a
+       FIXED box — one width for every word, one height for the two-line "Device Default" —
+       pinned to the TOP of the card, beside the label's first line. The card still grows with
+       the text (that is the setting taking effect), but the value no longer moves inside it. */
     <Pressable hitSlop={10} accessibilityRole="button" accessibilityLabel={LABEL[cur]}
+      style={{ alignSelf: "flex-start", width: 58, height: 22, justifyContent: "center",
+               alignItems: "flex-end" }}
       accessibilityHint="Tap to change"
       onPress={() => setTextSize(ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length])}>
       {/* "Device Default" sits on TWO lines, smaller, so it fits the chevron's slot without making

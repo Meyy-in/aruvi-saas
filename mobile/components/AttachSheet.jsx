@@ -28,7 +28,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { View, Modal, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions }
   from "react-native";
 import { Text } from "./Text";
-import { BAR_CONTENT_H } from "./Bar";
+import { useBarBottom } from "../lib/chrome";
 import PrepareCta from "./PrepareCta";
 import { pretty, classNum, pad, bareChapterTitle } from "@aruvi/shared/format";
 import { readHistory } from "@aruvi/shared/sectionHistory";
@@ -121,7 +121,8 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
      just under the brand bar — so it never covers it (WALK-A-112) — and it may run down to the
      safe area at the foot, so the class list, its note and Save fit without scrolling. Confirms
      and the four-row menu keep the centred card. */
-  const hangTop = (insets.top || 0) + BAR_CONTENT_H + 8;
+  const barBottom = useBarBottom();   // WALK-A-148: the MEASURED bar, + the status bar where Android left it out
+  const hangTop = barBottom + 8;
   const hang = scroll && !confirm && !kbCap;
   const hangCap = hang ? { maxHeight: winH - hangTop - Math.max(20, (insets.bottom || 0) + 12) } : null;
   const body = scroll

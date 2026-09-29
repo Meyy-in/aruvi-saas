@@ -474,7 +474,11 @@ export default function AssessPanel({ ws, t, items, assessment }) {
             {set.tabs.map(([id, label]) => (
               <Pressable key={id} onPress={() => setITab(id)} accessibilityRole="tab" accessibilityState={{ selected: tab === id }}
                 style={[ws.assess_mt, tab === id && ws.assess_mt_on]}>
-                <Text style={[ws.assess_mt_t, tab === id && ws.assess_mt_on_t]}>{label}</Text>
+                {/* WALK-A-145: four equal tabs; at 1.2× on a 393-wide iPhone INCLUSIVITY no longer
+                    fits and its last letter wrapped. One line always — the label shrinks a little
+                    only when it would otherwise wrap, never at the design size. */}
+                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}
+                  style={[ws.assess_mt_t, tab === id && ws.assess_mt_on_t]}>{label}</Text>
               </Pressable>
             ))}
           </View>

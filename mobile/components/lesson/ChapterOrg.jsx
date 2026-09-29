@@ -15,7 +15,8 @@ import { fetchEntitlement, fetchPlanNotes, savePlanNote, planNoteKey, userKey } 
 import { storage } from "@aruvi/shared/storage";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
-import { BAR_CONTENT_H } from "../Bar";
+import { BNAV_H } from "../BottomNav";
+import { useBarBottom } from "../../lib/chrome";
 
 /* `sectionLabel` (WALK-A-076): a lesson opened from a My Classes card says WHICH section it is
    being taught to — her own name for it where she gave one, else the tag. Same line as the web's
@@ -259,6 +260,7 @@ const RULE_H = 32;
 
 function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave, onClose, readOnly }) {
   const insets = useSafeAreaInsets();
+  const barBottom = useBarBottom();
   const [text, setText] = useState(initial || "");
   const [showWarn, setShowWarn] = useState(false);   // WALK-A-092: the warning behind a link
   const [paperH, setPaperH] = useState(0);      // the visible sheet
@@ -338,7 +340,13 @@ function ChapterNotesModal({ ws, t, chapterTitle, subjectGrade, initial, onSave,
        named in the component that makes it. **Do not "fix" either surface to match the other
        without asking again.** */
     <Modal visible transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
-      <View style={{ flex: 1, paddingTop: insets.top + BAR_CONTENT_H, paddingBottom: kbPad }}
+      /* WALK-A-150 (founder, iPhone 2026-09-29: "the notes hides part of bottom nav bar"): it
+         opened below the bar but ran to the foot of the screen. A panel is a room INSIDE the app —
+         it stops above the bottom nav too, as Ask Meyy's does (BNAV_H + the safe-area inset). With
+         the keyboard up the nav is under the keys, so the keyboard's padding takes over.
+         WALK-A-148: the top is the MEASURED bar (lib/chrome), not a constant. */
+      <View style={{ flex: 1, paddingTop: barBottom,
+                     paddingBottom: kb ? kbPad : BNAV_H + (insets.bottom || 0) }}
         onLayout={(e) => {
           const h = e.nativeEvent.layout.height;
           if (!kb && h > baseH.current) baseH.current = h;   // the keyboard-down height

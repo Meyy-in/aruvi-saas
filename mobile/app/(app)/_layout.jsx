@@ -39,6 +39,7 @@ import { useTour, tourNext, tourBack, tourSkip, useTourOverlayHost } from "../..
 import { closeAsk, subscribeAsk, toggleAsk } from "../../lib/ask";
 import { onSessionRefused } from "../../lib/boot";
 import { endSession } from "../../lib/session";
+import { setBarHeight } from "../../lib/chrome";   // WALK-A-148: windows open below the MEASURED bar
 
 export default function AppLayout() {
   const { t } = useTheme();
@@ -368,7 +369,7 @@ export default function AppLayout() {
           OUTSIDE `(app)` by design (§0, Q23), and first run's carries `gear={false}`. */}
       {/* The onLayout is Ask Meyy's `--hdr-h` — see `barH` above. It wraps the BRAND BAR and
           nothing else, because that is what the web measures. */}
-      <View onLayout={(e) => setBarH(e.nativeEvent.layout.height)}>
+      <View onLayout={(e) => { setBarH(e.nativeEvent.layout.height); setBarHeight(e.nativeEvent.layout.height); }}>
         <Bar onSettings={() => router.push("/settings")} />
       </View>
       {/* ★ THE FROZEN SETTINGS BAR (app. 04 rows A3-A5) sits in the slot the web's tab row

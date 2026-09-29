@@ -18,7 +18,8 @@ import { resetActivation } from "./firstRun";
 import { clearPurchase } from "./purchase";
 
 /* The web's own extra prefixes, kept in step with page.jsx's onSignOut. */
-const EXTRA = ["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_"];
+const EXTRA = ["setup_check_pending_", "mylessons_subject_", "mylessons_class_", "allocations_",
+  "aruvi_invoices_"];   // the phone's copy of her invoices (WALK-A-146)
 
 /* ★ EVERY CALLER NAMES ITSELF, and that is not decoration (2026-09-16). A teacher was found
  * signed out mid-session with no way to tell which of the six doors had done it: the bar's Log

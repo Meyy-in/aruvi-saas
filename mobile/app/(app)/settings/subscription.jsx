@@ -32,7 +32,8 @@ import { View, ScrollView, Pressable, Animated, Easing } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { pendingPurchase, settlePurchase, recentPurchase, clearRecent } from "../../../lib/purchase";
 import { Text } from "../../../components/Text";
-import { getJSON, fmtValidity, scopeRows, subsFromEntitlement } from "@aruvi/shared/format";
+import { getJSON, fmtValidity, scopeRows, subsFromEntitlement, userKey } from "@aruvi/shared/format";
+import { storage } from "@aruvi/shared/storage";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { canPreview, downloadDocument, fetchDocument, invoicePdf } from "../../../lib/download";
 import { useTheme } from "../../../theme/ThemeContext";
@@ -104,7 +105,20 @@ export default function Subscription() {
 
   /* Never gated (§2.5): a document recording money she paid stays reachable after the thing it
      paid for has ended. */
-  const [invoices, setInvoices] = useState([]);
+  /* ★ PAINTED FROM THE PHONE'S COPY, REFRESHED BEHIND IT (WALK-A-146, founder 2026-09-29: "the
+     invoice takes a second more to appear than the rest"). The cards come from the entitlement
+     store, already on the device; the invoices were fetched on every visit and kept nowhere, so
+     each card's invoice line arrived a beat after the card. The last list is now kept per teacher
+     (`aruvi_invoices_{user}`, swept at sign-out — lib/session EXTRA) and the fetch below replaces
+     it. A bonus: her invoices are still listed when the phone is offline. */
+  const [invoices, setInvoicesState] = useState(() => {
+    try { const raw = storage.getItem(userKey("aruvi_invoices")); return raw ? JSON.parse(raw) : []; }
+    catch { return []; }
+  });
+  const setInvoices = (list) => {
+    setInvoicesState(list);
+    try { storage.setItem(userKey("aruvi_invoices"), JSON.stringify(list || [])); } catch {}
+  };
   /* The scopes of a purchase still settling (lib/purchase). Re-read on FOCUS, not mount: the
      wizard is pushed on top of this screen and pops back to it, so there is no second mount. */
   const [pending, setPending] = useState(() => pendingPurchase());
@@ -136,7 +150,7 @@ export default function Subscription() {
          retries cover a slow disk or mail step. Two seconds apart, for up to half a minute,
          then the line simply waits for her next visit rather than spinning for ever. */
       if (left.length && ++tries < 15) timer = setTimeout(load, 2000);
-    }).catch(() => { if (live && !invoices.length) setInvoices([]); });
+    }).catch(() => {});   // offline or refused: keep what is on the phone (WALK-A-146)
     setPending(pendingPurchase());
     load();
     return () => { live = false; if (timer) clearTimeout(timer); };
