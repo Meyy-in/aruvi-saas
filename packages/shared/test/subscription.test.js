@@ -39,14 +39,14 @@ test("an unknown stage shows a dash, not an empty cell", () => {
   assert.equal(scopeRows("science/tertiary").classes, "—");
 });
 
-test("latest expiry first, and a tie keeps cart order", () => {
+test("earliest expiry first, and a tie keeps cart order (WALK-A-129)", () => {
   const subs = subsFromEntitlement({
     scopes: ["a/middle", "b/middle", "c/middle"],
     scope_valid_until: { "a/middle": "2027-01-01", "b/middle": "2027-06-01",
                          "c/middle": "2027-01-01" },
     live_scopes: ["a/middle", "b/middle", "c/middle"],
   });
-  assert.deepEqual(subs.map((s) => s.scope), ["b/middle", "a/middle", "c/middle"]);
+  assert.deepEqual(subs.map((s) => s.scope), ["a/middle", "c/middle", "b/middle"]);
 });
 
 test("live comes from the server's list, not from a date the client compared", () => {
@@ -128,7 +128,7 @@ test("a subject whose grades fail is omitted, never listed empty", async () => {
   assert.deepEqual(map.good, ["preparatory"]);
 });
 
-test("★ newest PURCHASE first — the invoice's issue time decides (2026-09-18)", () => {
+test("★ earliest EXPIRY first, whatever was bought last (WALK-A-129 supersedes 2026-09-18)", () => {
   const ent = { scopes: ["old/middle", "new/middle", "grant/middle"],
     scope_valid_until: { "old/middle": "2027-01-10", "grant/middle": "2027-05-01" },
     valid_until: "2027-09-18",            // new/middle has only the account-wide date
@@ -136,5 +136,8 @@ test("★ newest PURCHASE first — the invoice's issue time decides (2026-09-18
   const inv = [{ scopes: ["new/middle"], issued_at: "2026-09-18T09:00:00+00:00" },
                { scopes: ["old/middle"], issued_at: "2026-01-10T09:00:00+00:00" }];
   assert.deepEqual(subsFromEntitlement(ent, inv).map((s) => s.scope),
-    ["new/middle", "grant/middle", "old/middle"]);
+    ["old/middle", "grant/middle", "new/middle"]);
+  // `bought` still knows which one is newest — that is what the "New" tag reads.
+  const subs = subsFromEntitlement(ent, inv);
+  assert.equal(subs.find((s) => s.scope === "new/middle").bought, "2026-09-18T09:00:00+00:00");
 });

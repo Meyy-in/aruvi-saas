@@ -135,3 +135,17 @@ export function clearAccount() {
   mem = null;
   inflight = null;
 }
+
+/* ★ WHAT HER DATA EXPORT IS CALLED (WALK-A-132, founder 2026-09-28):
+ *   Meyy_{FirstName}_{Mon}_{YYYY}_data.{fmt}   e.g. Meyy_Kumar_Sep_2026_data.docx
+ * No name on the account (a trial teacher downloading from the delete window) → the last four
+ * digits of her mobile: Meyy_3210_Sep_2026_data.docx. The first name is the bar's own rule
+ * (`accountFirstName`), with anything that is not a letter or digit dropped so no platform's
+ * file system can object. One function for web and phone, so the two can never disagree. */
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+export function dataExportName(account, fmt = "docx", now = new Date(), mobile = "") {
+  const first = accountFirstName(account).replace(/[^\p{L}\p{N}]/gu, "");
+  const digits = String((account && account.phone) || mobile || "").replace(/\D/g, "");
+  const who = first || digits.slice(-4) || "teacher";
+  return `Meyy_${who}_${MONTHS[now.getMonth()]}_${now.getFullYear()}_data.${fmt}`;
+}

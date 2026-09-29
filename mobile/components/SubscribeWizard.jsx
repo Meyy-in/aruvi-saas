@@ -571,7 +571,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
           <Text style={[ws.ob_title, { color: t.ink }]}>What do you teach?</Text>
           <Text style={[ws.ob_sub, { color: t.ink_soft }]}>
             Each subject & stage is its own subscription — unlimited lesson plans across all its
-            classes. The total updates as you add.</Text>
+            classes. The total amount updates as you add.</Text>
 
           {!stageMap ? <Text style={ws.fr_loading}>Loading subjects…</Text> : null}
           {stageMap ? rows.map((r, i) => (

@@ -238,10 +238,37 @@ export async function postJSON(path, body, timeoutMs = POST_TIMEOUT_MS) {
  * ⚠️ "Other" is LAST in both and is not sorted with the rest — it is an escape hatch, not a
  * state. */
 export const ROLES = ["Teacher", "Academic coordinator", "Head of school", "Other"];
-export const STATES = ["Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa",
-  "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
-  "Madhya Pradesh", "Maharashtra", "Odisha", "Punjab", "Rajasthan", "Tamil Nadu",
-  "Telangana", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Other"];
+/* ★ EVERY STATE AND UNION TERRITORY (WALK-A-127, founder 2026-09-28: "why only 22 states?").
+   The list had 21 states + Delhi; the seven north-eastern states and seven UTs were missing, so a
+   teacher in Shillong or Puducherry had to call herself "Other". All 28 states + 8 UTs, one
+   alphabetical run (UTs under their short names), "Other" still last. */
+export const STATES = ["Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh",
+  "Assam", "Bihar", "Chandigarh", "Chhattisgarh",
+  "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana",
+  "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh",
+  "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+  "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Other"];
+
+/* ★ ROLE "OTHER" SAYS WHAT (WALK-A-126, founder 2026-09-28: "necessary to know who is this").
+   Choosing Other opens a box, and what she types there IS her stored role — no new field, no
+   schema change: a stored role that is not one of ROLES reads back as Other + that text. A bare
+   "Other" (an older record) reads back as Other with an empty box, which the forms then ask
+   her to fill. */
+export const ROLE_OTHER = "Other";
+export const roleChoice = (stored) => {
+  const r = String(stored || "").trim();
+  if (!r) return "";
+  return ROLES.includes(r) ? r : ROLE_OTHER;
+};
+export const roleOtherText = (stored) => {
+  const r = String(stored || "").trim();
+  return r && !ROLES.includes(r) ? r : "";
+};
+/* What to save: the choice, or — for Other — the typed words. "" while Other is still empty,
+   so a form can hold its Save/Continue on `!roleToSave(...)`. */
+export const roleToSave = (choice, otherText) =>
+  choice === ROLE_OTHER ? String(otherText || "").trim() : String(choice || "");
 
 /* Deliberately loose — "has an @ and a dot after it". The server and the mail provider are the
  * real validators, and a client regex strict enough to be interesting is a client regex that
@@ -524,6 +551,13 @@ export const scopeRows = (scope) => {
  * an older API, and the server is the authority because it honours ARUVI_TODAY, which no client
  * can. An EXPIRED subscription is still returned: she owned it, and its row is the explanation
  * for anything she can no longer prepare there. */
+/* ★ EARLIEST EXPIRY FIRST (WALK-A-129, founder 2026-09-28) — SEEING and LISTING are separated.
+ * The LIST is always ordered by what runs out first, so the subscription that needs her attention
+ * next sits at the top. A new purchase is SEEN another way: the screen opens scrolled to it with a
+ * "New" tag (page.jsx `justBought`), so it no longer has to jump the queue to be found. `bought`
+ * is still computed — it is what "newest purchase" means wherever that is asked. A scope with no
+ * date sorts last. Ties keep cart order.
+ * (Superseded below: NEWEST PURCHASE FIRST, founder 2026-09-18.) */
 /* ★ NEWEST PURCHASE FIRST (founder, 2026-09-18: "latest top, oldest last"). The order is WHEN
  * SHE BOUGHT IT: the issue time of the newest invoice that lists the scope. A scope with no
  * invoice (a manual grant) falls back to one year before its validity date — every subscription
@@ -547,7 +581,7 @@ export function subsFromEntitlement(e, invoices = null) {
       live: Array.isArray(liveList) ? liveList.includes(scope)
                                     : !(until && until < today),
     };
-  }).sort((a, b) => (b.bought || "").localeCompare(a.bought || "") || a.i - b.i);
+  }).sort((a, b) => (a.until || "9999").localeCompare(b.until || "9999") || a.i - b.i);
 }
 
 /* ───── what she HOLDS, as against what she may be OFFERED (founder, 2026-09-17) ─────
