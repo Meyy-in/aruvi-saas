@@ -1362,6 +1362,7 @@ def get_readiness(identity: tuple = Depends(_current_identity)) -> Dict[str, Any
     ready = bool(profile and profile.get("subjects"))
     if _readback_skew_due(tenant_id, user_id):
         profile = _skewed_profile(profile)
+        print(f"[aruvi] TEST read-back skew applied for …{str(user_id)[-4:]}", flush=True)
     return {"ready": ready, "readiness": profile}
 
 
@@ -1375,8 +1376,16 @@ def _readback_skew_listed(tenant_id: str, user_id: str) -> bool:
     if not config.TEST_READBACK_SKEW:
         return False
     acct = account_repo.load(tenant_id, user_id)
-    digits = "".join(c for c in ((acct.phone if acct else "") or "") if c.isdigit())
-    return bool(digits) and digits[-10:] in config.TEST_READBACK_SKEW
+    for raw in ((acct.phone if acct else "") or "", user_id or ""):
+        digits = "".join(c for c in str(raw) if c.isdigit())
+        if digits and digits[-10:] in config.TEST_READBACK_SKEW:
+            return True
+    return False
+
+
+if config.TEST_READBACK_SKEW:
+    print(f"[aruvi] TEST read-back skew ON for {len(config.TEST_READBACK_SKEW)} number(s) — walk row X.02 only",
+          flush=True)
 
 
 def _readback_skew_due(tenant_id: str, user_id: str) -> bool:
