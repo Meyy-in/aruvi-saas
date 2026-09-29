@@ -851,8 +851,29 @@ def health() -> Dict[str, str]:
 
 
 @app.get("/subjects")
-def get_subjects() -> Dict[str, Any]:
+def get_subjects(x_aruvi_user: Optional[str] = Header(default=None),
+                 authorization: Optional[str] = Header(default=None)) -> Dict[str, Any]:
+    if config.TEST_SUBJECTS_FAIL and _subjects_fail_due(x_aruvi_user, authorization):
+        print("[aruvi] TEST /subjects failure served (walk row X.13)", flush=True)
+        raise HTTPException(status_code=503, detail="Test: subject list unavailable.")
     return {"subjects": subjects.available()}
+
+
+def _subjects_fail_due(x_aruvi_user, authorization) -> bool:
+    """TEST-ONLY (config.TEST_SUBJECTS_FAIL). Never raises — a broken check must not break
+    the catalogue for anyone."""
+    try:
+        ident = auth_provider.verify_token(_credential(x_aruvi_user, authorization))
+        digits = "".join(c for c in str(ident.user_id or "") if c.isdigit())
+        if not digits or digits[-10:] not in config.TEST_SUBJECTS_FAIL:
+            return False
+        acct = account_repo.load(ident.tenant_id, ident.user_id)
+        if acct is None or not acct.created_at:
+            return False
+        age = (datetime.now(timezone.utc) - datetime.fromisoformat(acct.created_at)).total_seconds()
+        return 0 <= age <= config.SUBJECTS_FAIL_SECONDS
+    except Exception:
+        return False
 
 
 @app.get("/subjects/{subject}/grades")
@@ -1383,6 +1404,9 @@ def _readback_skew_listed(tenant_id: str, user_id: str) -> bool:
     return False
 
 
+if config.TEST_SUBJECTS_FAIL:
+    print(f"[aruvi] TEST /subjects failure ON for {len(config.TEST_SUBJECTS_FAIL)} number(s) — walk row X.13 only",
+          flush=True)
 if config.TEST_READBACK_SKEW:
     print(f"[aruvi] TEST read-back skew ON for {len(config.TEST_READBACK_SKEW)} number(s) — walk row X.02 only",
           flush=True)

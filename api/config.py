@@ -109,6 +109,17 @@ TEST_READBACK_SKEW = {
 }
 READBACK_SKEW_SECONDS = 20
 
+# TEST_SUBJECTS_FAIL (walk row X.13 on the phones, 2026-09-29): TEST-ONLY. Comma-separated mobile
+# numbers. For a listed account, GET /subjects answers 503 for SUBJECTS_FAIL_SECONDS after the
+# account record was created — i.e. through first run's opening moments — so the phone's
+# "Couldn't load the subject list" + Try again can be walked (airplane mode also cuts Expo Go off
+# from Metro). Empty (the default) = off for everyone.
+TEST_SUBJECTS_FAIL = {
+    "".join(c for c in n if c.isdigit())[-10:]
+    for n in os.environ.get("ARUVI_TEST_SUBJECTS_FAIL", "").split(",") if n.strip()
+}
+SUBJECTS_FAIL_SECONDS = 60
+
 # TRIAL LEDGER (founder, 2026-09-18): a free trial is once per mobile number, including across
 # an account erasure. The number is stored only as an HMAC under this key — SET IT on every real
 # deployment (Render secret) and never rotate it casually: a new key orphans every entry, which

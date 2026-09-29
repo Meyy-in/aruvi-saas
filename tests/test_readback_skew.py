@@ -62,7 +62,27 @@ def test_unlisted_number_is_never_skewed():
         config.TEST_READBACK_SKEW = set()
 
 
-if __name__ == "__main__":
+# ── TEST-ONLY /subjects failure (walk row X.13 on the phones) ──────────────────
+def test_subjects_fail_only_for_listed_new_account():
+    from datetime import datetime, timedelta, timezone
+    c = TestClient(api_main.app, raise_server_exceptions=False)
+    assert c.get("/subjects").status_code == 200                       # off: untouched
+    config.TEST_SUBJECTS_FAIL = {"9000000026"}
+    try:
+        h = {"X-Aruvi-User": "9000000026"}
+        assert c.get("/readiness", headers=h).status_code == 200      # JIT-creates the account
+        assert c.get("/subjects", headers=h).status_code == 503       # fresh → fails
+        assert c.get("/subjects", headers={"X-Aruvi-User": "9000000003"}).status_code == 200
+        assert c.get("/subjects").status_code == 200                  # anonymous → untouched
+        acct = api_main.account_repo.load("9000000026", "9000000026")
+        acct.created_at = (datetime.now(timezone.utc) - timedelta(seconds=120)).isoformat()
+        api_main.account_repo.save(acct)
+        assert c.get("/subjects", headers=h).status_code == 200       # window over → works
+    finally:
+        config.TEST_SUBJECTS_FAIL = set()
+
+
+if __name__ == "__main__":  # noqa
     for n, f in list(globals().items()):
         if n.startswith("test_"):
             f(); print("ok", n)
