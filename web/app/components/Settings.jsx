@@ -185,13 +185,15 @@ function PersonalProfile({ onSaved, leaveGuardRef }) {
             <h2 className="acct-final-t" id="pp-leave-t">Save your changes?</h2>
             <p className="acct-final-p">You've changed your personal profile and not saved it.</p>
             <div className="acct-final-row">
-              <button className="primary" disabled={busy || !canSave}
+              <button className="primary" autoFocus disabled={busy || !canSave}
                 onClick={async () => {
                   const go = askLeave;
                   if (await save()) { setAskLeave(null); dirtyRef.current = false; go(); }
                   else setAskLeave(null);
                 }}>{busy ? "Saving…" : "Save"}</button>
-              <button className="acct-del-cancel"
+              {/* Two real buttons (founder, re-walk 2026-09-29): Save is the default — pine, and
+                  it holds the focus, so Enter saves; leaving is the bordered alternative. */}
+              <button className="ob-offer-alt"
                 onClick={() => { const go = askLeave; setAskLeave(null); dirtyRef.current = false; go(); }}>
                 Leave without saving</button>
             </div>
@@ -761,7 +763,12 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = dataExportName(cachedAccount(), fmt, new Date(), getUser());   // WALK-A-132
+      /* WALK-A-132: the name comes from HER ACCOUNT, read now — the web keeps no device copy
+         of it (the shared account store is the phone's), so reading that store gave nothing
+         and every file fell back to the mobile's last four digits. */
+      const acct = await fetch(`${API}/account`, withUser())
+        .then((x) => (x.ok ? x.json() : null)).catch(() => null);
+      a.download = dataExportName(acct || cachedAccount(), fmt, new Date(), getUser());
       document.body.appendChild(a);
       a.click();
       a.remove();
