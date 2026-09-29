@@ -73,6 +73,11 @@ services:
         generateValue: true
       - key: ARUVI_ENTITLEMENT_ENFORCED
         value: "1"
+      # TEST-ONLY (walk row X.02): mobile numbers whose read-back right after a profile save
+      # reports periods-a-week +1, so the save-failed banner can be walked. Leave EMPTY in
+      # normal running; set in the dashboard only for the walk. api/config.TEST_READBACK_SKEW.
+      - key: ARUVI_TEST_READBACK_SKEW
+        sync: false
       - key: ARUVI_LP_YEAR
         value: "2026-27"
       # Outbound mail — same three-variable seam as dev.sh; absent → file outbox.

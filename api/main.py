@@ -1360,7 +1360,43 @@ def get_readiness(identity: tuple = Depends(_current_identity)) -> Dict[str, Any
     tenant_id, user_id = identity
     profile = readiness_repo.load_profile(tenant_id, user_id)
     ready = bool(profile and profile.get("subjects"))
+    if _readback_skew_due(tenant_id, user_id):
+        profile = _skewed_profile(profile)
     return {"ready": ready, "readiness": profile}
+
+
+# ── TEST-ONLY read-back skew (walk row X.02; config.TEST_READBACK_SKEW) ─────────────────────
+# Off unless the env var names this account's mobile. In-process memory is enough: the window
+# is seconds long and Render runs one process.
+_last_readiness_post: Dict[tuple, float] = {}
+
+
+def _readback_skew_listed(tenant_id: str, user_id: str) -> bool:
+    if not config.TEST_READBACK_SKEW:
+        return False
+    acct = account_repo.load(tenant_id, user_id)
+    digits = "".join(c for c in ((acct.phone if acct else "") or "") if c.isdigit())
+    return bool(digits) and digits[-10:] in config.TEST_READBACK_SKEW
+
+
+def _readback_skew_due(tenant_id: str, user_id: str) -> bool:
+    import time
+    at = _last_readiness_post.get((tenant_id, user_id))
+    return (at is not None and time.time() - at <= config.READBACK_SKEW_SECONDS
+            and _readback_skew_listed(tenant_id, user_id))
+
+
+def _skewed_profile(profile):
+    import copy
+    p = copy.deepcopy(profile or {})
+    for subj in p.get("subjects") or []:
+        for g in subj.get("grades") or []:
+            try:
+                g["periods_per_week"] = int(g.get("periods_per_week") or 0) + 1
+            except (TypeError, ValueError):
+                g["periods_per_week"] = 1
+            return p
+    return p
 
 
 @app.post("/readiness/impact")
@@ -1405,6 +1441,9 @@ def save_readiness(req: ReadinessRequest,
         if impact:
             _apply_cascade(tenant_id, user_id, year, diff)
         readiness_repo.save_profile(tenant_id, user_id, {"subjects": req.subjects})
+        if config.TEST_READBACK_SKEW:
+            import time
+            _last_readiness_post[(tenant_id, user_id)] = time.time()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save readiness: {str(e)}")
     saved = readiness_repo.load_profile(tenant_id, user_id)

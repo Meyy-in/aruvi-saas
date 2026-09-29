@@ -97,6 +97,18 @@ ENTITLEMENT_ENFORCED = os.environ.get("ARUVI_ENTITLEMENT_ENFORCED", "").strip().
 # serves. Empirical; env-overridable for the field test.
 TRIAL_CHAPTER_CAP = int(os.environ.get("ARUVI_TRIAL_CHAPTERS", "3"))
 
+# TEST_READBACK_SKEW (walk row X.02, 2026-09-29): TEST-ONLY. Comma-separated mobile numbers
+# (last 10 digits are compared). For a listed account, a GET /readiness within
+# READBACK_SKEW_SECONDS of its own POST /readiness answers with periods-a-week +1 on its first
+# class, so the client's read-after-write check sees a mismatch — the one state the save-failed
+# banner exists for and that cannot be produced by hand. Empty (the default) = off for everyone.
+# The stored record is never altered; only that one read-back is.
+TEST_READBACK_SKEW = {
+    "".join(c for c in n if c.isdigit())[-10:]
+    for n in os.environ.get("ARUVI_TEST_READBACK_SKEW", "").split(",") if n.strip()
+}
+READBACK_SKEW_SECONDS = 20
+
 # TRIAL LEDGER (founder, 2026-09-18): a free trial is once per mobile number, including across
 # an account erasure. The number is stored only as an HMAC under this key — SET IT on every real
 # deployment (Render secret) and never rotate it casually: a new key orphans every entry, which
