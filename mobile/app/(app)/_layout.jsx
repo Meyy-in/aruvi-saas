@@ -34,6 +34,7 @@ import { subscribePortal, setPortalWin, enterPortal, openEdit, closeEdit, editBa
          openPick, pickSubject, pickBackToSubject, closePick, clearPortal } from "../../lib/portal";
 import { Sheet } from "../../components/AttachSheet";
 import AskMeyy from "../../components/AskMeyy";
+import PaywallSheet from "../../components/PaywallSheet";
 import GuidedTour from "../../components/GuidedTour";
 import { useTour, tourNext, tourBack, tourSkip, useTourOverlayHost } from "../../lib/tour";
 import { closeAsk, subscribeAsk, toggleAsk } from "../../lib/ask";
@@ -272,7 +273,13 @@ export default function AppLayout() {
   useEffect(() => {
     if (!ent.lapsed) return;
     clearPortal();
-    if (!pathname.startsWith("/lessons")) router.navigate("/lessons");
+    /* WALK-A-159 (2026-09-29, X.14 lapsed): this used to move her off EVERY screen but My Lessons
+       — so the ⚙ gear pushed /settings and was bounced straight back, and a lapsed teacher on the
+       phone could not reach Settings at all: not to renew, not to export or erase her data, not
+       Support (all of which §2.5 says are never gated; the web always kept them). Only the two
+       screens that GROW the account are closed to her: My Classes ("/") and Prepare. Reading a
+       lesson (/lesson, /preview), Settings and Subscribe stay open. */
+    if (pathname === "/" || pathname.startsWith("/prepare")) router.navigate("/lessons");
   }, [ent.lapsed, pathname]);
 
   /* ── THE ACTIVATION GATE (app. 01 rows 14-15; founder's Q5 answer, 2026-09-16) ──────────
@@ -533,6 +540,9 @@ export default function AppLayout() {
           on the stack, so a crossing costs nothing and the screen she returns to is the one she
           left, scroll position and all. The stores behind them (plans, readiness) make a genuine
           first mount cheap; this is what stops most of the mounts happening. */}
+      {/* WALK-A-152: the 402 window, on every tab (it lived only in My Lessons). */}
+      <PaywallSheet />
+
       <BottomNav
         active={active}
         /* ✅ WIRED 2026-09-16 (6a F5, Q7). These two props have existed since the nav was

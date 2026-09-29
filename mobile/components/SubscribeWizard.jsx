@@ -38,7 +38,7 @@
  * whole. Never disable a row's OWN value, or changing her mind strands the wheel on a dead option.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform, BackHandler, Linking } from "react-native";
+import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform, BackHandler, Linking, Switch, Keyboard } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, TextInput } from "./Text";
@@ -131,6 +131,32 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
      edge-to-edge is mandatory from Android 16. */
   const insets = useSafeAreaInsets();
   const footPad = { paddingBottom: 26 + insets.bottom };
+  /* WALK-A-154 (founder, 2026-09-29): with the keypad up, About you shrank to ONE field between
+     the frozen top and a lifted foot. The notice now scrolls with the form, and so does the foot
+     (Save & continue · Back) — see the About screen. The step rail stays frozen (2026-09-20). */
+  /* WALK-A-156 (founder, Android, 2026-09-29): with the keypad up she could not scroll past
+     School name to the (now scrolling) Save & continue — under edge-to-edge the padding the
+     KeyboardAvoidingView adds does not fully clear the keys on Android, so the end of the form
+     stayed beneath them. Android gets exactly the covered strip as extra scroll room while it
+     is up — and, as of the iPhone report the same day, on iOS too. */
+  const [kbPad, setKbPad] = useState(0);
+  useEffect(() => {
+    /* BOTH phones (founder, iPhone, same day): the iPhone showed the same wall. The measure is
+       exact, so where the KeyboardAvoidingView already clears the keys it adds nothing. */
+    /* Only the part of the form the keys still COVER — measured, not the keypad's full height,
+       which over-scrolled (City/School jumped the form up and left a blank under ← Back). The
+       KeyboardAvoidingView has already cleared some of it; this is the remainder. */
+    const a = Keyboard.addListener("keyboardDidShow", (e) => {
+      const kbTop = e && e.endCoordinates ? e.endCoordinates.screenY : null;
+      setTimeout(() => {
+        const sv = aboutScroll.current;
+        if (!sv || kbTop == null || !sv.measureInWindow) { setKbPad(0); return; }
+        sv.measureInWindow((x, y, w, h) => setKbPad(Math.max(0, Math.round(y + h - kbTop))));
+      }, 60);
+    });
+    const b = Keyboard.addListener("keyboardDidHide", () => setKbPad(0));
+    return () => { a.remove(); b.remove(); };
+  }, []);
   /* WALK-A-040: bring the tail of the form (City + School) clear of the lifted foot. Twice — the
      keyboard is still rising at 120ms and the scroll range is not final until it has landed. */
   const tailUp = () => {
@@ -420,7 +446,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   if (screen === "about") {
     /* WALK-A-022 (founder, 2026-09-20): City is mandatory, and every required field is starred. */
     /* WALK-A-142: the WhatsApp question must be answered; with Yes, email is optional. */
-    const ready = name.trim() && wa !== null && (wa === true || emailStage === "ok")
+    const ready = name.trim() && (wa === true || emailStage === "ok")
       && roleToSave(role, roleOther) && stateName && city.trim();
     /* WALK-A-031 (walk blocker, 2026-09-20): with a field focused the keyboard covered the foot,
        so "Save & continue" could not be reached without dismissing it. The screen now lifts its
@@ -433,7 +459,6 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
            the founder could not get past State. Same correction as the sign-in screen. */
         behavior="padding">
         {trialWindow}
-        {noticeBar}
         {/* The step rail stays FROZEN at the top (founder, walk 2026-09-20); only the form
             scrolls. automaticallyAdjustKeyboardInsets is dropped — the KeyboardAvoidingView
             already lifts the screen, and the two together over-shrank the scroll area. */}
@@ -441,6 +466,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
           <Steps at={1} />
         </View>
         <ScrollView ref={aboutScroll} contentContainerStyle={[ws.ob_body, { paddingTop: 10 }]} keyboardShouldPersistTaps="handled">
+          {noticeBar ? <View style={{ marginHorizontal: -16, marginBottom: 12 }}>{noticeBar}</View> : null}
           <Text style={[ws.ob_title, { color: t.ink }]}>Tell us a bit about yourself</Text>
           <Text style={[ws.ob_sub, { color: t.ink_soft }]}>
             For your receipt and your account — nothing more.</Text>
@@ -452,26 +478,21 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
           {/* Email — typed twice (EmailEntry, WALK-A-125): frozen + "change" once on record, two
               boxes and one Confirm while open, a mismatch that resets nothing. */}
           {/* WhatsApp — asked BEFORE email, because its answer decides whether email is required.
-              Two plain answers, neither preselected (WALK-A-142, the web's 04.33). */}
-          <View style={{ marginTop: 12, rowGap: 6 }}>
-            <Text style={[type.label, { color: t.ink_soft }]}>Support on WhatsApp?
-              <Text style={{ color: t.clay }}> *</Text></Text>
-            <Text style={[ws.ob_quiet, { color: t.ink_soft, marginTop: 0 }]}>Reach Meyy support on
-              WhatsApp from <Text style={{ color: t.ink }}>{mobileWords(getUser())}</Text>, your
-              sign-in number. Service messages only — never marketing.</Text>
-            <View style={{ flexDirection: "row", columnGap: 10 }}>
-              {[[true, "Yes, add WhatsApp"], [false, "No, thanks"]].map(([v, label]) => (
-                <Pressable key={label} onPress={() => setWa(v)} accessibilityRole="radio"
-                  accessibilityState={{ selected: wa === v }}
-                  style={{ flex: 1, minHeight: 44, borderRadius: 8, borderWidth: 1,
-                           borderColor: t.pine, alignItems: "center", justifyContent: "center",
-                           paddingHorizontal: 10,
-                           backgroundColor: wa === v ? t.pine : "transparent" }}>
-                  <Text style={[type.button, { color: wa === v ? "#f3efe6" : t.pine }]}>{label}</Text>
-                </Pressable>
-              ))}
+              ★ PERSONAL PROFILE'S SWITCH, SAME WORDS (founder, 2026-09-29, WALK-A-153) — the web's
+              SubscribeFlow made the same change. Starts OFF (opt-in stays her own act); `wa` stays
+              null until touched, which the server reads as "leave the stored choice". */}
+          <Field label="WhatsApp support">
+            <View style={[ws.ob_email_view, { borderColor: t.line, backgroundColor: t.card_bg }]}>
+              <Text style={[ws.ob_email_addr, { color: t.ink }]}>{wa === true
+                ? "On — Meyy support on WhatsApp from your sign-in number" : "Off"}</Text>
+              <Switch value={wa === true} onValueChange={setWa}
+                accessibilityLabel="Use WhatsApp for Meyy support"
+                trackColor={{ false: t.edge, true: t.pine }}
+                /* WALK-A-155: iOS draws the OFF track white with no fill; give both phones the same grey. */
+                ios_backgroundColor={t.edge} />
             </View>
-          </View>
+            <Quiet>Service messages only — never marketing.</Quiet>
+          </Field>
 
           <EmailEntry current={emailStage === "ok" ? email : ""} mask
             selfId={(acctRef.current || {}).account_id}
@@ -514,12 +535,16 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             <Input value={school} onChangeText={setSchool} placeholder="Enter your school name"
               onFocus={tailUp} />
           </Field>
+          {/* ★ THE FOOT SCROLLS WITH THE FORM (founder, 2026-09-29, WALK-A-154) — it SUPERSEDES
+              WALK-A-031's always-visible CTA. Save & continue arrives as she scrolls, like the
+              fields above it, and gives the form the room it was holding. Focusing City or School
+              still scrolls to the end (tailUp), so the button is on screen when the last field is. */}
+          <View style={{ marginTop: 22, rowGap: 10, alignItems: "center", paddingBottom: insets.bottom + kbPad }}>
+            <Button title="Save & continue →" disabled={!ready}
+              onPress={() => setScreen("agreement")} style={{ width: "100%" }} />
+            <Link title="← Back" onPress={cancel} />
+          </View>
         </ScrollView>
-        <View style={[ws.ob_foot, footPad, { backgroundColor: t.paper }]}>
-          <Button title="Save & continue →" disabled={!ready}
-            onPress={() => setScreen("agreement")} style={{ width: "100%" }} />
-          <Link title="← Back" onPress={cancel} />
-        </View>
       </KeyboardAvoidingView>
     );
   }

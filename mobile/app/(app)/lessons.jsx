@@ -54,7 +54,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../components/Text";
 import {
-  API, classNum, getJSON, postJSON, pad, paywallKicker,
+  API, classNum, getJSON, postJSON, pad,
   pretty, subjectSlug, gradeSlug, userKey, withUser,
 } from "@aruvi/shared/format";
 import { subscribeYear } from "@aruvi/shared/year";
@@ -76,7 +76,7 @@ import { RollWheel } from "../../components/RollWheel";
 import PrepareCta from "../../components/PrepareCta";
 import ProposedCard, { matrixLabel } from "../../components/ProposedCard";
 import ReportButton from "../../components/ReportSheet";
-import { subscribePreparing, clearPreparing, clearPaywall, retryPreparing } from "../../lib/preparing";
+import { subscribePreparing, clearPreparing, retryPreparing } from "../../lib/preparing";
 import { cancelLessonsScope, noteLessonsScope, openEdit } from "../../lib/portal";
 import YearPlan from "../../components/YearPlan";
 import { useTheme } from "../../theme/ThemeContext";
@@ -717,7 +717,6 @@ export default function MyLessons() {
   const [ent, setEnt] = useState(() => entitlementState());
   /* The paywall's second body. Reset on the way out, never on the way in, so the window
      cannot reopen already showing the note. */
-  const closePaywall = useCallback(() => { clearPaywall(); }, []);
   useEffect(() => subscribeEntitlement(setEnt), []);
 
   /* The frozen header is drawn ONLY when there are wheels to put in it. The web returns before
@@ -995,48 +994,8 @@ export default function MyLessons() {
         )) : null}
       </ScrollView>
 
-      {/* ★ THE PAYWALL IS NOT AN ERROR (founder, 2026-08-24). A 402 — trial exhausted, or out of
-          subscription — must never render as a failed card or an inline card message: the card
-          comes DOWN and a window carries the sentence instead. The server's own wording travels
-          up unchanged, because it is written FOR HER. It lands here rather than on the prepare
-          screen because by the time a 402 arrives that screen is gone.
-
-          ★ AND IT IS THE WEB'S WINDOW NOW (founder's Q6 answer, 2026-09-16: "mimic web to add
-          'Not Now' button + Subscribe button"). Two things were wrong with what stood here.
-          ⓵ THE TITLE WAS A LIE FOR TWO OF THE THREE WALLS. "Your free chapters are used up" was
-          hardcoded over every 402, so a teacher blocked because she had reached a subject she
-          has not bought — or because her subscription ended — was told she had spent chapters
-          she never touched. The heading is now read off the server's sentence, which is the only
-          thing that knows which wall this is, by the SHARED `paywallKicker` the web also calls.
-          ⓶ ONE "Close" IS NOT THE WEB'S SHAPE. ★ The shape is the thing being preserved, not the
-          wiring: a teacher who learns this window today must not meet a differently-shaped one
-          the week Subscribe starts working. So both buttons are here from the start, and
-          Subscribe says plainly that the page is being built — which is true, and is more than
-          an email address would tell her.
-          ⚠️ ONE SHEET, WHOSE CHILDREN SWAP (the `dac26eb0` lesson). The "in development" note is
-          a second BODY, never a second Modal: two Modals fading over each other leave a frame
-          with no scrim in it, and the bare screen flashes through.
-          ⚠️ No subject·class kicker any more. The web has never had one, and the server's
-          sentence names the subject itself in the case where it matters. */}
-      <Sheet visible={!!prep.paywall} onClose={closePaywall} confirm>
-        <View style={ws.paywall_body}>
-          <Text style={ws.kicker}>{paywallKicker(prep.paywall)}</Text>
-          {/* ✅ SUBSCRIBE REALLY OPENS THE WIZARD NOW (2026-09-16). It used to swap the body
-              for "the subscription page is still in development" — honest while nothing
-              existed, and the wrong thing to keep the day it did. The window's SHAPE is
-              unchanged, which was the whole point of building both buttons before either
-              worked: a teacher who learnt this window last month meets the same one. */}
-          <Text style={ws.paywall_msg}>{prep.paywall}</Text>
-          <Pressable onPress={() => { closePaywall(); router.push("/subscribe"); }}
-            accessibilityRole="button"
-            style={[ws.paywall_sub, { backgroundColor: t.pine }]}>
-            <Text style={[ws.paywall_sub_t, { color: t.paper }]}>Subscribe</Text>
-          </Pressable>
-          <Pressable onPress={closePaywall} accessibilityRole="button" hitSlop={6}>
-            <Text style={ws.paywall_later}>Not now</Text>
-          </Pressable>
-        </View>
-      </Sheet>
+      {/* The 402 window moved to the shell — components/PaywallSheet.jsx, mounted in
+          (app)/_layout.jsx — so it answers on My Classes too (WALK-A-152). */}
 
       {/* Transient confirmation / block message — bottom-centre, non-blocking, auto-dismissed.
           It sits clear of the bottom bar rather than under it. */}

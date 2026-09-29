@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-29T14:17:13",
+  "updated_at": "2026-09-29T16:05:34",
   "items": {
     "04.19": {
       "ios": {
@@ -5079,15 +5079,43 @@
         "at": "2026-09-29T13:55:19",
         "comment": "026 fresh number. DevTools › Request conditions › block *://*/subjects, reload first run: 'Loading subjects…' then 'Couldn't load the subject list.' + Try again; unblocked, Try again → list appears. (Going offline AFTER the list loaded correctly changes nothing — the list loads once on mount.)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T14:54:11",
+        "comment": "026 deleted and re-joined (front door → free trial → OTP), TEST /subjects failure ON (60s after account creation): 'Loading subjects…' then 'Couldn't load the subject list.' + Try again; after a minute, Try again → list appears.",
+        "build": "Expo Go (tunnel → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T15:32:12",
+        "comment": "027 (fresh number; 026's trial was spent so its front door went to Subscribe — WALK-A-086, correct), TEST /subjects failure ON: 'Couldn't load the subject list.' + Try again; after a minute Try again → list.",
+        "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
       }
     },
     "X.04": {
       "web": {
-        "status": "pending",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-29T13:59:04",
-        "comment": "PART 1 PASS (026, first run → tour declined → My Classes): 'Would you like to check your set-up?' rose ~1s after My Classes, with values; not asked again on return. OWED: tap-away-within-1s re-queue (needs another fresh first run) and the after-purchase half (second subject-stage).",
+        "at": "2026-09-29T15:54:48",
+        "comment": "PART 1 PASS (026, first run → tour declined → My Classes): 'Would you like to check your set-up?' rose ~1s after My Classes, with values; not asked again on return. OWED: tap-away-within-1s re-queue (needs another fresh first run) and the after-purchase half (second subject-stage). ✓ AFTER PURCHASE (027, another subject-stage bought on the web): 'You've added {Subject}. {Stage} stage.' with values; rows straight in; class choice limited to the new stage. (Tap-away re-queue walked on the iPhone — shared logic.)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T15:53:31",
+        "comment": "TAP-AWAY PART PASS (026, iPhone first run, tour declined): tapped My Classes then My Lessons within 1s — nothing shown; next My Classes visit raised 'Would you like to check your set-up?' ~1s later with values (re-queued). OWED: the after-purchase half. ✓ AFTER PURCHASE (027: guided first lesson as a never-generated subscriber — correct, founder rule 2026-08-25 — then a second subject-stage bought): first open in My Lessons raised the 'You've added…' window.",
+        "build": "Expo Go (tunnel → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T15:47:17",
+        "comment": "First visit (026): set-up check ~1s after My Classes, once. AFTER PURCHASE (027, first run then one subject-stage bought): new subject on the wheels without relaunch; first open in My Lessons raised 'You've added {Subject}. {Stage} stage.' with values; rows go straight in; class wheel offers only the new stage's classes.",
+        "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
       }
     },
     "X.02": {
@@ -5097,6 +5125,20 @@
         "at": "2026-09-29T14:17:13",
         "comment": "↻ RE-WALKED after WALK-A-151: all four Add rows (Periods a week · Class · Section · Annual budget) show the shell caption 'Your teaching set-up didn't save — this is what Meyy has for you.' + Dismiss. (The stored profile keeps the new values — the skew fakes only the read-back, the write really lands.)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T14:48:25",
+        "comment": "026, TEST read-back skew ON. Add › Periods a week · Class · Section · Annual budget: the save-failed sentence appears inside the editor window on all four (named divergence: web shows it in the shell).",
+        "build": "Expo Go (tunnel → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T14:57:52",
+        "comment": "026, TEST read-back skew ON. All four Add saves: the save-failed sentence inside the editor window, visible above the number pad with the keyboard up.",
+        "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
       }
     },
     "X.03": {
@@ -5106,6 +5148,66 @@
         "at": "2026-09-29T14:13:33",
         "comment": "026. Every class unticked: 'No classes set up yet' / 'To start planning, add the classes you teach under Class in the Add window from the bottom tool bar.' One class re-added, first-run lesson unattached in My Lessons: 'Your classes are ready' / 'Your lesson is waiting in My Lessons — tap + on a class to start teaching it.' (the has-a-lesson variant; the no-lesson variant is 'Tap + on a class to prepare its first lesson.'). Phones must match word for word.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T14:50:56",
+        "comment": "026. Empty state and the has-a-lesson greeting match the web word for word. (The re-add save showed the save-failed sentence — expected, the X.02 read-back skew is still ON for 026; the class did save.)",
+        "build": "Expo Go (tunnel → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T14:57:52",
+        "comment": "026. Empty state and the has-a-lesson greeting match the web word for word.",
+        "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
+      }
+    },
+    "X.14": {
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T16:05:34",
+        "comment": "Paywall (026, trial spent): window from a class card's + and from My Lessons (after WALK-A-152). LAPSED (027 revoked): lands on My Lessons, bar = My Lessons + Ask Meyy, no Prepare, no flash; ↻ after WALK-A-159 Settings (incl. Subscription & billing, Your data) opens and stays, a lesson opens to read.",
+        "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
+      },
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T16:04:12",
+        "comment": "PAYWALL PART PASS (026, trial spent, Prepare a new chapter): paywall window ('free trial ends'), Subscribe + Not now, no failed card; Not now closes. OWED: the lapsed half. ✓ LAPSED (027 revoked): lands on My Lessons, bar = My Lessons + Ask Meyy, no Prepare, no flash; Settings still reachable.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T16:05:34",
+        "comment": "Paywall (026, trial spent): window from a class card's + and from My Lessons (after WALK-A-152). LAPSED (027 revoked): lands on My Lessons, bar = My Lessons + Ask Meyy, no Prepare, no flash; ↻ after WALK-A-159 Settings (incl. Subscription & billing, Your data) opens and stays, a lesson opens to read.",
+        "build": "Expo Go (tunnel → Render)"
+      }
+    },
+    "X.05": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T15:59:17",
+        "comment": "027 (paid). Every class of one paid subject unticked: confirm says the subject STAYS; My Lessons still lists it; Prepare offers only subjects with a class; Word + PDF export list the subject as '— · —', never 'No teaching profile on record'.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T15:59:41",
+        "comment": "027 (paid), subject with every class removed: subject stays; My Lessons lists it; Prepare offers only subjects with a class; Word + PDF export show '— · —' (iPhone: in-app preview).",
+        "build": "Expo Go (tunnel → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T15:59:41",
+        "comment": "027 (paid), subject with every class removed: subject stays; My Lessons lists it; Prepare offers only subjects with a class; Word + PDF export show '— · —' (Android: straight to the share sheet).",
+        "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
       }
     }
   },
@@ -8252,6 +8354,170 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T14:13:33"
+    },
+    {
+      "id": "WALK-A-152",
+      "opened": "2026-09-29T15:03:14",
+      "closed": "2026-09-29T15:03:53",
+      "feature": "X.14",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Phone: a 402 on a prepare started from a class card raises no paywall window",
+      "what": "X.14, iPhone, 026 with the trial spent: preparing a new chapter showed no paywall — the card went and nothing else. Android (and web) raised it.",
+      "fix": "[FIXED phone 2026-09-29T15:03:14] Cause: the paywall Sheet lived only in My Lessons (lessons.jsx). A prepare begun from a CLASS CARD (fromSection) settles back on My Classes, so paywallPreparing() pulled the card and raised a window on a screen she was not on. Moved to new components/PaywallSheet.jsx, mounted once in (app)/_layout.jsx beside BottomNav — it now answers on every tab, as the web's shell-level window always has. Body unchanged. Parse-checked. Awaiting the phone walk (iPhone AND Android, from a class card's + AND from My Lessons).\n[WALKED phone 2026-09-29T15:03:53] PASS on iPhone + Android, both entry points.",
+      "files": "mobile/components/PaywallSheet.jsx (new); mobile/app/(app)/_layout.jsx; mobile/app/(app)/lessons.jsx (sheet removed)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T15:03:14"
+    },
+    {
+      "id": "WALK-A-153",
+      "opened": "2026-09-29T15:12:03",
+      "closed": "2026-09-29T15:17:36",
+      "feature": "04.33",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "web+phone",
+      "title": "Subscribe › About you: WhatsApp question becomes Personal profile's switch, same words",
+      "what": "Founder, Android emulator, 2026-09-29 (026 routed to Subscribe): 'Yes, add WhatsApp' / 'No, thanks' are far larger than the web's and 'Yes, add WhatsApp' wraps to two lines. Not a unilateral Android change: the phone port of WALK-A-142 (this morning) used type.button (17px semibold, pine) instead of the web's .ob-wa-opt skin; it is the same on the iPhone's subscribe wizard (the iPhone screenshot compared was Personal profile, which has the switch).\nDECIDED (founder 2026-09-29T15:14:53): use Personal profile's WhatsApp switch and wording on the subscribe step, web AND phone. The switch starts OFF (opt-in stays her act); no forced Yes/No before Continue — this SUPERSEDES the 'neither preselected, Continue blocked until chosen' rule of 04.33/WALK-A-142. Off → email required; On → email optional.",
+      "fix": "[FIXED phone 2026-09-29T15:12:03] SubscribeWizard.jsx: buttons now carry the web's .ob-wa-opt values — 13px Newsreader in ink, field background, --line hairline; chosen = pine fill, paper text at 600; gap 8, padding 10/8. Parse-checked. Awaiting the phone walk.\n[CHANGED web+phone 2026-09-29T15:14:53] SubscribeFlow.jsx + SubscribeWizard.jsx: the Yes/No pair replaced by the profile's row — label 'WhatsApp support', 'On — Meyy support on WhatsApp from your sign-in number' / 'Off', a switch (web .set-switch checkbox; phone RN Switch, pine track) — plus one quiet line 'Service messages only — never marketing.' (kept: the promise at the moment of opting in). `wa` stays null until touched (server: leave the stored choice); Continue no longer waits on it. Parse-checked. Awaiting walk on web + both phones.\n[WALKED 2026-09-29T15:17:36] Founder: 'WhatsApp support is done' — switch row + Off/On wording + email required/optional confirmed.",
+      "files": "web/app/components/SubscribeFlow.jsx; mobile/components/SubscribeWizard.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T15:12:03"
+    },
+    {
+      "id": "WALK-A-154",
+      "opened": "2026-09-29T15:22:54",
+      "closed": "",
+      "feature": "04.33",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Subscribe › About you: with the keypad up only one field is visible",
+      "what": "Founder, iPhone + Android, 2026-09-29 (026, spent trial → Subscribe): focusing Name or any field shrinks the form to a single field, with Save & continue and ← Back directly beneath it. Frozen above: bar, the 'already used its free trial' notice, the step rail; lifted foot below: Save & continue, Back, home-indicator padding.",
+      "fix": "[FIXED phone 2026-09-29T15:26:20] DECIDED (founder): Save & continue should not be fixed — it arrives as she scrolls, like the fields; SUPERSEDES WALK-A-031's always-visible CTA on About you. SubscribeWizard.jsx: the foot (Save & continue · ← Back) and the 'already used its free trial' notice now live inside the ScrollView; only the step rail stays frozen (founder 2026-09-20). City/School focus still scrolls to the end (tailUp). Parse-checked. Awaiting the phone walk.",
+      "files": "mobile/components/SubscribeWizard.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T15:22:54"
+    },
+    {
+      "id": "WALK-A-155",
+      "opened": "2026-09-29T15:31:34",
+      "closed": "",
+      "feature": "04.33",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "WhatsApp switch OFF: white on iPhone, grey on Android — render the same",
+      "what": "Founder, 2026-09-29: the WhatsApp support switch when off is plain white on the iPhone, with no grey track like Android's. Render the same on both.",
+      "fix": "[FIXED phone 2026-09-29T15:31:34] Both Switches (settings/personal.jsx, SubscribeWizard.jsx): trackColor.false = t.edge and ios_backgroundColor = t.edge — one warm grey OFF track on both phones (and in dark theme via the token); ON stays pine. Parse-checked. Awaiting the phone walk.",
+      "files": "mobile/app/(app)/settings/personal.jsx; mobile/components/SubscribeWizard.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T15:31:34"
+    },
+    {
+      "id": "WALK-A-156",
+      "opened": "2026-09-29T15:35:21",
+      "closed": "",
+      "feature": "04.33",
+      "found_on": [
+        "and_emu",
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "Android About you: cannot scroll past School name to Save & continue with the keypad up",
+      "what": "Founder, Android emulator, 2026-09-29, after WALK-A-154 moved the foot into the scroll: with the cursor in School name the form will not scroll further, so Save & continue cannot be reached.",
+      "fix": "[FIXED phone 2026-09-29T15:35:21] SubscribeWizard.jsx: on Android only, the keypad's height is added as bottom scroll room under Save & continue · Back while the keypad is up (keyboardDidShow/Hide); iOS unchanged (its KeyboardAvoidingView measures exactly). Parse-checked. Awaiting the Android walk.\n[RE-FIXED phone 2026-09-29T15:37:28] Founder: with the full keypad height added, City/School focus jumped the form up and left a blank under ← Back. Now only the strip the keys still COVER is added (keyboard top vs the scroller's measured bottom, measureInWindow), so scroll-to-end lands with Back just above the keys. Parse-checked. Awaiting the Android walk.\n[RE-FIXED phone 2026-09-29T15:39:06] Founder: the iPhone has the same wall (cannot reach Save & continue). The measured covered-strip room now applies on iOS too (was Android-only). Awaiting the walk on both phones.",
+      "files": "mobile/components/SubscribeWizard.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T15:35:21"
+    },
+    {
+      "id": "WALK-A-157",
+      "opened": "2026-09-29T15:41:11",
+      "closed": "",
+      "feature": "04.xx agreement",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "web+phone",
+      "title": "Agreement: fold the two guidance lines into one paragraph",
+      "what": "Founder, 2026-09-29: combine 'Confirm each of the five points…' and 'Tap a box to go straight to that point.' into one paragraph to gain vertical space on all formats.",
+      "fix": "[FIXED web+phone 2026-09-29T15:41:11] Agreement.jsx (web + mobile): one line — 'Confirm each of the five points and accept the full agreement to continue. Tap a box to go straight to that point.' Shown only while not all ticked, as before. Parse-checked. Awaiting the walk on all three.",
+      "files": "web/app/components/Agreement.jsx; mobile/components/Agreement.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T15:41:11"
+    },
+    {
+      "id": "WALK-A-158",
+      "opened": "2026-09-29T15:45:08",
+      "closed": "",
+      "feature": "04.34 / invoices",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "api",
+      "title": "Invoice goes to BOTH channels when she has given both email and WhatsApp",
+      "what": "Founder, 2026-09-29 (027 purchase, invoice generated): if a teacher has given both an email and WhatsApp, the invoice must go to both channels.",
+      "fix": "[PARKED] Not buildable yet: WhatsApp sends are blocked while the Meta developer account is locked, and invoice-over-WhatsApp needs a fetchable PDF URL for the template's document header (WhatsAppTemplate.document) — already listed as owed in CLAUDE.md's WhatsApp section. When WhatsApp is live: send the invoice by email (as now) AND by WhatsApp whenever notify.whatsapp is on and an email is on record.",
+      "files": "",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "parked",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T15:45:08"
+    },
+    {
+      "id": "WALK-A-159",
+      "opened": "2026-09-29T16:04:12",
+      "closed": "2026-09-29T16:05:34",
+      "feature": "X.14",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Phone, lapsed: Settings unreachable (gear bounced back to My Lessons)",
+      "what": "X.14 lapsed, 027: web keeps Settings; iPhone and Android do not — a lapsed teacher cannot renew, export/erase or reach Support on the phone.",
+      "fix": "[FIXED phone 2026-09-29T16:04:12] Cause: the lapsed effect in (app)/_layout.jsx navigated to /lessons from ANY other path, so the gear's push to /settings was bounced at once (and opening a lesson likely too). Now it moves her only off My Classes ('/') and /prepare; /lesson, /preview, /settings/* and /subscribe stay open. Parse-checked. Awaiting the phone walk.\n[WALKED phone 2026-09-29T16:05:34] PASS on iPhone + Android.",
+      "files": "mobile/app/(app)/_layout.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T16:04:12"
     }
   ]
 }

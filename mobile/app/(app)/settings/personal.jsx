@@ -179,7 +179,9 @@ export default function PersonalProfile() {
                 ? "On — Meyy support on WhatsApp from your sign-in number" : "Off"}</Text>
               <Switch value={wa} disabled={locked || busy} onValueChange={setWa}
                 accessibilityLabel="Use WhatsApp for Meyy support"
-                trackColor={{ true: t.pine }} />
+                trackColor={{ false: t.edge, true: t.pine }}
+                /* WALK-A-155: iOS draws the OFF track white with no fill; give both phones the same grey. */
+                ios_backgroundColor={t.edge} />
             </View>
             {locked ? (
               <Quiet>To switch WhatsApp off, add an email address above first — Meyy needs at

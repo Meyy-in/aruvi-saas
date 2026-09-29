@@ -273,18 +273,13 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
             ))}
           </View>
         </View>
-        {/* WALK-A-084 (founder, 2026-09-24, wording his): nothing said the five boxes were jump
-            links, and on a phone she was left hunting a long document for the point still open. */}
+        {/* WALK-A-084 said the boxes are jump links; WALK-A-157 (founder, 2026-09-29) folds that
+            line and the "why is the button dead" line into ONE paragraph, as on the web — a line
+            of height back on every format. */}
         {!allTicked ? (
           <Text style={[ws.lgl_need, { color: t.ink_soft, marginTop: 4 }]}>
-            Tap a box to go straight to that point.
-          </Text>
-        ) : null}
-        {/* Said where the button is, so a teacher staring at a dead CTA knows why — a disabled
-            control with no explanation reads as a broken page, not an unfinished form. */}
-        {!allTicked ? (
-          <Text style={[ws.lgl_need, { color: t.ink_soft }]}>
-            Confirm each of the five points and accept the full agreement to continue.
+            Confirm each of the five points and accept the full agreement to continue. Tap a box
+            to go straight to that point.
           </Text>
         ) : null}
         {err ? (

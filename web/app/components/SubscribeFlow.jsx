@@ -405,18 +405,25 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" /></label>
 
           {/* WhatsApp — asked BEFORE email, because its answer decides whether email is
-              required. Two plain answers, neither preselected. */}
-          <div className="login-field ob-field ob-wa" role="group" aria-labelledby="ob-wa-q">
-            <span id="ob-wa-q">Support on WhatsApp? <span className="ob-req" aria-hidden="true">*</span></span>
-            <p className="ob-wa-sub">Reach Meyy support on WhatsApp from{" "}
-              <strong>{mobileWords(userId)}</strong>, your sign-in number. Service messages
-              only — never marketing.</p>
-            <div className="ob-wa-opts">
-              <button type="button" className={`ob-wa-opt ${wa === true ? "on" : ""}`}
-                aria-pressed={wa === true} onClick={() => setWa(true)}>Yes, add WhatsApp</button>
-              <button type="button" className={`ob-wa-opt ${wa === false ? "on" : ""}`}
-                aria-pressed={wa === false} onClick={() => setWa(false)}>No, thanks</button>
+              required. ★ THE PERSONAL PROFILE'S SWITCH, SAME WORDS (founder, 2026-09-29,
+              WALK-A-153) — it replaced two Yes/No buttons that had to be pressed before she
+              could continue. The switch starts OFF: opting in is still her own act (nothing
+              arrives ticked, DPDP §6), and a teacher who leaves it simply gives an email.
+              `wa` stays null until she touches it, which the server reads as "leave the stored
+              choice" — so a known profile's stored Yes is never switched off by a skip. */}
+          <div className="login-field ob-field ob-wa">
+            <span>WhatsApp support</span>
+            <div className="ob-email-view pp-wa">
+              <span className="pp-wa-txt">{wa === true
+                ? <>On — Meyy support on WhatsApp from your sign-in number</>
+                : <>Off</>}</span>
+              <label className="set-switch">
+                <input type="checkbox" checked={wa === true}
+                  onChange={(e) => setWa(e.target.checked)}
+                  aria-label="Use WhatsApp for Meyy support" />
+              </label>
             </div>
+            <p className="ob-quiet">Service messages only — never marketing.</p>
           </div>
 
           {/* Email — typed twice (EmailEntry). Optional once she has said Yes to WhatsApp;
@@ -464,7 +471,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
               a CONFIRMED address is ever sent (doCheckout), so a half-typed one is simply
               dropped. With WhatsApp off, a confirmed email is required as before. */}
           <button className="primary fr-cta"
-            disabled={!name.trim() || wa === null
+            disabled={!name.trim()
               || (wa !== true && emailStage !== "ok")
               || !roleToSave(role, roleOther) || !stateName || !city.trim()}
             onClick={() => setScreen("agreement")}>Save &amp; continue →</button>
