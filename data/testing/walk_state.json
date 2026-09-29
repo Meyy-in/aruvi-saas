@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-29T16:05:34",
+  "updated_at": "2026-09-29T16:08:57",
   "items": {
     "04.19": {
       "ios": {
@@ -8398,7 +8398,7 @@
     {
       "id": "WALK-A-154",
       "opened": "2026-09-29T15:22:54",
-      "closed": "",
+      "closed": "2026-09-29T16:08:57",
       "feature": "04.33",
       "found_on": [
         "ios",
@@ -8407,11 +8407,11 @@
       "applies_to": "phone",
       "title": "Subscribe › About you: with the keypad up only one field is visible",
       "what": "Founder, iPhone + Android, 2026-09-29 (026, spent trial → Subscribe): focusing Name or any field shrinks the form to a single field, with Save & continue and ← Back directly beneath it. Frozen above: bar, the 'already used its free trial' notice, the step rail; lifted foot below: Save & continue, Back, home-indicator padding.",
-      "fix": "[FIXED phone 2026-09-29T15:26:20] DECIDED (founder): Save & continue should not be fixed — it arrives as she scrolls, like the fields; SUPERSEDES WALK-A-031's always-visible CTA on About you. SubscribeWizard.jsx: the foot (Save & continue · ← Back) and the 'already used its free trial' notice now live inside the ScrollView; only the step rail stays frozen (founder 2026-09-20). City/School focus still scrolls to the end (tailUp). Parse-checked. Awaiting the phone walk.",
+      "fix": "[FIXED phone 2026-09-29T15:26:20] DECIDED (founder): Save & continue should not be fixed — it arrives as she scrolls, like the fields; SUPERSEDES WALK-A-031's always-visible CTA on About you. SubscribeWizard.jsx: the foot (Save & continue · ← Back) and the 'already used its free trial' notice now live inside the ScrollView; only the step rail stays frozen (founder 2026-09-20). City/School focus still scrolls to the end (tailUp). Parse-checked. Awaiting the phone walk.\n[WALKED 2026-09-29T16:08:57] Founder: all ok.",
       "files": "mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T15:22:54"
@@ -8419,7 +8419,7 @@
     {
       "id": "WALK-A-155",
       "opened": "2026-09-29T15:31:34",
-      "closed": "",
+      "closed": "2026-09-29T16:08:57",
       "feature": "04.33",
       "found_on": [
         "ios"
@@ -8427,11 +8427,11 @@
       "applies_to": "phone",
       "title": "WhatsApp switch OFF: white on iPhone, grey on Android — render the same",
       "what": "Founder, 2026-09-29: the WhatsApp support switch when off is plain white on the iPhone, with no grey track like Android's. Render the same on both.",
-      "fix": "[FIXED phone 2026-09-29T15:31:34] Both Switches (settings/personal.jsx, SubscribeWizard.jsx): trackColor.false = t.edge and ios_backgroundColor = t.edge — one warm grey OFF track on both phones (and in dark theme via the token); ON stays pine. Parse-checked. Awaiting the phone walk.",
+      "fix": "[FIXED phone 2026-09-29T15:31:34] Both Switches (settings/personal.jsx, SubscribeWizard.jsx): trackColor.false = t.edge and ios_backgroundColor = t.edge — one warm grey OFF track on both phones (and in dark theme via the token); ON stays pine. Parse-checked. Awaiting the phone walk.\n[WALKED 2026-09-29T16:08:57] Founder: all ok.",
       "files": "mobile/app/(app)/settings/personal.jsx; mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T15:31:34"
@@ -8439,7 +8439,7 @@
     {
       "id": "WALK-A-156",
       "opened": "2026-09-29T15:35:21",
-      "closed": "",
+      "closed": "2026-09-29T16:08:57",
       "feature": "04.33",
       "found_on": [
         "and_emu",
@@ -8448,11 +8448,11 @@
       "applies_to": "phone",
       "title": "Android About you: cannot scroll past School name to Save & continue with the keypad up",
       "what": "Founder, Android emulator, 2026-09-29, after WALK-A-154 moved the foot into the scroll: with the cursor in School name the form will not scroll further, so Save & continue cannot be reached.",
-      "fix": "[FIXED phone 2026-09-29T15:35:21] SubscribeWizard.jsx: on Android only, the keypad's height is added as bottom scroll room under Save & continue · Back while the keypad is up (keyboardDidShow/Hide); iOS unchanged (its KeyboardAvoidingView measures exactly). Parse-checked. Awaiting the Android walk.\n[RE-FIXED phone 2026-09-29T15:37:28] Founder: with the full keypad height added, City/School focus jumped the form up and left a blank under ← Back. Now only the strip the keys still COVER is added (keyboard top vs the scroller's measured bottom, measureInWindow), so scroll-to-end lands with Back just above the keys. Parse-checked. Awaiting the Android walk.\n[RE-FIXED phone 2026-09-29T15:39:06] Founder: the iPhone has the same wall (cannot reach Save & continue). The measured covered-strip room now applies on iOS too (was Android-only). Awaiting the walk on both phones.",
+      "fix": "[FIXED phone 2026-09-29T15:35:21] SubscribeWizard.jsx: on Android only, the keypad's height is added as bottom scroll room under Save & continue · Back while the keypad is up (keyboardDidShow/Hide); iOS unchanged (its KeyboardAvoidingView measures exactly). Parse-checked. Awaiting the Android walk.\n[RE-FIXED phone 2026-09-29T15:37:28] Founder: with the full keypad height added, City/School focus jumped the form up and left a blank under ← Back. Now only the strip the keys still COVER is added (keyboard top vs the scroller's measured bottom, measureInWindow), so scroll-to-end lands with Back just above the keys. Parse-checked. Awaiting the Android walk.\n[RE-FIXED phone 2026-09-29T15:39:06] Founder: the iPhone has the same wall (cannot reach Save & continue). The measured covered-strip room now applies on iOS too (was Android-only). Awaiting the walk on both phones.\n[WALKED 2026-09-29T16:08:57] Founder: all ok.",
       "files": "mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T15:35:21"
@@ -8460,7 +8460,7 @@
     {
       "id": "WALK-A-157",
       "opened": "2026-09-29T15:41:11",
-      "closed": "",
+      "closed": "2026-09-29T16:08:57",
       "feature": "04.xx agreement",
       "found_on": [
         "ios",
@@ -8469,11 +8469,11 @@
       "applies_to": "web+phone",
       "title": "Agreement: fold the two guidance lines into one paragraph",
       "what": "Founder, 2026-09-29: combine 'Confirm each of the five points…' and 'Tap a box to go straight to that point.' into one paragraph to gain vertical space on all formats.",
-      "fix": "[FIXED web+phone 2026-09-29T15:41:11] Agreement.jsx (web + mobile): one line — 'Confirm each of the five points and accept the full agreement to continue. Tap a box to go straight to that point.' Shown only while not all ticked, as before. Parse-checked. Awaiting the walk on all three.",
+      "fix": "[FIXED web+phone 2026-09-29T15:41:11] Agreement.jsx (web + mobile): one line — 'Confirm each of the five points and accept the full agreement to continue. Tap a box to go straight to that point.' Shown only while not all ticked, as before. Parse-checked. Awaiting the walk on all three.\n[WALKED 2026-09-29T16:08:57] Founder: all ok.",
       "files": "web/app/components/Agreement.jsx; mobile/components/Agreement.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T15:41:11"
