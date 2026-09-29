@@ -222,7 +222,6 @@ html.app-shell .yp-head { top: var(--mlp2-frozen-h, 132px); }
 }
 @media (max-width: 600px) {
   .hdr { padding: 14px 18px; }
-  .brand-mark { height: 19px; }
   .brand small { display: none; } /* "lesson studio" kicker — drop on phones, brand name + NCF line carry it */
 }
 .brand { display: flex; flex-direction: column; line-height: 1.1; }
@@ -243,6 +242,12 @@ html.app-shell .yp-head { top: var(--mlp2-frozen-h, 132px); }
 .brand-mark { display: block; height: 22px; width: auto; align-self: flex-start; color: var(--pine-d); }
 .brand-mark-dot { fill: var(--brand-dot, #d63a2f); }
 .brand small { font-family: var(--f-mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-soft); margin-left: 10px; }
+/* WALK-A-144 (2026-09-29): the phone size must come AFTER the base .brand-mark rule — same
+   specificity, so source order decides (the .ap-row-line trap). It sat in the ≤600px block
+   above the base rule and never applied: the mark was 22px at every width. */
+@media (max-width: 600px) {
+  .brand-mark { height: 19px; }
+}
 .brand-ncf { font-family: var(--f-body); font-style: italic; font-size: 11px; color: var(--ink-soft); margin-top: 3px; }
 .hdr .sel { margin-left: auto; display: flex; gap: 14px; }
 /* signed-in user + log out, top-right on the logo row */

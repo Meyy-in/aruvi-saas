@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-29T08:21:38",
+  "updated_at": "2026-09-29T09:48:48",
   "items": {
     "04.19": {
       "ios": {
@@ -4795,6 +4795,282 @@
         "comment": "WhatsApp on: 'Chat on WhatsApp' card opens WhatsApp with the prefilled note; off: no card (WALK-A-142).",
         "build": "Expo Go (LAN)"
       }
+    },
+    "X.08": {
+      "web": {
+        "status": "na",
+        "by": "Kumar",
+        "at": "2026-09-29T08:25:41",
+        "comment": "Phone-only row: the web has no soft keyboard.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:48:48",
+        "build": "Expo Go (Pixel 7 API 34, LAN)",
+        "comment": "Support Send, Personal profile Save, Prepare periods, Add budget: all reachable above the keyboard ✓. Delete my account window sits at the top with a large empty space below → WALK-A-147.\n↻ re-walk after the phone fix point (WALK-A-145…150)\n✓ re-walked 2026-09-29 after WALK-A-145…150: pass."
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:10:45",
+        "comment": "Support Send, Personal profile Save, Delete my account gates (not erased), Prepare periods field, Add budget field: all reachable above the keyboard; delete gate scrolls into view.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      }
+    },
+    "X.18": {
+      "web": {
+        "status": "na",
+        "by": "Kumar",
+        "at": "2026-09-29T08:25:41",
+        "comment": "Phone-only row: the web follows browser zoom.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:48:48",
+        "comment": "Tapping Text size repeatedly: the value field (where 'Device Default' / 'Standard' / 'Large' / 'Larger' appears) jumps up and down with each change → WALK-A-149. Otherwise at Larger and at the OS's largest: bar labels fixed, cards/tabs/tables/top bar/set-up rows hold (bar the Inclusivity wrap, WALK-A-145).\n↻ re-walk after the phone fix point (WALK-A-145…150)\n✓ re-walked 2026-09-29 after WALK-A-145…150: pass.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:48:48",
+        "comment": "Tapping Text size repeatedly: the value field (where 'Device Default' / 'Standard' / 'Large' / 'Larger' appears) jumps up and down with each change → WALK-A-149. Otherwise at Larger and at the OS's largest: bar labels fixed, cards/tabs/tables/top bar/set-up rows hold (bar the Inclusivity wrap, WALK-A-145). Label reads 'Device Default' on Android.\n↻ re-walk after the phone fix point (WALK-A-145…150)\n✓ re-walked 2026-09-29 after WALK-A-145…150: pass.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.19": {
+      "web": {
+        "status": "na",
+        "by": "Kumar",
+        "at": "2026-09-29T08:25:41",
+        "comment": "Founder decision 2026-09-27 (see 01.10, 04.06): the website stays light only; Appearance is a phone feature. Not walked on web.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:18:13",
+        "comment": "◐ → ☀ → ☾ repaint at once; cards keep the graph rule (lighter in dark); Auto follows the OS live; choice survives sign-out; status bar legible in both.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:18:13",
+        "comment": "◐ → ☀ → ☾ repaint at once; cards keep the graph rule (lighter in dark); Auto follows the OS live; choice survives sign-out; status bar legible in both.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.01": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:56:54",
+        "comment": "At phone width (DevTools device toolbar, ≤600px) the MEYY wordmark computes 82.594×22 — 22px, not 19. Bar height the same on every route; name over 'Log out', gear on the right, everywhere ✓. Cause read in globals.css: the ≤600px `.brand-mark { height: 19px }` (l.225) sits BEFORE the base `.brand-mark { height: 22px }` (l.243) at equal specificity, so source order wins → WALK-A-144.\n↻ re-walk after WALK-A-144\n✓ re-walked 2026-09-29: wordmark 19px at phone width.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:10:45",
+        "comment": "Wordmark matches the web at phone width; bar the same height on every route incl. an open lesson; name over 'Log out', gear right.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:48:48",
+        "comment": "Bar itself right on every route and clears the status bar / cut-out; but the four Add windows (Class · Section · Periods a week · Annual budget) cover part of the top bar → WALK-A-148.\n↻ re-walk after the phone fix point (WALK-A-145…150)\n✓ re-walked 2026-09-29 after WALK-A-145…150: pass.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.06": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:45:21",
+        "comment": "003, phone width: Assess items flat with Overview · Question · Answer · Inclusivity, pine pager when >1 item, answer boxes drawn; science·middle Material tables ruled.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:48:48",
+        "build": "Expo Go (iPhone 16, LAN)",
+        "comment": "At the largest text size the Assess item's 'Inclusivity' tab wraps: the final 'y' drops to a second line → WALK-A-145.\n↻ re-walk after the phone fix point (WALK-A-145…150)\n✓ re-walked 2026-09-29 after WALK-A-145…150: pass."
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:03:56",
+        "build": "Expo Go (Pixel 7 API 34, LAN)",
+        "comment": "Assess items and Material tables as on the web; at the largest text size the four item tabs hold on one line."
+      }
+    },
+    "X.07": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:45:21",
+        "comment": "Browser downloads, no preview: lesson report PDF, invoice, Your data Word + PDF, Year Plan export arrow — each downloads, opens, sensibly named.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:10:45",
+        "comment": "Lesson report PDF, invoice, Your data PDF + Word, Year Plan export: full-screen preview under Meyy's bar with the nav up; share sheet only from the arrow; .docx read-only. (Invoice line arrives ~1s late on Subscription & billing → WALK-A-146, a change request, not this row.)",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:10:45",
+        "comment": "No preview: share sheet opens directly with correctly named files; returns to Meyy after sharing. (Invoice line lag → WALK-A-146.)",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.12": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:45:21",
+        "comment": "DevTools › Block request domain meyy-api, reload: My Classes paints from the device copy (no welcome, no 'Connecting…'); opened lesson renders from cache; never-opened lesson says so plainly; Ask Meyy answers. Block removed after.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:26:29",
+        "comment": "Airplane mode, no reload: My Classes paints from the device copy (no welcome, no 'Connecting…'); the lesson opened online renders from cache (first open online was ~1s slower — the server fetch, expected); a never-opened lesson says 'Could not load this lesson right now', no crash; Ask Meyy answers. NOT exercised: the cold relaunch in airplane mode (Expo Go loses Metro) — owed on a dev/store build.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:26:29",
+        "comment": "Airplane mode, no reload: My Classes paints from the device copy (no welcome, no 'Connecting…'); the lesson opened online renders from cache (first open online was ~1s slower — the server fetch, expected); a never-opened lesson says 'Could not load this lesson right now', no crash; Ask Meyy answers. NOT exercised: the cold relaunch in airplane mode (Expo Go loses Metro) — owed on a dev/store build.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.16": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:49:47",
+        "comment": "003 → opened lessons + Ask Meyy → Log out → signed in as 015: none of 003's classes, history, lessons, entitlement or Ask remnants; no flash of 003's name; no surprise sign-out.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:18:13",
+        "comment": "003 → lesson + Ask Meyy → Log out → Sign in (not Choose) → 015: none of 003's classes, history, lessons, entitlement or Ask remnants; Dark + Larger survive.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:18:13",
+        "comment": "003 → lesson + Ask Meyy → Log out → Sign in (not Choose) → 015: none of 003's classes, history, lessons, entitlement or Ask remnants; Dark + Larger survive. Back after Log out does not return into the app.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.15": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:49:47",
+        "comment": "013, returning and new doors: number field greyed + locked while the code is in flight; countdown from 1:00; wrong code says it did not match (not expired); at zero only 'Send a new code', never stuck at 0:00. The row's 'Resend appears after 30s' is retired — mid-run Resend removed by WALK-A-004.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:18:13",
+        "comment": "013, both doors: number locked while in flight; countdown from 1:00; wrong code 'did not match'; at zero only 'Send a new code'. (Mid-run Resend retired, WALK-A-004.)",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:18:13",
+        "comment": "013, both doors: number locked while in flight; countdown from 1:00; wrong code 'did not match'; at zero only 'Send a new code'. Keyboard does not cover Verify.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.09": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:34:40",
+        "comment": "003 on web + iPhone + Pixel 7, English·VI·Ch 16·6B. Web moved a unit → Android on foreground matched; iPhone matched after home-and-back (foreground is the trigger). iPhone moved the bookmark → web same place. Android marked the final unit complete then Undo → web card still green, not completed. Web renamed 6B 'Rose' + periods a week +1 → both phones show both on My Classes, My Lessons, Prepare and Teaching profile without a relaunch.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:34:40",
+        "comment": "003 on web + iPhone + Pixel 7, English·VI·Ch 16·6B. Web moved a unit → Android on foreground matched; iPhone matched after home-and-back (foreground is the trigger). iPhone moved the bookmark → web same place. Android marked the final unit complete then Undo → web card still green, not completed. Web renamed 6B 'Rose' + periods a week +1 → both phones show both on My Classes, My Lessons, Prepare and Teaching profile without a relaunch.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:34:40",
+        "comment": "003 on web + iPhone + Pixel 7, English·VI·Ch 16·6B. Web moved a unit → Android on foreground matched; iPhone matched after home-and-back (foreground is the trigger). iPhone moved the bookmark → web same place. Android marked the final unit complete then Undo → web card still green, not completed. Web renamed 6B 'Rose' + periods a week +1 → both phones show both on My Classes, My Lessons, Prepare and Teaching profile without a relaunch.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.10": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:36:23",
+        "comment": "003: English·VI·Ch 16 completed on the web for 6B; on both phones (after foreground) the 6B card carries the history glyph and the popup 'Section history' lists Ch 16. The other-teacher half (no rows leak to a different number on the same device) was covered by X.16 (003 → 015, no history seen), same day.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:36:23",
+        "comment": "003: English·VI·Ch 16 completed on the web for 6B; on both phones (after foreground) the 6B card carries the history glyph and the popup 'Section history' lists Ch 16. The other-teacher half (no rows leak to a different number on the same device) was covered by X.16 (003 → 015, no history seen), same day.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:36:23",
+        "comment": "003: English·VI·Ch 16 completed on the web for 6B; on both phones (after foreground) the 6B card carries the history glyph and the popup 'Section history' lists Ch 16. The other-teacher half (no rows leak to a different number on the same device) was covered by X.16 (003 → 015, no history seen), same day.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      }
+    },
+    "X.11": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:40:06",
+        "comment": "003, English·VI·Ch 16: note written on iPhone (text sits above the rule) → edited on web → iPhone reopened shows the web's newer text; Android shows it too; cleared on Android → empty on web and iPhone.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:40:06",
+        "comment": "003, English·VI·Ch 16: note written on iPhone (text sits above the rule) → edited on web → iPhone reopened shows the web's newer text; Android shows it too; cleared on Android → empty on web and iPhone. Notes window leaves the bottom nav clear.",
+        "build": "Expo Go (Pixel 7 API 34, LAN)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T09:48:48",
+        "comment": "003, English·VI·Ch 16: note written on iPhone (text sits above the rule) → edited on web → iPhone reopened shows the web's newer text; Android shows it too; cleared on Android → empty on web and iPhone. But the Notes window covers part of the bottom nav → WALK-A-150.\n↻ re-walk after the phone fix point (WALK-A-145…150)\n✓ re-walked 2026-09-29 after WALK-A-145…150: pass.",
+        "build": "Expo Go (iPhone 16, LAN)"
+      }
     }
   },
   "gate": {
@@ -7778,6 +8054,148 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T08:12:19"
+    },
+    {
+      "id": "WALK-A-144",
+      "opened": "2026-09-29T08:35:37",
+      "closed": "2026-09-29T08:56:54",
+      "feature": "X.01",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web",
+      "title": "Web: MEYY wordmark stays 22px at phone width (19px rule never applies)",
+      "what": "Founder, web 2026-09-29, DevTools device toolbar at phone width: svg.brand-mark computes 82.594×22. globals.css: the ≤600px block's `.brand-mark { height: 19px }` (l.225) precedes the base `.brand-mark { height: 22px }` (l.243) at the same specificity, so the base rule wins on source order — the `.ap-row-line` trap (CLAUDE.md §4). Likely wrong since the wordmark landed 2026-09-03.",
+      "fix": "[FIXED web 2026-09-29T08:55:07] globals.css: the ≤600px `.brand-mark { height: 19px }` moved out of the early block into its own ≤600px block placed directly after the base rule. Desktop unchanged (22px); bar height is measured (--nav-h), so it absorbs the ~3px. CSS braces balanced 2448/2448. No packages/shared or API change.\n[RE-WALKED web 2026-09-29T08:56:54] PASS: wordmark computes ×19 at phone width.",
+      "files": "web/app/globals.css",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Claude",
+      "at": "2026-09-29T08:35:37"
+    },
+    {
+      "id": "WALK-A-145",
+      "opened": "2026-09-29T09:03:56",
+      "closed": "2026-09-29T09:48:48",
+      "feature": "X.06",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "iPhone: Assess item tab 'Inclusivity' wraps its last letter at the largest text size",
+      "what": "Founder, iPhone 16 2026-09-29: at the largest text size the fourth item tab reads 'Inclusivit' with 'y' on the next line. Android at its largest size holds (it caps at 1.2× itself, WALK-A-139). Also an X.18 tight spot.",
+      "fix": "[FIXED phone 2026-09-29T09:47:40] item tab labels: numberOfLines 1 + adjustsFontSizeToFit (minimumFontScale 0.8) — one line always, shrinking only when the label would otherwise wrap; tabs stay equal-width as on the web. Parse-checked; packages/shared node --test 252/252.\n[RE-WALKED phone 2026-09-29T09:48:48] PASS on iPhone + Android (founder).",
+      "files": "mobile/components/lesson/AssessPanel.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Claude",
+      "at": "2026-09-29T09:03:56"
+    },
+    {
+      "id": "WALK-A-146",
+      "opened": "2026-09-29T09:04:56",
+      "closed": "2026-09-29T09:48:48",
+      "feature": "X.07",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Phone: Subscription & billing — the invoice line arrives about a second after the cards",
+      "what": "Founder, phones 2026-09-29 (during X.07): opening Subscription & billing, the subscription cards paint at once but each card's invoice appears a second later. Read: the cards come from the entitlement store already on the device; invoices are fetched from Render (GET /invoices) on every focus and kept in screen state only, so the first paint has none. Change request — awaiting founder decision. Founder decision 2026-09-29: keep a copy of the invoices on the phone (paint at once, refresh from the server behind it).",
+      "fix": "[FIXED phone 2026-09-29T09:47:40] invoices painted from a per-teacher device copy (aruvi_invoices_{user}), replaced by GET /invoices on focus; a failed fetch keeps the copy; prefix added to the sign-out sweep (lib/session EXTRA). Phone-only — no packages/shared change. Parse-checked; packages/shared node --test 252/252.\n[RE-WALKED phone 2026-09-29T09:48:48] PASS on iPhone + Android (founder).",
+      "files": "mobile/app/(app)/settings/subscription.jsx, mobile/lib/session.js",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Claude",
+      "at": "2026-09-29T09:04:56"
+    },
+    {
+      "id": "WALK-A-147",
+      "opened": "2026-09-29T09:08:23",
+      "closed": "2026-09-29T09:48:48",
+      "feature": "X.08",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: Delete my account window sits at the top, large empty space below",
+      "what": "Founder, Pixel 7 2026-09-29: opening Settings › Delete my account… the window is drawn against the top of the screen, leaving a large empty area underneath.",
+      "fix": "[FIXED phone 2026-09-29T09:47:40] Android keypad padding = keypad height MINUS what the scroller already lost to it (onLayout baseline, the ChapterOrg WALK-A-091 rule), so a window that resizes is not padded twice. Unchanged where Android does not resize (edge-to-edge). Parse-checked; packages/shared node --test 252/252.\n[RE-WALKED phone 2026-09-29T09:48:48] PASS on iPhone + Android (founder).",
+      "files": "mobile/app/(app)/settings/index.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Claude",
+      "at": "2026-09-29T09:08:23"
+    },
+    {
+      "id": "WALK-A-148",
+      "opened": "2026-09-29T09:10:25",
+      "closed": "2026-09-29T09:48:48",
+      "feature": "X.01",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: Add › Class / Section / Periods a week / Annual budget — the window covers part of the top bar",
+      "what": "Founder, Pixel 7 2026-09-29: pressing Add and choosing any of the four rows, the window that opens overlaps the top of the screen and hides part of the top bar. Possibly the same Android window-placement cause as WALK-A-147 (to be read at the fix point).",
+      "fix": "[FIXED phone 2026-09-29T09:47:40] the shell publishes the MEASURED brand-bar height (same onLayout as Ask Meyy); statusBarTranslucent Modals (Sheet's hanging windows, chapter notes) open below it, adding StatusBar.currentHeight on Android where the app's insets.top is 0. Falls back to insets.top + BAR_CONTENT_H before the first measure. Parse-checked; packages/shared node --test 252/252.\n[RE-WALKED phone 2026-09-29T09:48:48] PASS on iPhone + Android (founder).",
+      "files": "mobile/lib/chrome.js (new), mobile/app/(app)/_layout.jsx, mobile/components/AttachSheet.jsx, mobile/components/lesson/ChapterOrg.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Claude",
+      "at": "2026-09-29T09:10:25"
+    },
+    {
+      "id": "WALK-A-149",
+      "opened": "2026-09-29T09:18:13",
+      "closed": "2026-09-29T09:48:48",
+      "feature": "X.18",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Settings › Appearance › Text size: the value jumps up and down as it cycles",
+      "what": "Founder, phones 2026-09-29: tapping Text size repeatedly, the value text ('Device Default' on two lines, then 'Standard', 'Large', 'Larger') moves vertically with each change instead of staying put. The row expects the card to keep its height; the value's position should hold too.",
+      "fix": "[FIXED phone 2026-09-29T09:47:40] the value sits in a fixed 58×22 box pinned to the top of the card (alignSelf flex-start): no bob within the card, no re-wrap of the card's text as the word changes width. Founder chose option 1: the card still moves as the cards above grow (the size taking effect). Parse-checked; packages/shared node --test 252/252.\n[RE-WALKED phone 2026-09-29T09:48:48] PASS on iPhone + Android (founder).",
+      "files": "mobile/components/TextSizeToggle.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Claude",
+      "at": "2026-09-29T09:18:13"
+    },
+    {
+      "id": "WALK-A-150",
+      "opened": "2026-09-29T09:37:45",
+      "closed": "2026-09-29T09:48:48",
+      "feature": "X.11",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "iPhone: the Chapter notes window covers part of the bottom nav",
+      "what": "Founder, iPhone 16 2026-09-29 (X.11): with Chapter notes open on the chapter page, the window overlaps and hides part of the bottom navigation bar. Nothing may cover the nav (CLAUDE §4, 2026-09-13).",
+      "fix": "[FIXED phone 2026-09-29T09:47:40] notes window stops above the bottom nav (paddingBottom BNAV_H + insets.bottom while the keyboard is down; keyboard padding when up), as Ask Meyy's panel does. Parse-checked; packages/shared node --test 252/252.\n[RE-WALKED phone 2026-09-29T09:48:48] PASS on iPhone + Android (founder).",
+      "files": "mobile/components/lesson/ChapterOrg.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Claude",
+      "at": "2026-09-29T09:37:45"
     }
   ]
 }
