@@ -29,7 +29,8 @@ import { Platform } from "react-native";
 import * as Sharing from "expo-sharing";
 import { File, Paths } from "expo-file-system";
 import { API } from "@aruvi/shared/config";
-import { withUser } from "@aruvi/shared/format";
+import { withUser, getUser } from "@aruvi/shared/format";
+import { dataExportName, cachedAccount } from "@aruvi/shared/account";
 import { IS_WEB } from "./boot";
 
 /* base64 without pulling in a polyfill: RN has no Buffer, and `btoa` chokes on binary strings
@@ -228,7 +229,8 @@ export async function downloadDocument(doc) {
 /* The two documents Settings offers, named once so no screen spells them itself. */
 export const dataExport = (fmt) => ({
   path: `/data-rights/export?format=${fmt}`,
-  filename: `aruvi-your-data.${fmt}`,
+  /* WALK-A-132: Meyy_{FirstName}_{Mon}_{YYYY}_data — the web's name, from the shared rule. */
+  filename: dataExportName(cachedAccount(), fmt, new Date(), getUser()),
   mime: fmt === "pdf" ? "application/pdf"
     : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 });

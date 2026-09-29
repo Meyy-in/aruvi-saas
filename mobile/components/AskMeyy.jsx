@@ -215,7 +215,12 @@ export default function AskMeyy({ top = 0, onClose }) {
             /* iOS's own clear-x, the nearest thing to the web's `type="search"`. */
             clearButtonMode={Platform.OS === "ios" ? "while-editing" : "never"}
             autoCorrect={false} autoCapitalize="none" returnKeyType="search"
-            style={[ws.aa_search_input, { color: t.ink, backgroundColor: t.paper_2, borderColor: t.line }]}
+            /* WALK-A-143 (iPhone): a single-line TextInput with a lineHeight draws its text at the
+               BOTTOM of the box on iOS (the WALK-A-029 lesson). Drop the lineHeight, keep the box's
+               height (11 + 24.8 + 11), and centre the text. */
+            style={[ws.aa_search_input, { lineHeight: undefined, minHeight: 47, paddingVertical: 0,
+                                          textAlignVertical: "center" },
+                    { color: t.ink, backgroundColor: t.paper_2, borderColor: t.line }]}
           />
           {searching ? (
             <Text style={[ws.aa_count, { color: t.ink_soft }]}>

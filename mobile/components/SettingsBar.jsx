@@ -28,7 +28,6 @@ export const SETTINGS_LABELS = {
   "/settings/subscription": "Subscription & billing",
   "/settings/data": "Your data & export",
   "/settings/support": "Support",
-  "/settings/about": "About Meyy",
   "/settings/legal": "Legal",
   "/settings/profile": "Teaching profile",
 };

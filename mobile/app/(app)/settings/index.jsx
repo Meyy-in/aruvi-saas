@@ -28,6 +28,7 @@
  * with no handler renders at half strength and does not respond, which is the gear's own idiom
  * from before it was lit.
  */
+import { versionLine } from "../../../lib/version";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { View, ScrollView, Pressable, Keyboard, Platform } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -346,8 +347,8 @@ export default function SettingsHome() {
 
       <BigCard label="Legal" sub="User agreement & privacy notice"
         onPress={() => router.push("/settings/legal")} />
-      <BigCard label="About Meyy" sub="Version info"
-        onPress={() => router.push("/settings/about")} />
+      {/* About Meyy removed (WALK-A-136, founder 2026-09-29) — the version is the quiet line at
+          the foot of this list, and rides in every Support message. */}
 
       {/* Account: her data, her session, her account — the three rows that are about the
           ACCOUNT rather than the teaching (founder, 2026-09-11: "data & export can go to
@@ -394,6 +395,7 @@ export default function SettingsHome() {
       {failMsg ? (
         <Text accessibilityRole="alert" style={[ws.acct_fail, { color: t.danger }]}>{failMsg}</Text>
       ) : null}
+      <Text style={[ws.set_hint, { color: t.ink_soft }]}>{versionLine()}</Text>
 
       {/* Gate 2 — "do you have your data?", as a window, because it is the last thing between
           her and an irreversible act and nothing else should be reachable behind it. */}

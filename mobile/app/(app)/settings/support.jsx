@@ -40,11 +40,11 @@
  * "Message sent", which is a STATE and not the name of a screen.
  */
 import { useEffect, useRef, useState } from "react";
-import { View, ScrollView, Pressable, Keyboard, Platform } from "react-native";
+import { View, ScrollView, Pressable, Keyboard, Platform, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import Svg, { Path, Circle } from "react-native-svg";
 import { Text, TextInput } from "../../../components/Text";
-import { getJSON, postJSON } from "@aruvi/shared/format";
+import { getJSON, postJSON, waLink, mobileWords } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { Button, Link } from "../../../components/ui";
 import Dropdown from "../../../components/Dropdown";
@@ -204,7 +204,14 @@ export default function Support() {
   /* ★ MEYY WRITES ONLY TO WHAT IS ON RECORD (WALK-A-135, founder 2026-09-28). No email → no form
      and no bare support@ address to write to from any mailbox; she adds one here (typed twice, no
      code) and the form opens. The server refuses a send without one too. See the web's SupportForm. */
-  const needsEmail = emailKnown && !hasEmail;
+  /* WhatsApp only for a teacher who opted in — and only when we KNOW she did (WALK-A-142). */
+  const hasWa = emailKnown && !!meta.whatsapp;
+  const waOnly = hasWa && !hasEmail;
+  const openWa = () => {
+    const note = `Hello Meyy, I need help. My sign-in number is ${mobileWords(meta && meta.mobile)}.`;
+    Linking.openURL(waLink(note, meta && meta.whatsapp_number)).catch(() => {});
+  };
+  const needsEmail = emailKnown && !hasEmail && !hasWa;
   const saveEmail = async (v) => {
     try {
       await postJSON("/account", { email: v });
@@ -293,6 +300,33 @@ export default function Support() {
         <Text style={[ws.set_chev, { color: t.ink_soft }]}>›</Text>
       </Pressable>
 
+      {/* 1b · WhatsApp — opted-in teachers only (WALK-A-142). */}
+      {hasWa ? (
+        <Pressable onPress={openWa} accessibilityRole="button" accessibilityLabel="Chat on WhatsApp"
+          style={[ws.set_bigcard, { backgroundColor: t.card_bg, borderColor: t.line }]}>
+          <View style={ws.set_bigtext}>
+            <Text style={[ws.set_biglab, { color: t.ink }]}>Chat on WhatsApp</Text>
+            <Text style={[ws.set_bigsub, { color: t.ink_soft }]}>Message Meyy support</Text>
+          </View>
+          <Text style={[ws.set_chev, { color: t.ink_soft }]}>›</Text>
+        </Pressable>
+      ) : null}
+
+      {/* A WhatsApp-only teacher (no email): the form gives way to adding one (the web's 04.37). */}
+      {waOnly ? (
+        <View style={ws.set_group}>
+          <Text style={[ws.set_cap, { color: t.ink_soft }]}>Email support</Text>
+          <View style={[ws.set_card, ws.set_card_pad,
+                        { borderColor: t.line, backgroundColor: t.card_bg }]}>
+            <Text style={[ws.set_plan_txt, { color: t.ink }]}>To use email support, first add an
+              email address to your account — our replies need somewhere to go. Meanwhile, you
+              can reach us on WhatsApp above.</Text>
+            <Link title="Add an email address →" style={{ textAlign: "left" }}
+              onPress={() => router.push("/settings/personal")} />
+          </View>
+        </View>
+      ) : null}
+
       {needsEmail ? (
         <View style={ws.set_group}>
           <Text style={[ws.set_cap, { color: t.ink_soft }]}>Email support</Text>
@@ -308,7 +342,7 @@ export default function Support() {
 
       {/* 2 · the form, shaped like a mail: To · Subject · message — not before an email is on
           record (needsEmail) */}
-      {!needsEmail ? (
+      {!needsEmail && !waOnly ? (
       <View style={ws.set_group}>
         <Text style={[ws.set_cap, { color: t.ink_soft }]}>Write to us</Text>
         <View style={[ws.set_card, ws.set_card_pad,

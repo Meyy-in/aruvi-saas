@@ -22,7 +22,7 @@
  * because a withdrawal right that disappears with a subscription state is not a withdrawal right.
  */
 import { useEffect, useRef, useState } from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Keyboard, Platform, Switch } from "react-native";
 import { useRouter, useNavigation } from "expo-router";
 import { Text } from "../../../components/Text";
 import { getJSON, postJSON, idInUse, ROLES, STATES, EMAIL_TAKEN,
@@ -51,6 +51,10 @@ export default function PersonalProfile() {
   const [email, setEmail] = useState("");              // the CONFIRMED value
   /* The open change, if any — EmailEntry reports every keystroke (WALK-A-125). */
   const [emailDraft, setEmailDraft] = useState({ editing: false, first: "", second: "" });
+  /* ★ WHATSAPP SUPPORT (WALK-A-142 — the web's 2026-09-26 rule, ported). AT LEAST ONE CHANNEL,
+     ALWAYS: she can switch WhatsApp off only while a CONFIRMED email is on the form; without one
+     the switch stays on, locked, and says why. The server enforces the same rule (409). */
+  const [wa, setWa] = useState(false);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
 
@@ -62,6 +66,7 @@ export default function PersonalProfile() {
       setName(a.display_name || ""); setRole(roleChoice(a.role)); setRoleOther(roleOtherText(a.role));
       setStateName(a.state || ""); setCity(a.city || ""); setSchool(a.school_name || "");
       setEmail(a.email || "");
+      setWa(!!a.whatsapp);
     }).catch(() => {});
     return () => { live = false; };
   }, []);
@@ -70,16 +75,32 @@ export default function PersonalProfile() {
      screen can go — the bar's ✕ (router.back), hardware Back, the swipe, and a nav tab that pops
      the Settings stack — so one listener covers them all. Save is the default answer. */
   const dirtyRef = useRef(false);
+  /* WALK-A-140 (iPhone): once a save has succeeded, THIS exit is not a question. A render between
+     the save and router.back() recomputes dirtyRef from the not-yet-refreshed `acct`, so the
+     guard cannot rely on dirtyRef alone — `leavingRef` says "we are going, on purpose". */
+  const leavingRef = useRef(false);
   const [askLeave, setAskLeave] = useState(null);
+  /* WALK-A-141 (Android): with the keyboard up, Save at the foot could not be scrolled into view —
+     `automaticallyAdjustKeyboardInsets` is iOS-only and edge-to-edge Android does not shrink the
+     window. Pad the content by the keypad's measured height while it is up (Support's idiom). */
+  const [kbH, setKbH] = useState(0);
+  useEffect(() => {
+    if (Platform.OS !== "android") return undefined;
+    const up = Keyboard.addListener("keyboardDidShow",
+      (e) => setKbH(Math.round((e && e.endCoordinates && e.endCoordinates.height) || 320)));
+    const down = Keyboard.addListener("keyboardDidHide", () => setKbH(0));
+    return () => { up.remove(); down.remove(); };
+  }, []);
   dirtyRef.current = !!acct && (
     name !== (acct.display_name || "") || roleToSave(role, roleOther) !== (acct.role || "")
     || stateName !== (acct.state || "") || city !== (acct.city || "")
     || school !== (acct.school_name || "") || email !== (acct.email || "")
+    || wa !== !!acct.whatsapp
     || (emailDraft.editing && !!(emailDraft.first.trim() || emailDraft.second.trim())));
   useEffect(() => navigation.addListener("beforeRemove", (e) => {
-    if (!dirtyRef.current) return;
+    if (leavingRef.current || !dirtyRef.current) return;
     e.preventDefault();
-    setAskLeave(() => () => { dirtyRef.current = false; navigation.dispatch(e.data.action); });
+    setAskLeave(() => () => { leavingRef.current = true; navigation.dispatch(e.data.action); });
   }), [navigation]);
 
   const canSave = !!String(name || "").trim() && !!String(city || "").trim()
@@ -108,10 +129,11 @@ export default function PersonalProfile() {
     if (mail === null) { setBusy(false); return false; }
     try {
       await postJSON("/account", { name, email: mail, role: roleToSave(role, roleOther),
-                                   state: stateName, city, school });
+                                   state: stateName, city, school, whatsapp: wa });
       /* ⚠️ HER NAME IS ON THE BAR AND IN THE GREETING, and both read a cached account. */
       invalidateAccount();
       dirtyRef.current = false;
+      leavingRef.current = true;
       if (leave) router.back();         // back to the cards (founder, 2026-08-26)
       return true;
     } catch (e) {
@@ -129,7 +151,8 @@ export default function PersonalProfile() {
     /* Same keyboard rule as Support (2026-09-16): without this the trailing Save sits below a
        scroll range the keyboard does not extend, so it cannot be reached while a field is
        focused. Not reported here — fixed because it is the identical shape. */
-    <ScrollView contentContainerStyle={[ws.main, { paddingTop: 6 }]}
+    <ScrollView contentContainerStyle={[ws.main, { paddingTop: 6 },
+                                       Platform.OS === "android" && kbH ? { paddingBottom: kbH + 24 } : null]}
       keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       {/* No heading — the Settings bar names this screen. Labels ABOVE the boxes (founder,
           2026-08-26: placeholder-only left fields ambiguous once filled). */}
@@ -145,6 +168,26 @@ export default function PersonalProfile() {
 
       <EmailEntry current={email} label="Email" selfId={acct.account_id} disabled={busy}
         onConfirmed={(v) => { setEmail(v); return ""; }} onDraft={setEmailDraft} />
+
+      {(() => {
+        const hasMail = !emailDraft.editing && !!String(email || "").trim();
+        const locked = wa && !hasMail;
+        return (
+          <Field label="WhatsApp support">
+            <View style={[ws.ob_email_view, { borderColor: t.line, backgroundColor: t.card_bg }]}>
+              <Text style={[ws.ob_email_addr, { color: t.ink }]}>{wa
+                ? "On — Meyy support on WhatsApp from your sign-in number" : "Off"}</Text>
+              <Switch value={wa} disabled={locked || busy} onValueChange={setWa}
+                accessibilityLabel="Use WhatsApp for Meyy support"
+                trackColor={{ true: t.pine }} />
+            </View>
+            {locked ? (
+              <Quiet>To switch WhatsApp off, add an email address above first — Meyy needs at
+                least one way to reach you for your invoices and for legal and privacy notices.</Quiet>
+            ) : null}
+          </Field>
+        );
+      })()}
 
       <Field label="Role">
         <Dropdown value={role} onChange={setRole} options={ROLES}

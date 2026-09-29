@@ -15,16 +15,16 @@
  * same `aruvi-theme` key the web uses, through the shared storage shim — so it survives sign-out,
  * as it does there.
  */
-import { Pressable } from "react-native";
+import { Pressable, View } from "react-native";
 import { Text } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
 const ORDER = ["system", "light", "dark"];
 const META = {
-  system: { glyph: "◐", label: "Theme: Auto (follows your phone)" },
-  light: { glyph: "☀", label: "Theme: Light" },
-  dark: { glyph: "☾", label: "Theme: Dark" },
+  system: { glyph: "◐", label: "Theme: Auto (follows your phone)", word: "Auto" },
+  light: { glyph: "☀", label: "Theme: Light", word: "Light" },
+  dark: { glyph: "☾", label: "Theme: Dark", word: "Dark" },
 };
 
 export default function ThemeToggle() {
@@ -34,7 +34,14 @@ export default function ThemeToggle() {
   return (
     <Pressable hitSlop={10} accessibilityRole="button" accessibilityLabel={m.label}
       onPress={() => setPref(ORDER[(ORDER.indexOf(pref) + 1) % ORDER.length])}>
-      <Text style={[ws.set_bar_gear, { color: t.ink_soft }]}>{m.glyph}</Text>
+      {/* ★ THE WORD BESIDE THE GLYPH (WALK-A-138, founder 2026-09-29) — the fix this header
+          foresaw: the glyph alone did not say which theme was on. Short words in the Text-size
+          control's own pill face, so the two cards read alike; "(follows your phone)" is already
+          the card's sub-line. Fixed size, so the control never grows with the text setting. */}
+      <View style={{ flexDirection: "row", alignItems: "center", columnGap: 6 }}>
+        <Text fixed style={[ws.set_pill_t, { color: t.pine }]}>{m.word}</Text>
+        <Text style={[ws.set_bar_gear, { color: t.ink_soft }]}>{m.glyph}</Text>
+      </View>
     </Pressable>
   );
 }

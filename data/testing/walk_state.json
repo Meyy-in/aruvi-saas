@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-29T06:12:13",
+  "updated_at": "2026-09-29T08:21:38",
   "items": {
     "04.19": {
       "ios": {
@@ -4136,6 +4136,20 @@
         "at": "2026-09-28T05:43:17",
         "comment": "Bar reads Settings / Support, no heading; X → list, X → My Lessons.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Gear → Settings / Support; X → list, X → My Lessons; hardware Back matches [A]; bar clear of the cut-out.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Gear → Settings / Support; X → list, X → My Lessons; hardware Back matches [A]; bar clear of the cut-out.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.02": {
@@ -4145,6 +4159,20 @@
         "at": "2026-09-28T05:43:17",
         "comment": "All four items stay up in Settings, none lit; My Lessons from Settings leaves and lights it.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "All four items stay up in Settings, none lit; My Lessons leaves and lights; bar under the gesture bar [A].",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "All four items stay up in Settings, none lit; My Lessons leaves and lights; bar under the gesture bar [A].",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.03": {
@@ -4154,6 +4182,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "Cards and ACCOUNT rows in order with the right sub-lines; Delete in red; no Appearance at desktop width (web light only).\n✓ WALK-A-136: About Meyy gone; version line at the foot. (2026-09-29)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Cards in order incl. Appearance; no About Meyy (WALK-A-136 ✓); ACCOUNT rows; 'Meyy 0.1.0' at the foot.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Cards in order incl. Appearance; no About Meyy (WALK-A-136 ✓); ACCOUNT rows; 'Meyy 0.1.0' at the foot.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.04": {
@@ -4163,6 +4205,20 @@
         "at": "2026-09-28T05:43:17",
         "comment": "9000000013 (trial): no Personal profile, no Your data & export; the rest present.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Trial (013 iPhone / 011 Android): no Personal profile, no Your data & export; rest present.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Trial (013 iPhone / 011 Android): no Personal profile, no Your data & export; rest present.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.05": {
@@ -4172,6 +4228,20 @@
         "at": "2026-09-28T05:43:17",
         "comment": "Bar reads Teaching profile; subjects, classes, sections, periods shown; X → Settings list.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Teaching profile under its bar; X and hardware Back [A] → Settings list.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T06:36:54",
+        "comment": "Teaching profile under its bar; X and hardware Back [A] → Settings list.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.06": {
@@ -4181,6 +4251,20 @@
         "at": "2026-09-28T05:43:23",
         "comment": "Founder decision 2026-09-27 (see 01.10): the website stays light only; Appearance is a phone feature. Not walked on web.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:04:54",
+        "comment": "Glyph cycles, whole app re-skins, Dark survives restart and sign-out. Note: no 'Theme: …' words beside the glyph → WALK-A-138 (founder to decide). ✓ WALK-A-138: the theme's name now shows beside the glyph.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:04:54",
+        "comment": "Glyph cycles, whole app re-skins, Dark survives restart and sign-out. Note: no 'Theme: …' words beside the glyph → WALK-A-138 (founder to decide). ✓ WALK-A-138.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.07": {
@@ -4190,6 +4274,20 @@
         "at": "2026-09-28T05:43:23",
         "comment": "Phone-only by design (web follows browser zoom). Not walked on web.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "'Device default' (both). Cap holds; sizes survive restart and sign-out.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "'Device default' (both). Android font at max: Device default no larger than 'Larger' after WALK-A-139.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.08": {
@@ -4199,6 +4297,20 @@
         "at": "2026-09-28T06:09:51",
         "comment": "Switch on/off saves with the right notes; API domain blocked → flips back, 'Couldn't save that just now — try again.'",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Notes right; offline flips back with 'Couldn't save that just now — try again.'",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Notes right; offline flips back with 'Couldn't save that just now — try again.'",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.12": {
@@ -4208,6 +4320,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "A wrong first entry followed by a correct second one is rejected and she is sent back to re-confirm the first — a loop. Change request on the whole flow → WALK-A-125\n✓ re-walked 2026-09-29 after WALK-A-125: frozen row + change, two boxes, Confirm, mismatch resets nothing, paste blocked in box 2.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "WALK-A-125 on phone: frozen + change, two boxes, Confirm, mismatch resets nothing, no Paste in box 2, autofill offered, change toggles.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "WALK-A-125 on phone: frozen + change, two boxes, Confirm, mismatch resets nothing, no Paste in box 2, autofill offered, change toggles.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.13": {
@@ -4217,6 +4343,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "Drop-downs work. Change requests: Role 'Other' must open a box to type the role → WALK-A-126; State lists only 22 (21 states + Delhi) — the 7 NE states and the UTs are missing → WALK-A-127\n✓ re-walked 2026-09-29 after WALK-A-126/127: Role Other → required 'Your role' box; full list of states and UTs.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "WALK-A-126/127 on phone: Role Other → required 'Your role'; full states + UTs; current marked; Back closes the sheet [A].",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "WALK-A-126/127 on phone: Role Other → required 'Your role'; full states + UTs; current marked; Back closes the sheet [A].",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.09": {
@@ -4226,6 +4366,20 @@
         "at": "2026-09-28T06:19:42",
         "comment": "Settings › Log out → Login, no confirmation; after signing back in Ask Meyy has answers.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Log out → Login, no confirmation; Ask Meyy answers after signing back in; theme kept; Back stays out [A].",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Log out → Login, no confirmation; Ask Meyy answers after signing back in; theme kept; Back stays out [A].",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.11": {
@@ -4235,6 +4389,20 @@
         "at": "2026-09-29T06:12:13",
         "comment": "Loading… then the form (mobile read-only); Save → Saving… → Settings list; new name on the bar.\n✓ WALK-A-133: unsaved changes ask; Save (default) / Leave without saving as buttons. (2026-09-29)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "Loads and saves; name on the bar. Leave-guard: 'Save your changes?' with Save / Leave without saving on ✕, Back, swipe; no question after a real Save (WALK-A-140); Save reachable with the keyboard up (WALK-A-141).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "Loads and saves; name on the bar. Leave-guard: 'Save your changes?' with Save / Leave without saving on ✕, Back, swipe; no question after a real Save (WALK-A-140); Save reachable with the keyboard up (WALK-A-141).",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.14": {
@@ -4244,6 +4412,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "Trial (013): pill, 'N of 3 chapters used', Subscribe — fine. Subscriber (003): cards and rows right, BUT a free-trial status shows at the top for a subscribed customer → WALK-A-128. Order: founder change — seeing and listing separated → WALK-A-129.\nWALK-A-128 closed-no-defect 2026-09-29 (a WALK-A-134 symptom); cell stays failed on WALK-A-129 (order).\n✓ re-walked 2026-09-29 after WALK-A-129: earliest expiry first. ('New' tag on arrival to be seen at the subscribe session.)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "003: no status card, earliest expiry first (WALK-A-129), rows right; trial: Free trial pill, N of 3, Subscribe.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "003: no status card, earliest expiry first (WALK-A-129), rows right; trial: Free trial pill, N of 3, Subscribe.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.15": {
@@ -4253,6 +4435,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "Invoice PDF downloads; blocked → 'Couldn't fetch…'. Change request: the message appears at the foot of the screen where it can be missed → WALK-A-130.\n✓ WALK-A-130: invoice error now on its card under the pill. (2026-09-29)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "Invoice PDF preview + share; chooser cancel leaves nothing stuck [A]; offline message on the card under its pill (WALK-A-130).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:43:44",
+        "comment": "Invoice PDF preview + share; chooser cancel leaves nothing stuck [A]; offline message on the card under its pill (WALK-A-130).",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.16": {
@@ -4262,6 +4458,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "Both buttons open the wizard (003 on the cart); lines under the button and at the foot right. Copy change on the cart line → WALK-A-131.\n✓ WALK-A-131: 'The total amount updates as you add.' (2026-09-29)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Wizard opens on the cart; 'The total amount updates as you add.' (WALK-A-131); lines right; Back → Subscription & billing [A].",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Wizard opens on the cart; 'The total amount updates as you add.' (WALK-A-131); lines right; Back → Subscription & billing [A].",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.17": {
@@ -4271,6 +4481,20 @@
         "at": "2026-09-29T06:12:13",
         "comment": "Hint, Preparing…, both rows disabled, files open, offline message right. Change request: file name → WALK-A-132.\n✓ WALK-A-132: Meyy_Kumar_Sep_2026_data from both doors. (2026-09-29)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Preparing… with both rows disabled; share sheet with Meyy_Kumar_Sep_2026_data.docx/.pdf (WALK-A-132); targets and Back re-enable [A].",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Preparing… with both rows disabled; share sheet with Meyy_Kumar_Sep_2026_data.docx/.pdf (WALK-A-132); targets and Back re-enable [A].",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.18": {
@@ -4280,6 +4504,20 @@
         "at": "2026-09-28T06:52:01",
         "comment": "Hint, Ask Meyy card, WRITE TO US, plain 'To support@meyy.in', Subject, Your message; Ask Meyy over Support returns to the half-written message.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Layout right; Ask Meyy over Support keeps the message; Back closes only the panel [A]. No WhatsApp card or Personal-profile switch on the phone — WhatsApp support is not yet ported to the phone (04.33–04.37).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Layout right; Ask Meyy over Support keeps the message; Back closes only the panel [A]. No WhatsApp card or Personal-profile switch on the phone — WhatsApp support is not yet ported to the phone (04.33–04.37).",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.20": {
@@ -4289,6 +4527,20 @@
         "at": "2026-09-28T06:52:01",
         "comment": "'Message sent', MEY-S-NNN reference, copy-to and 2-working-days lines, quote line; Back does not resurrect the form.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Message sent, reference, copy-to + window, quote line; Back does not resurrect the form [A].",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Message sent, reference, copy-to + window, quote line; Back does not resurrect the form [A].",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.21": {
@@ -4298,6 +4550,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "013 (trial, no email): both no-email lines as specified; message sent. Walks as built — but the founder is changing the POLICY for no-email teachers → WALK-A-135.\n✓ WALK-A-135: no-email trial sees the EMAIL SUPPORT box; after confirming, the form opens with 'Our reply goes to' + change. (2026-09-29)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Trial (013 / 011): EMAIL SUPPORT box instead of the form; after Confirm the form opens with 'Our reply goes to' frozen + change (WALK-A-135).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T07:56:37",
+        "comment": "Trial (013 / 011): EMAIL SUPPORT box instead of the form; after Confirm the form opens with 'Our reply goes to' frozen + change (WALK-A-135).",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.22": {
@@ -4307,6 +4573,20 @@
         "at": "2026-09-28T07:06:24",
         "comment": "API blocked on load: nothing said about her email. Send while blocked: 'Couldn't send that just now — try again.', text kept. Limit is 4,000 characters (web, phone and API).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Offline load says nothing of her email; offline send keeps the text with the retry line; counter near the cap.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Offline load says nothing of her email; offline send keeps the text with the retry line; counter near the cap.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.24": {
@@ -4316,6 +4596,20 @@
         "at": "2026-09-29T05:06:18",
         "comment": "Founder decision 2026-09-29: About Meyy is removed → WALK-A-136. Row retires once the fix lands.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "na",
+        "by": "Kumar",
+        "at": "2026-09-29T07:57:54",
+        "comment": "About Meyy removed (WALK-A-136).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "na",
+        "by": "Kumar",
+        "at": "2026-09-29T07:57:54",
+        "comment": "About Meyy removed (WALK-A-136).",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.23": {
@@ -4325,6 +4619,20 @@
         "at": "2026-09-29T05:09:35",
         "comment": "Pills + heading pinned; agreement accepted line, acknowledgements, closing line; privacy tables readable; pill switch resets to top; API blocked → couldn't-be-loaded message.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Pills + heading fixed; tables as stacked cards; pill switch to top; last line clear of the nav.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Pills + heading fixed; tables as stacked cards; pill switch to top; last line clear of the nav.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.28": {
@@ -4334,6 +4642,20 @@
         "at": "2026-09-29T05:09:35",
         "comment": "Panel between bar and nav; ASK MEYY clay; toggles; destinations close and go; one X over Settings; desktop autofocus, Escape closes.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Clay while open; toggles; destinations close and go; one X over Settings; no autofocus; Back closes the panel [A].",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Clay while open; toggles; destinations close and go; one X over Settings; no autofocus; Back closes the panel [A].",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.29": {
@@ -4343,6 +4665,20 @@
         "at": "2026-09-29T05:09:35",
         "comment": "Five categories with counts in their colours; one rail follows the tap; sticky header; one answer open at a time, line breaks kept.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Five categories, rail follows, sticky header steady, one answer open, chevron drawn; dark colours fine.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Five categories, rail follows, sticky header steady, one answer open, chevron drawn; dark colours fine.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.30": {
@@ -4352,6 +4688,20 @@
         "at": "2026-09-29T05:21:15",
         "comment": "'period' → 40 results, flat ranked list with category tags; 'zzqqxx' → no-matches line; clearing restores categories.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "'period' → 40 results; no-matches; clearing restores; search text centred on iPhone (WALK-A-143).",
+        "build": "Expo Go (LAN)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "'period' → 40 results; no-matches; clearing restores; search text centred on iPhone (WALK-A-143).",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.31": {
@@ -4361,6 +4711,20 @@
         "at": "2026-09-29T05:21:15",
         "comment": "API domain blocked + reload: Ask Meyy opens at once with all categories and answers; search works.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Offline after restart: opens at once with every answer; search works.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:12:19",
+        "comment": "Offline after restart: opens at once with every answer; search works.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.33": {
@@ -4370,6 +4734,20 @@
         "at": "2026-09-29T05:58:30",
         "comment": "Question, line, neither button preselected, Continue blocked until chosen; No → 'Email *', Yes → 'Email (optional)'. Copy change: drop the unconfirmed-email line → WALK-A-137.\n✓ WALK-A-137: no line under an unconfirmed email. (2026-09-29)",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "Fresh number: 'Support on WhatsApp? *', neither preselected, Continue blocked until chosen; No → Email *, Yes → Email (optional) (WALK-A-142).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "Fresh number: 'Support on WhatsApp? *', neither preselected, Continue blocked until chosen; No → Email *, Yes → Email (optional) (WALK-A-142).",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.35": {
@@ -4379,6 +4757,20 @@
         "at": "2026-09-29T05:21:15",
         "comment": "003 (email on record): switch on/off both save and survive reload. Case (b) WhatsApp on + no email held for a set-up session.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "003 (email on record): WhatsApp switch on/off both save and reload (WALK-A-142). Case (b) held for the special-state session.",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "003 (email on record): WhatsApp switch on/off both save and reload (WALK-A-142). Case (b) held for the special-state session.",
+        "build": "Expo Go (LAN)"
       }
     },
     "04.36": {
@@ -4388,6 +4780,20 @@
         "at": "2026-09-29T05:21:15",
         "comment": "WhatsApp on: 'Chat on WhatsApp' card under Ask Meyy opens wa.me to +91 93637 95723 with the prefilled line; off: no card.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "WhatsApp on: 'Chat on WhatsApp' card opens WhatsApp with the prefilled note; off: no card (WALK-A-142).",
+        "build": "Expo Go (LAN)"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T08:21:38",
+        "comment": "WhatsApp on: 'Chat on WhatsApp' card opens WhatsApp with the prefilled note; off: no card (WALK-A-142).",
+        "build": "Expo Go (LAN)"
       }
     }
   },
@@ -6988,7 +7394,7 @@
     {
       "id": "WALK-A-125",
       "opened": "2026-09-28T06:09:51",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.12",
       "found_on": [
         "web"
@@ -6996,11 +7402,11 @@
       "applies_to": "web+phone",
       "title": "Change email: frozen current address, two boxes, 'Confirm', no loop",
       "what": "Founder, web 2026-09-28: typing a WRONG address first and the correct one second is rejected and she is asked to re-confirm the first (wrong) one — she goes round in a loop. Wanted: (1) the current email shows frozen with 'change' at the right end; (2) 'change' opens a new-email box and, under it, a re-entry box with no 'change' of its own; (3) the button reads 'Confirm' (not 'Verify'); (4) matched → the two collapse into a single email row; (5) unmatched → a warning under the boxes, nothing reset; (6) pressing 'change' on the original row again removes both new boxes; (7) paste allowed in the first box, NOT in the re-entry box; browser autofill (saved emails) allowed in both.\nDECIDED (founder 2026-09-28): applies to Personal profile AND the subscribe 'About you' step, web + phone. Copy: frozen row = current address + 'change' at right; box 1 'New email'; box 2 'Type it again'; button 'Confirm'; mismatch: 'The two entries don't match — check both and try again.'",
-      "fix": "[FIXED web 2026-09-29T05:36:00] New shared web component EmailEntry: frozen address + 'change' (toggles the boxes away), 'New email' + 'Type it again' together, one 'Confirm', mismatch warns and resets nothing, paste blocked in box 2, autofill allowed in both. Used by Personal profile and Subscribe › About you. Profile Save folds a matched open change and stops on an unmatched one ('Your new email isn't confirmed yet — type it twice and tap Confirm, or tap change to keep the old one.'); the old 'Email isn't saved until…' line removed. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.",
-      "files": "web/app/components/EmailEntry.jsx (new); Settings.jsx PersonalProfile; SubscribeFlow.jsx",
+      "fix": "[FIXED web 2026-09-29T05:36:00] New shared web component EmailEntry: frozen address + 'change' (toggles the boxes away), 'New email' + 'Type it again' together, one 'Confirm', mismatch warns and resets nothing, paste blocked in box 2, autofill allowed in both. Used by Personal profile and Subscribe › About you. Profile Save folds a matched open change and stops on an unmatched one ('Your new email isn't confirmed yet — type it twice and tap Confirm, or tap change to keep the old one.'); the old 'Email isn't saved until…' line removed. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] mobile/components/EmailEntry.jsx (new, the web's twin; paste blocked in box 2 via contextMenuHidden); settings/personal.jsx; SubscribeWizard.jsx. Parse-checked. Awaiting the phone walk.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "web/app/components/EmailEntry.jsx (new); Settings.jsx PersonalProfile; SubscribeFlow.jsx; mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:09:51"
@@ -7008,7 +7414,7 @@
     {
       "id": "WALK-A-126",
       "opened": "2026-09-28T06:09:51",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.13",
       "found_on": [
         "web"
@@ -7016,11 +7422,11 @@
       "applies_to": "web+phone",
       "title": "Role 'Other' opens a box to type the role",
       "what": "Founder, web 2026-09-28: when Role is 'Other', a box opens below to type the role — Meyy needs to know who she is.\nDECIDED (founder 2026-09-28): the box is REQUIRED (Save / Continue disabled while empty). Label 'Your role *', placeholder 'e.g. Librarian, Special educator'. Personal profile + subscribe, web + phone.",
-      "fix": "[FIXED web 2026-09-29T05:36:00] Role 'Other' opens 'Your role *' (placeholder 'e.g. Librarian, Special educator'); the typed words ARE the stored role (no schema change); Save / Continue held until filled; a stored non-list role reads back as Other + text. PHONE PORT OWED (shared helpers ready). Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.",
-      "files": "packages/shared/src/format.js (ROLE_OTHER, roleChoice, roleOtherText, roleToSave) + test/roles.test.js; Settings.jsx; SubscribeFlow.jsx",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Role 'Other' opens 'Your role *' (placeholder 'e.g. Librarian, Special educator'); the typed words ARE the stored role (no schema change); Save / Continue held until filled; a stored non-list role reads back as Other + text. PHONE PORT OWED (shared helpers ready). Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] settings/personal.jsx and SubscribeWizard.jsx: 'Your role *' box when Role is Other; shared roleToSave. Parse-checked. Awaiting the phone walk.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "packages/shared/src/format.js (ROLE_OTHER, roleChoice, roleOtherText, roleToSave) + test/roles.test.js; Settings.jsx; SubscribeFlow.jsx; mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:09:51"
@@ -7028,7 +7434,7 @@
     {
       "id": "WALK-A-127",
       "opened": "2026-09-28T06:09:51",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.13",
       "found_on": [
         "web"
@@ -7036,11 +7442,11 @@
       "applies_to": "web+phone",
       "title": "State list is 22 — add the missing states and union territories",
       "what": "Founder, web 2026-09-28: 'why only 22 states?' The shared STATES list has 21 states + Delhi + Other. Missing: Arunachal Pradesh, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura, and the UTs other than Delhi.\nDECIDED (founder 2026-09-28): all 28 states + 8 union territories, alphabetical, 'Other' last.",
-      "fix": "[FIXED web 2026-09-29T05:36:00] All 28 states + 8 UTs, alphabetical, Other last. Shared — web and phone both pick it up (phone after reload). Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS.",
+      "fix": "[FIXED web 2026-09-29T05:36:00] All 28 states + 8 UTs, alphabetical, Other last. Shared — web and phone both pick it up (phone after reload). Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
       "files": "packages/shared/src/format.js STATES + test/roles.test.js",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:09:51"
@@ -7068,7 +7474,7 @@
     {
       "id": "WALK-A-129",
       "opened": "2026-09-28T06:36:41",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.14",
       "found_on": [
         "web"
@@ -7076,11 +7482,11 @@
       "applies_to": "web+phone",
       "title": "Subscription cards: list by earliest expiry; a new purchase is shown on arrival",
       "what": "Founder, web 2026-09-28: separate SEEING from LISTING. Listing is always EARLIEST expiry at the top (reverses the earlier 'newest expiry first'). When she has just taken a new subscription, she lands on it (scrolled to / marked) so she sees it — without it jumping to the top of the list.\nDECIDED (founder 2026-09-28): after a purchase, Subscription & billing opens scrolled to the new card, which carries a small 'New' tag for that visit only; the list stays earliest-expiry-first.",
-      "fix": "[FIXED web 2026-09-29T05:36:00] List sorts EARLIEST expiry first (ties = cart order). A checkout from inside the app now opens Settings › Subscription & billing scrolled to the new card with a 'New' pill, forgotten on leaving. PHONE PORT OWED for the landing/tag (the sort is shared). Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.",
-      "files": "packages/shared/src/format.js subsFromEntitlement + test; Settings.jsx; page.jsx; SubscribeFlow.jsx",
+      "fix": "[FIXED web 2026-09-29T05:36:00] List sorts EARLIEST expiry first (ties = cart order). A checkout from inside the app now opens Settings › Subscription & billing scrolled to the new card with a 'New' pill, forgotten on leaving. PHONE PORT OWED for the landing/tag (the sort is shared). Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] subscription.jsx: earliest-expiry order (shared); just-bought cards tagged 'New' (lib/purchase `recent`, cleared on leaving) and scrolled to; SubscribeWizard lands on Subscription & billing after a purchase (router.dismissTo). Parse-checked. Awaiting the phone walk.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "packages/shared/src/format.js subsFromEntitlement + test; Settings.jsx; page.jsx; SubscribeFlow.jsx; mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7088,7 +7494,7 @@
     {
       "id": "WALK-A-130",
       "opened": "2026-09-28T06:36:41",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.15",
       "found_on": [
         "web"
@@ -7096,11 +7502,11 @@
       "applies_to": "web+phone",
       "title": "Invoice fetch failure: say it on the card, under the pill",
       "what": "Founder, web 2026-09-28: 'Couldn't fetch that invoice right now. Try again in a moment.' appears at the foot of the screen where it can be hidden. Show it on the card whose invoice was tapped, just below its Subscribed pill.",
-      "fix": "[FIXED web 2026-09-29T05:36:00] Invoice failure shows on the tapped card, just under its pill. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.",
-      "files": "Settings.jsx billing",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Invoice failure shows on the tapped card, just under its pill. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] subscription.jsx: invoice failure on its card under the pill. Parse-checked. Awaiting the phone walk.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "Settings.jsx billing; mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7108,7 +7514,7 @@
     {
       "id": "WALK-A-131",
       "opened": "2026-09-28T06:36:41",
-      "closed": "",
+      "closed": "2026-09-29T07:56:37",
       "feature": "04.16",
       "found_on": [
         "web"
@@ -7116,11 +7522,11 @@
       "applies_to": "web+phone",
       "title": "Cart line: 'The total amount updates as you add.'",
       "what": "Founder, web 2026-09-28: in the paying page, 'Each subject & stage is its own subscription — unlimited lesson plans across all its classes. The total updates as you add.' → '… The total amount updates as you add.'",
-      "fix": "[FIXED web 2026-09-29T05:36:00] 'The total amount updates as you add.' — web and phone. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS.",
+      "fix": "[FIXED web 2026-09-29T05:36:00] 'The total amount updates as you add.' — web and phone. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS.\n[WALKED phone 2026-09-29T07:56:37] PASS on iPhone + Android.",
       "files": "web SubscribeFlow.jsx; mobile SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7128,7 +7534,7 @@
     {
       "id": "WALK-A-132",
       "opened": "2026-09-28T06:36:41",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.17",
       "found_on": [
         "web"
@@ -7136,11 +7542,11 @@
       "applies_to": "web+phone",
       "title": "Data export file name: Meyy_{name}_{month}_{year}_data",
       "what": "Founder, web 2026-09-28: 'aruvi-your-data.docx/.pdf' → 'Meyy_{user name}_{month}_{year}_data'. Applies to the Word and PDF exports and to the delete window's 'Download my data first'.\nDECIDED (founder 2026-09-28): Meyy_{FirstName}_{Mon}_{YYYY}_data (e.g. Meyy_Kumar_Sep_2026_data.docx); no name on the account → last 4 digits of the mobile (Meyy_3210_Sep_2026_data).",
-      "fix": "[FIXED web 2026-09-29T05:36:00] Meyy_{First}_{Mon}_{YYYY}_data.{fmt}, last-4 of mobile when there is no name; web download + API header. API NEEDS PUSH + REDEPLOY. PHONE PORT OWED (mobile/lib/download.js). Parse-checked; node --test packages/shared 252/252.\n[RE-WALK web 2026-09-29T05:58:30] FAIL: both downloads (Your data & export, and the delete window) named with the mobile's last four — the web keeps no device copy of the account, so the shared store read empty. FIX: download() now reads GET /account at the moment of download. Awaiting re-walk.\n[RE-WALKED web 2026-09-29T06:12:13] PASS. Phone port owed before the phone walk.",
-      "files": "packages/shared/src/account.js dataExportName + test/exportName.test.js; Settings.jsx; api/main.py _data_export_name",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Meyy_{First}_{Mon}_{YYYY}_data.{fmt}, last-4 of mobile when there is no name; web download + API header. API NEEDS PUSH + REDEPLOY. PHONE PORT OWED (mobile/lib/download.js). Parse-checked; node --test packages/shared 252/252.\n[RE-WALK web 2026-09-29T05:58:30] FAIL: both downloads (Your data & export, and the delete window) named with the mobile's last four — the web keeps no device copy of the account, so the shared store read empty. FIX: download() now reads GET /account at the moment of download. Awaiting re-walk.\n[RE-WALKED web 2026-09-29T06:12:13] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] lib/download.js dataExport → shared dataExportName (phone's cached account). Parse-checked. Awaiting the phone walk.\n[WALKED phone 2026-09-29T07:56:37] PASS on iPhone + Android.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "packages/shared/src/account.js dataExportName + test/exportName.test.js; Settings.jsx; api/main.py _data_export_name; mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7148,7 +7554,7 @@
     {
       "id": "WALK-A-133",
       "opened": "2026-09-28T06:52:01",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.11",
       "found_on": [
         "web"
@@ -7156,11 +7562,11 @@
       "applies_to": "web+phone",
       "title": "Personal profile: leaving with unsaved changes asks whether to save",
       "what": "Founder, web 2026-09-28: ticked WhatsApp support in Personal profile, but Save sits well below, so she left without saving and the change was lost silently. If any field has been changed and she tries to leave (X, a nav item, the gear, browser/hardware Back), ask whether she would like to save.",
-      "fix": "[FIXED web 2026-09-29T05:36:00] Unsaved Personal profile changes → 'Save your changes?' · 'You've changed your personal profile and not saved it.' · Save / Leave without saving; tap outside = stay. Guards the bar's ✕, the three nav items, the gear, Log out and the browser's Back. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALK web 2026-09-29T05:58:30] Change: both answers as real buttons, Save the default. → 'Leave without saving' now a bordered button (ob-offer-alt), Save pine + autofocus. Awaiting re-walk.\n[RE-WALKED web 2026-09-29T06:12:13] PASS. Phone port owed before the phone walk.",
-      "files": "Settings.jsx PersonalProfile; page.jsx (leaveGuardRef + guarded exits)",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Unsaved Personal profile changes → 'Save your changes?' · 'You've changed your personal profile and not saved it.' · Save / Leave without saving; tap outside = stay. Guards the bar's ✕, the three nav items, the gear, Log out and the browser's Back. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALK web 2026-09-29T05:58:30] Change: both answers as real buttons, Save the default. → 'Leave without saving' now a bordered button (ob-offer-alt), Save pine + autofocus. Awaiting re-walk.\n[RE-WALKED web 2026-09-29T06:12:13] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] settings/personal.jsx: navigation 'beforeRemove' guard (✕, hardware Back, swipe, nav tabs) → Sheet 'Save your changes?' with Save (primary) and a bordered 'Leave without saving'. Parse-checked. Awaiting the phone walk.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "Settings.jsx PersonalProfile; page.jsx (leaveGuardRef + guarded exits); mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:52:01"
@@ -7188,7 +7594,7 @@
     {
       "id": "WALK-A-135",
       "opened": "2026-09-28T07:03:47",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.21",
       "found_on": [
         "web"
@@ -7196,22 +7602,19 @@
       "applies_to": "web+phone+api",
       "title": "Support policy: Meyy corresponds only with an email or mobile on record — a teacher with no email adds one before she can write",
       "what": "Founder, web 2026-09-28: inviting a no-email teacher to write to support@meyy.in from any private address opens the door to abuse and privacy breaches. POLICY: Meyy corresponds only with and on the email or mobile on record. For a trial (or any no-email) teacher, Support shows no 'Write to us' form and no bare support@meyy.in invitation; instead a box to add an email address, stored on her profile beside her mobile. Once added, the form opens. No WhatsApp support on trial (no relationship yet). Same shape as 04.37 (WhatsApp-only teacher). Details pending founder decision (verification, copy).\nDECIDED (founder 2026-09-28): (1) ownership proven by a 6-digit CODE mailed to the address — applies wherever an email goes on record (trial Support box, Personal profile change, subscribe About-you); needs SMTP live on Render. (2) Reuse the 04.37 add-email box; no WhatsApp card on trial. (3) Remove the bare 'write to us directly at support@meyy.in' lines for no-email accounts. (4) Mail to support@meyy.in from an address on no account: ONE polite auto-reply pointing to Meyy › Settings › Support, then no correspondence. (5) The added email pre-fills (already confirmed) at subscribe. (6) Privacy notice line for trial emails; erase removes it; ~5 support sends/day/account. COPY: caption 'EMAIL SUPPORT' · 'Meyy writes back only to an email address on your account. Add yours and the form opens.' · [New email] [Type it again] Confirm · 'We've sent a 6-digit code to {email}. Enter it here.' [code] Confirm.\nREVISED (founder 2026-09-28T07:07:37): NO emailed code. The email is taken on record by double entry only — the same as for subscribing customers (and as reshaped by WALK-A-125: New email + Type it again + Confirm). Drop the code line from the copy; everything else in the decision stands.\nRATIONALE (founder 2026-09-28): at trial there is no commercial relationship, so Meyy accepts the risk of a mistyped/borrowed address. Proof of ownership (a code) belongs to the long-term relationship — a future decision for subscribers, not part of this amendment.\nADDED (founder 2026-09-28): ONE email only on trial. Once confirmed and the Support form opens, she cannot change it (no change link in Support; trial has no Personal profile). Server refuses a second email write for a trial account.\nREVISED (founder 2026-09-28, supersedes 'cannot change'): trial Support shows her email on record frozen with 'change' at the right end (the WALK-A-125 pattern); 'change' restarts the double entry (New email + Type it again + Confirm). Still one email at a time. At subscribe, the About-you step arrives with it pre-filled and confirmed; she may change it there and later in Personal profile like any subscriber.",
-      "fix": "[FIXED web 2026-09-29T05:36:00] Support: no email + no WhatsApp → 'EMAIL SUPPORT' box ('Meyy writes back only to an email address on your account. Add yours and the form opens.') with EmailEntry; saved via POST /account, then the form opens. Trial with an email: 'Our reply goes to' frozen row with change. The bare support@ invitations and the post-send 'add an email' link are gone. API: POST /support refuses an account with no email (409, before a reference is spent) and caps 5/day (429). Tests updated + new; all pass. NEEDS PUSH + RENDER REDEPLOY. OWED OUTSIDE CODE: the one-time auto-reply for mail from unknown addresses is a MAILBOX rule (support@meyy.in), and the privacy-notice line for trial emails needs a notice version bump — founder to schedule. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[2026-09-29T05:43:54] Unknown-sender auto-reply: deploy/support_autoreply/Code.gs (Google Apps Script in the support@meyy.in Workspace mailbox, 10-min timer; checks /onboarding/known; one reply per address ever; skips automated and own-domain mail; no API change). Setup in its README — founder to install.\n[DEFERRED 2026-09-29T05:45:34] Founder: the unknown-sender auto-reply waits until WhatsApp is live, to be folded into a fuller reply protocol. deploy/support_autoreply/ is kept as a draft, NOT installed. The rest of 135 (Support screen + API refusal + cap) stands.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.",
-      "files": "Settings.jsx SupportForm; api/main.py POST /support; tests/test_support.py; deploy/support_autoreply/",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Support: no email + no WhatsApp → 'EMAIL SUPPORT' box ('Meyy writes back only to an email address on your account. Add yours and the form opens.') with EmailEntry; saved via POST /account, then the form opens. Trial with an email: 'Our reply goes to' frozen row with change. The bare support@ invitations and the post-send 'add an email' link are gone. API: POST /support refuses an account with no email (409, before a reference is spent) and caps 5/day (429). Tests updated + new; all pass. NEEDS PUSH + RENDER REDEPLOY. OWED OUTSIDE CODE: the one-time auto-reply for mail from unknown addresses is a MAILBOX rule (support@meyy.in), and the privacy-notice line for trial emails needs a notice version bump — founder to schedule. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[2026-09-29T05:43:54] Unknown-sender auto-reply: deploy/support_autoreply/Code.gs (Google Apps Script in the support@meyy.in Workspace mailbox, 10-min timer; checks /onboarding/known; one reply per address ever; skips automated and own-domain mail; no API change). Setup in its README — founder to install.\n[DEFERRED 2026-09-29T05:45:34] Founder: the unknown-sender auto-reply waits until WhatsApp is live, to be folded into a fuller reply protocol. deploy/support_autoreply/ is kept as a draft, NOT installed. The rest of 135 (Support screen + API refusal + cap) stands.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] settings/support.jsx: EMAIL SUPPORT box for a no-email teacher; trial reply-to frozen with change; no-email lines and the post-send link removed; version in context. Parse-checked. Awaiting the phone walk.\n[WALKED phone 2026-09-29T07:56:37] PASS on iPhone + Android.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "Settings.jsx SupportForm; api/main.py POST /support; tests/test_support.py; deploy/support_autoreply/; mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "04.21",
-        "04.37"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T07:03:47"
     },
     {
       "id": "WALK-A-136",
       "opened": "2026-09-29T05:06:18",
-      "closed": "",
+      "closed": "2026-09-29T08:21:38",
       "feature": "04.24",
       "found_on": [
         "web"
@@ -7219,14 +7622,12 @@
       "applies_to": "web+phone",
       "title": "Remove About Meyy; a quiet version line at the foot of Settings; version sent with Support",
       "what": "Founder 2026-09-29: About Meyy carries nothing she needs. Legal identity (company, registered office, Grievance Officer) is already in Privacy Notice §10 under Legal; no store requires an About screen. DECIDED: drop the About card (web + phone) and its route; put one quiet line at the foot of the Settings list — 'Meyy {version} · build {n}' — and send the app version/build in every Support message's context. Update 04.03 (card list) and retire 04.24.",
-      "fix": "[FIXED web 2026-09-29T05:36:00] About card and view removed; 'Meyy 0.1.0' (· build N when NEXT_PUBLIC_BUILD_ID is set) at the foot of Settings; version sent in Support context. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.",
-      "files": "Settings.jsx; page.jsx; web/app/lib/version.js (new)",
+      "fix": "[FIXED web 2026-09-29T05:36:00] About card and view removed; 'Meyy 0.1.0' (· build N when NEXT_PUBLIC_BUILD_ID is set) at the foot of Settings; version sent in Support context. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.\n[RE-WALKED web 2026-09-29T05:58:30] PASS. Phone port owed before the phone walk.\n[PORTED phone 2026-09-29T06:16:17] settings/index.jsx: About card removed, version line at the foot (lib/version.js, expo-constants); about.jsx now redirects to /settings; SettingsBar label dropped. Parse-checked. Awaiting the phone walk.\n[WALKED phone 2026-09-29T06:36:54] About gone and version line seen on iPhone + Android (04.03).\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "Settings.jsx; page.jsx; web/app/lib/version.js (new); mobile (see fix)",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
-      "recheck": [
-        "04.03"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T05:06:18"
     },
@@ -7249,6 +7650,134 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T05:21:15"
+    },
+    {
+      "id": "WALK-A-138",
+      "opened": "2026-09-29T07:04:54",
+      "closed": "2026-09-29T08:21:38",
+      "feature": "04.06",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Appearance: the theme's name is not shown beside the glyph",
+      "what": "Founder, phones 2026-09-29: cycling the glyph produces no 'Theme: Auto (follows your phone)' / 'Theme: Light' / 'Theme: Dark' text next to it (the row expects it). Founder to decide whether the words should show.\nDECIDED (founder 2026-09-29): show the name — 'Auto (follows your phone)' / 'Light' / 'Dark' in quiet text beside the glyph.",
+      "fix": "[FIXED phone 2026-09-29T08:14:28] components/ThemeToggle.jsx: 'Auto' / 'Light' / 'Dark' in the pill face beside the glyph ('(follows your phone)' is the card's sub-line). Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "mobile/components/ThemeToggle.jsx; settings/index.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T07:04:54"
+    },
+    {
+      "id": "WALK-A-139",
+      "opened": "2026-09-29T07:04:54",
+      "closed": "2026-09-29T08:21:38",
+      "feature": "04.07",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Android: at the largest system font, 'Device default' outgrows the app's 'Larger'",
+      "what": "Founder, Android emulator 2026-09-29: with Android's font size at max, 'Device default' shows 4.5 section cards where 'Larger' shows 6.5 — more than the 1.2× cap should allow. Every Text goes through components/Text.jsx (maxFontSizeMultiplier 1.2), so first confirm whether Android's DISPLAY size (density, which no app can cap) was also raised on the same screen.\nCONFIRMED (founder 2026-09-29): only FONT size was raised (Display size untouched) — a real overflow past the 1.2× cap on Android.",
+      "fix": "[FIXED phone 2026-09-29T08:14:28] components/Text.jsx: on Android the 'system' path no longer trusts maxFontSizeMultiplier — it reads the phone's fontScale (useWindowDimensions), caps it at 1.2 and scales the style itself, as the fixed modes do. iOS unchanged. Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "mobile/components/Text.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T07:04:54"
+    },
+    {
+      "id": "WALK-A-140",
+      "opened": "2026-09-29T07:04:54",
+      "closed": "2026-09-29T08:21:38",
+      "feature": "04.11",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "iPhone: the bottom Save raises 'Save your changes?' after saving",
+      "what": "Founder, iPhone 2026-09-29: changing the name and pressing the form's own Save shows the leave-window again. Likely cause: dirtyRef is recomputed on each render, so a re-render between save and router.back() marks the form dirty again before beforeRemove runs. Fix: a 'leaving' flag set before router.back() that the guard honours.",
+      "fix": "[FIXED phone 2026-09-29T08:14:28] settings/personal.jsx: `leavingRef` set before router.back() after a successful save (and on 'Leave without saving'), which the beforeRemove guard honours. Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "mobile/app/(app)/settings/personal.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T07:04:54"
+    },
+    {
+      "id": "WALK-A-141",
+      "opened": "2026-09-29T07:04:54",
+      "closed": "2026-09-29T08:21:38",
+      "feature": "04.11",
+      "found_on": [
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Personal profile: with the keyboard up, Save cannot be scrolled into view",
+      "what": "Founder, phones 2026-09-29: with the cursor in a field (name), she cannot scroll to the Save button at the foot until the cursor leaves the field. Android needs the keyboard-height padding Support uses (WALK-A-044 idiom); check the iPhone inset too.\nCONFIRMED (founder 2026-09-29): Android only — the iPhone scrolls to Save. found_on narrowed.",
+      "fix": "[FIXED phone 2026-09-29T08:14:28] settings/personal.jsx: Android pads the form by the keyboard's measured height while it is up (Support's idiom), so Save scrolls into view. Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "mobile/app/(app)/settings/personal.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T07:04:54"
+    },
+    {
+      "id": "WALK-A-142",
+      "opened": "2026-09-29T07:57:54",
+      "closed": "",
+      "feature": "04.33",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "phone",
+      "title": "Port WhatsApp support to the phone (04.33–04.37)",
+      "what": "Founder 2026-09-29, from 04.18 on the phones: WhatsApp support exists on the web only. DECIDED: port it now, in this phone fix point — the subscribe wizard's 'Support on WhatsApp?' question (email optional on Yes), the hello screen after a WhatsApp checkout, Personal profile's WhatsApp switch with the at-least-one-channel lock, Support's 'Chat on WhatsApp' card for opted-in teachers, and the WhatsApp-only no-email box.",
+      "fix": "[FIXED phone 2026-09-29T08:14:28] SubscribeWizard.jsx: 'Support on WhatsApp? *' (neither preselected; email optional on Yes), whatsapp sent at checkout, the hello screen ('You're subscribed' · Say hello / Open WhatsApp via Linking) before landing; settings/personal.jsx: WhatsApp switch with the at-least-one-channel lock, saved with the form; settings/support.jsx: 'Chat on WhatsApp' card for opted-in teachers, WhatsApp-only no-email box → Personal profile. Tracker 04.33–04.37 divergence notes updated. Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS for 04.33, 04.35, 04.36. 04.34 (hello after checkout) and 04.37 (WhatsApp-only) held for the special-state session.",
+      "files": "mobile SubscribeWizard.jsx, settings/personal.jsx, settings/support.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "04.33",
+        "04.34",
+        "04.35",
+        "04.36",
+        "04.37"
+      ],
+      "owner": "Kumar",
+      "at": "2026-09-29T07:57:54"
+    },
+    {
+      "id": "WALK-A-143",
+      "opened": "2026-09-29T08:12:19",
+      "closed": "2026-09-29T08:21:38",
+      "feature": "04.30",
+      "found_on": [
+        "ios"
+      ],
+      "applies_to": "phone",
+      "title": "iPhone: Ask Meyy search box draws its text at the bottom, partly hidden",
+      "what": "Founder, iPhone 2026-09-29: the 'Search…' field's text sits bottom-aligned and is not fully visible. Same shape as WALK-A-029/023: a single-line TextInput with a lineHeight on iOS draws its text at the bottom of the box.",
+      "fix": "[FIXED phone 2026-09-29T08:14:28] components/AskMeyy.jsx: search input drops its lineHeight on the single-line field, keeps its 47px box, centres the text (the WALK-A-029 lesson). Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS on iPhone + Android.",
+      "files": "mobile/components/AskMeyy.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T08:12:19"
     }
   ]
 }

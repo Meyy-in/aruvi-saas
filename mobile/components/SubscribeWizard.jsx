@@ -38,12 +38,15 @@
  * whole. Never disable a row's OWN value, or changing her mind strands the wheel on a dead option.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform, BackHandler } from "react-native";
+import { View, ScrollView, Pressable, KeyboardAvoidingView, Platform, BackHandler, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, TextInput } from "./Text";
 import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
-         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN } from "@aruvi/shared/format";
+         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN,
+         ROLE_OTHER, roleChoice, roleOtherText, roleToSave,
+         getUser, waLink, mobileWords, WHATSAPP_DISPLAY } from "@aruvi/shared/format";
+import EmailEntry from "./EmailEntry";
 import { storage } from "@aruvi/shared/storage";
 import { dateWords } from "@aruvi/shared/legalmd";
 import { syncEntitlement } from "@aruvi/shared/entitlement";
@@ -137,7 +140,14 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   const [emailStage, setEmailStage] = useState("enter");   // enter | confirm | ok
   const [emailErr, setEmailErr] = useState("");
   const [emailBusy, setEmailBusy] = useState(false);
-  const [role, setRole] = useState("");
+  /* ★ WHATSAPP SUPPORT — ASKED, NEVER ASSUMED (WALK-A-142: the web's 2026-09-26 rule, ported).
+     null = not yet answered and the step cannot continue; neither answer is preselected (a
+     consent that arrives ticked is not one, DPDP §6). On her SIGN-IN mobile only. Yes makes the
+     email OPTIONAL. `done` holds the checkout answer for the hello screen. */
+  const [wa, setWa] = useState(null);
+  const [done, setDone] = useState(null);
+  const [role, setRole] = useState("");            // the drop-down CHOICE (WALK-A-126)
+  const [roleOther, setRoleOther] = useState("");  // her own words when the choice is Other
   const [stateName, setStateName] = useState("");
   const [city, setCity] = useState("");
   const [school, setSchool] = useState("");
@@ -203,7 +213,14 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
      same act — back to where she came from — so both default to `leave`. From the front door a
      finished purchase enters the APP and a cancelled one returns to the OTP screen, which is not
      a place this component can name. */
-  const finish = () => (onDone ? onDone() : leave());
+  /* ★ SHE LANDS ON WHAT SHE BOUGHT (WALK-A-129, founder 2026-09-28). In-app, a finished purchase
+     goes to Subscription & billing — popping back to it when she came from there, taking this
+     screen's place when she came from anywhere else (a paywall) — where the new card waits,
+     scrolled to and tagged "New" (lib/purchase `recent`). Cancel still simply goes back. */
+  const landOnPurchase = () => {
+    try { router.dismissTo("/settings/subscription"); } catch { leave(); }
+  };
+  const finish = () => (onDone ? onDone() : landOnPurchase());
   const cancel = () => (onCancel ? onCancel() : leave());
 
   useEffect(() => {
@@ -215,11 +232,15 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
       const looksReal = nm && !/^\d+$/.test(nm);          // a number is not a name
       if (looksReal) setName(nm);
       if (a.email) { setEmail(a.email); setEmailStage("ok"); }
-      if (a.role) setRole(a.role);
+      // Prefill only a YES: `false` is also what an account that was never asked reads as.
+      if (a.whatsapp === true) setWa(true);
+      if (a.role) { setRole(roleChoice(a.role)); setRoleOther(roleOtherText(a.role)); }
       if (a.state) setStateName(a.state);
       if (a.city) setCity(a.city);
       if (a.school_name) setSchool(a.school_name);
-      setProfileKnown(!!(looksReal && a.email && a.role && a.state));
+      /* A WhatsApp customer with no email is a COMPLETE profile — email is optional for her. */
+      setProfileKnown(!!(looksReal && (a.email || a.whatsapp) && a.role && a.role !== "Other"
+        && a.state));
     }).catch(() => { if (live) setProfileKnown(false); });
     return () => { live = false; };
   }, []);
@@ -274,28 +295,15 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
     rows.filter((r) => r.subject && r.stage).map((r) => `${r.subject}/${r.stage}`))), [rows]);
   const total = cartScopes.length * price;
 
-  const verifyEmail = async () => {
-    if (email2.trim().toLowerCase() !== email.trim().toLowerCase()) {
-      /* A mismatch says only that the two DISAGREE, and the typo is at least as likely to be in
-         the first — so it returns to the first field with her text intact and visible, which is
-         the only place the real address can be established (founder, 2026-08-27). */
-      setEmailErr("The two entries don’t match — try again.");
-      setEmail2(""); setEmailStage("enter");
-      return;
-    }
-    setEmailBusy(true);
-    const taken = await idInUse(email, (acctRef.current || {}).account_id);
-    setEmailBusy(false);
-    if (taken) { setEmailErr(EMAIL_TAKEN); setEmail2(""); setEmailStage("enter"); return; }
-    setEmailErr(""); setEmailStage("ok");
-  };
-
   const doCheckout = () => {
     setPayBusy(true); setPayErr("");
     postJSON("/onboarding/checkout", {
-      scopes: cartScopes, name, email: email.trim(), role, state: stateName, city, school,
+      scopes: cartScopes, name, email: emailStage === "ok" ? email.trim() : "",
+      /* null on the known-profile skip = "leave the stored choice" (server rule). */
+      whatsapp: wa,
+      role: roleToSave(role, roleOther), state: stateName, city, school,
     })
-      .then(() => {
+      .then((out) => {
         /* Both stores hold what this just changed — her scopes and her account fields — and
            both are read by screens she lands on next. */
         /* ★ RE-READ, DON'T BLANK (founder, 2026-09-18). `invalidateEntitlement()` dropped the copy,
@@ -322,6 +330,9 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
            write-throughs and EMITS, which is what the screens listening to the store redraw on.
            ⚠️ Not awaited: she leaves now, and the emit lands on whatever she lands on. */
         fetchReadiness({ force: true }).catch(() => {});
+        /* ★ THE HELLO (WALK-A-142). A teacher who chose WhatsApp gets ONE more screen — keyed on
+           the SERVER's stored answer, not on `wa`. Everyone else goes straight on, as before. */
+        if (out && out.whatsapp) { setDone(out); setPayBusy(false); setScreen("done"); return; }
         finish();
       })
       .catch((e) => {
@@ -408,7 +419,9 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   /* ── 2 · About you ───────────────────────────────────────────── */
   if (screen === "about") {
     /* WALK-A-022 (founder, 2026-09-20): City is mandatory, and every required field is starred. */
-    const ready = name.trim() && emailStage === "ok" && role && stateName && city.trim();
+    /* WALK-A-142: the WhatsApp question must be answered; with Yes, email is optional. */
+    const ready = name.trim() && wa !== null && (wa === true || emailStage === "ok")
+      && roleToSave(role, roleOther) && stateName && city.trim();
     /* WALK-A-031 (walk blocker, 2026-09-20): with a field focused the keyboard covered the foot,
        so "Save & continue" could not be reached without dismissing it. The screen now lifts its
        foot above the keyboard, so the CTA is ALWAYS visible — she may continue with the minimum. */
@@ -436,60 +449,47 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             <Input value={name} onChangeText={setName} placeholder="Enter your full name" />
           </Field>
 
-          {/* Email — DOUBLE BLIND: she types it once, it is then hidden, and she types it
-              again fresh. Only a match confirms; a typo cannot be rubber-stamped by reading
-              the first entry back. */}
-          {emailStage === "enter" ? (
-            <>
-              <Field label="Email" required>
-                <Input value={email} placeholder="Enter your email"
-                  onChangeText={(v) => { setEmail(v); setEmailErr(""); }}
-                  keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
-              </Field>
-              <ErrorLine>{emailErr}</ErrorLine>
-              {EMAIL_OK(email) ? (
-                /* WALK-A-022: an address that belongs to another account is refused HERE, on first
-                   entry — not after she has typed it a second time to confirm. */
-                <Link title={emailBusy ? "Checking…" : "Confirm this email →"} style={{ textAlign: "left" }}
-                  onPress={emailBusy ? undefined : async () => {
-                    setEmailBusy(true);
-                    const taken = await idInUse(email, (acctRef.current || {}).account_id);
-                    setEmailBusy(false);
-                    if (taken) { setEmailErr(EMAIL_TAKEN); return; }
-                    setEmail2(""); setEmailStage("confirm");
-                  }} />
-              ) : null}
-            </>
-          ) : null}
-          {emailStage === "confirm" ? (
-            <>
-              <Field label="Re-enter your email">
-                <Input value={email2} placeholder="Type it again to confirm" autoFocus
-                  onChangeText={(v) => { setEmail2(v); setEmailErr(""); }}
-                  keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
-              </Field>
-              <ErrorLine>{emailErr}</ErrorLine>
-              <Link title={emailBusy ? "Checking…" : "Verify →"} style={{ textAlign: "left" }}
-                onPress={!EMAIL_OK(email2) || emailBusy ? undefined : verifyEmail} />
-            </>
-          ) : null}
-          {emailStage === "ok" ? (
-            <Field label="Email">
-              <View style={[ws.ob_email_view, { borderColor: t.line, backgroundColor: t.card_bg }]}>
-                <Text style={[ws.ob_email_addr, { color: t.ink }]}>
-                  <Text style={[ws.ob_tick, { color: t.pine }]}>✓ </Text>{maskEmail(email)}
-                </Text>
-                <Link title="change" onPress={() => {
-                  setEmail(""); setEmail2(""); setEmailStage("enter");
-                }} />
-              </View>
-            </Field>
-          ) : null}
+          {/* Email — typed twice (EmailEntry, WALK-A-125): frozen + "change" once on record, two
+              boxes and one Confirm while open, a mismatch that resets nothing. */}
+          {/* WhatsApp — asked BEFORE email, because its answer decides whether email is required.
+              Two plain answers, neither preselected (WALK-A-142, the web's 04.33). */}
+          <View style={{ marginTop: 12, rowGap: 6 }}>
+            <Text style={[type.label, { color: t.ink_soft }]}>Support on WhatsApp?
+              <Text style={{ color: t.clay }}> *</Text></Text>
+            <Text style={[ws.ob_quiet, { color: t.ink_soft, marginTop: 0 }]}>Reach Meyy support on
+              WhatsApp from <Text style={{ color: t.ink }}>{mobileWords(getUser())}</Text>, your
+              sign-in number. Service messages only — never marketing.</Text>
+            <View style={{ flexDirection: "row", columnGap: 10 }}>
+              {[[true, "Yes, add WhatsApp"], [false, "No, thanks"]].map(([v, label]) => (
+                <Pressable key={label} onPress={() => setWa(v)} accessibilityRole="radio"
+                  accessibilityState={{ selected: wa === v }}
+                  style={{ flex: 1, minHeight: 44, borderRadius: 8, borderWidth: 1,
+                           borderColor: t.pine, alignItems: "center", justifyContent: "center",
+                           paddingHorizontal: 10,
+                           backgroundColor: wa === v ? t.pine : "transparent" }}>
+                  <Text style={[type.button, { color: wa === v ? "#f3efe6" : t.pine }]}>{label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          <EmailEntry current={emailStage === "ok" ? email : ""} mask
+            selfId={(acctRef.current || {}).account_id}
+            label={wa === true
+              ? <>Email<Text style={{ color: t.ink_soft }}> (optional)</Text></>
+              : <>Email<Text style={{ color: t.clay }}> *</Text></>}
+            onConfirmed={(v) => { setEmail(v); setEmailStage("ok"); return ""; }} />
 
           <Field label="Role" required>
             <Dropdown value={role} onChange={setRole} options={ROLES}
               placeholder="Select your role" label="Role" />
           </Field>
+          {role === ROLE_OTHER ? (
+            <Field label="Your role" required>
+              <Input value={roleOther} onChangeText={setRoleOther}
+                placeholder="e.g. Librarian, Special educator" />
+            </Field>
+          ) : null}
           <Field label="State" required>
             {/* WALK-A-040 (founder, 2026-09-20): answering State used to light up Save while City
                 and School sat below the fold — she could finish without ever seeing School. The
@@ -641,6 +641,41 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             onPress={() => setScreen("pay")} style={{ width: "100%" }} />
           <Link title="← Back"
             onPress={() => (skippedAbout ? cancel() : setScreen("about"))} />
+        </View>
+      </View>
+    );
+  }
+
+  /* ── ★ The hello, after a WhatsApp checkout (WALK-A-142 — the web's 04.34) ── */
+  if (screen === "done") {
+    const welcomed = !!(done && done.whatsapp_welcome === "sent");
+    const me = getUser();
+    const hello = `Hello Meyy! I've just subscribed. My sign-in number is ${mobileWords(me)}`
+      + (name.trim() ? ` — ${name.trim()}.` : ".");
+    return (
+      <View style={{ flex: 1, backgroundColor: t.paper }}>
+        <ScrollView contentContainerStyle={ws.ob_body}>
+          <Text style={[ws.ob_title, { color: t.ink }]}>You’re subscribed</Text>
+          <Text style={[ws.ob_sub, { color: t.ink_soft }]}>{welcomed
+            ? <>We’ve sent a welcome message to your WhatsApp on {mobileWords(me)}. Message us
+                there whenever you need help.</>
+            : <>One last thing — say hello to Meyy on WhatsApp, so our chat is there when you
+                need help.</>}</Text>
+          <Button title={welcomed ? "Open WhatsApp" : "Say hello on WhatsApp"}
+            style={{ marginTop: 16 }}
+            onPress={() => { Linking.openURL(waLink(welcomed ? "" : hello, done && done.whatsapp_number))
+              .catch(() => {}); }} />
+          <Quiet>{welcomed
+            ? `Meyy’s number is ${WHATSAPP_DISPLAY}. `
+            : `Opens a chat with Meyy (${WHATSAPP_DISPLAY}) with a short note ready to send. `}
+            {done && done.invoice_number
+              ? (emailStage === "ok"
+                ? "Your invoice is on its way by email and is always in Settings › Subscription."
+                : "Your invoice is always in Settings › Subscription.")
+              : ""}</Quiet>
+        </ScrollView>
+        <View style={[ws.ob_foot, footPad, { backgroundColor: t.paper }]}>
+          <Link title="Continue to Meyy →" onPress={finish} />
         </View>
       </View>
     );
