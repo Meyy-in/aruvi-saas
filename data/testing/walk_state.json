@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-28T07:06:24",
+  "updated_at": "2026-09-29T05:36:00",
   "items": {
     "04.19": {
       "ios": {
@@ -1497,6 +1497,13 @@
         "comment": "Red block gating, text centred, final window, Cancel unticks.\n✓ re-walked 2026-09-24 after WALK-A-053\n✓ re-walked 2026-09-24 after WALK-A-054",
         "build": "Expo Go (Pixel 7 API 34)",
         "status": "pass"
+      },
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:09:35",
+        "comment": "'eras' keeps Continue disabled, 'ERASE' accepted, field focused; final window complete; Delete forever disabled until ticked; Cancel / click-outside close and untick.",
+        "build": "web dev (localhost:3000 → Render)"
       }
     },
     "T.29": {
@@ -4034,8 +4041,8 @@
       "web": {
         "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T12:01:32",
-        "comment": "Log out → Login at once; reload stays on Login; next teacher sees none of the first's data. The Ask Meyy half cannot be observed on the web (not reachable from Login, and a second teacher cannot sign in offline) - left to the phones' offline sign-in check.",
+        "at": "2026-09-29T05:28:05",
+        "comment": "Log out → Login at once; reload stays on Login; next teacher sees none of the first's data. The Ask Meyy half cannot be observed on the web (not reachable from Login, and a second teacher cannot sign in offline) - left to the phones' offline sign-in check.\n✓ re-checked 2026-09-29 after WALK-A-134: a second tab's log-out / sign-in carries to the first tab.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4235,7 +4242,7 @@
         "status": "fail",
         "by": "Kumar",
         "at": "2026-09-28T06:36:41",
-        "comment": "Trial (013): pill, 'N of 3 chapters used', Subscribe — fine. Subscriber (003): cards and rows right, BUT a free-trial status shows at the top for a subscribed customer → WALK-A-128. Order: founder change — seeing and listing separated → WALK-A-129.",
+        "comment": "Trial (013): pill, 'N of 3 chapters used', Subscribe — fine. Subscriber (003): cards and rows right, BUT a free-trial status shows at the top for a subscribed customer → WALK-A-128. Order: founder change — seeing and listing separated → WALK-A-129.\nWALK-A-128 closed-no-defect 2026-09-29 (a WALK-A-134 symptom); cell stays failed on WALK-A-129 (order).",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -4299,6 +4306,87 @@
         "by": "Kumar",
         "at": "2026-09-28T07:06:24",
         "comment": "API blocked on load: nothing said about her email. Send while blocked: 'Couldn't send that just now — try again.', text kept. Limit is 4,000 characters (web, phone and API).",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.24": {
+      "web": {
+        "status": "na",
+        "by": "Kumar",
+        "at": "2026-09-29T05:06:18",
+        "comment": "Founder decision 2026-09-29: About Meyy is removed → WALK-A-136. Row retires once the fix lands.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.23": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:09:35",
+        "comment": "Pills + heading pinned; agreement accepted line, acknowledgements, closing line; privacy tables readable; pill switch resets to top; API blocked → couldn't-be-loaded message.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.28": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:09:35",
+        "comment": "Panel between bar and nav; ASK MEYY clay; toggles; destinations close and go; one X over Settings; desktop autofocus, Escape closes.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.29": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:09:35",
+        "comment": "Five categories with counts in their colours; one rail follows the tap; sticky header; one answer open at a time, line breaks kept.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.30": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:21:15",
+        "comment": "'period' → 40 results, flat ranked list with category tags; 'zzqqxx' → no-matches line; clearing restores categories.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.31": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:21:15",
+        "comment": "API domain blocked + reload: Ask Meyy opens at once with all categories and answers; search works.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.33": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:21:15",
+        "comment": "Question, line, neither button preselected, Continue blocked until chosen; No → 'Email *', Yes → 'Email (optional)'. Copy change: drop the unconfirmed-email line → WALK-A-137.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.35": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:21:15",
+        "comment": "003 (email on record): switch on/off both save and survive reload. Case (b) WhatsApp on + no email held for a set-up session.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.36": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T05:21:15",
+        "comment": "WhatsApp on: 'Chat on WhatsApp' card under Ask Meyy opens wa.me to +91 93637 95723 with the prefilled line; off: no card.",
         "build": "web dev (localhost:3000 → Render)"
       }
     }
@@ -6908,11 +6996,11 @@
       "applies_to": "web+phone",
       "title": "Change email: frozen current address, two boxes, 'Confirm', no loop",
       "what": "Founder, web 2026-09-28: typing a WRONG address first and the correct one second is rejected and she is asked to re-confirm the first (wrong) one — she goes round in a loop. Wanted: (1) the current email shows frozen with 'change' at the right end; (2) 'change' opens a new-email box and, under it, a re-entry box with no 'change' of its own; (3) the button reads 'Confirm' (not 'Verify'); (4) matched → the two collapse into a single email row; (5) unmatched → a warning under the boxes, nothing reset; (6) pressing 'change' on the original row again removes both new boxes; (7) paste allowed in the first box, NOT in the re-entry box; browser autofill (saved emails) allowed in both.\nDECIDED (founder 2026-09-28): applies to Personal profile AND the subscribe 'About you' step, web + phone. Copy: frozen row = current address + 'change' at right; box 1 'New email'; box 2 'Type it again'; button 'Confirm'; mismatch: 'The two entries don't match — check both and try again.'",
-      "fix": "",
-      "files": "web/app/components/Settings.jsx; mobile/app/(app)/settings/personal.jsx (and the subscribe forms if the same pattern — founder to decide)",
+      "fix": "[FIXED web 2026-09-29T05:36:00] New shared web component EmailEntry: frozen address + 'change' (toggles the boxes away), 'New email' + 'Type it again' together, one 'Confirm', mismatch warns and resets nothing, paste blocked in box 2, autofill allowed in both. Used by Personal profile and Subscribe › About you. Profile Save folds a matched open change and stops on an unmatched one ('Your new email isn't confirmed yet — type it twice and tap Confirm, or tap change to keep the old one.'); the old 'Email isn't saved until…' line removed. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.",
+      "files": "web/app/components/EmailEntry.jsx (new); Settings.jsx PersonalProfile; SubscribeFlow.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:09:51"
@@ -6928,11 +7016,11 @@
       "applies_to": "web+phone",
       "title": "Role 'Other' opens a box to type the role",
       "what": "Founder, web 2026-09-28: when Role is 'Other', a box opens below to type the role — Meyy needs to know who she is.\nDECIDED (founder 2026-09-28): the box is REQUIRED (Save / Continue disabled while empty). Label 'Your role *', placeholder 'e.g. Librarian, Special educator'. Personal profile + subscribe, web + phone.",
-      "fix": "",
-      "files": "packages/shared/src/format.js; web Settings.jsx + SubscribeFlow.jsx; mobile personal.jsx + SubscribeWizard.jsx; api /account (store the typed role)",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Role 'Other' opens 'Your role *' (placeholder 'e.g. Librarian, Special educator'); the typed words ARE the stored role (no schema change); Save / Continue held until filled; a stored non-list role reads back as Other + text. PHONE PORT OWED (shared helpers ready). Parse-checked; node --test packages/shared 252/252.",
+      "files": "packages/shared/src/format.js (ROLE_OTHER, roleChoice, roleOtherText, roleToSave) + test/roles.test.js; Settings.jsx; SubscribeFlow.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:09:51"
@@ -6948,11 +7036,11 @@
       "applies_to": "web+phone",
       "title": "State list is 22 — add the missing states and union territories",
       "what": "Founder, web 2026-09-28: 'why only 22 states?' The shared STATES list has 21 states + Delhi + Other. Missing: Arunachal Pradesh, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura, and the UTs other than Delhi.\nDECIDED (founder 2026-09-28): all 28 states + 8 union territories, alphabetical, 'Other' last.",
-      "fix": "",
-      "files": "packages/shared/src/format.js (one list feeds web + phone, Settings + subscribe)",
+      "fix": "[FIXED web 2026-09-29T05:36:00] All 28 states + 8 UTs, alphabetical, Other last. Shared — web and phone both pick it up (phone after reload). Parse-checked; node --test packages/shared 252/252.",
+      "files": "packages/shared/src/format.js STATES + test/roles.test.js",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:09:51"
@@ -6960,7 +7048,7 @@
     {
       "id": "WALK-A-128",
       "opened": "2026-09-28T06:36:41",
-      "closed": "",
+      "closed": "2026-09-29T05:26:49",
       "feature": "04.14",
       "found_on": [
         "web"
@@ -6968,11 +7056,11 @@
       "applies_to": "web+phone",
       "title": "Subscription & billing shows a free-trial status to a subscriber",
       "what": "Founder, web 2026-09-28, 9000000003: the top of Subscription & billing shows the free-trial status although she is subscribed. The row expects NO status card for an active subscriber (no sliver either). Check whether the trial ledger/trial_chapters on 003 is driving it.",
-      "fix": "",
+      "fix": "[2026-09-29T05:26:49] Re-checked by the founder in one clean window on 003: no Free-trial status at the top. The earlier sighting came from a tab that had been through the 003/013 switch — a symptom of WALK-A-134, not of the billing view.",
       "files": "web/app/components/Settings.jsx (billing view); mobile settings/billing; shared entitlement helpers",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "closed-no-defect",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -6988,11 +7076,11 @@
       "applies_to": "web+phone",
       "title": "Subscription cards: list by earliest expiry; a new purchase is shown on arrival",
       "what": "Founder, web 2026-09-28: separate SEEING from LISTING. Listing is always EARLIEST expiry at the top (reverses the earlier 'newest expiry first'). When she has just taken a new subscription, she lands on it (scrolled to / marked) so she sees it — without it jumping to the top of the list.\nDECIDED (founder 2026-09-28): after a purchase, Subscription & billing opens scrolled to the new card, which carries a small 'New' tag for that visit only; the list stays earliest-expiry-first.",
-      "fix": "",
-      "files": "web Settings.jsx billing + SubscribeFlow return; mobile billing + SubscribeWizard return; shared sort if any",
+      "fix": "[FIXED web 2026-09-29T05:36:00] List sorts EARLIEST expiry first (ties = cart order). A checkout from inside the app now opens Settings › Subscription & billing scrolled to the new card with a 'New' pill, forgotten on leaving. PHONE PORT OWED for the landing/tag (the sort is shared). Parse-checked; node --test packages/shared 252/252.",
+      "files": "packages/shared/src/format.js subsFromEntitlement + test; Settings.jsx; page.jsx; SubscribeFlow.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7008,11 +7096,11 @@
       "applies_to": "web+phone",
       "title": "Invoice fetch failure: say it on the card, under the pill",
       "what": "Founder, web 2026-09-28: 'Couldn't fetch that invoice right now. Try again in a moment.' appears at the foot of the screen where it can be hidden. Show it on the card whose invoice was tapped, just below its Subscribed pill.",
-      "fix": "",
-      "files": "web Settings.jsx billing; mobile billing",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Invoice failure shows on the tapped card, just under its pill. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.",
+      "files": "Settings.jsx billing",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7028,11 +7116,11 @@
       "applies_to": "web+phone",
       "title": "Cart line: 'The total amount updates as you add.'",
       "what": "Founder, web 2026-09-28: in the paying page, 'Each subject & stage is its own subscription — unlimited lesson plans across all its classes. The total updates as you add.' → '… The total amount updates as you add.'",
-      "fix": "",
-      "files": "web SubscribeFlow.jsx; mobile SubscribeWizard.jsx (wherever the line lives)",
+      "fix": "[FIXED web 2026-09-29T05:36:00] 'The total amount updates as you add.' — web and phone. Parse-checked; node --test packages/shared 252/252.",
+      "files": "web SubscribeFlow.jsx; mobile SubscribeWizard.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7048,11 +7136,11 @@
       "applies_to": "web+phone",
       "title": "Data export file name: Meyy_{name}_{month}_{year}_data",
       "what": "Founder, web 2026-09-28: 'aruvi-your-data.docx/.pdf' → 'Meyy_{user name}_{month}_{year}_data'. Applies to the Word and PDF exports and to the delete window's 'Download my data first'.\nDECIDED (founder 2026-09-28): Meyy_{FirstName}_{Mon}_{YYYY}_data (e.g. Meyy_Kumar_Sep_2026_data.docx); no name on the account → last 4 digits of the mobile (Meyy_3210_Sep_2026_data).",
-      "fix": "",
-      "files": "api export endpoint (Content-Disposition); web + phone download names",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Meyy_{First}_{Mon}_{YYYY}_data.{fmt}, last-4 of mobile when there is no name; web download + API header. API NEEDS PUSH + REDEPLOY. PHONE PORT OWED (mobile/lib/download.js). Parse-checked; node --test packages/shared 252/252.",
+      "files": "packages/shared/src/account.js dataExportName + test/exportName.test.js; Settings.jsx; api/main.py _data_export_name",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:36:41"
@@ -7068,11 +7156,11 @@
       "applies_to": "web+phone",
       "title": "Personal profile: leaving with unsaved changes asks whether to save",
       "what": "Founder, web 2026-09-28: ticked WhatsApp support in Personal profile, but Save sits well below, so she left without saving and the change was lost silently. If any field has been changed and she tries to leave (X, a nav item, the gear, browser/hardware Back), ask whether she would like to save.",
-      "fix": "",
-      "files": "web/app/components/Settings.jsx; mobile/app/(app)/settings/personal.jsx",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Unsaved Personal profile changes → 'Save your changes?' · 'You've changed your personal profile and not saved it.' · Save / Leave without saving; tap outside = stay. Guards the bar's ✕, the three nav items, the gear, Log out and the browser's Back. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.",
+      "files": "Settings.jsx PersonalProfile; page.jsx (leaveGuardRef + guarded exits)",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:52:01"
@@ -7080,7 +7168,7 @@
     {
       "id": "WALK-A-134",
       "opened": "2026-09-28T06:55:21",
-      "closed": "",
+      "closed": "2026-09-29T05:28:05",
       "feature": "01.31",
       "found_on": [
         "web"
@@ -7088,14 +7176,12 @@
       "applies_to": "web",
       "title": "Two tabs, one browser: a tab keeps showing the previous teacher's data under the new teacher's sign-in",
       "what": "Founder, web 2026-09-28: tab A signed in as 003; new tab B (same Chrome) logged out and signed in as 013. After a while, back in the other tab: the bar showed 013 but the data were 003's. Incognito 013 alone never mixes. DIAGNOSIS (read, not yet fixed): packages/shared/src/auth.js mirrors the token from onAuthStateChange, so tab A silently switches to 013's token while its shell state (profile, sections, lessons, device copy) stays 003's. RISK: any save from tab A would write 003's set-up into 013's account. Wanted: when another tab signs out or signs in as someone else, this tab drops to Login (or reloads as the new teacher) — never shows or saves one teacher's data under another's sign-in.",
-      "fix": "",
-      "files": "packages/shared/src/auth.js; web/app/page.jsx (shell) — listen for a user-id change / SIGNED_OUT across tabs",
+      "fix": "[FIXED 2026-09-29T05:22:39] web/app/page.jsx: a `storage` listener — when the signed-in id (aruvi_user) changes in ANOTHER tab (or localStorage is cleared), this tab reloads, landing on Login or on the new teacher's own data. Not onSignOut (that would sweep storage now owned by the other tab's teacher). Parse-checked.\n[RE-WALKED 2026-09-29T05:28:05] PASS (web): logging out in a second tab drops the first to Login; signing in as 013 there shows the first tab 013's own data.",
+      "files": "web/app/page.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
-      "recheck": [
-        "01.31"
-      ],
+      "status": "closed",
+      "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-28T06:55:21"
     },
@@ -7110,17 +7196,59 @@
       "applies_to": "web+phone+api",
       "title": "Support policy: Meyy corresponds only with an email or mobile on record — a teacher with no email adds one before she can write",
       "what": "Founder, web 2026-09-28: inviting a no-email teacher to write to support@meyy.in from any private address opens the door to abuse and privacy breaches. POLICY: Meyy corresponds only with and on the email or mobile on record. For a trial (or any no-email) teacher, Support shows no 'Write to us' form and no bare support@meyy.in invitation; instead a box to add an email address, stored on her profile beside her mobile. Once added, the form opens. No WhatsApp support on trial (no relationship yet). Same shape as 04.37 (WhatsApp-only teacher). Details pending founder decision (verification, copy).\nDECIDED (founder 2026-09-28): (1) ownership proven by a 6-digit CODE mailed to the address — applies wherever an email goes on record (trial Support box, Personal profile change, subscribe About-you); needs SMTP live on Render. (2) Reuse the 04.37 add-email box; no WhatsApp card on trial. (3) Remove the bare 'write to us directly at support@meyy.in' lines for no-email accounts. (4) Mail to support@meyy.in from an address on no account: ONE polite auto-reply pointing to Meyy › Settings › Support, then no correspondence. (5) The added email pre-fills (already confirmed) at subscribe. (6) Privacy notice line for trial emails; erase removes it; ~5 support sends/day/account. COPY: caption 'EMAIL SUPPORT' · 'Meyy writes back only to an email address on your account. Add yours and the form opens.' · [New email] [Type it again] Confirm · 'We've sent a 6-digit code to {email}. Enter it here.' [code] Confirm.\nREVISED (founder 2026-09-28T07:07:37): NO emailed code. The email is taken on record by double entry only — the same as for subscribing customers (and as reshaped by WALK-A-125: New email + Type it again + Confirm). Drop the code line from the copy; everything else in the decision stands.\nRATIONALE (founder 2026-09-28): at trial there is no commercial relationship, so Meyy accepts the risk of a mistyped/borrowed address. Proof of ownership (a code) belongs to the long-term relationship — a future decision for subscribers, not part of this amendment.\nADDED (founder 2026-09-28): ONE email only on trial. Once confirmed and the Support form opens, she cannot change it (no change link in Support; trial has no Personal profile). Server refuses a second email write for a trial account.\nREVISED (founder 2026-09-28, supersedes 'cannot change'): trial Support shows her email on record frozen with 'change' at the right end (the WALK-A-125 pattern); 'change' restarts the double entry (New email + Type it again + Confirm). Still one email at a time. At subscribe, the About-you step arrives with it pre-filled and confirmed; she may change it there and later in Personal profile like any subscriber.",
-      "fix": "",
-      "files": "web Settings.jsx (Support); mobile settings/support.jsx; api /account email write + support send guard; privacy notice (trial email purpose)",
+      "fix": "[FIXED web 2026-09-29T05:36:00] Support: no email + no WhatsApp → 'EMAIL SUPPORT' box ('Meyy writes back only to an email address on your account. Add yours and the form opens.') with EmailEntry; saved via POST /account, then the form opens. Trial with an email: 'Our reply goes to' frozen row with change. The bare support@ invitations and the post-send 'add an email' link are gone. API: POST /support refuses an account with no email (409, before a reference is spent) and caps 5/day (429). Tests updated + new; all pass. NEEDS PUSH + RENDER REDEPLOY. OWED OUTSIDE CODE: the one-time auto-reply for mail from unknown addresses is a MAILBOX rule (support@meyy.in), and the privacy-notice line for trial emails needs a notice version bump — founder to schedule. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.",
+      "files": "Settings.jsx SupportForm; api/main.py POST /support; tests/test_support.py",
       "commit": "",
       "native_rebuild": false,
-      "status": "open",
+      "status": "fixed-awaiting-rewalk",
       "recheck": [
         "04.21",
         "04.37"
       ],
       "owner": "Kumar",
       "at": "2026-09-28T07:03:47"
+    },
+    {
+      "id": "WALK-A-136",
+      "opened": "2026-09-29T05:06:18",
+      "closed": "",
+      "feature": "04.24",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "Remove About Meyy; a quiet version line at the foot of Settings; version sent with Support",
+      "what": "Founder 2026-09-29: About Meyy carries nothing she needs. Legal identity (company, registered office, Grievance Officer) is already in Privacy Notice §10 under Legal; no store requires an About screen. DECIDED: drop the About card (web + phone) and its route; put one quiet line at the foot of the Settings list — 'Meyy {version} · build {n}' — and send the app version/build in every Support message's context. Update 04.03 (card list) and retire 04.24.",
+      "fix": "[FIXED web 2026-09-29T05:36:00] About card and view removed; 'Meyy 0.1.0' (· build N when NEXT_PUBLIC_BUILD_ID is set) at the foot of Settings; version sent in Support context. PHONE PORT OWED. Parse-checked; node --test packages/shared 252/252.",
+      "files": "Settings.jsx; page.jsx; web/app/lib/version.js (new)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [
+        "04.03"
+      ],
+      "owner": "Kumar",
+      "at": "2026-09-29T05:06:18"
+    },
+    {
+      "id": "WALK-A-137",
+      "opened": "2026-09-29T05:21:15",
+      "closed": "",
+      "feature": "04.33",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web (+phone when WhatsApp is ported)",
+      "title": "Subscribe › About you: remove 'Optional — confirm it to add it to your account, or continue without it.'",
+      "what": "Founder, web 2026-09-29: with 'Yes, add WhatsApp' and an email typed but not confirmed, the line 'Optional — confirm it to add it to your account, or continue without it.' is to be removed. 'Email (optional)' label stays; an unconfirmed address still does not block Continue.",
+      "fix": "[FIXED web 2026-09-29T05:36:00] The unconfirmed-email line is gone (EmailEntry has none). Parse-checked; node --test packages/shared 252/252.",
+      "files": "SubscribeFlow.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T05:21:15"
     }
   ]
 }

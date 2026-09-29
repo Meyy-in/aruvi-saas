@@ -1744,7 +1744,7 @@ def data_rights_export(format: str = "docx",
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
     media = ("application/pdf" if fmt == "pdf" else
              "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-    fname = f"aruvi-your-data-{_safe_name(user_id)}.{fmt}"
+    fname = _data_export_name(account_repo.load(tenant_id, user_id), user_id, fmt)
     return StreamingResponse(
         iter([blob]), media_type=media,
         headers={"Content-Disposition": f'attachment; filename="{fname}"'})
@@ -2316,6 +2316,12 @@ def _wa_welcome(a: Any, mobile: str) -> Dict[str, Any]:
     if res.get("status") in ("sent", "written"):
         notify["whatsapp_welcomed_at"] = datetime.now(timezone.utc).isoformat()
         a.notify = notify
+    # Every welcome attempt is written to the inbox file WITH Meta's own reason on failure —
+    # the done screen and the sales-log mail only carry the one-word status, and "error"
+    # tells nobody what to fix. The number is masked to its last four digits.
+    _wa_log({"kind": "send", "template": config.WA_WELCOME_TEMPLATE,
+             "lang": config.WA_TEMPLATE_LANG,
+             "to": "…" + _wa_e164(mobile)[-4:], "result": res})
     return res
 
 
@@ -2556,6 +2562,11 @@ async def whatsapp_webhook(request: Request) -> Dict[str, Any]:
 #     the worst case is a saved case with `acknowledged: false` — recoverable, and
 #     visible to the founder — rather than her words evaporating.
 _SUPPORT_MAX_CHARS = 4000
+_SUPPORT_DAILY_CAP = 5
+_SUPPORT_NEEDS_EMAIL = ("Meyy writes back only to an email address on your account — "
+                        "add yours first.")
+_SUPPORT_CAP_REACHED = ("You've written to us five times today — we'll answer those first. "
+                        "You can write again tomorrow.")
 
 
 class SupportMessage(BaseModel):
@@ -2602,6 +2613,19 @@ def create_support_request(req: SupportMessage,
 
     acct = account_repo.load(tenant_id, user_id)
     to = (acct.email if acct else "").strip()
+    # ★ MEYY WRITES ONLY TO WHAT IS ON RECORD (WALK-A-135, founder 2026-09-28). A message
+    #   from an account with no email cannot be answered anywhere Meyy is willing to write,
+    #   so it is refused BEFORE a reference is spent — the screen asks her to add an address
+    #   first, and this keeps every other client (an old build, a script) to the same rule.
+    #   Still ungated on subscription: a trial or lapsed teacher with an email writes freely.
+    if not to:
+        raise HTTPException(status_code=409, detail=_SUPPORT_NEEDS_EMAIL)
+    # A light daily cap, so the form cannot become a spam pipe (founder, 2026-09-28).
+    today = datetime.now(timezone.utc).date().isoformat()
+    sent_today = sum(1 for r in support_repo.load_all(tenant_id, user_id)
+                     if str(r.created_at or "")[:10] == today)
+    if sent_today >= _SUPPORT_DAILY_CAP:
+        raise HTTPException(status_code=429, detail=_SUPPORT_CAP_REACHED)
     name = (acct.display_name if acct else "") or ""
     now = datetime.now(timezone.utc).isoformat()
     reference = support_repo.next_reference()
@@ -3682,6 +3706,20 @@ def genon_plan_name(subject: str, grade: str, chapter_number: int, req: GenonPla
     except (GenonDeclarationError, ServeError):
         return {"filename": None}
     return {"filename": target["filename"]}
+
+
+def _data_export_name(acct, user_id: str, fmt: str) -> str:
+    """Meyy_{FirstName}_{Mon}_{YYYY}_data.{fmt} (WALK-A-132, founder 2026-09-28) — the same rule
+    as @aruvi/shared/account `dataExportName`; move one, move the other. No name → the last four
+    digits of her mobile. ASCII letters/digits only in the header, so no client mangles it."""
+    nm = str(getattr(acct, "display_name", "") or "").strip()
+    first = "" if (not nm or nm.isdigit()) else nm.split()[0]
+    first = "".join(c for c in first if c.isascii() and c.isalnum())
+    first = first[:1].upper() + first[1:]
+    digits = "".join(c for c in str(getattr(acct, "phone", "") or user_id or "") if c.isdigit())
+    who = first or digits[-4:] or "teacher"
+    now = datetime.now(timezone.utc)
+    return f"Meyy_{who}_{now.strftime('%b')}_{now.year}_data.{fmt}"
 
 
 def _safe_name(s: str) -> str:

@@ -65,8 +65,22 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   messages to the TEST number still never arrive (known test-number quirk). RECEIVING PARKED until
   the real number is connected. Account-level webhook events (e.g. `message_template_status_update`)
   are now logged to the inbox file too — the template verdict landing there doubles as proof
-  that Meta's delivery reaches us. NEXT: template Active → welcome test with the founder's
-  personal mobile (a verified test recipient) → Part 2 number decision. Sending-number choice (second SIM · partner
+  that Meta's delivery reaches us. 2026-09-28: `meyy_welcome` ACTIVE. First live welcome test
+  (test account on 8004279854) → Meta refused ("error"): that number was NOT in the test number's
+  "To" recipient list. Every welcome attempt is now logged to the inbox file as `"kind": "send"`
+  WITH Meta's reason (number masked to last 4). Meta then flagged the new developer account for
+  "unusual activity" — founder completing Meta's confirmation steps. NEXT: regain access → add
+  +91 80042 79854 to the "To" list → re-trigger (Personal profile: add email, WhatsApp off→Save,
+  on→Save; the welcome is only stamped on success so it retries) → Part 2 number decision.
+  Remove that number's Supabase test OTP (123456) after testing.
+  2026-09-29: developer account still locked (code only to +91 93637 95723, never arrives; Meta
+  support offers only help articles for both the personal account and the portfolio). Direct
+  Graph calls from the Render Shell (python/httpx — the image has no curl) with the system-user
+  token now return **code 200 "API access blocked"** for EVERY call (/me, permissions, phone
+  number) → the Meyy app is blocked with its owner's developer account; nothing on our side is
+  wrong. The product degrades correctly meanwhile (done screen falls back to "Say hello"; sales
+  log says "NOT sent (error)"). Options: wait for the lock to lift · a second person as portfolio
+  admin creates a fresh app · go through a Meta partner (BSP) — needs an adapter. Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.
   `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
   template's document header (`WhatsAppTemplate.document`).

@@ -204,32 +204,45 @@ def test_route_files_a_case_and_acknowledges_it():
     print("✓ POST /support files a case, acknowledges it, and the listing shows it")
 
 
-def test_a_case_is_filed_even_with_no_address_on_the_account():
-    """She still gets a reference; the screen then says plainly that we cannot write
-    back and offers to fix that — rather than promising a mail that never left."""
+def test_no_email_on_record_means_no_case_is_filed():
+    """★ WALK-A-135 (founder, 2026-09-28): Meyy writes only to what is on record. An account
+    with no email is refused BEFORE a reference is spent, in a sentence that says what to
+    do — and the refusal is not a subscription gate (see the next-but-one test)."""
     from fastapi.testclient import TestClient
     from api import main as api_main
 
     c = TestClient(api_main.app, raise_server_exceptions=False)
     H = _headers("SupportNoMail")
     r = c.post("/support", headers=H, json={"category": "problem", "message": "Stuck."})
-    assert r.status_code == 200, r.json()
-    assert r.json()["emailed"] is False and r.json()["email"] == ""
-    # She is given somewhere to write FROM her own mail app instead of a dead end —
-    # the common case on trial, where the account holds a mobile and nothing else.
-    assert "@" in r.json()["address"], "the support address is offered as the fallback"
-    # ★ And it is THE support address (support@meyy.in, founder 2026-09-03) — the same
-    # one GET /support tells the screen and the acknowledgement's reply-to — never the
-    # sending account, which is the founder's own mailbox.
+    assert r.status_code == 409, r.json()
+    assert "email address on your account" in r.json()["detail"]
+    assert api_main.support_repo.load_all("SupportNoMail", "SupportNoMail") == [], \
+        "nothing filed, no reference burned"
+    # Once she adds one — typed twice on the screen, no code — the same message goes.
+    c.post("/account", headers=H, json={"email": "nomail.now@example.com"})
+    r = c.post("/support", headers=H, json={"category": "problem", "message": "Stuck."})
+    assert r.status_code == 200 and r.json()["emailed"] is True, r.json()
+    # The support address is still reported (the To line and the reply-to use it).
     from api import config as api_config
     assert r.json()["address"] == api_config.SUPPORT_ADDRESS
-    assert c.get("/support", headers=H).json()["address"] == api_config.SUPPORT_ADDRESS
-    if not os.environ.get("ARUVI_SUPPORT_ADDRESS"):
-        assert api_config.SUPPORT_ADDRESS == "support@meyy.in"
-    stored = api_main.support_repo.load_all("SupportNoMail", "SupportNoMail")
-    assert len(stored) == 1, "the message is kept regardless"
-    assert stored[0].acknowledged is False, "and we know it was never acknowledged"
-    print("✓ A teacher with no email on file still gets a real, stored case")
+    print("✓ No email on record → refused before filing; add one and it goes")
+
+
+def test_five_messages_a_day_then_a_polite_no():
+    from fastapi.testclient import TestClient
+    from api import main as api_main
+
+    c = TestClient(api_main.app, raise_server_exceptions=False)
+    H = _headers("SupportChatty")
+    c.post("/account", headers=H, json={"email": "chatty@example.com"})
+    for n in range(api_main._SUPPORT_DAILY_CAP):
+        r = c.post("/support", headers=H, json={"category": "other", "message": f"Note {n}."})
+        assert r.status_code == 200, r.json()
+    r = c.post("/support", headers=H, json={"category": "other", "message": "One more."})
+    assert r.status_code == 429 and "tomorrow" in r.json()["detail"]
+    assert len(api_main.support_repo.load_all("SupportChatty", "SupportChatty")) == \
+        api_main._SUPPORT_DAILY_CAP
+    print("✓ The daily cap holds, and says when she can write again")
 
 
 def test_an_empty_or_oversized_message_is_refused_in_her_words():
@@ -238,6 +251,7 @@ def test_an_empty_or_oversized_message_is_refused_in_her_words():
 
     c = TestClient(api_main.app, raise_server_exceptions=False)
     H = _headers("SupportEdge")
+    c.post("/account", headers=H, json={"email": "edge@example.com"})
     r = c.post("/support", headers=H, json={"category": "problem", "message": "   "})
     assert r.status_code == 400 and "write your message" in r.json()["detail"]
     r = c.post("/support", headers=H, json={"category": "problem", "message": "x" * 9000})
@@ -260,6 +274,7 @@ def test_support_is_never_gated_on_subscription():
 
     c = TestClient(api_main.app, raise_server_exceptions=False)
     H = _headers("SupportUnentitled")
+    c.post("/account", headers=H, json={"email": "unentitled@example.com"})
     was = api_main.config.ENTITLEMENT_ENFORCED
     api_main.config.ENTITLEMENT_ENFORCED = True
     try:
@@ -328,7 +343,8 @@ if __name__ == "__main__":
     test_an_unknown_category_is_prettified_not_dropped()
     test_html_escapes_what_she_typed()
     test_route_files_a_case_and_acknowledges_it()
-    test_a_case_is_filed_even_with_no_address_on_the_account()
+    test_no_email_on_record_means_no_case_is_filed()
+    test_five_messages_a_day_then_a_polite_no()
     test_an_empty_or_oversized_message_is_refused_in_her_words()
     test_support_is_never_gated_on_subscription()
     test_messages_export_with_her_data_and_erase_with_her_account()

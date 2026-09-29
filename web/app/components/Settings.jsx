@@ -1,12 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
-import { API, withUser, fetchEntitlement, getJSON, pretty, idInUse, errDetail,
-         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN, waLink, mobileWords,
+import { useEffect, useRef, useState } from "react";
+import { API, withUser, getUser, fetchEntitlement, getJSON, pretty, idInUse, errDetail,
+         ROLES, STATES, EMAIL_OK, EMAIL_TAKEN, ROLE_OTHER, roleChoice, roleOtherText, roleToSave, waLink, mobileWords,
          fmtValidity, scopeRows, subsFromEntitlement } from "../lib/format";
 import ThemeToggle from "./ThemeToggle";
 import Agreement from "./Agreement";
 import PrivacyNotice from "./PrivacyNotice";
 import Dropdown from "./Dropdown";
+import EmailEntry, { matchedDraft } from "./EmailEntry";
+import { dataExportName, cachedAccount } from "../lib/account";
+import { versionLine } from "../lib/version";
 
 const maskEmail = (e) => {
   const [u, d] = String(e).split("@");
@@ -68,19 +71,17 @@ const scopeLabel = (s) =>
 
 /* Settings › Personal profile — view + edit of the account record. Self-contained:
  * fetches GET /account on mount, saves via POST /account (partial). */
-function PersonalProfile({ onSaved }) {
+function PersonalProfile({ onSaved, leaveGuardRef }) {
   const [acct, setAcct] = useState(null);
   const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("");            // the drop-down CHOICE (WALK-A-126)
+  const [roleOther, setRoleOther] = useState("");  // her own words when the choice is Other
   const [stateName, setStateName] = useState("");
   const [city, setCity] = useState("");
   const [school, setSchool] = useState("");
   const [email, setEmail] = useState("");            // confirmed value (unchanged = keep)
-  const [emailStage, setEmailStage] = useState("ok"); // ok | enter | confirm
-  const [emailNew, setEmailNew] = useState("");
-  const [email2, setEmail2] = useState("");
-  const [emailErr, setEmailErr] = useState("");
-  const [emailBusy, setEmailBusy] = useState(false);   // the "already in use" round-trip
+  /* The open change, if any — EmailEntry reports every keystroke (WALK-A-125). */
+  const [emailDraft, setEmailDraft] = useState({ editing: false, first: "", second: "" });
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
   /* WhatsApp support (2026-09-26) lives HERE, beside the email it trades off against —
@@ -89,59 +90,60 @@ function PersonalProfile({ onSaved }) {
      reach a paying customer for invoices and legal/privacy notices. Without an email the
      switch stays on, locked, and says why. The server enforces the same rule (409). */
   const [wa, setWa] = useState(false);
+  /* ★ LEAVING WITH UNSAVED CHANGES ASKS FIRST (WALK-A-133, founder 2026-09-28: "i ticked
+     WhatsApp support but since Save was well below I exited without saving"). The shell owns
+     every exit (the bar's ✕, the nav, the gear, Log out, the browser's Back); it calls
+     `leaveGuardRef.current` before any of them, and this form answers "dirty?" and shows the
+     question. Dirty = any field differs from what GET /account returned, or an email change
+     is open with something typed in it. */
+  const [askLeave, setAskLeave] = useState(null);      // the exit to run after she answers
+  const dirtyRef = useRef(false);
+  useEffect(() => {
+    if (!leaveGuardRef) return undefined;
+    leaveGuardRef.current = {
+      dirty: () => dirtyRef.current,
+      ask: (proceed) => setAskLeave(() => proceed),
+    };
+    return () => { leaveGuardRef.current = null; };
+  }, [leaveGuardRef]);
   useEffect(() => {
     fetch(`${API}/account`, withUser()).then((r) => (r.ok ? r.json() : null)).then((a) => {
       if (!a) return;
       setAcct(a);
       setWa(!!a.whatsapp);
-      setName(a.display_name || ""); setRole(a.role || ""); setStateName(a.state || "");
+      setName(a.display_name || ""); setRole(roleChoice(a.role)); setRoleOther(roleOtherText(a.role));
+      setStateName(a.state || "");
       setCity(a.city || ""); setSchool(a.school_name || ""); setEmail(a.email || "");
-      setEmailStage(a.email ? "ok" : "enter");
     }).catch(() => {});
   }, []);
 
-  /* ★ THE EMAIL CHANGE MUST NOT SILENTLY EVAPORATE (founder, 2026-09-26, live: "email
-     when changed using 'change' after saving switches back to old mail"). The change was
-     committed only by pressing Verify; a teacher who typed the address twice and pressed
-     Save got the OLD address saved and the new one dropped. Now (a) two matching entries
-     verify themselves, as the subscribe wizard's do, and (b) Save folds in a pending
-     change whose two entries match — it never saves an unconfirmed one. Returns the
-     address to save, or null when the pending change must be fixed first. */
+  /* ★ THE EMAIL CHANGE MUST NOT SILENTLY EVAPORATE (founder, 2026-09-26) — and must not
+     LOOP (WALK-A-125, 2026-09-28). Save folds in an open change whose two entries match;
+     an open change that does NOT match stops the save and says so, rather than saving the
+     old address behind her back. Returns the address to save, or null to stop. */
   const verifyPending = async () => {
-    if (emailStage !== "confirm") return email;
-    if (!EMAIL_OK(email2)
-        || email2.trim().toLowerCase() !== emailNew.trim().toLowerCase()) {
-      setEmailErr("The two entries don't match — try again."); setEmail2("");
+    if (!emailDraft.editing) return email;
+    const v = matchedDraft(emailDraft);
+    if (v === null) {
+      if (!emailDraft.first.trim() && !emailDraft.second.trim()) return email;   // opened, never typed
+      setNote("Your new email isn't confirmed yet — type it twice and tap Confirm, or tap change to keep the old one.");
       return null;
     }
-    setEmailBusy(true);
-    const taken = await idInUse(emailNew, acct && acct.account_id);
-    setEmailBusy(false);
-    if (taken) {
-      setEmailErr(EMAIL_TAKEN); setEmail2(""); setEmailStage("enter");
-      return null;
-    }
-    const v = emailNew.trim();
-    setEmail(v); setEmailStage("ok"); setEmailErr("");
+    if (await idInUse(v, acct && acct.account_id)) { setNote(EMAIL_TAKEN); return null; }
+    setEmail(v);
     return v;
   };
-
-  useEffect(() => {
-    if (emailStage !== "confirm" || emailBusy || !EMAIL_OK(email2)) return;
-    if (email2.trim().toLowerCase() !== emailNew.trim().toLowerCase()) return;
-    verifyPending();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email2, emailNew, emailStage]);
 
   const save = async () => {
     setBusy(true); setNote("");
     const mail = await verifyPending();
-    if (mail === null) { setBusy(false); return; }
+    if (mail === null) { setBusy(false); return false; }
     try {
       const r = await fetch(`${API}/account`, withUser({
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email: mail, role, state: stateName, city, school,
+        body: JSON.stringify({ name, email: mail, role: roleToSave(role, roleOther),
+                               state: stateName, city, school,
                                whatsapp: wa }),
       }));
       /* The SERVER'S OWN SENTENCE on a 4xx (2026-08-26) — a 409 here means the address
@@ -149,22 +151,53 @@ function PersonalProfile({ onSaved }) {
          it. Same fix as the checkout path; see SubscribeFlow.doCheckout. */
       if (!r.ok) {
         setNote(await errDetail(r, "Couldn't save right now — try again."));
-        return;
+        return false;
       }
       // Back to the Settings cards (founder, 2026-08-26) AND tell the shell to re-read
       // the account, so a changed name lands on the bar/greeting without a reload.
+      dirtyRef.current = false;
       onSaved && onSaved();
-      return;
+      return true;
     } catch {
       setNote("Couldn't save right now — try again.");
+      return false;
     } finally {
       setBusy(false);
     }
   };
 
+  dirtyRef.current = !!acct && (
+    name !== (acct.display_name || "") || roleToSave(role, roleOther) !== (acct.role || "")
+    || stateName !== (acct.state || "") || city !== (acct.city || "")
+    || school !== (acct.school_name || "") || email !== (acct.email || "")
+    || wa !== !!acct.whatsapp
+    || (emailDraft.editing && !!(emailDraft.first.trim() || emailDraft.second.trim())));
+  const canSave = !!String(name || "").trim() && !!String(city || "").trim()
+    && (role !== ROLE_OTHER || !!roleToSave(role, roleOther));
+
   if (!acct) return <div className="setwrap"><div className="fr-loading">Loading…</div></div>;
   return (
     <div className="setwrap setwrap-tight">
+      {askLeave && (
+        <div className="acct-final-bg" onClick={() => setAskLeave(null)}>
+          <div className="acct-final" role="dialog" aria-modal="true" aria-labelledby="pp-leave-t"
+            onClick={(e) => e.stopPropagation()}>
+            <h2 className="acct-final-t" id="pp-leave-t">Save your changes?</h2>
+            <p className="acct-final-p">You've changed your personal profile and not saved it.</p>
+            <div className="acct-final-row">
+              <button className="primary" disabled={busy || !canSave}
+                onClick={async () => {
+                  const go = askLeave;
+                  if (await save()) { setAskLeave(null); dirtyRef.current = false; go(); }
+                  else setAskLeave(null);
+                }}>{busy ? "Saving…" : "Save"}</button>
+              <button className="acct-del-cancel"
+                onClick={() => { const go = askLeave; setAskLeave(null); dirtyRef.current = false; go(); }}>
+                Leave without saving</button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* No heading — the Settings bar names this screen (2026-09-03). */}
       {/* Labels ABOVE the boxes (founder, 2026-08-26 — placeholder-only left fields
           ambiguous once filled; reverted same day). */}
@@ -174,55 +207,14 @@ function PersonalProfile({ onSaved }) {
       <div className="acct-row"><span className="acct-k">Mobile</span>
         <span className="acct-v">{acct.phone || "—"}</span></div>
 
-      {emailStage === "ok" && (
-        /* Field-styled, like every other row (founder, 2026-08-26 — the confirmed
-           email read too small as a bare line). */
-        <label className="login-field ob-field"><span>Email</span>
-          <div className="ob-email-view">
-            <span className={"ob-email-addr" + emailFit(email)}>{email || "—"}</span>
-            <button type="button" className="fr-link"
-              onClick={() => { setEmailNew(""); setEmail2(""); setEmailStage("enter"); }}>
-              change
-            </button>
-          </div>
-        </label>
-      )}
-      {emailStage === "enter" && (
-        <>
-          <label className="login-field ob-field"><span>New email</span>
-            <input type="email" autoComplete="off" value={emailNew}
-              onChange={(e) => { setEmailNew(e.target.value); setEmailErr(""); }}
-              placeholder="Enter your email" /></label>
-          {/* The taken-address message lands HERE — the stage the fix belongs to. */}
-          {emailErr && <p className="ob-err" role="alert">{emailErr}</p>}
-          {EMAIL_OK(emailNew) && (
-            <button type="button" className="fr-link"
-              onClick={() => { setEmail2(""); setEmailStage("confirm"); }}>
-              Confirm this email →
-            </button>
-          )}
-        </>
-      )}
-      {emailStage === "confirm" && (
-        <>
-          <label className="login-field ob-field"><span>Re-enter your email</span>
-            <input type="email" autoComplete="off" autoFocus value={email2}
-              onChange={(e) => { setEmail2(e.target.value); setEmailErr(""); }}
-              placeholder="Type it again to confirm" /></label>
-          {emailErr && <p className="ob-err" role="alert">{emailErr}</p>}
-          {/* Told at VERIFY, not at Save — the twin of the checkout check. */}
-          <button type="button" className="fr-link"
-            disabled={!EMAIL_OK(email2) || emailBusy}
-            onClick={verifyPending}>
-            {emailBusy ? "Checking…" : "Verify →"}
-          </button>
-        </>
-      )}
+      <EmailEntry current={email} label="Email" selfId={acct.account_id} fit={emailFit}
+        disabled={busy} onConfirmed={(v) => { setEmail(v); return ""; }}
+        onDraft={setEmailDraft} />
 
       {/* WhatsApp support — see the state note above. `hasMail` is the CONFIRMED email on
           this form (an address mid-change does not count until Verify completes). */}
       {(() => {
-        const hasMail = emailStage === "ok" && !!String(email || "").trim();
+        const hasMail = !emailDraft.editing && !!String(email || "").trim();
         const locked = wa && !hasMail;
         return (
           <div className="login-field ob-field">
@@ -249,6 +241,11 @@ function PersonalProfile({ onSaved }) {
       <label className="login-field ob-field"><span>Role <span className="ob-req" aria-hidden="true">*</span></span>
         <Dropdown value={role} onChange={setRole} options={ROLES}
           placeholder="Select your role" ariaLabel="Role" /></label>
+      {role === ROLE_OTHER && (
+        <label className="login-field ob-field"><span>Your role <span className="ob-req" aria-hidden="true">*</span></span>
+          <input type="text" value={roleOther} placeholder="e.g. Librarian, Special educator"
+            onChange={(e) => setRoleOther(e.target.value)} /></label>
+      )}
       <label className="login-field ob-field"><span>State <span className="ob-req" aria-hidden="true">*</span></span>
         <Dropdown value={stateName} onChange={setStateName} options={STATES}
           placeholder="Select your state" ariaLabel="State" /></label>
@@ -263,16 +260,12 @@ function PersonalProfile({ onSaved }) {
           the Settings home. Personal profile is hidden on trial, and a withdrawal right
           that disappears with a subscription state is not a withdrawal right. */}
 
-      {/* Save never waits on the email step (founder, 2026-08-26): other fields save
-          freely; a half-done email change is simply not saved until Verify completes —
-          the previously confirmed email (or none) stays. */}
+      {/* WALK-A-125 (2026-09-28): Save folds in a matched open change and stops on an
+          unmatched one (see verifyPending) — the old "Email isn't saved until you confirm
+          it" line described the silent-drop behaviour this replaced, and is gone with it. */}
       {/* WALK-A-022: the same required fields as the subscribe wizard (City is mandatory). */}
-      <button className="primary fr-cta ob-cta" disabled={busy || !String(name || "").trim() || !String(city || "").trim()}
+      <button className="primary fr-cta ob-cta" disabled={busy || !canSave}
         onClick={save}>{busy ? "Saving…" : "Save"}</button>
-      {emailStage !== "ok" && (
-        <p className="ob-quiet">Email isn't saved until you confirm it — everything else
-          saves now.</p>
-      )}
       {note && <p className="ob-quiet">{note}</p>}
     </div>
   );
@@ -346,7 +339,7 @@ function AskMark() {
   );
 }
 
-function SupportForm({ onOpenProfile, onAsk }) {
+function SupportForm({ onOpenProfile, onAsk, trial = false }) {
   const [meta, setMeta] = useState(null);          // categories + windows + her email
   const [cat, setCat] = useState("");
   const [text, setText] = useState("");
@@ -385,6 +378,27 @@ function SupportForm({ onOpenProfile, onAsk }) {
   // WhatsApp only for a teacher who opted in — and only when we KNOW she did.
   const hasWa = emailKnown && !!meta.whatsapp;
   const waOnly = hasWa && !hasEmail;
+  /* ★ MEYY WRITES ONLY TO WHAT IS ON RECORD (WALK-A-135, founder 2026-09-28). A teacher with
+     no email and no WhatsApp — every trial teacher, until she adds one — is not offered the
+     form, nor a bare support@ address to write to from any mailbox she likes: anyone can
+     type anything into a From line, and a reply to the wrong inbox is a privacy breach.
+     She adds an address here (typed twice, no code — trial carries no commercial
+     relationship, so the founder accepts that risk) and the form opens. The SERVER refuses
+     a send from an account with no email too, so no other door gets round this. */
+  const needsEmail = emailKnown && !hasEmail && !hasWa;
+  const saveEmail = async (v) => {
+    try {
+      const r = await fetch(`${API}/account`, withUser({
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: v }),
+      }));
+      if (!r.ok) return await errDetail(r, "Couldn't save that just now — try again.");
+      setMeta((m) => ({ ...(m || {}), email: v }));
+      return "";
+    } catch {
+      return "Couldn't save that just now — try again.";
+    }
+  };
   const openWa = () => {
     const note = `Hello Meyy, I need help. My sign-in number is ${mobileWords(meta && meta.mobile)}.`;
     window.open(waLink(note, meta && meta.whatsapp_number), "_blank", "noopener");
@@ -404,7 +418,7 @@ function SupportForm({ onOpenProfile, onAsk }) {
              richer context (subject · class · chapter) arrives when Support is also
              reachable FROM a lesson, which is where a "this plan looks wrong" report
              actually belongs. */
-          context: { screen: "Settings › Support" },
+          context: { screen: "Settings › Support", version: versionLine() },
         }),
       }));
       if (!r.ok) { setErr(await errDetail(r, "Couldn't send that just now — try again.")); return; }
@@ -431,19 +445,9 @@ function SupportForm({ onOpenProfile, onAsk }) {
                   Monday to Friday.</>
               : <>Your message is with us and you can expect a response within{" "}
                   {sent.reply_window || replyWords(sent.reply_days || 2)}, Monday to
-                  Friday. There is no email address on your account, so write to us at{" "}
-                  <strong>{SUPPORT_ADDRESS}</strong> — quote your reference — and we will
-                  reply there.</>}
+                  Friday.</>}
           </p>
         </div>
-        {/* On TRIAL the account has only a mobile, so this is the common case, not the
-            edge one. The plain address above is the working answer; adding an email is
-            the better one, offered second. */}
-        {!sent.emailed && (
-          <button className="fr-link sup-addmail"
-            onClick={() => onOpenProfile && onOpenProfile()}>
-            Or add an email address to your account →</button>
-        )}
         <p className="set-hint">Quote {sent.reference} if you write to us about this
           again — it keeps everything in one place.</p>
       </div>
@@ -493,8 +497,21 @@ function SupportForm({ onOpenProfile, onAsk }) {
         </div>
       )}
 
-      {/* 2 · the form — not for a WhatsApp-only teacher (see 1b) */}
-      {!waOnly && (
+      {needsEmail && (
+        <div className="set-group">
+          <div className="set-cap">Email support</div>
+          <div className="set-card set-card-pad">
+            <p className="set-plan-txt">Meyy writes back only to an email address on your
+              account. Add yours and the form opens.</p>
+            <EmailEntry current="" label="Your email" selfId={meta && meta.mobile}
+              onConfirmed={saveEmail} />
+          </div>
+        </div>
+      )}
+
+      {/* 2 · the form — not for a WhatsApp-only teacher (see 1b), nor before an email is
+          on record (see needsEmail) */}
+      {!waOnly && !needsEmail && (
       <div className="set-group">
         <div className="set-cap">Write to us</div>
         <div className="set-card set-card-pad">
@@ -548,19 +565,15 @@ function SupportForm({ onOpenProfile, onAsk }) {
                  since "k•••@gmail.com" matches every address she owns.
                  `overflow-wrap` because an address has no spaces to break at, and a long
                  one would otherwise push the card sideways at 360px. */}
-          {hasEmail && (
+          {/* A trial teacher has no Personal profile, so her one door to her address is
+              HERE: frozen, with "change" (WALK-A-135 — a typo is never a dead end). */}
+          {hasEmail && trial && (
+            <EmailEntry current={meta.email} label="Our reply goes to"
+              selfId={meta.mobile} onConfirmed={saveEmail} />
+          )}
+          {hasEmail && !trial && (
             <p className="ob-quiet">Our reply goes to{" "}
               <span className="sup-replyto">{meta.email}</span>.</p>
-          )}
-          {/* ONLY when the server actually told us she has none. Said BEFORE she
-              writes, not after: a teacher who types out a problem and only then learns
-              nobody can answer her has been wasted. The address is spelled out so she
-              can write from her own mail app instead. When the lookup FAILED we say
-              nothing here — see `metaErr` above. */}
-          {emailKnown && !hasEmail && (
-            <p className="ob-quiet">There is no email address on your account, so we
-              cannot write back — add one under Personal profile, or write to us
-              directly at {SUPPORT_ADDRESS}.</p>
           )}
           {err && <p className="ob-err" role="alert">{err}</p>}
           <button className="primary fr-cta ob-cta"
@@ -610,13 +623,38 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
                                    /* Which document the Legal card shows — "agreement" |
                                       "privacy". Lifted to page.jsx so the shell's
                                       "notice updated" note can open Legal ON the notice. */
-                                   legalDoc = "agreement", setLegalDoc = () => {} }) {
+                                   legalDoc = "agreement", setLegalDoc = () => {},
+                                   /* WALK-A-133: the shell's exit guard, handed to the form. */
+                                   leaveGuardRef = null,
+                                   /* WALK-A-129: scopes bought moments ago — the billing view
+                                      opens scrolled to them, tagged "New", for this visit only. */
+                                   justBought = [], onSeenNew = () => {} }) {
   const [ent, setEnt] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [busy, setBusy] = useState("");        // "docx" | "pdf" | "erase" | ""
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [failMsg, setFailMsg] = useState("");
+  /* WALK-A-130: an invoice failure is said ON the card whose link was tapped, under its pill —
+     not at the foot of the screen where a long list hides it. */
+  const [invFail, setInvFail] = useState(null);      // { number, msg } | null
+  const newCardRef = useRef(null);
+  useEffect(() => {
+    if (view !== "subscription" || !justBought.length || !newCardRef.current) return undefined;
+    try { newCardRef.current.scrollIntoView({ block: "center", behavior: "smooth" }); } catch {}
+    return undefined;
+  });
+  // The tag is for THIS visit: leaving the screen (or Settings) forgets it. Read through a ref,
+  // because the purchase can land while this screen is already open.
+  const boughtRef = useRef(justBought);
+  boughtRef.current = justBought;
+  const onSeenRef = useRef(onSeenNew);
+  onSeenRef.current = onSeenNew;
+  const onSub = view === "subscription";
+  useEffect(() => {
+    if (!onSub) return undefined;
+    return () => { if (boughtRef.current.length) onSeenRef.current(); };
+  }, [onSub]);
   const [receipt, setReceipt] = useState(null);
   // The LAST window: "have you downloaded your data?" (founder, 2026-08-26).
   const [finalOpen, setFinalOpen] = useState(false);
@@ -723,7 +761,7 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `aruvi-your-data.${fmt}`;
+      a.download = dataExportName(cachedAccount(), fmt, new Date(), getUser());   // WALK-A-132
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -740,7 +778,7 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
      arrives with the API's own filename, and a failure says so instead of leaving a
      dead link (2026-08-26). */
   const downloadInvoice = async (number) => {
-    setBusy(`inv-${number}`); setFailMsg("");
+    setBusy(`inv-${number}`); setInvFail(null);
     try {
       const r = await fetch(`${API}/invoices/${encodeURI(number)}`, withUser());
       if (!r.ok) throw new Error(String(r.status));
@@ -753,7 +791,7 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 30000);
     } catch {
-      setFailMsg("Couldn't fetch that invoice right now. Try again in a moment.");
+      setInvFail({ number, msg: "Couldn't fetch that invoice right now. Try again in a moment." });
     } finally {
       setBusy("");
     }
@@ -816,7 +854,8 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
      Email edits use the same double-blind confirmation as acquisition. The mobile
      (her sign-in) is shown, never editable here. */
   if (view === "personal" && !onTrial) {
-    return <PersonalProfile onSaved={() => { onAccountSaved && onAccountSaved(); setView("home"); }} />;
+    return <PersonalProfile leaveGuardRef={leaveGuardRef}
+      onSaved={() => { onAccountSaved && onAccountSaved(); setView("home"); }} />;
   }
 
   /* ── subviews ── */
@@ -888,14 +927,22 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
              scope (a renewal issues a second invoice for the same scope, and the one
              that explains today's validity is the latest). */
           const inv = invoices.find((iv) => (iv.scopes || []).includes(scope));
+          const isNew = justBought.includes(scope);
+          const firstNew = isNew && subs.findIndex((x) => justBought.includes(x.scope)) === idx;
           return (
-            <div key={scope} className={`set-card set-card-pad set-sub-card${
+            <div key={scope} ref={firstNew ? newCardRef : undefined}
+              className={`set-card set-card-pad set-sub-card${
               !planCard && idx === 0 ? " set-first" : ""}`}>
               <div className="set-plan">
                 <span className={`set-pill ${live ? "set-pill-on" : "set-pill-off"}`}>
                   {live ? "Subscribed" : "Ended"}
                 </span>
+                {/* Inline, not a class: globals.css is held untouched until the walk ends. */}
+                {isNew && <span className="set-pill" style={{ marginLeft: 8, color: "var(--pine)" }}>New</span>}
               </div>
+              {inv && invFail && invFail.number === inv.number && (
+                <p className="acct-fail" role="alert">{invFail.msg}</p>
+              )}
               <div className="acct-row"><span className="acct-k">Subject</span><span className="acct-v">{r.subject}</span></div>
               <div className="acct-row"><span className="acct-k">Stage</span><span className="acct-v">{r.stage}</span></div>
               <div className="acct-row"><span className="acct-k">Class</span><span className="acct-v">{r.classes}</span></div>
@@ -977,23 +1024,13 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
      on trial: a teacher whose trial is the thing that is broken must be able to say so,
      and the /support route is ungated for the same reason data rights are (§2.5). */
   if (view === "support") {
-    return <SupportForm onAsk={onAsk}
+    return <SupportForm onAsk={onAsk} trial={onTrial}
                         onOpenProfile={() => setView("personal")} />;
   }
 
-  if (view === "about") {
-    return (
-      <div className="setwrap">
-        {back}
-        <div className="set-card set-card-pad set-first">
-          <p className="set-plan-txt">Meyy · Lesson Studio — preview build.<br />
-            NCF 2023 aligned.</p>
-        </div>
-        <p className="set-hint">Version details will live here. The user agreement and
-          privacy notice are under Settings &rsaquo; Legal.</p>
-      </div>
-    );
-  }
+  /* About Meyy was removed (WALK-A-136, founder 2026-09-29): it carried nothing she needs. The
+     legal identity lives in the Privacy Notice (§10) under Legal; the version is the quiet line
+     at the foot of this list and rides along in every Support message. */
 
   /* ── Legal (2026-08-27) — the agreement's permanent home ──
      The document promises it is "permanently available under Settings → Legal", so it is
@@ -1131,11 +1168,6 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
           <span className="set-bigsub">User agreement &amp; privacy notice</span></span>
         <span className="set-chev">›</span>
       </button>
-      <button className="set-bigcard" onClick={() => setView("about")}>
-        <span className="set-bigtext"><span className="set-biglab">About Meyy</span>
-          <span className="set-bigsub">Version info</span></span>
-        <span className="set-chev">›</span>
-      </button>
 
       {/* Account: her data, her session, her account — the three rows that are about the
           ACCOUNT rather than the teaching (founder, 2026-09-11: "data & export can go to
@@ -1239,6 +1271,7 @@ export default function Settings({ view, setView, onOpenProfile, onAsk, onSignOu
       )}
 
       {failMsg && <p className="acct-fail" role="alert">{failMsg}</p>}
+      <p className="set-hint">{versionLine()}</p>
     </div>
   );
 }

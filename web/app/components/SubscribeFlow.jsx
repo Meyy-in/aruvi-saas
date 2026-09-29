@@ -5,6 +5,7 @@ import { API, getJSON, pretty, idInUse, errDetail,
          subjectStageMap } from "../lib/format";
 import Agreement from "./Agreement";
 import Dropdown from "./Dropdown";
+import EmailEntry from "./EmailEntry";
 import MeyyMark from "./MeyyMark";
 import { dateWords as consentDateWords } from "../lib/legalmd";
 
@@ -14,7 +15,7 @@ import { dateWords as consentDateWords } from "../lib/legalmd";
 /* ⚠️ Imported AND re-exported: `export … from` alone serves importers without binding the names
  * in this module's own scope, and the email path below calls EMAIL_TAKEN (the PPW_CHOICES /
  * setupKey lesson, third sighting). */
-import { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK,
+import { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK, ROLE_OTHER, roleChoice, roleOtherText, roleToSave,
          waLink, mobileWords, WHATSAPP_DISPLAY } from "../lib/format";
 /* ⚠️ ROLES/STATES/EMAIL_OK moved to @aruvi/shared/format on 2026-09-16 — the phone's
    Personal profile needed them and could otherwise only RETYPE them. Re-exported so
@@ -137,14 +138,10 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
      double blind is not weakened: she still typed it twice unseen to get here, and
      confirming again still requires a fresh matching pass. */
   const [email, setEmail] = useState("");
-  const [email2, setEmail2] = useState("");
-  const [emailStage, setEmailStage] = useState("enter");   // enter | confirm | ok
+  const [emailStage, setEmailStage] = useState("enter");   // enter | ok — `ok` = on record (EmailEntry)
   /* Focused when a mismatch or a taken address sends her BACK to the first field. Not an
      autoFocus, which would steal the caret from Name on the step's first paint. */
-  const emailRef = useRef(null);
   const schoolRef = useRef(null);   // scrolled into view when she leaves City
-  const [emailErr, setEmailErr] = useState("");
-  const [emailBusy, setEmailBusy] = useState(false);   // the "already in use" round-trip
   /* ★ WHATSAPP SUPPORT — ASKED, NEVER ASSUMED (founder, 2026-09-26). null = not yet
      answered; the step cannot continue until she picks one, and neither answer is
      preselected: a consent that arrives already ticked is not one (DPDP §6). It is on her
@@ -153,7 +150,8 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
      API is wired, the invoice), so an email is no longer the only way back to her. */
   const [wa, setWa] = useState(null);
   const [done, setDone] = useState(null);            // the checkout answer, for the done screen
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("");            // the drop-down CHOICE (WALK-A-126)
+  const [roleOther, setRoleOther] = useState("");  // her own words when the choice is Other
   const [stateName, setStateName] = useState("");
   const [city, setCity] = useState("");
   const [school, setSchool] = useState("");
@@ -192,13 +190,14 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         if (a.email) { setEmail(a.email); setEmailStage("ok"); }
         // Prefill only a YES: `false` is also what an account that was never asked reads as.
         if (a.whatsapp === true) setWa(true);
-        if (a.role) setRole(a.role);
+        if (a.role) { setRole(roleChoice(a.role)); setRoleOther(roleOtherText(a.role)); }
         if (a.state) setStateName(a.state);
         if (a.city) setCity(a.city);
         if (a.school_name) setSchool(a.school_name);
         /* A WhatsApp customer with no email is a COMPLETE profile — email is optional for
            her by design, so its absence must not re-open About-you on every re-subscribe. */
-        setProfileKnown(!!(looksReal && (a.email || a.whatsapp) && a.role && a.state));
+        setProfileKnown(!!(looksReal && (a.email || a.whatsapp) && a.role && a.role !== "Other"
+          && a.state));
       })
       .catch(() => { if (live) setProfileKnown(false); });
     return () => { live = false; };
@@ -293,7 +292,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         body: JSON.stringify({ scopes: cartScopes, name,
                                email: emailStage === "ok" ? email.trim() : "",
                                whatsapp: wa,
-                               role, state: stateName, city, school }),
+                               role: roleToSave(role, roleOther), state: stateName, city, school }),
       });
       /* ★ THE SERVER'S OWN SENTENCE (2026-08-26). This used to throw the status code
          away and print "Try again in a moment" — advice that can never work for a
@@ -329,57 +328,17 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
          opt-in. Everyone else goes straight in, exactly as before. Keyed on the SERVER's
          stored answer, not on `wa`. */
       if (out && out.whatsapp) { setDone(out); setPayBusy(false); setScreen("done"); return; }
-      onDone && onDone(userId);
+      onDone && onDone(userId, cartScopes);
     } catch {
       setPayErr("Couldn't complete the activation. Try again in a moment.");
       setPayBusy(false);
     }
   };
 
-  /* ── The email confirmation, in one place (founder, 2026-08-27) ──
-     Called two ways, and the difference is the whole design:
-
-       · AUTOMATICALLY, the moment the re-typed address MATCHES. A second entry that
-         agrees with the first has nothing left to ask her — making her press Verify
-         after that is a keystroke that can only produce the answer she already gave.
-       · BY THE BUTTON, which now exists for exactly one case: a completed second entry
-         that does NOT match. Nothing may fire on a mismatch while she is still typing,
-         because every address is a mismatch until its last character — telling her so
-         mid-word would be wrong on every keystroke but the final one. So the button is
-         how she says "this IS what I meant", and only then does the mismatch surface. */
-  const verifyEmail = async () => {
-    if (emailBusy) return;
-    if (email2.trim().toLowerCase() !== email.trim().toLowerCase()) {
-      /* Back to ENTER — the same move the taken-address branch makes, for the same
-         reason: put her in the field where the fix can be. */
-      setEmailErr("The two entries didn't match. This is what you typed first — "
-                  + "correct it if it's wrong, then confirm again.");
-      setEmail2(""); setEmailStage("enter");
-      setTimeout(() => emailRef.current && emailRef.current.focus(), 0);
-      return;
-    }
-    setEmailBusy(true);
-    const taken = await idInUse(email, userId);
-    setEmailBusy(false);
-    if (taken) {
-      // Back to ENTER with her text intact: the fix is to edit this field.
-      setEmailErr(EMAIL_TAKEN); setEmail2(""); setEmailStage("enter");
-      setTimeout(() => emailRef.current && emailRef.current.focus(), 0);
-      return;
-    }
-    setEmailStage("ok"); setEmailErr("");
-  };
-
-  /* Auto-verify on match. Deliberately NOT in the input's onChange: a paste, an
-     autofill or a browser restore can set the field without one, and the match is a
-     fact about the VALUE, not about how it arrived. */
-  useEffect(() => {
-    if (emailStage !== "confirm" || emailBusy) return;
-    if (!EMAIL_OK(email2)) return;
-    if (email2.trim().toLowerCase() !== email.trim().toLowerCase()) return;
-    verifyEmail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email2, email, emailStage]);
+  /* ── The email confirmation moved to EmailEntry (WALK-A-125, 2026-09-28): one shape for
+     Subscribe, Personal profile and Support — frozen address + "change", two boxes, one
+     "Confirm", and a mismatch that resets nothing (the old flow here sent her back to the
+     first box and could loop). */
 
   /* The trial offer, defined once and rendered by every screen it can still be open
      over. It is declared HERE, above the first screen branch, because it now fires on
@@ -460,80 +419,23 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             </div>
           </div>
 
-          {/* Email — double-blind confirm (see the state note above). Optional once she
-              has said Yes to WhatsApp; required otherwise (it is then her only channel). */}
-          {emailStage === "enter" && (
-            <>
-              <label className="login-field ob-field"><span>{wa === true
-                ? <>Email <span className="ob-opt">(optional)</span></>
-                : <>Email <span className="ob-req" aria-hidden="true">*</span></>}</span>
-                <input type="email" inputMode="email" autoComplete="off" value={email}
-                  ref={emailRef}
-                  onChange={(e) => { setEmail(e.target.value); setEmailErr(""); }}
-                  placeholder="Enter your email" /></label>
-              {/* The taken-address message lands HERE — the stage the fix belongs to. */}
-              {emailErr && <p className="ob-err" role="alert">{emailErr}</p>}
-              {/* With WhatsApp on, an unconfirmed address is dropped, not a blocker — say so,
-                  or she will think what she typed was saved. */}
-              {wa === true && email.trim() && (
-                <p className="ob-quiet">Optional — confirm it to add it to your account, or
-                  continue without it.</p>
-              )}
-              {EMAIL_OK(email) && (
-                <button type="button" className="fr-link ob-email-next" disabled={emailBusy}
-                  onClick={async () => {
-                    /* WALK-A-022 (2026-09-20): refuse an address that belongs to another account
-                       HERE, on first entry — not after she has typed it a second time to confirm. */
-                    setEmailBusy(true);
-                    const taken = await idInUse(email, userId);
-                    setEmailBusy(false);
-                    if (taken) { setEmailErr(EMAIL_TAKEN); return; }
-                    setEmail2(""); setEmailStage("confirm");
-                  }}>
-                  {emailBusy ? "Checking…" : "Confirm this email →"}
-                </button>
-              )}
-            </>
-          )}
-          {emailStage === "confirm" && (
-            <>
-              <label className="login-field ob-field"><span>Re-enter your email</span>
-                <input type="email" inputMode="email" autoComplete="off" autoFocus value={email2}
-                  onChange={(e) => { setEmail2(e.target.value); setEmailErr(""); }}
-                  placeholder="Type it again to confirm" /></label>
-              {emailErr && <p className="ob-err" role="alert">{emailErr}</p>}
-              {/* ★ The "already in use" check happens inside verifyEmail, HERE rather
-                  than at Pay (2026-08-26). The server's 409 was always right; arriving
-                  at the END of a checkout is what made it useless — she had chosen
-                  subjects and pressed Pay before anything told her, and the only advice
-                  on screen was "try again", which for a deterministic clash can never
-                  work. One tap from the field she would have to change anyway.
-                  A MATCHING entry never reaches this button — the effect above has
-                  already run — so it is only ever pressed to commit a mismatch, and it
-                  says so. `emailBusy` keeps it visible during the auto-verify's own
-                  round trip, which is the one moment it doubles as a progress note. */}
-              <button type="button" className="fr-link ob-email-next"
-                disabled={!EMAIL_OK(email2) || emailBusy}
-                onClick={verifyEmail}>
-                {emailBusy ? "Checking…" : "Verify →"}
-              </button>
-            </>
-          )}
-          {emailStage === "ok" && (
-            <label className="login-field ob-field"><span>Email</span>
-              <div className="ob-email-view">
-                <span><span className="ob-tick">✓</span> {maskEmail(email)}</span>
-                <button type="button" className="fr-link"
-                  onClick={() => { setEmail(""); setEmail2(""); setEmailStage("enter"); }}>
-                  change
-                </button>
-              </div>
-            </label>
-          )}
+          {/* Email — typed twice (EmailEntry). Optional once she has said Yes to WhatsApp;
+              required otherwise (it is then her only channel). An address she typed but
+              never confirmed is simply not sent — no line about it (WALK-A-137). */}
+          <EmailEntry current={emailStage === "ok" ? email : ""} selfId={userId} mask
+            label={wa === true
+              ? <>Email <span className="ob-opt">(optional)</span></>
+              : <>Email <span className="ob-req" aria-hidden="true">*</span></>}
+            onConfirmed={(v) => { setEmail(v); setEmailStage("ok"); return ""; }} />
 
           <label className="login-field ob-field"><span>Role <span className="ob-req" aria-hidden="true">*</span></span>
             <Dropdown value={role} onChange={setRole} options={ROLES}
               placeholder="Select your role" ariaLabel="Role" /></label>
+          {role === ROLE_OTHER && (
+            <label className="login-field ob-field"><span>Your role <span className="ob-req" aria-hidden="true">*</span></span>
+              <input type="text" value={roleOther} placeholder="e.g. Librarian, Special educator"
+                onChange={(e) => setRoleOther(e.target.value)} /></label>
+          )}
           <label className="login-field ob-field"><span>State <span className="ob-req" aria-hidden="true">*</span></span>
             <Dropdown value={stateName} onChange={setStateName} options={STATES}
               placeholder="Select your state" ariaLabel="State" /></label>
@@ -564,7 +466,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
           <button className="primary fr-cta"
             disabled={!name.trim() || wa === null
               || (wa !== true && emailStage !== "ok")
-              || !role || !stateName || !city.trim()}
+              || !roleToSave(role, roleOther) || !stateName || !city.trim()}
             onClick={() => setScreen("agreement")}>Save &amp; continue →</button>
           <button className="fr-link" onClick={() => onCancel && onCancel()}>← Back</button>
         </div>
@@ -655,7 +557,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
           <Steps at={3} />
           <h1 className="ob-title">What do you teach?</h1>
           <p className="ob-sub">Each subject &amp; stage is its own subscription — unlimited
-            lesson plans across all its classes. The total updates as you add.</p>
+            lesson plans across all its classes. The total amount updates as you add.</p>
           {!stageMap && <div className="fr-loading">Loading subjects…</div>}
           {stageMap && rows.map((r, i) => (
             <div className="ob-row" key={i}>
@@ -764,7 +666,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
               : ""}</p>
         </div>
         <div className="ob-foot">
-          <button className="fr-link" onClick={() => onDone && onDone(userId)}>
+          <button className="fr-link" onClick={() => onDone && onDone(userId, cartScopes)}>
             Continue to Meyy →</button>
         </div>
       </div>

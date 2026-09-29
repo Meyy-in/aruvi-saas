@@ -436,6 +436,31 @@ export default function Home() {
   // On mount, restore the signed-in user from localStorage (survives refresh).
   useEffect(() => { setUserState(getUser()); }, []);
 
+  /* ★ ONE BROWSER, ONE TEACHER — ACROSS TABS TOO (WALK-A-134, founder 2026-09-28).
+     Tabs share localStorage, and with it the Supabase session: when another tab logged out and
+     signed in as a different teacher, THIS tab's token quietly became hers (auth.js mirrors it
+     from onAuthStateChange) while its screens kept the previous teacher's profile, classes and
+     lessons in memory — the bar read 013, the data were 003's, and any save from here would
+     have written 003's set-up into 013's account.
+     So: when the signed-in id changes in ANOTHER tab (the `storage` event never fires in the
+     tab that made the change), this tab reloads. It then reads the id afresh — Login if the
+     other tab signed out, the new teacher's own data if it signed someone in. Deliberately a
+     reload and NOT onSignOut(): the sweep would clear storage that now belongs to the other
+     tab's teacher, and a reload also drops every module-level memory copy in one motion.
+     `e.key === null` is a localStorage.clear() from elsewhere — treated the same way. */
+  const userRef = useRef(null);
+  useEffect(() => { userRef.current = user; }, [user]);
+  useEffect(() => {
+    const onStore = (e) => {
+      if (e.storageArea && e.storageArea !== window.localStorage) return;
+      if (e.key !== null && e.key !== "aruvi_user") return;
+      if (userRef.current === null) return;           // not yet restored — nothing on screen to protect
+      if ((getUser() || "") !== (userRef.current || "")) window.location.reload();
+    };
+    window.addEventListener("storage", onStore);
+    return () => window.removeEventListener("storage", onStore);
+  }, []);
+
   // App-shell scroll ownership (2026-08-09): while the signed-in shell is up, the document
   // never scrolls — html.app-shell (globals.css) locks html/body to the viewport and makes
   // .bodycontent the one scroll container, so the top bar is plain static flow that CANNOT
@@ -910,6 +935,7 @@ export default function Home() {
      completion: close, and bump the entitlement sync so the trial→active flip lands
      immediately (scope filters, counters, paywall all refresh). */
   const [subscribeOpen, setSubscribeOpen] = useState(false);
+  const [justBought, setJustBought] = useState([]);   // WALK-A-129 — see the SubscribeFlow onDone
   const [entSyncTick, setEntSyncTick] = useState(0);
 
   // From My Lesson Plans → Track: deep-link into My Week to open a SECTION's pointer-enabled
@@ -1271,6 +1297,14 @@ export default function Home() {
      the tab she was standing on at gear-press. Still ONE control in ONE slot — the 2026-08-24
      rule (no back-and-title pair; one titled row, one ✕) is untouched; what changed is that
      "close" is read against the named screen rather than against the whole of Settings. */
+  /* ★ ONE EXIT GUARD (WALK-A-133). A form with unsaved changes (Personal profile) sets this;
+     every exit below runs through `guarded`, which asks the form first. */
+  const leaveGuardRef = useRef(null);
+  const guarded = (fn) => (...args) => {
+    const g = leaveGuardRef.current;
+    if (g && g.dirty()) { g.ask(() => fn(...args)); return; }
+    fn(...args);
+  };
   const settingsClose = () => {
     // There is no account to go back TO — the ✕ is an exit from the product, not from a
     // screen (see onErased above). Checked FIRST, before every subview branch.
@@ -1323,7 +1357,7 @@ export default function Home() {
     const ev = new CustomEvent("aruvi:back", { cancelable: true });
     window.dispatchEvent(ev);
     if (ev.defaultPrevented) return true;
-    if (inSettingsBar) { settingsClose(); return true; }
+    if (inSettingsBar) { guarded(settingsClose)(); return true; }
     if (editFlow !== null || generateEntry || tab !== "myplans") { goClasses(); return true; }
     return false;                                // root: let the browser leave
   };
@@ -1364,7 +1398,7 @@ export default function Home() {
      blank. */
   const settingsBarLabel = (editFlow === "profile" && profileViaSettings) ? "Teaching profile"
     : ({ personal: "Personal profile", subscription: "Subscription & billing",
-         data: "Your data & export", support: "Support", about: "About Meyy",
+         data: "Your data & export", support: "Support",
          legal: "Legal" }[settingsView] || "Settings");
   // (The "add more classes in this subject" prompt that used to call in here was removed on
   // 2026-08-21 along with its one-time window — see the plusShow note in MyPlans.jsx. Nothing
@@ -1561,12 +1595,12 @@ export default function Home() {
               Settings, and the PROFILE is Settings' top card. ThemeToggle lives in
               Settings › App › Appearance. The tour's profile step keeps this anchor —
               the profile is reached through here. */}
-          <button className="hdr-gear" onClick={goSettings} aria-label="Settings"
+          <button className="hdr-gear" onClick={guarded(goSettings)} aria-label="Settings"
             title="Settings" data-tour="settings-gear">⚙</button>
           {/* rightmost: profile name stacked over its own log out */}
           <div className="hdr-user-id">
             <span className="hdr-user-name">{displayName || user}</span>
-            <button className="hdr-user-logout" onClick={onSignOut}>Log out</button>
+            <button className="hdr-user-logout" onClick={guarded(onSignOut)}>Log out</button>
           </div>
         </div>
       </header>
@@ -1591,7 +1625,7 @@ export default function Home() {
           </span>
           {/* The ✕ closes the item the bar NAMES — a subview back to the Settings list, the
               list itself back to origin (see settingsClose) — so the label says which. */}
-          <button className="set-bar-x" onClick={settingsClose}
+          <button className="set-bar-x" onClick={guarded(settingsClose)}
             aria-label={`Close ${settingsBarLabel}`}>✕</button>
         </nav>
       )}
@@ -1699,7 +1733,9 @@ export default function Home() {
                 onOpenProfile={openProfileFromSettings} syncTick={entSyncTick}
                 trial={entTrial}
                 onSubscribe={() => setSubscribeOpen(true)}
-                onAsk={() => setAskOpen(true)} onSignOut={onSignOut} onErased={onErased} />
+                onAsk={() => setAskOpen(true)} onSignOut={onSignOut} onErased={onErased}
+                leaveGuardRef={leaveGuardRef}
+                justBought={justBought} onSeenNew={() => setJustBought([])} />
             </div>
           ) :
             !subject ? <div className="empty">Connecting to the Meyy engine…</div> :
@@ -1757,14 +1793,14 @@ export default function Home() {
                 the reading room is My Lessons (§2.5 as amended). */}
             {!entLapsed && (
             <button className={`bnav-item ${activeNav === "classes" && !askOpen && !navWin ? "active" : ""}`}
-              onClick={() => { setAskOpen(false); goClasses(); }}
+              onClick={guarded(() => { setAskOpen(false); goClasses(); })}
               data-tour="nav-classes">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></svg>
               <span>My Classes</span>
             </button>
             )}
             <button className={`bnav-item ${activeNav === "lessons" && !askOpen && !navWin ? "active" : ""}`}
-              onClick={() => { setAskOpen(false); goLessons(); }}
+              onClick={guarded(() => { setAskOpen(false); goLessons(); })}
               data-tour="nav-lessons">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4z" /><path d="M15 4v5h5M8 13h8M8 17h6" /></svg>
               <span>My Lessons</span>
@@ -1777,7 +1813,7 @@ export default function Home() {
                 direction", founder 2026-07-06). */}
             {ready && !entLapsed && (
             <button className={`bnav-item ${navWin ? "active" : ""}`} data-tour="grow-add"
-              onClick={() => { setAskOpen(false); setPortalWin({ mode: "change" }); }}
+              onClick={guarded(() => { setAskOpen(false); setPortalWin({ mode: "change" }); })}
               aria-label="Add or change subjects, classes, or sections" title="Add or change what you teach">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="5.9" strokeWidth="1.5" />
@@ -1838,9 +1874,16 @@ export default function Home() {
       {subscribeOpen && (
         <div className="subflow-overlay">
           <SubscribeFlow userId={user}
-            onDone={() => {
+            onDone={(_uid, scopes) => {
               setSubscribeOpen(false);
               setEntSyncTick((t) => t + 1);
+              /* ★ SHE LANDS ON WHAT SHE BOUGHT (WALK-A-129, founder 2026-09-28). The list is
+                 earliest-expiry-first, so a new purchase no longer jumps to the top to be
+                 seen — instead Subscription & billing opens scrolled to it, tagged "New". */
+              if (scopes && scopes.length) {
+                setJustBought(scopes);
+                goSettings(); setSettingsView("subscription");
+              }
               /* Checkout also rewrote her PROFILE server-side (every purchased scope
                  becomes a default card; trial artifacts dropped) — rehydrate it so the
                  new cards appear without a reload. */
