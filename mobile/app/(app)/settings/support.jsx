@@ -52,6 +52,8 @@ import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
 import { type } from "../../../theme/type";
 import { openAsk } from "../../../lib/ask";
+import EmailEntry from "../../../components/EmailEntry";
+import { versionLine } from "../../../lib/version";
 
 /* Only ever a fallback for a server that sends no list — the categories are the API's
    (`mail_templates.SUPPORT_CATEGORIES`) and the stored `category_label` is what the founder
@@ -199,11 +201,25 @@ export default function Support() {
      longer disagree. `meta.reply_days` / `meta.billing_reply_days` arrive and stay unread. */
   const emailKnown = !!meta && !metaErr;
   const hasEmail = emailKnown && !!meta.email;
+  /* ★ MEYY WRITES ONLY TO WHAT IS ON RECORD (WALK-A-135, founder 2026-09-28). No email → no form
+     and no bare support@ address to write to from any mailbox; she adds one here (typed twice, no
+     code) and the form opens. The server refuses a send without one too. See the web's SupportForm. */
+  const needsEmail = emailKnown && !hasEmail;
+  const saveEmail = async (v) => {
+    try {
+      await postJSON("/account", { email: v });
+      setMeta((m) => ({ ...(m || {}), email: v }));
+      return "";
+    } catch (e) {
+      return (e && e.detail) || "Couldn’t save that just now — try again.";
+    }
+  };
 
   const send = () => {
     if (!cat || !text.trim() || busy) return;
     setBusy(true); setErr("");
-    postJSON("/support", { category: cat, message: text.trim(), context: { screen: SCREEN } })
+    postJSON("/support", { category: cat, message: text.trim(),
+                           context: { screen: SCREEN, version: versionLine() } })
       .then((r) => setSent(r))
       /* The SERVER'S OWN SENTENCE on a 4xx — the over-length message and the empty one both
          come back in words she can act on. 5xx is engine talk and `detail` is empty there, so
@@ -228,19 +244,10 @@ export default function Support() {
                 {sent.reply_window || replyWords(sent.reply_days || 2)}, Monday to Friday.</>
             ) : (
               <>Your message is with us and you can expect a response within{" "}
-                {sent.reply_window || replyWords(sent.reply_days || 2)}, Monday to Friday. There
-                is no email address on your account, so write to us at{" "}
-                <Text style={ws.lgl_b}>{SUPPORT_ADDRESS}</Text> — quote your
-                reference — and we will reply there.</>
+                {sent.reply_window || replyWords(sent.reply_days || 2)}, Monday to Friday.</>
             )}
           </Text>
         </View>
-        {/* Offered SECOND, because the plain address above is the working answer. Hidden on
-            trial (Q12): Personal profile is not there to open. */}
-        {!sent.emailed && !onTrial ? (
-          <Link title="Or add an email address to your account →"
-            style={{ textAlign: "left" }} onPress={() => router.push("/settings/personal")} />
-        ) : null}
         <Text style={[ws.set_hint, { color: t.ink_soft }]}>
           Quote {sent.reference} if you write to us about this again — it keeps everything in
           one place.
@@ -286,7 +293,22 @@ export default function Support() {
         <Text style={[ws.set_chev, { color: t.ink_soft }]}>›</Text>
       </Pressable>
 
-      {/* 2 · the form, shaped like a mail: To · Subject · message */}
+      {needsEmail ? (
+        <View style={ws.set_group}>
+          <Text style={[ws.set_cap, { color: t.ink_soft }]}>Email support</Text>
+          <View style={[ws.set_card, ws.set_card_pad,
+                        { borderColor: t.line, backgroundColor: t.card_bg }]}>
+            <Text style={[ws.set_plan_txt, { color: t.ink }]}>Meyy writes back only to an email
+              address on your account. Add yours and the form opens.</Text>
+            <EmailEntry current="" label="Your email" selfId={meta && meta.mobile}
+              onConfirmed={saveEmail} />
+          </View>
+        </View>
+      ) : null}
+
+      {/* 2 · the form, shaped like a mail: To · Subject · message — not before an email is on
+          record (needsEmail) */}
+      {!needsEmail ? (
       <View style={ws.set_group}>
         <Text style={[ws.set_cap, { color: t.ink_soft }]}>Write to us</Text>
         <View style={[ws.set_card, ws.set_card_pad,
@@ -331,20 +353,15 @@ export default function Support() {
               answered, and a mask defeats exactly that check. ⚠️ The nested Text names a COLOUR
               and nothing else — one that also named a size would stop inheriting the line it
               sits in (the `lgl_b` lesson). */}
-          {hasEmail ? (
+          {/* A trial teacher has no Personal profile, so her one door to her address is here —
+              frozen, with "change" (WALK-A-135). */}
+          {hasEmail && onTrial ? (
+            <EmailEntry current={meta.email} label="Our reply goes to" selfId={meta.mobile}
+              onConfirmed={saveEmail} />
+          ) : null}
+          {hasEmail && !onTrial ? (
             <Text style={[ws.ob_quiet, { color: t.ink_soft }]}>Our reply goes to{" "}
               <Text style={{ color: t.ink }}>{meta.email}</Text>.</Text>
-          ) : null}
-
-          {/* ONLY when the server actually told us she has none, and said BEFORE she writes: a
-              teacher who types out a problem and only then learns nobody can answer her has been
-              wasted. When the lookup FAILED we say nothing — see `metaErr` above. */}
-          {emailKnown && !hasEmail ? (
-            <Text style={[ws.ob_quiet, { color: t.ink_soft }]}>
-              {onTrial
-                ? `There is no email address on your account, so we cannot write back — write to us directly at ${SUPPORT_ADDRESS}.`
-                : `There is no email address on your account, so we cannot write back — add one under Personal profile, or write to us directly at ${SUPPORT_ADDRESS}.`}
-            </Text>
           ) : null}
 
           {err ? (
@@ -355,6 +372,7 @@ export default function Support() {
             disabled={!cat || !text.trim() || busy} onPress={send} style={{ marginTop: 16 }} />
         </View>
       </View>
+      ) : null}
     </ScrollView>
     </View>
   );

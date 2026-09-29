@@ -30,7 +30,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { View, ScrollView, Pressable, Animated, Easing } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
-import { pendingPurchase, settlePurchase } from "../../../lib/purchase";
+import { pendingPurchase, settlePurchase, recentPurchase, clearRecent } from "../../../lib/purchase";
 import { Text } from "../../../components/Text";
 import { getJSON, fmtValidity, scopeRows, subsFromEntitlement } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
@@ -108,6 +108,20 @@ export default function Subscription() {
   /* The scopes of a purchase still settling (lib/purchase). Re-read on FOCUS, not mount: the
      wizard is pushed on top of this screen and pops back to it, so there is no second mount. */
   const [pending, setPending] = useState(() => pendingPurchase());
+  const [recent, setRecent] = useState(() => recentPurchase());
+  useFocusEffect(useCallback(() => {
+    setRecent(recentPurchase());
+    return () => clearRecent();          // the "New" tag is for this visit only (WALK-A-129)
+  }, []));
+  /* Scrolled to the first new card once it has laid out (WALK-A-129). */
+  const scrollRef = useRef(null);
+  const scrolledTo = useRef(false);
+  const onNewLayout = (e) => {
+    if (scrolledTo.current || !scrollRef.current) return;
+    scrolledTo.current = true;
+    const y = Math.max(0, e.nativeEvent.layout.y - 80);
+    setTimeout(() => { try { scrollRef.current.scrollTo({ y, animated: true }); } catch {} }, 120);
+  };
   useFocusEffect(useCallback(() => {
     let live = true;
     let tries = 0;
@@ -132,7 +146,7 @@ export default function Subscription() {
   /* ⚠️ EVERYTHING BELOW READS `invoices` AND `pending`, SO IT SITS BELOW THEM. The first cut of
      2026-09-18 computed `planCard` above `purchasing` — a TDZ ReferenceError on first paint that
      no parse or scope check sees (the `tourNow` lesson in index.jsx, again). */
-  const subs = subsFromEntitlement(ent, invoices);   // newest purchase first (2026-09-18)
+  const subs = subsFromEntitlement(ent, invoices);   // earliest expiry first (WALK-A-129)
   /* ★ NOTHING TO SAY, NOTHING DRAWN (founder, 2026-09-16: "in both web and phone active
      subscriptions must not show that sliver"). The status card has exactly three things it can
      say and an ACTIVE teacher matches none of them, so it used to render as an empty bordered
@@ -149,8 +163,10 @@ export default function Subscription() {
 
   const [busy, setBusy] = useState("");
   const [failMsg, setFailMsg] = useState("");
+  /* WALK-A-130: said ON the card whose link was tapped, under its pill — not at the foot. */
+  const [invFail, setInvFail] = useState(null);      // { number, msg } | null
   const getInvoice = (number) => {
-    setBusy(`inv-${number}`); setFailMsg("");
+    setBusy(`inv-${number}`); setFailMsg(""); setInvFail(null);
     /* ★ SHOWN BEFORE IT IS SENT (founder, 2026-09-18: "the invoice… should appear in the screen as
        it does for pdf LP export"). The report window's rule, applied here: a PDF on iOS opens in
        the preview screen and the share sheet is her choice from its arrow. `from: "settings"`
@@ -161,12 +177,12 @@ export default function Subscription() {
           params: { uri: f.uri, name: f.name, mime: f.mime, label: `Invoice ${number}`, from: "settings" } }))
       : downloadDocument(doc);
     run
-      .catch(() => setFailMsg("Couldn’t fetch that invoice right now."))
+      .catch(() => setInvFail({ number, msg: "Couldn’t fetch that invoice right now. Try again in a moment." }))
       .finally(() => setBusy(""));
   };
 
   return (
-    <ScrollView contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
+    <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, { paddingTop: 12 }]}>
       {/* The status card. No heading — the bar reads "⚙ Subscription & billing". */}
       {planCard ? (
       <View style={[ws.set_card, ws.set_card_pad,
@@ -200,41 +216,31 @@ export default function Subscription() {
       </View>
       ) : null}
 
-      {/* ★ JUST BOUGHT, NOT YET IN HER COPY — a card per scope the store has not caught up with,
-          so the purchase shows at once — ON TOP, newest first (founder, 2026-09-18) — above everything she already had (whose invoices stay
-          where they were). Replaced by the ordinary card the moment the entitlement read lands. */}
-      {pendingOnly.map((scope, idx) => {
-        const r = scopeRows(scope);
-        return (
-          <View key={`p-${scope}`} style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
-                                          ws.set_card_inset,
-                                          !planCard && idx === 0 ? { marginTop: 0 } : null,
-                                          { borderColor: t.line, backgroundColor: t.card_bg }]}>
-            <View style={[ws.set_plan, ws.set_plan_sub]}><Pill tone="on">Subscribed</Pill></View>
-            <LedgerRow k="Subject" v={r.subject} />
-            <LedgerRow k="Stage" v={r.stage} />
-            <LedgerRow k="Class" v={r.classes} />
-            <LedgerRow k="Invoice" v={<InvoiceProgress />} />
-          </View>
-        );
-      })}
       {active ? subs.map(({ scope, until, live }, idx) => {
         const r = scopeRows(scope);
         /* The newest invoice listing this scope — a renewal issues a second one, and the one
            that explains today's validity is the latest. `invoices` arrives newest first. */
         const inv = invoices.find((iv) => (iv.scopes || []).includes(scope));
+        const isNew = recent.includes(scope);
+        const firstNew = isNew && subs.findIndex((x) => recent.includes(x.scope)) === idx;
         return (
-          <View key={scope} style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
+          <View key={scope} onLayout={firstNew ? onNewLayout : undefined}
+                style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
                                     ws.set_card_inset,
                                     /* With no status card above it, the first subscription card
                                        IS the first element and gives back `set_sub_card`'s 10px
                                        so the page does not start late. The web does the same
                                        with `.set-sub-card.set-first`. */
-                                    !planCard && idx === 0 && !pendingCards ? { marginTop: 0 } : null,
+                                    !planCard && idx === 0 ? { marginTop: 0 } : null,
                                     { borderColor: t.line, backgroundColor: t.card_bg }]}>
             <View style={[ws.set_plan, ws.set_plan_sub]}>
               <Pill tone={live ? "on" : "off"}>{live ? "Subscribed" : "Ended"}</Pill>
+              {isNew ? <View style={{ marginLeft: 8 }}><Pill>New</Pill></View> : null}
             </View>
+            {inv && invFail && invFail.number === inv.number ? (
+              <Text accessibilityRole="alert" style={[ws.acct_fail, { color: t.danger }]}>
+                {invFail.msg}</Text>
+            ) : null}
             <LedgerRow k="Subject" v={r.subject} />
             <LedgerRow k="Stage" v={r.stage} />
             <LedgerRow k="Class" v={r.classes} />
@@ -262,6 +268,27 @@ export default function Subscription() {
       }) : null}
 
 
+      {/* ★ JUST BOUGHT, NOT YET IN HER COPY — a card per scope the store has not caught up with,
+          so the purchase shows at once. Since WALK-A-129 (earliest expiry first) they sit AFTER
+          the rest — a year from today is the latest expiry there is — tagged "New", with the
+          screen scrolled to them. Replaced by the ordinary card the moment the entitlement read
+          lands. */}
+      {pendingOnly.map((scope, idx) => {
+        const r = scopeRows(scope);
+        return (
+          <View key={`p-${scope}`} onLayout={idx === 0 ? onNewLayout : undefined} style={[ws.set_card, ws.set_card_pad, ws.set_sub_card,
+                                          ws.set_card_inset,
+                                          !planCard && idx === 0 && !(active && subs.length) ? { marginTop: 0 } : null,
+                                          { borderColor: t.line, backgroundColor: t.card_bg }]}>
+            <View style={[ws.set_plan, ws.set_plan_sub]}><Pill tone="on">Subscribed</Pill>
+              <View style={{ marginLeft: 8 }}><Pill>New</Pill></View></View>
+            <LedgerRow k="Subject" v={r.subject} />
+            <LedgerRow k="Stage" v={r.stage} />
+            <LedgerRow k="Class" v={r.classes} />
+            <LedgerRow k="Invoice" v={<InvoiceProgress />} />
+          </View>
+        );
+      })}
       {/* ✅ LIT 2026-09-16. Both open the SAME wizard the paywall and the front door open — and it
           really buys: `POST /onboarding/checkout` is a server-side dev stub that activates
           through the ManualBillingProvider. */}
