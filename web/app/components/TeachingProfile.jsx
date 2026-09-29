@@ -134,7 +134,7 @@ const Pencil = ({ size = 14 }) => (
  * "{subject}/{stage}"). */
 const stageOfRoman = stageOfGrade;   // lib/format is the web's ONE copy of the mapping
 
-export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, heldScopes, trial, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome }) {
+export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, heldScopes, trial, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome, onSaveFailed }) {
   /* `heldScopes` is what she has BOUGHT, and it decides one thing only: whether a subject
      survives losing its last class (`subjectSurvivesEmpty`). It is NOT `paidScopes`, which is a
      display filter and says "no limit" while enforcement is off — see @aruvi/shared/format. */
@@ -385,7 +385,12 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
       if (status !== "mismatch") return;          // ok → silence; unverified → silence, retried
       // Y′ is the truth: re-sync the view to what is actually stored, and say so.
       onChange && onChange(projectReadiness({ subjects: (profile && profile.subjects) || [] }));
-      setSaveFailed(true);
+      /* WALK-A-151 (2026-09-29): inside the spot-edit WINDOW this screen unmounts the moment Save
+         returns her to the window's rows, so a banner held here died with it and a verified
+         mismatch said nothing. The window's host passes `onSaveFailed` and the SHELL shows the
+         caption instead — it outlives the window. Under Settings the screen stays mounted, no
+         prop is passed, and the banner stays here as before. */
+      if (onSaveFailed) onSaveFailed(); else setSaveFailed(true);
     }).catch(() => {});
   };
 

@@ -1685,6 +1685,7 @@ export default function Home() {
                   portalIntent={profilePortal} onConsumePortal={() => setProfilePortal(null)}
                   portalScope={profilePortalScope}
                   onChrome={setWinChrome}
+                  onSaveFailed={() => setSaveFailed(true)}
                   onSubscribe={() => setSubscribeOpen(true)} />
               </div>
             </div>

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-29T09:48:48",
+  "updated_at": "2026-09-29T14:17:13",
   "items": {
     "04.19": {
       "ios": {
@@ -5071,6 +5071,42 @@
         "comment": "003, English·VI·Ch 16: note written on iPhone (text sits above the rule) → edited on web → iPhone reopened shows the web's newer text; Android shows it too; cleared on Android → empty on web and iPhone. But the Notes window covers part of the bottom nav → WALK-A-150.\n↻ re-walk after the phone fix point (WALK-A-145…150)\n✓ re-walked 2026-09-29 after WALK-A-145…150: pass.",
         "build": "Expo Go (iPhone 16, LAN)"
       }
+    },
+    "X.13": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T13:55:19",
+        "comment": "026 fresh number. DevTools › Request conditions › block *://*/subjects, reload first run: 'Loading subjects…' then 'Couldn't load the subject list.' + Try again; unblocked, Try again → list appears. (Going offline AFTER the list loaded correctly changes nothing — the list loads once on mount.)",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "X.04": {
+      "web": {
+        "status": "pending",
+        "by": "Kumar",
+        "at": "2026-09-29T13:59:04",
+        "comment": "PART 1 PASS (026, first run → tour declined → My Classes): 'Would you like to check your set-up?' rose ~1s after My Classes, with values; not asked again on return. OWED: tap-away-within-1s re-queue (needs another fresh first run) and the after-purchase half (second subject-stage).",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "X.02": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T14:17:13",
+        "comment": "↻ RE-WALKED after WALK-A-151: all four Add rows (Periods a week · Class · Section · Annual budget) show the shell caption 'Your teaching set-up didn't save — this is what Meyy has for you.' + Dismiss. (The stored profile keeps the new values — the skew fakes only the read-back, the write really lands.)",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "X.03": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-09-29T14:13:33",
+        "comment": "026. Every class unticked: 'No classes set up yet' / 'To start planning, add the classes you teach under Class in the Add window from the bottom tool bar.' One class re-added, first-run lesson unattached in My Lessons: 'Your classes are ready' / 'Your lesson is waiting in My Lessons — tap + on a class to start teaching it.' (the has-a-lesson variant; the no-lesson variant is 'Tap + on a class to prepare its first lesson.'). Phones must match word for word.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
     }
   },
   "gate": {
@@ -8196,6 +8232,26 @@
       "recheck": [],
       "owner": "Claude",
       "at": "2026-09-29T09:37:45"
+    },
+    {
+      "id": "WALK-A-151",
+      "opened": "2026-09-29T14:13:33",
+      "closed": "2026-09-29T14:17:13",
+      "feature": "X.02",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web",
+      "title": "Web: a profile save through the Add window that fails its read-back says nothing",
+      "what": "X.02, web, account 026, server skew confirmed in the Render log. Add › Periods a week, Save: the read-after-write check got a mismatch but no save-failed sentence appeared anywhere. Expected per X.02: one save-failed sentence on EVERY step; web shows the shell caption.",
+      "fix": "[FIXED web 2026-09-29T14:14:26] Cause confirmed: TeachingProfile's own save-failed banner lives inside the spot-edit window, which unmounts when Save returns her to the window's rows — the verdict arrived after unmount and was dropped. The window's host (page.jsx) now passes onSaveFailed and the SHELL caption ('Your teaching set-up didn't save — this is what Meyy has for you.') shows instead; under Settings the profile screen keeps its own banner (no prop passed). Web only — the phone draws it inside the editor (named divergence). Parse-checked. Awaiting re-walk.\n[RE-WALKED web 2026-09-29T14:17:13] PASS on all four rows.",
+      "files": "web/app/components/TeachingProfile.jsx (onSaveFailed prop); web/app/page.jsx (window host passes it)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-09-29T14:13:33"
     }
   ]
 }
