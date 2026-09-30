@@ -107,7 +107,9 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   thread (ARUVI_WA_WELCOME_PREVIEW). Done screen no longer shows the number ("Meyy support").
   `tests/test_support_inbox.py` (7). Page rendered + checked at 1280 and 390 (Playwright, mocked
   API). OWED: data EXPORT does not yet include WhatsApp threads; privacy notice must name WhatsApp/
-  Meta and the inbox. NEXT: founder sets the password on Render, tests with the test number →
+  Meta and the inbox. 2026-09-30: DEPLOYED + founder-tested on the test number — greeting,
+  thread, email alert, reply all PASS. Replies are deliberately NOT emailed (the thread is the
+  record; only customer messages alert). NEXT (was: founder sets the password, tests) →
   migrate 9363795723 (export chats, delete from Business app, add in WhatsApp Manager as "Meyy",
   register via Render Shell, update ARUVI_WA_PHONE_NUMBER_ID, copy template if needed, add billing). Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.
