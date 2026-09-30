@@ -101,6 +101,8 @@ services:
         sync: false
       - key: ARUVI_WA_APP_SECRET
         sync: false
+      - key: ARUVI_SUPPORT_INBOX_PASSWORD
+        sync: false
       - key: ARUVI_MAIL_FROM
         sync: false
       - key: ARUVI_SUPPORT_ADDRESS

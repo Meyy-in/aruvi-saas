@@ -362,6 +362,10 @@ class DataRightsServiceFileImpl(DataRightsService):
         # still follows the last one issued rather than repeating it.
         if self._rm(f"support/{t}/{u}"):
             erased.append("support messages")
+        # Her WhatsApp conversation with Meyy (2026-09-30) — kept at the same {tenant}/{user}
+        # as her account precisely so this walk reaches it.
+        if self._rm(f"whatsapp_chats/{t}/{u}"):
+            erased.append("WhatsApp messages")
         if self._rm(f"academic_years/{t}/{u}"):
             erased.append("academic-year records")
         # Subscription/entitlement record (Step 5, added to the walk 2026-08-24 — a new

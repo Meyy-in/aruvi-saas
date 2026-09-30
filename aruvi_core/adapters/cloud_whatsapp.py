@@ -49,8 +49,19 @@ class CloudWhatsApp(WhatsAppClient):
         to = "".join(ch for ch in str(msg.to or "") if ch.isdigit())
         if not to:
             return {"status": "skipped", "reason": "no recipient number"}
+        return self._post(self.payload(msg, to))
+
+    def send_text(self, to: str, body: str) -> Dict[str, Any]:
+        num = "".join(ch for ch in str(to or "") if ch.isdigit())
+        if not num or not str(body or "").strip():
+            return {"status": "skipped", "reason": "no recipient or empty text"}
+        return self._post({"messaging_product": "whatsapp", "recipient_type": "individual",
+                           "to": num, "type": "text",
+                           "text": {"preview_url": False, "body": str(body)[:4096]}})
+
+    def _post(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         try:
-            r = httpx.post(self.url, json=self.payload(msg, to), timeout=self.timeout,
+            r = httpx.post(self.url, json=payload, timeout=self.timeout,
                            headers={"Authorization": f"Bearer {self.token}"})
             body = {}
             try:

@@ -80,7 +80,36 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   number) → the Meyy app is blocked with its owner's developer account; nothing on our side is
   wrong. The product degrades correctly meanwhile (done screen falls back to "Say hello"; sales
   log says "NOT sent (error)"). Options: wait for the lock to lift · a second person as portfolio
-  admin creates a fresh app · go through a Meta partner (BSP) — needs an adapter. Sending-number choice (second SIM · partner
+  admin creates a fresh app · go through a Meta partner (BSP) — needs an adapter.
+  2026-09-30: LOCK LIFTED. Remaining 400 "Authorization Error" (code 100) was the system-user
+  token missing **whatsapp_business_messaging** (only _management was granted) → regenerated with
+  BOTH, Render updated. Hand send of `meyy_welcome` (lang `en`, {{1}}=Kumar) from the Render Shell
+  to 918004279854 → accepted → webhook statuses `sent` + `delivered` logged → message RECEIVED on
+  the phone. So the whole sending chain works AND inbound webhooks now arrive (the lock, not the
+  test number, was what stopped them). Still to see: the APP's own automatic send (Personal
+  profile WhatsApp off→Save, then on→Save — two separate saves) → CONFIRMED the same day: the
+  app's automatic welcome was received too. END-TO-END SENDING VERIFIED on the test number.
+  Render Shell has no curl; use `python3` + httpx with $ARUVI_WA_TOKEN for Graph calls.
+  **DECISION 2026-09-30 (founder): OPTION C — 9363795723 moves fully to the Cloud API**, answered
+  in Meyy's own **Support inbox** (reasons: it began as online chat support; server-side messages
+  allow AI-assisted answers and issue tracking later; customers should know "Meyy", not a number).
+  **BUILT (step 1 of 4):** `api/support_inbox.py` + `aruvi_core/adapters/whatsapp_inbox_file.py`.
+  Threads at `whatsapp_chats/{n}/{n}/thread.json` (same {tenant}/{user} as her account → the erase
+  walk removes them: "WhatsApp messages"). Webhook → store (dedupe by Meta id) → auto-GREETING
+  (ARUVI_WA_GREETING, first message or after 14 days; never for STOP) → email ALERT to
+  ARUVI_INBOX_ALERT_TO (default support@), throttled 30 min/conversation. Statuses applied by id,
+  never backwards. `/support-inbox`: one password (ARUVI_SUPPORT_INBOX_PASSWORD, Render only;
+  closed while unset), HMAC cookie keyed on the password (HttpOnly/Secure/SameSite=Strict, 30
+  days), 10 failed logins / 15 min / client, writes need header X-Meyy-Inbox; login form parsed by
+  hand (no python-multipart). Replies only inside WhatsApp's 24-hour window (409 otherwise);
+  optional ARUVI_WA_REOPEN_TEMPLATE button. `send_text` added to the WhatsAppClient port. The
+  day-file log no longer holds message text (numbers masked). Welcome sends are recorded in the
+  thread (ARUVI_WA_WELCOME_PREVIEW). Done screen no longer shows the number ("Meyy support").
+  `tests/test_support_inbox.py` (7). Page rendered + checked at 1280 and 390 (Playwright, mocked
+  API). OWED: data EXPORT does not yet include WhatsApp threads; privacy notice must name WhatsApp/
+  Meta and the inbox. NEXT: founder sets the password on Render, tests with the test number →
+  migrate 9363795723 (export chats, delete from Business app, add in WhatsApp Manager as "Meyy",
+  register via Render Shell, update ARUVI_WA_PHONE_NUMBER_ID, copy template if needed, add billing). Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.
   `tests/test_whatsapp.py`. Invoice over WhatsApp still owed: needs a fetchable PDF URL for the
   template's document header (`WhatsAppTemplate.document`).

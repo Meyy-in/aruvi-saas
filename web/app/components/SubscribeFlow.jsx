@@ -16,7 +16,7 @@ import { dateWords as consentDateWords } from "../lib/legalmd";
  * in this module's own scope, and the email path below calls EMAIL_TAKEN (the PPW_CHOICES /
  * setupKey lesson, third sighting). */
 import { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK, ROLE_OTHER, roleChoice, roleOtherText, roleToSave,
-         waLink, mobileWords, WHATSAPP_DISPLAY } from "../lib/format";
+         waLink, mobileWords } from "../lib/format";
 /* ⚠️ ROLES/STATES/EMAIL_OK moved to @aruvi/shared/format on 2026-09-16 — the phone's
    Personal profile needed them and could otherwise only RETYPE them. Re-exported so
    this module's own call sites (and Settings', which imports them from here) are
@@ -664,8 +664,8 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
               "_blank", "noopener");
           }}>{welcomed ? "Open WhatsApp" : "Say hello on WhatsApp"}</button>
           <p className="ob-quiet">{welcomed
-            ? <>Meyy&rsquo;s number is {WHATSAPP_DISPLAY}. </>
-            : <>Opens a chat with Meyy ({WHATSAPP_DISPLAY}) with a short note ready to send. </>}
+            ? <>Opens your chat with Meyy support. </>
+            : <>Opens a chat with Meyy support with a short note ready to send. </>}
             {done && done.invoice_number
               ? (emailStage === "ok"
                 ? "Your invoice is on its way by email and is always in Settings › Subscription."

@@ -586,6 +586,11 @@ class WhatsAppClient(Protocol):
     NOT raise — a subscription never fails because WhatsApp was slow — and returns
     {"status": "sent"|"written"|"skipped"|"error", ...}."""
     def send_template(self, msg: "WhatsAppTemplate") -> Dict[str, Any]: ...
+    def send_text(self, to: str, body: str) -> Dict[str, Any]:
+        """A free-form text reply. WhatsApp allows it ONLY inside the 24-hour window the
+        customer opened with her last message; outside it Meta refuses (use a template).
+        Same never-raises contract; a sent result carries `message_id`."""
+        ...
 
 
 @runtime_checkable

@@ -200,6 +200,32 @@ WA_WELCOME_NAME_PARAM = os.environ.get("ARUVI_WA_WELCOME_NAME_PARAM", "1").strip
     "1", "true", "yes", "on")
 WA_VERIFY_TOKEN = os.environ.get("ARUVI_WA_VERIFY_TOKEN", "").strip()
 WA_APP_SECRET = os.environ.get("ARUVI_WA_APP_SECRET", "").strip()
+
+# ── The WhatsApp Support inbox (2026-09-30) ─────────────────────────────────────
+# Customer messages to the Meyy number arrive at the server; the founder reads and answers them
+# at {PUBLIC_API_URL}/support-inbox. The page is closed until SUPPORT_INBOX_PASSWORD is set
+# (Render dashboard only — never the repo); changing it signs every open session out.
+SUPPORT_INBOX_PASSWORD = os.environ.get("ARUVI_SUPPORT_INBOX_PASSWORD", "")
+PUBLIC_API_URL = (os.environ.get("ARUVI_PUBLIC_API_URL", "").strip()
+                  or "https://meyy-api.onrender.com").rstrip("/")
+# Who is emailed when a customer writes (at most once per conversation per ALERT_GAP_MIN).
+INBOX_ALERT_TO = os.environ.get("ARUVI_INBOX_ALERT_TO", "").strip() or SUPPORT_ADDRESS
+INBOX_ALERT_GAP_MIN = int(os.environ.get("ARUVI_INBOX_ALERT_GAP_MIN", "30"))
+# The automatic first reply — the WhatsApp Business app's "greeting message", now sent by the
+# server: on a customer's first message, or her first after GREETING_GAP_DAYS of silence.
+WA_GREETING = (os.environ.get("ARUVI_WA_GREETING", "").strip() or
+               "Thank you for contacting Meyy! We reply to messages only, not calls. Please "
+               "let us know your issues/feedback and we will get back to you.")
+WA_GREETING_GAP_DAYS = int(os.environ.get("ARUVI_WA_GREETING_GAP_DAYS", "14"))
+# Optional: an APPROVED template (no variables) that re-opens a conversation after the
+# 24-hour reply window has closed. Empty = the inbox just says the window is closed.
+WA_REOPEN_TEMPLATE = os.environ.get("ARUVI_WA_REOPEN_TEMPLATE", "").strip()
+# What the approved welcome template SAYS — only so the inbox can show the sent text in the
+# conversation ({name} is filled). Keep in step with the template in WhatsApp Manager.
+WA_WELCOME_PREVIEW = (os.environ.get("ARUVI_WA_WELCOME_PREVIEW", "").strip() or
+                      "Hello {name}, your Meyy subscription is now active. This chat is your "
+                      "support line for your account — we reply to messages only, not calls. "
+                      "Message us here with any questions about your lesson plans.")
 # The address mail is SENT from — the SMTP account itself unless overridden.
 MAIL_FROM = os.environ.get("ARUVI_MAIL_FROM", "").strip() or SMTP_USER or "kumar.radhakrishnan2@gmail.com"
 # ★ THE SENDER'S NAME (founder, 2026-09-04). Mail composed in Gmail arrives as

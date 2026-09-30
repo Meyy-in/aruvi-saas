@@ -54,6 +54,7 @@ from aruvi_core.adapters.file_notifier import FileNotifier
 from aruvi_core.adapters.smtp_notifier import SmtpNotifier
 from aruvi_core.adapters.file_whatsapp import FileWhatsApp
 from aruvi_core.adapters.cloud_whatsapp import CloudWhatsApp
+from aruvi_core.adapters.whatsapp_inbox_file import WhatsAppInboxFileImpl
 from aruvi_core.ports import WhatsAppTemplate
 from aruvi_core.ports import EmailMessage
 from api import mail_templates
@@ -2388,6 +2389,14 @@ def _wa_welcome(a: Any, mobile: str) -> Dict[str, Any]:
     if res.get("status") in ("sent", "written"):
         notify["whatsapp_welcomed_at"] = datetime.now(timezone.utc).isoformat()
         a.notify = notify
+    # The welcome also opens her conversation in the Support inbox, so the founder sees
+    # what she was sent before she ever writes back.
+    try:
+        support_inbox.record_template(
+            mobile, config.WA_WELCOME_TEMPLATE,
+            config.WA_WELCOME_PREVIEW.replace("{name}", first), res, by="system")
+    except Exception:                                  # noqa: BLE001
+        pass
     # Every welcome attempt is written to the inbox file WITH Meta's own reason on failure —
     # the done screen and the sales-log mail only carry the one-word status, and "error"
     # tells nobody what to fix. The number is masked to its last four digits.
@@ -2546,10 +2555,12 @@ def update_account(req: AccountUpdate,
 #   * AUTHENTICATE — every POST carries X-Hub-Signature-256 (HMAC-SHA256 of the raw body
 #     under the app secret); an unsigned or mis-signed POST is refused, because this route
 #     can switch a teacher's opt-in off and must not be drivable by anyone on the internet.
-#   * LOG + HONOUR "STOP" — events are appended to STATE_DIR/whatsapp_inbox/{date}.jsonl
-#     (the founder answers chats in the Business app — coexistence — so the app does NOT
-#     turn each message into a support case), and a message that is exactly STOP turns
-#     her WhatsApp opt-in off: withdrawal as easy as the consent (DPDP §6).
+#   * ROUTE — customer messages go to the Support inbox (api/support_inbox.py: stored per
+#     customer, auto-greeting, email alert, answered at /support-inbox); delivery statuses
+#     update the matching message; a message that is exactly STOP turns her WhatsApp opt-in
+#     off (withdrawal as easy as the consent — DPDP §6). A technical event log is also kept at
+#     STATE_DIR/whatsapp_inbox/{date}.jsonl — WITHOUT message text (★ 2026-09-30: the words
+#     live only in the thread, which the erase walk reaches; a day-file log it does not).
 def _wa_log(event: Dict[str, Any]) -> None:
     try:
         from pathlib import Path
@@ -2560,6 +2571,14 @@ def _wa_log(event: Dict[str, Any]) -> None:
             fh.write(json.dumps({"at": datetime.now(timezone.utc).isoformat(), **event}) + "\n")
     except Exception:                                  # noqa: BLE001
         pass
+
+
+from api import support_inbox as _support_inbox_mod  # noqa: E402
+
+wa_inbox_repo = WhatsAppInboxFileImpl(state)
+support_inbox = _support_inbox_mod.Inbox(config=config, repo=wa_inbox_repo, wa_client=wa_client,
+                                         notifier=notifier, account_repo=account_repo, log=_wa_log)
+app.include_router(_support_inbox_mod.build_router(support_inbox))
 
 
 @app.get("/whatsapp/webhook")
@@ -2601,13 +2620,23 @@ async def whatsapp_webhook(request: Request) -> Dict[str, Any]:
                 continue
             for st in value.get("statuses") or []:
                 _wa_log({"kind": "status", "id": st.get("id"), "status": st.get("status"),
-                         "to": st.get("recipient_id"),
+                         "to": "…" + str(st.get("recipient_id") or "")[-4:],
                          "errors": st.get("errors") or []})
+                try:
+                    support_inbox.on_status(st)
+                except Exception as e:                 # noqa: BLE001
+                    _wa_log({"kind": "inbox_error", "where": "status", "error": str(e)})
+            names = {str(c.get("wa_id") or ""): ((c.get("profile") or {}).get("name") or "")
+                     for c in (value.get("contacts") or [])}
             for m in value.get("messages") or []:
                 sender = str(m.get("from") or "")
                 text = ((m.get("text") or {}).get("body") or "").strip()
-                _wa_log({"kind": "message", "from": sender, "type": m.get("type"),
-                         "text": text[:1000]})
+                _wa_log({"kind": "message", "from": "…" + sender[-4:], "type": m.get("type"),
+                         "chars": len(text)})
+                try:
+                    support_inbox.on_message(m, names.get(sender, ""))
+                except Exception as e:                 # noqa: BLE001
+                    _wa_log({"kind": "inbox_error", "where": "message", "error": str(e)})
                 if text.upper() == "STOP":
                     uid = sender[-10:]
                     a = account_repo.load(uid, uid) if uid else None
