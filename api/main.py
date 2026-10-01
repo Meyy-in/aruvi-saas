@@ -2634,7 +2634,8 @@ async def whatsapp_webhook(request: Request) -> Dict[str, Any]:
                 _wa_log({"kind": "message", "from": "…" + sender[-4:], "type": m.get("type"),
                          "chars": len(text)})
                 try:
-                    support_inbox.on_message(m, names.get(sender, ""))
+                    support_inbox.on_message(m, names.get(sender, ""),
+                                             str((value.get("metadata") or {}).get("phone_number_id") or ""))
                 except Exception as e:                 # noqa: BLE001
                     _wa_log({"kind": "inbox_error", "where": "message", "error": str(e)})
                 if text.upper() == "STOP":

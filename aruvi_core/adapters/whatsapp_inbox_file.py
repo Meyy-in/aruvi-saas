@@ -126,6 +126,7 @@ class WhatsAppInboxFileImpl:
             out.append({"number": t.get("number", ""), "name": t.get("name", ""),
                         "unread": int(t.get("unread") or 0),
                         "last_inbound_at": t.get("last_inbound_at", ""),
+                        "last_inbound_pn": t.get("last_inbound_pn", ""),
                         "last_activity_at": t.get("last_activity_at", ""),
                         "preview": (last.get("text") or "")[:120],
                         "preview_dir": last.get("dir", "")})

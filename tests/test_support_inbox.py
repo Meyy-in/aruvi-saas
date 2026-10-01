@@ -37,8 +37,11 @@ def _client():
     return m, TestClient(m.app, base_url="https://testserver")
 
 
-def _hook(c, messages=None, statuses=None, contacts=None):
+def _hook(c, messages=None, statuses=None, contacts=None, pn=None):
+    import api.main as m
+    pn = m.config.WA_PHONE_NUMBER_ID if pn is None else pn
     body = json.dumps({"entry": [{"changes": [{"field": "messages", "value": {
+        "metadata": {"phone_number_id": pn},
         "messages": messages or [], "statuses": statuses or [], "contacts": contacts or []}}]}]}).encode()
     sig = "sha256=" + hmac.new(b"test-secret", body, hashlib.sha256).hexdigest()
     return c.post("/whatsapp/webhook", content=body, headers={"X-Hub-Signature-256": sig})
@@ -122,6 +125,27 @@ def test_reply_only_inside_the_24_hour_window():
     m.wa_inbox_repo.patch("9800000204", last_inbound_at=old)
     r = c.post("/support-inbox/api/thread/9800000204/reply", json={"text": "Still there?"}, headers=H)
     assert r.status_code == 409 and "24 hours" in r.json()["detail"]
+
+
+def test_window_is_per_business_number_and_other_numbers_are_ignored():
+    m, c = _client()
+    _login(c)
+    old = m.config.WA_PHONE_NUMBER_ID
+    try:
+        m.config.WA_PHONE_NUMBER_ID = "PN-NEW"
+        # a message to a number Meyy no longer sends from is not filed
+        _hook(c, [_msg("919800000207", "to the old number", "o1")], pn="PN-OLD")
+        assert m.wa_inbox_repo.load("9800000207") is None
+        # to the current number: filed, window open
+        _hook(c, [_msg("919800000207", "to the new number", "o2")], pn="PN-NEW")
+        t = c.get("/support-inbox/api/thread/9800000207").json()
+        assert t["window_open"] is True
+        # if the sending number changes, the old window no longer counts
+        m.config.WA_PHONE_NUMBER_ID = "PN-OTHER"
+        t = c.get("/support-inbox/api/thread/9800000207").json()
+        assert t["window_open"] is False
+    finally:
+        m.config.WA_PHONE_NUMBER_ID = old
 
 
 def test_conversation_is_erased_with_the_account():

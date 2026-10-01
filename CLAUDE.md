@@ -109,7 +109,37 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   API). OWED: data EXPORT does not yet include WhatsApp threads; privacy notice must name WhatsApp/
   Meta and the inbox. 2026-09-30: DEPLOYED + founder-tested on the test number — greeting,
   thread, email alert, reply all PASS. Replies are deliberately NOT emailed (the thread is the
-  record; only customer messages alert). NEXT (was: founder sets the password, tests) →
+  record; only customer messages alert).
+  **MIGRATION DONE (2026-09-30):** 9363795723 deleted from the WhatsApp Business app. The TEST WABA
+  was at its number limit, so a SECOND WABA "Meyy" was created (ID **1640737581117168**; portfolio
+  business info had to be completed first). Number added there → Phone number ID
+  **1389404607582202**, status CONNECTED, display name "Meyy" AVAILABLE_WITHOUT_REVIEW (adding it in
+  WhatsApp Manager registered it — the /register call only hit a PIN mismatch). meyy_backend given
+  Full control of the new WABA; `subscribed_apps` POSTed (app linked); two-step PIN set via API
+  (founder holds it). `meyy_welcome` re-submitted in the NEW WABA via the API (template id
+  1529862928947322, PENDING). Render: ARUVI_WA_PHONE_NUMBER_ID → 1389404607582202.
+  /register then SUCCEEDED once the PIN was set (the first attempt's "PIN mismatch" meant the
+  number was CONNECTED but NOT registered for messaging — "CONNECTED" alone is not enough).
+  Afterwards customers' WhatsApp still showed "This person is no longer on WhatsApp" (directory
+  lag after deleting + re-registering the same day; tapping "Invite" just SMSes the number).
+  Plan: once the NEW-WABA meyy_welcome is APPROVED, send it to the founder's phone from the
+  Render Shell — an inbound business message refreshes the client. Card ADDED to the new WABA
+  (founder's personal card for now; to be replaced by the company card once the Meyy bank
+  account is open). Waiting only on template approval.
+  **24-hour window is per (customer, BUSINESS number)** — a reply from the inbox to a thread whose
+  last inbound went to the old TEST number failed with Meta's "Re-engagement message" (131047).
+  Fixed: webhook passes `metadata.phone_number_id`; thread stores `last_inbound_pn`; window_open()
+  counts only inbound to the CURRENT ARUVI_WA_PHONE_NUMBER_ID (threads without it = closed);
+  messages to any other Meyy number are logged and NOT filed/greeted/alerted.
+  **2026-10-01: LIVE END TO END on 9363795723 ("Meyy").** New-WABA meyy_welcome APPROVED (the
+  approval arrived as a webhook event — proof Meta delivers to us); welcome sent from the Render
+  Shell → delivered; the phone's stale "no longer on WhatsApp" flag cleared after update + delete
+  chat + restart + wa.me link; customer "hi" → greeting + Support inbox thread + reply all work.
+  REMAINING: unsubscribe the old TEST WABA from the app (DELETE /1116630737570825/subscribed_apps)
+  · remove founder test OTPs (123456) from Supabase · swap to the company card · data EXPORT to
+  include WhatsApp threads · privacy-notice lines on WhatsApp/Meta + the inbox · mobile-app port of
+  the WhatsApp screens · invoices over WhatsApp (needs a fetchable PDF URL + an invoice template).
+  Earlier plan, kept for history →
   migrate 9363795723 (export chats, delete from Business app, add in WhatsApp Manager as "Meyy",
   register via Render Shell, update ARUVI_WA_PHONE_NUMBER_ID, copy template if needed, add billing). Sending-number choice (second SIM · partner
   coexistence · full migration) still OPEN.

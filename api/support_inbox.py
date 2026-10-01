@@ -56,8 +56,18 @@ def _pretty(n: str) -> str:
     return f"+91 {d[2:7]} {d[7:]}" if len(d) == 12 and d.startswith("91") else "+" + d
 
 
-def window_open(thread: Optional[Dict[str, Any]], now: Optional[datetime] = None) -> bool:
-    last = _parse((thread or {}).get("last_inbound_at", ""))
+def window_open(thread: Optional[Dict[str, Any]], now: Optional[datetime] = None,
+                current_pn: str = "") -> bool:
+    """WhatsApp's 24-hour window is per (customer, BUSINESS NUMBER). A customer who last wrote to
+    a different Meyy number — the test number before the 2026-09-30 move — has no open window
+    with the current one, and Meta refuses a free-text reply with "Re-engagement message"."""
+    t = thread or {}
+    pn = t.get("last_inbound_pn", "")
+    if current_pn and pn and pn != current_pn:
+        return False
+    if current_pn and not pn:
+        return False                     # recorded before numbers were tracked — can't vouch
+    last = _parse(t.get("last_inbound_at", ""))
     now = now or datetime.now(timezone.utc)
     return bool(last and now - last < timedelta(hours=WINDOW_HOURS))
 
@@ -96,14 +106,21 @@ class Inbox:
         return nm if nm and not nm.isdigit() else (fallback or "")
 
     # ── inbound (called by the webhook) ──
-    def on_message(self, m: Dict[str, Any], profile_name: str = "") -> None:
+    def on_message(self, m: Dict[str, Any], profile_name: str = "", to_pn: str = "") -> None:
         n = number_key(m.get("from") or "")
         if not n:
+            return
+        if to_pn and self.config.WA_PHONE_NUMBER_ID and to_pn != self.config.WA_PHONE_NUMBER_ID:
+            # Written to a Meyy number the server no longer sends from (the retired test number):
+            # log it, but don't file it, greet it or alert on it — a reply would come from a
+            # different number than the one she wrote to.
+            self.log({"kind": "ignored_other_number", "to_pn": to_pn})
             return
         text = describe(m)
         before = self.repo.append(
             n, {"id": m.get("id", ""), "dir": "in", "type": m.get("type", ""), "text": text},
             name=self._name_for(n, profile_name))
+        self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID)
         now = datetime.now(timezone.utc)
         # Greeting: first ever, or first after the gap — and never in answer to STOP.
         last_in = _parse(before.get("last_inbound_at", ""))
@@ -241,7 +258,7 @@ def build_router(inbox: Inbox) -> APIRouter:
         out = inbox.repo.list_threads()
         now = datetime.now(timezone.utc)
         for t in out:
-            t["window_open"] = window_open(t, now)
+            t["window_open"] = window_open(t, now, cfg.WA_PHONE_NUMBER_ID)
         return {"threads": out, "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
 
     @r.get("/support-inbox/api/thread/{n}")
@@ -253,7 +270,7 @@ def build_router(inbox: Inbox) -> APIRouter:
         if t.get("unread"):
             inbox.repo.mark_read(n)
             t["unread"] = 0
-        return {**t, "window_open": window_open(t), "phone": _pretty(n),
+        return {**t, "window_open": window_open(t, current_pn=cfg.WA_PHONE_NUMBER_ID), "phone": _pretty(n),
                 "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
 
     @r.post("/support-inbox/api/thread/{n}/reply")
@@ -267,7 +284,7 @@ def build_router(inbox: Inbox) -> APIRouter:
         t = inbox.repo.load(n)
         if t is None:
             raise HTTPException(status_code=404, detail="No such conversation.")
-        if not window_open(t):
+        if not window_open(t, current_pn=cfg.WA_PHONE_NUMBER_ID):
             raise HTTPException(status_code=409, detail=(
                 "More than 24 hours have passed since this customer last wrote, so WhatsApp "
                 "only allows an approved template now."))
