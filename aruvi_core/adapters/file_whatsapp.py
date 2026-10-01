@@ -49,3 +49,14 @@ class FileWhatsApp(WhatsAppClient):
         except Exception as e:                                  # noqa: BLE001
             return {"status": "error", "error": str(e)}
 
+    def upload_media(self, data: bytes, filename: str, mime_type: str) -> Dict[str, Any]:
+        if not data:
+            return {"status": "skipped", "reason": "empty file"}
+        try:
+            self.outbox_dir.mkdir(parents=True, exist_ok=True)
+            stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%f")
+            (self.outbox_dir / f"{stamp}-media-{filename}").write_bytes(data)
+            return {"status": "written", "media_id": f"file-media-{stamp}"}
+        except Exception as e:                                  # noqa: BLE001
+            return {"status": "error", "error": str(e)}
+

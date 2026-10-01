@@ -667,9 +667,13 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             ? <>Opens your chat with Meyy support. </>
             : <>Opens a chat with Meyy support with a short note ready to send. </>}
             {done && done.invoice_number
-              ? (emailStage === "ok"
-                ? "Your invoice is on its way by email and is always in Settings › Subscription."
-                : "Your invoice is always in Settings › Subscription.")
+              ? (done.whatsapp_invoice === "sent"
+                ? (emailStage === "ok"
+                  ? "Your invoice is on its way on WhatsApp and by email, and is always in Settings › Subscription."
+                  : "Your invoice is on its way on WhatsApp, and is always in Settings › Subscription.")
+                : emailStage === "ok"
+                  ? "Your invoice is on its way by email and is always in Settings › Subscription."
+                  : "Your invoice is always in Settings › Subscription.")
               : ""}</p>
         </div>
         <div className="ob-foot">

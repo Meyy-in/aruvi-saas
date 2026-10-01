@@ -2406,6 +2406,43 @@ def _wa_welcome(a: Any, mobile: str) -> Dict[str, Any]:
     return res
 
 
+def _wa_invoice(a: Any, mobile: str, invoice: Any, pdf: Optional[bytes]) -> Dict[str, Any]:
+    """Send this purchase's invoice on WhatsApp (2026-10-01) — to a customer who chose
+    WhatsApp, once the invoice template is approved and configured. The PDF is uploaded to
+    Meta's media store and attached by id, so it never needs a public link. The invoice ALSO
+    stays in Settings › Subscription (and goes by email when she has one): WhatsApp is an
+    extra copy, never the only one. Recorded in her Support-inbox thread. Never raises."""
+    if not config.WA_INVOICE_TEMPLATE:
+        return {"status": "skipped", "reason": "invoice template not configured"}
+    if a is None or not (a.notify or {}).get("whatsapp"):
+        return {"status": "skipped", "reason": "not opted in"}
+    if invoice is None or not pdf:
+        return {"status": "skipped", "reason": "no invoice PDF"}
+    fname = f"Meyy-invoice-{invoice.number.replace('/', '-')}.pdf"
+    up = wa_client.upload_media(pdf, fname, "application/pdf")
+    if up.get("status") not in ("sent", "written") or not up.get("media_id"):
+        _wa_log({"kind": "invoice_upload", "to": "…" + _wa_e164(mobile)[-4:], "result": up})
+        return {"status": "error", "error": "upload failed: " + str(up.get("error") or up.get("reason"))}
+    first = (str(a.display_name or "").strip().split() or [""])[0]
+    if not first or first.isdigit():
+        first = "there"
+    amount = f"{int(getattr(invoice, 'total', 0) or 0):,}"
+    res = wa_client.send_template(WhatsAppTemplate(
+        to=_wa_e164(mobile), template=config.WA_INVOICE_TEMPLATE,
+        language=config.WA_TEMPLATE_LANG, params=[first, invoice.number, amount],
+        document={"id": up["media_id"], "filename": fname}))
+    try:
+        support_inbox.record_template(
+            mobile, config.WA_INVOICE_TEMPLATE,
+            config.WA_INVOICE_PREVIEW.format(name=first, number=invoice.number, amount=amount)
+            + f"\n[attachment: {fname}]", res, by="system")
+    except Exception:                                  # noqa: BLE001
+        pass
+    _wa_log({"kind": "send_invoice", "invoice": invoice.number,
+             "to": "…" + _wa_e164(mobile)[-4:], "result": res})
+    return res
+
+
 class WhatsAppPref(BaseModel):
     enabled: bool
 
@@ -3444,6 +3481,12 @@ def onboarding_checkout(req: CheckoutRequest,
             account_repo.save(acct)
         except Exception as e:                         # noqa: BLE001
             wa_welcome = {"status": "error", "error": str(e)}
+    # The invoice on WhatsApp — after the welcome, so the chat reads in order.
+    wa_invoice = {"status": "skipped"}
+    try:
+        wa_invoice = _wa_invoice(acct, (acct.phone if acct else "") or user_id, invoice, invoice_pdf)
+    except Exception as e:                             # noqa: BLE001
+        wa_invoice = {"status": "error", "error": str(e)}
     mail = _send_subscription_confirmation(
         to=(req.email or (acct.email if acct else "") or "").strip(),
         name=(req.name or (acct.display_name if acct else "") or "").strip(),
@@ -3463,6 +3506,8 @@ def onboarding_checkout(req: CheckoutRequest,
             # "sent" only when Meta accepted it — the done screen then says "we've sent you
             # a welcome" instead of asking her to say hello first.
             "whatsapp_welcome": wa_welcome.get("status", "skipped"),
+            # "sent" when the invoice PDF went out on WhatsApp too.
+            "whatsapp_invoice": wa_invoice.get("status", "skipped"),
             "valid_until": result.get("valid_until"),
             "scope_valid_until": result.get("scope_valid_until") or {},
             "added": scopes,

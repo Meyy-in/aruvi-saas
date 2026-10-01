@@ -154,6 +154,42 @@ def test_account_level_webhook_events_are_logged():
     assert "message_template_status_update" in text and "APPROVED" in text
 
 
+def test_invoice_goes_on_whatsapp_only_when_the_template_is_configured():
+    m, c = _client()
+    old = m.config.WA_INVOICE_TEMPLATE
+    try:
+        m.config.WA_INVOICE_TEMPLATE = ""
+        r = _subscribe(c, "9800000111", whatsapp=True).json()
+        assert r["whatsapp_invoice"] == "skipped"
+        m.config.WA_INVOICE_TEMPLATE = "meyy_invoice"
+        before = _outbox(m)
+        r = _subscribe(c, "9800000112", whatsapp=True).json()
+        assert r["whatsapp_invoice"] == "written", r
+        new = [f for f in _outbox(m) if f not in before]
+        assert any("-media-Meyy-invoice-" in f for f in new), new        # PDF uploaded
+        sent = [json.load(open(os.path.join(m.config.STATE_DIR, "whatsapp_outbox", f)))
+                for f in new if f.endswith(".json")]
+        inv = [x for x in sent if x.get("template") == "meyy_invoice"]
+        assert inv and inv[0]["params"][0] == "Priya" and inv[0]["params"][1] == r["invoice_number"]
+        assert inv[0]["document"]["id"].startswith("file-media-")
+        # recorded in her Support-inbox thread
+        t = m.wa_inbox_repo.load("9800000112")
+        assert any(x.get("template") == "meyy_invoice" for x in t["messages"])
+        # a customer WITHOUT WhatsApp gets none
+        r = _subscribe(c, "9800000113", whatsapp=False, email="x9800000113@example.com").json()
+        assert r["whatsapp_invoice"] == "skipped"
+    finally:
+        m.config.WA_INVOICE_TEMPLATE = old
+
+
+def test_cloud_payload_uses_uploaded_media_id():
+    p = CloudWhatsApp.payload(WhatsAppTemplate(
+        to="x", template="meyy_invoice", params=["Priya", "MEY/2026-27/0001", "500"],
+        document={"id": "123", "filename": "inv.pdf"}), "919800000101")
+    doc = p["template"]["components"][0]["parameters"][0]["document"]
+    assert doc == {"filename": "inv.pdf", "id": "123"}
+
+
 def test_cloud_payload_shape():
     p = CloudWhatsApp.payload(WhatsAppTemplate(
         to="x", template="meyy_welcome", params=["Priya"],

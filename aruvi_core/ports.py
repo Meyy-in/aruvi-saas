@@ -576,7 +576,7 @@ class WhatsAppTemplate:
     template: str                             # approved template name, e.g. "meyy_welcome"
     language: str = "en"
     params: List[str] = field(default_factory=list)
-    document: Dict[str, str] = field(default_factory=dict)   # {link, filename} or {}
+    document: Dict[str, str] = field(default_factory=dict)   # {id|link, filename} or {}
 
 
 @runtime_checkable
@@ -586,6 +586,12 @@ class WhatsAppClient(Protocol):
     NOT raise — a subscription never fails because WhatsApp was slow — and returns
     {"status": "sent"|"written"|"skipped"|"error", ...}."""
     def send_template(self, msg: "WhatsAppTemplate") -> Dict[str, Any]: ...
+    def upload_media(self, data: bytes, filename: str, mime_type: str) -> Dict[str, Any]:
+        """Upload a file to WhatsApp's own media store (2026-10-01) and get back {"status",
+        "media_id"}. Used for invoices: the PDF goes straight to Meta, so it never needs a
+        public link. Media ids live ~30 days, long enough for any send. Never raises."""
+        ...
+
     def send_text(self, to: str, body: str) -> Dict[str, Any]:
         """A free-form text reply. WhatsApp allows it ONLY inside the 24-hour window the
         customer opened with her last message; outside it Meta refuses (use a template).

@@ -31,11 +31,14 @@ class CloudWhatsApp(WhatsAppClient):
     def payload(msg: WhatsAppTemplate, to: str) -> Dict[str, Any]:
         """The Cloud API body. Split out so a test can pin its shape without a network."""
         components = []
-        if msg.document and msg.document.get("link"):
+        if msg.document and (msg.document.get("id") or msg.document.get("link")):
+            doc = {"filename": msg.document.get("filename", "document.pdf")}
+            if msg.document.get("id"):
+                doc["id"] = msg.document["id"]          # uploaded to Meta — preferred
+            else:
+                doc["link"] = msg.document["link"]
             components.append({"type": "header", "parameters": [{
-                "type": "document",
-                "document": {"link": msg.document["link"],
-                             "filename": msg.document.get("filename", "document.pdf")}}]})
+                "type": "document", "document": doc}]})
         if msg.params:
             components.append({"type": "body", "parameters": [
                 {"type": "text", "text": str(p)} for p in msg.params]})
@@ -50,6 +53,27 @@ class CloudWhatsApp(WhatsAppClient):
         if not to:
             return {"status": "skipped", "reason": "no recipient number"}
         return self._post(self.payload(msg, to))
+
+    def upload_media(self, data: bytes, filename: str, mime_type: str) -> Dict[str, Any]:
+        if not data:
+            return {"status": "skipped", "reason": "empty file"}
+        try:
+            r = httpx.post(self.url.rsplit("/", 1)[0] + "/media", timeout=self.timeout,
+                           headers={"Authorization": f"Bearer {self.token}"},
+                           data={"messaging_product": "whatsapp", "type": mime_type},
+                           files={"file": (filename, data, mime_type)})
+            body = {}
+            try:
+                body = r.json()
+            except Exception:                                   # noqa: BLE001
+                pass
+            if r.status_code // 100 == 2 and body.get("id"):
+                return {"status": "sent", "media_id": body["id"]}
+            err = (body.get("error") or {})
+            return {"status": "error", "http": r.status_code,
+                    "error": err.get("message") or r.text[:300], "code": err.get("code")}
+        except Exception as e:                                  # noqa: BLE001
+            return {"status": "error", "error": str(e)}
 
     def send_text(self, to: str, body: str) -> Dict[str, Any]:
         num = "".join(ch for ch in str(to or "") if ch.isdigit())

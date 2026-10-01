@@ -138,7 +138,17 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   REMAINING: unsubscribe the old TEST WABA from the app (DELETE /1116630737570825/subscribed_apps)
   · remove founder test OTPs (123456) from Supabase · swap to the company card · data EXPORT to
   include WhatsApp threads · privacy-notice lines on WhatsApp/Meta + the inbox · mobile-app port of
-  the WhatsApp screens · invoices over WhatsApp (needs a fetchable PDF URL + an invoice template).
+  the WhatsApp screens.
+  **INVOICES ON WHATSAPP — BUILT 2026-10-01.** `WhatsAppClient.upload_media` (Cloud: POST
+  /{phone_number_id}/media, multipart) → the invoice PDF goes to Meta's media store and is attached
+  BY ID (no public link ever). `_wa_invoice()` in checkout, after the welcome: only when
+  ARUVI_WA_INVOICE_TEMPLATE is set (EMPTY = off until Meta approves) and she opted in; template
+  params {{1}} first name, {{2}} invoice number, {{3}} amount (₹, grouped); recorded in her inbox
+  thread (ARUVI_WA_INVOICE_PREVIEW); response field `whatsapp_invoice`; done screen says "on its
+  way on WhatsApp". Invoice still lives in Settings › Subscription and goes by email when she has
+  one. Template `meyy_invoice` (Utility, English, DOCUMENT header, 3 NUMBER variables) must be
+  created in WhatsApp Manager of the NEW WABA with a sample PDF — the API route needs a resumable
+  upload handle. Tests in tests/test_whatsapp.py.
   Earlier plan, kept for history →
   migrate 9363795723 (export chats, delete from Business app, add in WhatsApp Manager as "Meyy",
   register via Render Shell, update ARUVI_WA_PHONE_NUMBER_ID, copy template if needed, add billing). Sending-number choice (second SIM · partner
