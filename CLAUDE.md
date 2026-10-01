@@ -149,6 +149,11 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
   one. Template `meyy_invoice` (Utility, English, DOCUMENT header, 3 NUMBER variables) must be
   created in WhatsApp Manager of the NEW WABA with a sample PDF — the API route needs a resumable
   upload handle. Tests in tests/test_whatsapp.py.
+  **Follow-up template `meyy_followup`** (Utility, one NUMBER variable {{1}} = first name, created
+  via the API from the Render Shell): "Hello {{1}}, we have an update on your Meyy support request.
+  Please reply to this message to continue the conversation." Set ARUVI_WA_REOPEN_TEMPLATE=
+  meyy_followup after approval → the inbox shows "Send re-open template" on closed conversations
+  (sends her first name; ARUVI_WA_REOPEN_NAME_PARAM=0 for a variable-less template).
   Earlier plan, kept for history →
   migrate 9363795723 (export chats, delete from Business app, add in WhatsApp Manager as "Meyy",
   register via Render Shell, update ARUVI_WA_PHONE_NUMBER_ID, copy template if needed, add billing). Sending-number choice (second SIM · partner

@@ -300,10 +300,16 @@ def build_router(inbox: Inbox) -> APIRouter:
             raise HTTPException(status_code=409, detail="No re-open template is configured.")
         if inbox.repo.load(n) is None:
             raise HTTPException(status_code=404, detail="No such conversation.")
+        t = inbox.repo.load(n) or {}
+        first = (str(t.get("name") or "").strip().split() or [""])[0]
+        if not first or first.isdigit():
+            first = "there"
         res = inbox.wa.send_template(WhatsAppTemplate(
-            to=e164(n), template=cfg.WA_REOPEN_TEMPLATE, language=cfg.WA_TEMPLATE_LANG))
-        inbox.record_template(n, cfg.WA_REOPEN_TEMPLATE, f"[template: {cfg.WA_REOPEN_TEMPLATE}]",
-                              res, by="founder")
+            to=e164(n), template=cfg.WA_REOPEN_TEMPLATE, language=cfg.WA_TEMPLATE_LANG,
+            params=[first] if getattr(cfg, "WA_REOPEN_NAME_PARAM", True) else []))
+        inbox.record_template(n, cfg.WA_REOPEN_TEMPLATE,
+                              getattr(cfg, "WA_REOPEN_PREVIEW", "").replace("{name}", first)
+                              or f"[template: {cfg.WA_REOPEN_TEMPLATE}]", res, by="founder")
         if res.get("status") not in ("sent", "written"):
             raise HTTPException(status_code=502, detail=f"WhatsApp refused it: {res.get('error')}")
         return {"status": "sent"}

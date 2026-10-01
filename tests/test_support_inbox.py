@@ -148,6 +148,22 @@ def test_window_is_per_business_number_and_other_numbers_are_ignored():
         m.config.WA_PHONE_NUMBER_ID = old
 
 
+def test_reopen_template_sends_her_first_name_when_the_window_is_closed():
+    m, c = _client()
+    _login(c)
+    old = m.config.WA_REOPEN_TEMPLATE
+    try:
+        m.config.WA_REOPEN_TEMPLATE = "meyy_followup"
+        _hook(c, [_msg("919800000208", "hello", "f1")],
+              contacts=[{"wa_id": "919800000208", "profile": {"name": "Geetha R"}}])
+        r = c.post("/support-inbox/api/thread/9800000208/reopen", headers={"X-Meyy-Inbox": "1"})
+        assert r.status_code == 200, r.text
+        last = m.wa_inbox_repo.load("9800000208")["messages"][-1]
+        assert last.get("template") == "meyy_followup" and "Hello Geetha" in last["text"]
+    finally:
+        m.config.WA_REOPEN_TEMPLATE = old
+
+
 def test_conversation_is_erased_with_the_account():
     m, c = _client()
     _hook(c, [_msg("919800000205", "hi", "e1")])

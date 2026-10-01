@@ -220,6 +220,12 @@ WA_GREETING_GAP_DAYS = int(os.environ.get("ARUVI_WA_GREETING_GAP_DAYS", "14"))
 # Optional: an APPROVED template (no variables) that re-opens a conversation after the
 # 24-hour reply window has closed. Empty = the inbox just says the window is closed.
 WA_REOPEN_TEMPLATE = os.environ.get("ARUVI_WA_REOPEN_TEMPLATE", "").strip()
+# meyy_followup has ONE variable — {{1}} her first name. Set to 0 for a template without one.
+WA_REOPEN_NAME_PARAM = os.environ.get("ARUVI_WA_REOPEN_NAME_PARAM", "1").strip().lower() in (
+    "1", "true", "yes", "on")
+WA_REOPEN_PREVIEW = (os.environ.get("ARUVI_WA_REOPEN_PREVIEW", "").strip() or
+                     "Hello {name}, we have an update on your Meyy support request. Please reply "
+                     "to this message to continue the conversation.")
 # ── Invoices on WhatsApp (2026-10-01) ── EMPTY = off. Set it to the APPROVED template's name
 # (meyy_invoice) only after Meta approves it: a DOCUMENT header (the PDF) and a body with three
 # variables — {{1}} first name, {{2}} invoice number, {{3}} amount in rupees. Until then a
@@ -227,9 +233,10 @@ WA_REOPEN_TEMPLATE = os.environ.get("ARUVI_WA_REOPEN_TEMPLATE", "").strip()
 # if she gave one).
 WA_INVOICE_TEMPLATE = os.environ.get("ARUVI_WA_INVOICE_TEMPLATE", "").strip()
 WA_INVOICE_PREVIEW = (os.environ.get("ARUVI_WA_INVOICE_PREVIEW", "").strip() or
-                      "Hello {name}, thank you for your payment to Meyy. Your invoice {number} "
-                      "for ₹{amount} is attached. You can also find it any time in Settings › "
-                      "Subscription.")
+                      "Hello {name}, thank you for your payment to Meyy. Your invoice number "
+                      "{number} for an amount of ₹{amount} is attached to this message as a PDF. "
+                      "You can also download it any time from Settings › Subscription in the Meyy "
+                      "app. For any questions about this invoice, simply reply to this message.")
 # What the approved welcome template SAYS — only so the inbox can show the sent text in the
 # conversation ({name} is filled). Keep in step with the template in WhatsApp Manager.
 WA_WELCOME_PREVIEW = (os.environ.get("ARUVI_WA_WELCOME_PREVIEW", "").strip() or
