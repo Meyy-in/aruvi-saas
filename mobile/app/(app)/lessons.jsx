@@ -394,7 +394,8 @@ export default function MyLessons() {
            a dep array before it existed" crash of `ed8fc93d` all over again. Going to the map
            also keeps the filter FRESH: the closure would otherwise hold whatever this year's
            listing was when the folder was opened. */
-        const here = new Set((plansByKey[key] || []).filter((x) => x.prepared)
+        // WALK-A-164: only a fresh re-prepare leaves the folder; a carried-forward lesson stays.
+        const here = new Set((plansByKey[key] || []).filter((x) => x.prepared && !x.prepared_source_year)
           .map((x) => x.filename));
         const mine = ((d && d.plans) || []).filter((x) => x.prepared && !here.has(x.filename));
         setPriorPlans({ _for: cacheKey, [openPrior]: mine });
@@ -643,7 +644,13 @@ export default function MyLessons() {
     return (Number(a.chapter_number) || 0) - (Number(b.chapter_number) || 0);
   };
   const preparedPlans = (Array.isArray(plans) ? plans : [])
-    .filter((p) => (p.prepared || isAttached(p)) && !(p.prepared_source_year && !p.prepared))
+    /* WALK-A-164 (founder, 2026-10-02 — REVERSES the 2026-08-26 "once back in play it belongs
+       to this year's list" rule): a lesson from a PAST year stays in that year's section even
+       while a class is teaching it again. This list is where THIS year's new lessons arrive, and
+       an old one landing here confused that. Any plan carrying `prepared_source_year` — carried
+       forward by attaching it, or derived by the roll — is excluded; the class card still shows
+       it, stamped, and opens it. */
+    .filter((p) => (p.prepared || isAttached(p)) && !p.prepared_source_year)
     .slice()
     .sort(byRecency);
   const activePlans = preparedPlans.filter((p) => !p.archived);

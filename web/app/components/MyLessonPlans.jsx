@@ -686,7 +686,9 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
            screen — "Teaching now 9A" above and "Taught in 2026-27" below). The folder
            answers "what else do I have from last year?", so once a lesson is back in play
            it belongs to this year's list alone. */
-        const here = new Set((plansByKey[key] || []).filter((p) => p.prepared)
+        /* WALK-A-164: only a lesson she RE-PREPARED fresh this year (prepared, no source year)
+           leaves the folder; one carried forward by attaching it stays here. */
+        const here = new Set((plansByKey[key] || []).filter((p) => p.prepared && !p.prepared_source_year)
           .map((p) => p.filename));
         const mine = (d.plans || []).filter((p) => p.prepared && !here.has(p.filename));
         setPriorPlans({ _for: cacheKey, [openPrior]: mine });
@@ -1061,7 +1063,13 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
        this wrong in either direction is visible: too loose and last year's shelf floods
        the current list; too tight and a chapter she is actively teaching disappears from
        My Lessons altogether (both happened while building this). */
-    .filter((p) => (p.prepared || isAttached(p)) && !(p.prepared_source_year && !p.prepared))
+    /* WALK-A-164 (founder, 2026-10-02 — REVERSES the 2026-08-26 "once back in play it belongs
+       to this year's list" rule): a lesson from a PAST year stays in that year's section even
+       while a class is teaching it again. This list is where THIS year's new lessons arrive, and
+       an old one landing here confused that. Any plan carrying `prepared_source_year` — carried
+       forward by attaching it, or derived by the roll — is excluded; the class card still shows
+       it, stamped, and opens it. */
+    .filter((p) => (p.prepared || isAttached(p)) && !p.prepared_source_year)
     .slice()
     .sort(byRecency);
   // Split the prepared list into the two views by the server-set archived flag (archive is a

@@ -268,7 +268,8 @@ export function AttachSheet({ target, plans, boundFile, alsoAttachable, onAttach
     if (!plans) return null;          // not asked yet — a different fact from "none"
     return Object.values(plans)
       .filter((p) => (p.prepared || (alsoAttachable && alsoAttachable.has(p.filename)))
-        && p.filename !== boundFile && !p.archived)
+        && p.filename !== boundFile && !p.archived
+        && !p.prepared_source_year)     // WALK-A-165: a past year's lesson sits under its year
       .sort((a, b) => (a.chapter_number || 0) - (b.chapter_number || 0));
   }, [target, plans, boundFile, alsoAttachable]);
 

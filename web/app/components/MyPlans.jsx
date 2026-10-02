@@ -469,32 +469,40 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   /* Fetch an opened prior-year folder's lessons for the section's subject·class, filtered
      to what she actually PREPARED that year (the library is shared, so an unfiltered list
      would offer her every sample plan Aruvi owns). */
+  /* WALK-A-165 (2026-10-02, cutover walk): the folder sat on "Loading lessons…" for ever. The
+     effect set `{_for: cacheKey}` and fired the fetch; any re-run before it landed (plansByKey
+     refreshes in the background) CANCELLED that fetch through the old `live` flag and then
+     returned early because `_for` already matched — so nothing was ever fetched again. A request
+     is now owned by a ref keyed to its cacheKey: a re-run never cancels it, the result lands
+     when it comes, and a stale answer for a different key is simply ignored. */
+  const apPriorReq = useRef("");
   useEffect(() => {
     if (!apPrior || !attachFor) return;
     const { c } = attachFor;
-    /* The cache key carries HOW MANY of this class's plans are already prepared this
-       year, so bringing one back from the folder invalidates the folder's own list —
-       otherwise the chapter she just attached is still sitting there when she reopens it. */
-    const here = (plansByKey[`${c.subjectSlug}/${c.gradeSlug}`] || []).filter((p) => p.prepared);
+    /* Only a lesson RE-PREPARED fresh this year leaves the folder (WALK-A-164); one carried
+       forward by attaching it stays under its own year. The count keys the cache, so a fresh
+       re-prepare invalidates the folder's list. */
+    const here = (plansByKey[`${c.subjectSlug}/${c.gradeSlug}`] || [])
+      .filter((p) => p.prepared && !p.prepared_source_year);
     const cacheKey = `${apPrior}|${c.subjectSlug}/${c.gradeSlug}|${here.length}`;
-    if (apPriorPlans._for === cacheKey) return;
-    let live = true;
+    if (apPriorPlans._for === cacheKey && apPriorPlans[apPrior] !== undefined) return;
+    if (apPriorReq.current === cacheKey) return;            // already on its way
+    apPriorReq.current = cacheKey;
     setApPriorPlans({ _for: cacheKey });
-    getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(apPrior)}`)
+    const yid = apPrior;
+    const settle = (mine) => {
+      if (apPriorReq.current !== cacheKey) return;          // a newer request owns the folder
+      apPriorReq.current = "";
+      setApPriorPlans({ _for: cacheKey, [yid]: mine });
+    };
+    getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(yid)}`)
       .then((d) => {
-        if (!live) return;
         const bound = currentChapterFile(`${c.subjectSlug}_${c.gradeSlug}_${c.sectionTag}`);
-        /* Exclude anything already offered in THIS year's list above (the same rule the
-           My Lessons folder follows): a chapter she has brought back into this year is
-           current work, and listing it in both halves of one small modal is just noise.
-           The folder answers "what ELSE do I have from last year?". */
         const hereFiles = new Set(here.map((p) => p.filename));
-        const mine = (d.plans || []).filter((p) => p.prepared && !p.archived
-          && p.filename !== bound && !hereFiles.has(p.filename));
-        setApPriorPlans({ _for: cacheKey, [apPrior]: mine });
+        settle((d.plans || []).filter((p) => p.prepared && !p.archived
+          && p.filename !== bound && !hereFiles.has(p.filename)));
       })
-      .catch(() => { if (live) setApPriorPlans({ _for: cacheKey, [apPrior]: [] }); });
-    return () => { live = false; };
+      .catch(() => settle([]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apPrior, attachFor, plansByKey]);
 
@@ -708,7 +716,10 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     const boundFile = currentChapterFile(sectionKey);
     const alsoAttachable = boundFilesForGrade(c.subjectSlug, c.gradeSlug); // bound to a sibling section
     const listPlans = Array.isArray(gradePlans)
-      ? gradePlans.filter((p) => (p.prepared || alsoAttachable.has(p.filename)) && p.filename !== boundFile && !p.archived)
+      /* WALK-A-165 (founder, 2026-10-02): a past year's lesson is offered under ITS year below,
+         never in this year's list — the same rule as My Lessons (WALK-A-164). */
+      ? gradePlans.filter((p) => (p.prepared || alsoAttachable.has(p.filename)) && p.filename !== boundFile && !p.archived
+          && !p.prepared_source_year)
       : gradePlans;
     return (
       <div className="ap-overlay" onClick={() => setAttachFor(null)}>

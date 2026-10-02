@@ -305,26 +305,39 @@ export default function Home() {
      ★ The cache key carries HOW MANY of this class's plans are prepared this year, so bringing
      one back INVALIDATES the folder's own list — otherwise the chapter she just attached is
      still sitting in the folder when she reopens it (the web's own note). */
+  /* WALK-A-165 (2026-10-02): the folder never left "Loading lessons…" — `priorPlans._for` was in
+     the deps, so setting it re-ran the effect, whose cleanup cancelled the fetch it had just
+     started and whose early return then refused to start another. The request is owned by a ref
+     keyed to its cacheKey (the web's same fix); a re-run never cancels it. */
+  const priorReq = useRef("");
   useEffect(() => {
     if (!openPrior || !attachFor) return undefined;
     const { c } = attachFor;
     const key = `${c.subjectSlug}/${c.gradeSlug}`;
-    const here = Object.values(st.plansBySG[key] || {}).filter((p) => p.prepared);
+    // Only a fresh re-prepare this year leaves the folder (WALK-A-164).
+    const here = Object.values(st.plansBySG[key] || {})
+      .filter((p) => p.prepared && !p.prepared_source_year);
     const cacheKey = `${openPrior}|${key}|${here.length}`;
-    if (priorPlans._for === cacheKey) return undefined;
-    let live = true;
+    if (priorPlans._for === cacheKey && priorPlans[openPrior] !== undefined) return undefined;
+    if (priorReq.current === cacheKey) return undefined;
+    priorReq.current = cacheKey;
     setPriorPlans({ _for: cacheKey });
-    getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(openPrior)}`)
+    const yid = openPrior;
+    const sectionKey = attachFor.sectionKey;
+    const settle = (mine) => {
+      if (priorReq.current !== cacheKey) return;
+      priorReq.current = "";
+      setPriorPlans({ _for: cacheKey, [yid]: mine });
+    };
+    getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(yid)}`)
       .then((d) => {
-        if (!live) return;
-        const bound = readLocalSection(attachFor.sectionKey).chapter;
+        const bound = readLocalSection(sectionKey).chapter;
         const hereFiles = new Set(here.map((p) => p.filename));
-        const mine = ((d && d.plans) || []).filter((p) => p.prepared && !p.archived
-          && p.filename !== bound && !hereFiles.has(p.filename));
-        setPriorPlans({ _for: cacheKey, [openPrior]: mine });
+        settle(((d && d.plans) || []).filter((p) => p.prepared && !p.archived
+          && p.filename !== bound && !hereFiles.has(p.filename)));
       })
-      .catch(() => { if (live) setPriorPlans({ _for: cacheKey, [openPrior]: [] }); });
-    return () => { live = false; };
+      .catch(() => settle([]));
+    return undefined;
   }, [openPrior, attachFor, st.plansBySG, priorPlans._for]);
   const bump = () => setTick((n) => n + 1);
 

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T08:48:45",
+  "updated_at": "2026-10-02T09:28:16",
   "items": {
     "04.19": {
       "ios": {
@@ -5219,17 +5219,17 @@
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
-        "status": "pending",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-10-02T08:42:55",
-        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. OWED: pressing Start my classes fresh.",
+        "at": "2026-10-02T08:55:55",
+        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. ✓ After the press (made on the web): offer gone, 2026-27 lessons fine; cards were STALE (last year's attachments) → WALK-A-163 → re-walked: 7A and 7B empty.",
         "build": "Expo Go (tunnel → Render)"
       },
       "and_emu": {
-        "status": "pending",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-10-02T08:42:55",
-        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. OWED: pressing Start my classes fresh.",
+        "at": "2026-10-02T08:55:55",
+        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. ✓ After the press (made on the web): offer gone, 2026-27 lessons fine; cards were STALE (last year's attachments) → WALK-A-163 → re-walked: 7A and 7B empty.",
         "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
       }
     }
@@ -8565,7 +8565,7 @@
     {
       "id": "WALK-A-161",
       "opened": "2026-10-02T08:33:37",
-      "closed": "",
+      "closed": "2026-10-02T08:55:55",
       "feature": "01.30",
       "found_on": [
         "web"
@@ -8573,11 +8573,11 @@
       "applies_to": "web+phone",
       "title": "New-year offer: plain wording that says the class cards are emptied",
       "what": "Founder, cutover walk on 028, 2026-10-02: the offer's text ('You are still tracking last year's chapters… nothing is deleted…') was confusing and gave the wrong impression that everything stays — pressing the button actually removes every attachment, leaving empty class cards. Founder wrote the replacement wording.",
-      "fix": "[FIXED web+phone 2026-10-02T08:33:37] MyPlans.jsx + mobile/components/YearNudge.jsx: title unchanged ('{year} has begun — start your classes fresh?'); body now two paragraphs — 'It is time to begin your classes all over again. When you have finished last year's teaching, tap **Start my classes fresh** below.' / 'This removes the lessons attached to your class cards, so each class begins the new year empty. Your lessons themselves are not affected: every lesson you have prepared stays available in My Lessons.' No folders/archive named (founder). Parse-checked. Awaiting the walk.",
+      "fix": "[FIXED web+phone 2026-10-02T08:33:37] MyPlans.jsx + mobile/components/YearNudge.jsx: title unchanged ('{year} has begun — start your classes fresh?'); body now two paragraphs — 'It is time to begin your classes all over again. When you have finished last year's teaching, tap **Start my classes fresh** below.' / 'This removes the lessons attached to your class cards, so each class begins the new year empty. Your lessons themselves are not affected: every lesson you have prepared stays available in My Lessons.' No folders/archive named (founder). Parse-checked. Awaiting the walk.\n[WALKED 2026-10-02T08:55:55] Seen on web, iPhone and Android during the cutover walk. PASS.",
       "files": "web/app/components/MyPlans.jsx; mobile/components/YearNudge.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-10-02T08:33:37"
@@ -8585,7 +8585,7 @@
     {
       "id": "WALK-A-162",
       "opened": "2026-10-02T08:35:47",
-      "closed": "",
+      "closed": "2026-10-02T08:55:55",
       "feature": "01.30",
       "found_on": [
         "web"
@@ -8593,11 +8593,11 @@
       "applies_to": "web+phone",
       "title": "New-year offer: 'Not yet' should look like a button",
       "what": "Founder, cutover walk on 028, 2026-10-02: 'Not yet' beside 'Start my classes fresh' read as plain text; it should be within a button.",
-      "fix": "[FIXED web+phone 2026-10-02T08:35:47] .yr-nudge-later (globals.css) + yr_nudge_later (mobile/theme/web.js): an OUTLINED pine button the same size as the filled start button (8/15 padding + 1px edge = 9/16), pine label, faint pine tint on hover (web). Still secondary — no fill. Parse-checked. Awaiting the walk.",
+      "fix": "[FIXED web+phone 2026-10-02T08:35:47] .yr-nudge-later (globals.css) + yr_nudge_later (mobile/theme/web.js): an OUTLINED pine button the same size as the filled start button (8/15 padding + 1px edge = 9/16), pine label, faint pine tint on hover (web). Still secondary — no fill. Parse-checked. Awaiting the walk.\n[WALKED 2026-10-02T08:55:55] Seen on web, iPhone and Android during the cutover walk. PASS.",
       "files": "web/app/globals.css; mobile/theme/web.js; mobile/components/YearNudge.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-10-02T08:35:47"
@@ -8605,7 +8605,7 @@
     {
       "id": "WALK-A-163",
       "opened": "2026-10-02T08:48:45",
-      "closed": "",
+      "closed": "2026-10-02T08:55:55",
       "feature": "01.30",
       "found_on": [
         "ios",
@@ -8614,14 +8614,54 @@
       "applies_to": "api+shared+web+phone",
       "title": "Start my classes fresh on one device leaves the other devices showing last year's attachments",
       "what": "Cutover walk, 028, 2026-10-02: 'Start my classes fresh' pressed on the WEB; after reloading, both phones still showed 7A/7B with last year's chapters attached (offer gone, My Lessons fine). Cause: the press clears the server's section state + history and the pressing device's caches; other devices keep theirs, and pullSectionState refuses to delete on a wholesale-empty answer while the history pull unions — so a stale cache can never self-heal.",
-      "fix": "[FIXED 2026-10-02T08:48:45] AcademicYear.fresh_started_at (ports + file adapter) stamped by POST /academic-year/cutover and returned by GET /academic-year. @aruvi/shared/year noteFreshStart(info): a stamp this device has not acted on clears the local section cache + history cache, records the stamp per teacher, and pulls. Called from fetchYear (phone: launch + foreground) and from page.jsx's year read (web, new lib/year.js wrapper). Tests: tests/test_test_cutover.py (stamp set + reported); shared suite 252/252; cutover + academic-year suites green. NEEDS PUSH + REDEPLOY. 028 pressed before the stamp existed → backfill its stamp once to re-walk.",
+      "fix": "[FIXED 2026-10-02T08:48:45] AcademicYear.fresh_started_at (ports + file adapter) stamped by POST /academic-year/cutover and returned by GET /academic-year. @aruvi/shared/year noteFreshStart(info): a stamp this device has not acted on clears the local section cache + history cache, records the stamp per teacher, and pulls. Called from fetchYear (phone: launch + foreground) and from page.jsx's year read (web, new lib/year.js wrapper). Tests: tests/test_test_cutover.py (stamp set + reported); shared suite 252/252; cutover + academic-year suites green. NEEDS PUSH + REDEPLOY. 028 pressed before the stamp existed → backfill its stamp once to re-walk.\n[WALKED 2026-10-02T08:55:55] Pushed + redeployed; 028's stamp backfilled once (it pressed before the field existed). iPhone and Android, reopened: 7A and 7B now EMPTY. PASS.",
       "files": "aruvi_core/ports.py; aruvi_core/adapters/academic_year_repository_file.py; api/main.py; packages/shared/src/year.js; web/app/lib/year.js (new); web/app/page.jsx; tests/test_test_cutover.py",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-10-02T08:48:45"
+    },
+    {
+      "id": "WALK-A-164",
+      "opened": "2026-10-02T09:10:31",
+      "closed": "2026-10-02T09:15:58",
+      "feature": "01.30 / My Lessons",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "A past year's lesson re-attached this year stays in its year's section, not the main list",
+      "what": "Founder, cutover walk on 028, 2026-10-02: attaching last year's Ch 3 (2026-27 version) to 7B moved it out of the 2026-27 section into the main body of My Lessons (above Prepare a lesson). It should not — the main list is where this year's new plans arrive, and an old one there confuses that. REVERSES the 2026-08-26 rule ('once back in play it belongs to this year's list alone').",
+      "fix": "[FIXED web+phone 2026-10-02T09:10:31] MyLessonPlans.jsx + mobile lessons.jsx: the main list excludes ANY plan carrying prepared_source_year (carried forward or derived by the roll); the prior-year folder now drops only a lesson RE-PREPARED fresh this year (prepared, no source year), so a carried-forward lesson stays in its year's section. The class card still shows it stamped '2026-27 version' and opens it. Client-only; parse-checked. Awaiting the walk.\n[WALKED 2026-10-02T09:15:58] PASS on web, iPhone and Android: main list holds only this year's Ch 4; 2026-27 section holds Ch 2 + Ch 3; 7B card shows Ch 3 stamped 2026-27 and opens it.",
+      "files": "web/app/components/MyLessonPlans.jsx; mobile/app/(app)/lessons.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-10-02T09:10:31"
+    },
+    {
+      "id": "WALK-A-165",
+      "opened": "2026-10-02T09:19:50",
+      "closed": "2026-10-02T09:25:12",
+      "feature": "01.30 / attach picker",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "Attach picker: a past year's lesson listed in this year's list, and the 2026-27 folder stuck on 'Loading lessons…'",
+      "what": "Founder, cutover walk on 028, 2026-10-02: in the '+' picker ('Track a chapter for this section') the 2026-27 version appears in the main list for selection, while tapping the 2026-27 folder says 'Loading lessons…' and never loads — and that folder must hold ALL of last year's lessons.",
+      "fix": "[FIXED web+phone 2026-10-02T09:19:50] (1) The picker's main list excludes any plan with prepared_source_year (same rule as WALK-A-164); the folder keeps a carried-forward lesson and drops only a fresh re-prepare. (2) Stuck folder: the fetch effect set `_for` then any re-run (web: plansByKey refresh; phone: `priorPlans._for` itself in the deps) cancelled the in-flight fetch via the `live` flag and then returned early because `_for` matched — nothing was ever fetched again. Requests are now owned by a ref keyed to the cacheKey (never cancelled by a re-run; a stale answer for another key is ignored). MyPlans.jsx; mobile index.jsx + AttachSheet.jsx. Parse-checked. Awaiting the walk.\n[WALKED 2026-10-02T09:25:12] Founder: pass.",
+      "files": "web/app/components/MyPlans.jsx; mobile/app/(app)/index.jsx; mobile/components/AttachSheet.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-10-02T09:19:50"
     }
   ],
   "renewal_check": {
@@ -8629,5 +8669,11 @@
     "result": "pass web+ios+and_emu",
     "account": "027",
     "detail": "9A Science Ch 02 unit 4 / 3 done + chapter note survived revoke → grant; bar restored; Prepare open."
+  },
+  "cutover_walk": {
+    "at": "2026-10-02T09:28:16",
+    "account": "028",
+    "result": "pass web+ios+and_emu",
+    "detail": "Roll 2026-27→2027-28 via ARUVI_TEST_CUTOVER; cards carried + stamped; offer (161/162) Not yet/✕ return next open; Start fresh empties cards on every device (163); new chapter + re-attached 2026-27 chapter (164/165); Year Plan; export (028 granted science/middle) shows both years. Founder: all pass."
   }
 }

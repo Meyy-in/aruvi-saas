@@ -7,7 +7,7 @@ what changed since.
 - **Family X is now 19 of 19 done.** The six held rows — **X.02, X.03, X.04, X.05, X.13, X.14 —
   pass on web, iPhone and Android** (X.08/X.18 phone-only, X.19 n/a on web, as before).
   X.12's cold relaunch in airplane mode still needs a real build (Expo Go loses Metro).
-- **Last amendment: WALK-A-160 (closed, no change). Next: 161.** Open: 048 and 077 (as before), 142 (WhatsApp on the
+- **Last amendment: WALK-A-165. Next: 166.** Open: 048 and 077 (as before), 142 (WhatsApp on the
   phone — 04.34/04.37 still to walk), **158 PARKED** (invoice to both channels, see below).
 
 ## Still held for special states (not walked today)
@@ -16,10 +16,26 @@ what changed since.
 01.27 / 05.26 (paywall — 026 has a spent trial), 01.29 / 02.30 (lapsed — 027 is expired),
 01.18 (added subject asks once — seen via X.04's purchase half), 01.28 (Subscribe from the
 paywall), 04.34 (hello screen — needs a checkout with WhatsApp ON).
-Still genuinely hard: 01.30 (year rollover — the NEXT session, below), 04.10 (privacy-notice version bump), 04.32 (bank
+01.30 is DONE (cutover walk, below). Still genuinely hard: 04.10 (privacy-notice version bump), 04.32 (bank
 edit + deploy), 04.37 (WhatsApp-only, no email).
 
-## ★ NEXT SESSION — the academic-year cutover (founder, 2026-09-29)
+## ✅ DONE 2026-10-02 — the academic-year cutover walk: PASS on web, iPhone and Android
+Account **028**, rolled 2026-27 → 2027-28 with `ARUVI_TEST_CUTOVER` (switch now to be turned OFF).
+Row **01.30 ✅ on all three.** Walked: the roll (7A Ch 2 complete / 7B Ch 3 at unit 3 carried,
+stamped 2026-27); the offer, Not yet and ✕ (returns on the next open, never on a tab switch);
+Start my classes fresh (pressed on the web — cards emptied everywhere); a new chapter in the new
+year; a 2026-27 chapter re-attached (starts at unit 1, its 2026-27 note stays with 2026-27);
+Year Plan; Settings › Your data export across both years (028 granted science/middle for it — the
+export card is hidden on trial by design). First run never fired for 028 after the roll.
+Amendments: **161** offer wording (founder's own), **162** 'Not yet' as an outlined button,
+**163** a fresh start made on one device clears every other device's cached cards
+(`AcademicYear.fresh_started_at` + shared `noteFreshStart`), **164** a past year's lesson stays in
+its year's section of My Lessons even when re-attached (REVERSES the 2026-08-26 rule), **165** the
+'+' picker: past-year lessons only under their year, and the year folder no longer sticks on
+'Loading lessons…' (fetch owned by a ref). All closed.
+The original plan follows for reference.
+
+## (plan) — the academic-year cutover (founder, 2026-09-29)
 Row **01.30** and everything that fires only on cutover morning have never been walked. Meyy
 rolls every teacher into the new year automatically on **1 June** (`config.CUTOVER_MONTH_DAY`,
 `_resolve_year` → `_auto_roll_year` in api/main.py), so left alone the first real cutover is
@@ -54,6 +70,19 @@ rolls every teacher into the new year automatically on **1 June** (`config.CUTOV
    - a lapsed or trial account crossing the cutover (optional, if time).
 5. **Turn the switch off** and record results; amendments from WALK-A-161.
 
+## ⚠️ BEFORE 1 JUNE 2027 — the library edition is a SEPARATE, MANUAL step (founder, 2026-10-02)
+Two years exist and only one rolls by itself: the TEACHER's year (per teacher, on 1 June) and the
+LIBRARY edition (one global setting, `ARUVI_LP_YEAR` on Render, folders
+`saved_plans/{subject}/{grade}/{year}/`). The cutover walk on 028 showed what happens when the
+teacher's year moves and the edition does not: nothing fails — she is quietly served the old
+edition, and Prepare on an unchanged chapter says "you already have this" (same file). So:
+1. Build the 2027-28 library before 1 June: re-author changed chapters; copy unchanged ones
+   (canonical AND derived plans) with `carry_over_year.py`.
+2. Set `ARUVI_LP_YEAR=2027-28` on Render.
+Open product question (founder, deferred until the 2027-28 library exists): for an UNCHANGED
+chapter, keep "Prepare again" grey (Option A, built — she teaches the 2026-27 copy from its year's
+section) or let it file the same plan as this year's work (Option B).
+
 ## ✅ DONE 2026-10-02 — renewal after a lapse: PASS on web, iPhone and Android
 027 given real state (9A Science Ch 02 at unit 4, 3 completed, a chapter note), revoked →
 reading room (My Lessons + Ask Meyy; Ch 02 still readable in My Lessons), granted again → My
@@ -80,7 +109,8 @@ before the revoke; chapter notes intact; the profile is editable again; Prepare 
 check a renewal through the SUBSCRIBE screen (not the CLI) restores the same state. Any
 difference is an amendment from WALK-A-161.
 
-## The two TEST-ONLY server switches (built today, now OFF)
+## The TEST-ONLY server switches (all three OFF after 2026-10-02)
+- **`ARUVI_TEST_CUTOVER`** (built 2026-10-02, cutover walk): see the cutover section above.
 Both are env-driven, default empty = off for everyone; code stays in `api/main.py` +
 `api/config.py`, tests in `tests/test_readback_skew.py`, keys declared in `render.yaml`.
 - **`ARUVI_TEST_READBACK_SKEW`** (X.02): for listed numbers, a GET /readiness within 20s of that
@@ -135,6 +165,12 @@ Both are env-driven, default empty = off for everyone; code stays in `api/main.p
   subject has no classes (X.05). Several test invoices exist for it.
 - Supabase test OTPs for 919000000026 and 919000000027 (=123456) are still listed — remove when
   no longer needed.
+
+## Test accounts added 2026-10-02
+- **027** — renewal check: revoked → granted again (active, social_sciences/secondary,
+  science/secondary, mathematics/middle); 9A Science Ch 02 at unit 4 with a chapter note.
+- **028** — the cutover account: now in **2027-28** (fresh start done), granted science/middle;
+  7A has Ch 4 (this year), 7B has the re-attached 2026-27 Ch 3. Supabase OTP 919000000028=123456.
 
 ## Committed
 Everything above is committed and pushed (last: `d8d49a85`), bar this note and the tracker's
