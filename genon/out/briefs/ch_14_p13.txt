@@ -1,6 +1,6 @@
-CANONICAL BRIEF — 10 periods (platform-computed; binding)
+CANONICAL BRIEF — 13 periods (platform-computed; binding)
 
-- This is a COMPLETE, self-sufficient lesson plan for the whole chapter at 10 periods x 50 minutes (period_schedule: exactly one row {50, 10}). It is NOT a compression, summary, or edit of any other plan of this chapter — author it from the chapter summary as if it were the only plan.
+- This is a COMPLETE, self-sufficient lesson plan for the whole chapter at 13 periods x 50 minutes (period_schedule: exactly one row {50, 13}). It is NOT a compression, summary, or edit of any other plan of this chapter — author it from the chapter summary as if it were the only plan.
 - SECTION REGISTRY (verbatim; the chapter's ordered sections):
     1. 14.1
     2. 14.2
@@ -20,4 +20,4 @@ CANONICAL BRIEF — 10 periods (platform-computed; binding)
 - MATERIALS, OPENING MOVES AND HOMEWORK ARE PER-UNIT. No unit may require that another unit was taught, or that its homework was set, in order to run.
 - NO UNIT MAY DEPEND ON A PHYSICAL ARTEFACT ANOTHER UNIT PRODUCES. If a unit needs a poster, chart, model, collection or draft to exist, it must make it itself within its own minutes, or the material must be something any classroom already has. A unit that lists 'prepared previously', 'their charts from earlier' or 'the models they built' in `materials`, `visual_aids` or an opening band is asking for a sitting that may not have happened — it is the same failure as naming another unit, arriving through the props instead of the prose. Where the chapter genuinely wants a make-then-present pair, put BOTH acts inside ONE unit. A STUDENT'S OWN PIECE OF WRITING COUNTS: an article, essay, letter or story drafted in one unit and continued, revised or finished in another is the same dependency in a thinner disguise. Plan every writing task to begin AND end inside a single unit — drafting, peer response and revision together, on a scale that fits the minutes available.
 - The assessment for this plan is generated from THIS plan's coverage_handoff in the normal way; it references no other plan of this chapter.
-- Save as: ch_14_canonical_p10.json
+- Save as: ch_14_canonical_p13.json

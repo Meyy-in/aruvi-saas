@@ -55,6 +55,7 @@ from aruvi_core.adapters.smtp_notifier import SmtpNotifier
 from aruvi_core.adapters.file_whatsapp import FileWhatsApp
 from aruvi_core.adapters.cloud_whatsapp import CloudWhatsApp
 from aruvi_core.adapters.whatsapp_inbox_file import WhatsAppInboxFileImpl
+from api import support_inbox as _support_inbox_mod  # noqa: E402
 from aruvi_core.ports import WhatsAppTemplate
 from aruvi_core.ports import EmailMessage
 from api import mail_templates
@@ -2414,7 +2415,7 @@ def _wa_welcome(a: Any, mobile: str) -> Dict[str, Any]:
         return {"status": "skipped", "reason": "not opted in"}
     if notify.get("whatsapp_welcomed_at"):
         return {"status": "skipped", "reason": "already welcomed"}
-    first = (str(a.display_name or "").strip().split() or [""])[0]
+    first = _support_inbox_mod.first_name(a.display_name)
     if not first or first.isdigit():
         first = "there"                       # "Hello there" beats "Hello 9876543210"
     res = wa_client.send_template(WhatsAppTemplate(
@@ -2458,7 +2459,7 @@ def _wa_invoice(a: Any, mobile: str, invoice: Any, pdf: Optional[bytes]) -> Dict
     if up.get("status") not in ("sent", "written") or not up.get("media_id"):
         _wa_log({"kind": "invoice_upload", "to": "…" + _wa_e164(mobile)[-4:], "result": up})
         return {"status": "error", "error": "upload failed: " + str(up.get("error") or up.get("reason"))}
-    first = (str(a.display_name or "").strip().split() or [""])[0]
+    first = _support_inbox_mod.first_name(a.display_name)
     if not first or first.isdigit():
         first = "there"
     amount = f"{int(getattr(invoice, 'total', 0) or 0):,}"
@@ -2644,8 +2645,6 @@ def _wa_log(event: Dict[str, Any]) -> None:
     except Exception:                                  # noqa: BLE001
         pass
 
-
-from api import support_inbox as _support_inbox_mod  # noqa: E402
 
 wa_inbox_repo = WhatsAppInboxFileImpl(state)
 support_inbox = _support_inbox_mod.Inbox(config=config, repo=wa_inbox_repo, wa_client=wa_client,

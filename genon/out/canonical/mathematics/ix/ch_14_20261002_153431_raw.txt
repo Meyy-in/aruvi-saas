@@ -1,0 +1,1317 @@
+{
+  "grade": "Grade IX",
+  "subject": "Mathematics",
+  "chapter_number": 14,
+  "chapter_title": "Math of Space: Surface Area and Volume",
+  "period_schedule": [{"duration_minutes": 50, "count": 13}],
+  "lesson_plan": {
+    "periods": [
+      {
+        "period_number": 1,
+        "period_duration_minutes": 50,
+        "activity_title": "Deriving Surface Area and Volume of Cuboids and Cubes",
+        "section_anchor": "14.1",
+        "pedagogical_method": "Deductive",
+        "materials": ["Textbook", "Ruler", "Squared paper for net sketches"],
+        "visual_aids": "Board diagram of a cuboid net (Fig. 14.2) showing the six rectangular faces",
+        "textbook_items_in_class": [
+          {
+            "id": "WE-1",
+            "type": "worked_example",
+            "source_section": "14.1",
+            "book_ref": "Example 1, p.125",
+            "description": "Compare Cube A of side 6 cm with Cuboid B of 9 cm × 6 cm × 4 cm: both have volume 216 cm^3 but surface areas 216 cm^2 and 228 cm^2."
+          },
+          {
+            "id": "E-1",
+            "type": "exercise",
+            "source_section": "14.1",
+            "book_ref": "Exercise Set 14.1 Q1, p.125",
+            "description": "Volume of a cube is 64 cm^3; find its total surface area."
+          },
+          {
+            "id": "E-6",
+            "type": "exercise",
+            "source_section": "14.1",
+            "book_ref": "Exercise Set 14.1 Q6, p.126",
+            "description": "Three faces of a cuboid meeting at a corner have areas 6 cm^2, 15 cm^2 and 10 cm^2; find the volume."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-10",
+            "activity": "Open by sketching a cuboid net on the board (Fig. 14.2). Label the six faces and establish that TSA = 2(wl + hl + hw) by summing face areas. Introduce the cube as the special case l = w = h = a, giving TSA = 6a² and V = a³, and recall cube numbers 1, 8, 27, 64 as volumes of cubes of side 1, 2, 3, 4."
+          },
+          {
+            "minutes": "10-22",
+            "activity": "Develop the volume formula V = lwh as the count of unit cubes that fill the cuboid, then reframe it as V = area of base × height. Use the stacked-playing-cards image: each thin rectangular sheet has area lw and the sheets are stacked to height h. Walk through Example 1 (p.125) step by step: both solids have V = 216 cm³ but TSA differs (216 cm² for the cube, 228 cm² for the cuboid), making the cube the more material-efficient container."
+          },
+          {
+            "minutes": "22-35",
+            "activity": "Think-and-reflect discussion: pose the swimming-pool comparison from the section — two proposed pools, one 8 ft deep × 50 ft × 20 ft, the other 6 ft deep × 100 ft × 15 ft. Ask students to compute volumes (converting ft³ to litres using 1 ft³ ≈ 28.3 L) and decide which is suitable, naming the parameters (depth for safety, volume for capacity). Students work individually, then share reasoning."
+          },
+          {
+            "minutes": "35-45",
+            "activity": "Students attempt Exercise Set 14.1 Q1 (p.125) — find TSA from a given volume — and Exercise Set 14.1 Q6 (p.126) — recover volume from three face areas — independently. Circulate and address any sign or formula slips."
+          },
+          {
+            "minutes": "45-50",
+            "activity": "Consolidate: reinforce that TSA and V are independent quantities (same V, different TSA possible), and that this distinction drives real applications in packaging and engineering."
+          }
+        ],
+        "teacher_notes": "This unit enters the chapter through the net of a cuboid, a representation students met when studying solids in an earlier grade. A common error is treating the total surface area formula as 2(l + w + h) rather than 2(wl + hl + hw) — watch for additive confusions in the face-area calculation. For independent reading, Exercise Set 14.1 Q5 (p.126), which explores how surface area changes dramatically when a cube is subdivided, is a good self-study pointer.",
+        "homework": ["Exercise Set 14.1 Q2, p.125 — find how many small cubes of side 20 cm fit in a cubical box of side 2 m.", "Exercise Set 14.1 Q4, p.125 — two cubes each of volume 125 cm³ joined end to end; find the surface area of the resulting cuboid."]
+      },
+      {
+        "period_number": 2,
+        "period_duration_minutes": 50,
+        "activity_title": "Defining the Right Circular Cylinder and Deriving Its Formulas",
+        "section_anchor": "14.2",
+        "pedagogical_method": "Deductive",
+        "materials": ["Textbook", "A cylindrical tin or tumbler for demonstration", "Scissors and a rectangular strip of paper"],
+        "visual_aids": "Board sketch of a cylinder opened into a rectangle, showing height h and circumference 2πr as the rectangle's dimensions",
+        "textbook_items_in_class": [
+          {
+            "id": "WE-2",
+            "type": "worked_example",
+            "source_section": "14.2",
+            "book_ref": "Example 2, p.129",
+            "description": "Find the chart paper area for the curved surface of a kaleidoscope of length 25 cm and radius 3.5 cm; CSA = 2πrh = 550 cm²."
+          },
+          {
+            "id": "E-7",
+            "type": "exercise",
+            "source_section": "14.2",
+            "book_ref": "Exercise Set 14.2 Q1, p.129",
+            "description": "Cylinder B has twice the radius and half the height of cylinder A; find the ratio of CSA and of volume."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-10",
+            "activity": "Establish the definition: a right circular cylinder has a circular cross-section and its axis perpendicular to its base, distinguishing it from an oblique cylinder. Explain 'cross-section' as an extremely thin slice — circular when sliced parallel to the base, rectangular when sliced parallel to the axis. Draw examples on the board and link to the MRI-scan analogy in the text."
+          },
+          {
+            "minutes": "10-25",
+            "activity": "Demonstrate with the paper strip: cut along a slant edge of the curved surface and unroll it into a rectangle. Identify the rectangle's dimensions as height h and circumference 2πr, giving CSA = 2πrh. Derive TSA for both cases — closed at both ends (biscuit tin): 2πrh + 2πr² = 2πr(h + r); closed at one end (tumbler): 2πrh + πr² = πr(2h + r). State V = πr²h as cross-sectional area × height. Walk through Example 2 (p.129)."
+          },
+          {
+            "minutes": "25-38",
+            "activity": "Students work on Exercise Set 14.2 Q1 (p.129) in pairs: set up the ratio for CSA and volume when radius doubles and height halves. Discuss the outcome (CSA unchanged, volume doubles) — this reveals that CSA and volume respond differently to the same dimensional change."
+          },
+          {
+            "minutes": "38-47",
+            "activity": "Brief class discussion: which formula applies to a closed tin versus an open tumbler? Work through a quick example on the board choosing the correct TSA expression, reinforcing the distinction between the two cases."
+          },
+          {
+            "minutes": "47-50",
+            "activity": "Summarise: the curved surface of a cylinder is fundamentally a rectangle, and the two TSA cases differ by one flat circular face. Preview that the next unit revisits why these formulas hold through a slice-stacking argument."
+          }
+        ],
+        "teacher_notes": "Having derived the cuboid's surface area from its net, the cylinder's curved-surface derivation follows the same unfolding logic applied to a curved face. A very common slip is using the diameter instead of the radius in 2πrh, or confusing which TSA formula applies (both-ends-closed vs. one-end-closed) — ask students to identify the physical object before choosing the formula. Example 2 (p.129) is straightforward enough for students to re-read and verify independently.",
+        "homework": ["Exercise Set 14.2 Q2, p.129 — radii in ratio 2:3 and heights in ratio 3:2; find ratios of volumes and CSA.", "End of Chapter Q6, p.144 — school milk in cylindrical glasses; find total litres for 1600 students."]
+      },
+      {
+        "period_number": 3,
+        "period_duration_minutes": 50,
+        "activity_title": "The Stacking-Slices Argument and Multi-Solid Cylinder Problems",
+        "section_anchor": "14.2.1",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Board"],
+        "visual_aids": "Board sketch of a cylinder visualised as a stack of thin circular discs, analogous to the cuboid's playing-card stack",
+        "textbook_items_in_class": [
+          {
+            "id": "E-8",
+            "type": "exercise",
+            "source_section": "14.2",
+            "book_ref": "Exercise Set 14.2 Q2, p.129",
+            "description": "Radii in ratio 2:3 and heights in ratio 3:2; find ratios of volumes and CSA."
+          },
+          {
+            "id": "E-9",
+            "type": "exercise",
+            "source_section": "14.2",
+            "book_ref": "Exercise Set 14.2 Q3, p.129",
+            "description": "Largest possible cylinder cut from a cube of edge r cm; find volume."
+          },
+          {
+            "id": "E-10",
+            "type": "exercise",
+            "source_section": "14.2",
+            "source_sections": ["14.1", "14.2"],
+            "book_ref": "Exercise Set 14.2 Q5, p.129",
+            "description": "A solid metallic cube of side 12 cm melted into cylindrical rods of radius 2 cm and height 12 cm; find volume of cube, volume of one rod, and approximate number of rods."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-12",
+            "activity": "Present section 14.2.1's core idea: picture a cylinder as a large number of thin circular discs (khakhras) stacked on top of one another, exactly as the cuboid was viewed as stacked playing cards. Each disc has area πr² and the stack's height is h, giving V = πr²h directly. This connects the stacking picture to the formula derived algebraically in the previous unit and deepens why V = cross-sectional area × height is a universal principle for prism-like solids."
+          },
+          {
+            "minutes": "12-27",
+            "activity": "Students work individually on Exercise Set 14.2 Q2 (p.129) — ratios of volumes and CSA for two cylinders with given ratio dimensions — and Exercise Set 14.2 Q3 (p.129) — the largest cylinder cut from a cube. After independent work, pairs compare methods and reconcile any differences."
+          },
+          {
+            "minutes": "27-43",
+            "activity": "Work through Exercise Set 14.2 Q5 (p.129) as a guided class problem: first find the cube's volume (12³ = 1728 cm³), then one rod's volume (π × 4 × 12 = 48π ≈ 150.86 cm³), then the number of complete rods (1728 ÷ 150.86 ≈ 11). Discuss why the answer must be rounded down to a whole number."
+          },
+          {
+            "minutes": "43-50",
+            "activity": "Consolidate: the stacking picture is a conceptual bridge — volume formulas for both the cuboid and the cylinder follow from the same base-times-height principle. Ask: if you stack discs of varying radii, would this principle still hold? (No — this foreshadows the cone.)"
+          }
+        ],
+        "teacher_notes": "The stacking-slices image from section 14.2.1 ties directly to the playing-cards argument used for the cuboid in section 14.1, giving students a unifying way to see why V = base area × height holds for all constant-cross-section solids. A frequent error in Exercise Set 14.2 Q5 (p.129) is computing the number of rods before dividing by the exact rod volume — remind students to divide volumes and then take the floor. Exercise Set 14.2 Q3 (p.129) makes a good self-study item for those who want to explore the constraint that the cylinder's diameter equals the cube's edge.",
+        "homework": []
+      },
+      {
+        "period_number": 4,
+        "period_duration_minutes": 50,
+        "activity_title": "Right Circular Cones: Deriving Surface Area Two Ways",
+        "section_anchor": "14.3",
+        "pedagogical_method": "Deductive",
+        "materials": ["Textbook", "A paper cone cut along a slant edge and unrolled", "Compass and ruler"],
+        "visual_aids": "Board diagram of the unrolled cone showing the sector of radius l, arc length 2πr, and the isosceles-triangle subdivision",
+        "textbook_items_in_class": [
+          {
+            "id": "E-11",
+            "type": "exercise",
+            "source_section": "14.3",
+            "book_ref": "Exercise Set 14.3 Q1, p.133",
+            "description": "Total surface area of a cone with slant height 21 m and base diameter 24 m."
+          },
+          {
+            "id": "E-12",
+            "type": "exercise",
+            "source_section": "14.3",
+            "book_ref": "Exercise Set 14.3 Q2, p.133",
+            "description": "Curved surface area of a cone with slant height 10 cm and base radius 7 cm."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-10",
+            "activity": "Define the right circular cone as the solid generated when a right triangle is rotated about one of its legs. Establish the relation l² = h² + r² from the Baudhāyana–Pythagoras theorem. Demonstrate physically: cut the paper cone along a slant edge and lay it flat, revealing a sector of a circle of radius l."
+          },
+          {
+            "minutes": "10-28",
+            "activity": "Derive CSA = πrl two ways. Method 1: subdivide the unrolled sector into a large number of thin sectors, each approximated as a narrow isosceles triangle of height l; sum their bases to get the cone's circumference 2πr, so CSA = ½ × 2πr × l = πrl. Method 2: sector area = πl² × (θ/360°); the arc length (θ/360°) × 2πl = 2πr gives θ/360° = r/l, so CSA = πrl. Both routes agree. State TSA = πrl + πr²."
+          },
+          {
+            "minutes": "28-40",
+            "activity": "Students work on Exercise Set 14.3 Q1 (p.133) and Q2 (p.133) individually: one gives slant height and diameter (need r = 12 m), the other gives slant height and radius directly. Circulate and check that students are computing r correctly from the diameter where needed."
+          },
+          {
+            "minutes": "40-48",
+            "activity": "Select two students to write their solutions on the board for Q1 and Q2. Class checks each step. Address any confusion between l, h and r."
+          },
+          {
+            "minutes": "48-50",
+            "activity": "Preview: the cone's volume is one-third of the cylinder's on the same base and height — to be established experimentally in the next unit."
+          }
+        ],
+        "teacher_notes": "The two derivations of CSA = πrl from section 14.3 are both worth doing in full because they illustrate different modes of geometric reasoning — thin-element approximation and angle proportion — that recur later. The most common error is confusing the slant height l with the vertical height h when reading a problem; insist students write all three quantities (r, h, l) and check l² = h² + r² before substituting. Exercise Set 14.3 Q3 (p.133) — where students must first compute l from h and r — is a good independent follow-up.",
+        "homework": ["Exercise Set 14.3 Q3, p.133 — cone with h = 16 cm and r = 12 cm; find l, CSA and TSA.", "Exercise Set 14.3 Q5, p.134 — CSA = 308 cm² and l = 14 cm; find r and TSA."]
+      },
+      {
+        "period_number": 5,
+        "period_duration_minutes": 50,
+        "activity_title": "Volume of a Cone: Experimental Verification and Applications",
+        "section_anchor": "14.3",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Paper cone and cylindrical tin of equal base radius and height (or teacher demonstration set)", "Fine salt or sand"],
+        "visual_aids": "Board: side-by-side sketches of a cone and a cylinder with identical r and h, labelled V_cone = (1/3)πr²h and V_cylinder = πr²h",
+        "textbook_items_in_class": [
+          {
+            "id": "WE-3",
+            "type": "worked_example",
+            "source_section": "14.3",
+            "book_ref": "Example 3, p.133",
+            "description": "Right triangle with sides 5, 12, 13 cm rotated about the 12 cm side; recognise the cone, find V = 100π cm³."
+          },
+          {
+            "id": "E-14",
+            "type": "exercise",
+            "source_section": "14.3",
+            "book_ref": "Exercise Set 14.3 Q4, p.134",
+            "description": "Cone of height 15 cm has volume 1570 cm³; find the base radius."
+          },
+          {
+            "id": "E-17",
+            "type": "exercise",
+            "source_section": "14.3",
+            "book_ref": "Exercise Set 14.3 Q8, p.134",
+            "description": "Right triangle with sides 6, 8, 10 cm rotated about the 8 cm side; find volume and CSA of the cone formed."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-10",
+            "activity": "Conduct the filling experiment: the paper cone (same r and h as the tin) is filled with fine salt and poured into the cylindrical tin; repeat — three full pourings fill the tin exactly. From this observation, state V_cone = (1/3) × πr²h. Note that the factor 1/3 will be derived formally in Grade 12 calculus; the experiment is the evidence available now."
+          },
+          {
+            "minutes": "10-22",
+            "activity": "Walk through Example 3 (p.133): identify the solid formed by rotating a 5-12-13 right triangle about its 12 cm leg as a cone with r = 5, h = 12; verify 5² + 12² = 13² = 169; compute V = (1/3)π × 25 × 12 = 100π cm³. Emphasise how rotation-of-a-right-triangle problems are identified."
+          },
+          {
+            "minutes": "22-37",
+            "activity": "Students work individually on Exercise Set 14.3 Q4 (p.134) — working backwards from volume to find radius — and Exercise Set 14.3 Q8 (p.134) — rotation of a 6-8-10 triangle. For Q8, students must first verify the right angle and identify which leg becomes the axis."
+          },
+          {
+            "minutes": "37-47",
+            "activity": "Discuss Q4: solving (1/3)π r² × 15 = 1570 gives r² = 100, so r = 10 cm. Discuss Q8: the 6-8-10 triangle rotated about the 8 cm leg gives r = 6, h = 8; V = (1/3)π × 36 × 8 = 96π cm³; CSA = πrl = π × 6 × 10 = 60π cm³. Link CSA back to the previous unit's formula."
+          },
+          {
+            "minutes": "47-50",
+            "activity": "Consolidate the volume formula and the rotation-generates-solid technique. The fact that V_cone = (1/3) V_cylinder is an exact result verified experimentally and to be proved later."
+          }
+        ],
+        "teacher_notes": "The experimental pouring here is the textbook's own verification of V = (1/3)πr²h and is worth doing even as a teacher demonstration if the materials are to hand. A common error in rotation problems is rotating about the hypotenuse rather than the specified leg; insist students label the axis of rotation before computing. Exercise Set 14.3 Q6 (p.134) — area of sheet for 10 joker's caps — is a good self-study item connecting CSA to practical material estimation.",
+        "homework": ["Exercise Set 14.3 Q6, p.134 — joker's cap of base radius 7 cm and height 24 cm; area of sheet for 10 caps.", "End of Chapter Q7, p.144 — surface area of a sphere of radius 5 cm is five times the CSA of a cone of radius 4 cm; find the cone's height and volume."]
+      },
+      {
+        "period_number": 6,
+        "period_duration_minutes": 50,
+        "activity_title": "Pyramidal Shapes: Volume from First Principles and No New Formula for TSA",
+        "section_anchor": "14.4",
+        "pedagogical_method": "Deductive",
+        "materials": ["Textbook", "Images or sketches of the Egyptian pyramids, Shivling Peak, and the Matterhorn"],
+        "visual_aids": "Board sketch of a square-based pyramid labelling base side, apex, and height; note that TSA = sum of all polygonal face areas",
+        "textbook_items_in_class": [],
+        "time_bands": [
+          {
+            "minutes": "0-12",
+            "activity": "Define a pyramidal shape: any base (triangle, square, or any closed polygon) with all base points connected to a single apex in a different plane. Show images of Egyptian square-based pyramids and the Shivling Peak / Matterhorn as natural pyramidal forms. Establish vocabulary: base, apex, lateral faces."
+          },
+          {
+            "minutes": "12-28",
+            "activity": "State V = (1/3) × area of base × height, applicable for any pyramid regardless of base shape. Draw a square-based pyramid and a triangular-based pyramid; compute a quick numerical example each (e.g., square base 6 cm × 6 cm, height 4 cm: V = (1/3) × 36 × 4 = 48 cm³). Note: this is the same formula as for the cone — a cone is simply a pyramid with a circular base. Emphasise that the factor 1/3 is the same as in the cone's formula, reinforcing the unified principle."
+          },
+          {
+            "minutes": "28-38",
+            "activity": "Surface area of a pyramid: there is no separate formula. Walk through the procedure: identify all polygonal faces, compute each face's area, add them up. For a square-based pyramid, TSA = base area + 4 × (area of one triangular face). Students compute the TSA of the square pyramid used above: base 36 cm², slant height of each triangular face found by Pythagoras if needed (demonstrate on board), then add."
+          },
+          {
+            "minutes": "38-46",
+            "activity": "Students pose their own simple pyramid problem: choose a base shape, choose dimensions, compute volume and TSA. Students work individually and then share with a partner to check."
+          },
+          {
+            "minutes": "46-50",
+            "activity": "Consolidate the twin points: V uses one universal formula with base area and height; TSA is found by decomposition into flat faces. Connect to earlier work — the cone is the limiting case of a pyramid as the number of base sides grows without bound."
+          }
+        ],
+        "teacher_notes": "Section 14.4 deliberately introduces no new surface-area formula; the lesson should make this a feature, not a gap. Students sometimes try to apply the cone formula πrl to a pyramid's lateral face — stress that each triangular face is a flat triangle whose area is (1/2) × base × slant height of that face, computed directly. The natural-world examples (Shivling Peak, Matterhorn) ground the concept without requiring any materials beyond images or a board sketch.",
+        "homework": ["Write the volume and TSA of a triangular-based pyramid with an equilateral-triangle base of side 6 cm and height 9 cm (students may leave the triangular face area in surd form)."]
+      },
+      {
+        "period_number": 7,
+        "period_duration_minutes": 50,
+        "activity_title": "Spheres: Archimedes' Surface Area Formula and Volume",
+        "section_anchor": "14.5",
+        "pedagogical_method": "Deductive",
+        "materials": ["Textbook", "Board"],
+        "visual_aids": "Board sketch of a sphere of radius r fitted inside a cylinder of radius r and height 2r (Fig. 14.12), showing the curved surface area correspondence",
+        "textbook_items_in_class": [
+          {
+            "id": "E-18",
+            "type": "exercise",
+            "source_section": "14.5",
+            "book_ref": "Exercise Set 14.4 Q1, p.140",
+            "description": "Surface area of a ball bearing of radius 0.7 cm."
+          },
+          {
+            "id": "E-19",
+            "type": "exercise",
+            "source_section": "14.5",
+            "book_ref": "Exercise Set 14.4 Q3, p.140",
+            "description": "Moon's diameter is one-fourth Earth's; find the ratio of their surface areas."
+          },
+          {
+            "id": "E-22",
+            "type": "exercise",
+            "source_section": "14.5",
+            "book_ref": "Exercise Set 14.4 Q6, p.140",
+            "description": "Show that increasing a sphere's radius by 10% increases volume by approximately 33.1%."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-12",
+            "activity": "Define a sphere as the set of all points in 3D space at distance r from a centre O — the 3D analogue of a circle. Note that rotating a circle about any of its diameters produces a hollow sphere. Draw the tight-fitting cylinder (radius r, height 2r) on the board; state Archimedes' result: the sphere's surface area equals the CSA of that cylinder = 2πr × 2r = 4πr²."
+          },
+          {
+            "minutes": "12-25",
+            "activity": "State V = (4/3)πr³ and invite students to verify the internal consistency: write V = (1/3) × (4πr²) × r — one-third of the surface area times the radius — linking it conceptually to the cone-and-pyramid volume principle. Note that the derivations of both formulas will be covered in calculus in later grades. Work through Exercise Set 14.4 Q1 (p.140): SA = 4π × (0.7)² = 4π × 0.49 ≈ 6.16 cm²."
+          },
+          {
+            "minutes": "25-37",
+            "activity": "Students work on Exercise Set 14.4 Q3 (p.140) independently: if moon's diameter = (1/4) Earth's, then moon's r = (1/4) Earth's r; ratio of SAs = 4π(r_m)² : 4π(r_e)² = (1/4)² : 1 = 1:16. Discuss how the ratio of surface areas scales as the square of the ratio of radii."
+          },
+          {
+            "minutes": "37-47",
+            "activity": "Exercise Set 14.4 Q6 (p.140) as a class reasoning exercise: let new radius = 1.1r; new V = (4/3)π(1.1r)³ = (4/3)πr³ × 1.331; percentage increase = 33.1%. Students write this out step by step on paper, verifying the algebraic manipulation."
+          },
+          {
+            "minutes": "47-50",
+            "activity": "Consolidate: SA = 4πr² (four circles of radius r), V = (4/3)πr³. Both formulas are Archimedes' achievement; their full derivation is a landmark result of calculus."
+          }
+        ],
+        "teacher_notes": "Having established V = (1/3) × base area × height for cones and pyramids, the internal decomposition V = (1/3) × (4πr²) × r for the sphere gives students a coherent conceptual link rather than an isolated formula to memorise. A frequent slip is writing SA = 2πr² (confusing the sphere with the curved surface of a hemisphere); writing SA = 4 × πr² — four full circles — is the safest mnemonic. Exercise Set 14.4 Q5 (p.140) — spheres packed in a box with preservative liquid — is a good self-study item that combines sphere and cuboid volumes.",
+        "homework": ["Exercise Set 14.4 Q5, p.140 — 16 spheres of radius 2 cm in a 16 × 8 × 8 cm box; find the volume of liquid.", "End of Chapter Q8, p.145 — compute volume ratios of Jupiter and Sun to Earth treating all as spheres."]
+      },
+      {
+        "period_number": 8,
+        "period_duration_minutes": 50,
+        "activity_title": "String-Winding Activity: Verifying Surface Area of a Sphere",
+        "section_anchor": "14.5.1",
+        "pedagogical_method": "Discovery/Inquiry",
+        "materials": ["Rubber ball with a nail driven in", "Ball of string and pins", "Compass and large sheet of paper", "Ruler", "Textbook"],
+        "visual_aids": "Textbook Fig. 14.14 shown on board: four circles of radius r exactly filled by the unwound string",
+        "textbook_items_in_class": [],
+        "time_bands": [
+          {
+            "minutes": "0-8",
+            "activity": "Set up the activity from section 14.5.1: a nail is driven into the rubber ball to hold it while string is wound tightly around it, held with pins once the ball's widest part is reached, until the entire surface is covered. Students predict: how many circles of radius r (the ball's radius) will the string fill?"
+          },
+          {
+            "minutes": "8-25",
+            "activity": "Students (in groups of three or four) wind the string around the ball, secure it with pins, and then unwind it carefully. Using a compass set to the ball's radius, draw circles on the large sheet of paper and fill them with the string. Count the circles filled — the string fills exactly four circles. Record the observation: surface area of sphere = 4 × πr²."
+          },
+          {
+            "minutes": "25-35",
+            "activity": "Groups write a brief record of their results: ball radius (measured), number of circles filled, and the formula inferred. Compare results across groups. Discuss sources of experimental error (uneven winding, string overlap) and why 'exactly four' is the theoretical value."
+          },
+          {
+            "minutes": "35-45",
+            "activity": "Connect the experimental result to Archimedes' argument from the previous unit: both routes give 4πr². The experiment is a verification, not a derivation. Pose the question: why might the experiment never give exactly 4, and what does that tell us about the difference between experimental evidence and mathematical proof?"
+          },
+          {
+            "minutes": "45-50",
+            "activity": "Consolidate: write SA = 4πr² as the agreed result, now supported both by Archimedes' geometric argument and by the string experiment. Discuss how physical experiments can confirm mathematical formulas even when full proofs are not yet accessible."
+          }
+        ],
+        "teacher_notes": "Section 14.5.1 is a hands-on verification unit, and the physical activity should dominate the time bands. The most common difficulty is that groups wind the string unevenly or with gaps; encourage slow, systematic winding from the nail outward and checking before unwinding. The key intellectual move at the end is distinguishing experimental verification from mathematical proof — this is an important habit of mind at the secondary stage.",
+        "homework": []
+      },
+      {
+        "period_number": 9,
+        "period_duration_minutes": 50,
+        "activity_title": "Hemispheres: Surface Areas, Volume, and Applications",
+        "section_anchor": "14.5.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Board"],
+        "visual_aids": "Board sketch of a hemisphere labelling the flat circular base (πr²) and the curved surface (2πr²); real-world images of a dome and a bowl",
+        "textbook_items_in_class": [
+          {
+            "id": "WE-4",
+            "type": "worked_example",
+            "source_section": "14.5.2",
+            "book_ref": "Example 4, p.140",
+            "description": "Volume of water in a hemispherical bowl of radius 3.5 cm using (2/3)πr³; about 89.8 cm³."
+          },
+          {
+            "id": "E-20",
+            "type": "exercise",
+            "source_section": "14.5.2",
+            "book_ref": "Exercise Set 14.4 Q4, p.140",
+            "description": "Curved surface area and total surface area of a hemisphere of radius 21 cm."
+          },
+          {
+            "id": "E-23",
+            "type": "exercise",
+            "source_section": "14.5.2",
+            "book_ref": "Exercise Set 14.4 Q8, p.141",
+            "description": "Hemispherical dome with base circumference 35.2 m; find cost of painting at ₹10 per 100 cm²."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-10",
+            "activity": "Define a hemisphere as the solid formed when a plane through a sphere's centre cuts it into two equal halves. Identify its surfaces: one curved surface (half the sphere's SA) and one flat circular base. Derive CSA = 2πr² (half of 4πr²), TSA = 2πr² + πr² = 3πr², and V = (2/3)πr³ (half of (4/3)πr³). Link to the Geography concept of Northern/Southern Hemispheres."
+          },
+          {
+            "minutes": "10-22",
+            "activity": "Walk through Example 4 (p.140): V = (2/3)π × (3.5)³ = (2/3) × (22/7) × 42.875 ≈ 89.8 cm³. Discuss when to use CSA versus TSA: CSA for painting the outside of a dome (no base); TSA for the total material of a solid hemisphere."
+          },
+          {
+            "minutes": "22-35",
+            "activity": "Students work on Exercise Set 14.4 Q4 (p.140): CSA = 2π × 21² = 2π × 441 = 882π ≈ 2771.3 cm²; TSA = 3π × 441 = 1323π ≈ 4156.9 cm². Students write full working."
+          },
+          {
+            "minutes": "35-47",
+            "activity": "Students work on Exercise Set 14.4 Q8 (p.141): from the base circumference 2πr = 35.2 m find r = 35.2/(2π) = 5.6 m; CSA = 2π × (5.6)² ≈ 197.1 m² = 1,971,000 cm²; cost = (1,971,000 / 100) × 10 = ₹197,100. Circulate and check unit conversions (m² to cm²)."
+          },
+          {
+            "minutes": "47-50",
+            "activity": "Consolidate the three hemisphere formulas and the unit-conversion trap. Ask students to name one real structure near them that is approximately hemispherical."
+          }
+        ],
+        "teacher_notes": "Having established the sphere's SA and V in the previous two units, the hemisphere formulas follow by halving — the derivation is fast, leaving most of the unit for computation practice. The most common error is using TSA = 2πr² (forgetting the flat circular base), which applies to a dome but not to a solid or a bowl; always ask students to identify which surfaces are present. Exercise Set 14.4 Q8 (p.141) is a multi-step problem requiring a unit conversion from metres to centimetres — watch for students who compute the cost in m² and forget to convert.",
+        "homework": ["Exercise Set 14.4 Q8, p.141 — if not completed in class, finish the unit-conversion step and verify the cost."]
+      },
+      {
+        "period_number": 10,
+        "period_duration_minutes": 50,
+        "activity_title": "Identifying Shapes Around Us and Estimating Real Volumes",
+        "section_anchor": "14.6",
+        "pedagogical_method": "Discovery/Inquiry",
+        "materials": ["Textbook", "Ruler and measuring tape", "A gas cylinder or water bottle brought to class if available"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {
+            "id": "E-34",
+            "type": "exercise",
+            "source_section": "14.6",
+            "source_sections": ["14.2", "14.6"],
+            "book_ref": "End of Chapter Q16, p.146",
+            "description": "Find the volume of ink in a new ballpoint pen by treating the ink column as a thin cylinder and measuring as needed."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-10",
+            "activity": "Open with the section 14.6 activity: students list objects or structures in the classroom and school that are cubical, cuboidal, cylindrical, conical, spherical or pyramidal (or close approximations). Share lists; discuss which everyday objects are genuinely good approximations and which are only rough ones."
+          },
+          {
+            "minutes": "10-28",
+            "activity": "Groups of three choose two objects from their list — one cylindrical, one cuboidal — measure necessary dimensions with a ruler or tape, and estimate their volumes. Convert to litres where appropriate (1000 cm³ = 1 L). Each group records: object, formula used, measured dimensions, computed volume."
+          },
+          {
+            "minutes": "28-40",
+            "activity": "Class share-out: each group reports one estimate. Compare values for the same object across groups; discuss how measurement uncertainty propagates into the volume estimate."
+          },
+          {
+            "minutes": "40-48",
+            "activity": "Introduce End of Chapter Q16 (p.146): measure the diameter and length of a ballpoint-pen refill, treat the ink column as a thin cylinder, compute volume. Students work individually with a pen refill or use assumed typical dimensions (e.g. diameter 1 mm, length 7 cm)."
+          },
+          {
+            "minutes": "48-50",
+            "activity": "Consolidate: surface-area and volume formulas are tools for modelling real objects, and measurement uncertainty is part of every real application."
+          }
+        ],
+        "teacher_notes": "Section 14.6 is explicitly an applications-and-identification unit, and the pedagogical goal is to see the chapter's formulas as modelling tools rather than isolated exercises. Students often underestimate how closely a gas cylinder or bucket approximates a cylinder — encourage them to measure and compute rather than just assert. End of Chapter Q16 (p.146) is a good example of measurement-driven problem solving; if pen refills are available, the physical measurement makes the exercise more concrete.",
+        "homework": ["End of Chapter Q22, p.147 — project: estimate the volume of your home by treating rooms as cuboids; bring your measurements and estimate to the next unit."]
+      },
+      {
+        "period_number": 11,
+        "period_duration_minutes": 50,
+        "activity_title": "Guesstimates: Reasoning with Assumptions to Estimate Quantities",
+        "section_anchor": "14.6.1",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Board", "Calculator (optional)"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {
+            "id": "WE-5",
+            "type": "worked_example",
+            "source_section": "14.6.1",
+            "book_ref": "Example 5, p.141",
+            "description": "How many golgappas Lallan can serve from 5000π cm³ of pani; two students' different assumptions give about 1850 and 870."
+          },
+          {
+            "id": "WE-6",
+            "type": "worked_example",
+            "source_section": "14.6.1",
+            "book_ref": "Example 6, p.142",
+            "description": "How many tennis balls of radius 3 cm fit in a 30 ft × 30 ft × 15 ft classroom; ordered packing gives about 16,87,500."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-8",
+            "activity": "Define guesstimate: a reasonable estimate using assumptions, approximations, logic and everyday knowledge when exact data are unavailable. Stress that different people may reach different answers and that the quality of the reasoning matters most. Introduce the guesstimate method: make a quick intuitive guess → model the situation → identify relationships among quantities → state assumptions → calculate → compare the guess with the estimate."
+          },
+          {
+            "minutes": "8-22",
+            "activity": "Work through Example 5 (p.141): vessel volume = π × 10² × 50 = 5000π cm³. Two models: (i) spherical golgappa r = 1.5 cm, 60% full → volume of pani per golgappa ≈ 8.5 cm³ → about 1850 served; (ii) r = 1.75 cm, 80% full → about 18 cm³ → about 870 served. Discuss how each assumption changes the estimate and why neither is wrong — the assumptions determine the answer."
+          },
+          {
+            "minutes": "22-37",
+            "activity": "Work through Example 6 (p.142): room volume = 30 × 30 × 15 ft³ = 13,500 ft³ ≈ 3.78 × 10⁸ cm³; ball volume = (4/3)π × 3³ ≈ 113 cm³; upper bound = 3.78 × 10⁸ / 113 ≈ 33,45,000; ordered packing: 150 × 150 × 75 ≈ 16,87,500. Discuss why the volume-ratio upper bound is unreachable (spheres leave gaps) and why spheres cannot serve as volume units."
+          },
+          {
+            "minutes": "37-47",
+            "activity": "Students attempt End of Chapter Q18 (p.146) — estimate whether the pages of the textbook laid out would cover the classroom floor, and the maximum textbooks fitting in a 15 ft × 20 ft × 30 ft storeroom — in pairs. Each pair states their assumptions explicitly before computing."
+          },
+          {
+            "minutes": "47-50",
+            "activity": "Brief share-out of assumptions and estimates. Consolidate: a guesstimate is a structured approximation, not a wild guess; documenting assumptions is what makes it credible."
+          }
+        ],
+        "teacher_notes": "Section 14.6.1 pivots from formula application to mathematical modelling, and the key teaching move is insisting students state assumptions before computing. A common difficulty is that students feel there is one 'correct' answer; use Example 5 (p.141) explicitly to show that two defensible models give very different results, and that both are acceptable if the reasoning is transparent. End of Chapter Q18 (p.146) is well-suited to pair work because partners naturally challenge each other's assumptions.",
+        "homework": ["End of Chapter Q5, p.144 — guesstimate how much area all the people in the world would cover if crowded together; state assumptions explicitly.", "End of Chapter Q1, p.144 — guesstimate ice-cream scoops from a 10 × 15 × 20 cm container."]
+      },
+      {
+        "period_number": 12,
+        "period_duration_minutes": 50,
+        "activity_title": "Cross-Solid Problems: Connecting Cuboid, Cylinder, and Sphere Volumes",
+        "section_anchor": "14.1 / 14.2 / 14.5",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Board"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {
+            "id": "E-21",
+            "type": "exercise",
+            "source_section": "14.5",
+            "source_sections": ["14.1", "14.5"],
+            "book_ref": "Exercise Set 14.4 Q5, p.140",
+            "description": "16 spheres of radius 2 cm packed in a 16 × 8 × 8 cm box; find the volume of preservative liquid."
+          },
+          {
+            "id": "E-30",
+            "type": "exercise",
+            "source_section": "14.5",
+            "book_ref": "End of Chapter Q8, p.145",
+            "description": "Volume ratios of Jupiter and Sun to Earth treating all as spheres."
+          },
+          {
+            "id": "E-31",
+            "type": "exercise",
+            "source_section": "14.5",
+            "source_sections": ["14.2", "14.5"],
+            "book_ref": "End of Chapter Q9, p.145",
+            "description": "Show that the volume of a sphere is 2/3 of the volume of the smallest enclosing cylinder."
+          },
+          {
+            "id": "E-33",
+            "type": "exercise",
+            "source_section": "14.2",
+            "source_sections": ["14.2", "14.5"],
+            "book_ref": "End of Chapter Q15, p.146",
+            "description": "Crow drops marbles of radius 1 cm into a cylindrical glass; find how many are needed to raise the water from 16 cm to 20 cm."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-12",
+            "activity": "Frame the unit: several important problems require applying two or more solid formulas together. Introduce End of Chapter Q9 (p.145) — show V_sphere = (2/3) V_cylinder: the smallest enclosing cylinder has radius r and height 2r, so V_cyl = πr² × 2r = 2πr³; V_sphere / V_cyl = (4/3)πr³ / (2πr³) = 2/3. Walk through this algebraic proof as a class, step by step."
+          },
+          {
+            "minutes": "12-26",
+            "activity": "Students work on Exercise Set 14.4 Q5 (p.140): box volume = 16 × 8 × 8 = 1024 cm³; 16 spheres of radius 2 cm total volume = 16 × (4/3)π × 8 = (512/3)π ≈ 536.2 cm³; volume of liquid = 1024 − 536.2 ≈ 487.8 cm³ ≈ 488 cm³. Emphasise subtraction-of-volumes logic."
+          },
+          {
+            "minutes": "26-38",
+            "activity": "End of Chapter Q15 (p.146) as a class problem: the water must rise by 4 cm in a cylinder of radius 4 cm; volume to be displaced = π × 16 × 4 = 64π cm³; each marble volume = (4/3)π × 1 = (4/3)π cm³; number of marbles = 64π / ((4/3)π) = 48. Discuss the water-displacement model."
+          },
+          {
+            "minutes": "38-47",
+            "activity": "End of Chapter Q8 (p.145): ratio of Jupiter's volume to Earth's = (69900/6370)³ ≈ (10.97)³ ≈ 1321; ratio of Sun's to Earth's = (695700/6370)³ ≈ (109.2)³ ≈ 1,302,000. Students use approximations and verify reasonableness."
+          },
+          {
+            "minutes": "47-50",
+            "activity": "Consolidate the displacement-of-volume strategy and the ratio-of-cubed-radii technique for sphere volume comparisons. Both appear in science and engineering applications."
+          }
+        ],
+        "teacher_notes": "The key intellectual move in cross-solid problems is identifying which formula applies to which solid, then deciding whether to add or subtract volumes. A frequent error in the marble problem (End of Chapter Q15, p.146) is computing the volume of marbles needed and forgetting that the water is also displaced — make sure students set up the displacement equation correctly. End of Chapter Q9 (p.145) is worth treating as a written proof exercise; it rewards students who write clear algebraic steps.",
+        "homework": ["End of Chapter Q12, p.145 — choose the correct change in volume when a cuboid's length increases by 1 and when a cylinder's radius increases by 1."]
+      },
+      {
+        "period_number": 13,
+        "period_duration_minutes": 50,
+        "activity_title": "Chapter Consolidation: Selecting and Applying Formulas Across All Solids",
+        "section_anchor": "14.1 / 14.2 / 14.3 / 14.4 / 14.5 / 14.5.2 / 14.6.1",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Board", "Exercise sheets"],
+        "visual_aids": "Board summary table: solid, SA formula, V formula — one row per solid type covered in the chapter",
+        "textbook_items_in_class": [
+          {
+            "id": "E-3",
+            "type": "exercise",
+            "source_section": "14.1",
+            "book_ref": "Exercise Set 14.1 Q3, p.125",
+            "description": "Godown 40 × 25 × 10 m filled with cuboidal boxes 2 × 1.25 × 1 m; find the number of boxes."
+          },
+          {
+            "id": "E-16",
+            "type": "exercise",
+            "source_section": "14.3",
+            "book_ref": "Exercise Set 14.3 Q6, p.134",
+            "description": "Joker's cap: area of sheet for 10 cones of base radius 7 cm and height 24 cm."
+          },
+          {
+            "id": "E-25",
+            "type": "exercise",
+            "source_section": "14.1",
+            "book_ref": "End of Chapter Q2, p.144",
+            "description": "Express the number of unit cubes needed to grow a cube of side a to side a + 1."
+          },
+          {
+            "id": "E-26",
+            "type": "exercise",
+            "source_section": "14.1",
+            "book_ref": "End of Chapter Q4, p.144",
+            "description": "More chocolate: one cube of side 50 mm or a hundred cubes of side 10 mm?"
+          },
+          {
+            "id": "E-35",
+            "type": "exercise",
+            "source_section": "14.6.1",
+            "source_sections": ["14.2", "14.5", "14.6.1"],
+            "book_ref": "End of Chapter Q17, p.146",
+            "description": "Estimate chapatis from a ball of dough of radius 6 cm modelled as a sphere, with each chapati a thin disc."
+          }
+        ],
+        "time_bands": [
+          {
+            "minutes": "0-8",
+            "activity": "Build a board summary table together with the class: one row per solid (cuboid, cube, cylinder, cone, pyramid, sphere, hemisphere), with columns for SA formula and V formula. Students call out formulas and the teacher records them. This is a retrieval exercise, not a lecture."
+          },
+          {
+            "minutes": "8-22",
+            "activity": "Students work independently on End of Chapter Q2 (p.144) — algebraic: (a+1)³ − a³ = 3a² + 3a + 1 — and End of Chapter Q4 (p.144) — volume of one 50 mm cube = 125,000 mm³ vs. 100 cubes each 1000 mm³ = 100,000 mm³; the single large cube has more chocolate. These two items require algebraic manipulation and numerical comparison without any formula lookup."
+          },
+          {
+            "minutes": "22-35",
+            "activity": "Students work on Exercise Set 14.1 Q3 (p.125) — integer-division of godown volume by box volume — and Exercise Set 14.3 Q6 (p.134) — slant height of joker's cap from l² = 24² + 7² = 625, l = 25; CSA per cap = π × 7 × 25 = 175π; total for 10 = 1750π ≈ 5500 cm². Circulate and check setup."
+          },
+          {
+            "minutes": "35-46",
+            "activity": "End of Chapter Q17 (p.146) as a guesstimate: sphere of dough r = 6 cm, V_dough = (4/3)π × 216 = 288π cm³; each chapati modelled as a disc of radius 12 cm (assumed) and thickness 0.2 cm (assumed), V_chapati = π × 144 × 0.2 = 28.8π cm³; number ≈ 288π / 28.8π = 10. Students state their own assumptions if they differ and compute their estimate."
+          },
+          {
+            "minutes": "46-50",
+            "activity": "Closing reflection: the chapter's formulas all follow from one of two geometric ideas — unfolding a curved surface into a flat shape or picturing a solid as a stack of thin slices — and its applications range from exact computation to approximate estimation, both equally valid depending on what data are available."
+          }
+        ],
+        "teacher_notes": "The closing unit is explicitly a cross-formula consolidation and should feel like synthesis through practice rather than a revision lecture. End of Chapter Q2 (p.144) is algebraic and tests whether students can expand (a+1)³ correctly — a common slip is writing 3a² + 1 (forgetting the 3a term). The chapati guesstimate in End of Chapter Q17 (p.146) is a natural closing guesstimate problem; celebrate varied but well-reasoned answers.",
+        "homework": []
+      }
+    ]
+  },
+  "coverage_handoff": [
+    {
+      "section_number": 1,
+      "section_ref": "14.1",
+      "section_title": "Cuboids and Cubes",
+      "total_sections": 10,
+      "period_numbers": [1],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can derive and apply TSA = 2(wl + hl + hw) and V = lwh for a cuboid, and TSA = 6a² and V = a³ for a cube, including comparing solids of equal volume by their surface areas.",
+        "Students can select appropriate surface-area or volume parameters to judge the suitability of a real cuboidal container, articulating which quantity governs each criterion."
+      ],
+      "section_context": "cuboid net, TSA and volume formulas, cube as special case, equal-volume comparison",
+      "c_code": "C-5.2",
+      "co_central": false
+    },
+    {
+      "section_number": 2,
+      "section_ref": "14.2",
+      "section_title": "Right Circular Cylinder",
+      "total_sections": 10,
+      "period_numbers": [2],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can derive and apply CSA = 2πrh and V = πr²h for a right circular cylinder, selecting the correct TSA expression (both-ends-closed or one-end-closed) for a given physical object."
+      ],
+      "section_context": "cylinder CSA from unrolled rectangle, two TSA cases, volume as cross-section × height",
+      "c_code": "C-5.2",
+      "co_central": false
+    },
+    {
+      "section_number": 3,
+      "section_ref": "14.2.1",
+      "section_title": "Another Way of Understanding Why the Above Formulas Are True",
+      "total_sections": 10,
+      "period_numbers": [3],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can explain why V = πr²h for a cylinder using the stacking-thin-circular-slices argument, and solve multi-solid problems that require equating or comparing cylinder and cuboid volumes."
+      ],
+      "section_context": "thin-disc stacking argument for cylinder volume, cross-solid volume problems",
+      "c_code": "C-8.2",
+      "co_central": false
+    },
+    {
+      "section_number": 4,
+      "section_ref": "14.3",
+      "section_title": "Cones",
+      "total_sections": 10,
+      "period_numbers": [4, 5],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can derive CSA = πrl for a right circular cone using both the thin-sector and the sector-angle methods, and compute TSA and CSA given r, h, and l.",
+        "Students can apply V = (1/3)πr²h to find the volume of a cone or recover a dimension from a given volume, including identifying cones generated by rotating a right triangle about one of its legs."
+      ],
+      "section_context": "cone from unrolled sector, two CSA derivations, volume one-third of cylinder, rotation of right triangle",
+      "c_code": "C-5.2",
+      "co_central": false
+    },
+    {
+      "section_number": 5,
+      "section_ref": "14.4",
+      "section_title": "Pyramidal Shapes",
+      "total_sections": 10,
+      "period_numbers": [6],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can apply V = (1/3) × base area × height to pyramids with any polygonal base, and determine the TSA of a pyramid by summing the areas of all its polygonal faces."
+      ],
+      "section_context": "pyramid definition, universal volume formula, TSA by face decomposition, cone as circular pyramid",
+      "c_code": "C-5.2",
+      "co_central": false
+    },
+    {
+      "section_number": 6,
+      "section_ref": "14.5",
+      "section_title": "Spheres and Hemispheres",
+      "total_sections": 10,
+      "period_numbers": [7],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can state and apply SA = 4πr² and V = (4/3)πr³ for a sphere, and use them to compare surface areas and volumes of spheres whose radii are in a given ratio."
+      ],
+      "section_context": "Archimedes' sphere SA = cylinder CSA, V = (4/3)πr³, ratio of surface areas and volumes",
+      "c_code": "C-5.2",
+      "co_central": false
+    },
+    {
+      "section_number": 7,
+      "section_ref": "14.5.1",
+      "section_title": "Hands-on Activity to Verify the Formula for Surface Area of a Sphere",
+      "total_sections": 10,
+      "period_numbers": [8],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can carry out and interpret the string-winding experiment to verify that the surface area of a sphere equals the area of four circles of the same radius, distinguishing experimental verification from mathematical proof."
+      ],
+      "section_context": "string-winding verification of SA = 4πr², experimental evidence vs. proof",
+      "c_code": "C-8.2",
+      "co_central": false
+    },
+    {
+      "section_number": 8,
+      "section_ref": "14.5.2",
+      "section_title": "Hemisphere",
+      "total_sections": 10,
+      "period_numbers": [9],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can derive and apply CSA = 2πr², TSA = 3πr², and V = (2/3)πr³ for a hemisphere, selecting CSA or TSA as appropriate for a given physical context."
+      ],
+      "section_context": "hemisphere CSA, TSA, volume derived from sphere formulas, dome and bowl contexts",
+      "c_code": "C-5.2",
+      "co_central": false
+    },
+    {
+      "section_number": 9,
+      "section_ref": "14.6",
+      "section_title": "Areas and Volumes Around Us",
+      "total_sections": 10,
+      "period_numbers": [10],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can identify real objects as approximations of standard solids and estimate their volumes by measuring dimensions and applying the appropriate formula, converting units as needed."
+      ],
+      "section_context": "classifying real objects by solid type, measuring and computing volumes, litre conversion",
+      "c_code": "C-8.1",
+      "co_central": false
+    },
+    {
+      "section_number": 10,
+      "section_ref": "14.6.1",
+      "section_title": "Guesstimates: Did You Ever Wonder?",
+      "total_sections": 10,
+      "period_numbers": [11],
+      "period_duration_minutes": 50,
+      "implied_lo": [
+        "Students can construct a guesstimate by stating explicit assumptions, modelling the situation with appropriate solid-volume formulas, computing an estimate, and comparing it with an initial intuitive guess."
+      ],
+      "section_context": "guesstimate method, modelling with sphere and cylinder volumes, assumption-driven estimation",
+      "c_code": "C-8.1",
+      "co_central": false
+    }
+  ],
+  "assessment_items": {
+    "grade": "Grade IX",
+    "subject": "mathematics",
+    "stage": "secondary",
+    "chapter_number": 14,
+    "chapter_title": "Math of Space: Surface Area and Volume",
+    "chapter_cg": "CG-5",
+    "reasoning_floor_lift_applied": false,
+    "questions": [
+      {
+        "section_number": 1,
+        "section_ref": "14.1",
+        "section_title": "Cuboids and Cubes",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can derive and apply TSA = 2(wl + hl + hw) and V = lwh for a cuboid, and TSA = 6a² and V = a³ for a cube, including comparing solids of equal volume by their surface areas.",
+        "section_context": "cuboid net, TSA and volume formulas, cube as special case, equal-volume comparison",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Derives and uses surface-area and volume formulas for standard solids including cuboids and cubes."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A solid wooden cuboid measures 10 cm × 6 cm × 4 cm. A solid wooden cube is made from wood of the same volume as this cuboid. Find (i) the side length of the cube, correct to one decimal place, and (ii) the difference in total surface areas between the cuboid and the cube, correct to one decimal place. State clearly which solid has the greater total surface area.",
+        "options": [],
+        "expected_answer": "(i) Side of cube = ∛240 ≈ 6.2 cm. (ii) TSA of cuboid = 2(10×6 + 10×4 + 6×4) = 2(60+40+24) = 248 cm². TSA of cube = 6 × (6.2)² = 6 × 38.44 = 230.6 cm². Difference = 248 − 230.6 = 17.4 cm²; the cuboid has the greater total surface area.",
+        "method_one_line": "Compute V = lwh for the cuboid, find the cube's side as the cube root, then apply TSA = 2(wl+hl+hw) and TSA = 6a² and subtract.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 1},
+            "inclusivity": "Students who struggle with ∛240 may be invited to use 6² = 216 and 7² = 343 to bracket the cube root and estimate to one decimal place; students who finish quickly may be asked to generalise: for a cuboid of dimensions l, w, h, write an algebraic expression for the side of the equal-volume cube and show that the cube always has a smaller TSA when l, w, h are not all equal."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 1,
+        "section_ref": "14.1",
+        "section_title": "Cuboids and Cubes",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can select appropriate surface-area or volume parameters to judge the suitability of a real cuboidal container, articulating which quantity governs each criterion.",
+        "section_context": "cuboid net, TSA and volume formulas, cube as special case, equal-volume comparison",
+        "question_type": "ECR",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Derives and uses surface-area and volume formulas for standard solids including cuboids and cubes."
+        },
+        "cognitive_demand": "Evaluation",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A school is choosing between two proposed designs for a rectangular storage room. Design P has dimensions 6 m × 4 m × 3 m. Design Q has dimensions 8 m × 3 m × 3 m. Both designs cost the same to build. The school wants maximum storage capacity. A contractor argues that Design Q is better because it has a longer floor. A teacher argues that Design P is better. Using calculations of volume and total surface area, decide which design provides greater storage capacity, and evaluate whether the contractor's reasoning is correct. Justify your conclusion.",
+        "options": [],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [
+          "Correct volume of Design P: 6 × 4 × 3 = 72 m³.",
+          "Correct volume of Design Q: 8 × 3 × 3 = 72 m³.",
+          "Recognition that volumes are equal, so neither design has greater storage capacity on that basis alone.",
+          "Correct TSA of Design P: 2(24 + 18 + 12) = 108 m².",
+          "Correct TSA of Design Q: 2(24 + 24 + 9) = 114 m².",
+          "Correct evaluation: the contractor's reasoning (longer floor) is flawed because floor length does not determine volume; both rooms hold the same amount.",
+          "Clear conclusion: storage capacity (volume) is identical; if construction material cost matters, Design P uses less surface area."
+        ],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": null,
+          "SCR": null,
+          "ECR": {
+            "learning_outcome": {"section": 1},
+            "inclusivity": "Students who find the algebraic setup difficult may be guided to write the formula TSA = 2(wl + hl + hw) and substitute numbers for each design before evaluating; students who complete the task quickly may be asked to find a third design with the same volume but the smallest possible total surface area, and to explain why that design would minimise construction material."
+          },
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 2,
+        "section_ref": "14.2",
+        "section_title": "Right Circular Cylinder",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can derive and apply CSA = 2πrh and V = πr²h for a right circular cylinder, selecting the correct TSA expression (both-ends-closed or one-end-closed) for a given physical object.",
+        "section_context": "cylinder CSA from unrolled rectangle, two TSA cases, volume as cross-section × height",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Derives and uses surface-area and volume formulas for standard solids including cylinders."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A metal container in the shape of a cylinder is open at the top (i.e., it has only one flat circular base) and has an internal radius of 7 cm and an internal height of 20 cm. (i) Find the total surface area of sheet metal used to make the container (use π = 22/7). (ii) Find the volume of liquid it can hold in litres, using 1000 cm³ = 1 litre.",
+        "options": [],
+        "expected_answer": "(i) TSA (open-top) = CSA + one base = 2πrh + πr² = πr(2h + r) = (22/7) × 7 × (40 + 7) = 22 × 47 = 1034 cm². (ii) V = πr²h = (22/7) × 49 × 20 = 22 × 7 × 20 = 3080 cm³ = 3.08 litres.",
+        "method_one_line": "Apply TSA = πr(2h + r) for one-end-closed cylinder and V = πr²h, then convert volume to litres.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 2},
+            "inclusivity": "Students who confuse the two TSA cases may be prompted to list the surfaces present (curved surface + one circular base) before selecting the formula; students who finish quickly may be asked to find the height of a second cylinder of radius 3.5 cm that holds the same volume, and to compute how much more or less sheet metal it requires."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 3,
+        "section_ref": "14.2.1",
+        "section_title": "Another Way of Understanding Why the Above Formulas Are True",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can explain why V = πr²h for a cylinder using the stacking-thin-circular-slices argument, and solve multi-solid problems that require equating or comparing cylinder and cuboid volumes.",
+        "section_context": "thin-disc stacking argument for cylinder volume, cross-solid volume problems",
+        "question_type": "ECR",
+        "competency": {
+          "c_code": "C-8.2",
+          "competency_text": "Moves between solids and their flat representations and uses slice-based arguments to establish volume formulas."
+        },
+        "cognitive_demand": "Analysis",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A solid metallic cylinder of radius 6 cm and height 14 cm is melted and recast into solid cubes of side 3 cm. (i) Using the stacking-thin-circular-discs argument from section 14.2.1, explain in your own words why the volume of the cylinder equals πr²h. (ii) Find the volume of the cylinder (use π = 22/7). (iii) Find the number of complete cubes that can be formed. Show all working.",
+        "options": [],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [
+          "Part (i): A clear explanation that the cylinder is imagined as a very large number of thin circular discs, each of area πr² and negligible thickness; the total volume is the sum of all disc volumes, which equals πr² × h.",
+          "Part (ii): V = (22/7) × 36 × 14 = 22 × 36 × 2 = 1584 cm³.",
+          "Part (iii): Volume of one cube = 3³ = 27 cm³; number of complete cubes = floor(1584 / 27) = floor(58.67) = 58.",
+          "Explicit floor/rounding justification: the answer must be a whole number and the remainder cannot form a complete cube."
+        ],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": null,
+          "SCR": null,
+          "ECR": {
+            "learning_outcome": {"section": 3},
+            "inclusivity": "Students who find the verbal explanation difficult may first draw a diagram of the stacked discs and then translate it into words; students who complete all three parts may be asked to find what fraction of the original cylinder's volume is left over after forming the 58 cubes, and what shape that remaining metal might form."
+          },
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 4,
+        "section_ref": "14.3",
+        "section_title": "Cones",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can derive CSA = πrl for a right circular cone using both the thin-sector and the sector-angle methods, and compute TSA and CSA given r, h, and l.",
+        "section_context": "cone from unrolled sector, two CSA derivations, volume one-third of cylinder, rotation of right triangle",
+        "question_type": "MCQ",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Derives and applies surface-area formulas for cones by unrolling their curved surfaces."
+        },
+        "cognitive_demand": "Understanding",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A right circular cone has a vertical height of 8 cm and a base radius of 6 cm. Which of the following gives its total surface area?",
+        "options": [
+          {"label": "A", "text": "π × 6 × 8 + π × 36", "is_correct": false},
+          {"label": "B", "text": "π × 6 × 10 + π × 36", "is_correct": true},
+          {"label": "C", "text": "π × 6 × 10", "is_correct": false},
+          {"label": "D", "text": "π × 6 × 8", "is_correct": false}
+        ],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": {
+            "learning_outcome": {"section": 4},
+            "what_each_option_reveals": {
+              "A": "Uses the vertical height h = 8 in place of the slant height l in the CSA formula πrl, failing to first compute l = √(h² + r²) = √(64 + 36) = 10.",
+              "C": "Computes CSA = πrl correctly (π × 6 × 10) but omits the base area πr², giving only the curved surface area rather than the total surface area.",
+              "D": "Uses h instead of l and also omits the base area, combining both errors."
+            },
+            "inclusivity": "Students who are uncertain may be prompted to write the three quantities r, h, l and use l² = h² + r² before choosing; students who find the item straightforward may be asked to also compute the numerical value of the TSA using π ≈ 3.14 and verify by an alternative route (sector area method)."
+          },
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 4,
+        "section_ref": "14.3",
+        "section_title": "Cones",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can apply V = (1/3)πr²h to find the volume of a cone or recover a dimension from a given volume, including identifying cones generated by rotating a right triangle about one of its legs.",
+        "section_context": "cone from unrolled sector, two CSA derivations, volume one-third of cylinder, rotation of right triangle",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Applies V = (1/3)πr²h to find cone volumes and to recover dimensions from given volumes."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A right triangle with legs 9 cm and 12 cm is rotated through 360° about its 12 cm leg. (i) Identify the solid formed and state the values of its radius and height. (ii) Find the volume of the solid, leaving the answer in terms of π. (iii) A cylindrical container has the same base radius and the same height as this solid. How many times must the solid be filled with liquid and poured into the cylinder to fill it completely?",
+        "options": [],
+        "expected_answer": "(i) Right circular cone with r = 9 cm and h = 12 cm. (ii) V = (1/3)π × 81 × 12 = 324π cm³. (iii) Volume of cylinder = π × 81 × 12 = 972π cm³; 972π / 324π = 3. The cone must be filled and poured exactly 3 times.",
+        "method_one_line": "Identify the axis of rotation, read off r and h, apply V = (1/3)πr²h, then divide V_cylinder = πr²h by V_cone to get 3.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 4},
+            "inclusivity": "Students who are unsure which leg becomes the radius may be prompted to draw the triangle and the axis of rotation before computing; students who finish quickly may be asked to redo the problem rotating the triangle about the 9 cm leg instead and compare the resulting cone's volume with the original."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 5,
+        "section_ref": "14.4",
+        "section_title": "Pyramidal Shapes",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can apply V = (1/3) × base area × height to pyramids with any polygonal base, and determine the TSA of a pyramid by summing the areas of all its polygonal faces.",
+        "section_context": "pyramid definition, universal volume formula, TSA by face decomposition, cone as circular pyramid",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Applies V = (1/3) × base area × height to pyramids and finds TSA by summing polygonal face areas."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A square-based pyramid has a base side of 8 cm and a vertical height of 6 cm. The slant height of each triangular face (measured from the midpoint of a base edge to the apex) is 7.2 cm (given; do not derive). (i) Find the volume of the pyramid. (ii) Find the total surface area of the pyramid, showing how you decompose it into the base and the four triangular faces.",
+        "options": [],
+        "expected_answer": "(i) V = (1/3) × 64 × 6 = 128 cm³. (ii) Base area = 8² = 64 cm²; area of one triangular face = (1/2) × 8 × 7.2 = 28.8 cm²; total area of 4 faces = 4 × 28.8 = 115.2 cm²; TSA = 64 + 115.2 = 179.2 cm².",
+        "method_one_line": "Apply V = (1/3) × base area × height; then TSA = base area + 4 × (1/2 × base side × slant height).",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 5},
+            "inclusivity": "Students who are uncertain about the TSA decomposition may be prompted to list all faces (one square base, four triangular lateral faces) and compute each area separately before summing; students who finish quickly may be asked to compare this pyramid's volume with that of a cone with base radius 4 cm and the same height (V_cone = (1/3)π × 16 × 6 ≈ 100.5 cm³) and explain why the pyramid's volume is larger despite both using the same formula structure."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 6,
+        "section_ref": "14.5",
+        "section_title": "Spheres and Hemispheres",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can state and apply SA = 4πr² and V = (4/3)πr³ for a sphere, and use them to compare surface areas and volumes of spheres whose radii are in a given ratio.",
+        "section_context": "Archimedes' sphere SA = cylinder CSA, V = (4/3)πr³, ratio of surface areas and volumes",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Applies SA = 4πr² and V = (4/3)πr³ for spheres and compares spheres by their SA and volume ratios."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "Sphere X has radius r and Sphere Y has radius 3r. (i) Find the ratio of the surface area of X to the surface area of Y. (ii) Find the ratio of the volume of X to the volume of Y. (iii) A sphere X of radius 3.5 cm is made of solid wax. Find the number of complete spheres of radius 1 cm that can be made by melting sphere X (use π = 22/7).",
+        "options": [],
+        "expected_answer": "(i) SA_X / SA_Y = 4πr² / 4π(3r)² = r² / 9r² = 1 : 9. (ii) V_X / V_Y = (4/3)πr³ / (4/3)π(3r)³ = r³ / 27r³ = 1 : 27. (iii) V of sphere X = (4/3) × (22/7) × (3.5)³ = (4/3) × (22/7) × 42.875 = (4 × 22 × 42.875) / 21 = 3773 / 21 ≈ 179.67 cm³. V of one small sphere = (4/3) × (22/7) × 1 = 88/21 ≈ 4.19 cm³. Number = floor(179.67 / 4.19) = floor(42.88) = 42.",
+        "method_one_line": "Use SA = 4πr² and V = (4/3)πr³, form ratios algebraically, then divide the wax sphere's volume by one small sphere's volume and take the floor.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 6},
+            "inclusivity": "Students who struggle with the ratio parts may be asked to substitute a concrete value such as r = 2 and verify the pattern before generalising algebraically; students who finish quickly may be asked to show that increasing r by 10% increases V by approximately 33.1%, linking to Exercise Set 14.4 Q6."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 7,
+        "section_ref": "14.5.1",
+        "section_title": "Hands-on Activity to Verify the Formula for Surface Area of a Sphere",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can carry out and interpret the string-winding experiment to verify that the surface area of a sphere equals the area of four circles of the same radius, distinguishing experimental verification from mathematical proof.",
+        "section_context": "string-winding verification of SA = 4πr², experimental evidence vs. proof",
+        "question_type": "ECR",
+        "competency": {
+          "c_code": "C-8.2",
+          "competency_text": "Uses physical representation and flat-shape correspondence to verify the sphere surface-area formula."
+        },
+        "cognitive_demand": "Analysis",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "In the string-winding activity from section 14.5.1, a student winds string tightly around a rubber ball of radius 4.5 cm until the surface is completely covered, then unwinds the string and fills circles of radius 4.5 cm. (i) How many such circles should the string exactly fill, according to the formula SA = 4πr²? Show the calculation. (ii) In practice, a student finds the string fills slightly fewer than the expected number of circles. Give two reasons why this might happen in a real experiment. (iii) Explain why this experiment, even if the result were perfect, does not constitute a mathematical proof that SA = 4πr².",
+        "options": [],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [
+          "Part (i): SA of sphere = 4π × (4.5)² = 4π × 20.25 = 81π cm²; area of one circle = π × (4.5)² = 20.25π cm²; number of circles = 81π / 20.25π = 4. The string should fill exactly 4 circles.",
+          "Part (ii): Any two of — string overlaps slightly at edges or gaps appear, string is not wound to uniform tightness, the circles drawn on paper are not perfectly sized to the ball's radius, the ball is not a perfect sphere.",
+          "Part (iii): A clear explanation that experimental results are always subject to measurement error and physical imperfection; the formula is established through mathematical argument (Archimedes' geometric proof / calculus), not by physical measurement; no finite experiment can verify an exact equality."
+        ],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": null,
+          "SCR": null,
+          "ECR": {
+            "learning_outcome": {"section": 7},
+            "inclusivity": "Students who find part (iii) abstract may be guided by the prompt 'What would need to be true for an experiment to prove a formula exactly?' — this helps them articulate the difference between measurement and proof; students who answer fluently may be asked to describe how Archimedes' argument about the enclosing cylinder provides a non-experimental justification for the formula."
+          },
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 8,
+        "section_ref": "14.5.2",
+        "section_title": "Hemisphere",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can derive and apply CSA = 2πr², TSA = 3πr², and V = (2/3)πr³ for a hemisphere, selecting CSA or TSA as appropriate for a given physical context.",
+        "section_context": "hemisphere CSA, TSA, volume derived from sphere formulas, dome and bowl contexts",
+        "question_type": "MCQ",
+        "competency": {
+          "c_code": "C-5.2",
+          "competency_text": "Applies hemisphere surface area and volume formulas and selects CSA or TSA for a given context."
+        },
+        "cognitive_demand": "Understanding",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A hemispherical dome is to be painted on its outside curved surface only. Its radius is 7 m. Which expression gives the area to be painted?",
+        "options": [
+          {"label": "A", "text": "3π × 7²", "is_correct": false},
+          {"label": "B", "text": "4π × 7²", "is_correct": false},
+          {"label": "C", "text": "2π × 7²", "is_correct": true},
+          {"label": "D", "text": "π × 7²", "is_correct": false}
+        ],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": {
+            "learning_outcome": {"section": 8},
+            "what_each_option_reveals": {
+              "A": "Uses TSA = 3πr², which includes both the curved surface and the flat circular base; the student has not recognised that only the curved exterior is painted.",
+              "B": "Uses the full sphere's surface area 4πr², confusing the hemisphere with a complete sphere.",
+              "D": "Gives only the area of the flat circular base πr², confusing the base with the curved surface."
+            },
+            "inclusivity": "Students who are uncertain may be prompted to list the surfaces of a hemisphere (one curved surface, one flat base) and decide which one a painter would reach on the outside of a dome; students who finish quickly may be asked to compute the cost of painting this dome at ₹15 per 100 cm², first converting the radius to centimetres."
+          },
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 9,
+        "section_ref": "14.6",
+        "section_title": "Areas and Volumes Around Us",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can identify real objects as approximations of standard solids and estimate their volumes by measuring dimensions and applying the appropriate formula, converting units as needed.",
+        "section_context": "classifying real objects by solid type, measuring and computing volumes, litre conversion",
+        "question_type": "SCR",
+        "competency": {
+          "c_code": "C-8.1",
+          "competency_text": "Models everyday situations using solid-volume formulas and estimates quantities by measuring and computing."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A student wants to estimate how much water a cylindrical overhead water tank can hold. She measures the tank's outer diameter as 1.4 m and its outer height as 2 m. She estimates the wall thickness is approximately 5 cm throughout. (i) State which solid model she should use and identify the internal radius and internal height she should use in her calculation. (ii) Compute the volume of water the tank can hold in litres (use π = 22/7 and 1000 cm³ = 1 litre).",
+        "options": [],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [
+          "Correct solid identification: cylinder, using internal dimensions.",
+          "Internal radius = (1.4/2) − 0.05 = 0.7 − 0.05 = 0.65 m = 65 cm; internal height = 2 m − 2 × 0.05 m = 1.9 m = 190 cm.",
+          "V = (22/7) × 65² × 190 = (22/7) × 4225 × 190. First: 4225 × 190 = 802750; then 802750 × 22 / 7 = 17660500 / 7 = 2522928.6 cm³ ≈ 2523 litres.",
+          "Correct unit conversion dividing by 1000."
+        ],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": null,
+          "SCR": {
+            "learning_outcome": {"section": 9},
+            "inclusivity": "Students who are uncertain about how wall thickness affects the radius may be prompted to draw a cross-section of the tank and mark the inner and outer radii; students who complete the problem quickly may be asked to estimate how long the tank would last a family that uses 150 litres of water per day."
+          },
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 10,
+        "section_ref": "14.6.1",
+        "section_title": "Guesstimates: Did You Ever Wonder?",
+        "total_sections": 10,
+        "implied_lo_assessed": "Students can construct a guesstimate by stating explicit assumptions, modelling the situation with appropriate solid-volume formulas, computing an estimate, and comparing it with an initial intuitive guess.",
+        "section_context": "guesstimate method, modelling with sphere and cylinder volumes, assumption-driven estimation",
+        "question_type": "OPEN_TASK",
+        "competency": {
+          "c_code": "C-8.1",
+          "competency_text": "Constructs guesstimates using solid-volume formulas, explicit assumptions, and reasoned approximation."
+        },
+        "cognitive_demand": "Evaluation",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "",
+        "options": [],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "Guesstimate how many marbles of diameter 2 cm can be packed into a cylindrical jar of internal diameter 14 cm and internal height 20 cm. Before you calculate: write your intuitive guess. Then work through the following steps in your solution: (1) State your assumptions about how the marbles pack. (2) Use the cylinder's volume and the marble's volume to find an upper bound. (3) Use a simple ordered-packing model (rows and layers) to find a realistic estimate. (4) Compare your two estimates with your initial guess and write a sentence explaining why the upper bound cannot be achieved.",
+        "scaffold": "Upper bound: divide the jar's volume by one marble's volume. Ordered packing: find how many marbles fit along the diameter, how many rows fit along the diameter at right angles, and how many layers fit along the height. Multiply to get the realistic estimate.",
+        "format_of_output": ["Written intuitive guess (one sentence)", "List of stated assumptions", "Calculation of upper bound with working", "Ordered-packing calculation with working", "One-sentence comparison and explanation"],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": {
+            "learning_outcome": {"section": 10},
+            "format_type": "Model-and-solve",
+            "format_rationale": "The guesstimate method from section 14.6.1 requires students to model a real situation with a volume formula, state assumptions, compute an estimate, and reflect on its validity — exactly the model-and-solve structure.",
+            "what_this_demonstrates": "Students demonstrate the full guesstimate cycle: intuitive guess, explicit assumptions, upper-bound computation using V_cylinder and V_sphere, a structured ordered-packing estimate, and critical reflection on why the upper bound is unattainable due to packing gaps.",
+            "reading_the_scaffold": "The upper bound step uses V_jar = π × 7² × 20 = 980π cm³ and V_marble = (4/3)π × 1³ = (4/3)π cm³; upper bound = 980π / ((4/3)π) = 980 × 3/4 = 735. Ordered packing: diameter 14 cm ÷ 2 cm = 7 marbles per row, 7 rows per layer (square grid), 20 cm ÷ 2 cm = 10 layers; estimate = 7 × 7 × 10 = 490. The gap between 735 and 490 reflects packing inefficiency.",
+            "strong_vs_weak_markers": "Strong: explicit assumptions stated; both computations shown with formula and substitution; a clear explanation that spheres leave gaps so the volume ratio is an overcount; initial guess compared to both estimates. Weak: no stated assumptions; only one of the two computations; explanation of the gap missing or vague; no initial guess recorded.",
+            "inclusivity": "Students who find the ordered-packing model difficult may be guided to think of one layer first (how many marbles fit flat in the base of the jar?) before extending to multiple layers; students who complete all steps may be asked to estimate the percentage of the jar's volume that is empty space in their ordered-packing model and suggest how a denser packing might improve the estimate."
+          }
+        }
+      }
+    ]
+  }
+}

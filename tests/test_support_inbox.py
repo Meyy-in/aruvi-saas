@@ -164,6 +164,13 @@ def test_reopen_template_sends_her_first_name_when_the_window_is_closed():
         m.config.WA_REOPEN_TEMPLATE = old
 
 
+def test_first_name_is_capitalised_for_templates():
+    from api.support_inbox import first_name
+    assert first_name("kumar radhakrishnan") == "Kumar"
+    assert first_name("McKenzie") == "McKenzie"
+    assert first_name("9876543210") == "there" and first_name("") == "there"
+
+
 def test_conversation_is_erased_with_the_account():
     m, c = _client()
     _hook(c, [_msg("919800000205", "hi", "e1")])

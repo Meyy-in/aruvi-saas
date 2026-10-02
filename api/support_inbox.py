@@ -51,6 +51,16 @@ def _parse(ts: str) -> Optional[datetime]:
         return None
 
 
+def first_name(full: Any) -> str:
+    """The first name a WhatsApp template greets her by — "kumar radhakrishnan" → "Kumar".
+    Only the first letter is raised, so "McKenzie" stays as she wrote it. A missing or numeric
+    name (an account whose name is still its mobile) becomes "there": "Hello there"."""
+    first = (str(full or "").strip().split() or [""])[0]
+    if not first or first.isdigit():
+        return "there"
+    return first[:1].upper() + first[1:]
+
+
 def _pretty(n: str) -> str:
     d = e164(n)
     return f"+91 {d[2:7]} {d[7:]}" if len(d) == 12 and d.startswith("91") else "+" + d
@@ -301,9 +311,7 @@ def build_router(inbox: Inbox) -> APIRouter:
         if inbox.repo.load(n) is None:
             raise HTTPException(status_code=404, detail="No such conversation.")
         t = inbox.repo.load(n) or {}
-        first = (str(t.get("name") or "").strip().split() or [""])[0]
-        if not first or first.isdigit():
-            first = "there"
+        first = first_name(t.get("name"))
         res = inbox.wa.send_template(WhatsAppTemplate(
             to=e164(n), template=cfg.WA_REOPEN_TEMPLATE, language=cfg.WA_TEMPLATE_LANG,
             params=[first] if getattr(cfg, "WA_REOPEN_NAME_PARAM", True) else []))
