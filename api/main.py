@@ -943,6 +943,15 @@ def get_chapters(subject: str, grade: str) -> Dict[str, Any]:
             n = row.get("chapter")
             if n is None or n in listed:
                 continue
+            if row.get("reserve"):
+                # Budgeted time, not a chapter (genon/master_plan.py RESERVE_PREFIX, founder
+                # ruling 2026-10-02): the Year Plan shows it under its own title and counts its
+                # periods; like a placeholder it is never offered for generation.
+                chapters.append({"chapter_number": n,
+                                 "chapter_title": row.get("title") or "Reserved for practice",
+                                 "weight": row.get("weight"), "placeholder": True,
+                                 "reserve": True})
+                continue
             chapters.append({"chapter_number": n, "chapter_title": "Book awaited",
                              "weight": row.get("weight"), "placeholder": True})
         chapters.sort(key=lambda c: (c["chapter_number"] is None, c["chapter_number"]))
