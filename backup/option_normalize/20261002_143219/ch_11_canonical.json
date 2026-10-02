@@ -1,0 +1,1832 @@
+{
+  "filename": "ch_11_canonical.json",
+  "saved_at": "2026-10-02T14:20:10",
+  "plan_status": "canonical",
+  "chapter_number": 11,
+  "chapter_title": "The World of Algorithms",
+  "grade": "Grade IX",
+  "subject": "mathematics",
+  "period_rows_snapshot": [
+    {
+      "id": 0,
+      "duration": 50,
+      "count": 14
+    }
+  ],
+  "period_schedule_display": "Period schedule:\n  Row 1: 50 minutes × 14 periods = 700 minutes\nTotal: 14 periods · 11h 40min",
+  "genon_canonical": {
+    "generated": "2026-10-02",
+    "academic_year": "2026-27",
+    "schedule": "14x50",
+    "constitution": "LP v1.3 / assessment v1.2",
+    "source": "generate_canonical.py one mathematics ix 11",
+    "ledger_ts": "20261002_141235",
+    "validation": "clean"
+  },
+  "result": {
+    "lesson_plan": {
+      "periods": [
+        {
+          "period_number": 1,
+          "period_duration_minutes": 50,
+          "activity_title": "From Dot-Counting to Column Addition — What Is an Algorithm",
+          "section_anchor": "11.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook"
+          ],
+          "visual_aids": "Board illustration contrasting dot-picture of 5+7 with column layout of 473+695",
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Open with the question: how would you add 5 and 7 by drawing dots? Then ask: what if the two numbers were 473 and 695? Students estimate how many dots they would need and share their intuition about why dot-counting becomes impractical. Record responses on the board."
+            },
+            {
+              "minutes": "10-25",
+              "activity": "Introduce the column method for 473 + 695 on the board: write the numbers one below the other with digits aligned from the right, then add column by column from right to left, showing the carry at each step. Students copy the layout and follow the working column by column, noting where the carry arises and where it does not."
+            },
+            {
+              "minutes": "25-40",
+              "activity": "Place both approaches side by side on the board — the dot picture and the column — and ask students to articulate in pairs why the column method is faster. Draw out the idea that the column method is a systematic, step-by-step procedure: the chapter's central concept of an algorithm is named here. Students write one sentence defining, in their own words, what they understand an algorithm to be."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Whole-class share-out of student definitions. Teacher consolidates: an algorithm is a step-by-step procedure stated precisely enough that each step can be carried out without ambiguity. Connect this framing to the chapter's opening questions — what an algorithm is and what it has to do with mathematics — which the rest of the chapter answers through specific examples."
+            }
+          ],
+          "teacher_notes": "This unit opens the chapter's two guiding questions — what an algorithm is and why mathematics cares about it — using addition as the vehicle; no prior chapter content is assumed beyond familiarity with the Indian base-ten place-value system. Watch for students who treat the column method as 'just the way you add' without seeing it as a procedure whose steps could be written down and examined. The comparison of growth rates (dots versus columns as number size increases) is the key intuition this unit plants.",
+          "homework": []
+        },
+        {
+          "period_number": 2,
+          "period_duration_minutes": 50,
+          "activity_title": "Writing and Justifying the Five-Step Addition Algorithm",
+          "section_anchor": "11.1.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Squared paper or notebook"
+          ],
+          "visual_aids": "Board display of the five-step addition algorithm written out in numbered steps",
+          "textbook_items_in_class": [
+            {
+              "id": "E-1",
+              "type": "exercise",
+              "source_section": "11.1.1",
+              "book_ref": "Exercise Set 11.1 Q1, p.38",
+              "description": "Add two 4-digit numbers using the written steps of the addition algorithm, following them precisely and performing no action that is not explicitly mentioned, and check whether the correct result is obtained."
+            },
+            {
+              "id": "E-3",
+              "type": "exercise",
+              "source_section": "11.1.1",
+              "book_ref": "Exercise Set 11.1 Q3, p.38",
+              "description": "Explain why it is important to align the columns from right to left."
+            },
+            {
+              "id": "E-4",
+              "type": "exercise",
+              "source_section": "11.1.1",
+              "book_ref": "Exercise Set 11.1 Q4, p.38",
+              "description": "Explain why, in Step 3 of the addition algorithm, the value of carry cannot be more than 1."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Write the five steps of the addition algorithm on the board exactly as the textbook states them. Read through each step aloud with the class, pausing after each to ask: what is the algorithm doing here, and why? Focus on the carry variable: name it, explain its two possible values (0 or 1), and show how it is set and used in Steps 2 and 3."
+            },
+            {
+              "minutes": "12-25",
+              "activity": "Students work individually on Exercise Set 11.1 Q1 (p.38): add a given pair of 4-digit numbers by following the five written steps precisely, performing only what each step says. When finished, check the result by a second independent addition. Circulate to watch whether students are actually consulting each step or reverting to habit."
+            },
+            {
+              "minutes": "25-38",
+              "activity": "Think-and-reflect discussion: why does digit-by-digit addition give the correct sum? Lead students through the place-value grouping argument — each digit represents a count of units, tens, hundreds, etc.; adding the same-place groups separately and carrying a newly formed group of ten into the next group is exactly what combining and counting means. Students then tackle Exercise Set 11.1 Q3 (p.38) and Q4 (p.38) in pairs, writing short justifications."
+            },
+            {
+              "minutes": "38-50",
+              "activity": "Pairs share their justifications for Q3 and Q4. Consolidate the key insight: right-to-left alignment keeps same-place values in the same column, and carry can never exceed 1 because the maximum sum of two single digits plus a carry of 1 is 9 + 9 + 1 = 19, whose tens digit is 1. Pose the think-reflect extension: how would the algorithm need to change to add two decimal fractions? Students note ideas; these are not collected but serve as a reasoning bridge."
+            }
+          ],
+          "teacher_notes": "The place-value grouping argument — units added to units, tens to tens, a group of ten carried to the next column — is the justification the chapter insists must accompany every algorithm; students who simply execute the steps without connecting them to this reasoning have not yet met the unit's goal. A frequent slip is to confuse 'carry = 1' with writing a 1 into the sum column rather than into the column to the left; watch for this in Q1. Exercise Set 11.1 Q2 (p.38) — what happens when a 5-digit number is added to a 3-digit number — is a useful self-study item for students who finish early.",
+          "homework": [
+            "Exercise Set 11.1 Q5, p.38 — find out what happens if Step 5 (writing the final carry of 1) is left out, giving an example where the algorithm still works and one where it fails."
+          ]
+        },
+        {
+          "period_number": 3,
+          "period_duration_minutes": 50,
+          "activity_title": "Introducing the GCD Problem and the Divisors Algorithm",
+          "section_anchor": "11.2",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Pose the problem: given two numbers, say 375 and 825, find their greatest common divisor — without using prime factorisation. Ask students how they would approach this from first principles. Collect ideas. Establish the three-part plan the chapter proposes: understand what is needed, break into known sub-problems, and only then write an algorithm."
+            },
+            {
+              "minutes": "12-30",
+              "activity": "Introduce the two sub-problems: computing the divisors of each number, and then comparing the two lists. Focus first on what a divisor is (a number that divides evenly), and on the question of how to find all divisors of a given number systematically. Lead students to see that every divisor of n lies between 1 and n, so checking each candidate in turn is a complete method."
+            },
+            {
+              "minutes": "30-45",
+              "activity": "Name the key new idea: an algorithm needs to keep track of intermediate values, and for this we use a list — a sequence of values written in square brackets. Introduce the notation [1, 4, 9, 16] as an example and explain that divisors will be stored as a list. Discuss what 'executing' an algorithm means: running through its steps in order with actual values. Set up the structure that the next unit will execute in full."
+            },
+            {
+              "minutes": "45-50",
+              "activity": "Quick consolidation: students write, in one or two sentences, the two sub-problems that the gcd computation has been broken into, and why breaking it into sub-problems is a useful strategy. Share two or three responses aloud."
+            }
+          ],
+          "teacher_notes": "Section 11.2 is intentionally a framing section — it names the gcd problem and the strategy of decomposition without yet writing the full algorithm. The goal here is that students see problem decomposition as a principled step, not an ad hoc trick. Watch for students who jump to prime factorisation: acknowledge it as familiar but distinguish it from an algorithm derived directly from the definition of gcd. The notion of a list as a data container introduced here prepares the work in Section 11.2.1.",
+          "homework": []
+        },
+        {
+          "period_number": 4,
+          "period_duration_minutes": 50,
+          "activity_title": "Executing the Divisors Algorithm — Lists and Systematic Checking",
+          "section_anchor": "11.2.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Notebook for tracing execution"
+          ],
+          "visual_aids": "Board table showing execution trace of divisors algorithm for n = 18, column by column (j, does j divide 18?, updated list)",
+          "textbook_items_in_class": [
+            {
+              "id": "E-12",
+              "type": "exercise",
+              "source_section": "11.2.1",
+              "book_ref": "End of Chapter Q3, p.50",
+              "description": "Write an algorithm prime(n) to check whether n is prime, using the hint that a prime p has exactly two distinct factors, 1 and p, so that divisors(n) can be used to write out prime(n)."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Write the 'Algorithm to find the divisors of n' on the board in its numbered-step form: start with an empty list; for each j from 1 to n, add j to the list if j divides n. Trace the execution for n = 18 as a class, updating the list at each j and recording j, the divisibility check, and the current list in a board table. Reach divisors(18) = [1, 2, 3, 6, 9, 18] together."
+            },
+            {
+              "minutes": "15-28",
+              "activity": "Think-reflect moment: students execute the algorithm independently for n = 15 in their notebooks, then compare with a neighbour. Discuss how the work grows — how many steps for 15? For 135? The chapter's think-reflect asks students to consider how the amount of work grows as numbers grow; draw out the observation that the number of steps is proportional to n itself."
+            },
+            {
+              "minutes": "28-40",
+              "activity": "Show divisors(375) = [1, 3, 5, 15, 25, 75, 125, 375] and divisors(825) = [1, 3, 5, 11, 15, 25, 33, 55, 75, 165, 275, 825] from the textbook, checking one or two entries as a class to confirm the method. Discuss the role of the basic step: the algorithm assumes we can directly tell whether j divides n, just as the addition algorithm assumed we can directly add two single-digit numbers."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Students work on End of Chapter Q3 (p.50): write an algorithm prime(n) using divisors(n). Pairs share their drafts and the class agrees on a precise formulation: if the list divisors(n) has exactly two elements — 1 and n — then n is prime. Consolidate: the ability to reuse one algorithm inside another is a key idea."
+            }
+          ],
+          "teacher_notes": "The execution trace is the unit's cognitive centre: students must follow each step mechanically and record the list's state at each j. A common confusion is adding j to the list before checking divisibility — emphasise that the check comes first. Naming the two variables (j and list-of-divisors) as the algorithm's tracked quantities is important; students who lose track of variable state mid-execution are exhibiting the error the chapter explicitly addresses by giving things names.",
+          "homework": []
+        },
+        {
+          "period_number": 5,
+          "period_duration_minutes": 50,
+          "activity_title": "Comparing Divisor Lists to Find the GCD",
+          "section_anchor": "11.2.2",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook"
+          ],
+          "visual_aids": "Board display of divisors(375) and divisors(825) side by side, with common elements circled",
+          "textbook_items_in_class": [
+            {
+              "id": "E-6",
+              "type": "exercise",
+              "source_section": "11.2.2",
+              "book_ref": "Exercise Set 11.2 Q1, p.43",
+              "description": "For two lists of numbers, List 1 and List 2, each in increasing order, write an algorithm to find (i) the elements of List 1 that are not present in List 2 and (ii) the elements of List 2 that are not present in List 1."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Display divisors(375) = [1, 3, 5, 15, 25, 75, 125, 375] and divisors(825) = [1, 3, 5, 11, 15, 25, 33, 55, 75, 165, 275, 825] on the board. Ask students to find the largest number appearing in both lists by inspection. Confirm: gcd(375, 825) = 75. Then pose the challenge: what if the lists had 80 entries each, as for 54000 and 81000?"
+            },
+            {
+              "minutes": "12-28",
+              "activity": "Develop the systematic method for building a list of common divisors: start with an empty list; for each element in the first list, check whether it appears in the second list; if so, add it. Explain why the result is in increasing order (since the first list is in increasing order). Show that the rightmost element is the gcd. Trace the method briefly for a small example on the board to confirm it yields gcd(54000, 81000) = 27000."
+            },
+            {
+              "minutes": "28-42",
+              "activity": "Students work on Exercise Set 11.2 Q1 (p.43): write an algorithm for the elements present in List 1 but not List 2, and for elements present in List 2 but not List 1. This extends the comparison idea in a new direction. Students write the algorithm steps and test on the two divisor lists used in class."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Pairs share their algorithms for Q1. Discuss: could the algorithm be made more efficient by using the fact that both lists are already in increasing order? Students propose ideas; the key insight is that a scan of both lists together, advancing through whichever is currently smaller, avoids re-checking from the start. Record these ideas as a pointer to Section 11.3's refinements."
+            }
+          ],
+          "teacher_notes": "The key reasoning point is why the rightmost element of the common-divisor list is the gcd: because the list is in increasing order, the last entry is the largest. Students sometimes confuse 'rightmost' with 'largest' in a non-ordered list; tie the claim explicitly to the ordering inherited from scanning the first divisor list in increasing order. Exercise Set 11.2 Q1 (p.43) is also excellent self-study for a student who wants to think further about list comparison.",
+          "homework": []
+        },
+        {
+          "period_number": 6,
+          "period_duration_minutes": 50,
+          "activity_title": "The First Complete GCD Algorithm — Writing and Executing It",
+          "section_anchor": "11.2.3",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Notebook"
+          ],
+          "visual_aids": "Board display of the first gcd algorithm in numbered steps",
+          "textbook_items_in_class": [
+            {
+              "id": "E-7",
+              "type": "exercise",
+              "source_section": "11.2.3",
+              "book_ref": "Exercise Set 11.2 Q2, p.43",
+              "description": "Describe an algorithm to compute the least common multiple (lcm) of two numbers."
+            },
+            {
+              "id": "E-8",
+              "type": "exercise",
+              "source_section": "11.2.3",
+              "source_sections": [
+                "11.2.1",
+                "11.2.2",
+                "11.2.3"
+              ],
+              "book_ref": "Exercise Set 11.3 Q1, p.45",
+              "description": "Explain how the original gcd algorithm would change if the divisors of a number n were computed by examining the numbers from 1 to n in reverse order, from n down to 1."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Write the first complete gcd algorithm on the board in numbered steps: compute divisors-of-m and divisors-of-n; build common-divisors by checking each element of divisors-of-m against divisors-of-n; report the rightmost element of common-divisors. Name the three data objects: divisors-of-m, divisors-of-n, common-divisors. Trace through gcd(375, 825) together — checking each divisor of 375 against the divisors of 825 — and confirm the result 75."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Students work on Exercise Set 11.2 Q2 (p.43): write an algorithm for the lcm of two numbers. This requires adapting the gcd structure: build the common-divisors list as before, then note that lcm × gcd = m × n, or equivalently find all divisors of m that are also divisors of both m and n and take the smallest multiple. Students should write precise steps and test on a small pair such as 6 and 10."
+            },
+            {
+              "minutes": "30-42",
+              "activity": "Students tackle Exercise Set 11.3 Q1 (p.45): how does the algorithm change if divisors are computed from n down to 1 rather than 1 up to n? Students reason that the list comes out in decreasing order, so the gcd is now the leftmost (first) element of common-divisors. Pairs compare and reconcile."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Consolidation: the class names the three data structures the algorithm uses and states why naming them matters — named quantities can be referred to in later steps, keeping the description concise. The first gcd algorithm is now complete and justified; students note its limitation: the amount of work grows with the value of the numbers, not their digit count."
+            }
+          ],
+          "teacher_notes": "Having established the divisors and list-comparison methods through Sections 11.2.1 and 11.2.2, this unit assembles them into one named algorithm. The commonest error is forgetting that common-divisors starts empty and confusing it with divisors-of-m; insist that students name all three lists before writing any step. Exercise Set 11.3 Q1 (p.45) is particularly good for exposing whether students understand that algorithm correctness depends on the order of the list produced, not just its contents.",
+          "homework": []
+        },
+        {
+          "period_number": 7,
+          "period_duration_minutes": 50,
+          "activity_title": "Data Structures — Names That Make Algorithms Concise",
+          "section_anchor": "11.3",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Open with the observation from the first gcd algorithm: it keeps track of three lists. Ask: why give these lists names? Students discuss in pairs and share. Lead to the definition: a data structure is a named, organised way of storing intermediate values so that later steps of an algorithm can refer to them by name. The list — a sequence in square brackets, arranged here in ascending order — is the chapter's first example."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Examine the role of order in the gcd algorithm's lists: divisors-of-m and divisors-of-n are in ascending order because candidates are checked from 1 upward, and common-divisors inherits this order. Walk through how the gcd algorithm's steps depend on this structural property — without the ascending order, the 'rightmost element' rule would fail. Students write a short explanation in their notebooks."
+            },
+            {
+              "minutes": "30-43",
+              "activity": "Contrast: what would the algorithm look like if intermediate values were not named? Simulate writing the algorithm without names — steps quickly become circular or unparsable. Return to the named version and highlight how each step's description is short precisely because it references a named structure. Students articulate the distinction in their own words."
+            },
+            {
+              "minutes": "43-50",
+              "activity": "Brief consolidation discussion: name two other everyday or mathematical contexts where keeping a named, organised list makes a procedure easier to describe. Students share examples. Teacher closes by noting that the chapter will now ask whether more efficient algorithms can be built by choosing data structures more cleverly."
+            }
+          ],
+          "teacher_notes": "Section 11.3 is a conceptual pivot — it names and defines data structures as an idea, not merely a convenience. The risk is treating the section as trivial ('of course you name things'); the point is that the choice of data structure shapes what algorithms become possible, a theme the rest of the chapter develops. Watch for students who conflate data structure with variable: stress that a list is structured (ordered, extendable), not just a single stored value.",
+          "homework": []
+        },
+        {
+          "period_number": 8,
+          "period_duration_minutes": 50,
+          "activity_title": "Three Refinements — From Two Scans to a Single Variable",
+          "section_anchor": "11.3.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Notebook"
+          ],
+          "visual_aids": "Board trace of most-recent-common-divisor updates for m=6, n=12",
+          "textbook_items_in_class": [
+            {
+              "id": "E-9",
+              "type": "exercise",
+              "source_section": "11.3.1",
+              "book_ref": "Exercise Set 11.3 Q2, p.45",
+              "description": "For the last algorithm described (scanning k from 2 to min(m, n) and updating most-recent-common-divisor), find out what happens when the common divisors are examined starting from min(m, n) and working backwards to 1."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Recall the first gcd algorithm. Present Refinement 1: instead of two separate scans (1 to m, then 1 to n), scan j from 1 to max(m, n) once, adding j to divisors-of-m if it divides m and to divisors-of-n if it divides n. Show how this reduces the total candidate checks. Present Refinement 2: directly build common-divisors by adding j whenever it divides both m and n, and note that j can stop at min(m, n) since no common divisor can exceed the smaller number."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Present Refinement 3: instead of a growing list, keep only one quantity — most-recent-common-divisor — starting at 1. Trace the algorithm for m = 6, n = 12 on the board: scan k from 2 to 6; update to 2 (divides both), to 3 (divides both), to 6 (divides both); end with gcd(6, 12) = 6. Students reproduce the trace for a second pair in their notebooks."
+            },
+            {
+              "minutes": "30-42",
+              "activity": "Students work on Exercise Set 11.3 Q2 (p.45): what happens if the scan for most-recent-common-divisor starts from min(m, n) and works backwards to 1? Students reason that the first k encountered that divides both is the gcd, so the scan can stop immediately — but must now start from the top. Have students write the modified algorithm steps and test on m = 6, n = 12."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Class compares the forward and backward scan strategies from Q2. Discuss: which is more efficient on average? The backward scan stops as soon as it finds the first (largest) common divisor but must start from min(m, n); the forward scan examines every candidate. Students note both are still proportional to the value of the numbers, not the digit count — the inefficiency identified at the end of Section 11.2."
+            }
+          ],
+          "teacher_notes": "Having established the first gcd algorithm through divisor lists, this unit builds three successive refinements, each tightening one inefficiency. The key conceptual move in Refinement 3 is observing that a growing list whose earlier entries are always superseded can be replaced by a single updateable variable; students who miss this often try to keep at least a two-element list. For Q2, watch for students who claim the backward scan is always faster — on a pair like gcd(2, 100) the backward scan reaches 2 quickly, but on gcd(97, 100) both scans are similar.",
+          "homework": []
+        },
+        {
+          "period_number": 9,
+          "period_duration_minutes": 50,
+          "activity_title": "Correctness and Efficiency — Why These Algorithms Still Fall Short",
+          "section_anchor": "11.3.2",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook"
+          ],
+          "visual_aids": "Board table comparing number of steps for 3-digit, 4-digit, 5-digit inputs in dot-counting versus column addition, and in scanning divisors",
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Begin with correctness: the basic gcd algorithm was derived directly from the definition — it computes every divisor of each number and finds the largest common one. Each refinement in Section 11.3.1 changed efficiency without changing what is computed. Walk through the argument: the single-scan version checks all j up to min(m, n); the most-recent-common-divisor version updates at exactly the same j values; the result is identical."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Turn to efficiency: draw the parallel with addition. For dot-counting, going from 3 to 4 digits means about 10 times more work; for the divisor-scanning algorithm, going from 3 to 4 digits also means about 10 times more candidates to check. Construct a small table on the board: 3-digit minimum (about 100 candidates), 4-digit minimum (about 1000), 5-digit minimum (about 10000). Compare with column addition: 3 digits means 3 column additions, 4 digits means 4."
+            },
+            {
+              "minutes": "30-43",
+              "activity": "Pose the section's closing question: as with the shift from dot-counting to column addition, is there a gcd algorithm whose effort grows with the number of digits rather than the size of the numbers? Students discuss in pairs and share their guesses. Accept all conjectures — the point is to motivate the search, not to answer it yet."
+            },
+            {
+              "minutes": "43-50",
+              "activity": "Students write a two-sentence summary: why are all the gcd algorithms studied so far still inefficient, and what would an efficient algorithm look like? A few are read aloud and compared. Close by naming the two mathematicians whose ideas answer the question — Euclid and Āryabhaṭa — as the subject of the remaining units."
+            }
+          ],
+          "teacher_notes": "Having refined the gcd algorithm through Section 11.3.1, this unit steps back to justify correctness and quantify inefficiency — the two analytical questions the chapter says must accompany every algorithm. Students often accept that refinements preserve correctness without being able to argue it; push them to articulate the key point: each refinement examines the same set of candidates in a different order or with a leaner data structure, but checks the same divisibility condition. The efficiency comparison to dot-counting versus column addition is the chapter's central analogy and should be made explicit.",
+          "homework": []
+        },
+        {
+          "period_number": 10,
+          "period_duration_minutes": 50,
+          "activity_title": "Euclid's Key Observation — Proving gcd(m,n) = gcd(n, m−n)",
+          "section_anchor": "11.3.3",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook"
+          ],
+          "visual_aids": "Board diagram illustrating tiling argument: m, n, and m−n each tiled by blocks of size d (mirroring Fig. 11.1)",
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "State the key observation: for m ≥ n, gcd(m, n) = gcd(n, m − n). Before proving it, ask students: if d divides m and d divides n, does d divide m − n? Students work this out in their notebooks: m = ad, n = bd, so m − n = (a − b)d — yes. Record on the board."
+            },
+            {
+              "minutes": "15-32",
+              "activity": "Prove the converse: if d divides n and d divides m − n, does d divide m? n = xd, m − n = yd, so m = n + (m − n) = (x + y)d — yes. Therefore d divides m and n if and only if d divides n and m − n: the two pairs share exactly the same set of common divisors, hence the same gcd. Show the tiling picture on the board (Fig. 11.1 style): a row of length m can be tiled by d-blocks exactly when a row of length n and a row of length m − n can each be tiled by d-blocks."
+            },
+            {
+              "minutes": "32-42",
+              "activity": "Introduce Euclid's algorithm from this observation: if m < n, swap the pair; if n = 0, the answer is m; otherwise reduce to gcd(n, m − n). Trace the algorithm for gcd(375, 825) on the board, recording each reduction step, until gcd(75, 0) = 75 is reached after 7 reductions."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Consolidation: students write the three-step algorithm from memory in their notebooks, then compare with a neighbour. Close with the observation — to be explored next unit — that Euclid's algorithm, while correct, may still require many reductions when the numbers have a large ratio (like gcd(99, 2))."
+            }
+          ],
+          "teacher_notes": "The proof that gcd(m, n) = gcd(n, m − n) is this unit's centrepiece and must be done in both directions — students who only prove the forward direction ('if d | m and d | n then d | m − n') have not established the gcd equality. A common logical slip is claiming that because every common divisor of m and n is a common divisor of n and m − n, the gcd is preserved; the converse must also be checked. The tiling picture from Fig. 11.1 supports the intuition and is worth drawing carefully.",
+          "homework": []
+        },
+        {
+          "period_number": 11,
+          "period_duration_minutes": 50,
+          "activity_title": "Euclid's Algorithm — Execution, Efficiency Limit, and the Need for a Better Step",
+          "section_anchor": "11.3.3",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Notebook"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Review the three-step Euclidean algorithm. Trace gcd(23, 23) on the board: it reduces immediately to gcd(23, 0), confirming the stopping rule. Then trace gcd(99, 2): gcd(99, 2) → gcd(97, 2) → gcd(95, 2) → … → gcd(3, 2) → gcd(2, 1) → gcd(1, 1) → gcd(1, 0). Count the reductions aloud as you go."
+            },
+            {
+              "minutes": "12-28",
+              "activity": "Generalise: gcd(2k + 1, 2) needs approximately k reductions. Ask students to evaluate this for k = 49 (gcd(99, 2): about 49 reductions) and k = 499 (gcd(999, 2): about 499 reductions). The number of reductions is proportional to the value of the smaller number, not to its digit count. The efficiency problem persists."
+            },
+            {
+              "minutes": "28-42",
+              "activity": "Students explore Euclid's algorithm on a few pairs of their own choice in their notebooks — at least one pair where the algorithm terminates quickly (e.g. gcd(100, 50)) and one where it is slow (e.g. gcd(101, 2)). They count and compare the number of reductions, noting when subtraction is an inefficient step."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Class discussion: what makes gcd(99, 2) slow? Each step subtracts only 2, so many small steps are needed to reach 0. Students conjecture: instead of subtracting once, subtract as many times as possible in one go — that is, use division. This motivates Āryabhaṭa's improvement introduced in the next unit."
+            }
+          ],
+          "teacher_notes": "Section 11.3.3's second half — demonstrating the efficiency limit of Euclid's subtraction algorithm — is the conceptual bridge to Āryabhaṭa's method. Having proved the key observation in the previous unit, this unit focuses on execution and the identification of the bottleneck. Watch for students who conclude that gcd(2k + 1, 2) always equals 1: this is true, but the point is the number of steps, not the answer. The observation that subtracting 2 from 99 repeatedly is the same as finding the remainder of 99 divided by 2 should emerge naturally from student conjectures.",
+          "homework": []
+        },
+        {
+          "period_number": 12,
+          "period_duration_minutes": 50,
+          "activity_title": "Āryabhaṭa's Division Algorithm — Remainder Replaces Repeated Subtraction",
+          "section_anchor": "11.3.4",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Notebook"
+          ],
+          "visual_aids": "Board layout of long-division format for gcd(99, 2), gcd(825, 375), and gcd(60, 16) as shown in Section 11.3.4",
+          "textbook_items_in_class": [
+            {
+              "id": "E-10",
+              "type": "exercise",
+              "source_section": "11.3.4",
+              "book_ref": "End of Chapter Q1, p.50",
+              "description": "Compute, using the improved (division-by-remainder) version of Euclid's algorithm, (i) gcd(375, 825), (ii) gcd(51000, 81000), (iii) gcd(1789287, 237656) and (iv) gcd(2587392, 157656)."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Introduce the key insight: subtracting 2 from 99 until no further subtraction is possible leaves exactly the remainder when 99 is divided by 2. Define m mod n as the remainder when m is divided by n (17 mod 5 = 2; 33 mod 7 = 5). State Āryabhaṭa's reduction: gcd(m, n) = gcd(n, m mod n). Justify using the same tiling argument as for subtraction — d divides m and n exactly when d divides n and m mod n — and show that only Step 3 of Euclid's algorithm changes."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Show the long-division format on the board for gcd(99, 2): one division gives remainder 1, the next gives remainder 0, so gcd(99, 2) = 1 in two reductions instead of about 49. Similarly trace gcd(825, 375) and gcd(60, 16) in long-division format. Name Āryabhaṭa and the Āryabhaṭīya (499 CE) as the historical source, and note that the Indian long-division layout is how the computation was recorded."
+            },
+            {
+              "minutes": "30-42",
+              "activity": "Students work on End of Chapter Q1 (p.50): compute gcd(375, 825) and gcd(51000, 81000) using the division algorithm, showing each reduction step in long-division format. Circulate and check that students correctly compute each remainder and transfer it to the next step."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Consolidate: the class compares the number of reductions for gcd(825, 375) using Euclid's subtraction algorithm (7 steps from the earlier trace) versus Āryabhaṭa's division algorithm (shown to be just 2 steps). State the chapter's result — without proving it here — that the number of reductions is now proportional to the number of digits in m and n, not their values."
+            }
+          ],
+          "teacher_notes": "Having traced Euclid's subtraction algorithm's inefficiency in the previous unit, this unit introduces the division step as a direct improvement: one division replaces a whole sequence of subtractions. A frequent error is confusing m mod n with the quotient of m divided by n — insist on the remainder. Students should be able to articulate the justification (the tiling argument applies unchanged, since m and n have the same common divisors as n and m mod n) rather than accepting the result on authority; End of Chapter Q2 (p.50), which asks students to verify this directly, is an excellent self-study item.",
+          "homework": [
+            "End of Chapter Q1 (p.50) parts (iii) and (iv) — gcd(1789287, 237656) and gcd(2587392, 157656) — using the division algorithm, showing all reduction steps."
+          ]
+        },
+        {
+          "period_number": 13,
+          "period_duration_minutes": 50,
+          "activity_title": "Verifying the Remainder Reduction and Tracing the Word 'Algorithm'",
+          "section_anchor": "11.3.4",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Notebook"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-11",
+              "type": "exercise",
+              "source_section": "11.3.4",
+              "source_sections": [
+                "11.3.3",
+                "11.3.4"
+              ],
+              "book_ref": "End of Chapter Q2, p.50",
+              "description": "Assuming m ≥ n, verify that d divides m and n if and only if d divides both n and m mod n."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-18",
+              "activity": "Students work on End of Chapter Q2 (p.50): assuming m ≥ n, verify that d divides m and n if and only if d divides n and m mod n. Guide them to write m = qn + r where r = m mod n, then show both directions: if d | m and d | n then d | r = m − qn; conversely if d | n and d | r then d | m = qn + r. Students write the proof in their notebooks step by step."
+            },
+            {
+              "minutes": "18-30",
+              "activity": "Debrief Q2 as a class: students share their proofs and the teacher highlights the structure — the same 'exactly the same common divisors' argument that justified Euclid's subtraction step, now extended to the remainder step. Connect back to the tiling picture: a row of length m is tiled by d-blocks exactly when a row of length n and a row of length r = m mod n are each tiled, because m = qn + r means the m-row consists of q copies of the n-row plus one r-row."
+            },
+            {
+              "minutes": "30-42",
+              "activity": "Read and discuss the 'A Pinch of History' closing: Al-Khwārizmī (780–850 CE) at the House of Wisdom in Baghdad wrote a treatise on Indian arithmetic around 820 CE; its 12th-century Latin translation spread Indian methods through Europe, and the Latin form 'algorismus' of his name gave rise to the word 'algorithm', originally meaning an Indian arithmetic method. Students note the chain: Indian procedures → Al-Khwārizmī → Latin Europe → English 'algorithm'."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Students write two sentences: what does the word 'algorithm' originally mean, and how has its meaning broadened? Share responses. Consolidate the chapter's full arc: the chapter began by asking what an algorithm is and what it has to do with mathematics, and now answers both — an algorithm is a precisely stated, step-by-step procedure for a class of problems, and mathematics both provides the justification for why each step works and the tools to analyse how efficient the procedure is."
+            }
+          ],
+          "teacher_notes": "Having computed with Āryabhaṭa's algorithm in the previous unit, this unit completes the justification of the remainder reduction through End of Chapter Q2 and closes with the historical context. The proof in Q2 is a two-direction argument; students often prove only one direction — watch for this and insist on both. The etymology segment ('A Pinch of History') is brief but important for the chapter's framing: the word 'algorithm' itself is a historical artifact of the encounter between Indian and Arabic mathematics.",
+          "homework": []
+        },
+        {
+          "period_number": 14,
+          "period_duration_minutes": 50,
+          "activity_title": "Synthesis — Algorithms, Efficiency, and Mathematical Justification Across the Chapter",
+          "section_anchor": "synthesis",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Blackboard and chalk",
+            "Textbook",
+            "Notebook"
+          ],
+          "visual_aids": "Board summary table: algorithm name, reduction step, data structure used, efficiency (proportional to value vs digits)",
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Open with a summary table on the board listing every gcd algorithm studied: the basic divisor-list algorithm, the three refinements, Euclid's subtraction algorithm, and Āryabhaṭa's division algorithm. For each, fill in: reduction step used, data structure(s) kept, and efficiency class (proportional to value of numbers vs proportional to number of digits). Students complete the table in their notebooks, consulting their notes."
+            },
+            {
+              "minutes": "15-28",
+              "activity": "Pose two synthesis questions for pair work. (1) The addition algorithm and Āryabhaṭa's gcd algorithm both have effort proportional to the number of digits. What do they have in common structurally? (Draw out: both process the numbers column by column or digit step by step rather than repeatedly counting or subtracting by value.) (2) Every algorithm in this chapter required a justification. Name one justification from addition, one from the divisor algorithm, and one from the gcd reduction step, and state what each justification does — what it guarantees."
+            },
+            {
+              "minutes": "28-40",
+              "activity": "Each pair presents one of their answers briefly. Teacher draws out the two core ideas: designing algorithms means writing steps precisely enough to execute without ambiguity; analysing algorithms means justifying correctness (why the steps give the right answer) and measuring efficiency (how work grows with input size). These twin demands — design and analysis — run through every section of the chapter."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Individual written task: a student claims that to find gcd(m, n) it is always faster to use Āryabhaṭa's division algorithm than Euclid's subtraction algorithm, no matter what m and n are. Evaluate this claim — is it always true, and why? Students write a brief argument (two to three sentences) with a supporting example. Share two or three responses; consolidate: the claim is correct in general because division collapses many subtractions into one step, and for pairs like gcd(2k+1, 2) the improvement is dramatic."
+            }
+          ],
+          "teacher_notes": "This unit revisits the chapter's content — the addition algorithm, the successive gcd algorithms, Euclid's and Āryabhaṭa's methods — through the unifying lens of the design-and-analysis framework. It introduces nothing new; every concept named here was developed in an earlier section. A student who can fill in the summary table and articulate both the correctness justification and the efficiency comparison for any pair of algorithms has met the chapter's central aims. Watch for students who conflate 'justified' with 'gives the right answer in examples': a justification is a general argument, not a check on specific values.",
+          "homework": []
+        }
+      ]
+    },
+    "period_schedule": [
+      {
+        "duration_minutes": 50,
+        "count": 14
+      }
+    ],
+    "coverage_handoff": [
+      {
+        "section_number": 1,
+        "section_ref": "11.1",
+        "section_title": "Adding Numbers",
+        "total_sections": 11,
+        "period_numbers": [
+          1
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can contrast the dot-counting method with the column addition method and identify the column method as a systematic step-by-step procedure for adding large numbers."
+        ],
+        "section_context": "dot-counting versus column addition, algorithm concept introduction, 473+695 example",
+        "c_code": "C-9.2",
+        "co_central": true
+      },
+      {
+        "section_number": 2,
+        "section_ref": "11.1.1",
+        "section_title": "Adding Numbers Digit by Digit",
+        "total_sections": 11,
+        "period_numbers": [
+          2
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can execute the five-step addition algorithm on multi-digit numbers and justify why digit-by-digit column addition gives the correct sum using the place-value grouping argument.",
+          "Students can determine how the carry variable behaves in the addition algorithm and explain why its value cannot exceed 1."
+        ],
+        "section_context": "five-step addition algorithm, carry variable, place-value grouping justification, right-to-left alignment",
+        "c_code": "C-9.4",
+        "co_central": true
+      },
+      {
+        "section_number": 3,
+        "section_ref": "11.2",
+        "section_title": "Greatest Common Divisor",
+        "total_sections": 11,
+        "period_numbers": [
+          3
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can decompose the gcd computation into two sub-problems — finding divisors and comparing lists — and justify why this decomposition makes the algorithm designable."
+        ],
+        "section_context": "gcd problem decomposition, divisors sub-problem, list comparison sub-problem, problem-breaking strategy",
+        "c_code": "C-9.4",
+        "co_central": true
+      },
+      {
+        "section_number": 4,
+        "section_ref": "11.2.1",
+        "section_title": "Computing the Divisors of a Number",
+        "total_sections": 11,
+        "period_numbers": [
+          4
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can execute the divisors algorithm for a given number by tracing its steps, updating the list at each candidate, and determine how the work grows as the input increases."
+        ],
+        "section_context": "divisors algorithm, list data structure, execution trace for n=18 and n=375, work-growth observation",
+        "c_code": "C-9.2",
+        "co_central": true
+      },
+      {
+        "section_number": 5,
+        "section_ref": "11.2.2",
+        "section_title": "Finding the Greatest Common Divisor",
+        "total_sections": 11,
+        "period_numbers": [
+          5
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can construct the list of common divisors of two numbers from their divisor lists and identify the gcd as the rightmost element of that ordered list."
+        ],
+        "section_context": "common-divisors list construction, rightmost-element rule, gcd(375,825)=75, gcd(54000,81000)=27000",
+        "c_code": "C-9.4",
+        "co_central": true
+      },
+      {
+        "section_number": 6,
+        "section_ref": "11.2.3",
+        "section_title": "First Algorithm for gcd",
+        "total_sections": 11,
+        "period_numbers": [
+          6
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can write and execute the first complete gcd algorithm using divisors-of-m, divisors-of-n, and common-divisors as named data objects, and adapt its structure to compute the lcm."
+        ],
+        "section_context": "first complete gcd algorithm, three named lists, execution for gcd(375,825), lcm adaptation",
+        "c_code": "C-9.4",
+        "co_central": true
+      },
+      {
+        "section_number": 7,
+        "section_ref": "11.3",
+        "section_title": "Data Structures",
+        "total_sections": 11,
+        "period_numbers": [
+          7
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can explain what a data structure is and justify why naming and organising intermediate values makes an algorithm's steps concise and unambiguous."
+        ],
+        "section_context": "data structure definition, list as ordered named container, role of naming in algorithm description",
+        "c_code": "C-9.4",
+        "co_central": true
+      },
+      {
+        "section_number": 8,
+        "section_ref": "11.3.1",
+        "section_title": "Improving the Algorithm",
+        "total_sections": 11,
+        "period_numbers": [
+          8
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can trace the three successive refinements of the gcd algorithm — combined scan, direct common-divisor construction, and single-variable update — and determine the gcd using the most-recent-common-divisor approach."
+        ],
+        "section_context": "three gcd refinements, combined scan to min(m,n), most-recent-common-divisor variable, trace for m=6 n=12",
+        "c_code": "C-9.4",
+        "co_central": true
+      },
+      {
+        "section_number": 9,
+        "section_ref": "11.3.2",
+        "section_title": "Analysing these Algorithms",
+        "total_sections": 11,
+        "period_numbers": [
+          9
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can justify the correctness of the refined gcd algorithms and analyse their efficiency by comparing how work grows with digit count versus number value."
+        ],
+        "section_context": "correctness justification of refinements, efficiency analysis, work proportional to value not digit count, analogy with dot-counting",
+        "c_code": "C-9.2",
+        "co_central": true
+      },
+      {
+        "section_number": 10,
+        "section_ref": "11.3.3",
+        "section_title": "Euclid's Subtraction Algorithm",
+        "total_sections": 11,
+        "period_numbers": [
+          10,
+          11
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can prove that gcd(m, n) = gcd(n, m−n) using the common-divisor argument in both directions and execute Euclid's subtraction algorithm to compute a gcd.",
+          "Students can determine the number of reductions Euclid's subtraction algorithm requires for a given pair and explain why its efficiency is still proportional to the value of the numbers."
+        ],
+        "section_context": "gcd(m,n)=gcd(n,m-n) proof, tiling argument, Euclid's three-step algorithm, inefficiency for gcd(2k+1,2)",
+        "c_code": "C-9.2",
+        "co_central": true
+      },
+      {
+        "section_number": 11,
+        "section_ref": "11.3.4",
+        "section_title": "Āryabhaṭa's Division Algorithm",
+        "total_sections": 11,
+        "period_numbers": [
+          12,
+          13
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can execute Āryabhaṭa's division algorithm using the gcd(m,n) = gcd(n, m mod n) reduction and verify the correctness of the remainder step by a two-direction divisibility argument."
+        ],
+        "section_context": "m mod n definition, gcd(m,n)=gcd(n,m mod n) justification, Indian long-division format, Al-Khwarizmi etymology",
+        "c_code": "C-9.4",
+        "co_central": true
+      },
+      {
+        "section_number": 12,
+        "section_ref": "synthesis",
+        "section_title": "synthesis",
+        "total_sections": 11,
+        "period_numbers": [
+          14
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can compare all gcd algorithms studied in the chapter — from the basic divisor-list method through Euclid's and Āryabhaṭa's algorithms — across the dimensions of design, correctness justification, data structures used, and efficiency, and evaluate a claim about algorithm efficiency with a general argument supported by an example."
+        ],
+        "section_context": "whole-chapter synthesis: algorithm design, correctness, efficiency comparison across all gcd methods",
+        "c_code": "C-9.4",
+        "co_central": true
+      }
+    ],
+    "assessment_items": {
+      "grade": "Grade IX",
+      "subject": "mathematics",
+      "stage": "secondary",
+      "chapter_number": 11,
+      "chapter_title": "The World of Algorithms",
+      "chapter_cg": "CG-9",
+      "reasoning_floor_lift_applied": false,
+      "questions": [
+        {
+          "section_number": 1,
+          "section_ref": "11.1",
+          "section_title": "Adding Numbers",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can contrast the dot-counting method with the column addition method and identify the column method as a systematic step-by-step procedure for adding large numbers.",
+          "section_context": "dot-counting versus column addition, algorithm concept introduction, 473+695 example",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-9.2",
+            "competency_text": "Following and analysing sequences of instructions — executing algorithms step by step, tracing their behaviour, and comparing how work grows with input size."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "To add 2847 and 5316 using the dot-counting method, you would draw 2847 dots, then 5316 more dots, and count all of them. To add the same pair using the column method, you write the numbers one below the other, aligned from the right, and add column by column. Which statement best explains why the column method is more practical for large numbers?",
+          "options": [
+            {
+              "label": "A",
+              "text": "The column method always gives a different answer from dot-counting, so it must be checked separately.",
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "text": "The number of column additions grows by one for each extra digit, while the number of dots to draw and count grows tenfold for each extra digit.",
+              "is_correct": true
+            },
+            {
+              "label": "C",
+              "text": "The column method only works when both numbers have the same number of digits.",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "Dot-counting requires carrying, whereas the column method does not.",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "what_each_option_reveals": {
+                "A": "Confuses the two methods as producing different results — a misconception about correctness rather than efficiency; the column method gives the same sum as dot-counting.",
+                "C": "Misidentifies a condition for the column method — the method works for numbers with any number of digits, including mismatched lengths, by treating absent digits as zero.",
+                "D": "Reverses the carrying relationship — carrying arises in the column method (when a column sum reaches 10) and is absent from simple dot-counting."
+              },
+              "inclusivity": "A student who finds the verbal comparison abstract can draw two small examples (e.g. 13 + 24 versus 130 + 240) and count the steps in each method. A student ready for more can estimate the time to add two 6-digit numbers by each method using the chapter's rate figures."
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 2,
+          "section_ref": "11.1.1",
+          "section_title": "Adding Numbers Digit by Digit",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can execute the five-step addition algorithm on multi-digit numbers and justify why digit-by-digit column addition gives the correct sum using the place-value grouping argument.",
+          "section_context": "five-step addition algorithm, carry variable, place-value grouping justification, right-to-left alignment",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Use the five steps of the addition algorithm exactly as written in the chapter — write the numbers one below the other aligned from the right, add the rightmost digits first, set carry to 0 or 1 according to the rule, move left column by column, and write any final carry — to compute 3856 + 7479. Show the carry value after each column addition, and state the final sum.",
+          "options": [],
+          "expected_answer": "11335",
+          "method_one_line": "Add column by column from right to left: 6+9=15 (write 5, carry 1); 5+7+1=13 (write 3, carry 1); 8+4+1=13 (write 3, carry 1); 3+7+1=11 (write 1, carry 1); write final carry 1 to the left, giving 11335.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "inclusivity": "A student who is uncertain can start with a 3-digit pair such as 385 + 479 and trace the steps, then extend to 4 digits. A student ready for more can try adding 38560 + 74790 and explain how Step 5 applies when two leading carries accumulate."
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 2,
+          "section_ref": "11.1.1",
+          "section_title": "Adding Numbers Digit by Digit",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can determine how the carry variable behaves in the addition algorithm and explain why its value cannot exceed 1.",
+          "section_context": "five-step addition algorithm, carry variable, place-value grouping justification, right-to-left alignment",
+          "question_type": "ECR",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Evaluation",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "In Step 3 of the addition algorithm, when two column digits and a carry are added, the carry passed to the next column is set to 1 if the sum is 10 or more, and to 0 otherwise. A student claims: 'The carry could sometimes be 2 — for example, if both digits are 9 and the incoming carry is also 1.' Evaluate this claim. Justify your answer using the maximum possible value of the sum of two single-digit numbers and an incoming carry, and state what this implies about the algorithm.",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [
+            "States that the maximum value of a single digit is 9, so the maximum sum in any column is 9 + 9 + 1 = 19.",
+            "Identifies that 19 < 20, so the tens digit of the column sum is at most 1 — the carry is either 0 or 1, never 2.",
+            "Concludes that the claim is false: the carry variable needs only one bit (0 or 1), and the algorithm's carry rule is always valid.",
+            "Connects this to the correctness of Step 5: if carry could be 2, the final step would need to write '2' rather than '1', but this never happens."
+          ],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "inclusivity": "A student who struggles to construct the argument abstractly can be prompted to try the largest possible column: 9 + 9 + 1 = 19, then ask what the tens digit of 19 is. A student ready for extension can generalise: in a base-b number system, what is the maximum carry, and why?"
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 3,
+          "section_ref": "11.2",
+          "section_title": "Greatest Common Divisor",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can decompose the gcd computation into two sub-problems — finding divisors and comparing lists — and justify why this decomposition makes the algorithm designable.",
+          "section_context": "gcd problem decomposition, divisors sub-problem, list comparison sub-problem, problem-breaking strategy",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "The chapter says that the first step towards writing an algorithm for gcd(m, n) is to 'understand what is required and break the problem into smaller pieces whose solution is already known.' Which pair of sub-problems does the chapter identify for the gcd computation?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Find all prime factors of m, then find all prime factors of n.",
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "text": "Find all divisors of m and all divisors of n, then compare the two collections and find the largest number present in both.",
+              "is_correct": true
+            },
+            {
+              "label": "C",
+              "text": "Find the largest divisor of m that is less than n, then check whether it also divides n.",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "Subtract n from m repeatedly until the result is zero, then report the number of subtractions.",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 3
+              },
+              "what_each_option_reveals": {
+                "A": "Substitutes prime factorisation — a familiar but different method — for the algorithm the chapter derives from the definition of gcd; confuses 'prime factors' with 'all divisors'.",
+                "C": "Describes a plausible but non-systematic shortcut that does not constitute a complete algorithm — it only checks one candidate divisor of m rather than building the full divisor list.",
+                "D": "Describes Euclid's subtraction algorithm, which is a later, more sophisticated algorithm — not the problem-decomposition strategy that opens Section 11.2."
+              },
+              "inclusivity": "A student who confuses prime factors with divisors can be asked to list all divisors of 12 and all prime factors of 12 and compare the two lists. A student ready for extension can explain why the prime-factorisation approach gives the gcd and whether it fits the chapter's definition of 'algorithm built from basic steps'."
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 3
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 3
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 3
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 3
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 4,
+          "section_ref": "11.2.1",
+          "section_title": "Computing the Divisors of a Number",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can execute the divisors algorithm for a given number by tracing its steps, updating the list at each candidate, and determine how the work grows as the input increases.",
+          "section_context": "divisors algorithm, list data structure, execution trace for n=18 and n=375, work-growth observation",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-9.2",
+            "competency_text": "Following and analysing sequences of instructions — executing algorithms step by step, tracing their behaviour, and comparing how work grows with input size."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Execute the divisors algorithm on n = 24: start with an empty list and, for each j from 1 to 24, add j to the list if j divides 24. Write the final list divisors(24). Then state how many divisor-check steps the algorithm performs for n = 24, for n = 240, and for n = 2400, and describe how the number of steps grows as n is multiplied by 10.",
+          "options": [],
+          "expected_answer": "divisors(24) = [1, 2, 3, 4, 6, 8, 12, 24]; steps for n=24: 24; for n=240: 240; for n=2400: 2400; each time n is multiplied by 10 the number of steps is multiplied by 10.",
+          "method_one_line": "For each j from 1 to n, check whether j divides n; add j to the list if so — the total number of checks equals n, so multiplying n by 10 multiplies the work by 10.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 4
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 4
+              },
+              "inclusivity": "A student who finds 24 steps difficult to trace fully can be told to record only the j values that pass the divisibility check, since the algorithm performs a check at each j regardless. A student ready for extension can ask: how many steps does divisors(n) need if n is a prime — and why is the list always [1, n] in that case?"
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 4
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 4
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 4
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 5,
+          "section_ref": "11.2.2",
+          "section_title": "Finding the Greatest Common Divisor",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can construct the list of common divisors of two numbers from their divisor lists and identify the gcd as the rightmost element of that ordered list.",
+          "section_context": "common-divisors list construction, rightmost-element rule, gcd(375,825)=75, gcd(54000,81000)=27000",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": "divisors(48) | divisors(180)\n[1, 2, 3, 4, 6, 8, 12, 16, 24, 48] | [1, 2, 3, 4, 5, 6, 9, 10, 12, 15, 18, 20, 30, 36, 45, 60, 90, 180]",
+          "graph_paper": false,
+          "question_text": "Refer to the table provided, which shows divisors(48) and divisors(180). Using the method from Section 11.2.2 — building a list of common divisors by checking each element of divisors(48) against divisors(180) — construct the complete list of common divisors of 48 and 180, and state gcd(48, 180).",
+          "options": [],
+          "expected_answer": "common-divisors = [1, 2, 3, 4, 6, 12]; gcd(48, 180) = 12.",
+          "method_one_line": "For each element x in divisors(48), add x to common-divisors if x also appears in divisors(180); the rightmost element of the resulting list is the gcd.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 5
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 5
+              },
+              "inclusivity": "A student who is unsure of the process can first circle the elements that appear in both lists before writing the common-divisors list in order. A student ready for extension can explain why the common-divisors list is always in ascending order, given that divisors(48) is already in ascending order."
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 5
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 5
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 5
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 6,
+          "section_ref": "11.2.3",
+          "section_title": "First Algorithm for gcd",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can write and execute the first complete gcd algorithm using divisors-of-m, divisors-of-n, and common-divisors as named data objects, and adapt its structure to compute the lcm.",
+          "section_context": "first complete gcd algorithm, three named lists, execution for gcd(375,825), lcm adaptation",
+          "question_type": "SCR",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Write a precise algorithm — in numbered steps — to compute the least common multiple (lcm) of two positive integers m and n. Your algorithm must: name the data objects it uses; reuse the divisors algorithm as a sub-step; and state clearly where the lcm is found from the computed lists. Test your algorithm on m = 6, n = 10, showing the list of common divisors and the final answer.",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [
+            "Names at least three data objects: divisors-of-m (list), divisors-of-n (list), and common-divisors (list).",
+            "Step 1 computes divisors-of-m using the divisors algorithm on m.",
+            "Step 2 computes divisors-of-n using the divisors algorithm on n.",
+            "Step 3 builds common-divisors by checking each element of divisors-of-m against divisors-of-n, analogously to the gcd algorithm.",
+            "Reports the lcm as (m × n) divided by the rightmost element of common-divisors, or equivalently finds the smallest multiple of m that appears in divisors-of-n (alternative valid formulation).",
+            "For m=6, n=10: divisors(6)=[1,2,3,6], divisors(10)=[1,2,5,10], common-divisors=[1,2], gcd=2, lcm=6×10÷2=30."
+          ],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 6
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 6
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 6
+              },
+              "inclusivity": "A student who struggles to state the lcm formula can be reminded that lcm(m, n) × gcd(m, n) = m × n, and asked to find gcd(6, 10) first. A student ready for extension can write the algorithm without using the formula lcm = m×n/gcd, instead building the list of all multiples of m up to m×n and checking which appear in divisors-of-(m×n) — and discuss why this is less efficient."
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 6
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 6
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 7,
+          "section_ref": "11.3",
+          "section_title": "Data Structures",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can explain what a data structure is and justify why naming and organising intermediate values makes an algorithm's steps concise and unambiguous.",
+          "section_context": "data structure definition, list as ordered named container, role of naming in algorithm description",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "The chapter defines a data structure as 'a way of organising information that helps make an algorithm more efficient.' In the gcd algorithm, the lists divisors-of-m, divisors-of-n, and common-divisors are data structures. Which of the following best explains why naming these lists as data structures — rather than keeping all divisors in an unnamed pile — makes the algorithm easier to write?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Named lists store larger numbers than unnamed collections can hold.",
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "text": "Naming the lists allows later steps to refer to them precisely — 'for each element of divisors-of-m' — without re-describing how they were built.",
+              "is_correct": true
+            },
+            {
+              "label": "C",
+              "text": "Named lists automatically sort themselves into ascending order without any additional step.",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "Using named lists means the algorithm never needs to execute the divisors sub-algorithm, saving computation time.",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 7
+              },
+              "what_each_option_reveals": {
+                "A": "Confuses a naming convention with a storage-capacity property — the name of a list does not affect how many elements it can hold.",
+                "C": "Attributes the ascending order of divisor lists to the name rather than to the systematic 1-to-n scan that produces them in order; the list's organisation is a result of the algorithm's design, not of naming.",
+                "D": "Conflates naming an intermediate result with bypassing the computation that produces it; the divisors sub-algorithm still runs, and its output is stored under a name."
+              },
+              "inclusivity": "A student who finds the concept abstract can rewrite one step of the gcd algorithm without any named list and see how the description becomes circular or requires re-describing the divisor computation each time. A student ready for extension can identify what property of the list — not just its name but its ascending order — makes the 'rightmost element is the gcd' rule valid."
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 7
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 7
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 7
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 7
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 8,
+          "section_ref": "11.3.1",
+          "section_title": "Improving the Algorithm",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can trace the three successive refinements of the gcd algorithm — combined scan, direct common-divisor construction, and single-variable update — and determine the gcd using the most-recent-common-divisor approach.",
+          "section_context": "three gcd refinements, combined scan to min(m,n), most-recent-common-divisor variable, trace for m=6 n=12",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Use the most-recent-common-divisor algorithm (Refinement 3 from Section 11.3.1) to find gcd(18, 30). The algorithm: set most-recent-common-divisor to 1; then for each k from 2 to min(18, 30), if k divides both 18 and 30, update most-recent-common-divisor to k; at the end, report most-recent-common-divisor as the gcd. Trace each k from 2 to 18, recording which values of k cause an update, and state the final gcd.",
+          "options": [],
+          "expected_answer": "most-recent-common-divisor is updated at k=2 (divides 18 and 30), k=3 (divides 18 and 30), k=6 (divides 18 and 30); no update at k=4,5,7,8,9,10,11,12,13,14,15,16,17,18; gcd(18,30)=6.",
+          "method_one_line": "Scan k from 2 to min(18,30)=18; update most-recent-common-divisor whenever k divides both 18 and 30; the final value is the gcd.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 8
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 8
+              },
+              "inclusivity": "A student who is unsure can first list divisors(18) = [1,2,3,6,9,18] and divisors(30) = [1,2,3,5,6,10,15,30], then identify the common divisors by inspection, and check that the most-recent-common-divisor trace gives the same answer. A student ready for extension can modify the algorithm so it scans from min(m,n) down to 2 and stops at the first k that divides both, and verify that it gives the same gcd with fewer steps for this pair."
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 8
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 8
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 8
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 9,
+          "section_ref": "11.3.2",
+          "section_title": "Analysing these Algorithms",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can justify the correctness of the refined gcd algorithms and analyse their efficiency by comparing how work grows with digit count versus number value.",
+          "section_context": "correctness justification of refinements, efficiency analysis, work proportional to value not digit count, analogy with dot-counting",
+          "question_type": "ECR",
+          "competency": {
+            "c_code": "C-9.2",
+            "competency_text": "Following and analysing sequences of instructions — executing algorithms step by step, tracing their behaviour, and comparing how work grows with input size."
+          },
+          "cognitive_demand": "Analysis",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "The most-recent-common-divisor algorithm (Refinement 3) scans every k from 2 to min(m, n) and updates a single variable. A student claims this algorithm gives the same answer as the basic gcd algorithm — the one that builds full divisors-of-m and divisors-of-n lists — for every pair of inputs. (a) Justify this claim: explain why the two algorithms always produce the same gcd. (b) Explain why Refinement 3 is still inefficient: describe how the number of steps grows when min(m, n) increases from a 3-digit to a 4-digit number, and compare this with what happens in column addition.",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [
+            "Part (a): argues that Refinement 3 checks every k from 1 to min(m,n) for divisibility by both m and n — the same divisibility tests as the basic algorithm, just in a different order and without keeping the full lists; the variable most-recent-common-divisor holds the largest k seen so far that passes, which is the same as the rightmost element of common-divisors.",
+            "Part (a): notes that removing the lists does not change what is computed — only the data structure is leaner, not the set of candidates examined.",
+            "Part (b): states that min(m,n) going from 3 to 4 digits means min(m,n) increases by a factor of about 10 (e.g. from ~100 to ~1000), so the number of scan steps increases tenfold.",
+            "Part (b): contrasts with column addition, where going from 3 to 4 digits adds exactly one more column — the work grows by one step, not by a factor of 10.",
+            "Conclusion: the scan-based algorithms are proportional to the value of min(m,n), while column addition is proportional to the number of digits — a qualitatively different and much slower growth."
+          ],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 9
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 9
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 9
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 9
+              },
+              "inclusivity": "A student who finds part (a) hard to articulate can be asked: does Refinement 3 skip any k that the basic algorithm would have added to common-divisors? Showing the answer is no is the core of the justification. For part (b), a student who finds the abstract comparison difficult can use concrete counts: divisors(100) needs 100 checks; divisors(1000) needs 1000; column addition of two 3-digit numbers needs 3 additions; of two 4-digit numbers, 4. A student ready for extension can explain what 'proportional to the number of digits' means formally in terms of powers of 10."
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 9
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 10,
+          "section_ref": "11.3.3",
+          "section_title": "Euclid's Subtraction Algorithm",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can prove that gcd(m, n) = gcd(n, m−n) using the common-divisor argument in both directions and execute Euclid's subtraction algorithm to compute a gcd.",
+          "section_context": "gcd(m,n)=gcd(n,m-n) proof, tiling argument, Euclid's three-step algorithm, inefficiency for gcd(2k+1,2)",
+          "question_type": "ECR",
+          "competency": {
+            "c_code": "C-9.2",
+            "competency_text": "Following and analysing sequences of instructions — executing algorithms step by step, tracing their behaviour, and comparing how work grows with input size."
+          },
+          "cognitive_demand": "Evaluation",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Euclid's subtraction algorithm uses the reduction gcd(m, n) = gcd(n, m − n) for m ≥ n. Prove this equality: show that every common divisor of m and n is also a common divisor of n and m − n, and that every common divisor of n and m − n is also a common divisor of m and n. Then execute Euclid's algorithm on gcd(56, 21), recording each pair at every reduction step until gcd is found.",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [
+            "Forward direction: if d divides m and d divides n, write m = ad and n = bd; then m − n = (a − b)d, so d divides m − n; thus d is a common divisor of n and m − n.",
+            "Backward direction: if d divides n and d divides m − n, write n = xd and m − n = yd; then m = n + (m − n) = (x + y)d, so d divides m; thus d is a common divisor of m and n.",
+            "Conclusion: the two pairs {m, n} and {n, m − n} have exactly the same common divisors, so gcd(m, n) = gcd(n, m − n).",
+            "Execution of gcd(56, 21): gcd(56,21)→gcd(35,21)→gcd(21,14)→gcd(14,7)→gcd(7,7)→gcd(7,0)=7. (Some students may write gcd(7,7) as two steps before reaching gcd(7,0); either sequencing accepted provided all pairs are listed.)",
+            "Correct final answer: gcd(56, 21) = 7."
+          ],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "inclusivity": "A student who finds the proof structure difficult can be prompted to try a specific number first: if d = 7 divides 56 and 21, does 7 divide 56 − 21 = 35? Then ask: can you generalise this with letters? A student ready for extension can count the number of reductions for gcd(56, 21) and compare with how many reductions gcd(55, 2) would need, identifying which pair is harder for the subtraction algorithm and why."
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 10,
+          "section_ref": "11.3.3",
+          "section_title": "Euclid's Subtraction Algorithm",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can determine the number of reductions Euclid's subtraction algorithm requires for a given pair and explain why its efficiency is still proportional to the value of the numbers.",
+          "section_context": "gcd(m,n)=gcd(n,m-n) proof, tiling argument, Euclid's three-step algorithm, inefficiency for gcd(2k+1,2)",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-9.2",
+            "competency_text": "Following and analysing sequences of instructions — executing algorithms step by step, tracing their behaviour, and comparing how work grows with input size."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Euclid's subtraction algorithm computes gcd(2k + 1, 2) by repeatedly applying the reduction gcd(m, n) = gcd(n, m − n). Approximately how many reduction steps does the algorithm need to reach gcd(1, 0) when computing gcd(2k + 1, 2)?",
+          "options": [
+            {
+              "label": "A",
+              "text": "About 2 steps, regardless of k.",
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "text": "About k steps, proportional to the value of the larger number.",
+              "is_correct": true
+            },
+            {
+              "label": "C",
+              "text": "About log₂(k) steps, proportional to the number of digits.",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "Exactly 2k + 1 steps, one for each unit in the larger number.",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "what_each_option_reveals": {
+                "A": "Confuses Āryabhaṭa's division algorithm (which needs about 2 steps for gcd(2k+1, 2)) with Euclid's subtraction algorithm — a confusion between the two methods the chapter compares.",
+                "C": "Attributes the efficient digit-proportional growth to Euclid's subtraction algorithm — this is actually the claim the chapter makes for Āryabhaṭa's division algorithm, not for the subtraction version.",
+                "D": "Overestimates by a factor of 2: each subtraction step reduces 2k+1 by 2 (one step per pair of units removed), so about k steps are needed, not 2k+1."
+              },
+              "inclusivity": "A student who is uncertain can trace gcd(9, 2) — a small case with k=4 — and count the steps: gcd(9,2)→gcd(7,2)→gcd(5,2)→gcd(3,2)→gcd(2,1)→gcd(1,1)→gcd(1,0), approximately 6 steps for k=4. A student ready for extension can verify the chapter's general claim by writing out the full sequence for gcd(2k+1, 2) symbolically."
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 11,
+          "section_ref": "11.3.4",
+          "section_title": "Āryabhaṭa's Division Algorithm",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can execute Āryabhaṭa's division algorithm using the gcd(m,n) = gcd(n, m mod n) reduction and verify the correctness of the remainder step by a two-direction divisibility argument.",
+          "section_context": "m mod n definition, gcd(m,n)=gcd(n,m mod n) justification, Indian long-division format, Al-Khwarizmi etymology",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Use Āryabhaṭa's division algorithm — the reduction gcd(m, n) = gcd(n, m mod n) — to compute gcd(60, 16). At each step, write the current pair and the remainder, and continue until the second number is 0. State the number of reduction steps needed and the final gcd.",
+          "options": [],
+          "expected_answer": "gcd(60,16): 60 mod 16 = 12, so gcd(60,16)=gcd(16,12); 16 mod 12 = 4, so gcd(16,12)=gcd(12,4); 12 mod 4 = 0, so gcd(12,4)=gcd(4,0)=4. Three reduction steps; gcd(60,16)=4.",
+          "method_one_line": "At each step replace gcd(m,n) with gcd(n, m mod n) until the second argument is 0; the first argument is then the gcd.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 11
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 11
+              },
+              "inclusivity": "A student who confuses m mod n with the quotient can be reminded: 60 ÷ 16 = 3 remainder 12, so 60 mod 16 = 12 (the remainder, not 3). A student ready for extension can verify the justification: show that d divides 60 and 16 if and only if d divides 16 and 12 = 60 mod 16, using the fact that 60 = 3 × 16 + 12."
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 11
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 11
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 11
+              },
+              "format_type": "",
+              "format_rationale": "",
+              "what_this_demonstrates": "",
+              "reading_the_scaffold": "",
+              "strong_vs_weak_markers": "",
+              "inclusivity": ""
+            }
+          }
+        },
+        {
+          "section_number": 12,
+          "section_ref": "synthesis",
+          "section_title": "synthesis",
+          "total_sections": 11,
+          "implied_lo_assessed": "Students can compare all gcd algorithms studied in the chapter — from the basic divisor-list method through Euclid's and Āryabhaṭa's algorithms — across the dimensions of design, correctness justification, data structures used, and efficiency, and evaluate a claim about algorithm efficiency with a general argument supported by an example.",
+          "section_context": "whole-chapter synthesis: algorithm design, correctness, efficiency comparison across all gcd methods",
+          "question_type": "OPEN_TASK",
+          "competency": {
+            "c_code": "C-9.4",
+            "competency_text": "Designing algorithms — writing precise step-by-step procedures, justifying each step, and refining procedures to improve them."
+          },
+          "cognitive_demand": "Evaluation",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "This task asks you to compare the gcd algorithms from the chapter and evaluate a claim about one of them.\n\nPart A — Algorithm Comparison Table\nThe chapter develops the following gcd algorithms: (1) Basic divisor-list algorithm (builds divisors-of-m and divisors-of-n separately, then builds common-divisors); (2) Refinement 3 — the most-recent-common-divisor scan; (3) Euclid's subtraction algorithm; (4) Āryabhaṭa's division algorithm.\nFor each algorithm, state: (a) the reduction step or main operation it uses; (b) the data structure(s) it keeps; (c) whether its efficiency is proportional to the VALUE of the smaller input or to the NUMBER OF DIGITS of the inputs.\n\nPart B — Evaluate a Claim\nA student says: 'Euclid's subtraction algorithm and Āryabhaṭa's division algorithm are both correct for computing the gcd, so for practical computation it does not matter which one you use.'\nEvaluate this claim. Use a specific pair of numbers to show a situation where the two algorithms differ significantly in the number of reduction steps needed, and give a general reason — based on what each algorithm's reduction step does — why Āryabhaṭa's algorithm is always at least as fast as Euclid's, and often much faster.",
+          "scaffold": "Part A: Fill in the table for each of the four algorithms. For the reduction step, think: what smaller problem does each algorithm reduce the current problem to? For efficiency, recall what the chapter says about each algorithm and the analogy with dot-counting versus column addition.\n\nPart B: Choose a pair where the smaller number is 2 and the larger is odd (for example, gcd(2k+1, 2) for a value of k you choose). Count the steps for each algorithm on your chosen pair. Then explain in one or two sentences what each reduction step does geometrically or arithmetically, and why one is faster.",
+          "format_of_output": [
+            "Part A: A four-row table with columns: Algorithm name | Reduction step | Data structures kept | Efficiency class.",
+            "Part B: A chosen example pair with both algorithms traced and step counts stated, followed by a general explanation of 2–4 sentences."
+          ],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 12
+              },
+              "what_each_option_reveals": {},
+              "inclusivity": ""
+            },
+            "NUM": {
+              "learning_outcome": {
+                "section": 12
+              },
+              "inclusivity": ""
+            },
+            "SCR": {
+              "learning_outcome": {
+                "section": 12
+              },
+              "inclusivity": ""
+            },
+            "ECR": {
+              "learning_outcome": {
+                "section": 12
+              },
+              "inclusivity": ""
+            },
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 12
+              },
+              "format_type": "Procedure / argument evaluation",
+              "format_rationale": "The synthesis LO requires students to judge the efficiency claim across all gcd algorithms, which is naturally a procedure/argument evaluation: students must compare methods, identify the flaw in the claim, and justify with a general argument.",
+              "what_this_demonstrates": "Students demonstrate integration of both core competencies — designing algorithms (C-9.4) and analysing their behaviour (C-9.2) — by holding four algorithms in view simultaneously and reasoning about their correctness, data structures, and efficiency in a single task.",
+              "reading_the_scaffold": "Part A builds the comparison systematically before Part B asks for evaluation; a student who completes Part A correctly has the evidence needed to construct the Part B argument. The scaffold for Part B directs students to the gcd(2k+1,2) family, which the chapter uses as the canonical efficiency contrast.",
+              "strong_vs_weak_markers": "Strong: Part A table is accurate for all four algorithms, including correctly classifying the efficiency of (3) and (4); Part B traces both algorithms on a concrete pair with correct step counts, then gives a general argument ('each subtraction removes only n from m, while one division removes the remainder, which can be much smaller than n') that is grounded in what the reduction steps do. Weak: Part A has errors in efficiency classification (e.g. labelling all as 'proportional to value'); Part B only traces one algorithm or gives an example without a general argument.",
+              "inclusivity": "A student who finds the table format unclear can be told to write one paragraph per algorithm instead, covering the same three questions. A student ready for extension can explain why Āryabhaṭa's algorithm's efficiency is proportional to the number of digits — the claim the chapter states without proof — by estimating how large m mod n can be relative to n and how quickly the pairs shrink."
+            }
+          }
+        }
+      ]
+    },
+    "competency_gap_note": "",
+    "section_coverage_note": null
+  }
+}

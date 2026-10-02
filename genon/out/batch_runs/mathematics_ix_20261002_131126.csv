@@ -1,0 +1,2 @@
+grade,chapter,title,counts,generations,cost_inr,seconds,exit,verdict,attempts,retried,report,log
+ix,9,Propositions and their Converses,16/13/10,3,93.28,899.1,1,FAILURES — see report,1,,genon/out/library_reports/mathematics_ix_ch09_20261002_132625.md,genon/out/runlogs/batch_mathematics_ix_ch09_20261002_131126.log

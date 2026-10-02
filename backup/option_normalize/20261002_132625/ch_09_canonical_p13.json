@@ -1,0 +1,850 @@
+{
+  "filename": "ch_09_canonical_p13.json",
+  "saved_at": "2026-10-02T13:22:29",
+  "plan_status": "canonical",
+  "chapter_number": 9,
+  "chapter_title": "Propositions and their Converses",
+  "grade": "Grade IX",
+  "subject": "Mathematics",
+  "period_rows_snapshot": [
+    {
+      "id": 0,
+      "duration": 50,
+      "count": 13
+    }
+  ],
+  "period_schedule_display": "Period schedule:\n  Row 1: 50 minutes × 13 periods = 650 minutes\nTotal: 13 periods · 10h 50min",
+  "genon_canonical": {
+    "generated": "2026-10-02",
+    "academic_year": "2026-27",
+    "schedule": "13x50",
+    "constitution": "LP v1.3 / assessment v1.2",
+    "source": "generate_canonical.py one mathematics ix 9",
+    "ledger_ts": "20261002_131755",
+    "validation": "clean"
+  },
+  "result": {
+    "lesson_plan": {
+      "periods": [
+        {
+          "period_number": 1,
+          "period_duration_minutes": 50,
+          "activity_title": "What Is a Proposition and What Is Its Converse",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-1",
+              "type": "worked_example",
+              "source_section": "9.1",
+              "book_ref": "Example 1, p.1",
+              "description": "Proposition P 'If it rains, then the road is wet' and its converse Q 'If the road is wet, then it has rained': P is true but Q may not be, since the road may be wet because a tanker spilled water on it — the situation the text then uses to define a counterexample."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Open with the two triangle statements — 'If two sides of a triangle are equal, then the angles opposite the equal sides are equal' and 'If two angles of a triangle are equal, then the sides opposite the equal angles have equal lengths' — written on the board. Ask students which statement is the converse of the other, and invite brief responses without adjudicating yet. Record the general form 'If X then Y' and 'If Y then X' once students have spoken."
+            },
+            {
+              "minutes": "10-20",
+              "activity": "Formally define a proposition (a statement that is either true or false) and its converse, using the triangle pair as the anchor. Introduce 'X implies Y' as an interchangeable formulation. Pose the guiding question: if a proposition is true, must its converse also be true? Hold responses — the answer will emerge from Example 1, p.1."
+            },
+            {
+              "minutes": "20-35",
+              "activity": "Work through Example 1, p.1 together. Write proposition P ('If it rains, then the road is wet') and converse Q ('If the road is wet, then it has rained') on the board. Establish that P is true, then ask students whether Q must be true. Elicit the tanker scenario. Use this to define a counterexample precisely: a situation that illustrates why a proposition is not necessarily true — an example that contradicts the stated proposition. Emphasise on the board why a single counterexample is sufficient to disprove a proposition, and connect this to Euler's refutation of Fermat's claim about numbers of the form 2^(2^n) + 1."
+            },
+            {
+              "minutes": "35-50",
+              "activity": "Students individually write the following in their notebooks: the definition of a proposition, the definition of a converse, a sentence explaining what a counterexample does and why one is sufficient. Conduct a brief whole-class check by asking two or three students to read their definitions aloud; correct any imprecision in the language."
+            }
+          ],
+          "teacher_notes": "This unit introduces the chapter's two foundational ideas — what a proposition is and what its converse is — so orient students to the logical vocabulary before asking them to evaluate truth. A common early error is treating 'If Y then X' as a restatement of 'If X then Y' rather than a genuinely distinct claim; press students to articulate why the two are different. Students who want a second reading of the rain example can consult Example 1, p.1 independently.",
+          "homework": []
+        },
+        {
+          "period_number": 2,
+          "period_duration_minutes": 50,
+          "activity_title": "Multiples, Divisibility and the First Exercise in Converse Framing",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-2",
+              "type": "worked_example",
+              "source_section": "9.1",
+              "book_ref": "Example 2, p.2",
+              "description": "Proposition P 'If a number is a multiple of 6, then it is a multiple of 3' and its converse Q 'If a number is a multiple of 3, then it is a multiple of 6': P is stated to be true and the student is asked to justify why, then to determine whether Q is true and, if not, to give a counterexample."
+            },
+            {
+              "id": "E-1",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q1, p.5",
+              "description": "Frame the converse of 'If two lines are parallel, then the corresponding angles formed by a transversal are equal', then determine whether each statement is true or not, justifying the true statements and giving a counterexample for each false statement."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Recall the definition of a counterexample established in the previous unit by asking students to state it in their own words. Write a fresh proposition on the board — 'If a number is a multiple of 6, then it is a multiple of 3' (Example 2, p.2) — and ask students to silently decide: true or false? Then ask them to write a one-sentence justification."
+            },
+            {
+              "minutes": "10-25",
+              "activity": "Take responses from two or three students for the justification of P. Guide the class toward the argument: since 6 = 2 × 3, any multiple of 6 is also a multiple of 3. Now write the converse Q on the board: 'If a number is a multiple of 3, then it is a multiple of 6.' Ask students in pairs to decide whether Q is true and, if not, to produce a counterexample. Share findings; record the counterexample 9 (a multiple of 3 but not of 6) on the board."
+            },
+            {
+              "minutes": "25-40",
+              "activity": "Students individually attempt Exercise Set 9.1 Q1, p.5: write the converse of 'If two lines are parallel, then the corresponding angles formed by a transversal are equal', decide the truth of each, justify the true one, and give a counterexample for the false one. After individual work, pair students to compare their converse formulations and their counterexample choices before a whole-class discussion."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Consolidate by asking: what is the minimum evidence needed to declare a proposition true? What is the minimum to declare it false? Ensure students articulate that a general justification is needed for truth and a single counterexample suffices for falsehood. Record these two principles on the board as a reference."
+            }
+          ],
+          "teacher_notes": "Having established the concepts of proposition, converse, and counterexample through everyday language, this unit grounds them in number and geometry. A frequent error in Example 2, p.2 is confusing the direction — students sometimes write the counterexample as a number that is a multiple of 6 but not of 3, which would contradict P rather than Q; press them to identify which statement the counterexample is meant to refute. Exercise Set 9.1 Q1, p.5 is a useful geometric companion because both directions here are true, unlike the multiplicity example.",
+          "homework": [
+            "Exercise Set 9.1 Q2, p.5"
+          ]
+        },
+        {
+          "period_number": 3,
+          "period_duration_minutes": 50,
+          "activity_title": "Perfect Squares, Factor Counts and a Two-Direction Proof",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-3",
+              "type": "worked_example",
+              "source_section": "9.1",
+              "book_ref": "Example 3, p.2",
+              "description": "Proposition P 'If n is a perfect square, then it has an odd number of factors' and its converse Q 'If n has an odd number of factors, then it is a perfect square', with the question of which are true; the Discussion that follows uses factor-partner pairs to prove first Q and then P."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Write on the board the two statements from Example 3, p.2: P 'If n is a perfect square, then it has an odd number of factors' and Q 'If n has an odd number of factors, then it is a perfect square.' Ask students to list the factors of 9, 16, and 12 quickly and count them. Use the counts (9 has 3 factors, 16 has 5 factors, 12 has 6 factors) to form a conjecture about which of P and Q might be true."
+            },
+            {
+              "minutes": "10-25",
+              "activity": "Develop the factor-partner argument on the board. For any positive integer n, every factor f has a partner g where f × g = n, giving pairs like (1, 12), (2, 6), (3, 4) for 12. Ask: when can one factor be paired with itself? Lead students to see that this happens when f × f = n, i.e., n is a perfect square. Show how this means a number with an odd number of factors must contain a repeated-factor pair, proving Q. Explicitly trace the chain of implications: (i) n has an odd number of factors → (ii) some pair (f, f) exists → (iii) n = f², so n is a perfect square."
+            },
+            {
+              "minutes": "25-40",
+              "activity": "Now prove P by starting from (iii): n = f² clearly gives the pair (f, f). Ask: does having (f, f) immediately mean the total factor count is odd? Work through why a number cannot have more than one repeated-factor pair (if (f, f) and (g, g) both existed, n = f² and n = g² would give two separate square roots, but then both f and g are square roots of n, impossible unless f = g). Therefore a perfect square has exactly one repeated-factor pair, giving an odd total. Record both proofs side by side to make the two-direction structure visible."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Students verify the argument on a fresh example (say n = 25 or n = 36) by listing all factor pairs, identifying the repeated pair, and confirming the odd count. Ask one student to explain, in their own words, why the two statements imply each other — not as a recitation but as a reconstruction of the argument."
+            }
+          ],
+          "teacher_notes": "The factor-partner argument is the chapter's first full two-direction deductive proof, and students often mix up which direction is proved by which chain of implications; keep the two chains (Q proved by going from odd factors to a repeated pair to a square; P proved by going from a square to uniqueness of the repeated pair to odd count) visually separated on the board throughout this unit. A student who found it difficult to articulate the uniqueness step can reread the Discussion section in Example 3, p.2 as self-study.",
+          "homework": []
+        },
+        {
+          "period_number": 4,
+          "period_duration_minutes": 50,
+          "activity_title": "Same Area, Congruence and All Four Truth Combinations",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk",
+            "Ruler and compass for student use"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-4",
+              "type": "worked_example",
+              "source_section": "9.1",
+              "book_ref": "Example 4, p.3",
+              "description": "Proposition P 'If two triangles have the same area, then they are congruent' and its converse Q 'If two triangles are congruent, then they have the same area': the student determines whether each is true, justifying the true statements and giving a counterexample for each false statement."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Write the two statements from Example 4, p.3 on the board. Ask students to vote (show of hands) on whether each is true before any working is done. Record the votes without comment to surface initial intuitions."
+            },
+            {
+              "minutes": "10-30",
+              "activity": "Students work in pairs: for P, they try to produce a counterexample (two triangles with the same area that are clearly not congruent — a 3-4-5 right triangle with area 6 and a 1-12 right triangle with area 6, for instance). For Q, they construct a brief deductive argument: congruent triangles have identical dimensions, so their areas must be equal. After pair work, bring findings to the board: confirm P is false by displaying the counterexample, and confirm Q is true by reconstructing the argument from congruence to equal area."
+            },
+            {
+              "minutes": "30-42",
+              "activity": "Summarise the four possible truth combinations that a proposition and its converse can take: (a) P true, Q false (the rain example and this area example); (b) P true, Q true (the factor-count result from Example 3, p.2); (c) P false, Q true (the converse of the rain example could be taken as a proposition whose 'original' was false). Draw students' attention to the Think and Reflect note in the text: both can also be false simultaneously. Ask students to attempt to construct such an example from their own knowledge."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Whole-class discussion of student-generated examples where both P and Q are false. Accept any valid pair; correct reasoning where a student mistakes a true statement for a false one. Close by having students write one sentence naming which of the four combinations they find most surprising and why."
+            }
+          ],
+          "teacher_notes": "Students frequently assume that a true proposition guarantees a true converse; this unit directly confronts that assumption through a geometric counterexample they construct themselves. The typical error in the counterexample for P is using congruent triangles (which trivially have the same area) rather than non-congruent triangles with equal areas — steer students to vary both shape and orientation. The Think and Reflect prompt about both being false is valuable for extending confident students within this unit.",
+          "homework": [
+            "Exercise Set 9.1 Q4, p.6"
+          ]
+        },
+        {
+          "period_number": 5,
+          "period_duration_minutes": 50,
+          "activity_title": "Framing the Converse of the Baudhāyana–Pythagoras Theorem",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk",
+            "Ruler and compass for student use"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-5",
+              "type": "worked_example",
+              "source_section": "9.1",
+              "book_ref": "Example 5, p.4",
+              "description": "States the Baudhāyana–Pythagoras theorem, forms its converse, and proves the converse in guided steps using construction of a right triangle ∆XYZ and the SSS criterion."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Write the Baudhāyana–Pythagoras theorem on the board in the form used in Example 5, p.4: 'Let a, b, c be the side-lengths of a triangle. If the triangle is right-angled, then a² + b² = c².' Ask students to frame the converse in their own words before opening the textbook. Record two or three student attempts on the board and ask the class to identify which preserves the theorem's first sentence unchanged."
+            },
+            {
+              "minutes": "10-25",
+              "activity": "Establish the agreed converse: 'Let a, b, c be the side-lengths of a triangle. If a² + b² = c², then the triangle is right-angled.' Discuss what must be proved: starting from the algebraic condition, reaching the geometric conclusion of a right angle. Outline the proof strategy on the board before executing it — construct a fresh right triangle ∆XYZ with legs YZ = a and XZ = b, apply the Baudhāyana–Pythagoras theorem to ∆XYZ to find XY = c, then invoke the SSS criterion."
+            },
+            {
+              "minutes": "25-42",
+              "activity": "Students carry out the proof steps in their notebooks, guided by the board outline. For each step, ask: what do we know at this point? What does the next step use? After students have written the proof, walk through it as a class, pausing at the SSS step to confirm that all three sides of ∆ABC and ∆XYZ are now known to be equal, which yields congruence and therefore the right angle at C."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Return to the Note in the text: that 'If X then Y', 'X implies Y', and 'Y when X' all express the same logical relationship. Ask students to restate both the theorem and its converse using 'when' in place of 'If…then'. Confirm that the proof they wrote applies identically regardless of which phrasing is used."
+            }
+          ],
+          "teacher_notes": "This unit provides the chapter's most structured proof — a proof of a converse that requires auxiliary construction. Students commonly make the error of attempting to prove the converse of the Baudhāyana–Pythagoras theorem by assuming a right angle and deriving a² + b² = c², which proves the original theorem again rather than the converse; insist that the proof begins from a² + b² = c² with no right-angle assumption. The Note about equivalent phrasings ('Y when X') is brief but important for later exercises where propositions are stated in non-standard form.",
+          "homework": [
+            "Exercise Set 9.1 Q5, p.6"
+          ]
+        },
+        {
+          "period_number": 6,
+          "period_duration_minutes": 50,
+          "activity_title": "Algebraic Propositions: Squaring, Cubing and Equation Arithmetic",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-3",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q4, p.6",
+              "description": "Frame the converse of 'If x = y, then a + x = a + y', determine truth of each, justify or give a counterexample; the book notes this pair is used routinely in solving equations."
+            },
+            {
+              "id": "E-5",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q6, p.6",
+              "description": "With x and y real numbers, frame the converse of 'If x = y, then x² = y²', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-6",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q7, p.6",
+              "description": "With x and y real numbers, frame the converse of 'If x = y, then x³ = y³', determine truth of each, justify or give a counterexample."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Students work individually on Exercise Set 9.1 Q4, p.6: frame the converse of 'If x = y, then a + x = a + y' and decide the truth of both. After a short pause, share: P is true (adding the same number to equals gives equals) and the converse is also true (if a + x = a + y, subtract a from both sides to get x = y). Highlight the textbook's observation that both directions of this pair are used every time an equation is solved."
+            },
+            {
+              "minutes": "12-28",
+              "activity": "Move to Exercise Set 9.1 Q6, p.6: frame the converse of 'If x = y, then x² = y²' and investigate truth. Students work in pairs. Take responses: P is true (squaring preserves equality); the converse is false — provide the counterexample x = 3, y = −3, where x² = y² = 9 but x ≠ y. Record the counterexample on the board and ask students to generalise: squaring loses the sign, so the converse fails for any pair (k, −k) with k ≠ 0."
+            },
+            {
+              "minutes": "28-42",
+              "activity": "Students attempt Exercise Set 9.1 Q7, p.6 independently: frame the converse of 'If x = y, then x³ = y³' and investigate truth. After individual work, compare with the squaring case: the converse here is also true because the cube function is injective over the reals (x³ = y³ implies x = y). Ask students to explain in writing why the cube case differs from the square case."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Whole-class synthesis: place the three exercise results side by side on the board — addition (both true), squaring (P true, Q false), cubing (both true). Ask students what property of a function determines whether the converse of 'If x = y, then f(x) = f(y)' is true, guiding them toward the idea that injective (one-to-one) functions preserve the converse while non-injective ones do not. This is a conjectural discussion — students are not expected to use formal function vocabulary, but to articulate the idea."
+            }
+          ],
+          "teacher_notes": "The squaring example is the unit's key conceptual hinge: students who have only seen positive real numbers may doubt that x = 3 and y = −3 constitutes a genuine counterexample, so confirm that the variables range over all real numbers as stated in the exercise. A common error in Q7, p.6 is providing a numerical verification (e.g., 2³ = 8 implies x = y = 2) rather than an argument; push for a sentence explaining why x³ = y³ forces x = y rather than merely showing it for one value.",
+          "homework": [
+            "Exercise Set 9.1 Q8, p.6"
+          ]
+        },
+        {
+          "period_number": 7,
+          "period_duration_minutes": 50,
+          "activity_title": "Divisibility Pairs: 24 and 60 and Their Converses",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-7",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q8, p.6",
+              "description": "Frame the converse of 'If n is divisible by 24, then it is divisible by both 4 and 6', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-8",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q9, p.6",
+              "description": "Frame the converse of 'If n is divisible by 60, then it is divisible by both 5 and 12', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-14",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q15, p.6",
+              "description": "For 'If a number is divisible by 8, then it is divisible by both 2 and 4': justify the statement; decide whether divisibility by 2 and 4 is sufficient for divisibility by 8, and explain why or why not."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Students work individually on Exercise Set 9.1 Q8, p.6: frame the converse of 'If n is divisible by 24, then it is divisible by both 4 and 6', then decide the truth of each. Take responses: P is true because 24 = 4 × 6 (and more precisely because 4 | 24 and 6 | 24, so both divide any multiple of 24). The converse is false — the counterexample is 12, which is divisible by both 4 and 6 but not by 24. Write the counterexample on the board with the verification: 12 ÷ 4 = 3, 12 ÷ 6 = 2, but 12 ÷ 24 is not an integer."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Students move to Exercise Set 9.1 Q9, p.6: the same task for the 60 and (5, 12) pair. After individual work, take the converse statement (if n is divisible by both 5 and 12, then it is divisible by 60) and ask: is this the same structural situation as the 24 case? Guide students to notice that 5 and 12 are coprime (gcd = 1), so divisibility by both forces divisibility by 60, making the converse true — unlike the 24 case where 4 and 6 share the factor 2. Record the key distinction: when the two divisors are coprime, the converse holds."
+            },
+            {
+              "minutes": "30-44",
+              "activity": "Students tackle Exercise Set 9.1 Q15, p.6: justify that divisibility by 8 implies divisibility by 2 and 4, then decide whether the converse holds. After individual work, confirm: the converse is false — 12 is divisible by 2 and by 4 but not by 8. Ask students to connect this to the 24 example: both fail because the pair of divisors shares a common factor, so their lcm is smaller than the original divisor."
+            },
+            {
+              "minutes": "44-50",
+              "activity": "Formulate a conjecture on the board: 'If n = a × b where a and b are coprime, then being divisible by both a and b is sufficient for divisibility by n.' Students note this conjecture in their notebooks. Clarify that they are conjecturing, not proving — the proof (using the fundamental theorem of arithmetic or properties of lcm) is beyond this unit."
+            }
+          ],
+          "teacher_notes": "The comparison between the 24 case and the 60 case — identical surface structure, opposite truth value for the converse — is the unit's central insight, and students who work only numerically (checking specific values) often miss why the coprimality of 5 and 12 is decisive. Encourage students to think about the lcm of the two divisors rather than their product. Students who want a further challenge within divisibility can attempt Exercise Set 9.1 Q11, p.6 independently.",
+          "homework": [
+            "Exercise Set 9.1 Q10, p.6"
+          ]
+        },
+        {
+          "period_number": 8,
+          "period_duration_minutes": 50,
+          "activity_title": "Factor Counts of Primes, Prime Squares and Prime Products",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-9",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q10, p.6",
+              "description": "Frame the converse of 'If n is the square of a prime number, then it has exactly 3 factors', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-10",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q11, p.6",
+              "description": "Frame the converse of 'If n is a product of two unequal prime numbers, then it has exactly 4 divisors', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-4",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q5, p.6",
+              "description": "Frame the converse of 'If a and b are perfect squares, then ab is a perfect square', determine truth of each, justify or give a counterexample."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Students work on Exercise Set 9.1 Q10, p.6: frame the converse of 'If n is the square of a prime, then n has exactly 3 factors', and decide truth. Take responses: P is true — if n = p² then its only factors are 1, p, and p², giving exactly 3. The converse states 'If n has exactly 3 factors, then n is the square of a prime.' Ask students to check whether 1 is a counterexample (it has 1 factor), 4 = 2² (3 factors), 9 = 3² (3 factors), and whether any non-prime-square has exactly 3 factors. Conclude: the converse is also true, and write the brief justification."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Move to Exercise Set 9.1 Q11, p.6: frame the converse of 'If n is a product of two unequal primes, then n has exactly 4 divisors.' Students list examples — 6 = 2 × 3 has factors 1, 2, 3, 6; 15 = 3 × 5 has factors 1, 3, 5, 15 — and conjecture P is true. Now frame the converse: 'If n has exactly 4 divisors, then n is a product of two unequal primes.' Ask: is 8 = 2³ a counterexample? Its factors are 1, 2, 4, 8 — exactly 4. Yes: 8 has exactly 4 divisors but is not a product of two unequal primes. Record the counterexample."
+            },
+            {
+              "minutes": "30-44",
+              "activity": "Students attempt Exercise Set 9.1 Q5, p.6 individually: frame the converse of 'If a and b are perfect squares, then ab is a perfect square', and investigate truth. After work, confirm P is true (product of two perfect squares is a perfect square: (m²)(n²) = (mn)²). For the converse — 'If ab is a perfect square, then a and b are each perfect squares' — students produce the counterexample a = 2, b = 8 (ab = 16 = 4², but neither 2 nor 8 is a perfect square)."
+            },
+            {
+              "minutes": "44-50",
+              "activity": "Place the three results side by side: Q10 (both true), Q11 (P true, Q false via 8), Q5 (P true, Q false via 2 and 8). Ask students to reflect in writing: across the exercises done so far, which truth-combination has appeared most often, and why might it be common for propositions about number properties to have false converses?"
+            }
+          ],
+          "teacher_notes": "For Exercise Set 9.1 Q10, p.6 the full justification that only prime squares have exactly 3 factors requires a brief divisor-count argument: any number with exactly 3 factors must have one factor that is neither 1 nor itself, and that factor squared must equal the number, forcing the factor to be prime. Students often assert the converse is true without this reasoning — press for a complete argument. For Exercise Set 9.1 Q11, p.6 the counterexample n = 8 is easy to miss because students may only test products of two distinct primes.",
+          "homework": []
+        },
+        {
+          "period_number": 9,
+          "period_duration_minutes": 50,
+          "activity_title": "Divisibility Rules Expressed as Propositions and Converses",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-11",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q12, p.6",
+              "description": "Frame the converse of 'If n and n + 3 have no factors in common, then n is not a multiple of 3', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-15",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q16, p.6",
+              "description": "Recalling the shortcut that a number is divisible by 3 when the sum of its digits is a multiple of 3, express the relationship using 'If-then' sentences."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Students read Exercise Set 9.1 Q12, p.6 carefully and frame the converse of 'If n and n + 3 have no factors in common, then n is not a multiple of 3.' They then test P with specific values: try n = 4 (n + 3 = 7, gcd(4,7) = 1, 4 is not a multiple of 3 — consistent with P); try n = 6 (n + 3 = 9, gcd(6,9) = 3, so the hypothesis of P is not satisfied — P is vacuously not being tested here). Guide students to construct a deductive argument for P: if 3 | n and 3 | (n + 3), then 3 | their difference = 3 — true always — so 3 always divides gcd(n, n+3) when 3 | n, contradicting the hypothesis. Therefore P is true."
+            },
+            {
+              "minutes": "15-28",
+              "activity": "Now examine the converse: 'If n is not a multiple of 3, then n and n + 3 have no factors in common.' Reason on the board: if 3 does not divide n, does 3 divide gcd(n, n+3)? The gcd divides n and divides n+3, so it divides their difference 3 — meaning gcd(n, n+3) divides 3, so it is 1 or 3. Since 3 does not divide n, gcd ≠ 3, so gcd = 1. The converse is true. Record both proofs."
+            },
+            {
+              "minutes": "28-42",
+              "activity": "Students work on Exercise Set 9.1 Q16, p.6: express the divisibility-by-3 shortcut as 'If-then' sentences. They write at least two: 'If a number is divisible by 3, then the sum of its digits is a multiple of 3' and its converse 'If the sum of the digits of a number is a multiple of 3, then the number is divisible by 3.' Ask students to reflect: are both directions true? (They are — this is a biconditional.) Confirm with two or three numerical checks."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Discuss the idea of a biconditional — when both a proposition and its converse are true, each implies the other. Connect back to the perfect-square factor-count result: 'n is a perfect square' and 'n has an odd number of factors' imply each other, as do divisibility by 3 and digit-sum divisibility. Students note in their books one example of a biconditional from geometry and one from number theory encountered in this chapter."
+            }
+          ],
+          "teacher_notes": "Exercise Set 9.1 Q12, p.6 is algebraically subtle — the key step is recognising that gcd(n, n+3) must divide 3 because it divides the difference of any two numbers it divides. Students who have not explicitly seen this divisibility-of-differences argument before will need it written out on the board step by step. Exercise Set 9.1 Q16, p.6 connects to a familiar shortcut from earlier grades, making it a good anchor for the biconditional idea without requiring new mathematical content.",
+          "homework": [
+            "Exercise Set 9.1 Q13, p.6"
+          ]
+        },
+        {
+          "period_number": 10,
+          "period_duration_minutes": 50,
+          "activity_title": "Counterexamples to Prime-Generating Formulas",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk",
+            "Calculators (optional)"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-12",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q13, p.6",
+              "description": "Noting that there are no known 'neat' expressions that generate only primes, find counterexamples to the claims that all numbers of the form (i) 4n² + 1, (ii) n² + n + 11 and (iii) 4^n + 3 are prime."
+            },
+            {
+              "id": "E-13",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q14, p.6",
+              "description": "Find counterexamples to (i) 'If n is prime, then 2^n − 1 is prime' and (ii) 'If n is even, then 2^n + 1 is prime'."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-8",
+              "activity": "Recall Fermat's claim from the chapter opening — that all numbers of the form 2^(2^n) + 1 are prime — and Euler's counterexample. Emphasise: Fermat's formula works for n = 0, 1, 2, 3, 4 and fails at n = 5. This motivates Exercise Set 9.1 Q13, p.6: even a formula that generates primes for many values can fail."
+            },
+            {
+              "minutes": "8-25",
+              "activity": "Students work in groups of three on Exercise Set 9.1 Q13, p.6. Group A takes formula (i) 4n² + 1: test n = 1 (5, prime), n = 2 (17, prime), n = 3 (37, prime), n = 5 (101, prime), n = 10 (401 = 401, prime?) — direct them to n = 5: 4(25)+1 = 101 (prime), n = 10: 401 (prime); they may need to try n = 5 is prime but n = ... actually guide them to note 4(5²)+1 = 101; the counterexample appears at n with 4n²+1 composite — e.g. n = 5 gives 101 (prime) but n = 10 gives 401 (prime); direct groups to try n where the number factors: 4n²+1 factors when it equals (2n+1)(2n-1)+2 — actually the simplest counterexample is n = 5: 4(25)+1 = 101 prime; n = 10: 401; n = 15: 4(225)+1=901 = 17×53. Group B takes formula (ii) n² + n + 11: test small values until n = 11 gives 11² + 11 + 11 = 143 = 11 × 13. Group C takes formula (iii) 4^n + 3: n = 1 gives 7 (prime), n = 2 gives 19 (prime), n = 3 gives 67 (prime), n = 4 gives 259 = 7 × 37. Groups record their counterexample with verification."
+            },
+            {
+              "minutes": "25-40",
+              "activity": "Each group presents its counterexample on the board, including the computation verifying the number is composite. After all three are presented, students individually attempt Exercise Set 9.1 Q14, p.6: find counterexamples to (i) 'If n is prime, 2^n − 1 is prime' (n = 11: 2^11 − 1 = 2047 = 23 × 89) and (ii) 'If n is even, 2^n + 1 is prime' (n = 4: 2^4 + 1 = 17 (prime); try n = 6: 2^6 + 1 = 65 = 5 × 13)."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Consolidate: why does finding a counterexample settle the question? Re-anchor in the chapter's definition — one example that contradicts the proposition is sufficient to show it is not always true. Contrast this with justifying a proposition: a finite number of examples, however large, never constitutes a proof. Students write this contrast in one or two sentences in their notebooks."
+            }
+          ],
+          "teacher_notes": "The formula n² + n + 11 produces primes for n = 0 through 10 and fails at n = 11; students who are surprised by this should be encouraged to count how many values have been checked before celebrating a pattern. For Exercise Set 9.1 Q14, p.6 the computation 2^11 − 1 = 2047 can be done by hand; confirming that 23 × 89 = 2047 is a useful verification step that reinforces why the counterexample is genuine.",
+          "homework": []
+        },
+        {
+          "period_number": 11,
+          "period_duration_minutes": 50,
+          "activity_title": "Quadrilateral Propositions and the Diagonal Construction Problem",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk",
+            "Two thin sticks (or pencils) per pair",
+            "Ruler"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-2",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q2, p.5",
+              "description": "Frame the converse of 'If a quadrilateral is a square, then all its angles are equal', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-16",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q17, p.7",
+              "description": "For a quadrilateral of type Q constructed by joining the endpoints of two sticks laid as diagonals: (i) if Q satisfies 'If a quadrilateral is of type Q, then it has equal-length diagonals', decide (a) whether the sticks should be equal in length and (b) whether it matters how they are put together; (ii) answer (a) and (b) again if Q satisfies 'If a quadrilateral has equal diagonals, then it is of type Q'."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Students work individually on Exercise Set 9.1 Q2, p.5: frame the converse of 'If a quadrilateral is a square, then all its angles are equal', and decide truth. Take responses: P is true (all angles of a square are 90°); the converse is false — a rectangle has all angles equal (all 90°) but is not a square. Record the rectangle as the counterexample."
+            },
+            {
+              "minutes": "12-35",
+              "activity": "Introduce Exercise Set 9.1 Q17, p.7. Each pair uses two pencils (or thin sticks) to form diagonals by crossing them at a point and joining the four endpoints as a quadrilateral. Part (i): the quadrilateral Q satisfies 'If it is of type Q, then its diagonals are equal.' Ask: must the two sticks be of equal length? (Yes — the diagonal lengths equal the stick lengths by construction.) Does it matter how they are placed — the angle at which they cross or where they cross? (No — any angle and any crossing point will produce a quadrilateral of type Q as long as the sticks have equal length.) Students record answers with brief justifications."
+            },
+            {
+              "minutes": "35-47",
+              "activity": "Part (ii) of Exercise Set 9.1 Q17, p.7: now Q satisfies 'If a quadrilateral has equal diagonals, then it is of type Q.' This reverses the proposition. Ask: now must the sticks be equal? (Yes, same reason — equal diagonals require sticks of equal length.) Does placement matter? (This time it might — if the angle or crossing point is constrained by the definition of Q, any deviation produces a quadrilateral not of type Q that still has equal diagonals, i.e. a counterexample to the converse.) Students discuss in pairs and write a response."
+            },
+            {
+              "minutes": "47-50",
+              "activity": "Brief whole-class discussion: what did the change from part (i) to part (ii) represent logically? It swapped the hypothesis and conclusion — it formed the converse — and the answer changed. This reinforces in a physical context why proposition and converse must be treated independently."
+            }
+          ],
+          "teacher_notes": "Exercise Set 9.1 Q17, p.7 is the chapter's most open-ended problem and students sometimes struggle to articulate why the placement matters differently in part (ii) — the key is that in (ii), any quadrilateral with equal diagonals is supposed to be of type Q, so any configuration not of type Q that still has equal diagonals is a counterexample to the converse. Using actual pencils or sticks in pairs makes the argument concrete without requiring rulers or measurement.",
+          "homework": [
+            "Exercise Set 9.1 Q11, p.6"
+          ]
+        },
+        {
+          "period_number": 12,
+          "period_duration_minutes": 50,
+          "activity_title": "Mixed Exercise Practice: Framing, Justifying and Counterexampling",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-7",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q8, p.6",
+              "description": "Frame the converse of 'If n is divisible by 24, then it is divisible by both 4 and 6', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-8",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q9, p.6",
+              "description": "Frame the converse of 'If n is divisible by 60, then it is divisible by both 5 and 12', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-9",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q10, p.6",
+              "description": "Frame the converse of 'If n is the square of a prime number, then it has exactly 3 factors', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-10",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q11, p.6",
+              "description": "Frame the converse of 'If n is a product of two unequal prime numbers, then it has exactly 4 divisors', determine truth of each, justify or give a counterexample."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Pose a quick oral warm-up: for each of the following, state in one sentence whether the converse is true or false and why — (a) 'If a triangle is equilateral, then all its angles are 60°'; (b) 'If a number ends in 0, then it is divisible by 10.' Take responses rapidly, aiming for correct and concise answers rather than extended arguments."
+            },
+            {
+              "minutes": "10-30",
+              "activity": "Students choose two exercises from among Exercise Set 9.1 Q8, Q9, Q10, Q11 (p.6) that they have not yet completed or reviewed. They work individually: frame the converse, decide truth, and write a justification or counterexample. After 15 minutes, they pair with a neighbour who chose different exercises and explain their reasoning to each other."
+            },
+            {
+              "minutes": "30-45",
+              "activity": "Whole-class discussion of the most contested results. Focus especially on the distinction between Exercise Set 9.1 Q8 (converse false, counterexample 12) and Exercise Set 9.1 Q9 (converse true, because 5 and 12 are coprime), reinforcing the coprimality principle identified in Unit 7. Also clarify the Q11 counterexample n = 8 for any student who used it as homework."
+            },
+            {
+              "minutes": "45-50",
+              "activity": "Students compile a personal summary table in their notebooks with three columns: Proposition, Converse, Truth outcome (P true/false, Q true/false). They enter at least five rows from across the chapter, choosing examples that span all four truth combinations."
+            }
+          ],
+          "teacher_notes": "This unit is designed to consolidate the chapter's full exercise range through student choice and peer explanation — working exercises already encountered in earlier units and ensuring the reasoning is articulated, not just recalled. A common error at this stage is writing a counterexample that disproves P rather than Q, or vice versa — the warm-up is designed to surface this confusion quickly so it can be corrected before extended practice. Students who finish their summary table early can attempt Exercise Set 9.1 Q16, p.6 if they have not yet done so.",
+          "homework": [
+            "Exercise Set 9.1 Q6, p.6",
+            "Exercise Set 9.1 Q7, p.6"
+          ]
+        },
+        {
+          "period_number": 13,
+          "period_duration_minutes": 50,
+          "activity_title": "Chapter Consolidation: Proving, Disproving and Writing Arguments",
+          "section_anchor": "9.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-5",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q6, p.6",
+              "description": "Frame the converse of 'If x = y, then x² = y²', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-6",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q7, p.6",
+              "description": "Frame the converse of 'If x = y, then x³ = y³', determine truth of each, justify or give a counterexample."
+            },
+            {
+              "id": "E-3",
+              "type": "exercise",
+              "source_section": "9.1",
+              "book_ref": "Exercise Set 9.1 Q4, p.6",
+              "description": "Frame the converse of 'If x = y, then a + x = a + y', determine truth of each, justify or give a counterexample."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-15",
+              "activity": "Open with a whole-class reconstruction of the chapter's logical vocabulary on the board: students supply definitions for proposition, converse, counterexample, and biconditional. For each term, a student gives one example from the chapter. Do not supply the examples — draw them entirely from student responses, and correct any imprecision in wording rather than substituting your own phrase."
+            },
+            {
+              "minutes": "15-30",
+              "activity": "Students write — individually and without notes — a complete argument for both directions of the following claim: 'A real number x satisfies x² = x if and only if x = 0 or x = 1.' This is not a textbook item; it is a fresh application of the chapter's reasoning structure. The forward direction: if x² = x then x² − x = 0, so x(x−1) = 0, so x = 0 or x = 1. The backward direction: if x = 0 then x² = 0 = x; if x = 1 then x² = 1 = x. Collect written arguments after 12 minutes."
+            },
+            {
+              "minutes": "30-44",
+              "activity": "Review Exercise Set 9.1 Q6, p.6 and Q7, p.6 side by side on the board. For Q6 (squaring) confirm the counterexample x = 3, y = −3. For Q7 (cubing) confirm the proof that x³ = y³ implies x = y over the reals (the function t³ is strictly increasing, so distinct inputs give distinct outputs). Ask students to compare their homework solutions with the board argument and identify where, if anywhere, their reasoning differed."
+            },
+            {
+              "minutes": "44-50",
+              "activity": "Students write, as a closing reflection in their notebooks, one proposition-and-converse pair of their own composition — from any domain (geometry, numbers, everyday life) — in correct 'If X then Y' and 'If Y then X' form, with a one-sentence verdict on the truth of each. Invite two volunteers to share their pairs with the class; discuss whether the verdicts are correct."
+            }
+          ],
+          "teacher_notes": "The fresh argument in the 15–30 band — proving that x² = x if and only if x = 0 or x = 1 — applies exactly the two-direction proof structure developed in the factor-count argument of Example 3, p.2, but in an algebraic rather than number-theoretic context; if students have absorbed that structure, this task is accessible. A frequent error is proving only one direction and claiming the biconditional; insist that both directions appear as separate, labelled arguments. The closing composition task reveals whether students have internalised the vocabulary as a thinking tool rather than a formula.",
+          "homework": []
+        }
+      ]
+    },
+    "period_schedule": [
+      {
+        "duration_minutes": 50,
+        "count": 13
+      }
+    ],
+    "coverage_handoff": [
+      {
+        "section_number": 1,
+        "section_ref": "9.1",
+        "section_title": "Propositions and their Converses",
+        "total_sections": 1,
+        "period_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can frame the converse of a proposition stated in 'if X then Y' form, classify each as true or false, and support their verdict with a deductive justification or a specific counterexample.",
+          "Students can construct multi-step deductive arguments — including auxiliary constructions and established criteria such as SSS congruence — to prove that a proposition and its converse are both true, or to prove one true and refute the other with a counterexample."
+        ],
+        "section_context": "Propositions, converses, counterexamples, and biconditionals across geometry and number theory",
+        "c_code": "C-7.1",
+        "co_central": false
+      }
+    ],
+    "assessment_items": {
+      "grade": "Grade IX",
+      "subject": "mathematics",
+      "stage": "secondary",
+      "chapter_number": 9,
+      "chapter_title": "Propositions and their Converses",
+      "chapter_cg": "CG-7",
+      "reasoning_floor_lift_applied": false,
+      "questions": [
+        {
+          "section_number": 1,
+          "section_ref": "9.1",
+          "section_title": "Propositions and their Converses",
+          "total_sections": 1,
+          "implied_lo_assessed": "Students can frame the converse of a proposition stated in 'if X then Y' form, classify each as true or false, and support their verdict with a deductive justification or a specific counterexample.",
+          "section_context": "Propositions, converses, counterexamples, and biconditionals across geometry and number theory",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-7.1",
+            "competency_text": "The student proves and disproves mathematical statements by framing propositions in 'if X then Y' form, justifying the true ones through deductive arguments, and refuting the false ones with counterexamples."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Consider the proposition P: 'If a number is a multiple of 6, then it is a multiple of 3.' Which of the following is the converse of P, and what is the correct verdict about its truth?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Converse: 'If a number is a multiple of 3, then it is a multiple of 6.' The converse is false; for example, 9 is a multiple of 3 but not of 6.",
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "text": "Converse: 'If a number is not a multiple of 3, then it is not a multiple of 6.' The converse is true because 6 is a multiple of 3.",
+              "is_correct": false
+            },
+            {
+              "label": "C",
+              "text": "Converse: 'If a number is a multiple of 3, then it is a multiple of 6.' The converse is true because every multiple of 3 can be written as 3k, and 3k = 6(k/2).",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "Converse: 'If a number is a multiple of 6, then it is a multiple of 3.' This is the same statement as P, so it is automatically true.",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "what_each_option_reveals": {
+                "B": "Confuses the converse with the contrapositive ('If not Y then not X'); also incorrectly claims it is true.",
+                "C": "Correctly frames the converse but makes an algebraic error in justification — 3k equals 6(k/2) only when k is even, not for all multiples of 3 (e.g. k = 3 gives 9, which is not a multiple of 6).",
+                "D": "Mistakes the converse for a restatement of the original proposition — treats 'If X then Y' and 'If Y then X' as the same claim."
+              },
+              "inclusivity": "Students who find the full wording difficult can first underline X and Y in proposition P, then swap them to form the converse before evaluating options. Students who answer quickly can be asked to write a second counterexample to the converse (other than 9) to confirm their reasoning."
+            },
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 1,
+          "section_ref": "9.1",
+          "section_title": "Propositions and their Converses",
+          "total_sections": 1,
+          "implied_lo_assessed": "Students can construct multi-step deductive arguments — including auxiliary constructions and established criteria such as SSS congruence — to prove that a proposition and its converse are both true, or to prove one true and refute the other with a counterexample.",
+          "section_context": "Propositions, converses, counterexamples, and biconditionals across geometry and number theory",
+          "question_type": "ECR",
+          "competency": {
+            "c_code": "C-7.1",
+            "competency_text": "The student proves and disproves mathematical statements by framing propositions in 'if X then Y' form, justifying the true ones through deductive arguments, and refuting the false ones with counterexamples."
+          },
+          "cognitive_demand": "Evaluation",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Consider the two statements about a positive integer n:\n\nP: 'If n is a perfect square, then n has an odd number of factors.'\nQ: 'If n has an odd number of factors, then n is a perfect square.'\n\n(a) A student writes: 'Since 36 is a perfect square and has 9 factors (an odd number), P is proved.' Identify the flaw in this argument and explain what a correct proof of P must show.\n\n(b) Give a complete deductive proof of Q using the factor-partner argument (where each factor f of n is paired with the factor n/f).\n\n(c) Explain briefly why P and Q together mean that 'n is a perfect square' and 'n has an odd number of factors' imply each other.",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [
+            "(a) The student's argument tests one specific value (36) and concludes P is proved — this is the flaw. A proof of P must work for every perfect square n, not just one example. A correct proof starts from 'let n = m² for some positive integer m' and derives, using the factor-partner argument, that n has an odd number of factors.",
+            "(b) A complete proof of Q: Pair each factor f of n with its partner n/f; factors come in distinct pairs (f, n/f) with f ≠ n/f, unless f = n/f, i.e. f² = n. If n has an odd number of factors, the pairing cannot account for all factors in distinct pairs — exactly one factor must equal its own partner, so f² = n for some f, meaning n is a perfect square.",
+            "(c) P says 'perfect square → odd number of factors' and Q says 'odd number of factors → perfect square'. Together they establish that the two conditions are equivalent: each implies the other, so they hold for exactly the same set of numbers. This is a biconditional — 'n is a perfect square if and only if n has an odd number of factors'.",
+            "The argument in (b) must be written in general terms (for any n satisfying the hypothesis), not verified for a single example.",
+            "The response distinguishes clearly between which chain of implications proves P and which proves Q."
+          ],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": null,
+            "SCR": null,
+            "ECR": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "inclusivity": "Students who find part (b) difficult can begin by listing all factor pairs of a specific perfect square (e.g. 16: pairs (1,16), (2,8), (4,4)) and describing what they notice before attempting the general argument. Students who complete all three parts fluently can be asked to explain why a number cannot have more than one factor that equals its own partner, providing the uniqueness step that closes the proof of P."
+            },
+            "OPEN_TASK": null
+          }
+        }
+      ]
+    },
+    "competency_gap_note": "",
+    "section_coverage_note": null
+  }
+}

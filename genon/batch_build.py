@@ -75,7 +75,7 @@ from aruvi_core.genon.carriers import (                           # noqa: E402
     CarrierNotImplemented, require_carrier,
 )
 
-MASTER = REPO / "data" / "content" / "allocation_norms" / "master_plan.json"
+MASTER = REPO / "data" / "cloud" / "content" / "allocation_norms" / "master_plan.json"  # path fix 2026-10-02
 TOKEN_LOG = REPO / "runtime_data" / "token_log.csv"
 RUNLOGS = HERE / "out" / "runlogs"
 BATCHDIR = HERE / "out" / "batch_runs"
@@ -94,9 +94,12 @@ def counts_for(row) -> list[int]:
 def content_present(subject: str, grade: str, ch: int) -> bool:
     """Eligibility as testing.md defines it: BOTH a summary and a mapping on disk.
     Summaries are .json for maths/english/TWAU and .txt for science/SS — glob the suffix."""
-    base = REPO / "data" / "content" / "chapters" / subject / grade
-    has_summary = any((base / "summaries").glob(f"ch_{ch:02d}_summary.*"))
-    has_mapping = (base / "mappings" / f"ch_{ch:02d}_mapping.json").is_file()
+    # Path fix 2026-10-02: since the 2026-08-23 split, summaries live in the founder-secure
+    # authoring root and mappings in the runtime content root (CLOUD_DATA_MODEL.md §0.5).
+    summaries = REPO / "data" / "authoring" / "chapters" / subject / grade / "summaries"
+    mappings = REPO / "data" / "cloud" / "content" / "chapters" / subject / grade / "mappings"
+    has_summary = any(summaries.glob(f"ch_{ch:02d}_summary.*"))
+    has_mapping = (mappings / f"ch_{ch:02d}_mapping.json").is_file()
     return has_summary and has_mapping
 
 

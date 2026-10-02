@@ -31,9 +31,14 @@ sys.path.insert(0, ROOT)
 
 from aruvi_core.genon import compile_stream                      # noqa: E402
 from aruvi_core.genon.serve import authored_registry              # noqa: E402
+from api import config                                            # noqa: E402
 
 MP = os.path.join(ROOT, "data/cloud/content/allocation_norms/master_plan.json")
-SAVED = os.path.join(ROOT, "data/cloud/content/saved_plans")
+# ★ PATH FIX 2026-10-02. Since 2026-08-27 the served library is foldered by EDITION YEAR
+# (saved_plans/<subject>/<grade>/<LP_YEAR>/), and generate_canonical.py writes there via
+# api.config. Read from the same place — otherwise every authored chapter looks unauthored
+# and a re-annotation flips it back to provisional (and briefs_for then refuses it).
+SAVED = os.path.join(config.DATA_DIR, "saved_plans")
 
 GRADE_KEY = {"III": "iii", "IV": "iv", "V": "v", "VI": "vi", "VII": "vii",
              "VIII": "viii", "IX": "ix", "X": "x"}
@@ -53,7 +58,7 @@ def canonical_counts(a, c):
 
 
 def library_paths(subject, klass, chapter):
-    d = os.path.join(SAVED, subject, GRADE_KEY.get(klass, klass.lower()))
+    d = os.path.join(SAVED, subject, GRADE_KEY.get(klass, klass.lower()), config.LP_YEAR)
     ch = int(chapter)
     return (os.path.join(d, f"ch_{ch:02d}_canonical.json"),
             lambda k: os.path.join(d, f"ch_{ch:02d}_canonical_p{k:02d}.json"))
@@ -537,6 +542,11 @@ def main():
     for key, combo in mp["combos"].items():
         subject, klass = key.split("|")
         for ch in combo["chapters"]:
+            if ch.get("reserve"):
+                # Budgeted time with no chapter behind it (master_plan.py RESERVE_PREFIX,
+                # 2026-10-02): nothing to author, so no canonical plan to annotate.
+                ch.pop("canonical_plan", None)
+                continue
             a = int(ch["recommended_periods"])
             c = int(ch["floor_periods_at_standard"])
             counts = list(ch.get("canonical_periods") or canonical_counts(a, c))

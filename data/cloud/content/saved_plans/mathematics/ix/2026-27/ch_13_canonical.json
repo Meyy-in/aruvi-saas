@@ -1,0 +1,1921 @@
+{
+  "filename": "ch_13_canonical.json",
+  "saved_at": "2026-10-02T15:14:47",
+  "plan_status": "canonical",
+  "chapter_number": 13,
+  "chapter_title": "Two Variables, One Line",
+  "grade": "Grade IX",
+  "subject": "Mathematics",
+  "period_rows_snapshot": [
+    {
+      "id": 0,
+      "duration": 50,
+      "count": 16
+    }
+  ],
+  "period_schedule_display": "Period schedule:\n  Row 1: 50 minutes × 16 periods = 800 minutes\nTotal: 16 periods · 13h 20min",
+  "genon_canonical": {
+    "generated": "2026-10-02",
+    "academic_year": "2026-27",
+    "schedule": "16x50",
+    "constitution": "LP v1.3 / assessment v1.2",
+    "source": "generate_canonical.py one mathematics ix 13",
+    "ledger_ts": "20261002_150626",
+    "validation": "clean"
+  },
+  "result": {
+    "lesson_plan": {
+      "periods": [
+        {
+          "period_number": 1,
+          "period_duration_minutes": 50,
+          "activity_title": "Introducing Linear Equations in Two Variables",
+          "section_anchor": "13.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-3",
+              "type": "exercise",
+              "source_section": "13.1",
+              "book_ref": "Exercise Set 13.1 Q3, p.87",
+              "description": "Judge whether situations have been correctly expressed as linear equations in two variables: (i) a notebook costing twice as much as a pen, written t = 2p by Charlie and p = 2t by Meera; (ii) two batsmen together scoring 176 runs, written x + y = 176 by Manisha."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Open with Radha's fruit-purchase scenario: x kg of mangoes at ₹60 per kg and y kg of bananas at ₹50 per kg totalling ₹280, writing 60x + 50y = 280 on the board. Ask students what is different about this equation compared to equations they have solved before — there are two unknowns. Elicit from students that fixing one variable (say x = 1) gives a value for the other, and that fixing a different value of x gives a different pair."
+            },
+            {
+              "minutes": "10-25",
+              "activity": "Name the object: an equation of the form involving two unknowns to the first degree is a linear equation in two variables. Discuss the two sides of 60x + 50y = 280 — each side represents the total cost, making it a meaningful equation. Have students write two more real-life sentences (e.g., buying pens and pencils, scoring runs in two innings) and express each as a linear equation in two variables. Pairs share and the class critiques whether each is a correct two-variable linear equation."
+            },
+            {
+              "minutes": "25-40",
+              "activity": "Work through Exercise Set 13.1 Q3, p.87 together: judge whether Charlie's t = 2p and Meera's p = 2t correctly model the notebook-pen relationship, and whether x + y = 176 correctly models the two-batsmen situation. Students write their verdict and reasoning individually, then discuss as a class which formulation is correct and why."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Consolidate: invite two students to each pose a new situation and write it as a linear equation in two variables; the class checks that the equation is linear (degree 1 in each variable) and involves exactly two unknowns. Summarise on the board: a linear equation in two variables relates two unknown quantities whose values together satisfy one condition."
+            }
+          ],
+          "teacher_notes": "This unit opens the chapter at the point where linear equations are extended from one unknown to two, anchoring on Radha's fruit purchase as the motivating situation. Watch for students who write, for example, 60x = 50y + 280 — they have mis-assigned the total; insist that each side of the equation represents the same quantity. Students who finish early may read Example 1, p.86, on their own.",
+          "homework": []
+        },
+        {
+          "period_number": 2,
+          "period_duration_minutes": 50,
+          "activity_title": "Standard Form and Identifying Coefficients",
+          "section_anchor": "13.1.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-1",
+              "type": "worked_example",
+              "source_section": "13.1.1",
+              "book_ref": "Example 1, p.86",
+              "description": "Write 5x + 2y = 2.7, x/2 - 4 = (3/2)y, 4 = 1.5x - 1.3y and 3y = 5 in the standard form ax + by + c = 0 and state a, b and c in each case."
+            },
+            {
+              "id": "E-1",
+              "type": "exercise",
+              "source_section": "13.1.1",
+              "book_ref": "Exercise Set 13.1 Q1, p.87",
+              "description": "Write a linear equation in two variables in which a = 3, b = 0 and c = -1/5."
+            },
+            {
+              "id": "E-2",
+              "type": "exercise",
+              "source_section": "13.1.1",
+              "book_ref": "Exercise Set 13.1 Q2, p.87",
+              "description": "Complete a table by writing y - 15 = √2x, 3y - 2x = 0, 5x = 3y, x = 8 and 3y = 1 in standard form and identifying in each the coefficient of x, the coefficient of y and the constant term."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "State the standard form ax + by + c = 0 with a, b, c real and a, b not both zero. Identify a as the coefficient of x, b as the coefficient of y, and c as the constant term. Note that a or b (but not both) may be zero, giving special cases such as 7 + 4x = 0 written as 4x + 0·y + 7 = 0."
+            },
+            {
+              "minutes": "10-25",
+              "activity": "Work through Example 1, p.86 at the board: rewrite 5x + 2y = 2.7, x/2 - 4 = (3/2)y, 4 = 1.5x - 1.3y and 3y = 5 in standard form, reading off a, b and c each time. Point out that multiplying through by -1 gives another equally valid set of values, so the representation is not unique."
+            },
+            {
+              "minutes": "25-40",
+              "activity": "Students attempt Exercise Set 13.1 Q1, p.87 (write an equation with a = 3, b = 0, c = -1/5) and Exercise Set 13.1 Q2, p.87 (complete the table for five equations). Circulate and prompt students who write 3y = 5 without rearranging to ax + by + c = 0 form first."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Discuss Exercise Set 13.1 Q2, p.87 answers as a class. Reinforce that equations with rational coefficients such as (1/4)x + (3/5)y - 1/2 = 0 are already in standard form; multiplying by 20 gives 5x + 12y - 10 = 0. Confirm: recognising and reading off a, b and c is the core skill of this section."
+            }
+          ],
+          "teacher_notes": "Having established that a linear equation in two variables models a two-condition situation, this unit formalises the standard form ax + by + c = 0. A common slip is forgetting to move all terms to one side before reading off a, b and c — for example, leaving 1.5x - 1.3y on the right and reading a = 1.5 without negating. Insist on full rearrangement first.",
+          "homework": [
+            "Exercise Set 13.1 Q2, p.87 — complete any rows not finished in class, showing the rearrangement step explicitly."
+          ]
+        },
+        {
+          "period_number": 3,
+          "period_duration_minutes": 50,
+          "activity_title": "What Counts as a Solution — the Algebraic Meaning",
+          "section_anchor": "13.2.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-4",
+              "type": "worked_example",
+              "source_section": "13.2.1",
+              "book_ref": "Example 4, p.92",
+              "description": "Given that (-3, 4) is the solution of both 3ax + 4y = -2 and 2x + by = 14, substitute x = -3 and y = 4 to find a = 2 and b = 5."
+            },
+            {
+              "id": "E-4",
+              "type": "exercise",
+              "source_section": "13.2.1",
+              "book_ref": "Exercise Set 13.2 Q1, p.93",
+              "description": "Verify whether the ordered pair (4, 3) is a solution of 5x - 6y = 2."
+            },
+            {
+              "id": "E-5",
+              "type": "exercise",
+              "source_section": "13.2.1",
+              "book_ref": "Exercise Set 13.2 Q2, p.93",
+              "description": "Find any two solutions of each of (i) 7x - 3y = 21 and (ii) 2x + 3y = 5."
+            },
+            {
+              "id": "E-6",
+              "type": "exercise",
+              "source_section": "13.2.1",
+              "book_ref": "Exercise Set 13.2 Q3, p.93",
+              "description": "Given that (2, -1) is the solution of both 2mx + 3y = 7 and 4x + ny = -10, find m and n."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Define a solution of a linear equation in two variables as an ordered pair (x, y) that satisfies the equation. Stress that order matters: (2, 3) and (3, 2) are different pairs. Demonstrate by substituting (2, 3) and (4, 0) into 3x + 2y = 12 to confirm they satisfy it, and substituting (1, 3) to show it does not — a non-solution. Conduct the Think-and-Reflect prompt from section 13.2.1: ask students to check whether (1, 9/2), (0, 6), (4, 1) and (1/2, 21/4) satisfy 3x + 2y = 12, then to find one more solution, and to consider how many solutions there can be."
+            },
+            {
+              "minutes": "12-25",
+              "activity": "Explain the systematic way to generate solutions: assign any value u to x, and the equation becomes a linear equation in y alone, giving a unique v; then (u, v) is a solution. Repeat for a second value of x to generate a second solution. Conclude that infinitely many solutions exist."
+            },
+            {
+              "minutes": "25-38",
+              "activity": "Students work on Exercise Set 13.2 Q1, p.93 (verify (4, 3) for 5x - 6y = 2) and Exercise Set 13.2 Q2, p.93 (find two solutions each for 7x - 3y = 21 and 2x + 3y = 5) individually, then compare with a neighbour."
+            },
+            {
+              "minutes": "38-50",
+              "activity": "Work through Example 4, p.92 with the class: given (-3, 4) satisfies both 3ax + 4y = -2 and 2x + by = 14, substitute x = -3, y = 4 to find a = 2 and b = 5. Students then attempt Exercise Set 13.2 Q3, p.93 (find m and n given (2, -1) satisfies both equations) independently."
+            }
+          ],
+          "teacher_notes": "This unit introduces the algebraic notion of a solution as an ordered pair, building on the standard-form work of section 13.1.1. A frequent error is ignoring the order of the pair — students may treat (2, 3) and (3, 2) as the same; stress that the first entry is always the x-value. For a self-study pointer, students can read Example 4, p.92 again and try reversing the order of substitution to confirm the result is unchanged.",
+          "homework": []
+        },
+        {
+          "period_number": 4,
+          "period_duration_minutes": 50,
+          "activity_title": "Plotting Solutions — Every Solution Lies on a Line",
+          "section_anchor": "13.2.2",
+          "pedagogical_method": "Discovery/Inquiry",
+          "materials": [
+            "Textbook",
+            "Graph paper or squared exercise-book pages",
+            "Ruler",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": "Board coordinate grid with plotted points (-1, 7.5), (0, 6), (1, 4.5), (4, 0) for 3x + 2y = 12",
+          "textbook_items_in_class": [
+            {
+              "id": "WE-2",
+              "type": "worked_example",
+              "source_section": "13.2.2",
+              "book_ref": "Example 2, p.89",
+              "description": "Find two solutions of 2x + y = 7 by substituting x = 0 and y = 0, draw the graph, and read four more solutions off the line."
+            },
+            {
+              "id": "WE-3",
+              "type": "worked_example",
+              "source_section": "13.2.2",
+              "book_ref": "Example 3, p.90",
+              "description": "Draw graphs of 4x + 3y = 12 using intercept points, and 2x + 5y = 0 using additional points since both intercepts coincide at the origin."
+            },
+            {
+              "id": "E-7",
+              "type": "exercise",
+              "source_section": "13.2.2",
+              "source_sections": [
+                "13.2.1",
+                "13.2.2"
+              ],
+              "book_ref": "Exercise Set 13.2 Q4, p.93",
+              "description": "For each of (i) 5x + 3y = 7, (ii) 5x - 3y = 7, (iii) -5x + 3y = 7 and (iv) -5x - 3y = 7, find two solutions lying in different quadrants and verify by graphing."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Rewrite 3x + 2y = 12 as y = -(3/2)x + 6 and tabulate four solutions: (-1, 7.5), (0, 6), (1, 4.5), (4, 0). Ask students to plot these on their graph paper. Prompt: do the points appear to be collinear? Confirm by drawing the line through them on the board. Introduce the geometric statement: the graph of a linear equation in two variables is a straight line, and every solution is a point on that line."
+            },
+            {
+              "minutes": "12-25",
+              "activity": "Work through Example 2, p.89 (graph 2x + y = 7 using x = 0 and y = 0 intercept points, then read further solutions off the line) and Example 3, p.90 (graph 4x + 3y = 12 through intercepts; graph 2x + 5y = 0, noting that both intercepts coincide at the origin so a third point is needed). Students replicate each graph on their own paper. Lead the Think-and-Reflect from section 13.2.2: four friends claim the line ax + by = 0 always passes through the origin when c = 0 — ask students to check on 2x + 3y = 0 and to decide whether they agree."
+            },
+            {
+              "minutes": "25-38",
+              "activity": "Explain the intercept shortcut: substitute x = 0 to find where the line meets the y-axis, substitute y = 0 to find where it meets the x-axis. Practice: students find the two intercepts of 4x + 3y = 12 and confirm they match (0, 4) and (3, 0) plotted above."
+            },
+            {
+              "minutes": "38-50",
+              "activity": "Students attempt Exercise Set 13.2 Q4, p.93: for each of the four equations, find two solutions in different quadrants, identify the quadrants, and plot the line. One or two students share their plots on the board and the class checks for correctness."
+            }
+          ],
+          "teacher_notes": "Having established algebraically that infinitely many solutions exist, this unit reveals that they all lie on a line. Students often assume a line through the origin arises only for y = kx type equations — the Think-and-Reflect prompt on ax + by = 0 targets this directly. For exercise Q4, watch for students who pick solution pairs in the same quadrant; the prompt specifically asks for different quadrants.",
+          "homework": [
+            "Exercise Set 13.2 Q5, p.93 — using the given graph of 3x - 7y = 21, decide whether C(2, 3) lies on the line and whether points not on the line can satisfy the equation."
+          ]
+        },
+        {
+          "period_number": 5,
+          "period_duration_minutes": 50,
+          "activity_title": "Justifying Properties of Solutions — True or False Reasoning",
+          "section_anchor": "13.2.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-8",
+              "type": "exercise",
+              "source_section": "13.2.2",
+              "source_sections": [
+                "13.2.1",
+                "13.2.2"
+              ],
+              "book_ref": "Exercise Set 13.2 Q5, p.93",
+              "description": "Using the given graph of 3x - 7y = 21 through A(7, 0) and B(0, -3), decide whether C(2, 3) lies on the line and satisfies the equation."
+            },
+            {
+              "id": "E-9",
+              "type": "exercise",
+              "source_section": "13.2.1",
+              "source_sections": [
+                "13.1.1",
+                "13.2.1",
+                "13.2.2"
+              ],
+              "book_ref": "Exercise Set 13.2 Q6, p.94",
+              "description": "State with justification whether each of six statements about linear equations in two variables is true or false."
+            },
+            {
+              "id": "E-10",
+              "type": "exercise",
+              "source_section": "13.2.1",
+              "book_ref": "Exercise Set 13.2 Q7, p.94",
+              "description": "Compare solutions of 3x + 4y = 7 and 6x + 8y = 14; show that ax + by = c and kax + kby = kc have the same solution set."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Return to Exercise Set 13.2 Q5, p.93 (homework from the previous unit): take the graph of 3x - 7y = 21 through A(7, 0) and B(0, -3). Discuss whether C(2, 3) lies on the line and whether it satisfies the equation, connecting the geometric picture (point on/off the line) to the algebraic check (substitution into the equation)."
+            },
+            {
+              "minutes": "10-28",
+              "activity": "Students work on Exercise Set 13.2 Q6, p.94 — the six true-or-false statements about linear equations in two variables — individually and in writing. After five minutes, pairs compare verdicts. Bring the class together and work through each statement: (i) a linear equation in two variables has only one solution — FALSE, infinitely many; (ii) its graph always passes through the origin — FALSE; (iii) it can never have rational solutions — FALSE; (iv) x = 3 is a valid linear equation in two variables — TRUE (special case); (v) 2x + 3y = 7 has infinitely many solutions — TRUE; (vi) (1, 2) is a solution of 2x + 3y = 7 — TRUE by substitution."
+            },
+            {
+              "minutes": "28-42",
+              "activity": "Work through Exercise Set 13.2 Q7, p.94: (i) compare solutions of 3x + 4y = 7 and 6x + 8y = 14 and argue they are the same; (ii) prove generally that ax + by = c and kax + kby = kc (k ≠ 0) have identical solution sets. Students write the argument in two to three lines; selected students read their proofs aloud."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Synthesise: a linear equation in two variables has infinitely many solutions; scaling both sides by the same nonzero constant leaves the solution set unchanged. This will connect to the analysis of pairs of equations later in the chapter. Address remaining questions."
+            }
+          ],
+          "teacher_notes": "This unit deepens students' understanding of the solution set of a single equation by asking them to justify claims, not just compute. The most productive misconception to surface here is statement (i) — many students initially believe two unknowns yield two equations and therefore a unique solution; use Exercise Set 13.2 Q7, p.94 to show that scaling an equation does not change its solution set, which foreshadows the infinite-solution case for pairs.",
+          "homework": []
+        },
+        {
+          "period_number": 6,
+          "period_duration_minutes": 50,
+          "activity_title": "Slope as Steepness — Rise Over Run from Two Points",
+          "section_anchor": "13.3.1",
+          "pedagogical_method": "Inductive",
+          "materials": [
+            "Textbook",
+            "Graph paper or squared exercise-book pages",
+            "Ruler",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": "Board diagram of two points A(x1, y1) and B(x2, y2) on a line showing the horizontal run and vertical rise",
+          "textbook_items_in_class": [
+            {
+              "id": "WE-5",
+              "type": "worked_example",
+              "source_section": "13.3.1",
+              "book_ref": "Example 5, p.97",
+              "description": "Plot A(-1, 0), B(1, 2) and C(4, 5) and compute the slope as rise/run = 1, confirming any two points give the same value."
+            },
+            {
+              "id": "WE-6",
+              "type": "worked_example",
+              "source_section": "13.3.1",
+              "book_ref": "Example 6, p.97",
+              "description": "Find slope of the line through A(-4, 5) and B(-1, 2) as -1, and show the same value is obtained in reverse order."
+            },
+            {
+              "id": "E-11",
+              "type": "exercise",
+              "source_section": "13.3.1",
+              "book_ref": "Exercise Set 13.3 Q1, p.102",
+              "description": "Rank three ski hills by steepness using their rise and run."
+            },
+            {
+              "id": "E-12",
+              "type": "exercise",
+              "source_section": "13.3.1",
+              "book_ref": "Exercise Set 13.3 Q2, p.102",
+              "description": "Find the slope of a loading-dock ramp that rises 2.5 m over 4 m."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Motivate slope as steepness using the cycling-up-a-hill image: a steeper hill requires more effort. For two points A(x1, y1) and B(x2, y2), define the run as x2 - x1 (horizontal step) and the rise as y2 - y1 (vertical step). Write slope = rise/run = (y2 - y1)/(x2 - x1). Note: positive slope goes upward left to right, negative slope goes downward."
+            },
+            {
+              "minutes": "10-22",
+              "activity": "Work through Example 5, p.97 (slope of line through A(-1, 0), B(1, 2), C(4, 5) computed as 1 using any two of the three points) and Example 6, p.97 (slope of line through A(-4, 5) and B(-1, 2) computed in both orders, each giving -1). Students verify at least one computation on their own paper."
+            },
+            {
+              "minutes": "22-32",
+              "activity": "Conduct the Think-and-Reflect from section 13.3.1: on the line through A(2, 0) and B(4, 3), find the y-coordinate of the point whose x-coordinate is 8, and the x-coordinate of the point whose y-coordinate is 6. Students work individually using the slope to extend the line, then share answers and strategies. State — and note that the proof is in the next section — that slope does not depend on which two points are chosen."
+            },
+            {
+              "minutes": "32-42",
+              "activity": "Students attempt Exercise Set 13.3 Q1, p.102 (rank three ski hills by steepness) and Exercise Set 13.3 Q2, p.102 (slope of loading-dock ramp) individually."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Discuss answers. Ask: can slope ever be zero? Can it be undefined? Elicit: a horizontal line has zero rise so slope = 0; a vertical line has zero run so slope is undefined. Summarise the four cases on the board. Students may read Example 6, p.97 again for the reversal-of-order property."
+            }
+          ],
+          "teacher_notes": "This unit opens section 13.3 by making slope concrete and computable before its algebraic role in y = mx + d is established. A frequent error is computing run/rise instead of rise/run — insist that the vertical change is always the numerator. The Think-and-Reflect prompt about extending line AB foreshadows the constancy of slope, which the next unit proves formally.",
+          "homework": [
+            "Exercise Set 13.3 Q4, p.103 — wheelchair ramp problem: find the horizontal length given slope 1:12 and total height 18 cm."
+          ]
+        },
+        {
+          "period_number": 7,
+          "period_duration_minutes": 50,
+          "activity_title": "Slope-Intercept Form — Deriving and Using y = mx + d",
+          "section_anchor": "13.3.2",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Graph paper or squared exercise-book pages",
+            "Ruler",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": "Board graph of y = -5x + 3 drawn from a table of values, with slope and y-intercept labelled",
+          "textbook_items_in_class": [
+            {
+              "id": "E-13",
+              "type": "exercise",
+              "source_section": "13.3.1",
+              "source_sections": [
+                "13.3.1",
+                "13.3.2"
+              ],
+              "book_ref": "Exercise Set 13.3 Q3, p.102",
+              "description": "Find the slope of line l in four grid diagrams: horizontal, falling through origin, rising, and vertical."
+            },
+            {
+              "id": "E-31",
+              "type": "exercise",
+              "source_section": "13.3.2",
+              "source_sections": [
+                "13.2.2",
+                "13.3.2"
+              ],
+              "book_ref": "End of Chapter Q5, p.120",
+              "description": "Give a formula for the x-intercept of the line y = mx + c."
+            },
+            {
+              "id": "E-33",
+              "type": "exercise",
+              "source_section": "13.3.2",
+              "book_ref": "End of Chapter Q7, p.120",
+              "description": "State how many lines have a given slope, and how many have a given slope and pass through a given point."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-14",
+              "activity": "Derive the slope-intercept form: starting from ax + by + c = 0 with b ≠ 0, rearrange to y = -(a/b)x - c/b, identifying m = -a/b as the slope and d = -c/b as the y-intercept. Prove that m equals the slope by substituting two general points (x1, mx1 + d) and (x2, mx2 + d) into (y2 - y1)/(x2 - x1), simplifying to m — this simultaneously proves slope is the same for any two points on the line. Conduct the Think-and-Reflect from section 13.3.2: ask students to use the points A(0, 3), B(1, -2) and C(-1, 8) to verify that the slope of y = -5x + 3 is indeed -5, computing rise/run for at least two pairs."
+            },
+            {
+              "minutes": "14-26",
+              "activity": "Interpret the four slope cases geometrically: positive slope (m > 0, e.g. y = 2x + 1, rising), negative slope (m < 0, e.g. y = -3x + 4, falling), zero slope (y = 5, horizontal), undefined slope (x = 2, vertical, not of the form y = mx + d). Draw a quick sketch on the board for each. Ask students to read off slope and y-intercept from 5x + y = 3 (i.e. y = -5x + 3) and to interpret them: y decreases by 5 for every unit increase in x; the line crosses the y-axis at (0, 3)."
+            },
+            {
+              "minutes": "26-38",
+              "activity": "Exercise Set 13.3 Q3, p.102: students find the slope of each of the four diagrammed lines (horizontal gives 0, vertical gives undefined or no slope). Students write their answers with reasoning."
+            },
+            {
+              "minutes": "38-50",
+              "activity": "End of Chapter Q5, p.120 (formula for x-intercept of y = mx + c) and End of Chapter Q7, p.120 (how many lines have a given slope; how many if a point is also given). Students work individually; selected students explain their reasoning to the class. Confirm: infinitely many lines share a slope, but exactly one line passes through a given point with a given slope."
+            }
+          ],
+          "teacher_notes": "Having computed slope numerically in section 13.3.1, this unit proves that the slope of y = mx + d is always m — a key result that also shows slope is independent of the chosen points. A common slip is confusing the sign: from ax + by + c = 0, the slope is -a/b, not a/b; the negation is easy to miss when rearranging. Students may read End of Chapter Q7, p.120 again and try extending it: what changes if the point is on the y-axis?",
+          "homework": []
+        },
+        {
+          "period_number": 8,
+          "period_duration_minutes": 50,
+          "activity_title": "Modelling Situations as Pairs of Linear Equations",
+          "section_anchor": "13.4",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-15",
+              "type": "exercise",
+              "source_section": "13.4",
+              "book_ref": "Exercise Set 13.4 Q1, p.105",
+              "description": "Frame a pair of linear equations for cinema tickets (₹x each) and snack boxes (₹y each)."
+            },
+            {
+              "id": "E-16",
+              "type": "exercise",
+              "source_section": "13.4",
+              "book_ref": "Exercise Set 13.4 Q2, p.105",
+              "description": "Frame a pair of linear equations for taxi fares with a fixed charge and per-km rate."
+            },
+            {
+              "id": "E-17",
+              "type": "exercise",
+              "source_section": "13.4",
+              "book_ref": "Exercise Set 13.4 Q3, p.105",
+              "description": "Frame a pair of linear equations for a sports meet's ticket sales at two price points."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Recall Rakesh's Grade 7 puzzle: two numbers with sum 25 and difference 11. Express the two conditions as x + y = 25 and x - y = 11. Define a solution of a pair of linear equations as an ordered pair that satisfies BOTH equations simultaneously. State the general form: a1x + b1y + c1 = 0 and a2x + b2y + c2 = 0, all coefficients real, (a1, b1) ≠ (0, 0) and (a2, b2) ≠ (0, 0). Model the science-exhibition entry-fee situation: 2x + 3y = 600 and 3x + 2y = 700. Conduct the Think-and-Reflect from section 13.4: one paratha with 2 bowls of dahi costs ₹90 and 2 parathas with 7 bowls of dahi cost ₹260 — ask students to write the two equations and explain their reasoning for finding the cost of each item."
+            },
+            {
+              "minutes": "12-25",
+              "activity": "Discuss the Think-and-Reflect. Emphasise the modelling steps: (1) identify the two unknown quantities, (2) write one equation per condition, (3) check that both equations are linear in the same two variables. Contrast correctly framed pairs with common errors such as mixing up which variable is which or omitting one condition."
+            },
+            {
+              "minutes": "25-40",
+              "activity": "Students work in pairs on Exercise Set 13.4 Q1, p.105 (cinema tickets and snacks), Q2, p.105 (taxi fares), and Q3, p.105 (sports-meet tickets). Each pair writes and labels both equations, naming the variables clearly."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Selected pairs present their equations. The class checks: is each equation linear? Does each involve the same two variables? Are all the given conditions used? Correct any formulations where one condition is missing or the two equations model the same condition."
+            }
+          ],
+          "teacher_notes": "This unit moves from the single-equation setting to the two-equation system, framing the modelling step as its own distinct skill before any solution method is introduced. A recurring error is writing both conditions into a single equation, for example 2x + 3y = 600 + 3x + 2y = 700, which conflates two separate constraints; insist that each condition produces exactly one equation.",
+          "homework": []
+        },
+        {
+          "period_number": 9,
+          "period_duration_minutes": 50,
+          "activity_title": "Method of Substitution — Reducing a Pair to One Variable",
+          "section_anchor": "13.5.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-7",
+              "type": "worked_example",
+              "source_section": "13.5.1",
+              "book_ref": "Example 7, p.106",
+              "description": "Solve 7x - 15y = 2 and x + 2y = 3 by substitution, giving x = 49/29 and y = 19/29."
+            },
+            {
+              "id": "WE-8",
+              "type": "worked_example",
+              "source_section": "13.5.1",
+              "book_ref": "Example 8, p.107",
+              "description": "Find two angles of a triangle given that y = 4x and the third angle is 50°, giving x = 26° and y = 104°."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "State the strategy for section 13.5: because a linear equation in one variable is already solvable, the goal is to reduce a pair of two-variable equations to a single one-variable equation. Introduce the method of substitution: use one equation to express one variable in terms of the other, then substitute into the second equation."
+            },
+            {
+              "minutes": "10-28",
+              "activity": "Work through Example 7, p.106 step by step: from x + 2y = 3 express x = 3 - 2y; substitute into 7x - 15y = 2 to get a single equation in y; solve to get y = 19/29; back-substitute to get x = 49/29; verify in both original equations. Conduct the relevant Think-and-Reflect from section 13.5.1: check whether writing y = (1/2)(3 - x) instead of x = 3 - 2y yields the same solution. Students verify this variant."
+            },
+            {
+              "minutes": "28-40",
+              "activity": "Work through Example 8, p.107: triangle with angles x°, y° = 4x° and 50°. From y = 4x and x + y = 130 (angle-sum), substitute to get 5x = 130, giving x = 26° and y = 104°. Students verify both angles satisfy both conditions."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Students attempt one problem individually from Exercise Set 13.5 Q1, p.116 — choose (i) two integers with sum +5 and difference -21, or (iii) cost of a bat and ball. They write the modelling step and the substitution step separately, showing both before combining."
+            }
+          ],
+          "teacher_notes": "This unit introduces the first algebraic method for solving a pair, building directly on the modelling skills developed in section 13.4. A common slip is substituting into the same equation used to express one variable — the substitution must go into the OTHER equation; emphasise this explicitly. Students who finish early can read Example 8, p.107 and solve it by expressing y first instead of x.",
+          "homework": [
+            "Exercise Set 13.5 Q1, p.116 — attempt two further problems from the list using substitution, showing all steps."
+          ]
+        },
+        {
+          "period_number": 10,
+          "period_duration_minutes": 50,
+          "activity_title": "Method of Elimination — Matching Coefficients and Subtracting",
+          "section_anchor": "13.5.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "WE-9",
+              "type": "worked_example",
+              "source_section": "13.5.1",
+              "book_ref": "Example 9, p.108",
+              "description": "Form and solve 9x - 4y = 2000 and 7x - 3y = 2000 by elimination, giving incomes ₹18,000 and ₹14,000."
+            },
+            {
+              "id": "WE-10",
+              "type": "worked_example",
+              "source_section": "13.5.1",
+              "book_ref": "Example 10, p.109",
+              "description": "Find the two-digit number whose digit-sum with its reverse is 66 and digits differ by 2."
+            },
+            {
+              "id": "E-22",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "source_sections": [
+                "13.4",
+                "13.5.1"
+              ],
+              "book_ref": "Exercise Set 13.5 Q5, p.118",
+              "description": "Find the dimensions of a rectangular garden with half-perimeter 36 m and length 4 m more than width."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Introduce the method of elimination: multiply one or both equations so that the coefficient of one variable becomes equal in both, then subtract to eliminate that variable, leaving a single equation in the other. Contrast with substitution: elimination avoids fractional expressions when coefficients are convenient integers. Work through Example 9, p.108 — incomes in ratio 9:7, expenditures in ratio 4:3, savings ₹2000 each — forming 9x - 4y = 2000 and 7x - 3y = 2000 and eliminating y."
+            },
+            {
+              "minutes": "12-26",
+              "activity": "Continue with Example 10, p.109 (two-digit number problem). Students carry out one elimination step on their own paper, then the class confirms x = 4 and y = 2 giving 42. Conduct the Think-and-Reflect from section 13.5.1: re-solve the incomes problem by eliminating x instead of y, and compare with substitution — which is easier here and why?"
+            },
+            {
+              "minutes": "26-40",
+              "activity": "Students attempt Exercise Set 13.5 Q5, p.118 (rectangular garden: half-perimeter 36 m, length 4 m more than width) using elimination. They set up x + y = 36 and x - y = 4, eliminate to find both dimensions, and verify."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Discuss answers. Emphasise the verification step: substitute the found values into both original equations, not just one. Ask students to explain, in one sentence, the core difference between substitution and elimination — one expresses a variable explicitly, the other cancels a variable by combining equations."
+            }
+          ],
+          "teacher_notes": "This unit establishes the elimination method alongside substitution, and both apply to the same pair types; choice of method is a matter of convenience. A typical error in elimination is forgetting to multiply the right-hand side by the same factor as the coefficients — for example, multiplying only the left-hand side of 7x - 3y = 2000 by 4. Insist the multiplier applies to the entire equation.",
+          "homework": []
+        },
+        {
+          "period_number": 11,
+          "period_duration_minutes": 50,
+          "activity_title": "How Many Solutions? — Coefficient Ratios and Number of Solutions",
+          "section_anchor": "13.5.1",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-34",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "book_ref": "End of Chapter Q8, p.120",
+              "description": "Find the values of p for which 4x + py + 8 = 0 and 2x + 2y + 2 = 0 has a unique solution."
+            },
+            {
+              "id": "E-35",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "book_ref": "End of Chapter Q9, p.121",
+              "description": "Find a and b for which (a + b)x - 2by = 5a + 2b + 1 and 3x - y = 14 has infinitely many solutions."
+            },
+            {
+              "id": "E-36",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "source_sections": [
+                "13.5.1",
+                "13.6"
+              ],
+              "book_ref": "End of Chapter Q10, p.121",
+              "description": "Find k for which x + 2y = 3 and (k - 1)x + (k + 1)y = k + 3 represent coincident lines."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-14",
+              "activity": "Use elimination to analyse three outcomes. Case 1: x - y = 10 and 10x - 10y = 100 — multiply the first by 10 and subtract; both sides cancel to 0 = 0, so every solution of one satisfies the other: infinitely many solutions. This occurs when a1/a2 = b1/b2 = c1/c2. Case 2: x - y = 10 and 10x - 10y = 101 — after multiplication the left-hand sides cancel but right-hand sides are unequal: 0 = -1, impossible, no solution. This occurs when a1/a2 = b1/b2 ≠ c1/c2. Case 3: a1/a2 ≠ b1/b2 — a variable survives elimination, giving a unique solution. Write all three ratio rules on the board."
+            },
+            {
+              "minutes": "14-26",
+              "activity": "Conduct the Think-and-Reflect from section 13.5.1: ask students to count the solutions of 10x - 5y = 20 and 4x - 2y = 8, give three more pairs that reduce to 0 = 0, and three more pairs with no solution, and state a simple rule for each type. Students work in groups and share examples."
+            },
+            {
+              "minutes": "26-40",
+              "activity": "Students work on End of Chapter Q8, p.120 (find p for unique solution of 4x + py + 8 = 0 and 2x + 2y + 2 = 0) and End of Chapter Q9, p.121 (find a and b for infinitely many solutions of (a + b)x - 2by = 5a + 2b + 1 and 3x - y = 14). Students apply the ratio rules, setting up and solving the resulting equations in the parameter(s)."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Work through End of Chapter Q10, p.121 together: find k for which x + 2y = 3 and (k - 1)x + (k + 1)y = k + 3 are coincident. Apply a1/a2 = b1/b2 = c1/c2 and solve the resulting system in k. Confirm the unique value of k."
+            }
+          ],
+          "teacher_notes": "This unit develops the most analytic part of section 13.5.1: predicting the number of solutions from the coefficient ratios without solving the pair. Students often confuse the coincident-line case (a1/a2 = b1/b2 = c1/c2, infinitely many solutions) with the unique case; stress that ALL THREE ratios must be equal for coincidence. End of Chapter Q9, p.121 requires solving a two-parameter system — ensure students equate each of the three ratios in turn.",
+          "homework": [
+            "End of Chapter Q8, p.120 — check the answer by substituting back and verify the condition for a unique solution."
+          ]
+        },
+        {
+          "period_number": 12,
+          "period_duration_minutes": 50,
+          "activity_title": "Solving Pairs Algebraically — Extended Problem Practice",
+          "section_anchor": "13.5.1",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": null,
+          "textbook_items_in_class": [
+            {
+              "id": "E-18",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "source_sections": [
+                "13.4",
+                "13.5.1"
+              ],
+              "book_ref": "Exercise Set 13.5 Q1, p.116",
+              "description": "Form and solve ten problems including integers, fractions, ages, taxi fares, digit problems, and currency notes."
+            },
+            {
+              "id": "E-24",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "book_ref": "Exercise Set 13.5 Q7, p.118",
+              "description": "Solve Mahāvīrāchārya's problem (9x + 7y = 107, 7x + 9y = 101) using the hint that adding and subtracting the equations is efficient."
+            },
+            {
+              "id": "E-25",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "source_sections": [
+                "13.4",
+                "13.5.1"
+              ],
+              "book_ref": "Exercise Set 13.5 Q8, p.118",
+              "description": "Find cost of a pencil and a pen from 5 pencils + 7 pens = ₹50 and 7 pencils + 5 pens = ₹46."
+            },
+            {
+              "id": "E-26",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "source_sections": [
+                "13.4",
+                "13.5.1"
+              ],
+              "book_ref": "Exercise Set 13.5 Q9, p.118",
+              "description": "Find the height of a stool given that a cat on it reaches 85 cm and the stool is 25 cm above a floor-seated cat."
+            },
+            {
+              "id": "E-32",
+              "type": "exercise",
+              "source_section": "13.5.1",
+              "source_sections": [
+                "13.4",
+                "13.5.1",
+                "13.6"
+              ],
+              "book_ref": "End of Chapter Q6, p.120",
+              "description": "Compare two mobile plans (Plan A: ₹50 + ₹0.20/min; Plan B: ₹30 + ₹0.30/min) to find the break-even minutes and decide which is cheaper for a given usage."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Briefly revisit the modelling-and-solving pipeline: (1) identify two unknowns, (2) write two equations from the conditions, (3) choose substitution or elimination, (4) solve for both variables, (5) verify in both original equations. Assign different problems to different groups: Group A takes Exercise Set 13.5 Q1(v) (fraction problem), Group B takes Q1(viii) (two-digit digit-sum problem), Group C takes Exercise Set 13.5 Q7, p.118 (Mahāvīrāchārya's problem)."
+            },
+            {
+              "minutes": "10-28",
+              "activity": "Groups work through their assigned problem, writing the modelling step and solution step separately. Circulate and prompt: is the model correct? Which method — substitution or elimination — is more convenient here? For Exercise Set 13.5 Q7, p.118, encourage students to first add the two equations (giving 16(x + y) = 208) and then subtract (giving 2(x - y) = 6), rather than direct elimination."
+            },
+            {
+              "minutes": "28-40",
+              "activity": "Each group presents its solution. The class checks the verification step. Then the whole class works on Exercise Set 13.5 Q8, p.118 (pencils and pens) and Exercise Set 13.5 Q9, p.118 (cat and stool) simultaneously — short problems that can be set up and solved quickly."
+            },
+            {
+              "minutes": "40-50",
+              "activity": "Work through End of Chapter Q6, p.120 (mobile-plan comparison) together: set up total costs as linear functions of minutes-used, form the pair, find the break-even point, and interpret which plan is cheaper for usage above and below that point. This item integrates modelling, solving and interpretation."
+            }
+          ],
+          "teacher_notes": "This unit provides extended practice across a range of modelling contexts, consolidating both substitution and elimination from the preceding units. The most common difficulty is in the modelling step rather than the algebra — students sometimes write one equation instead of two, or assign the same variable to two different unknowns. Exercise Set 13.5 Q7, p.118 uses a symmetric coefficient structure (coefficients interchanged) that rewards adding and subtracting rather than the standard elimination; highlighting this pattern builds algebraic insight.",
+          "homework": [
+            "Exercise Set 13.5 Q1, p.116 — complete problems (iv) taxi-fare and (x) library-charge at home, showing the full modelling and solution steps."
+          ]
+        },
+        {
+          "period_number": 13,
+          "period_duration_minutes": 50,
+          "activity_title": "Graphical Solution — Intersection as the Common Solution",
+          "section_anchor": "13.6",
+          "pedagogical_method": "Discovery/Inquiry",
+          "materials": [
+            "Textbook",
+            "Graph paper or squared exercise-book pages",
+            "Ruler",
+            "Pencil",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": "Board coordinate graph of x + 3y = 6 and 2x - 3y = 12, with intersection at (6, 0) marked",
+          "textbook_items_in_class": [
+            {
+              "id": "WE-11",
+              "type": "worked_example",
+              "source_section": "13.6",
+              "book_ref": "Example 11, p.113",
+              "description": "Solve x + 3y = 6 and 2x - 3y = 12 graphically; read off intersection (6, 0) as the unique solution."
+            },
+            {
+              "id": "E-19",
+              "type": "exercise",
+              "source_section": "13.6",
+              "source_sections": [
+                "13.4",
+                "13.6"
+              ],
+              "book_ref": "Exercise Set 13.5 Q2, p.117",
+              "description": "Form a pair of linear equations and find the common solution graphically: 10 students in a maths quiz, girls 4 more than boys."
+            },
+            {
+              "id": "E-29",
+              "type": "exercise",
+              "source_section": "13.6",
+              "book_ref": "End of Chapter Q3, p.120",
+              "description": "Solve 2x + y = 6 and 2x - y - 2 = 0 graphically."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Explain the graphical approach: each linear equation in two variables is a line; a solution of the pair is a point on both lines, so the graphical solution is the intersection of the two lines. A point where the lines meet satisfies both equations. Ask students: what if the lines do not intersect? (Parallel — no solution.) What if they overlap completely? (Coincident — infinitely many solutions.) Record these as the three geometric cases."
+            },
+            {
+              "minutes": "10-24",
+              "activity": "Work through Example 11, p.113: tabulate two points for each of x + 3y = 6 and 2x - 3y = 12, draw both lines on the board graph, read off the intersection (6, 0) as the unique solution, and note that a1/a2 = 1/2 ≠ b1/b2 = -1, confirming a unique solution. Conduct the Think-and-Reflect from section 13.6: how are solutions found from a graph? What can be said about the number of solutions when the two lines intersect at a point, are parallel, or are coincident? Ask students to write their answers before revealing the full analysis."
+            },
+            {
+              "minutes": "24-38",
+              "activity": "Students work on Exercise Set 13.5 Q2, p.117: model 'girls = boys + 4' and 'girls + boys = 10' as a pair, tabulate points for each line, plot on graph paper, and read off the intersection. Students confirm algebraically that the graphical answer satisfies both equations."
+            },
+            {
+              "minutes": "38-50",
+              "activity": "Students attempt End of Chapter Q3, p.120 (solve 2x + y = 6 and 2x - y - 2 = 0 graphically). After graphing, they check the intersection point algebraically. Open discussion: what is the advantage of the graphical method over substitution or elimination? When might it be less reliable?"
+            }
+          ],
+          "teacher_notes": "The graphical method makes the number of solutions visible and geometrically motivated. A common graphing error is marking a tabulated point incorrectly because of a sign error in the y-value — students should always check each plotted point by substituting back into the equation. The Think-and-Reflect prompt about the three geometric cases links directly to the coefficient-ratio rules established in section 13.5.1.",
+          "homework": []
+        },
+        {
+          "period_number": 14,
+          "period_duration_minutes": 50,
+          "activity_title": "Parallel and Coincident Lines — Graphical Confirmation of Ratio Rules",
+          "section_anchor": "13.6",
+          "pedagogical_method": "Deductive",
+          "materials": [
+            "Textbook",
+            "Graph paper or squared exercise-book pages",
+            "Ruler",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": "Board coordinate graphs of (a) x + 2y - 4 = 0 and 2x + 4y - 12 = 0 (parallel) and (b) 2x + 3y = 9 and 4x + 6y = 18 (coincident)",
+          "textbook_items_in_class": [
+            {
+              "id": "WE-12",
+              "type": "worked_example",
+              "source_section": "13.6",
+              "book_ref": "Example 12, p.114",
+              "description": "Decide whether x + 2y - 4 = 0 and 2x + 4y - 12 = 0 intersect, coincide or are parallel using coefficient ratios, conclude parallel, and verify graphically."
+            },
+            {
+              "id": "WE-13",
+              "type": "worked_example",
+              "source_section": "13.6",
+              "book_ref": "Example 13, p.115",
+              "description": "Represent 2x + 3y = 9 and 4x + 6y = 18 graphically, find the lines coincide, and match a1/a2 = b1/b2 = c1/c2 = 1/2."
+            },
+            {
+              "id": "E-20",
+              "type": "exercise",
+              "source_section": "13.6",
+              "source_sections": [
+                "13.5.1",
+                "13.6"
+              ],
+              "book_ref": "Exercise Set 13.5 Q3, p.117",
+              "description": "Use coefficient ratios to decide whether each of three pairs represents intersecting, parallel or coincident lines."
+            },
+            {
+              "id": "E-21",
+              "type": "exercise",
+              "source_section": "13.6",
+              "source_sections": [
+                "13.5.1",
+                "13.6"
+              ],
+              "book_ref": "Exercise Set 13.5 Q4, p.118",
+              "description": "Decide which of four pairs have solutions and find the solutions graphically where they exist."
+            },
+            {
+              "id": "E-23",
+              "type": "exercise",
+              "source_section": "13.6",
+              "source_sections": [
+                "13.5.1",
+                "13.6"
+              ],
+              "book_ref": "Exercise Set 13.5 Q6, p.118",
+              "description": "Given 2x + 3y - 8 = 0, write another equation so the pair represents (i) intersecting lines, (ii) parallel lines, (iii) coincident lines."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-12",
+              "activity": "Work through Example 12, p.114: compare a1/a2 = b1/b2 = 1/2 with c1/c2 = 1/3, conclude that x + 2y - 4 = 0 and 2x + 4y - 12 = 0 are parallel (no solution), and confirm by graphing both lines through their intercepts. Then work through Example 13, p.115: 2x + 3y = 9 and 4x + 6y = 18 give a1/a2 = b1/b2 = c1/c2 = 1/2, so the lines coincide (infinitely many solutions), confirmed graphically."
+            },
+            {
+              "minutes": "12-26",
+              "activity": "State the Think-and-Reflect from section 13.6: prove that two lines with the same slope m are parallel, by considering y = mx + d1 and y = mx + d2 (d1 ≠ d2) and showing they share no common point. Students write the two-step argument: if (x, y) satisfies both, then d1 = d2, a contradiction."
+            },
+            {
+              "minutes": "26-38",
+              "activity": "Students work on Exercise Set 13.5 Q3, p.117 (classify three pairs as intersecting, parallel or coincident using ratios) and Exercise Set 13.5 Q6, p.118 (given 2x + 3y - 8 = 0, construct companion equations for each geometric case). Students write the ratio conditions they use in each case."
+            },
+            {
+              "minutes": "38-50",
+              "activity": "Students begin Exercise Set 13.5 Q4, p.118: use coefficient ratios to predict for each of the four pairs whether a solution exists, then graph the pairs that do have solutions and read off the intersection. Confirm the graph matches the algebraic prediction."
+            }
+          ],
+          "teacher_notes": "This unit completes the graphical analysis by tying the three geometric cases — intersecting, parallel, coincident — firmly to the coefficient-ratio rules. A frequent confusion is between the parallel case (a1/a2 = b1/b2 ≠ c1/c2) and the coincident case (all three ratios equal); students sometimes check only two of the three ratios. Insist on checking all three before concluding coincidence.",
+          "homework": [
+            "Exercise Set 13.5 Q4, p.118 — complete any graphs not finished in class and write the interpretation of each geometric result."
+          ]
+        },
+        {
+          "period_number": 15,
+          "period_duration_minutes": 50,
+          "activity_title": "Robot Paths, Conversion Graphs and Further Graphical Work",
+          "section_anchor": "13.6",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Graph paper or squared exercise-book pages",
+            "Ruler",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": "Board coordinate graph for End of Chapter Q11(i) showing robot paths",
+          "textbook_items_in_class": [
+            {
+              "id": "E-27",
+              "type": "exercise",
+              "source_section": "13.3.2",
+              "source_sections": [
+                "13.2.1",
+                "13.2.2",
+                "13.3.1",
+                "13.3.2"
+              ],
+              "book_ref": "End of Chapter Q1, p.119",
+              "description": "For the graph of y = 3x: identify slope, state y-intercept, use the water-level interpretation to find heights and times, decide whether (4, 10) is on the line, and plot the point where the line meets x = 3."
+            },
+            {
+              "id": "E-28",
+              "type": "exercise",
+              "source_section": "13.2.1",
+              "source_sections": [
+                "13.2.1",
+                "13.2.2",
+                "13.5.1"
+              ],
+              "book_ref": "End of Chapter Q2, p.120",
+              "description": "For F = (9/5)C + 32: draw graph, convert temperatures, and find whether some temperature has the same numerical value on both scales."
+            },
+            {
+              "id": "E-37",
+              "type": "exercise",
+              "source_section": "13.6",
+              "source_sections": [
+                "13.3.1",
+                "13.3.2",
+                "13.5.1",
+                "13.6"
+              ],
+              "book_ref": "End of Chapter Q11, p.121",
+              "description": "Decide whether and where the paths of two robots intersect in two scenarios."
+            }
+          ],
+          "time_bands": [
+            {
+              "minutes": "0-14",
+              "activity": "Work through End of Chapter Q1, p.119 together: on the graph of y = 3x, identify slope = 3 from the coordinates (0, 0) and (2, 6), state y-intercept = 0, interpret as water-level growth to find y when x = 5 and x when y = 21, decide whether (4, 10) lies on the line by checking 3 × 4 ≠ 10, and locate the point on x = 3 by computing y = 9."
+            },
+            {
+              "minutes": "14-28",
+              "activity": "Students work on End of Chapter Q2, p.120 (Celsius–Fahrenheit conversion graph): draw F = (9/5)C + 32 on a coordinate plane, convert 30 °C to F and 95 °F to C by reading the graph and by substitution, find F when C = 0 and C when F = 0, and determine whether F = C has a solution by setting (9/5)C + 32 = C and solving. Students write and verify the algebraic answer."
+            },
+            {
+              "minutes": "28-42",
+              "activity": "Work through End of Chapter Q11, p.121 (robot paths): for part (i), Robot 1 starts at (0, 0) and moves 3 right, 4 up each step — path y = (4/3)x; Robot 2 starts at (10, 0) and moves 1 right, 2 up — path y = 2(x - 10). Set up the pair and solve to find the intersection. For part (ii), Robot 1 starts at (3, 0) moving 5 right, 5 up — slope 1; Robot 2 starts at (7, 0) moving 5 right, 3 down — slope -3/5. Students plot both paths and determine whether they intersect."
+            },
+            {
+              "minutes": "42-50",
+              "activity": "Debrief End of Chapter Q11, p.121: how does recognising the slope and starting point of each robot's path let you predict whether paths cross? Connect to the parallel-line criterion: equal slopes mean no intersection. Confirm the results algebraically. Summarise the unit's themes: graphical and algebraic methods reach the same conclusion and each offers a check on the other."
+            }
+          ],
+          "teacher_notes": "This unit applies the graphical and algebraic methods developed across sections 13.3 through 13.6 to multi-part and real-context problems. The Celsius-Fahrenheit problem in End of Chapter Q2, p.120 rewards interpreting slope and y-intercept in context — slope 9/5 means a 1 °C change corresponds to a 1.8 °F change. In the robot problem, students should identify each robot's path as a linear equation before attempting to solve; watch for students who compute speed rather than slope.",
+          "homework": []
+        },
+        {
+          "period_number": 16,
+          "period_duration_minutes": 50,
+          "activity_title": "Whole-Chapter Synthesis — Connecting Solutions, Slopes and Systems",
+          "section_anchor": "synthesis",
+          "pedagogical_method": "Problem solving",
+          "materials": [
+            "Textbook",
+            "Graph paper or squared exercise-book pages",
+            "Ruler",
+            "Blackboard and chalk"
+          ],
+          "visual_aids": "Board summary table: three geometric cases with coefficient-ratio conditions and algebraic/graphical interpretation",
+          "textbook_items_in_class": [],
+          "time_bands": [
+            {
+              "minutes": "0-10",
+              "activity": "Draw a three-column board summary connecting the chapter's main ideas: (1) a single linear equation in two variables — infinitely many solutions, each an ordered pair (x, y), all lying on one line with slope m = -a/b and y-intercept d = -c/b; (2) a pair of linear equations — three cases decided by the ratios a1/a2, b1/b2, c1/c2: unique solution (intersection), no solution (parallel), infinitely many solutions (coincident); (3) two solution methods — substitution reduces one variable explicitly, elimination cancels a variable by combining equations. Ask students to identify which section each item comes from."
+            },
+            {
+              "minutes": "10-24",
+              "activity": "Present a fresh integrative problem: two water tanks begin filling at time t = 0. Tank A starts empty and fills at a rate that gives level y = 4t + 0 (litres, minutes). Tank B starts with 20 litres and fills at y = 2t + 20. Ask: (a) write both as equations in t and y; (b) find the slope and y-intercept of each and interpret them physically; (c) find the time and level at which both tanks hold the same amount of water — by setting up and solving the pair algebraically; (d) use the ratio rules to confirm that the pair has a unique solution before solving. Students work individually for five minutes, then pairs compare."
+            },
+            {
+              "minutes": "24-36",
+              "activity": "Whole-class debrief: slope of Tank A's line = 4 (rate of filling), slope of Tank B's = 2 (slower rate), y-intercepts are 0 and 20 (initial amounts). Since slopes differ (a1/a2 ≠ b1/b2), a unique solution exists: 4t = 2t + 20 gives t = 10 min and y = 40 litres. Plot both lines briefly on the board, mark the intersection at (10, 40). Confirm graphically matches the algebraic answer."
+            },
+            {
+              "minutes": "36-46",
+              "activity": "Pose a second synthesis question connecting coefficient-ratio analysis to modelling: a student claims the pair px + 3y = 12 and 2x + qy = 8 has infinitely many solutions. Ask: what conditions on p and q make this true? Students set up p/2 = 3/q = 12/8 = 3/2 and solve to find p = 3 and q = 2. Then ask: modify one constant so the pair instead has no solution — what changes? Students adjust the constant term to break the third ratio."
+            },
+            {
+              "minutes": "46-50",
+              "activity": "Closing reflection: ask three students each to state one key idea from the chapter in one sentence — one about what a solution is, one about slope-intercept form, one about the three cases for a pair of linear equations. Record the three sentences on the board. The chapter is complete."
+            }
+          ],
+          "teacher_notes": "This synthesis unit draws on the full span of chapter content — ordered-pair solutions, geometric representation, slope and y-intercept from the slope-intercept form, algebraic solution methods, and the coefficient-ratio classification — without requiring any specific prior activity to have taken place. Watch for students who confuse the infinitely-many-solutions case with the no-solution case when setting up ratio conditions in the second synthesis problem; the distinction is whether c1/c2 equals or differs from a1/a2 = b1/b2.",
+          "homework": []
+        }
+      ]
+    },
+    "period_schedule": [
+      {
+        "duration_minutes": 50,
+        "count": 16
+      }
+    ],
+    "coverage_handoff": [
+      {
+        "section_number": 1,
+        "section_ref": "13.1",
+        "section_title": "Linear Equations in Two Variables",
+        "total_sections": 12,
+        "period_numbers": [
+          1
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can model a two-condition real-life situation as a linear equation in two variables and verify whether a proposed equation correctly captures the given condition."
+        ],
+        "section_context": "Radha's fruit purchase 60x + 50y = 280; modelling two-variable conditions",
+        "c_code": "C-3.2",
+        "co_central": false
+      },
+      {
+        "section_number": 2,
+        "section_ref": "13.1.1",
+        "section_title": "Standard Form of Linear Equations in Two Variables",
+        "total_sections": 12,
+        "period_numbers": [
+          2
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can rewrite a linear equation in two variables in the standard form ax + by + c = 0 and correctly identify the coefficients a and b and the constant c."
+        ],
+        "section_context": "Standard form ax + by + c = 0; rational coefficients; special cases a or b zero",
+        "c_code": "C-3.2",
+        "co_central": false
+      },
+      {
+        "section_number": 3,
+        "section_ref": "13.2.1",
+        "section_title": "Algebraic Meaning of Solution",
+        "total_sections": 12,
+        "period_numbers": [
+          3,
+          5
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can determine whether an ordered pair is a solution of a linear equation in two variables by substitution, generate multiple solutions by assigning values to one variable, and find unknown coefficients given a common solution of two equations."
+        ],
+        "section_context": "Ordered-pair solutions; substitution check; infinitely many solutions; unknown coefficients",
+        "c_code": "C-3.2",
+        "co_central": false
+      },
+      {
+        "section_number": 4,
+        "section_ref": "13.2.2",
+        "section_title": "Geometric Visualisation of Solutions",
+        "total_sections": 12,
+        "period_numbers": [
+          4
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can plot the solutions of a linear equation in two variables on a coordinate plane and draw its graph as a straight line, using intercept points and additional points where both intercepts coincide at the origin."
+        ],
+        "section_context": "Graph of 3x + 2y = 12 as a line; intercept shortcut; line through origin for ax + by = 0",
+        "c_code": "C-4.5",
+        "co_central": false
+      },
+      {
+        "section_number": 5,
+        "section_ref": "13.3.1",
+        "section_title": "Understanding Slope",
+        "total_sections": 12,
+        "period_numbers": [
+          6
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can compute the slope of a line from two given points using slope = (y2 - y1)/(x2 - x1) and identify whether a slope is positive, negative, zero or undefined."
+        ],
+        "section_context": "Slope as rise/run; sign of slope; same value for any two points; four slope cases",
+        "c_code": "C-4.5",
+        "co_central": false
+      },
+      {
+        "section_number": 6,
+        "section_ref": "13.3.2",
+        "section_title": "Slope-Intercept Form",
+        "total_sections": 12,
+        "period_numbers": [
+          7
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can derive and apply the slope-intercept form y = mx + d, identifying the slope m = -a/b and y-intercept d = -c/b from the standard form ax + by + c = 0, and interpret the geometric meaning of m and d."
+        ],
+        "section_context": "Proof that slope of y = mx + d is m; standard form to slope-intercept; four geometric slope cases",
+        "c_code": "C-4.5",
+        "co_central": false
+      },
+      {
+        "section_number": 7,
+        "section_ref": "13.4",
+        "section_title": "Pair of Linear Equations in Two Variables",
+        "total_sections": 12,
+        "period_numbers": [
+          8
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can model a real-life situation involving two conditions as a pair of linear equations in two variables in the standard general form."
+        ],
+        "section_context": "Pair a1x + b1y + c1 = 0, a2x + b2y + c2 = 0; modelling ticket, taxi, and ratio scenarios",
+        "c_code": "C-3.2",
+        "co_central": false
+      },
+      {
+        "section_number": 8,
+        "section_ref": "13.5",
+        "section_title": "Finding Solutions to a Pair of Linear Equations",
+        "total_sections": 12,
+        "period_numbers": [
+          9
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can explain the strategy of reducing a pair of linear equations in two variables to a single linear equation in one variable as the basis for algebraic solution methods."
+        ],
+        "section_context": "Strategy of reducing pair to single equation in one variable; introduction to two methods",
+        "c_code": "C-3.2",
+        "co_central": false
+      },
+      {
+        "section_number": 9,
+        "section_ref": "13.5.1",
+        "section_title": "Algebraic Methods for Solving a Pair of Linear Equations",
+        "total_sections": 12,
+        "period_numbers": [
+          9,
+          10,
+          11,
+          12
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can solve a pair of linear equations in two variables using the method of substitution or the method of elimination and verify the solution in both equations.",
+          "Students can determine whether a pair of linear equations has a unique solution, no solution or infinitely many solutions by comparing the coefficient ratios a1/a2, b1/b2 and c1/c2, and find the parameter values for which a given pair achieves each case."
+        ],
+        "section_context": "Substitution; elimination; three solution-count cases; coefficient ratios a1/a2, b1/b2, c1/c2",
+        "c_code": "C-3.2",
+        "co_central": false
+      },
+      {
+        "section_number": 10,
+        "section_ref": "13.6",
+        "section_title": "Graphical Method for Solving A Pair of Linear Equations in Two Variables",
+        "total_sections": 12,
+        "period_numbers": [
+          13,
+          14,
+          15
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can solve a pair of linear equations in two variables graphically by plotting both lines and identifying the intersection point, and classify the pair geometrically as intersecting, parallel or coincident lines by applying the coefficient-ratio rules."
+        ],
+        "section_context": "Graphical solution by intersection; parallel and coincident lines; coefficient-ratio confirmation",
+        "c_code": "C-4.5",
+        "co_central": false
+      },
+      {
+        "section_number": 11,
+        "section_ref": "13.3",
+        "section_title": "Slope-intercept form of a Linear Equation in Two Variables",
+        "total_sections": 12,
+        "period_numbers": [
+          6
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can recognise that the slope-intercept form y = mx + d connects the geometric properties of a line — its slope and y-intercept — to its algebraic form, and can restate equations in this form to read off both properties."
+        ],
+        "section_context": "Slope-intercept form y = mx + d as connecting algebra and geometry of a line",
+        "c_code": "C-4.5",
+        "co_central": false
+      },
+      {
+        "section_number": 12,
+        "section_ref": "synthesis",
+        "section_title": "synthesis",
+        "total_sections": 12,
+        "period_numbers": [
+          16
+        ],
+        "period_duration_minutes": 50,
+        "implied_lo": [
+          "Students can integrate the chapter's concepts — modelling with linear equations in two variables, representing solutions graphically using slope and intercept, and solving pairs by algebraic and graphical methods — to analyse a novel multi-condition problem and predict the nature of its solution set."
+        ],
+        "section_context": "Integration of single-equation solutions, slope-intercept form, pair-solution methods and ratio classification",
+        "c_code": "C-3.2",
+        "co_central": false
+      }
+    ],
+    "assessment_items": {
+      "grade": "Grade IX",
+      "subject": "mathematics",
+      "stage": "secondary",
+      "chapter_number": 13,
+      "chapter_title": "Two Variables, One Line",
+      "chapter_cg": "CG-3",
+      "reasoning_floor_lift_applied": false,
+      "questions": [
+        {
+          "section_number": 1,
+          "section_ref": "13.1",
+          "section_title": "Linear Equations in Two Variables",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can model a two-condition real-life situation as a linear equation in two variables and verify whether a proposed equation correctly captures the given condition.",
+          "section_context": "Radha's fruit purchase 60x + 50y = 280; modelling two-variable conditions",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Models everyday situations as linear equations in two variables and checks whether a proposed equation correctly represents the condition."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Priya buys x notebooks at ₹15 each and y pens at ₹8 each, spending exactly ₹79 in total. Which equation correctly models this situation?",
+          "options": [
+            {
+              "label": "A",
+              "text": "8x + 15y = 79",
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "text": "15x + 8y = 79",
+              "is_correct": true
+            },
+            {
+              "label": "C",
+              "text": "15x - 8y = 79",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "15x + 8y + 79 = 0",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 1
+              },
+              "what_each_option_reveals": {
+                "A": "Swaps the price and item variable — assigns ₹8 as the notebook price and ₹15 as the pen price, reversing the roles of x and y.",
+                "C": "Subtracts the pen cost from the notebook cost instead of adding both costs to form the total — models a difference, not a total expenditure.",
+                "D": "Moves the total to the left as a negative constant (standard form), but uses -79 when the standard form from ax + by + c = 0 would require +79 as c and a correct rearrangement gives 15x + 8y - 79 = 0; this option uses +79 instead of -79, incorrectly."
+              },
+              "inclusivity": "A student who is unsure can substitute a simple test pair — for example x = 1, y = 8 gives 15(1) + 8(8) = 79 ✓ — to verify the correct option by checking. A student ready for extension can write a second valid equation for a different total spend and explain what information would be needed to find a unique solution for x and y."
+            },
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 2,
+          "section_ref": "13.1.1",
+          "section_title": "Standard Form of Linear Equations in Two Variables",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can rewrite a linear equation in two variables in the standard form ax + by + c = 0 and correctly identify the coefficients a and b and the constant c.",
+          "section_context": "Standard form ax + by + c = 0; rational coefficients; special cases a or b zero",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Rewrites a linear equation in two variables in standard form and reads off the coefficients."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "The equation x/3 - 2 = (2/3)y is rewritten in the standard form ax + by + c = 0. Which set of values of a, b and c is correct?",
+          "options": [
+            {
+              "label": "A",
+              "text": "a = 1, b = -2, c = -6",
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "text": "a = 1, b = 2, c = -6",
+              "is_correct": false
+            },
+            {
+              "label": "C",
+              "text": "a = -1, b = 2, c = 6",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "a = 1/3, b = -2/3, c = -2",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 2
+              },
+              "what_each_option_reveals": {
+                "D": "Reads off the coefficients before multiplying through by 3 — treats the fractional form x/3 - (2/3)y - 2 = 0 as the standard form without clearing fractions, leaving a = 1/3 and b = -2/3.",
+                "B": "Moves y to the left correctly but does not negate its coefficient — writes +2y instead of -2y, losing the sign when rearranging from x/3 - 2 = (2/3)y.",
+                "C": "Multiplies through by -3 instead of 3, reversing all signs and giving a = -1, b = 2, c = 6 — a valid representation (multiplying by -1 gives another valid set), but with the wrong sign choice relative to option A; confuses valid sign-reversal with the required rearrangement."
+              },
+              "inclusivity": "A student who is uncertain can first move all terms to one side to get x/3 - (2/3)y - 2 = 0 and then multiply every term by 3 as a two-step approach. A student looking for a challenge can verify that option D is also a mathematically valid standard form (obtained by multiplying through by -3) and discuss why the section notes that multiplying by -1 gives another equally valid set of values."
+            },
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 3,
+          "section_ref": "13.2.1",
+          "section_title": "Algebraic Meaning of Solution",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can determine whether an ordered pair is a solution of a linear equation in two variables by substitution, generate multiple solutions by assigning values to one variable, and find unknown coefficients given a common solution of two equations.",
+          "section_context": "Ordered-pair solutions; substitution check; infinitely many solutions; unknown coefficients",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Determines unknown coefficients in two equations given their common solution, using substitution."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "The ordered pair (2, 3) satisfies both the equation 5x + ky = 19 and the equation mx - 2y = 4. Find the values of k and m.",
+          "options": [],
+          "expected_answer": "k = 3, m = 5",
+          "method_one_line": "Substitute x = 2 and y = 3 into each equation separately and solve the resulting one-variable equation for the unknown coefficient.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": {
+              "learning_outcome": {
+                "section": 3
+              },
+              "inclusivity": "A student who finds both substitutions at once overwhelming can work on each equation separately — first find k from 5(2) + k(3) = 19, then find m from m(2) - 2(3) = 4. A student ready for extension can ask: write a third linear equation in x and y that also has (2, 3) as a solution, and describe the general form of all such equations."
+            },
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 4,
+          "section_ref": "13.2.2",
+          "section_title": "Geometric Visualisation of Solutions",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can plot the solutions of a linear equation in two variables on a coordinate plane and draw its graph as a straight line, using intercept points and additional points where both intercepts coincide at the origin.",
+          "section_context": "Graph of 3x + 2y = 12 as a line; intercept shortcut; line through origin for ax + by = 0",
+          "question_type": "SCR",
+          "competency": {
+            "c_code": "C-4.5",
+            "competency_text": "Plots the graph of a linear equation in two variables using intercept points or additional points when the line passes through the origin."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": true,
+          "question_text": "Draw the graph of 4x - 3y = 0 on the coordinate plane provided. Tabulate at least two solutions you use, explain why the standard intercept shortcut alone is not sufficient for this equation, and identify one additional point you chose and why.",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [
+            "Recognises that substituting x = 0 gives y = 0 and substituting y = 0 also gives x = 0, so both intercepts coincide at the origin — the shortcut alone yields only one usable point.",
+            "Chooses at least one non-zero value of x (e.g. x = 3 giving y = 4, or x = -3 giving y = -4) to generate a second distinct point.",
+            "Tabulates the two points correctly, e.g. (0, 0) and (3, 4).",
+            "Draws a straight line through the two tabulated points extending across the grid.",
+            "Line passes through the origin, confirming the ax + by = 0 property."
+          ],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": null,
+            "SCR": {
+              "learning_outcome": {
+                "section": 4
+              },
+              "inclusivity": "A student who is uncertain where to start can first substitute x = 3 into 4x - 3y = 0 to find y = 4, and use (3, 4) as a second point alongside the origin. A student looking for a challenge can explain algebraically why any equation of the form ax + by = 0 must pass through the origin, and give a general argument rather than a specific example."
+            },
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 5,
+          "section_ref": "13.3.1",
+          "section_title": "Understanding Slope",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can compute the slope of a line from two given points using slope = (y2 - y1)/(x2 - x1) and identify whether a slope is positive, negative, zero or undefined.",
+          "section_context": "Slope as rise/run; sign of slope; same value for any two points; four slope cases",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-4.5",
+            "competency_text": "Computes and interprets slope from two points on a line."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "A line passes through the points P(−3, 7) and Q(5, −1). What is the slope of this line?",
+          "options": [
+            {
+              "label": "A",
+              "text": "1",
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "text": "3/4",
+              "is_correct": false
+            },
+            {
+              "label": "C",
+              "text": "−1",
+              "is_correct": true
+            },
+            {
+              "label": "D",
+              "text": "−8",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 5
+              },
+              "what_each_option_reveals": {
+                "A": "Computes rise/run but drops the negative sign — calculates (7 - (-1))/((-3) - 5) = 8/(-8) but records +1 instead of -1, losing track of the sign of the run.",
+                "D": "Computes only the rise (y2 - y1 = -1 - 7 = -8) and omits dividing by the run — uses rise alone as the slope.",
+                "B": "Reverses the formula, computing run/rise = (5 - (-3))/(-1 - 7) = 8/(-8) with a sign error, or confuses the order of subtraction partially."
+              },
+              "inclusivity": "A student unsure about signs can write out the subtraction as (-1) - 7 = -8 for rise and 5 - (-3) = 8 for run step by step before dividing. A student looking for a challenge can verify that taking P and Q in the reverse order gives the same slope value, and explain why this is always the case."
+            },
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 6,
+          "section_ref": "13.3.2",
+          "section_title": "Slope-Intercept Form",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can derive and apply the slope-intercept form y = mx + d, identifying the slope m = -a/b and y-intercept d = -c/b from the standard form ax + by + c = 0, and interpret the geometric meaning of m and d.",
+          "section_context": "Proof that slope of y = mx + d is m; standard form to slope-intercept; four geometric slope cases",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-4.5",
+            "competency_text": "Reads slope and y-intercept from the slope-intercept form of a linear equation and interprets them geometrically."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "The equation 6x - 4y + 20 = 0 is given. (a) Rewrite it in slope-intercept form y = mx + d. (b) State the slope m and the y-intercept d. (c) Find the x-intercept of the line.",
+          "options": [],
+          "expected_answer": "(a) y = (3/2)x + 5. (b) m = 3/2, d = 5. (c) x-intercept: set y = 0, giving 0 = (3/2)x + 5, so x = -10/3.",
+          "method_one_line": "Rearrange 6x - 4y + 20 = 0 to isolate y, giving y = (3/2)x + 5, then read off m and d, and set y = 0 to find the x-intercept.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": {
+              "learning_outcome": {
+                "section": 6
+              },
+              "inclusivity": "A student who finds rearranging directly difficult can use m = -a/b = -(6)/(-4) = 3/2 and d = -c/b = -(20)/(-4) = 5 directly from the standard-form coefficients. A student ready for extension can describe what happens to the slope and y-intercept if all three coefficients are multiplied by the same nonzero constant, and whether the line changes."
+            },
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 7,
+          "section_ref": "13.4",
+          "section_title": "Pair of Linear Equations in Two Variables",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can model a real-life situation involving two conditions as a pair of linear equations in two variables in the standard general form.",
+          "section_context": "Pair a1x + b1y + c1 = 0, a2x + b2y + c2 = 0; modelling ticket, taxi, and ratio scenarios",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Frames a pair of linear equations in two variables from a two-condition real-life situation."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "A school canteen sells sandwiches for ₹x each and juice cartons for ₹y each. On Monday, a group bought 3 sandwiches and 5 juice cartons for ₹115. On Tuesday, another group bought 5 sandwiches and 2 juice cartons for ₹130. Which pair of equations models this situation correctly?",
+          "options": [
+            {
+              "label": "A",
+              "text": "3x + 5y = 115  and  5x + 2y = 130",
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "text": "3x + 5y = 130  and  5x + 2y = 115",
+              "is_correct": false
+            },
+            {
+              "label": "C",
+              "text": "3x + 5y = 115  and  5x + 2y = 115",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "5x + 3y = 115  and  2x + 5y = 130",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 7
+              },
+              "what_each_option_reveals": {
+                "D": "Swaps the number of sandwiches and juice cartons in each equation — assigns 5 sandwiches and 3 juices to Monday's purchase and 2 sandwiches and 5 juices to Tuesday's, reversing the grouping within each condition.",
+                "B": "Assigns the correct item quantities to each day but swaps the totals — gives Monday's spending as ₹130 and Tuesday's as ₹115, reversing the two conditions.",
+                "C": "Models both days with the same total ₹115, ignoring the fact that Tuesday's total is ₹130 — uses only one of the two given total amounts."
+              },
+              "inclusivity": "A student who is unsure can map each sentence to one equation separately before combining: 'Monday: 3 sandwiches at ₹x plus 5 juices at ₹y equals ₹115' writes directly as 3x + 5y = 115. A student ready for a challenge can find the actual price of a sandwich and juice carton and verify both original conditions."
+            },
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 8,
+          "section_ref": "13.5",
+          "section_title": "Finding Solutions to a Pair of Linear Equations",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can explain the strategy of reducing a pair of linear equations in two variables to a single linear equation in one variable as the basis for algebraic solution methods.",
+          "section_context": "Strategy of reducing pair to single equation in one variable; introduction to two methods",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Explains why the strategy of reducing a pair of equations to one equation in one variable is central to all algebraic solution methods."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "A student wants to solve the pair p + q = 10 and 2p - q = 5. She says: 'From the first equation, q = 10 - p. I will substitute this into the second equation.' What will her next equation look like, and what does this step achieve?",
+          "options": [
+            {
+              "label": "A",
+              "text": "2p - (10 - p) = 5; this removes q and gives a single equation in p alone.",
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "text": "2p - (10 - p) = 10; this substitutes the first equation's right side into both equations.",
+              "is_correct": false
+            },
+            {
+              "label": "C",
+              "text": "2(10 - q) - q = 5; this replaces p with 10 - q and still involves two variables.",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "2p - q = 10 - p; this replaces the right side of the second equation using the first equation.",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 8
+              },
+              "what_each_option_reveals": {
+                "B": "Forms the correct substituted expression but substitutes into the wrong total — uses the right-hand side of the first equation (10) instead of the right-hand side of the second equation (5), confusing which equation receives the substitution.",
+                "C": "Expresses p in terms of q rather than q in terms of p, so the substituted equation still contains q — does not complete the reduction to a single-variable equation.",
+                "D": "Substitutes the expression for q into the right side of the second equation rather than replacing q in the left side, producing an equation that still involves both p and q in a confused form."
+              },
+              "inclusivity": "A student who is uncertain which variable to express first can choose q = 10 - p because q has coefficient 1 in the first equation, making the algebra easiest. A student ready for a challenge can check whether expressing p from the second equation (p = (5 + q)/2) and substituting into the first leads to the same solution for q."
+            },
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 9,
+          "section_ref": "13.5.1",
+          "section_title": "Algebraic Methods for Solving a Pair of Linear Equations",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can solve a pair of linear equations in two variables using the method of substitution or the method of elimination and verify the solution in both equations.",
+          "section_context": "Substitution; elimination; three solution-count cases; coefficient ratios a1/a2, b1/b2, c1/c2",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Solves a pair of linear equations in two variables using elimination or substitution and verifies the solution."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Solve the pair of equations 5x + 3y = 29 and 2x - y = 4 using elimination. Show your working and verify the solution in both equations.",
+          "options": [],
+          "expected_answer": "x = 41/11, y = 37/11. Verification: 5(41/11) + 3(37/11) = 205/11 + 111/11 = 316/11 ≠ 29... Correction: solve correctly. From 2x - y = 4, multiply by 3: 6x - 3y = 12. Add to 5x + 3y = 29: 11x = 41, so x = 41/11. Then y = 2(41/11) - 4 = 82/11 - 44/11 = 38/11. Verification: 5(41/11) + 3(38/11) = 205/11 + 114/11 = 319/11 ≠ 29. Re-solve: multiply 2x - y = 4 by 3 gives 6x - 3y = 12. Add to 5x + 3y = 29: 11x = 41, x = 41/11. y = 2(41/11) - 4 = 82/11 - 44/11 = 38/11. Check: 5(41/11) + 3(38/11) = (205 + 114)/11 = 319/11. This does not equal 29 = 319/11? 29 × 11 = 319. Yes! 319/11 = 29. Verified. x = 41/11, y = 38/11.",
+          "method_one_line": "Multiply 2x - y = 4 by 3 to match the y-coefficient in 5x + 3y = 29, add the equations to eliminate y, solve for x, back-substitute to find y, and verify in both original equations.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": {
+              "learning_outcome": {
+                "section": 9
+              },
+              "inclusivity": "A student who finds fractional arithmetic difficult can first check using substitution: from 2x - y = 4 express y = 2x - 4 and substitute into 5x + 3y = 29 to obtain 11x = 41, confirming the same x. A student ready for a challenge can re-solve the pair using substitution instead of elimination and confirm both methods give the same answer, then comment on which is more efficient here."
+            },
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 9,
+          "section_ref": "13.5.1",
+          "section_title": "Algebraic Methods for Solving a Pair of Linear Equations",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can determine whether a pair of linear equations has a unique solution, no solution or infinitely many solutions by comparing the coefficient ratios a1/a2, b1/b2 and c1/c2, and find the parameter values for which a given pair achieves each case.",
+          "section_context": "Substitution; elimination; three solution-count cases; coefficient ratios a1/a2, b1/b2, c1/c2",
+          "question_type": "ECR",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Determines the nature of solutions of a pair of linear equations using coefficient ratios and finds parameter values that produce each case."
+          },
+          "cognitive_demand": "Analysis",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Consider the pair of equations 3x + ky = 12 and 6x + 4y = c. (a) Find the value of k for which this pair has no solution, and state the range of values of c for which no solution exists with that k. (b) Find the values of both k and c for which the pair has infinitely many solutions. (c) For what values of k does the pair have a unique solution, regardless of the value of c? Justify each answer using the coefficient-ratio rules.",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [
+            "Computes a1/a2 = 3/6 = 1/2 and b1/b2 = k/4.",
+            "For no solution: sets k/4 = 1/2 (so k = 2) and requires c1/c2 = 12/c ≠ 1/2, i.e. c ≠ 24.",
+            "For infinitely many solutions: sets k = 2 AND 12/c = 1/2, giving c = 24.",
+            "For unique solution: requires k/4 ≠ 1/2, i.e. k ≠ 2, and this holds for all values of c.",
+            "Cites the ratio rules explicitly: a1/a2 = b1/b2 ≠ c1/c2 for no solution; a1/a2 = b1/b2 = c1/c2 for infinitely many; a1/a2 ≠ b1/b2 for unique.",
+            "Presents reasoning in a logical sequence with each case clearly separated."
+          ],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": null,
+            "SCR": null,
+            "ECR": {
+              "learning_outcome": {
+                "section": 9
+              },
+              "inclusivity": "A student who finds the three-case analysis at once difficult can first compute a1/a2 = 1/2 and then ask: for what k is b1/b2 also 1/2? That single answer (k = 2) is the entry point for both the no-solution and infinitely-many cases. A student ready for extension can try to find values of k and c so that the pair has exactly two solutions — and explain why that is impossible for linear equations."
+            },
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 10,
+          "section_ref": "13.6",
+          "section_title": "Graphical Method for Solving A Pair of Linear Equations in Two Variables",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can solve a pair of linear equations in two variables graphically by plotting both lines and identifying the intersection point, and classify the pair geometrically as intersecting, parallel or coincident lines by applying the coefficient-ratio rules.",
+          "section_context": "Graphical solution by intersection; parallel and coincident lines; coefficient-ratio confirmation",
+          "question_type": "NUM",
+          "competency": {
+            "c_code": "C-4.5",
+            "competency_text": "Solves a pair of linear equations graphically and confirms the geometric classification using coefficient ratios."
+          },
+          "cognitive_demand": "Application",
+          "visual_stimulus": null,
+          "graph_paper": true,
+          "question_text": "Solve the pair of equations x + 2y = 8 and 3x - 2y = 8 graphically. Tabulate two solutions for each equation, draw both lines on the coordinate plane provided, read off the point of intersection, and confirm algebraically that this point satisfies both equations. Also state the values of a1/a2 and b1/b2 and explain what they tell you about the number of solutions.",
+          "options": [],
+          "expected_answer": "Intersection point: (4, 2). Verification: 4 + 2(2) = 8 ✓ and 3(4) - 2(2) = 12 - 4 = 8 ✓. a1/a2 = 1/3, b1/b2 = 2/(-2) = -1; since 1/3 ≠ -1, the pair has a unique solution.",
+          "method_one_line": "Tabulate two points for each line (using x = 0 and y = 0 intercepts where convenient), plot and draw both lines, read the intersection, verify by substitution, and compare a1/a2 with b1/b2.",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": {
+              "learning_outcome": {
+                "section": 10
+              },
+              "inclusivity": "A student unsure where to start can substitute x = 0 into each equation to find the y-intercepts (y = 4 and y = -4), giving two immediate points before choosing a second point for each line. A student ready for a challenge can predict the intersection algebraically first using elimination (add the two equations to get 4x = 16, x = 4), then confirm that the graph matches, and discuss when the graphical method might be less reliable than the algebraic one."
+            },
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 11,
+          "section_ref": "13.3",
+          "section_title": "Slope-intercept form of a Linear Equation in Two Variables",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can recognise that the slope-intercept form y = mx + d connects the geometric properties of a line — its slope and y-intercept — to its algebraic form, and can restate equations in this form to read off both properties.",
+          "section_context": "Slope-intercept form y = mx + d as connecting algebra and geometry of a line",
+          "question_type": "MCQ",
+          "competency": {
+            "c_code": "C-4.5",
+            "competency_text": "Connects the slope-intercept form of a line to its geometric properties."
+          },
+          "cognitive_demand": "Understanding",
+          "visual_stimulus": null,
+          "graph_paper": false,
+          "question_text": "Which of the following statements about a line with equation y = -3x + 7 is correct?",
+          "options": [
+            {
+              "label": "A",
+              "text": "The line falls from left to right and crosses the x-axis at (0, 7).",
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "text": "The line falls from left to right and crosses the y-axis at (0, 7).",
+              "is_correct": true
+            },
+            {
+              "label": "C",
+              "text": "The line falls from left to right and crosses the y-axis at (0, −3).",
+              "is_correct": false
+            },
+            {
+              "label": "D",
+              "text": "The line rises from left to right and crosses the y-axis at (0, 7).",
+              "is_correct": false
+            }
+          ],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "",
+          "scaffold": "",
+          "format_of_output": [],
+          "verified": true,
+          "guide": {
+            "MCQ": {
+              "learning_outcome": {
+                "section": 11
+              },
+              "what_each_option_reveals": {
+                "D": "Reads the slope as positive — ignores the negative sign in m = -3 and concludes the line rises from left to right, confusing -3 with +3.",
+                "C": "Correctly identifies the falling direction (m = -3 < 0) but swaps the roles of m and d — reads the slope -3 as the y-intercept and misses the constant term +7.",
+                "A": "Identifies the direction correctly and reads d = 7 correctly but names the y-axis intercept as the x-axis, confusing which axis the y-intercept lies on."
+              },
+              "inclusivity": "A student who is uncertain can substitute x = 0 into y = -3x + 7 to find y = 7, confirming the y-intercept directly, and then check the direction by substituting x = 1 to find y = 4, showing y decreases as x increases. A student ready for a challenge can find the x-intercept of y = -3x + 7 and explain how the sign of the slope and the signs of the intercepts together determine in which quadrants the line lies."
+            },
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": null
+          }
+        },
+        {
+          "section_number": 12,
+          "section_ref": "synthesis",
+          "section_title": "synthesis",
+          "total_sections": 12,
+          "implied_lo_assessed": "Students can integrate the chapter's concepts — modelling with linear equations in two variables, representing solutions graphically using slope and intercept, and solving pairs by algebraic and graphical methods — to analyse a novel multi-condition problem and predict the nature of its solution set.",
+          "section_context": "Integration of single-equation solutions, slope-intercept form, pair-solution methods and ratio classification",
+          "question_type": "OPEN_TASK",
+          "competency": {
+            "c_code": "C-3.2",
+            "competency_text": "Integrates modelling, slope-intercept form, algebraic solution methods and coefficient-ratio classification to analyse a novel two-condition problem end to end."
+          },
+          "cognitive_demand": "Evaluation",
+          "visual_stimulus": null,
+          "graph_paper": true,
+          "question_text": "",
+          "options": [],
+          "expected_answer": "",
+          "method_one_line": "",
+          "expected_elements": [],
+          "look_for": [],
+          "task": "Two mobile data plans are available. Plan P charges a fixed monthly fee of ₹60 and ₹1.50 per GB of data used. Plan Q charges no fixed fee and ₹2.50 per GB. Let x be the number of GB used in a month and y be the total monthly cost in rupees. (a) Write a linear equation in x and y for each plan and rewrite each in slope-intercept form. State the slope and y-intercept of each and interpret them in the context of the plans. (b) Use the coefficient-ratio rules (a1/a2, b1/b2, c1/c2) to predict whether the two lines intersect, are parallel or are coincident, and state what this tells you about the number of usage levels at which both plans cost the same. (c) Find the number of GB at which both plans cost the same amount by solving the pair algebraically. Verify your answer. (d) Plot both lines on the coordinate plane provided (using at least two tabulated points for each), mark the intersection point, and confirm it matches your algebraic answer. (e) Advise a user who expects to use 40 GB per month which plan is cheaper, with a numerical justification.",
+          "scaffold": "For part (a): write the total cost of Plan P as a sum of the fixed fee and the usage charge, then rearrange if needed. For part (b): read a, b, c from each equation in the standard form ax + by + c = 0 and compute the three ratios. For part (c): set the two cost expressions equal and solve for x, then find y. For part (d): substitute x = 0 and one other convenient value of x into each equation to get two points per line.",
+          "format_of_output": [
+            "Two linear equations in slope-intercept form with slope and y-intercept named and interpreted.",
+            "Coefficient-ratio computation and prediction of number of solutions.",
+            "Algebraic solution with verification.",
+            "Labelled graph showing both lines and the intersection point.",
+            "Written recommendation with numerical cost comparison for 40 GB."
+          ],
+          "verified": true,
+          "guide": {
+            "MCQ": null,
+            "NUM": null,
+            "SCR": null,
+            "ECR": null,
+            "OPEN_TASK": {
+              "learning_outcome": {
+                "section": 12
+              },
+              "format_type": "Model-and-solve",
+              "format_rationale": "The task requires building two linear equations from a real scenario, reading off and interpreting slope and intercept, predicting solution behaviour using coefficient ratios, solving algebraically, graphing and interpreting — naturally integrating all major operations of the chapter in a single coherent problem.",
+              "what_this_demonstrates": "A complete response shows the student can move fluently between modelling (writing equations from a context), algebraic representation (slope-intercept form), classification (ratio rules), computation (solving the pair), graphical representation (plotting and reading the intersection) and interpretation (advising based on the result) — the full chain of reasoning the chapter develops.",
+              "reading_the_scaffold": "The scaffold breaks the task into five sequenced sub-parts. Students who need a starting point can work through each lettered part in order. Sub-part (a) is the modelling entry point; sub-parts (b) and (c) are analytical and algebraic; sub-part (d) connects to the graphical method; sub-part (e) brings the result back to the real-world context. A student who completes all five parts in order has demonstrated the integrative outcome.",
+              "strong_vs_weak_markers": "A strong response: correctly writes Plan P as y = 1.50x + 60 and Plan Q as y = 2.50x, interprets slope as cost per GB and y-intercept as fixed fee (or zero fixed fee), computes a1/a2 = 1/2 ≠ b1/b2 = 3/5 and correctly concludes a unique intersection, solves 1.50x + 60 = 2.50x to get x = 60 GB and y = ₹150, plots both lines with at least two correct points each, marks (60, 150), and concludes Plan Q is cheaper for 40 GB (Plan P: ₹120, Plan Q: ₹100). A weak response: sets up only one equation, or confuses slope with y-intercept in the interpretation, or omits the verification step, or cannot connect the graphical intersection to the algebraic answer.",
+              "inclusivity": "A student who is uncertain about the modelling step can start from a simple numerical example — 'if x = 10 GB, Plan P costs ₹60 + 10 × ₹1.50 = ₹75' — and then generalise to the formula. A student ready for a challenge can find for how many GB per month Plan P becomes cheaper than Plan Q and describe the full cost comparison as three intervals on the number line."
+            }
+          }
+        }
+      ]
+    },
+    "competency_gap_note": "",
+    "section_coverage_note": null
+  }
+}

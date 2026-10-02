@@ -1,0 +1,4 @@
+grade,chapter,title,counts,generations,cost_inr,seconds,exit,verdict,attempts,retried,report,log
+ix,12,Quadrilaterals,16/13/10,3,129.14,1289.1,1,FAILURES — see report,1,,genon/out/library_reports/mathematics_ix_ch12_20261002_150625.md,genon/out/runlogs/batch_mathematics_ix_ch12_20261002_144456.log
+ix,13,"Two Variables, One Line",16/13/10,3,130.41,1202.9,1,FAILURES — see report,1,,genon/out/library_reports/mathematics_ix_ch13_20261002_152628.md,genon/out/runlogs/batch_mathematics_ix_ch13_20261002_144456.log
+ix,14,Math of Space: Surface Area and Volume,16/13/10,3,132.08,1307.7,1,FAILURES — see report,1,,genon/out/library_reports/mathematics_ix_ch14_20261002_154816.md,genon/out/runlogs/batch_mathematics_ix_ch14_20261002_144456.log

@@ -95,7 +95,10 @@ def std_duration(grade_folder: str) -> int:
 
 def master_plan_entry(subject_folder: str, grade_folder: str, chapter: int) -> dict | None:
     # master_plan.json lives with the other allocation sources (founder layout, 2026-07-25)
-    mp = REPO / "data" / "content" / "allocation_norms" / "master_plan.json"
+    # ★ PATH FIX 2026-10-02. data/content/ has not existed since the 2026-08-23 restructure
+    # (see the library write below, fixed 2026-08-27). Reading the old path returned None, so
+    # a top canonical found no period count and the placeholder guard never fired.
+    mp = Path(config.DATA_DIR) / "allocation_norms" / "master_plan.json"
     if not mp.exists():
         return None
     combos = json.loads(mp.read_text(encoding="utf-8"))["combos"]

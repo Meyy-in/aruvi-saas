@@ -18,6 +18,14 @@ NORMS = REPO / "data" / "cloud" / "content" / "allocation_norms"
 WB = str(NORMS / "ncf_chapterwise_period_allocation.xlsx")
 DROP_THRESHOLD = 0.6
 
+# A workbook row whose title starts with this is BUDGETED TIME, not a chapter (founder ruling
+# 2026-10-02, mathematics·IX: Part I held at its authored counts, Part II at its own counts,
+# and the 10 periods left over kept as practice time). It takes its share of the year like any
+# row — so the Year Plan totals reconcile and a teacher's own budget re-spreads it — but it has
+# no summary, mapping or canonicals: placeholder=true (every generation flow skips it) and
+# reserve=true (the API shows its own title instead of "Book awaited").
+RESERVE_PREFIX = "Reserved for practice"
+
 # budget-sheet subject label -> repo subject key; Chapters-sheet label -> same key
 SUBJECT_KEY = {
     "English": "english",
@@ -179,7 +187,8 @@ for key in sorted(chapters, key=lambda k: (k[0], ROMAN[k[1]])):
         canonical_min = periods * dur
         floor_min = DROP_THRESHOLD * canonical_min
         floor_periods = round(floor_min / dur)  # nearest, not ceil (founder, 2026-07-31)
-        rows.append({
+        reserve = str(title).startswith(RESERVE_PREFIX)
+        row = {
             "chapter": ch,
             "title": title,
             "weight": w,
@@ -188,19 +197,21 @@ for key in sorted(chapters, key=lambda k: (k[0], ROMAN[k[1]])):
             "canonical_minutes": canonical_min,
             "floor_minutes": round(floor_min, 1),
             "floor_periods_at_standard": floor_periods,
-            "canonical_periods": pinned_or(subject, cls, ch,
-                                           canonical_periods(periods, floor_periods,
-                                                             subject=subject,
-                                                             cls_roman=cls)),
-            "placeholder": "Placeholder" in str(title),
-        })
+            "canonical_periods": [] if reserve else pinned_or(
+                subject, cls, ch, canonical_periods(periods, floor_periods,
+                                                    subject=subject, cls_roman=cls)),
+            "placeholder": reserve or "Placeholder" in str(title),
+        }
+        if reserve:
+            row["reserve"] = True
+        rows.append(row)
     plan[f"{subject}|{cls}"] = {
         "subject": subject,
         "class": cls,
         "standard_duration_minutes": dur,
         "annual_budget_periods": budget,
         "total_effort_weight": sum(c[2] for c in chs),
-        "n_chapters": len(chs),
+        "n_chapters": sum(1 for c in chs if not str(c[1]).startswith(RESERVE_PREFIX)),
         "chapters": rows,
     }
 

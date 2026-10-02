@@ -54,6 +54,7 @@ from aruvi_core.genon.serve import (                               # noqa: E402
 )
 from aruvi_core.assessment_norm import mistyped_tag                # noqa: E402
 import variant_plans as vp_mod                                     # noqa: E402
+from api import config                                             # noqa: E402
 from register_scan import scan_plan, scanned_fields                # noqa: E402
 import stem_deixis                                                 # noqa: E402  (C5 check 12)
 from summary_sections import (                                     # noqa: E402
@@ -206,7 +207,11 @@ def run(label, argv):
 
 
 def lib_dir_of(subject, grade):
-    return REPO / "data" / "content" / "saved_plans" / subject / grade
+    # ★ PATH FIX 2026-10-02. The served library moved twice after this was written: under
+    # data/cloud/content/ (2026-08-23) and into an edition-year folder (2026-08-27).
+    # generate_canonical.py already writes to DATA_DIR/saved_plans/<s>/<g>/<LP_YEAR>; read
+    # from the same api.config values so authoring, certification and serving agree.
+    return Path(config.DATA_DIR) / "saved_plans" / subject / grade / config.LP_YEAR
 
 
 def item_census(raw):
@@ -887,7 +892,7 @@ def quarantine(subject, grade, ch, fails, lines):
     backup/quarantine/<subject>/<grade>/ — which doubles as the fix worklist.
     If the TOP canonical fails, the whole library goes with it (the variants'
     registry has no ground without it)."""
-    lib_dir = REPO / "data" / "content" / "saved_plans" / subject / grade
+    lib_dir = lib_dir_of(subject, grade)
     qdir = REPO / "backup" / "quarantine" / subject / grade
     top_name = f"ch_{ch:02d}_canonical.json"
     to_move = set(fails)

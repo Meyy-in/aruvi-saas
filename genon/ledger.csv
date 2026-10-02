@@ -1169,3 +1169,21 @@ ts,mode,tag,model,subject,grade,chapter,schedule,lp_only,constitution,input_toke
 20260820_121241_math_iv_14_p05,batch,,claude-sonnet-4-6,5,mathematics,iv,14,5x40,False,LP v1.4 / assessment v1.4,15630,12903,10.23,0.0,ok,auto-repaired 19 naked quotes,ch_14_20260820_121241_math_iv_14_p05_raw.txt
 20260820_121241_math_iii_14_p06,batch,,claude-sonnet-4-6,6,mathematics,iii,14,6x40,False,LP v1.4 / assessment v1.4,17353,15264,12.1,0.0,ok,auto-repaired 23 naked quotes,ch_14_20260820_121241_math_iii_14_p06_raw.txt
 20260820_130325_math_v_01_p07,batch,,claude-sonnet-4-6,7,mathematics,v,1,7x40,False,LP v1.4 / assessment v1.4,17249,13834,10.4,0.0,ok,auto-repaired 18 naked quotes,ch_01_20260820_130325_math_v_01_p07_raw.txt
+20261002_131126,one,,claude-sonnet-4-6,,mathematics,ix,9,16x50,False,LP v1.3 / assessment v1.2,22907,23360,38.56,388.3,ok,,ch_09_20261002_131126_raw.txt
+20261002_131755,one,,claude-sonnet-4-6,13,mathematics,ix,9,13x50,False,LP v1.3 / assessment v1.2,22479,16729,29.29,273.1,ok,,ch_09_20261002_131755_raw.txt
+20261002_132229,one,,claude-sonnet-4-6,10,mathematics,ix,9,10x50,False,LP v1.3 / assessment v1.2,22479,13935,25.43,235.3,ok,,ch_09_20261002_132229_raw.txt
+20261002_135258,one,,claude-sonnet-4-6,,mathematics,ix,10,16x50,False,LP v1.3 / assessment v1.2,27064,26455,43.98,455.6,ok,,ch_10_20261002_135258_raw.txt
+20261002_140034,one,,claude-sonnet-4-6,13,mathematics,ix,10,13x50,False,LP v1.3 / assessment v1.2,26694,21517,37.06,365.7,ok,,ch_10_20261002_140034_raw.txt
+20261002_140640,one,,claude-sonnet-4-6,10,mathematics,ix,10,10x50,False,LP v1.3 / assessment v1.2,26694,20862,36.16,354.0,ok,,ch_10_20261002_140640_raw.txt
+20261002_141235,one,,claude-sonnet-4-6,,mathematics,ix,11,14x50,False,LP v1.3 / assessment v1.2,23435,27716,44.72,454.7,ok,,ch_11_20261002_141235_raw.txt
+20261002_142011,one,,claude-sonnet-4-6,11,mathematics,ix,11,11x50,False,LP v1.3 / assessment v1.2,23103,22833,37.89,376.9,ok,,ch_11_20261002_142011_raw.txt
+20261002_142628,one,,claude-sonnet-4-6,8,mathematics,ix,11,8x50,False,LP v1.3 / assessment v1.2,23103,22081,36.85,350.1,ok,,ch_11_20261002_142628_raw.txt
+20261002_144456,one,,claude-sonnet-4-6,,mathematics,ix,12,16x50,False,LP v1.3 / assessment v1.2,26185,32597,52.21,538.3,ok,,ch_12_20261002_144456_raw.txt
+20261002_145356,one,,claude-sonnet-4-6,13,mathematics,ix,12,13x50,False,LP v1.3 / assessment v1.2,25801,24014,40.26,394.4,ok,,ch_12_20261002_145356_raw.txt
+20261002_150030,one,,claude-sonnet-4-6,10,mathematics,ix,12,10x50,False,LP v1.3 / assessment v1.2,25801,21410,36.67,354.1,ok,,ch_12_20261002_150030_raw.txt
+20261002_150626,one,,claude-sonnet-4-6,,mathematics,ix,13,16x50,False,LP v1.3 / assessment v1.2,29955,31881,52.26,501.0,ok,,ch_13_20261002_150626_raw.txt
+20261002_151447,one,,claude-sonnet-4-6,13,mathematics,ix,13,13x50,False,LP v1.3 / assessment v1.2,29603,22819,39.66,350.3,ok,,ch_13_20261002_151447_raw.txt
+20261002_152038,one,,claude-sonnet-4-6,10,mathematics,ix,13,10x50,False,LP v1.3 / assessment v1.2,29603,21967,38.48,349.5,ok,,ch_13_20261002_152038_raw.txt
+20261002_152628,one,,claude-sonnet-4-6,,mathematics,ix,14,16x50,False,LP v1.3 / assessment v1.2,26335,29390,47.83,481.6,ok,,ch_14_20261002_152628_raw.txt
+20261002_153431,one,,claude-sonnet-4-6,13,mathematics,ix,14,13x50,False,LP v1.3 / assessment v1.2,25987,25853,42.85,425.3,ok,,ch_14_20261002_153431_raw.txt
+20261002_154136,one,,claude-sonnet-4-6,10,mathematics,ix,14,10x50,False,LP v1.3 / assessment v1.2,25987,24802,41.4,398.7,ok,,ch_14_20261002_154136_raw.txt

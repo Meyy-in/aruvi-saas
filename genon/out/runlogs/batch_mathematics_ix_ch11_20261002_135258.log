@@ -1,0 +1,1205 @@
+$ /Library/Developer/CommandLineTools/usr/bin/python3 /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/genon/build_library.py mathematics ix 11
+
+
+  streaming:        1 chars · ~     0 tokens · period 0/14 · 00:01   
+  streaming:      224 chars · ~    56 tokens · period 0/14 · 00:02   
+  streaming:      442 chars · ~   110 tokens · period 1/14 · 00:03   
+  streaming:      650 chars · ~   162 tokens · period 1/14 · 00:04   
+  streaming:      752 chars · ~   188 tokens · period 1/14 · 00:05   
+  streaming:      920 chars · ~   230 tokens · period 1/14 · 00:06   
+  streaming:    1,126 chars · ~   281 tokens · period 1/14 · 00:07   
+  streaming:    1,318 chars · ~   329 tokens · period 1/14 · 00:08   
+  streaming:    1,573 chars · ~   393 tokens · period 1/14 · 00:09   
+  streaming:    1,819 chars · ~   454 tokens · period 1/14 · 00:10   
+  streaming:    2,017 chars · ~   504 tokens · period 1/14 · 00:11   
+  streaming:    2,234 chars · ~   558 tokens · period 1/14 · 00:12   
+  streaming:    2,447 chars · ~   611 tokens · period 1/14 · 00:13   
+  streaming:    2,659 chars · ~   664 tokens · period 1/14 · 00:14   
+  streaming:    2,856 chars · ~   714 tokens · period 1/14 · 00:15   
+  streaming:    3,041 chars · ~   760 tokens · period 1/14 · 00:16   
+  streaming:    3,294 chars · ~   823 tokens · period 2/14 · 00:17   
+  streaming:    3,558 chars · ~   889 tokens · period 2/14 · 00:18   
+  streaming:    3,720 chars · ~   930 tokens · period 2/14 · 00:19   
+  streaming:    3,879 chars · ~   969 tokens · period 2/14 · 00:20   
+  streaming:    4,167 chars · ~ 1,041 tokens · period 2/14 · 00:22   
+  streaming:    4,443 chars · ~ 1,110 tokens · period 2/14 · 00:23   
+  streaming:    4,709 chars · ~ 1,177 tokens · period 2/14 · 00:24   
+  streaming:    4,908 chars · ~ 1,227 tokens · period 2/14 · 00:25   
+  streaming:    5,108 chars · ~ 1,277 tokens · period 2/14 · 00:26   
+  streaming:    5,342 chars · ~ 1,335 tokens · period 2/14 · 00:27   
+  streaming:    5,548 chars · ~ 1,387 tokens · period 2/14 · 00:28   
+  streaming:    5,707 chars · ~ 1,426 tokens · period 2/14 · 00:29   
+  streaming:    5,859 chars · ~ 1,464 tokens · period 2/14 · 00:30   
+  streaming:    6,082 chars · ~ 1,520 tokens · period 2/14 · 00:31   
+  streaming:    6,249 chars · ~ 1,562 tokens · period 2/14 · 00:32   
+  streaming:    6,405 chars · ~ 1,601 tokens · period 2/14 · 00:33   
+  streaming:    6,634 chars · ~ 1,658 tokens · period 2/14 · 00:34   
+  streaming:    6,825 chars · ~ 1,706 tokens · period 2/14 · 00:35   
+  streaming:    6,950 chars · ~ 1,737 tokens · period 2/14 · 00:36   
+  streaming:    7,105 chars · ~ 1,776 tokens · period 2/14 · 00:37   
+  streaming:    7,273 chars · ~ 1,818 tokens · period 2/14 · 00:38   
+  streaming:    7,503 chars · ~ 1,875 tokens · period 3/14 · 00:39   
+  streaming:    7,822 chars · ~ 1,955 tokens · period 3/14 · 00:40   
+  streaming:    8,007 chars · ~ 2,001 tokens · period 3/14 · 00:41   
+  streaming:    8,232 chars · ~ 2,058 tokens · period 3/14 · 00:42   
+  streaming:    8,411 chars · ~ 2,102 tokens · period 3/14 · 00:43   
+  streaming:    8,646 chars · ~ 2,161 tokens · period 3/14 · 00:44   
+  streaming:    8,803 chars · ~ 2,200 tokens · period 3/14 · 00:45   
+  streaming:    8,934 chars · ~ 2,233 tokens · period 3/14 · 00:46   
+  streaming:    9,194 chars · ~ 2,298 tokens · period 3/14 · 00:47   
+  streaming:    9,382 chars · ~ 2,345 tokens · period 3/14 · 00:48   
+  streaming:    9,576 chars · ~ 2,394 tokens · period 3/14 · 00:49   
+  streaming:    9,799 chars · ~ 2,449 tokens · period 3/14 · 00:50   
+  streaming:    9,984 chars · ~ 2,496 tokens · period 3/14 · 00:51   
+  streaming:   10,315 chars · ~ 2,578 tokens · period 4/14 · 00:52   
+  streaming:   10,462 chars · ~ 2,615 tokens · period 4/14 · 00:53   
+  streaming:   10,717 chars · ~ 2,679 tokens · period 4/14 · 00:54   
+  streaming:   10,849 chars · ~ 2,712 tokens · period 4/14 · 00:55   
+  streaming:   11,041 chars · ~ 2,760 tokens · period 4/14 · 00:56   
+  streaming:   11,221 chars · ~ 2,805 tokens · period 4/14 · 00:57   
+  streaming:   11,364 chars · ~ 2,841 tokens · period 4/14 · 00:58   
+  streaming:   11,577 chars · ~ 2,894 tokens · period 4/14 · 00:59   
+  streaming:   11,758 chars · ~ 2,939 tokens · period 4/14 · 01:00   
+  streaming:   12,003 chars · ~ 3,000 tokens · period 4/14 · 01:01   
+  streaming:   12,128 chars · ~ 3,032 tokens · period 4/14 · 01:02   
+  streaming:   12,361 chars · ~ 3,090 tokens · period 4/14 · 01:03   
+  streaming:   12,566 chars · ~ 3,141 tokens · period 4/14 · 01:05   
+  streaming:   12,792 chars · ~ 3,198 tokens · period 4/14 · 01:06   
+  streaming:   12,989 chars · ~ 3,247 tokens · period 4/14 · 01:07   
+  streaming:   13,160 chars · ~ 3,290 tokens · period 4/14 · 01:08   
+  streaming:   13,406 chars · ~ 3,351 tokens · period 5/14 · 01:09   
+  streaming:   13,673 chars · ~ 3,418 tokens · period 5/14 · 01:10   
+  streaming:   13,951 chars · ~ 3,487 tokens · period 5/14 · 01:11   
+  streaming:   14,188 chars · ~ 3,547 tokens · period 5/14 · 01:12   
+  streaming:   14,399 chars · ~ 3,599 tokens · period 5/14 · 01:13   
+  streaming:   14,570 chars · ~ 3,642 tokens · period 5/14 · 01:14   
+  streaming:   14,794 chars · ~ 3,698 tokens · period 5/14 · 01:15   
+  streaming:   15,009 chars · ~ 3,752 tokens · period 5/14 · 01:16   
+  streaming:   15,274 chars · ~ 3,818 tokens · period 5/14 · 01:17   
+  streaming:   15,467 chars · ~ 3,866 tokens · period 5/14 · 01:18   
+  streaming:   15,759 chars · ~ 3,939 tokens · period 5/14 · 01:19   
+  streaming:   15,942 chars · ~ 3,985 tokens · period 5/14 · 01:20   
+  streaming:   16,154 chars · ~ 4,038 tokens · period 5/14 · 01:21   
+  streaming:   16,318 chars · ~ 4,079 tokens · period 5/14 · 01:22   
+  streaming:   16,550 chars · ~ 4,137 tokens · period 6/14 · 01:23   
+  streaming:   16,820 chars · ~ 4,205 tokens · period 6/14 · 01:24   
+  streaming:   17,145 chars · ~ 4,286 tokens · period 6/14 · 01:25   
+  streaming:   17,398 chars · ~ 4,349 tokens · period 6/14 · 01:26   
+  streaming:   17,602 chars · ~ 4,400 tokens · period 6/14 · 01:27   
+  streaming:   17,867 chars · ~ 4,466 tokens · period 6/14 · 01:28   
+  streaming:   18,092 chars · ~ 4,523 tokens · period 6/14 · 01:29   
+  streaming:   18,352 chars · ~ 4,588 tokens · period 6/14 · 01:30   
+  streaming:   18,591 chars · ~ 4,647 tokens · period 6/14 · 01:31   
+  streaming:   18,809 chars · ~ 4,702 tokens · period 6/14 · 01:32   
+  streaming:   19,021 chars · ~ 4,755 tokens · period 6/14 · 01:33   
+  streaming:   19,260 chars · ~ 4,815 tokens · period 6/14 · 01:34   
+  streaming:   19,440 chars · ~ 4,860 tokens · period 6/14 · 01:35   
+  streaming:   19,637 chars · ~ 4,909 tokens · period 6/14 · 01:36   
+  streaming:   19,814 chars · ~ 4,953 tokens · period 6/14 · 01:37   
+  streaming:   20,009 chars · ~ 5,002 tokens · period 6/14 · 01:38   
+  streaming:   20,268 chars · ~ 5,067 tokens · period 7/14 · 01:39   
+  streaming:   20,600 chars · ~ 5,150 tokens · period 7/14 · 01:40   
+  streaming:   20,739 chars · ~ 5,184 tokens · period 7/14 · 01:41   
+  streaming:   20,948 chars · ~ 5,237 tokens · period 7/14 · 01:42   
+  streaming:   21,214 chars · ~ 5,303 tokens · period 7/14 · 01:43   
+  streaming:   21,374 chars · ~ 5,343 tokens · period 7/14 · 01:44   
+  streaming:   21,585 chars · ~ 5,396 tokens · period 7/14 · 01:45   
+  streaming:   21,792 chars · ~ 5,448 tokens · period 7/14 · 01:46   
+  streaming:   22,056 chars · ~ 5,514 tokens · period 7/14 · 01:47   
+  streaming:   22,212 chars · ~ 5,553 tokens · period 7/14 · 01:48   
+  streaming:   22,427 chars · ~ 5,606 tokens · period 7/14 · 01:49   
+  streaming:   22,601 chars · ~ 5,650 tokens · period 7/14 · 01:50   
+  streaming:   22,812 chars · ~ 5,703 tokens · period 7/14 · 01:51   
+  streaming:   23,034 chars · ~ 5,758 tokens · period 8/14 · 01:52   
+  streaming:   23,286 chars · ~ 5,821 tokens · period 8/14 · 01:53   
+  streaming:   23,534 chars · ~ 5,883 tokens · period 8/14 · 01:55   
+  streaming:   23,693 chars · ~ 5,923 tokens · period 8/14 · 01:56   
+  streaming:   23,942 chars · ~ 5,985 tokens · period 8/14 · 01:57   
+  streaming:   24,103 chars · ~ 6,025 tokens · period 8/14 · 01:58   
+  streaming:   24,296 chars · ~ 6,074 tokens · period 8/14 · 01:59   
+  streaming:   24,552 chars · ~ 6,138 tokens · period 8/14 · 02:00   
+  streaming:   24,677 chars · ~ 6,169 tokens · period 8/14 · 02:01   
+  streaming:   24,892 chars · ~ 6,223 tokens · period 8/14 · 02:02   
+  streaming:   25,101 chars · ~ 6,275 tokens · period 8/14 · 02:03   
+  streaming:   25,349 chars · ~ 6,337 tokens · period 8/14 · 02:04   
+  streaming:   25,545 chars · ~ 6,386 tokens · period 8/14 · 02:05   
+  streaming:   25,762 chars · ~ 6,440 tokens · period 8/14 · 02:06   
+  streaming:   25,989 chars · ~ 6,497 tokens · period 8/14 · 02:07   
+  streaming:   26,152 chars · ~ 6,538 tokens · period 8/14 · 02:08   
+  streaming:   26,319 chars · ~ 6,579 tokens · period 8/14 · 02:09   
+  streaming:   26,648 chars · ~ 6,662 tokens · period 9/14 · 02:10   
+  streaming:   26,818 chars · ~ 6,704 tokens · period 9/14 · 02:11   
+  streaming:   27,075 chars · ~ 6,768 tokens · period 9/14 · 02:12   
+  streaming:   27,295 chars · ~ 6,823 tokens · period 9/14 · 02:13   
+  streaming:   27,537 chars · ~ 6,884 tokens · period 9/14 · 02:14   
+  streaming:   27,739 chars · ~ 6,934 tokens · period 9/14 · 02:15   
+  streaming:   27,969 chars · ~ 6,992 tokens · period 9/14 · 02:16   
+  streaming:   28,271 chars · ~ 7,067 tokens · period 9/14 · 02:17   
+  streaming:   28,491 chars · ~ 7,122 tokens · period 9/14 · 02:18   
+  streaming:   28,705 chars · ~ 7,176 tokens · period 9/14 · 02:19   
+  streaming:   28,928 chars · ~ 7,232 tokens · period 9/14 · 02:20   
+  streaming:   29,116 chars · ~ 7,279 tokens · period 9/14 · 02:21   
+  streaming:   29,354 chars · ~ 7,338 tokens · period 9/14 · 02:22   
+  streaming:   29,610 chars · ~ 7,402 tokens · period 10/14 · 02:23   
+  streaming:   29,854 chars · ~ 7,463 tokens · period 10/14 · 02:24   
+  streaming:   30,087 chars · ~ 7,521 tokens · period 10/14 · 02:25   
+  streaming:   30,267 chars · ~ 7,566 tokens · period 10/14 · 02:26   
+  streaming:   30,492 chars · ~ 7,623 tokens · period 10/14 · 02:27   
+  streaming:   30,677 chars · ~ 7,669 tokens · period 10/14 · 02:28   
+  streaming:   30,866 chars · ~ 7,716 tokens · period 10/14 · 02:29   
+  streaming:   31,027 chars · ~ 7,756 tokens · period 10/14 · 02:31   
+  streaming:   31,168 chars · ~ 7,792 tokens · period 10/14 · 02:32   
+  streaming:   31,405 chars · ~ 7,851 tokens · period 10/14 · 02:33   
+  streaming:   31,567 chars · ~ 7,891 tokens · period 10/14 · 02:34   
+  streaming:   31,749 chars · ~ 7,937 tokens · period 10/14 · 02:35   
+  streaming:   31,947 chars · ~ 7,986 tokens · period 10/14 · 02:36   
+  streaming:   32,166 chars · ~ 8,041 tokens · period 10/14 · 02:37   
+  streaming:   32,419 chars · ~ 8,104 tokens · period 11/14 · 02:38   
+  streaming:   32,716 chars · ~ 8,179 tokens · period 11/14 · 02:39   
+  streaming:   32,865 chars · ~ 8,216 tokens · period 11/14 · 02:40   
+  streaming:   33,051 chars · ~ 8,262 tokens · period 11/14 · 02:41   
+  streaming:   33,233 chars · ~ 8,308 tokens · period 11/14 · 02:42   
+  streaming:   33,493 chars · ~ 8,373 tokens · period 11/14 · 02:43   
+  streaming:   33,664 chars · ~ 8,416 tokens · period 11/14 · 02:44   
+  streaming:   33,904 chars · ~ 8,476 tokens · period 11/14 · 02:45   
+  streaming:   34,075 chars · ~ 8,518 tokens · period 11/14 · 02:46   
+  streaming:   34,318 chars · ~ 8,579 tokens · period 11/14 · 02:47   
+  streaming:   34,518 chars · ~ 8,629 tokens · period 11/14 · 02:48   
+  streaming:   34,695 chars · ~ 8,673 tokens · period 11/14 · 02:49   
+  streaming:   34,986 chars · ~ 8,746 tokens · period 12/14 · 02:50   
+  streaming:   35,216 chars · ~ 8,804 tokens · period 12/14 · 02:51   
+  streaming:   35,452 chars · ~ 8,863 tokens · period 12/14 · 02:52   
+  streaming:   35,603 chars · ~ 8,900 tokens · period 12/14 · 02:53   
+  streaming:   35,764 chars · ~ 8,941 tokens · period 12/14 · 02:54   
+  streaming:   35,983 chars · ~ 8,995 tokens · period 12/14 · 02:55   
+  streaming:   36,099 chars · ~ 9,024 tokens · period 12/14 · 02:56   
+  streaming:   36,332 chars · ~ 9,083 tokens · period 12/14 · 02:57   
+  streaming:   36,505 chars · ~ 9,126 tokens · period 12/14 · 02:58   
+  streaming:   36,642 chars · ~ 9,160 tokens · period 12/14 · 02:59   
+  streaming:   36,922 chars · ~ 9,230 tokens · period 12/14 · 03:00   
+  streaming:   37,169 chars · ~ 9,292 tokens · period 12/14 · 03:01   
+  streaming:   37,363 chars · ~ 9,340 tokens · period 12/14 · 03:02   
+  streaming:   37,539 chars · ~ 9,384 tokens · period 12/14 · 03:04   
+  streaming:   37,775 chars · ~ 9,443 tokens · period 12/14 · 03:05   
+  streaming:   37,978 chars · ~ 9,494 tokens · period 12/14 · 03:06   
+  streaming:   38,130 chars · ~ 9,532 tokens · period 12/14 · 03:07   
+  streaming:   38,328 chars · ~ 9,582 tokens · period 12/14 · 03:08   
+  streaming:   38,582 chars · ~ 9,645 tokens · period 13/14 · 03:09   
+  streaming:   38,910 chars · ~ 9,727 tokens · period 13/14 · 03:10   
+  streaming:   39,137 chars · ~ 9,784 tokens · period 13/14 · 03:11   
+  streaming:   39,408 chars · ~ 9,852 tokens · period 13/14 · 03:12   
+  streaming:   39,575 chars · ~ 9,893 tokens · period 13/14 · 03:13   
+  streaming:   39,783 chars · ~ 9,945 tokens · period 13/14 · 03:14   
+  streaming:   40,020 chars · ~10,005 tokens · period 13/14 · 03:15   
+  streaming:   40,238 chars · ~10,059 tokens · period 13/14 · 03:16   
+  streaming:   40,370 chars · ~10,092 tokens · period 13/14 · 03:17   
+  streaming:   40,495 chars · ~10,123 tokens · period 13/14 · 03:18   
+  streaming:   40,700 chars · ~10,175 tokens · period 13/14 · 03:19   
+  streaming:   40,903 chars · ~10,225 tokens · period 13/14 · 03:20   
+  streaming:   41,076 chars · ~10,269 tokens · period 13/14 · 03:21   
+  streaming:   41,314 chars · ~10,328 tokens · period 13/14 · 03:22   
+  streaming:   41,519 chars · ~10,379 tokens · period 13/14 · 03:23   
+  streaming:   41,715 chars · ~10,428 tokens · period 13/14 · 03:24   
+  streaming:   41,969 chars · ~10,492 tokens · period 14/14 · 03:25   
+  streaming:   42,264 chars · ~10,566 tokens · period 14/14 · 03:26   
+  streaming:   42,509 chars · ~10,627 tokens · period 14/14 · 03:27   
+  streaming:   42,696 chars · ~10,674 tokens · period 14/14 · 03:28   
+  streaming:   42,966 chars · ~10,741 tokens · period 14/14 · 03:29   
+  streaming:   43,154 chars · ~10,788 tokens · period 14/14 · 03:30   
+  streaming:   43,347 chars · ~10,836 tokens · period 14/14 · 03:31   
+  streaming:   43,534 chars · ~10,883 tokens · period 14/14 · 03:32   
+  streaming:   43,723 chars · ~10,930 tokens · period 14/14 · 03:33   
+  streaming:   43,935 chars · ~10,983 tokens · period 14/14 · 03:34   
+  streaming:   44,177 chars · ~11,044 tokens · period 14/14 · 03:35   
+  streaming:   44,365 chars · ~11,091 tokens · period 14/14 · 03:36   
+  streaming:   44,541 chars · ~11,135 tokens · period 14/14 · 03:37   
+  streaming:   44,766 chars · ~11,191 tokens · period 14/14 · 03:38   
+  streaming:   44,948 chars · ~11,237 tokens · period 14/14 · 03:39   
+  streaming:   45,174 chars · ~11,293 tokens · period 14/14 · 03:40   
+  streaming:   45,394 chars · ~11,348 tokens · periods 14/14 · handoff LO 0 · 03:41   
+  streaming:   45,613 chars · ~11,403 tokens · periods 14/14 · handoff LO 0 · 03:42   
+  streaming:   45,836 chars · ~11,459 tokens · periods 14/14 · handoff LO 0 · 03:43   
+  streaming:   45,962 chars · ~11,490 tokens · periods 14/14 · handoff LO 0 · 03:44   
+  streaming:   46,190 chars · ~11,547 tokens · periods 14/14 · handoff LO 0 · 03:46   
+  streaming:   46,446 chars · ~11,611 tokens · periods 14/14 · handoff LO 0 · 03:47   
+  streaming:   46,684 chars · ~11,671 tokens · periods 14/14 · handoff LO 0 · 03:48   
+  streaming:   46,989 chars · ~11,747 tokens · periods 14/14 · handoff LO 0 · 03:49   
+  streaming:   47,207 chars · ~11,801 tokens · periods 14/14 · handoff LO 0 · 03:50   
+  streaming:   47,463 chars · ~11,865 tokens · periods 14/14 · handoff LO 0 · 03:51   
+  streaming:   47,723 chars · ~11,930 tokens · periods 14/14 · handoff LO 0 · 03:52   
+  streaming:   47,900 chars · ~11,975 tokens · periods 14/14 · handoff LO 0 · 03:53   
+  streaming:   48,194 chars · ~12,048 tokens · periods 14/14 · handoff LO 0 · 03:54   
+  streaming:   48,487 chars · ~12,121 tokens · periods 14/14 · handoff LO 0 · 03:55   
+  streaming:   48,689 chars · ~12,172 tokens · periods 14/14 · handoff LO 0 · 03:56   
+  streaming:   48,911 chars · ~12,227 tokens · periods 14/14 · handoff LO 0 · 03:57   
+  streaming:   49,102 chars · ~12,275 tokens · periods 14/14 · handoff LO 0 · 03:58   
+  streaming:   49,355 chars · ~12,338 tokens · periods 14/14 · handoff LO 0 · 03:59   
+  streaming:   49,647 chars · ~12,411 tokens · periods 14/14 · handoff LO 0 · 04:00   
+  streaming:   49,910 chars · ~12,477 tokens · periods 14/14 · handoff LO 0 · 04:01   
+  streaming:   50,166 chars · ~12,541 tokens · periods 14/14 · handoff LO 0 · 04:02   
+  streaming:   50,366 chars · ~12,591 tokens · periods 14/14 · handoff LO 0 · 04:03   
+  streaming:   50,609 chars · ~12,652 tokens · periods 14/14 · handoff LO 0 · 04:04   
+  streaming:   50,890 chars · ~12,722 tokens · periods 14/14 · handoff LO 0 · 04:05   
+  streaming:   51,162 chars · ~12,790 tokens · periods 14/14 · handoff LO 0 · 04:06   
+  streaming:   51,395 chars · ~12,848 tokens · periods 14/14 · handoff LO 0 · 04:07   
+  streaming:   51,631 chars · ~12,907 tokens · periods 14/14 · handoff LO 0 · 04:08   
+  streaming:   51,820 chars · ~12,955 tokens · periods 14/14 · handoff LO 0 · 04:09   
+  streaming:   52,101 chars · ~13,025 tokens · periods 14/14 · handoff LO 0 · 04:10   
+  streaming:   52,290 chars · ~13,072 tokens · periods 14/14 · handoff LO 0 · 04:11   
+  streaming:   52,495 chars · ~13,123 tokens · periods 14/14 · handoff LO 0 · 04:12   
+  streaming:   52,810 chars · ~13,202 tokens · periods 14/14 · handoff LO 0 · 04:13   
+  streaming:   53,003 chars · ~13,250 tokens · periods 14/14 · handoff LO 0 · 04:14   
+  streaming:   53,227 chars · ~13,306 tokens · periods 14/14 · handoff LO 0 · 04:15   
+  streaming:   53,419 chars · ~13,354 tokens · periods 14/14 · assessment item 0 · 04:16   
+  streaming:   53,565 chars · ~13,391 tokens · periods 14/14 · assessment item 0 · 04:17   
+  streaming:   53,933 chars · ~13,483 tokens · periods 14/14 · assessment item 0 · 04:18   
+  streaming:   54,208 chars · ~13,552 tokens · periods 14/14 · assessment item 1 · 04:19   
+  streaming:   54,447 chars · ~13,611 tokens · periods 14/14 · assessment item 1 · 04:20   
+  streaming:   54,571 chars · ~13,642 tokens · periods 14/14 · assessment item 1 · 04:21   
+  streaming:   54,819 chars · ~13,704 tokens · periods 14/14 · assessment item 1 · 04:22   
+  streaming:   55,011 chars · ~13,752 tokens · periods 14/14 · assessment item 1 · 04:23   
+  streaming:   55,208 chars · ~13,802 tokens · periods 14/14 · assessment item 1 · 04:24   
+  streaming:   55,510 chars · ~13,877 tokens · periods 14/14 · assessment item 1 · 04:26   
+  streaming:   55,679 chars · ~13,919 tokens · periods 14/14 · assessment item 1 · 04:27   
+  streaming:   55,856 chars · ~13,964 tokens · periods 14/14 · assessment item 1 · 04:28   
+  streaming:   56,091 chars · ~14,022 tokens · periods 14/14 · assessment item 1 · 04:29   
+  streaming:   56,306 chars · ~14,076 tokens · periods 14/14 · assessment item 1 · 04:30   
+  streaming:   56,487 chars · ~14,121 tokens · periods 14/14 · assessment item 1 · 04:31   
+  streaming:   56,644 chars · ~14,161 tokens · periods 14/14 · assessment item 1 · 04:32   
+  streaming:   56,896 chars · ~14,224 tokens · periods 14/14 · assessment item 1 · 04:33   
+  streaming:   57,093 chars · ~14,273 tokens · periods 14/14 · assessment item 1 · 04:34   
+  streaming:   57,479 chars · ~14,369 tokens · periods 14/14 · assessment item 1 · 04:35   
+  streaming:   57,847 chars · ~14,461 tokens · periods 14/14 · assessment item 2 · 04:36   
+  streaming:   58,185 chars · ~14,546 tokens · periods 14/14 · assessment item 2 · 04:37   
+  streaming:   58,323 chars · ~14,580 tokens · periods 14/14 · assessment item 2 · 04:38   
+  streaming:   58,491 chars · ~14,622 tokens · periods 14/14 · assessment item 2 · 04:39   
+  streaming:   58,641 chars · ~14,660 tokens · periods 14/14 · assessment item 2 · 04:40   
+  streaming:   58,933 chars · ~14,733 tokens · periods 14/14 · assessment item 2 · 04:41   
+  streaming:   59,153 chars · ~14,788 tokens · periods 14/14 · assessment item 2 · 04:42   
+  streaming:   59,297 chars · ~14,824 tokens · periods 14/14 · assessment item 2 · 04:43   
+  streaming:   59,648 chars · ~14,912 tokens · periods 14/14 · assessment item 2 · 04:44   
+  streaming:   60,040 chars · ~15,010 tokens · periods 14/14 · assessment item 2 · 04:45   
+  streaming:   60,461 chars · ~15,115 tokens · periods 14/14 · assessment item 3 · 04:46   
+  streaming:   60,713 chars · ~15,178 tokens · periods 14/14 · assessment item 3 · 04:47   
+  streaming:   60,924 chars · ~15,231 tokens · periods 14/14 · assessment item 3 · 04:48   
+  streaming:   61,212 chars · ~15,303 tokens · periods 14/14 · assessment item 3 · 04:49   
+  streaming:   61,350 chars · ~15,337 tokens · periods 14/14 · assessment item 3 · 04:50   
+  streaming:   61,508 chars · ~15,377 tokens · periods 14/14 · assessment item 3 · 04:51   
+  streaming:   61,668 chars · ~15,417 tokens · periods 14/14 · assessment item 3 · 04:52   
+  streaming:   61,961 chars · ~15,490 tokens · periods 14/14 · assessment item 3 · 04:53   
+  streaming:   62,288 chars · ~15,572 tokens · periods 14/14 · assessment item 3 · 04:54   
+  streaming:   62,428 chars · ~15,607 tokens · periods 14/14 · assessment item 3 · 04:55   
+  streaming:   62,758 chars · ~15,689 tokens · periods 14/14 · assessment item 3 · 04:56   
+  streaming:   63,099 chars · ~15,774 tokens · periods 14/14 · assessment item 3 · 04:57   
+  streaming:   63,512 chars · ~15,878 tokens · periods 14/14 · assessment item 4 · 04:58   
+  streaming:   63,722 chars · ~15,930 tokens · periods 14/14 · assessment item 4 · 04:59   
+  streaming:   63,944 chars · ~15,986 tokens · periods 14/14 · assessment item 4 · 05:00   
+  streaming:   64,230 chars · ~16,057 tokens · periods 14/14 · assessment item 4 · 05:01   
+  streaming:   64,433 chars · ~16,108 tokens · periods 14/14 · assessment item 4 · 05:02   
+  streaming:   64,814 chars · ~16,203 tokens · periods 14/14 · assessment item 4 · 05:03   
+  streaming:   65,002 chars · ~16,250 tokens · periods 14/14 · assessment item 4 · 05:04   
+  streaming:   65,191 chars · ~16,297 tokens · periods 14/14 · assessment item 4 · 05:05   
+  streaming:   65,425 chars · ~16,356 tokens · periods 14/14 · assessment item 4 · 05:07   
+  streaming:   65,690 chars · ~16,422 tokens · periods 14/14 · assessment item 4 · 05:08   
+  streaming:   65,956 chars · ~16,489 tokens · periods 14/14 · assessment item 4 · 05:09   
+  streaming:   66,307 chars · ~16,576 tokens · periods 14/14 · assessment item 4 · 05:10   
+  streaming:   66,739 chars · ~16,684 tokens · periods 14/14 · assessment item 4 · 05:11   
+  streaming:   67,178 chars · ~16,794 tokens · periods 14/14 · assessment item 5 · 05:12   
+  streaming:   67,390 chars · ~16,847 tokens · periods 14/14 · assessment item 5 · 05:13   
+  streaming:   67,608 chars · ~16,902 tokens · periods 14/14 · assessment item 5 · 05:14   
+  streaming:   67,762 chars · ~16,940 tokens · periods 14/14 · assessment item 5 · 05:15   
+  streaming:   67,966 chars · ~16,991 tokens · periods 14/14 · assessment item 5 · 05:16   
+  streaming:   68,355 chars · ~17,088 tokens · periods 14/14 · assessment item 5 · 05:17   
+  streaming:   68,565 chars · ~17,141 tokens · periods 14/14 · assessment item 5 · 05:18   
+  streaming:   68,752 chars · ~17,188 tokens · periods 14/14 · assessment item 5 · 05:19   
+  streaming:   69,122 chars · ~17,280 tokens · periods 14/14 · assessment item 5 · 05:20   
+  streaming:   69,507 chars · ~17,376 tokens · periods 14/14 · assessment item 5 · 05:21   
+  streaming:   69,867 chars · ~17,466 tokens · periods 14/14 · assessment item 6 · 05:22   
+  streaming:   69,972 chars · ~17,493 tokens · periods 14/14 · assessment item 6 · 05:23   
+  streaming:   70,153 chars · ~17,538 tokens · periods 14/14 · assessment item 6 · 05:24   
+  streaming:   70,381 chars · ~17,595 tokens · periods 14/14 · assessment item 6 · 05:25   
+  streaming:   70,623 chars · ~17,655 tokens · periods 14/14 · assessment item 6 · 05:26   
+  streaming:   71,016 chars · ~17,754 tokens · periods 14/14 · assessment item 6 · 05:27   
+  streaming:   71,325 chars · ~17,831 tokens · periods 14/14 · assessment item 6 · 05:28   
+  streaming:   71,714 chars · ~17,928 tokens · periods 14/14 · assessment item 6 · 05:29   
+  streaming:   71,987 chars · ~17,996 tokens · periods 14/14 · assessment item 6 · 05:30   
+  streaming:   72,160 chars · ~18,040 tokens · periods 14/14 · assessment item 6 · 05:31   
+  streaming:   72,454 chars · ~18,113 tokens · periods 14/14 · assessment item 7 · 05:32   
+  streaming:   72,711 chars · ~18,177 tokens · periods 14/14 · assessment item 7 · 05:33   
+  streaming:   72,866 chars · ~18,216 tokens · periods 14/14 · assessment item 7 · 05:34   
+  streaming:   73,092 chars · ~18,273 tokens · periods 14/14 · assessment item 7 · 05:35   
+  streaming:   73,322 chars · ~18,330 tokens · periods 14/14 · assessment item 7 · 05:36   
+  streaming:   73,569 chars · ~18,392 tokens · periods 14/14 · assessment item 7 · 05:37   
+  streaming:   73,746 chars · ~18,436 tokens · periods 14/14 · assessment item 7 · 05:38   
+  streaming:   73,936 chars · ~18,484 tokens · periods 14/14 · assessment item 7 · 05:39   
+  streaming:   74,303 chars · ~18,575 tokens · periods 14/14 · assessment item 7 · 05:40   
+  streaming:   74,502 chars · ~18,625 tokens · periods 14/14 · assessment item 7 · 05:41   
+  streaming:   74,686 chars · ~18,671 tokens · periods 14/14 · assessment item 7 · 05:42   
+  streaming:   75,041 chars · ~18,760 tokens · periods 14/14 · assessment item 7 · 05:43   
+  streaming:   75,295 chars · ~18,823 tokens · periods 14/14 · assessment item 7 · 05:45   
+  streaming:   75,604 chars · ~18,901 tokens · periods 14/14 · assessment item 8 · 05:46   
+  streaming:   75,953 chars · ~18,988 tokens · periods 14/14 · assessment item 8 · 05:47   
+  streaming:   76,180 chars · ~19,045 tokens · periods 14/14 · assessment item 8 · 05:48   
+  streaming:   76,465 chars · ~19,116 tokens · periods 14/14 · assessment item 8 · 05:49   
+  streaming:   76,676 chars · ~19,169 tokens · periods 14/14 · assessment item 8 · 05:50   
+  streaming:   77,008 chars · ~19,252 tokens · periods 14/14 · assessment item 8 · 05:51   
+  streaming:   77,334 chars · ~19,333 tokens · periods 14/14 · assessment item 8 · 05:52   
+  streaming:   77,517 chars · ~19,379 tokens · periods 14/14 · assessment item 8 · 05:53   
+  streaming:   77,726 chars · ~19,431 tokens · periods 14/14 · assessment item 8 · 05:54   
+  streaming:   77,923 chars · ~19,480 tokens · periods 14/14 · assessment item 8 · 05:55   
+  streaming:   78,121 chars · ~19,530 tokens · periods 14/14 · assessment item 8 · 05:56   
+  streaming:   78,396 chars · ~19,599 tokens · periods 14/14 · assessment item 8 · 05:57   
+  streaming:   78,773 chars · ~19,693 tokens · periods 14/14 · assessment item 8 · 05:58   
+  streaming:   79,048 chars · ~19,762 tokens · periods 14/14 · assessment item 8 · 05:59   
+  streaming:   79,248 chars · ~19,812 tokens · periods 14/14 · assessment item 8 · 06:00   
+  streaming:   79,627 chars · ~19,906 tokens · periods 14/14 · assessment item 9 · 06:01   
+  streaming:   79,790 chars · ~19,947 tokens · periods 14/14 · assessment item 9 · 06:02   
+  streaming:   79,973 chars · ~19,993 tokens · periods 14/14 · assessment item 9 · 06:03   
+  streaming:   80,180 chars · ~20,045 tokens · periods 14/14 · assessment item 9 · 06:04   
+  streaming:   80,330 chars · ~20,082 tokens · periods 14/14 · assessment item 9 · 06:05   
+  streaming:   80,614 chars · ~20,153 tokens · periods 14/14 · assessment item 9 · 06:06   
+  streaming:   80,897 chars · ~20,224 tokens · periods 14/14 · assessment item 9 · 06:07   
+  streaming:   81,130 chars · ~20,282 tokens · periods 14/14 · assessment item 9 · 06:08   
+  streaming:   81,302 chars · ~20,325 tokens · periods 14/14 · assessment item 9 · 06:09   
+  streaming:   81,683 chars · ~20,420 tokens · periods 14/14 · assessment item 9 · 06:10   
+  streaming:   81,931 chars · ~20,482 tokens · periods 14/14 · assessment item 9 · 06:11   
+  streaming:   82,138 chars · ~20,534 tokens · periods 14/14 · assessment item 9 · 06:12   
+  streaming:   82,420 chars · ~20,605 tokens · periods 14/14 · assessment item 10 · 06:13   
+  streaming:   82,716 chars · ~20,679 tokens · periods 14/14 · assessment item 10 · 06:14   
+  streaming:   82,880 chars · ~20,720 tokens · periods 14/14 · assessment item 10 · 06:15   
+  streaming:   83,071 chars · ~20,767 tokens · periods 14/14 · assessment item 10 · 06:16   
+  streaming:   83,320 chars · ~20,830 tokens · periods 14/14 · assessment item 10 · 06:17   
+  streaming:   83,525 chars · ~20,881 tokens · periods 14/14 · assessment item 10 · 06:18   
+  streaming:   83,726 chars · ~20,931 tokens · periods 14/14 · assessment item 10 · 06:19   
+  streaming:   83,925 chars · ~20,981 tokens · periods 14/14 · assessment item 10 · 06:20   
+  streaming:   84,093 chars · ~21,023 tokens · periods 14/14 · assessment item 10 · 06:21   
+  streaming:   84,284 chars · ~21,071 tokens · periods 14/14 · assessment item 10 · 06:22   
+  streaming:   84,595 chars · ~21,148 tokens · periods 14/14 · assessment item 10 · 06:23   
+  streaming:   84,949 chars · ~21,237 tokens · periods 14/14 · assessment item 10 · 06:25   
+  streaming:   85,122 chars · ~21,280 tokens · periods 14/14 · assessment item 10 · 06:26   
+  streaming:   85,315 chars · ~21,328 tokens · periods 14/14 · assessment item 10 · 06:27   
+  streaming:   85,583 chars · ~21,395 tokens · periods 14/14 · assessment item 10 · 06:28   
+  streaming:   85,936 chars · ~21,484 tokens · periods 14/14 · assessment item 10 · 06:29   
+  streaming:   86,116 chars · ~21,529 tokens · periods 14/14 · assessment item 10 · 06:30   
+  streaming:   86,267 chars · ~21,566 tokens · periods 14/14 · assessment item 11 · 06:31   
+  streaming:   86,681 chars · ~21,670 tokens · periods 14/14 · assessment item 11 · 06:32   
+  streaming:   86,904 chars · ~21,726 tokens · periods 14/14 · assessment item 11 · 06:33   
+  streaming:   87,103 chars · ~21,775 tokens · periods 14/14 · assessment item 11 · 06:34   
+  streaming:   87,320 chars · ~21,830 tokens · periods 14/14 · assessment item 11 · 06:35   
+  streaming:   87,571 chars · ~21,892 tokens · periods 14/14 · assessment item 11 · 06:36   
+  streaming:   87,737 chars · ~21,934 tokens · periods 14/14 · assessment item 11 · 06:37   
+  streaming:   87,869 chars · ~21,967 tokens · periods 14/14 · assessment item 11 · 06:38   
+  streaming:   88,191 chars · ~22,047 tokens · periods 14/14 · assessment item 11 · 06:39   
+  streaming:   88,523 chars · ~22,130 tokens · periods 14/14 · assessment item 11 · 06:40   
+  streaming:   88,702 chars · ~22,175 tokens · periods 14/14 · assessment item 11 · 06:41   
+  streaming:   88,903 chars · ~22,225 tokens · periods 14/14 · assessment item 11 · 06:42   
+  streaming:   89,256 chars · ~22,314 tokens · periods 14/14 · assessment item 11 · 06:43   
+  streaming:   89,506 chars · ~22,376 tokens · periods 14/14 · assessment item 11 · 06:44   
+  streaming:   89,949 chars · ~22,487 tokens · periods 14/14 · assessment item 12 · 06:45   
+  streaming:   90,204 chars · ~22,551 tokens · periods 14/14 · assessment item 12 · 06:46   
+  streaming:   90,400 chars · ~22,600 tokens · periods 14/14 · assessment item 12 · 06:47   
+  streaming:   90,725 chars · ~22,681 tokens · periods 14/14 · assessment item 12 · 06:48   
+  streaming:   91,104 chars · ~22,776 tokens · periods 14/14 · assessment item 12 · 06:49   
+  streaming:   91,295 chars · ~22,823 tokens · periods 14/14 · assessment item 12 · 06:50   
+  streaming:   91,526 chars · ~22,881 tokens · periods 14/14 · assessment item 12 · 06:51   
+  streaming:   91,671 chars · ~22,917 tokens · periods 14/14 · assessment item 12 · 06:52   
+  streaming:   91,841 chars · ~22,960 tokens · periods 14/14 · assessment item 12 · 06:53   
+  streaming:   92,017 chars · ~23,004 tokens · periods 14/14 · assessment item 12 · 06:54   
+  streaming:   92,379 chars · ~23,094 tokens · periods 14/14 · assessment item 12 · 06:56   
+  streaming:   92,761 chars · ~23,190 tokens · periods 14/14 · assessment item 12 · 06:57   
+  streaming:   92,936 chars · ~23,234 tokens · periods 14/14 · assessment item 12 · 06:58   
+  streaming:   93,168 chars · ~23,292 tokens · periods 14/14 · assessment item 13 · 06:59   
+  streaming:   93,508 chars · ~23,377 tokens · periods 14/14 · assessment item 13 · 07:00   
+  streaming:   93,694 chars · ~23,423 tokens · periods 14/14 · assessment item 13 · 07:01   
+  streaming:   93,862 chars · ~23,465 tokens · periods 14/14 · assessment item 13 · 07:02   
+  streaming:   94,051 chars · ~23,512 tokens · periods 14/14 · assessment item 13 · 07:03   
+  streaming:   94,439 chars · ~23,609 tokens · periods 14/14 · assessment item 13 · 07:04   
+  streaming:   94,569 chars · ~23,642 tokens · periods 14/14 · assessment item 13 · 07:05   
+  streaming:   94,790 chars · ~23,697 tokens · periods 14/14 · assessment item 13 · 07:06   
+  streaming:   95,176 chars · ~23,794 tokens · periods 14/14 · assessment item 13 · 07:07   
+  streaming:   95,403 chars · ~23,850 tokens · periods 14/14 · assessment item 13 · 07:08   
+  streaming:   95,574 chars · ~23,893 tokens · periods 14/14 · assessment item 13 · 07:09   
+  streaming:   95,814 chars · ~23,953 tokens · periods 14/14 · assessment item 14 · 07:10   
+  streaming:   96,237 chars · ~24,059 tokens · periods 14/14 · assessment item 14 · 07:11   
+  streaming:   96,487 chars · ~24,121 tokens · periods 14/14 · assessment item 14 · 07:12   
+  streaming:   96,670 chars · ~24,167 tokens · periods 14/14 · assessment item 14 · 07:13   
+  streaming:   96,859 chars · ~24,214 tokens · periods 14/14 · assessment item 14 · 07:14   
+  streaming:   97,065 chars · ~24,266 tokens · periods 14/14 · assessment item 14 · 07:15   
+  streaming:   97,278 chars · ~24,319 tokens · periods 14/14 · assessment item 14 · 07:16   
+  streaming:   97,481 chars · ~24,370 tokens · periods 14/14 · assessment item 14 · 07:17   
+  streaming:   97,666 chars · ~24,416 tokens · periods 14/14 · assessment item 14 · 07:18   
+  streaming:   97,876 chars · ~24,469 tokens · periods 14/14 · assessment item 14 · 07:19   
+  streaming:   98,015 chars · ~24,503 tokens · periods 14/14 · assessment item 14 · 07:20   
+  streaming:   98,210 chars · ~24,552 tokens · periods 14/14 · assessment item 14 · 07:21   
+  streaming:   98,419 chars · ~24,604 tokens · periods 14/14 · assessment item 14 · 07:22   
+  streaming:   98,742 chars · ~24,685 tokens · periods 14/14 · assessment item 14 · 07:23   
+  streaming:   99,034 chars · ~24,758 tokens · periods 14/14 · assessment item 14 · 07:24   
+  streaming:   99,338 chars · ~24,834 tokens · periods 14/14 · assessment item 14 · 07:25   
+  streaming:   99,559 chars · ~24,889 tokens · periods 14/14 · assessment item 14 · 07:26   
+  streaming:   99,770 chars · ~24,942 tokens · periods 14/14 · assessment item 14 · 07:27   
+  streaming:   99,946 chars · ~24,986 tokens · periods 14/14 · assessment item 14 · 07:28   
+  streaming:  100,136 chars · ~25,034 tokens · periods 14/14 · assessment item 14 · 07:29   
+  streaming:  100,289 chars · ~25,072 tokens · periods 14/14 · assessment item 14 · 07:30   
+  streaming:  100,469 chars · ~25,117 tokens · periods 14/14 · assessment item 14 · 07:31   
+  streaming:  100,695 chars · ~25,173 tokens · periods 14/14 · assessment item 14 · 07:33   
+  streaming:  100,910 chars · ~25,227 tokens · periods 14/14 · assessment item 14 · 07:34   
+Mathematics · Grade IX · ch 11 — 14 × 50 min (LP+A; constitution serve-era)
+  schedule : Total: 14 periods · 11h 40min
+  system   : 52,682 chars   user: 41,917 chars
+  saved    : /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/genon/out/canonical/mathematics/ix/ch_11_20261002_141235_canonical.json
+  installed: /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/data/cloud/content/saved_plans/mathematics/ix/2026-27/ch_11_canonical.json
+  tokens   : 23,435 in / 27,716 out · ₹44.72 · 454.7s · ok
+canonical plans written: 326 on authored standards, 12 provisional
+
+  streaming:        1 chars · ~     0 tokens · period 0/11 · 00:02   
+  streaming:      228 chars · ~    57 tokens · period 0/11 · 00:03   
+  streaming:      442 chars · ~   110 tokens · period 1/11 · 00:04   
+  streaming:      636 chars · ~   159 tokens · period 1/11 · 00:05   
+  streaming:      727 chars · ~   181 tokens · period 1/11 · 00:06   
+  streaming:      921 chars · ~   230 tokens · period 1/11 · 00:07   
+  streaming:    1,052 chars · ~   263 tokens · period 1/11 · 00:08   
+  streaming:    1,284 chars · ~   321 tokens · period 1/11 · 00:09   
+  streaming:    1,433 chars · ~   358 tokens · period 1/11 · 00:10   
+  streaming:    1,632 chars · ~   408 tokens · period 1/11 · 00:11   
+  streaming:    1,871 chars · ~   467 tokens · period 1/11 · 00:12   
+  streaming:    2,093 chars · ~   523 tokens · period 1/11 · 00:13   
+  streaming:    2,313 chars · ~   578 tokens · period 1/11 · 00:14   
+  streaming:    2,587 chars · ~   646 tokens · period 1/11 · 00:15   
+  streaming:    2,783 chars · ~   695 tokens · period 1/11 · 00:16   
+  streaming:    3,013 chars · ~   753 tokens · period 2/11 · 00:17   
+  streaming:    3,239 chars · ~   809 tokens · period 2/11 · 00:18   
+  streaming:    3,501 chars · ~   875 tokens · period 2/11 · 00:19   
+  streaming:    3,650 chars · ~   912 tokens · period 2/11 · 00:20   
+  streaming:    3,873 chars · ~   968 tokens · period 2/11 · 00:21   
+  streaming:    4,164 chars · ~ 1,041 tokens · period 2/11 · 00:22   
+  streaming:    4,409 chars · ~ 1,102 tokens · period 2/11 · 00:23   
+  streaming:    4,615 chars · ~ 1,153 tokens · period 2/11 · 00:24   
+  streaming:    4,757 chars · ~ 1,189 tokens · period 2/11 · 00:25   
+  streaming:    4,964 chars · ~ 1,241 tokens · period 2/11 · 00:26   
+  streaming:    5,258 chars · ~ 1,314 tokens · period 2/11 · 00:27   
+  streaming:    5,454 chars · ~ 1,363 tokens · period 2/11 · 00:28   
+  streaming:    5,610 chars · ~ 1,402 tokens · period 2/11 · 00:29   
+  streaming:    5,846 chars · ~ 1,461 tokens · period 2/11 · 00:30   
+  streaming:    6,032 chars · ~ 1,508 tokens · period 2/11 · 00:31   
+  streaming:    6,191 chars · ~ 1,547 tokens · period 2/11 · 00:32   
+  streaming:    6,365 chars · ~ 1,591 tokens · period 2/11 · 00:33   
+  streaming:    6,610 chars · ~ 1,652 tokens · period 2/11 · 00:34   
+  streaming:    6,817 chars · ~ 1,704 tokens · period 2/11 · 00:35   
+  streaming:    6,978 chars · ~ 1,744 tokens · period 2/11 · 00:36   
+  streaming:    7,139 chars · ~ 1,784 tokens · period 2/11 · 00:37   
+  streaming:    7,391 chars · ~ 1,847 tokens · period 3/11 · 00:38   
+  streaming:    7,729 chars · ~ 1,932 tokens · period 3/11 · 00:39   
+  streaming:    7,938 chars · ~ 1,984 tokens · period 3/11 · 00:40   
+  streaming:    8,154 chars · ~ 2,038 tokens · period 3/11 · 00:41   
+  streaming:    8,320 chars · ~ 2,080 tokens · period 3/11 · 00:43   
+  streaming:    8,486 chars · ~ 2,121 tokens · period 3/11 · 00:44   
+  streaming:    8,700 chars · ~ 2,175 tokens · period 3/11 · 00:45   
+  streaming:    8,907 chars · ~ 2,226 tokens · period 3/11 · 00:46   
+  streaming:    9,059 chars · ~ 2,264 tokens · period 3/11 · 00:47   
+  streaming:    9,295 chars · ~ 2,323 tokens · period 3/11 · 00:48   
+  streaming:    9,473 chars · ~ 2,368 tokens · period 3/11 · 00:49   
+  streaming:    9,672 chars · ~ 2,418 tokens · period 3/11 · 00:50   
+  streaming:    9,840 chars · ~ 2,460 tokens · period 3/11 · 00:51   
+  streaming:   10,051 chars · ~ 2,512 tokens · period 3/11 · 00:52   
+  streaming:   10,265 chars · ~ 2,566 tokens · period 4/11 · 00:53   
+  streaming:   10,530 chars · ~ 2,632 tokens · period 4/11 · 00:54   
+  streaming:   10,776 chars · ~ 2,694 tokens · period 4/11 · 00:55   
+  streaming:   10,978 chars · ~ 2,744 tokens · period 4/11 · 00:56   
+  streaming:   11,194 chars · ~ 2,798 tokens · period 4/11 · 00:57   
+  streaming:   11,342 chars · ~ 2,835 tokens · period 4/11 · 00:58   
+  streaming:   11,556 chars · ~ 2,889 tokens · period 4/11 · 00:59   
+  streaming:   11,718 chars · ~ 2,929 tokens · period 4/11 · 01:00   
+  streaming:   11,834 chars · ~ 2,958 tokens · period 4/11 · 01:01   
+  streaming:   11,980 chars · ~ 2,995 tokens · period 4/11 · 01:02   
+  streaming:   12,181 chars · ~ 3,045 tokens · period 4/11 · 01:03   
+  streaming:   12,361 chars · ~ 3,090 tokens · period 4/11 · 01:04   
+  streaming:   12,525 chars · ~ 3,131 tokens · period 4/11 · 01:05   
+  streaming:   12,766 chars · ~ 3,191 tokens · period 4/11 · 01:06   
+  streaming:   12,897 chars · ~ 3,224 tokens · period 4/11 · 01:07   
+  streaming:   13,088 chars · ~ 3,272 tokens · period 4/11 · 01:08   
+  streaming:   13,291 chars · ~ 3,322 tokens · period 4/11 · 01:09   
+  streaming:   13,502 chars · ~ 3,375 tokens · period 4/11 · 01:10   
+  streaming:   13,702 chars · ~ 3,425 tokens · period 4/11 · 01:11   
+  streaming:   13,962 chars · ~ 3,490 tokens · period 5/11 · 01:12   
+  streaming:   14,247 chars · ~ 3,561 tokens · period 5/11 · 01:13   
+  streaming:   14,493 chars · ~ 3,623 tokens · period 5/11 · 01:14   
+  streaming:   14,717 chars · ~ 3,679 tokens · period 5/11 · 01:15   
+  streaming:   14,895 chars · ~ 3,723 tokens · period 5/11 · 01:16   
+  streaming:   15,038 chars · ~ 3,759 tokens · period 5/11 · 01:17   
+  streaming:   15,272 chars · ~ 3,818 tokens · period 5/11 · 01:18   
+  streaming:   15,544 chars · ~ 3,886 tokens · period 5/11 · 01:19   
+  streaming:   15,688 chars · ~ 3,922 tokens · period 5/11 · 01:20   
+  streaming:   15,948 chars · ~ 3,987 tokens · period 5/11 · 01:21   
+  streaming:   16,133 chars · ~ 4,033 tokens · period 5/11 · 01:22   
+  streaming:   16,422 chars · ~ 4,105 tokens · period 5/11 · 01:23   
+  streaming:   16,630 chars · ~ 4,157 tokens · period 5/11 · 01:24   
+  streaming:   16,822 chars · ~ 4,205 tokens · period 5/11 · 01:25   
+  streaming:   17,034 chars · ~ 4,258 tokens · period 5/11 · 01:26   
+  streaming:   17,299 chars · ~ 4,324 tokens · period 6/11 · 01:28   
+  streaming:   17,585 chars · ~ 4,396 tokens · period 6/11 · 01:29   
+  streaming:   17,819 chars · ~ 4,454 tokens · period 6/11 · 01:30   
+  streaming:   18,105 chars · ~ 4,526 tokens · period 6/11 · 01:31   
+  streaming:   18,311 chars · ~ 4,577 tokens · period 6/11 · 01:32   
+  streaming:   18,556 chars · ~ 4,639 tokens · period 6/11 · 01:33   
+  streaming:   18,773 chars · ~ 4,693 tokens · period 6/11 · 01:34   
+  streaming:   18,891 chars · ~ 4,722 tokens · period 6/11 · 01:35   
+  streaming:   19,136 chars · ~ 4,784 tokens · period 6/11 · 01:36   
+  streaming:   19,378 chars · ~ 4,844 tokens · period 6/11 · 01:37   
+  streaming:   19,670 chars · ~ 4,917 tokens · period 6/11 · 01:38   
+  streaming:   19,868 chars · ~ 4,967 tokens · period 6/11 · 01:39   
+  streaming:   20,098 chars · ~ 5,024 tokens · period 6/11 · 01:40   
+  streaming:   20,272 chars · ~ 5,068 tokens · period 6/11 · 01:41   
+  streaming:   20,591 chars · ~ 5,147 tokens · period 6/11 · 01:42   
+  streaming:   20,823 chars · ~ 5,205 tokens · period 6/11 · 01:43   
+  streaming:   21,027 chars · ~ 5,256 tokens · period 6/11 · 01:44   
+  streaming:   21,295 chars · ~ 5,323 tokens · period 7/11 · 01:45   
+  streaming:   21,539 chars · ~ 5,384 tokens · period 7/11 · 01:46   
+  streaming:   21,846 chars · ~ 5,461 tokens · period 7/11 · 01:47   
+  streaming:   22,057 chars · ~ 5,514 tokens · period 7/11 · 01:48   
+  streaming:   22,208 chars · ~ 5,552 tokens · period 7/11 · 01:49   
+  streaming:   22,405 chars · ~ 5,601 tokens · period 7/11 · 01:50   
+  streaming:   22,614 chars · ~ 5,653 tokens · period 7/11 · 01:51   
+  streaming:   22,805 chars · ~ 5,701 tokens · period 7/11 · 01:52   
+  streaming:   22,954 chars · ~ 5,738 tokens · period 7/11 · 01:53   
+  streaming:   23,186 chars · ~ 5,796 tokens · period 7/11 · 01:54   
+  streaming:   23,374 chars · ~ 5,843 tokens · period 7/11 · 01:55   
+  streaming:   23,608 chars · ~ 5,902 tokens · period 7/11 · 01:56   
+  streaming:   23,823 chars · ~ 5,955 tokens · period 7/11 · 01:57   
+  streaming:   24,019 chars · ~ 6,004 tokens · period 7/11 · 01:58   
+  streaming:   24,259 chars · ~ 6,064 tokens · period 7/11 · 01:59   
+  streaming:   24,461 chars · ~ 6,115 tokens · period 7/11 · 02:00   
+  streaming:   24,762 chars · ~ 6,190 tokens · period 8/11 · 02:01   
+  streaming:   25,009 chars · ~ 6,252 tokens · period 8/11 · 02:02   
+  streaming:   25,278 chars · ~ 6,319 tokens · period 8/11 · 02:03   
+  streaming:   25,476 chars · ~ 6,369 tokens · period 8/11 · 02:04   
+  streaming:   25,755 chars · ~ 6,438 tokens · period 8/11 · 02:06   
+  streaming:   25,921 chars · ~ 6,480 tokens · period 8/11 · 02:07   
+  streaming:   26,118 chars · ~ 6,529 tokens · period 8/11 · 02:08   
+  streaming:   26,331 chars · ~ 6,582 tokens · period 8/11 · 02:09   
+  streaming:   26,519 chars · ~ 6,629 tokens · period 8/11 · 02:10   
+  streaming:   26,700 chars · ~ 6,675 tokens · period 8/11 · 02:11   
+  streaming:   26,981 chars · ~ 6,745 tokens · period 8/11 · 02:12   
+  streaming:   27,198 chars · ~ 6,799 tokens · period 8/11 · 02:13   
+  streaming:   27,390 chars · ~ 6,847 tokens · period 8/11 · 02:14   
+  streaming:   27,575 chars · ~ 6,893 tokens · period 8/11 · 02:15   
+  streaming:   27,806 chars · ~ 6,951 tokens · period 9/11 · 02:16   
+  streaming:   28,096 chars · ~ 7,024 tokens · period 9/11 · 02:17   
+  streaming:   28,204 chars · ~ 7,051 tokens · period 9/11 · 02:18   
+  streaming:   28,438 chars · ~ 7,109 tokens · period 9/11 · 02:19   
+  streaming:   28,601 chars · ~ 7,150 tokens · period 9/11 · 02:20   
+  streaming:   28,805 chars · ~ 7,201 tokens · period 9/11 · 02:21   
+  streaming:   28,972 chars · ~ 7,243 tokens · period 9/11 · 02:22   
+  streaming:   29,233 chars · ~ 7,308 tokens · period 9/11 · 02:23   
+  streaming:   29,345 chars · ~ 7,336 tokens · period 9/11 · 02:24   
+  streaming:   29,557 chars · ~ 7,389 tokens · period 9/11 · 02:25   
+  streaming:   29,691 chars · ~ 7,422 tokens · period 9/11 · 02:26   
+  streaming:   29,844 chars · ~ 7,461 tokens · period 9/11 · 02:27   
+  streaming:   30,036 chars · ~ 7,509 tokens · period 9/11 · 02:28   
+  streaming:   30,244 chars · ~ 7,561 tokens · period 9/11 · 02:29   
+  streaming:   30,407 chars · ~ 7,601 tokens · period 9/11 · 02:30   
+  streaming:   30,647 chars · ~ 7,661 tokens · period 10/11 · 02:31   
+  streaming:   30,928 chars · ~ 7,732 tokens · period 10/11 · 02:32   
+  streaming:   31,131 chars · ~ 7,782 tokens · period 10/11 · 02:33   
+  streaming:   31,286 chars · ~ 7,821 tokens · period 10/11 · 02:34   
+  streaming:   31,546 chars · ~ 7,886 tokens · period 10/11 · 02:35   
+  streaming:   31,811 chars · ~ 7,952 tokens · period 10/11 · 02:36   
+  streaming:   32,029 chars · ~ 8,007 tokens · period 10/11 · 02:37   
+  streaming:   32,153 chars · ~ 8,038 tokens · period 10/11 · 02:38   
+  streaming:   32,372 chars · ~ 8,093 tokens · period 10/11 · 02:39   
+  streaming:   32,552 chars · ~ 8,138 tokens · period 10/11 · 02:40   
+  streaming:   32,820 chars · ~ 8,205 tokens · period 10/11 · 02:41   
+  streaming:   32,978 chars · ~ 8,244 tokens · period 10/11 · 02:42   
+  streaming:   33,225 chars · ~ 8,306 tokens · period 10/11 · 02:43   
+  streaming:   33,403 chars · ~ 8,350 tokens · period 10/11 · 02:44   
+  streaming:   33,604 chars · ~ 8,401 tokens · period 10/11 · 02:45   
+  streaming:   33,819 chars · ~ 8,454 tokens · period 10/11 · 02:46   
+  streaming:   34,000 chars · ~ 8,500 tokens · period 10/11 · 02:47   
+  streaming:   34,155 chars · ~ 8,538 tokens · period 10/11 · 02:49   
+  streaming:   34,412 chars · ~ 8,603 tokens · period 10/11 · 02:50   
+  streaming:   34,635 chars · ~ 8,658 tokens · period 11/11 · 02:51   
+  streaming:   34,987 chars · ~ 8,746 tokens · period 11/11 · 02:52   
+  streaming:   35,258 chars · ~ 8,814 tokens · period 11/11 · 02:53   
+  streaming:   35,433 chars · ~ 8,858 tokens · period 11/11 · 02:54   
+  streaming:   35,595 chars · ~ 8,898 tokens · period 11/11 · 02:55   
+  streaming:   35,727 chars · ~ 8,931 tokens · period 11/11 · 02:56   
+  streaming:   35,959 chars · ~ 8,989 tokens · period 11/11 · 02:57   
+  streaming:   36,145 chars · ~ 9,036 tokens · period 11/11 · 02:58   
+  streaming:   36,321 chars · ~ 9,080 tokens · period 11/11 · 02:59   
+  streaming:   36,545 chars · ~ 9,136 tokens · period 11/11 · 03:00   
+  streaming:   36,750 chars · ~ 9,187 tokens · period 11/11 · 03:01   
+  streaming:   36,958 chars · ~ 9,239 tokens · period 11/11 · 03:02   
+  streaming:   37,218 chars · ~ 9,304 tokens · period 11/11 · 03:03   
+  streaming:   37,439 chars · ~ 9,359 tokens · period 11/11 · 03:04   
+  streaming:   37,672 chars · ~ 9,418 tokens · period 11/11 · 03:05   
+  streaming:   37,820 chars · ~ 9,455 tokens · period 11/11 · 03:06   
+  streaming:   38,028 chars · ~ 9,507 tokens · period 11/11 · 03:07   
+  streaming:   38,194 chars · ~ 9,548 tokens · period 11/11 · 03:08   
+  streaming:   38,384 chars · ~ 9,596 tokens · periods 11/11 · handoff LO 0 · 03:09   
+  streaming:   38,589 chars · ~ 9,647 tokens · periods 11/11 · handoff LO 0 · 03:10   
+  streaming:   38,788 chars · ~ 9,697 tokens · periods 11/11 · handoff LO 0 · 03:11   
+  streaming:   38,942 chars · ~ 9,735 tokens · periods 11/11 · handoff LO 0 · 03:12   
+  streaming:   39,225 chars · ~ 9,806 tokens · periods 11/11 · handoff LO 0 · 03:13   
+  streaming:   39,447 chars · ~ 9,861 tokens · periods 11/11 · handoff LO 0 · 03:14   
+  streaming:   39,752 chars · ~ 9,938 tokens · periods 11/11 · handoff LO 0 · 03:15   
+  streaming:   39,988 chars · ~ 9,997 tokens · periods 11/11 · handoff LO 0 · 03:16   
+  streaming:   40,266 chars · ~10,066 tokens · periods 11/11 · handoff LO 0 · 03:17   
+  streaming:   40,539 chars · ~10,134 tokens · periods 11/11 · handoff LO 0 · 03:18   
+  streaming:   40,748 chars · ~10,187 tokens · periods 11/11 · handoff LO 0 · 03:19   
+  streaming:   41,000 chars · ~10,250 tokens · periods 11/11 · handoff LO 0 · 03:20   
+  streaming:   41,267 chars · ~10,316 tokens · periods 11/11 · handoff LO 0 · 03:21   
+  streaming:   41,528 chars · ~10,382 tokens · periods 11/11 · handoff LO 0 · 03:22   
+  streaming:   41,749 chars · ~10,437 tokens · periods 11/11 · handoff LO 0 · 03:23   
+  streaming:   41,968 chars · ~10,492 tokens · periods 11/11 · handoff LO 0 · 03:24   
+  streaming:   42,243 chars · ~10,560 tokens · periods 11/11 · handoff LO 0 · 03:25   
+  streaming:   42,513 chars · ~10,628 tokens · periods 11/11 · handoff LO 0 · 03:26   
+  streaming:   42,781 chars · ~10,695 tokens · periods 11/11 · handoff LO 0 · 03:27   
+  streaming:   43,057 chars · ~10,764 tokens · periods 11/11 · handoff LO 0 · 03:28   
+  streaming:   43,372 chars · ~10,843 tokens · periods 11/11 · handoff LO 0 · 03:30   
+  streaming:   43,613 chars · ~10,903 tokens · periods 11/11 · handoff LO 0 · 03:31   
+  streaming:   43,865 chars · ~10,966 tokens · periods 11/11 · handoff LO 0 · 03:32   
+  streaming:   44,104 chars · ~11,026 tokens · periods 11/11 · handoff LO 0 · 03:33   
+  streaming:   44,298 chars · ~11,074 tokens · periods 11/11 · handoff LO 0 · 03:34   
+  streaming:   44,605 chars · ~11,151 tokens · periods 11/11 · handoff LO 0 · 03:35   
+  streaming:   44,838 chars · ~11,209 tokens · periods 11/11 · handoff LO 0 · 03:36   
+  streaming:   45,083 chars · ~11,270 tokens · periods 11/11 · handoff LO 0 · 03:37   
+  streaming:   45,268 chars · ~11,317 tokens · periods 11/11 · assessment item 0 · 03:38   
+  streaming:   45,418 chars · ~11,354 tokens · periods 11/11 · assessment item 0 · 03:39   
+  streaming:   45,653 chars · ~11,413 tokens · periods 11/11 · assessment item 0 · 03:40   
+  streaming:   46,027 chars · ~11,506 tokens · periods 11/11 · assessment item 1 · 03:41   
+  streaming:   46,238 chars · ~11,559 tokens · periods 11/11 · assessment item 1 · 03:42   
+  streaming:   46,398 chars · ~11,599 tokens · periods 11/11 · assessment item 1 · 03:43   
+  streaming:   46,586 chars · ~11,646 tokens · periods 11/11 · assessment item 1 · 03:44   
+  streaming:   46,863 chars · ~11,715 tokens · periods 11/11 · assessment item 1 · 03:45   
+  streaming:   47,005 chars · ~11,751 tokens · periods 11/11 · assessment item 1 · 03:46   
+  streaming:   47,295 chars · ~11,823 tokens · periods 11/11 · assessment item 1 · 03:47   
+  streaming:   47,477 chars · ~11,869 tokens · periods 11/11 · assessment item 1 · 03:48   
+  streaming:   47,634 chars · ~11,908 tokens · periods 11/11 · assessment item 1 · 03:49   
+  streaming:   47,808 chars · ~11,952 tokens · periods 11/11 · assessment item 1 · 03:50   
+  streaming:   48,037 chars · ~12,009 tokens · periods 11/11 · assessment item 1 · 03:51   
+  streaming:   48,253 chars · ~12,063 tokens · periods 11/11 · assessment item 1 · 03:52   
+  streaming:   48,441 chars · ~12,110 tokens · periods 11/11 · assessment item 1 · 03:53   
+  streaming:   48,581 chars · ~12,145 tokens · periods 11/11 · assessment item 1 · 03:54   
+  streaming:   48,792 chars · ~12,198 tokens · periods 11/11 · assessment item 1 · 03:55   
+  streaming:   49,137 chars · ~12,284 tokens · periods 11/11 · assessment item 1 · 03:56   
+  streaming:   49,463 chars · ~12,365 tokens · periods 11/11 · assessment item 2 · 03:57   
+  streaming:   49,748 chars · ~12,437 tokens · periods 11/11 · assessment item 2 · 03:58   
+  streaming:   49,879 chars · ~12,469 tokens · periods 11/11 · assessment item 2 · 03:59   
+  streaming:   50,046 chars · ~12,511 tokens · periods 11/11 · assessment item 2 · 04:00   
+  streaming:   50,350 chars · ~12,587 tokens · periods 11/11 · assessment item 2 · 04:01   
+  streaming:   50,608 chars · ~12,652 tokens · periods 11/11 · assessment item 2 · 04:02   
+  streaming:   50,776 chars · ~12,694 tokens · periods 11/11 · assessment item 2 · 04:03   
+  streaming:   51,157 chars · ~12,789 tokens · periods 11/11 · assessment item 2 · 04:04   
+  streaming:   51,542 chars · ~12,885 tokens · periods 11/11 · assessment item 3 · 04:05   
+  streaming:   51,783 chars · ~12,945 tokens · periods 11/11 · assessment item 3 · 04:06   
+  streaming:   51,971 chars · ~12,992 tokens · periods 11/11 · assessment item 3 · 04:08   
+  streaming:   52,240 chars · ~13,060 tokens · periods 11/11 · assessment item 3 · 04:09   
+  streaming:   52,414 chars · ~13,103 tokens · periods 11/11 · assessment item 3 · 04:10   
+  streaming:   52,637 chars · ~13,159 tokens · periods 11/11 · assessment item 3 · 04:11   
+  streaming:   52,888 chars · ~13,222 tokens · periods 11/11 · assessment item 3 · 04:12   
+  streaming:   53,133 chars · ~13,283 tokens · periods 11/11 · assessment item 3 · 04:13   
+  streaming:   53,317 chars · ~13,329 tokens · periods 11/11 · assessment item 3 · 04:14   
+  streaming:   53,607 chars · ~13,401 tokens · periods 11/11 · assessment item 3 · 04:15   
+  streaming:   54,035 chars · ~13,508 tokens · periods 11/11 · assessment item 4 · 04:16   
+  streaming:   54,325 chars · ~13,581 tokens · periods 11/11 · assessment item 4 · 04:17   
+  streaming:   54,554 chars · ~13,638 tokens · periods 11/11 · assessment item 4 · 04:18   
+  streaming:   54,784 chars · ~13,696 tokens · periods 11/11 · assessment item 4 · 04:19   
+  streaming:   55,040 chars · ~13,760 tokens · periods 11/11 · assessment item 4 · 04:20   
+  streaming:   55,419 chars · ~13,854 tokens · periods 11/11 · assessment item 4 · 04:21   
+  streaming:   55,651 chars · ~13,912 tokens · periods 11/11 · assessment item 4 · 04:22   
+  streaming:   55,909 chars · ~13,977 tokens · periods 11/11 · assessment item 4 · 04:23   
+  streaming:   56,113 chars · ~14,028 tokens · periods 11/11 · assessment item 4 · 04:24   
+  streaming:   56,325 chars · ~14,081 tokens · periods 11/11 · assessment item 4 · 04:25   
+  streaming:   56,565 chars · ~14,141 tokens · periods 11/11 · assessment item 4 · 04:26   
+  streaming:   56,920 chars · ~14,230 tokens · periods 11/11 · assessment item 4 · 04:27   
+  streaming:   57,312 chars · ~14,328 tokens · periods 11/11 · assessment item 5 · 04:28   
+  streaming:   57,607 chars · ~14,401 tokens · periods 11/11 · assessment item 5 · 04:29   
+  streaming:   57,785 chars · ~14,446 tokens · periods 11/11 · assessment item 5 · 04:30   
+  streaming:   57,963 chars · ~14,490 tokens · periods 11/11 · assessment item 5 · 04:31   
+  streaming:   58,321 chars · ~14,580 tokens · periods 11/11 · assessment item 5 · 04:32   
+  streaming:   58,509 chars · ~14,627 tokens · periods 11/11 · assessment item 5 · 04:33   
+  streaming:   58,775 chars · ~14,693 tokens · periods 11/11 · assessment item 5 · 04:34   
+  streaming:   59,117 chars · ~14,779 tokens · periods 11/11 · assessment item 5 · 04:35   
+  streaming:   59,455 chars · ~14,863 tokens · periods 11/11 · assessment item 6 · 04:36   
+  streaming:   59,659 chars · ~14,914 tokens · periods 11/11 · assessment item 6 · 04:37   
+  streaming:   59,843 chars · ~14,960 tokens · periods 11/11 · assessment item 6 · 04:38   
+  streaming:   60,092 chars · ~15,023 tokens · periods 11/11 · assessment item 6 · 04:39   
+  streaming:   60,315 chars · ~15,078 tokens · periods 11/11 · assessment item 6 · 04:40   
+  streaming:   60,673 chars · ~15,168 tokens · periods 11/11 · assessment item 6 · 04:42   
+  streaming:   60,912 chars · ~15,228 tokens · periods 11/11 · assessment item 6 · 04:43   
+  streaming:   61,246 chars · ~15,311 tokens · periods 11/11 · assessment item 6 · 04:44   
+  streaming:   61,618 chars · ~15,404 tokens · periods 11/11 · assessment item 7 · 04:45   
+  streaming:   61,950 chars · ~15,487 tokens · periods 11/11 · assessment item 7 · 04:46   
+  streaming:   62,152 chars · ~15,538 tokens · periods 11/11 · assessment item 7 · 04:47   
+  streaming:   62,360 chars · ~15,590 tokens · periods 11/11 · assessment item 7 · 04:48   
+  streaming:   62,584 chars · ~15,646 tokens · periods 11/11 · assessment item 7 · 04:49   
+  streaming:   62,769 chars · ~15,692 tokens · periods 11/11 · assessment item 7 · 04:50   
+  streaming:   62,976 chars · ~15,744 tokens · periods 11/11 · assessment item 7 · 04:51   
+  streaming:   63,302 chars · ~15,825 tokens · periods 11/11 · assessment item 7 · 04:52   
+  streaming:   63,497 chars · ~15,874 tokens · periods 11/11 · assessment item 7 · 04:53   
+  streaming:   63,810 chars · ~15,952 tokens · periods 11/11 · assessment item 7 · 04:54   
+  streaming:   64,195 chars · ~16,048 tokens · periods 11/11 · assessment item 8 · 04:55   
+  streaming:   64,508 chars · ~16,127 tokens · periods 11/11 · assessment item 8 · 04:56   
+  streaming:   64,750 chars · ~16,187 tokens · periods 11/11 · assessment item 8 · 04:57   
+  streaming:   65,016 chars · ~16,254 tokens · periods 11/11 · assessment item 8 · 04:58   
+  streaming:   65,221 chars · ~16,305 tokens · periods 11/11 · assessment item 8 · 04:59   
+  streaming:   65,502 chars · ~16,375 tokens · periods 11/11 · assessment item 8 · 05:00   
+  streaming:   65,857 chars · ~16,464 tokens · periods 11/11 · assessment item 8 · 05:01   
+  streaming:   66,102 chars · ~16,525 tokens · periods 11/11 · assessment item 8 · 05:02   
+  streaming:   66,307 chars · ~16,576 tokens · periods 11/11 · assessment item 8 · 05:03   
+  streaming:   66,549 chars · ~16,637 tokens · periods 11/11 · assessment item 8 · 05:04   
+  streaming:   66,720 chars · ~16,680 tokens · periods 11/11 · assessment item 8 · 05:05   
+  streaming:   66,935 chars · ~16,733 tokens · periods 11/11 · assessment item 8 · 05:06   
+  streaming:   67,237 chars · ~16,809 tokens · periods 11/11 · assessment item 8 · 05:07   
+  streaming:   67,427 chars · ~16,856 tokens · periods 11/11 · assessment item 8 · 05:08   
+  streaming:   67,762 chars · ~16,940 tokens · periods 11/11 · assessment item 9 · 05:09   
+  streaming:   67,948 chars · ~16,987 tokens · periods 11/11 · assessment item 9 · 05:10   
+  streaming:   68,108 chars · ~17,027 tokens · periods 11/11 · assessment item 9 · 05:11   
+  streaming:   68,283 chars · ~17,070 tokens · periods 11/11 · assessment item 9 · 05:12   
+  streaming:   68,424 chars · ~17,106 tokens · periods 11/11 · assessment item 9 · 05:13   
+  streaming:   68,612 chars · ~17,153 tokens · periods 11/11 · assessment item 9 · 05:14   
+  streaming:   68,809 chars · ~17,202 tokens · periods 11/11 · assessment item 9 · 05:15   
+  streaming:   69,182 chars · ~17,295 tokens · periods 11/11 · assessment item 9 · 05:16   
+  streaming:   69,300 chars · ~17,325 tokens · periods 11/11 · assessment item 9 · 05:17   
+  streaming:   69,621 chars · ~17,405 tokens · periods 11/11 · assessment item 9 · 05:18   
+  streaming:   69,886 chars · ~17,471 tokens · periods 11/11 · assessment item 9 · 05:19   
+  streaming:   70,106 chars · ~17,526 tokens · periods 11/11 · assessment item 9 · 05:20   
+  streaming:   70,409 chars · ~17,602 tokens · periods 11/11 · assessment item 10 · 05:21   
+  streaming:   70,644 chars · ~17,661 tokens · periods 11/11 · assessment item 10 · 05:22   
+  streaming:   70,847 chars · ~17,711 tokens · periods 11/11 · assessment item 10 · 05:23   
+  streaming:   71,063 chars · ~17,765 tokens · periods 11/11 · assessment item 10 · 05:24   
+  streaming:   71,292 chars · ~17,823 tokens · periods 11/11 · assessment item 10 · 05:25   
+  streaming:   71,524 chars · ~17,881 tokens · periods 11/11 · assessment item 10 · 05:26   
+  streaming:   71,745 chars · ~17,936 tokens · periods 11/11 · assessment item 10 · 05:27   
+  streaming:   71,957 chars · ~17,989 tokens · periods 11/11 · assessment item 10 · 05:28   
+  streaming:   72,283 chars · ~18,070 tokens · periods 11/11 · assessment item 10 · 05:30   
+  streaming:   72,555 chars · ~18,138 tokens · periods 11/11 · assessment item 10 · 05:31   
+  streaming:   72,745 chars · ~18,186 tokens · periods 11/11 · assessment item 10 · 05:32   
+  streaming:   72,997 chars · ~18,249 tokens · periods 11/11 · assessment item 10 · 05:33   
+  streaming:   73,211 chars · ~18,302 tokens · periods 11/11 · assessment item 10 · 05:34   
+  streaming:   73,385 chars · ~18,346 tokens · periods 11/11 · assessment item 10 · 05:35   
+  streaming:   73,728 chars · ~18,432 tokens · periods 11/11 · assessment item 11 · 05:36   
+  streaming:   73,960 chars · ~18,490 tokens · periods 11/11 · assessment item 11 · 05:37   
+  streaming:   74,243 chars · ~18,560 tokens · periods 11/11 · assessment item 11 · 05:38   
+  streaming:   74,373 chars · ~18,593 tokens · periods 11/11 · assessment item 11 · 05:39   
+  streaming:   74,639 chars · ~18,659 tokens · periods 11/11 · assessment item 11 · 05:40   
+  streaming:   74,819 chars · ~18,704 tokens · periods 11/11 · assessment item 11 · 05:41   
+  streaming:   75,004 chars · ~18,751 tokens · periods 11/11 · assessment item 11 · 05:42   
+  streaming:   75,292 chars · ~18,823 tokens · periods 11/11 · assessment item 11 · 05:43   
+  streaming:   75,498 chars · ~18,874 tokens · periods 11/11 · assessment item 11 · 05:44   
+  streaming:   75,761 chars · ~18,940 tokens · periods 11/11 · assessment item 11 · 05:45   
+  streaming:   75,981 chars · ~18,995 tokens · periods 11/11 · assessment item 11 · 05:46   
+  streaming:   76,167 chars · ~19,041 tokens · periods 11/11 · assessment item 11 · 05:47   
+  streaming:   76,407 chars · ~19,101 tokens · periods 11/11 · assessment item 12 · 05:48   
+  streaming:   76,686 chars · ~19,171 tokens · periods 11/11 · assessment item 12 · 05:49   
+  streaming:   76,893 chars · ~19,223 tokens · periods 11/11 · assessment item 12 · 05:50   
+  streaming:   77,085 chars · ~19,271 tokens · periods 11/11 · assessment item 12 · 05:51   
+  streaming:   77,396 chars · ~19,349 tokens · periods 11/11 · assessment item 12 · 05:52   
+  streaming:   77,643 chars · ~19,410 tokens · periods 11/11 · assessment item 12 · 05:53   
+  streaming:   77,952 chars · ~19,488 tokens · periods 11/11 · assessment item 12 · 05:54   
+  streaming:   78,263 chars · ~19,565 tokens · periods 11/11 · assessment item 12 · 05:55   
+  streaming:   78,590 chars · ~19,647 tokens · periods 11/11 · assessment item 13 · 05:56   
+  streaming:   78,910 chars · ~19,727 tokens · periods 11/11 · assessment item 13 · 05:57   
+  streaming:   79,176 chars · ~19,794 tokens · periods 11/11 · assessment item 13 · 05:58   
+  streaming:   79,423 chars · ~19,855 tokens · periods 11/11 · assessment item 13 · 05:59   
+  streaming:   79,552 chars · ~19,888 tokens · periods 11/11 · assessment item 13 · 06:00   
+  streaming:   79,737 chars · ~19,934 tokens · periods 11/11 · assessment item 13 · 06:01   
+  streaming:   79,962 chars · ~19,990 tokens · periods 11/11 · assessment item 13 · 06:03   
+  streaming:   80,136 chars · ~20,034 tokens · periods 11/11 · assessment item 13 · 06:04   
+  streaming:   80,400 chars · ~20,100 tokens · periods 11/11 · assessment item 13 · 06:05   
+  streaming:   80,699 chars · ~20,174 tokens · periods 11/11 · assessment item 13 · 06:06   
+  streaming:   80,899 chars · ~20,224 tokens · periods 11/11 · assessment item 13 · 06:07   
+  streaming:   81,172 chars · ~20,293 tokens · periods 11/11 · assessment item 13 · 06:08   
+  streaming:   81,396 chars · ~20,349 tokens · periods 11/11 · assessment item 13 · 06:09   
+  streaming:   81,572 chars · ~20,393 tokens · periods 11/11 · assessment item 13 · 06:10   
+  streaming:   81,749 chars · ~20,437 tokens · periods 11/11 · assessment item 13 · 06:11   
+  streaming:   81,939 chars · ~20,484 tokens · periods 11/11 · assessment item 13 · 06:12   
+  streaming:   82,119 chars · ~20,529 tokens · periods 11/11 · assessment item 13 · 06:13   
+  streaming:   82,295 chars · ~20,573 tokens · periods 11/11 · assessment item 13 · 06:14   
+  streaming:   82,551 chars · ~20,637 tokens · periods 11/11 · assessment item 13 · 06:15   
+  streaming:   82,733 chars · ~20,683 tokens · periods 11/11 · assessment item 13 · 06:16   
+Mathematics · Grade IX · ch 11 — 11 × 50 min (LP+A; constitution serve-era)
+  schedule : Total: 11 periods · 9h 10min
+  system   : 52,682 chars   user: 40,230 chars
+  saved    : /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/genon/out/canonical/mathematics/ix/ch_11_20261002_142011_canonical.json
+  installed: /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/data/cloud/content/saved_plans/mathematics/ix/2026-27/ch_11_canonical_p11.json
+  tokens   : 23,103 in / 22,833 out · ₹37.89 · 376.9s · ok
+
+  streaming:       14 chars · ~     3 tokens · period 0/8 · 00:01   
+  streaming:      281 chars · ~    70 tokens · period 1/8 · 00:02   
+  streaming:      485 chars · ~   121 tokens · period 1/8 · 00:03   
+  streaming:      620 chars · ~   155 tokens · period 1/8 · 00:04   
+  streaming:      802 chars · ~   200 tokens · period 1/8 · 00:05   
+  streaming:      962 chars · ~   240 tokens · period 1/8 · 00:06   
+  streaming:    1,187 chars · ~   296 tokens · period 1/8 · 00:07   
+  streaming:    1,363 chars · ~   340 tokens · period 1/8 · 00:08   
+  streaming:    1,533 chars · ~   383 tokens · period 1/8 · 00:09   
+  streaming:    1,777 chars · ~   444 tokens · period 1/8 · 00:10   
+  streaming:    1,995 chars · ~   498 tokens · period 1/8 · 00:11   
+  streaming:    2,197 chars · ~   549 tokens · period 1/8 · 00:12   
+  streaming:    2,378 chars · ~   594 tokens · period 1/8 · 00:13   
+  streaming:    2,604 chars · ~   651 tokens · period 1/8 · 00:14   
+  streaming:    2,770 chars · ~   692 tokens · period 2/8 · 00:15   
+  streaming:    3,052 chars · ~   763 tokens · period 2/8 · 00:16   
+  streaming:    3,269 chars · ~   817 tokens · period 2/8 · 00:17   
+  streaming:    3,435 chars · ~   858 tokens · period 2/8 · 00:18   
+  streaming:    3,616 chars · ~   904 tokens · period 2/8 · 00:20   
+  streaming:    3,867 chars · ~   966 tokens · period 2/8 · 00:21   
+  streaming:    4,104 chars · ~ 1,026 tokens · period 2/8 · 00:22   
+  streaming:    4,280 chars · ~ 1,070 tokens · period 2/8 · 00:23   
+  streaming:    4,522 chars · ~ 1,130 tokens · period 2/8 · 00:24   
+  streaming:    4,786 chars · ~ 1,196 tokens · period 2/8 · 00:25   
+  streaming:    4,938 chars · ~ 1,234 tokens · period 2/8 · 00:26   
+  streaming:    5,134 chars · ~ 1,283 tokens · period 2/8 · 00:27   
+  streaming:    5,346 chars · ~ 1,336 tokens · period 2/8 · 00:28   
+  streaming:    5,511 chars · ~ 1,377 tokens · period 2/8 · 00:29   
+  streaming:    5,713 chars · ~ 1,428 tokens · period 2/8 · 00:30   
+  streaming:    5,865 chars · ~ 1,466 tokens · period 2/8 · 00:31   
+  streaming:    6,030 chars · ~ 1,507 tokens · period 2/8 · 00:32   
+  streaming:    6,256 chars · ~ 1,564 tokens · period 2/8 · 00:33   
+  streaming:    6,424 chars · ~ 1,606 tokens · period 2/8 · 00:34   
+  streaming:    6,683 chars · ~ 1,670 tokens · period 3/8 · 00:35   
+  streaming:    6,920 chars · ~ 1,730 tokens · period 3/8 · 00:36   
+  streaming:    7,156 chars · ~ 1,789 tokens · period 3/8 · 00:37   
+  streaming:    7,372 chars · ~ 1,843 tokens · period 3/8 · 00:38   
+  streaming:    7,559 chars · ~ 1,889 tokens · period 3/8 · 00:39   
+  streaming:    7,764 chars · ~ 1,941 tokens · period 3/8 · 00:40   
+  streaming:    7,971 chars · ~ 1,992 tokens · period 3/8 · 00:41   
+  streaming:    8,169 chars · ~ 2,042 tokens · period 3/8 · 00:42   
+  streaming:    8,340 chars · ~ 2,085 tokens · period 3/8 · 00:43   
+  streaming:    8,548 chars · ~ 2,137 tokens · period 3/8 · 00:44   
+  streaming:    8,727 chars · ~ 2,181 tokens · period 3/8 · 00:45   
+  streaming:    8,982 chars · ~ 2,245 tokens · period 3/8 · 00:46   
+  streaming:    9,157 chars · ~ 2,289 tokens · period 3/8 · 00:47   
+  streaming:    9,360 chars · ~ 2,340 tokens · period 3/8 · 00:48   
+  streaming:    9,514 chars · ~ 2,378 tokens · period 3/8 · 00:49   
+  streaming:    9,679 chars · ~ 2,419 tokens · period 3/8 · 00:50   
+  streaming:    9,950 chars · ~ 2,487 tokens · period 4/8 · 00:51   
+  streaming:   10,168 chars · ~ 2,542 tokens · period 4/8 · 00:52   
+  streaming:   10,432 chars · ~ 2,608 tokens · period 4/8 · 00:53   
+  streaming:   10,664 chars · ~ 2,666 tokens · period 4/8 · 00:54   
+  streaming:   10,929 chars · ~ 2,732 tokens · period 4/8 · 00:55   
+  streaming:   11,227 chars · ~ 2,806 tokens · period 4/8 · 00:57   
+  streaming:   11,380 chars · ~ 2,845 tokens · period 4/8 · 00:58   
+  streaming:   11,485 chars · ~ 2,871 tokens · period 4/8 · 00:59   
+  streaming:   11,753 chars · ~ 2,938 tokens · period 4/8 · 01:00   
+  streaming:   11,919 chars · ~ 2,979 tokens · period 4/8 · 01:01   
+  streaming:   12,089 chars · ~ 3,022 tokens · period 4/8 · 01:02   
+  streaming:   12,272 chars · ~ 3,068 tokens · period 4/8 · 01:03   
+  streaming:   12,521 chars · ~ 3,130 tokens · period 4/8 · 01:04   
+  streaming:   12,710 chars · ~ 3,177 tokens · period 4/8 · 01:05   
+  streaming:   12,972 chars · ~ 3,243 tokens · period 4/8 · 01:06   
+  streaming:   13,180 chars · ~ 3,295 tokens · period 4/8 · 01:07   
+  streaming:   13,394 chars · ~ 3,348 tokens · period 4/8 · 01:08   
+  streaming:   13,545 chars · ~ 3,386 tokens · period 4/8 · 01:09   
+  streaming:   13,837 chars · ~ 3,459 tokens · period 5/8 · 01:10   
+  streaming:   14,045 chars · ~ 3,511 tokens · period 5/8 · 01:11   
+  streaming:   14,318 chars · ~ 3,579 tokens · period 5/8 · 01:12   
+  streaming:   14,531 chars · ~ 3,632 tokens · period 5/8 · 01:13   
+  streaming:   14,781 chars · ~ 3,695 tokens · period 5/8 · 01:14   
+  streaming:   14,954 chars · ~ 3,738 tokens · period 5/8 · 01:15   
+  streaming:   15,186 chars · ~ 3,796 tokens · period 5/8 · 01:16   
+  streaming:   15,326 chars · ~ 3,831 tokens · period 5/8 · 01:17   
+  streaming:   15,521 chars · ~ 3,880 tokens · period 5/8 · 01:18   
+  streaming:   15,690 chars · ~ 3,922 tokens · period 5/8 · 01:19   
+  streaming:   15,951 chars · ~ 3,987 tokens · period 5/8 · 01:20   
+  streaming:   16,128 chars · ~ 4,032 tokens · period 5/8 · 01:21   
+  streaming:   16,280 chars · ~ 4,070 tokens · period 5/8 · 01:22   
+  streaming:   16,499 chars · ~ 4,124 tokens · period 5/8 · 01:23   
+  streaming:   16,650 chars · ~ 4,162 tokens · period 5/8 · 01:24   
+  streaming:   16,862 chars · ~ 4,215 tokens · period 5/8 · 01:25   
+  streaming:   17,054 chars · ~ 4,263 tokens · period 5/8 · 01:26   
+  streaming:   17,243 chars · ~ 4,310 tokens · period 5/8 · 01:27   
+  streaming:   17,455 chars · ~ 4,363 tokens · period 6/8 · 01:28   
+  streaming:   17,702 chars · ~ 4,425 tokens · period 6/8 · 01:29   
+  streaming:   17,846 chars · ~ 4,461 tokens · period 6/8 · 01:30   
+  streaming:   18,072 chars · ~ 4,518 tokens · period 6/8 · 01:31   
+  streaming:   18,208 chars · ~ 4,552 tokens · period 6/8 · 01:32   
+  streaming:   18,427 chars · ~ 4,606 tokens · period 6/8 · 01:33   
+  streaming:   18,580 chars · ~ 4,645 tokens · period 6/8 · 01:34   
+  streaming:   18,748 chars · ~ 4,687 tokens · period 6/8 · 01:35   
+  streaming:   18,936 chars · ~ 4,734 tokens · period 6/8 · 01:36   
+  streaming:   19,086 chars · ~ 4,771 tokens · period 6/8 · 01:38   
+  streaming:   19,337 chars · ~ 4,834 tokens · period 6/8 · 01:39   
+  streaming:   19,541 chars · ~ 4,885 tokens · period 6/8 · 01:40   
+  streaming:   19,765 chars · ~ 4,941 tokens · period 6/8 · 01:41   
+  streaming:   19,944 chars · ~ 4,986 tokens · period 6/8 · 01:42   
+  streaming:   20,107 chars · ~ 5,026 tokens · period 6/8 · 01:43   
+  streaming:   20,392 chars · ~ 5,098 tokens · period 7/8 · 01:44   
+  streaming:   20,598 chars · ~ 5,149 tokens · period 7/8 · 01:45   
+  streaming:   20,867 chars · ~ 5,216 tokens · period 7/8 · 01:46   
+  streaming:   21,004 chars · ~ 5,251 tokens · period 7/8 · 01:47   
+  streaming:   21,194 chars · ~ 5,298 tokens · period 7/8 · 01:48   
+  streaming:   21,419 chars · ~ 5,354 tokens · period 7/8 · 01:49   
+  streaming:   21,613 chars · ~ 5,403 tokens · period 7/8 · 01:50   
+  streaming:   21,829 chars · ~ 5,457 tokens · period 7/8 · 01:51   
+  streaming:   22,009 chars · ~ 5,502 tokens · period 7/8 · 01:52   
+  streaming:   22,191 chars · ~ 5,547 tokens · period 7/8 · 01:53   
+  streaming:   22,391 chars · ~ 5,597 tokens · period 7/8 · 01:54   
+  streaming:   22,529 chars · ~ 5,632 tokens · period 7/8 · 01:55   
+  streaming:   22,687 chars · ~ 5,671 tokens · period 7/8 · 01:56   
+  streaming:   22,922 chars · ~ 5,730 tokens · period 7/8 · 01:57   
+  streaming:   23,143 chars · ~ 5,785 tokens · period 7/8 · 01:58   
+  streaming:   23,379 chars · ~ 5,844 tokens · period 7/8 · 01:59   
+  streaming:   23,538 chars · ~ 5,884 tokens · period 7/8 · 02:00   
+  streaming:   23,711 chars · ~ 5,927 tokens · period 7/8 · 02:01   
+  streaming:   23,952 chars · ~ 5,988 tokens · period 8/8 · 02:02   
+  streaming:   24,213 chars · ~ 6,053 tokens · period 8/8 · 02:03   
+  streaming:   24,410 chars · ~ 6,102 tokens · period 8/8 · 02:04   
+  streaming:   24,626 chars · ~ 6,156 tokens · period 8/8 · 02:05   
+  streaming:   24,845 chars · ~ 6,211 tokens · period 8/8 · 02:06   
+  streaming:   24,981 chars · ~ 6,245 tokens · period 8/8 · 02:07   
+  streaming:   25,112 chars · ~ 6,278 tokens · period 8/8 · 02:08   
+  streaming:   25,325 chars · ~ 6,331 tokens · period 8/8 · 02:09   
+  streaming:   25,541 chars · ~ 6,385 tokens · period 8/8 · 02:10   
+  streaming:   25,808 chars · ~ 6,452 tokens · period 8/8 · 02:11   
+  streaming:   25,972 chars · ~ 6,493 tokens · period 8/8 · 02:12   
+  streaming:   26,222 chars · ~ 6,555 tokens · period 8/8 · 02:13   
+  streaming:   26,406 chars · ~ 6,601 tokens · period 8/8 · 02:14   
+  streaming:   26,658 chars · ~ 6,664 tokens · period 8/8 · 02:15   
+  streaming:   26,853 chars · ~ 6,713 tokens · period 8/8 · 02:16   
+  streaming:   27,051 chars · ~ 6,762 tokens · period 8/8 · 02:18   
+  streaming:   27,250 chars · ~ 6,812 tokens · periods 8/8 · handoff LO 0 · 02:19   
+  streaming:   27,442 chars · ~ 6,860 tokens · periods 8/8 · handoff LO 0 · 02:20   
+  streaming:   27,617 chars · ~ 6,904 tokens · periods 8/8 · handoff LO 0 · 02:21   
+  streaming:   27,777 chars · ~ 6,944 tokens · periods 8/8 · handoff LO 0 · 02:22   
+  streaming:   28,045 chars · ~ 7,011 tokens · periods 8/8 · handoff LO 0 · 02:23   
+  streaming:   28,252 chars · ~ 7,063 tokens · periods 8/8 · handoff LO 0 · 02:24   
+  streaming:   28,516 chars · ~ 7,129 tokens · periods 8/8 · handoff LO 0 · 02:25   
+  streaming:   28,756 chars · ~ 7,189 tokens · periods 8/8 · handoff LO 0 · 02:26   
+  streaming:   28,984 chars · ~ 7,246 tokens · periods 8/8 · handoff LO 0 · 02:27   
+  streaming:   29,259 chars · ~ 7,314 tokens · periods 8/8 · handoff LO 0 · 02:28   
+  streaming:   29,521 chars · ~ 7,380 tokens · periods 8/8 · handoff LO 0 · 02:29   
+  streaming:   29,809 chars · ~ 7,452 tokens · periods 8/8 · handoff LO 0 · 02:30   
+  streaming:   30,076 chars · ~ 7,519 tokens · periods 8/8 · handoff LO 0 · 02:31   
+  streaming:   30,342 chars · ~ 7,585 tokens · periods 8/8 · handoff LO 0 · 02:32   
+  streaming:   30,542 chars · ~ 7,635 tokens · periods 8/8 · handoff LO 0 · 02:33   
+  streaming:   30,798 chars · ~ 7,699 tokens · periods 8/8 · handoff LO 0 · 02:34   
+  streaming:   31,097 chars · ~ 7,774 tokens · periods 8/8 · handoff LO 0 · 02:35   
+  streaming:   31,363 chars · ~ 7,840 tokens · periods 8/8 · handoff LO 0 · 02:36   
+  streaming:   31,633 chars · ~ 7,908 tokens · periods 8/8 · handoff LO 0 · 02:37   
+  streaming:   31,833 chars · ~ 7,958 tokens · periods 8/8 · handoff LO 0 · 02:38   
+  streaming:   32,109 chars · ~ 8,027 tokens · periods 8/8 · handoff LO 0 · 02:39   
+  streaming:   32,431 chars · ~ 8,107 tokens · periods 8/8 · handoff LO 0 · 02:40   
+  streaming:   32,696 chars · ~ 8,174 tokens · periods 8/8 · handoff LO 0 · 02:41   
+  streaming:   32,922 chars · ~ 8,230 tokens · periods 8/8 · handoff LO 0 · 02:42   
+  streaming:   33,108 chars · ~ 8,277 tokens · periods 8/8 · handoff LO 0 · 02:43   
+  streaming:   33,404 chars · ~ 8,351 tokens · periods 8/8 · handoff LO 0 · 02:44   
+  streaming:   33,647 chars · ~ 8,411 tokens · periods 8/8 · handoff LO 0 · 02:45   
+  streaming:   33,929 chars · ~ 8,482 tokens · periods 8/8 · handoff LO 0 · 02:46   
+  streaming:   34,134 chars · ~ 8,533 tokens · periods 8/8 · assessment item 0 · 02:47   
+  streaming:   34,307 chars · ~ 8,576 tokens · periods 8/8 · assessment item 0 · 02:48   
+  streaming:   34,659 chars · ~ 8,664 tokens · periods 8/8 · assessment item 0 · 02:49   
+  streaming:   34,925 chars · ~ 8,731 tokens · periods 8/8 · assessment item 1 · 02:50   
+  streaming:   35,150 chars · ~ 8,787 tokens · periods 8/8 · assessment item 1 · 02:51   
+  streaming:   35,433 chars · ~ 8,858 tokens · periods 8/8 · assessment item 1 · 02:52   
+  streaming:   35,675 chars · ~ 8,918 tokens · periods 8/8 · assessment item 1 · 02:53   
+  streaming:   35,984 chars · ~ 8,996 tokens · periods 8/8 · assessment item 1 · 02:54   
+  streaming:   36,299 chars · ~ 9,074 tokens · periods 8/8 · assessment item 1 · 02:55   
+  streaming:   36,496 chars · ~ 9,124 tokens · periods 8/8 · assessment item 1 · 02:56   
+  streaming:   36,675 chars · ~ 9,168 tokens · periods 8/8 · assessment item 1 · 02:57   
+  streaming:   36,836 chars · ~ 9,209 tokens · periods 8/8 · assessment item 1 · 02:58   
+  streaming:   37,064 chars · ~ 9,266 tokens · periods 8/8 · assessment item 1 · 03:00   
+  streaming:   37,239 chars · ~ 9,309 tokens · periods 8/8 · assessment item 1 · 03:01   
+  streaming:   37,407 chars · ~ 9,351 tokens · periods 8/8 · assessment item 1 · 03:02   
+  streaming:   37,582 chars · ~ 9,395 tokens · periods 8/8 · assessment item 1 · 03:03   
+  streaming:   37,860 chars · ~ 9,465 tokens · periods 8/8 · assessment item 1 · 03:04   
+  streaming:   38,120 chars · ~ 9,530 tokens · periods 8/8 · assessment item 1 · 03:05   
+  streaming:   38,584 chars · ~ 9,646 tokens · periods 8/8 · assessment item 2 · 03:06   
+  streaming:   38,852 chars · ~ 9,713 tokens · periods 8/8 · assessment item 2 · 03:07   
+  streaming:   39,116 chars · ~ 9,779 tokens · periods 8/8 · assessment item 2 · 03:08   
+  streaming:   39,212 chars · ~ 9,803 tokens · periods 8/8 · assessment item 2 · 03:09   
+  streaming:   39,336 chars · ~ 9,834 tokens · periods 8/8 · assessment item 2 · 03:10   
+  streaming:   39,482 chars · ~ 9,870 tokens · periods 8/8 · assessment item 2 · 03:11   
+  streaming:   39,725 chars · ~ 9,931 tokens · periods 8/8 · assessment item 2 · 03:12   
+  streaming:   40,039 chars · ~10,009 tokens · periods 8/8 · assessment item 2 · 03:13   
+  streaming:   40,252 chars · ~10,063 tokens · periods 8/8 · assessment item 2 · 03:14   
+  streaming:   40,468 chars · ~10,117 tokens · periods 8/8 · assessment item 2 · 03:15   
+  streaming:   40,830 chars · ~10,207 tokens · periods 8/8 · assessment item 2 · 03:16   
+  streaming:   41,239 chars · ~10,309 tokens · periods 8/8 · assessment item 2 · 03:17   
+  streaming:   41,669 chars · ~10,417 tokens · periods 8/8 · assessment item 3 · 03:18   
+  streaming:   41,867 chars · ~10,466 tokens · periods 8/8 · assessment item 3 · 03:19   
+  streaming:   41,998 chars · ~10,499 tokens · periods 8/8 · assessment item 3 · 03:20   
+  streaming:   42,295 chars · ~10,573 tokens · periods 8/8 · assessment item 3 · 03:21   
+  streaming:   42,467 chars · ~10,616 tokens · periods 8/8 · assessment item 3 · 03:22   
+  streaming:   42,651 chars · ~10,662 tokens · periods 8/8 · assessment item 3 · 03:23   
+  streaming:   42,972 chars · ~10,743 tokens · periods 8/8 · assessment item 3 · 03:24   
+  streaming:   43,347 chars · ~10,836 tokens · periods 8/8 · assessment item 3 · 03:25   
+  streaming:   43,541 chars · ~10,885 tokens · periods 8/8 · assessment item 3 · 03:26   
+  streaming:   43,840 chars · ~10,960 tokens · periods 8/8 · assessment item 3 · 03:27   
+  streaming:   44,230 chars · ~11,057 tokens · periods 8/8 · assessment item 3 · 03:28   
+  streaming:   44,597 chars · ~11,149 tokens · periods 8/8 · assessment item 4 · 03:29   
+  streaming:   44,910 chars · ~11,227 tokens · periods 8/8 · assessment item 4 · 03:31   
+  streaming:   45,183 chars · ~11,295 tokens · periods 8/8 · assessment item 4 · 03:32   
+  streaming:   45,430 chars · ~11,357 tokens · periods 8/8 · assessment item 4 · 03:33   
+  streaming:   45,754 chars · ~11,438 tokens · periods 8/8 · assessment item 4 · 03:34   
+  streaming:   46,023 chars · ~11,505 tokens · periods 8/8 · assessment item 4 · 03:35   
+  streaming:   46,367 chars · ~11,591 tokens · periods 8/8 · assessment item 4 · 03:36   
+  streaming:   46,665 chars · ~11,666 tokens · periods 8/8 · assessment item 4 · 03:37   
+  streaming:   46,867 chars · ~11,716 tokens · periods 8/8 · assessment item 4 · 03:38   
+  streaming:   47,103 chars · ~11,775 tokens · periods 8/8 · assessment item 4 · 03:39   
+  streaming:   47,319 chars · ~11,829 tokens · periods 8/8 · assessment item 4 · 03:40   
+  streaming:   47,515 chars · ~11,878 tokens · periods 8/8 · assessment item 4 · 03:41   
+  streaming:   47,824 chars · ~11,956 tokens · periods 8/8 · assessment item 4 · 03:42   
+  streaming:   48,221 chars · ~12,055 tokens · periods 8/8 · assessment item 4 · 03:43   
+  streaming:   48,634 chars · ~12,158 tokens · periods 8/8 · assessment item 5 · 03:44   
+  streaming:   49,013 chars · ~12,253 tokens · periods 8/8 · assessment item 5 · 03:45   
+  streaming:   49,180 chars · ~12,295 tokens · periods 8/8 · assessment item 5 · 03:46   
+  streaming:   49,384 chars · ~12,346 tokens · periods 8/8 · assessment item 5 · 03:47   
+  streaming:   49,539 chars · ~12,384 tokens · periods 8/8 · assessment item 5 · 03:48   
+  streaming:   49,858 chars · ~12,464 tokens · periods 8/8 · assessment item 5 · 03:49   
+  streaming:   50,056 chars · ~12,514 tokens · periods 8/8 · assessment item 5 · 03:50   
+  streaming:   50,219 chars · ~12,554 tokens · periods 8/8 · assessment item 5 · 03:51   
+  streaming:   50,568 chars · ~12,642 tokens · periods 8/8 · assessment item 5 · 03:52   
+  streaming:   50,953 chars · ~12,738 tokens · periods 8/8 · assessment item 5 · 03:53   
+  streaming:   51,332 chars · ~12,833 tokens · periods 8/8 · assessment item 6 · 03:54   
+  streaming:   51,547 chars · ~12,886 tokens · periods 8/8 · assessment item 6 · 03:55   
+  streaming:   51,701 chars · ~12,925 tokens · periods 8/8 · assessment item 6 · 03:56   
+  streaming:   51,860 chars · ~12,965 tokens · periods 8/8 · assessment item 6 · 03:57   
+  streaming:   52,108 chars · ~13,027 tokens · periods 8/8 · assessment item 6 · 03:58   
+  streaming:   52,392 chars · ~13,098 tokens · periods 8/8 · assessment item 6 · 03:59   
+  streaming:   52,773 chars · ~13,193 tokens · periods 8/8 · assessment item 6 · 04:00   
+  streaming:   52,994 chars · ~13,248 tokens · periods 8/8 · assessment item 6 · 04:01   
+  streaming:   53,416 chars · ~13,354 tokens · periods 8/8 · assessment item 6 · 04:02   
+  streaming:   53,657 chars · ~13,414 tokens · periods 8/8 · assessment item 6 · 04:03   
+  streaming:   53,874 chars · ~13,468 tokens · periods 8/8 · assessment item 6 · 04:04   
+  streaming:   54,159 chars · ~13,539 tokens · periods 8/8 · assessment item 7 · 04:05   
+  streaming:   54,488 chars · ~13,622 tokens · periods 8/8 · assessment item 7 · 04:06   
+  streaming:   54,701 chars · ~13,675 tokens · periods 8/8 · assessment item 7 · 04:07   
+  streaming:   54,881 chars · ~13,720 tokens · periods 8/8 · assessment item 7 · 04:08   
+  streaming:   55,075 chars · ~13,768 tokens · periods 8/8 · assessment item 7 · 04:10   
+  streaming:   55,283 chars · ~13,820 tokens · periods 8/8 · assessment item 7 · 04:11   
+  streaming:   55,510 chars · ~13,877 tokens · periods 8/8 · assessment item 7 · 04:12   
+  streaming:   55,733 chars · ~13,933 tokens · periods 8/8 · assessment item 7 · 04:13   
+  streaming:   56,113 chars · ~14,028 tokens · periods 8/8 · assessment item 7 · 04:14   
+  streaming:   56,323 chars · ~14,080 tokens · periods 8/8 · assessment item 7 · 04:15   
+  streaming:   56,536 chars · ~14,134 tokens · periods 8/8 · assessment item 7 · 04:16   
+  streaming:   56,806 chars · ~14,201 tokens · periods 8/8 · assessment item 7 · 04:17   
+  streaming:   56,991 chars · ~14,247 tokens · periods 8/8 · assessment item 7 · 04:18   
+  streaming:   57,156 chars · ~14,289 tokens · periods 8/8 · assessment item 7 · 04:19   
+  streaming:   57,333 chars · ~14,333 tokens · periods 8/8 · assessment item 7 · 04:20   
+  streaming:   57,507 chars · ~14,376 tokens · periods 8/8 · assessment item 7 · 04:21   
+  streaming:   57,665 chars · ~14,416 tokens · periods 8/8 · assessment item 7 · 04:22   
+  streaming:   57,833 chars · ~14,458 tokens · periods 8/8 · assessment item 7 · 04:23   
+  streaming:   58,002 chars · ~14,500 tokens · periods 8/8 · assessment item 7 · 04:24   
+  streaming:   58,275 chars · ~14,568 tokens · periods 8/8 · assessment item 7 · 04:25   
+  streaming:   58,526 chars · ~14,631 tokens · periods 8/8 · assessment item 7 · 04:26   
+  streaming:   58,782 chars · ~14,695 tokens · periods 8/8 · assessment item 8 · 04:27   
+  streaming:   59,092 chars · ~14,773 tokens · periods 8/8 · assessment item 8 · 04:28   
+  streaming:   59,300 chars · ~14,825 tokens · periods 8/8 · assessment item 8 · 04:29   
+  streaming:   59,565 chars · ~14,891 tokens · periods 8/8 · assessment item 8 · 04:30   
+  streaming:   59,901 chars · ~14,975 tokens · periods 8/8 · assessment item 8 · 04:31   
+  streaming:   60,157 chars · ~15,039 tokens · periods 8/8 · assessment item 8 · 04:32   
+  streaming:   60,503 chars · ~15,125 tokens · periods 8/8 · assessment item 8 · 04:33   
+  streaming:   60,770 chars · ~15,192 tokens · periods 8/8 · assessment item 8 · 04:34   
+  streaming:   60,969 chars · ~15,242 tokens · periods 8/8 · assessment item 8 · 04:35   
+  streaming:   61,204 chars · ~15,301 tokens · periods 8/8 · assessment item 8 · 04:36   
+  streaming:   61,519 chars · ~15,379 tokens · periods 8/8 · assessment item 8 · 04:37   
+  streaming:   61,885 chars · ~15,471 tokens · periods 8/8 · assessment item 8 · 04:38   
+  streaming:   62,303 chars · ~15,575 tokens · periods 8/8 · assessment item 8 · 04:39   
+  streaming:   62,534 chars · ~15,633 tokens · periods 8/8 · assessment item 8 · 04:40   
+  streaming:   62,723 chars · ~15,680 tokens · periods 8/8 · assessment item 8 · 04:41   
+  streaming:   62,962 chars · ~15,740 tokens · periods 8/8 · assessment item 9 · 04:42   
+  streaming:   63,249 chars · ~15,812 tokens · periods 8/8 · assessment item 9 · 04:43   
+  streaming:   63,437 chars · ~15,859 tokens · periods 8/8 · assessment item 9 · 04:44   
+  streaming:   63,611 chars · ~15,902 tokens · periods 8/8 · assessment item 9 · 04:45   
+  streaming:   63,776 chars · ~15,944 tokens · periods 8/8 · assessment item 9 · 04:46   
+  streaming:   63,969 chars · ~15,992 tokens · periods 8/8 · assessment item 9 · 04:47   
+  streaming:   64,287 chars · ~16,071 tokens · periods 8/8 · assessment item 9 · 04:48   
+  streaming:   64,535 chars · ~16,133 tokens · periods 8/8 · assessment item 9 · 04:49   
+  streaming:   64,734 chars · ~16,183 tokens · periods 8/8 · assessment item 9 · 04:51   
+  streaming:   65,064 chars · ~16,266 tokens · periods 8/8 · assessment item 9 · 04:52   
+  streaming:   65,449 chars · ~16,362 tokens · periods 8/8 · assessment item 9 · 04:53   
+  streaming:   65,694 chars · ~16,423 tokens · periods 8/8 · assessment item 9 · 04:54   
+  streaming:   65,925 chars · ~16,481 tokens · periods 8/8 · assessment item 10 · 04:55   
+  streaming:   66,197 chars · ~16,549 tokens · periods 8/8 · assessment item 10 · 04:56   
+  streaming:   66,378 chars · ~16,594 tokens · periods 8/8 · assessment item 10 · 04:57   
+  streaming:   66,626 chars · ~16,656 tokens · periods 8/8 · assessment item 10 · 04:58   
+  streaming:   66,893 chars · ~16,723 tokens · periods 8/8 · assessment item 10 · 04:59   
+  streaming:   67,112 chars · ~16,778 tokens · periods 8/8 · assessment item 10 · 05:00   
+  streaming:   67,298 chars · ~16,824 tokens · periods 8/8 · assessment item 10 · 05:01   
+  streaming:   67,540 chars · ~16,885 tokens · periods 8/8 · assessment item 10 · 05:02   
+  streaming:   67,917 chars · ~16,979 tokens · periods 8/8 · assessment item 10 · 05:03   
+  streaming:   68,148 chars · ~17,037 tokens · periods 8/8 · assessment item 10 · 05:04   
+  streaming:   68,350 chars · ~17,087 tokens · periods 8/8 · assessment item 10 · 05:05   
+  streaming:   68,732 chars · ~17,183 tokens · periods 8/8 · assessment item 10 · 05:06   
+  streaming:   68,987 chars · ~17,246 tokens · periods 8/8 · assessment item 10 · 05:07   
+  streaming:   69,198 chars · ~17,299 tokens · periods 8/8 · assessment item 10 · 05:08   
+  streaming:   69,401 chars · ~17,350 tokens · periods 8/8 · assessment item 11 · 05:09   
+  streaming:   69,662 chars · ~17,415 tokens · periods 8/8 · assessment item 11 · 05:10   
+  streaming:   69,898 chars · ~17,474 tokens · periods 8/8 · assessment item 11 · 05:11   
+  streaming:   70,147 chars · ~17,536 tokens · periods 8/8 · assessment item 11 · 05:12   
+  streaming:   70,312 chars · ~17,578 tokens · periods 8/8 · assessment item 11 · 05:13   
+  streaming:   70,501 chars · ~17,625 tokens · periods 8/8 · assessment item 11 · 05:14   
+  streaming:   70,654 chars · ~17,663 tokens · periods 8/8 · assessment item 11 · 05:15   
+  streaming:   70,909 chars · ~17,727 tokens · periods 8/8 · assessment item 11 · 05:16   
+  streaming:   71,277 chars · ~17,819 tokens · periods 8/8 · assessment item 11 · 05:17   
+  streaming:   71,445 chars · ~17,861 tokens · periods 8/8 · assessment item 11 · 05:18   
+  streaming:   71,636 chars · ~17,909 tokens · periods 8/8 · assessment item 11 · 05:19   
+  streaming:   71,941 chars · ~17,985 tokens · periods 8/8 · assessment item 11 · 05:20   
+  streaming:   72,247 chars · ~18,061 tokens · periods 8/8 · assessment item 11 · 05:21   
+  streaming:   72,441 chars · ~18,110 tokens · periods 8/8 · assessment item 11 · 05:22   
+  streaming:   72,742 chars · ~18,185 tokens · periods 8/8 · assessment item 12 · 05:23   
+  streaming:   73,010 chars · ~18,252 tokens · periods 8/8 · assessment item 12 · 05:24   
+  streaming:   73,230 chars · ~18,307 tokens · periods 8/8 · assessment item 12 · 05:25   
+  streaming:   73,422 chars · ~18,355 tokens · periods 8/8 · assessment item 12 · 05:26   
+  streaming:   73,656 chars · ~18,414 tokens · periods 8/8 · assessment item 12 · 05:27   
+  streaming:   74,023 chars · ~18,505 tokens · periods 8/8 · assessment item 12 · 05:28   
+  streaming:   74,193 chars · ~18,548 tokens · periods 8/8 · assessment item 12 · 05:30   
+  streaming:   74,318 chars · ~18,579 tokens · periods 8/8 · assessment item 12 · 05:31   
+  streaming:   74,734 chars · ~18,683 tokens · periods 8/8 · assessment item 12 · 05:32   
+  streaming:   75,056 chars · ~18,764 tokens · periods 8/8 · assessment item 12 · 05:33   
+  streaming:   75,385 chars · ~18,846 tokens · periods 8/8 · assessment item 12 · 05:34   
+  streaming:   75,713 chars · ~18,928 tokens · periods 8/8 · assessment item 13 · 05:35   
+  streaming:   75,944 chars · ~18,986 tokens · periods 8/8 · assessment item 13 · 05:36   
+  streaming:   76,184 chars · ~19,046 tokens · periods 8/8 · assessment item 13 · 05:37   
+  streaming:   76,479 chars · ~19,119 tokens · periods 8/8 · assessment item 13 · 05:38   
+  streaming:   76,590 chars · ~19,147 tokens · periods 8/8 · assessment item 13 · 05:39   
+  streaming:   76,707 chars · ~19,176 tokens · periods 8/8 · assessment item 13 · 05:40   
+  streaming:   76,869 chars · ~19,217 tokens · periods 8/8 · assessment item 13 · 05:41   
+  streaming:   77,031 chars · ~19,257 tokens · periods 8/8 · assessment item 13 · 05:42   
+  streaming:   77,216 chars · ~19,304 tokens · periods 8/8 · assessment item 13 · 05:43   
+  streaming:   77,385 chars · ~19,346 tokens · periods 8/8 · assessment item 13 · 05:44   
+  streaming:   77,569 chars · ~19,392 tokens · periods 8/8 · assessment item 13 · 05:45   
+  streaming:   77,949 chars · ~19,487 tokens · periods 8/8 · assessment item 13 · 05:46   
+  streaming:   78,209 chars · ~19,552 tokens · periods 8/8 · assessment item 13 · 05:47   
+  streaming:   78,439 chars · ~19,609 tokens · periods 8/8 · assessment item 13 · 05:48   
+  streaming:   78,730 chars · ~19,682 tokens · periods 8/8 · assessment item 13 · 05:49   
+Mathematics · Grade IX · ch 11 — 8 × 50 min (LP+A; constitution serve-era)
+  schedule : Total: 8 periods · 6h 40min
+  system   : 52,682 chars   user: 40,225 chars
+  saved    : /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/genon/out/canonical/mathematics/ix/ch_11_20261002_142628_canonical.json
+  installed: /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/data/cloud/content/saved_plans/mathematics/ix/2026-27/ch_11_canonical_p08.json
+  tokens   : 23,103 in / 22,081 out · ₹36.85 · 350.1s · ok
+canonical plans written: 326 on authored standards, 12 provisional
+brief written: /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/genon/out/briefs/ch_11_top.txt
+
+== STEP 1 · top canonical (metered, Sonnet 4.6) ==
+
+== STEP 2 · annotate master plan ==
+brief written: /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/genon/out/briefs/ch_11_p11.txt
+brief written: /Users/kumar_radhakrishnan/main/kumar/AI/aruvi-saas/genon/out/briefs/ch_11_p08.txt
+
+== STEP 4 · 11-period variant (metered, Sonnet 4.6) ==
+
+== STEP 4 · 8-period variant (metered, Sonnet 4.6) ==
+
+== STEP 5 · re-annotate on the full library ==
+
+== STEP 6 · arrange MCQ options ==
+options arranged: 9 of 10 item(s) re-ordered this run. Nothing is written to the artefact (founder ruling 2026-08-04), so a 0 here means only that nothing was left to move — on a re-run that is expected, and it is NOT evidence the model arranged them unaided. Read this number on the FIRST pass of a freshly generated library or not at all.
+      ch_11_canonical.json: 3 of 4 item(s) re-ordered
+          #1 C-9.2 S1: A–D now hold DACB · correct B -> D
+          #4 C-9.4 S3: A–D now hold BACD · correct B -> A
+          #8 C-9.4 S7: A–D now hold CABD · correct B -> C
+      ch_11_canonical_p08.json: 3 of 3 item(s) re-ordered
+          #1 C-9.2 S1: A–D now hold BCDA · correct A -> D
+          #4 C-9.4 S3: A–D now hold CABD · correct A -> B
+          #8 C-9.4 S7: A–D now hold DACB · correct A -> B
+      ch_11_canonical_p11.json: 3 of 3 item(s) re-ordered
+          #1 C-9.2 S1: A–D now hold BACD · correct B -> A
+          #4 C-9.4 S3: A–D now hold DBCA · correct B -> B
+          #8 C-9.4 S7: A–D now hold CBDA · correct B -> B
+
+== report: genon/out/library_reports/mathematics_ix_ch11_20261002_143219.md ==
+deterministic checks: FAILURES — see report
+Next: open a Cowork session and ask it to present this report for the human gate.

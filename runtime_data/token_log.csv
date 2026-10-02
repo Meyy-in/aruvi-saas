@@ -1175,3 +1175,21 @@ timestamp,call_type,subject,grade,chapter_number,chapter_title,input_tokens,outp
 2026-08-20T12:45:58,variant_generation,mathematics,iv,14,Data Handling,15630,12903,28533,10.2337,4418,7880
 2026-08-20T12:45:58,variant_generation,mathematics,iii,14,The Surajkund Fair,17353,15264,32617,12.1014,4442,7880
 2026-08-20T15:39:51,variant_generation,mathematics,v,1,We the Travellers—I,17249,13834,31083,10.3969,0,12310
+2026-10-02T13:17:55,canonical_generation,mathematics,ix,9,Propositions and their Converses,22907,23360,46267,38.5591,0,0
+2026-10-02T13:22:29,variant_generation,mathematics,ix,9,Propositions and their Converses,22479,16729,39208,29.2902,0,0
+2026-10-02T13:26:24,variant_generation,mathematics,ix,9,Propositions and their Converses,22479,13935,36414,25.4345,0,0
+2026-10-02T14:00:34,canonical_generation,mathematics,ix,10,Understanding Data,27064,26455,53519,43.9776,0,0
+2026-10-02T14:06:40,variant_generation,mathematics,ix,10,Understanding Data,26694,21517,48211,37.061,0,0
+2026-10-02T14:12:35,variant_generation,mathematics,ix,10,Understanding Data,26694,20862,47556,36.1571,0,0
+2026-10-02T14:20:10,canonical_generation,mathematics,ix,11,The World of Algorithms,23435,27716,51151,44.7161,0,0
+2026-10-02T14:26:28,variant_generation,mathematics,ix,11,The World of Algorithms,23103,22833,45936,37.886,0,0
+2026-10-02T14:32:19,variant_generation,mathematics,ix,11,The World of Algorithms,23103,22081,45184,36.8482,0,0
+2026-10-02T14:53:55,canonical_generation,mathematics,ix,12,Quadrilaterals,26185,32597,58782,52.2109,0,0
+2026-10-02T15:00:30,variant_generation,mathematics,ix,12,Quadrilaterals,25801,24014,49815,40.2604,0,0
+2026-10-02T15:06:25,variant_generation,mathematics,ix,12,Quadrilaterals,25801,21410,47211,36.6669,0,0
+2026-10-02T15:14:47,canonical_generation,mathematics,ix,13,"Two Variables, One Line",29955,31881,61836,52.2634,0,0
+2026-10-02T15:20:38,variant_generation,mathematics,ix,13,"Two Variables, One Line",29603,22819,52422,39.6606,0,0
+2026-10-02T15:26:28,variant_generation,mathematics,ix,13,"Two Variables, One Line",29603,21967,51570,38.4849,0,0
+2026-10-02T15:34:30,canonical_generation,mathematics,ix,14,Surface Area and Volume,26335,29390,55725,47.8267,0,0
+2026-10-02T15:41:36,variant_generation,mathematics,ix,14,Surface Area and Volume,25987,25853,51840,42.8496,0,0
+2026-10-02T15:48:16,variant_generation,mathematics,ix,14,Surface Area and Volume,25987,24802,50789,41.3992,0,0

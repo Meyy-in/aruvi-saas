@@ -1,11 +1,24 @@
 CANONICAL BRIEF — 11 periods (platform-computed; binding)
 
-- This is a COMPLETE, self-sufficient lesson plan for the whole chapter at 11 units x 45 minutes (period_schedule: exactly one row {45, 11}). It is NOT a compression, summary or edit of any other plan of this chapter — author it from the chapter summary as if it were the only plan, deriving its cognitive progression arc afresh at this length.
-- THE ARC IS YOURS AT THIS COUNT. Stage count, stage labels and the shape of the progression are decided by this chapter's content AT THIS BUDGET; they need not match any other plan of this chapter, and nothing is ever borrowed between them. The one fixed point is the terminus: the final stage must correspond to the operation named in the dissolution test sentence.
-- THE PLAN IS SERVED WHOLE OR NOT AT ALL. This platform never cuts a plan of this stage mid-arc, so every stage you open must be completed inside these 11 units. There is no coverage note and no budget shortfall available: an arc that does not close at this count is an authoring failure.
-- MATERIALS, OPENING MOVES AND HOMEWORK ARE PER-UNIT. No unit may require that another unit's homework was set in order to run. Forward and backward references BETWEEN THE UNITS OF THIS PLAN are welcome — they are always served together (LP constitution v2.2, THE SELF-CONTAINED REGISTER).
-- NO UNIT MAY DEPEND ON A PHYSICAL ARTEFACT ANOTHER UNIT PRODUCES. Naming a prior unit is fine here; needing its OUTPUT is not. If a unit needs a poster, chart, model or draft to exist, it makes it itself, or the material is something any classroom already has — the closing unit especially, since it is the one that travels.
-- NO CLOCK QUANTITY and NO CALENDAR TIME in any band or note: the platform scales band minutes to the sitting that carries them, and keeps no calendar.
-- NO SYNTHESIS UNIT. The closing whole-chapter synthesis is reserved to this chapter's STANDARD canonical; never emit `"synthesis": true` here. End the plan the way this count teaches best.
+- This is a COMPLETE, self-sufficient lesson plan for the whole chapter at 11 periods x 50 minutes (period_schedule: exactly one row {50, 11}). It is NOT a compression, summary, or edit of any other plan of this chapter — author it from the chapter summary as if it were the only plan.
+- SECTION REGISTRY (verbatim; the chapter's ordered sections):
+    1. 11.1
+    2. 11.1.1
+    3. 11.2
+    4. 11.2.1
+    5. 11.2.2
+    6. 11.2.3
+    7. 11.3
+    8. 11.3.1
+    9. 11.3.2
+    10. 11.3.3
+    11. 11.3.4
+  Every unit's section_anchor MUST be drawn verbatim from this list (a multi-section unit joins its sections with " / " in list order). Sections must FIRST APPEAR in registry order. The token `synthesis` is RESERVED to the chapter's standard canonical — never use it here.
+- A canonical covers the whole chapter: section_coverage_note is not available here.
+- ITS UNITS ARE SERVED WHOLE AND IN PARTS. A teacher whose budget differs receives another plan's first X-1 units followed by ONE unit borrowed from this plan — the unit that FIRST introduces the section her class has reached. So ANY unit of this plan may be somebody's last sitting, met by a class that never had the units before it.
+- Therefore every unit CLOSES ON ITS OWN GROUND. Write each unit as though it were the only sitting this class receives: it stands up on the material it teaches inside its own minutes. Where continuity helps, name the CONTENT already taught — the idea, text, method or phenomenon — never a unit's position or existence.
+- THE SERVE MODEL IS NEVER THE TEACHER'S BUSINESS. Everything above constrains how you BUILD the plan; none of it is a subject the plan may discuss. Do not reassure the teacher that a unit assumes no prior draft, requires no earlier activity, needs no particular sitting to have happened, or stands alone — simply write a unit of which those things are true. State what THIS sitting does; say nothing about what it does not need. If a sentence would be pointless to a teacher who had never heard of variant plans, cut it.
+- MATERIALS, OPENING MOVES AND HOMEWORK ARE PER-UNIT. No unit may require that another unit was taught, or that its homework was set, in order to run.
+- NO UNIT MAY DEPEND ON A PHYSICAL ARTEFACT ANOTHER UNIT PRODUCES. If a unit needs a poster, chart, model, collection or draft to exist, it must make it itself within its own minutes, or the material must be something any classroom already has. A unit that lists 'prepared previously', 'their charts from earlier' or 'the models they built' in `materials`, `visual_aids` or an opening band is asking for a sitting that may not have happened — it is the same failure as naming another unit, arriving through the props instead of the prose. Where the chapter genuinely wants a make-then-present pair, put BOTH acts inside ONE unit. A STUDENT'S OWN PIECE OF WRITING COUNTS: an article, essay, letter or story drafted in one unit and continued, revised or finished in another is the same dependency in a thinner disguise. Plan every writing task to begin AND end inside a single unit — drafting, peer response and revision together, on a scale that fits the minutes available.
 - The assessment for this plan is generated from THIS plan's coverage_handoff in the normal way; it references no other plan of this chapter.
 - Save as: ch_11_canonical_p11.json

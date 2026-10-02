@@ -1,7 +1,7 @@
 {
   "_meta": {
     "generated": "2026-07-24",
-    "source_workbook": "data/content/allocation_norms/ncf_chapterwise_period_allocation.xlsx",
+    "source_workbook": "data/cloud/content/allocation_norms/ncf_chapterwise_period_allocation.xlsx",
     "standard_durations": {
       "<=VII": 40,
       "VIII": 45,
@@ -5696,14 +5696,14 @@
       "class": "IX",
       "standard_duration_minutes": 50,
       "annual_budget_periods": 210,
-      "total_effort_weight": 159.0,
-      "n_chapters": 16,
+      "total_effort_weight": 210,
+      "n_chapters": 14,
       "chapters": [
         {
           "chapter": 1,
           "title": "Orienting Yourself: The Use of Coordinates",
-          "weight": 7.5,
-          "exact_share": 9.91,
+          "weight": 10,
+          "exact_share": 10.0,
           "recommended_periods": 10,
           "canonical_minutes": 500,
           "floor_minutes": 300.0,
@@ -5733,8 +5733,8 @@
         {
           "chapter": 2,
           "title": "Introduction to Linear Polynomials",
-          "weight": 9,
-          "exact_share": 11.89,
+          "weight": 12,
+          "exact_share": 12.0,
           "recommended_periods": 12,
           "canonical_minutes": 600,
           "floor_minutes": 360.0,
@@ -5764,8 +5764,8 @@
         {
           "chapter": 3,
           "title": "The World of Numbers",
-          "weight": 13,
-          "exact_share": 17.17,
+          "weight": 17,
+          "exact_share": 17.0,
           "recommended_periods": 17,
           "canonical_minutes": 850,
           "floor_minutes": 510.0,
@@ -5795,8 +5795,8 @@
         {
           "chapter": 4,
           "title": "Exploring Algebraic Identities",
-          "weight": 11,
-          "exact_share": 14.53,
+          "weight": 15,
+          "exact_share": 15.0,
           "recommended_periods": 15,
           "canonical_minutes": 750,
           "floor_minutes": 450.0,
@@ -5826,8 +5826,8 @@
         {
           "chapter": 5,
           "title": "I'm Up and Down, and Round and Round",
-          "weight": 11.5,
-          "exact_share": 15.19,
+          "weight": 15,
+          "exact_share": 15.0,
           "recommended_periods": 15,
           "canonical_minutes": 750,
           "floor_minutes": 450.0,
@@ -5857,8 +5857,8 @@
         {
           "chapter": 6,
           "title": "Measuring Space: Perimeter and Area",
-          "weight": 11,
-          "exact_share": 14.53,
+          "weight": 15,
+          "exact_share": 15.0,
           "recommended_periods": 15,
           "canonical_minutes": 750,
           "floor_minutes": 450.0,
@@ -5888,8 +5888,8 @@
         {
           "chapter": 7,
           "title": "The Mathematics of Maybe: Introduction to Probability",
-          "weight": 7.5,
-          "exact_share": 9.91,
+          "weight": 10,
+          "exact_share": 10.0,
           "recommended_periods": 10,
           "canonical_minutes": 500,
           "floor_minutes": 300.0,
@@ -5919,8 +5919,8 @@
         {
           "chapter": 8,
           "title": "Predicting What Comes Next: Exploring Sequences and Progressions",
-          "weight": 9,
-          "exact_share": 11.89,
+          "weight": 12,
+          "exact_share": 12.0,
           "recommended_periods": 12,
           "canonical_minutes": 600,
           "floor_minutes": 360.0,
@@ -5949,219 +5949,202 @@
         },
         {
           "chapter": 9,
-          "title": "Chapter 9: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
-          "floor_periods_at_standard": 8,
+          "title": "Propositions and their Converses",
+          "weight": 16,
+          "exact_share": 16.0,
+          "recommended_periods": 16,
+          "canonical_minutes": 800,
+          "floor_minutes": 480.0,
+          "floor_periods_at_standard": 10,
           "canonical_periods": [
+            16,
             13,
-            11,
-            8
+            10
           ],
-          "placeholder": true,
+          "placeholder": false,
           "canonical_plan": {
             "counts": [
+              16,
               13,
-              11,
-              8
+              10
             ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
+            "provisional": false,
+            "basis": "authored_standard",
+            "registry_sections": 1,
+            "authored": [
+              16,
+              13,
+              10
+            ]
           }
         },
         {
           "chapter": 10,
-          "title": "Chapter 10: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
-          "floor_periods_at_standard": 8,
+          "title": "How Quantities Combine: Understanding Data",
+          "weight": 16,
+          "exact_share": 16.0,
+          "recommended_periods": 16,
+          "canonical_minutes": 800,
+          "floor_minutes": 480.0,
+          "floor_periods_at_standard": 10,
           "canonical_periods": [
+            16,
             13,
-            11,
-            8
+            10
           ],
-          "placeholder": true,
+          "placeholder": false,
           "canonical_plan": {
             "counts": [
+              16,
               13,
-              11,
-              8
+              10
             ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
+            "provisional": false,
+            "basis": "authored_standard",
+            "registry_sections": 7,
+            "authored": [
+              16,
+              13,
+              10
+            ]
           }
         },
         {
           "chapter": 11,
-          "title": "Chapter 11: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
+          "title": "The World of Algorithms",
+          "weight": 14,
+          "exact_share": 14.0,
+          "recommended_periods": 14,
+          "canonical_minutes": 700,
+          "floor_minutes": 420.0,
           "floor_periods_at_standard": 8,
           "canonical_periods": [
-            13,
+            14,
             11,
             8
           ],
-          "placeholder": true,
+          "placeholder": false,
           "canonical_plan": {
             "counts": [
-              13,
+              14,
               11,
               8
             ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
+            "provisional": false,
+            "basis": "authored_standard",
+            "registry_sections": 11,
+            "authored": [
+              14,
+              11,
+              8
+            ]
           }
         },
         {
           "chapter": 12,
-          "title": "Chapter 12: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
-          "floor_periods_at_standard": 8,
+          "title": "Quadrilaterals",
+          "weight": 16,
+          "exact_share": 16.0,
+          "recommended_periods": 16,
+          "canonical_minutes": 800,
+          "floor_minutes": 480.0,
+          "floor_periods_at_standard": 10,
           "canonical_periods": [
+            16,
             13,
-            11,
-            8
+            10
           ],
-          "placeholder": true,
+          "placeholder": false,
           "canonical_plan": {
             "counts": [
+              16,
               13,
-              11,
-              8
+              10
             ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
+            "provisional": false,
+            "basis": "authored_standard",
+            "registry_sections": 6,
+            "authored": [
+              16,
+              13,
+              10
+            ]
           }
         },
         {
           "chapter": 13,
-          "title": "Chapter 13: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
-          "floor_periods_at_standard": 8,
+          "title": "Two Variables, One Line",
+          "weight": 16,
+          "exact_share": 16.0,
+          "recommended_periods": 16,
+          "canonical_minutes": 800,
+          "floor_minutes": 480.0,
+          "floor_periods_at_standard": 10,
           "canonical_periods": [
+            16,
             13,
-            11,
-            8
+            10
           ],
-          "placeholder": true,
+          "placeholder": false,
           "canonical_plan": {
             "counts": [
+              16,
               13,
-              11,
-              8
+              10
             ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
+            "provisional": false,
+            "basis": "authored_standard",
+            "registry_sections": 9,
+            "authored": [
+              16,
+              13,
+              10
+            ]
           }
         },
         {
           "chapter": 14,
-          "title": "Chapter 14: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
-          "floor_periods_at_standard": 8,
+          "title": "Math of Space: Surface Area and Volume",
+          "weight": 16,
+          "exact_share": 16.0,
+          "recommended_periods": 16,
+          "canonical_minutes": 800,
+          "floor_minutes": 480.0,
+          "floor_periods_at_standard": 10,
           "canonical_periods": [
+            16,
             13,
-            11,
-            8
+            10
           ],
-          "placeholder": true,
+          "placeholder": false,
           "canonical_plan": {
             "counts": [
+              16,
               13,
-              11,
-              8
+              10
             ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
+            "provisional": false,
+            "basis": "authored_standard",
+            "registry_sections": 10,
+            "authored": [
+              16,
+              13,
+              10
+            ]
           }
         },
         {
           "chapter": 15,
-          "title": "Chapter 15: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
-          "floor_periods_at_standard": 8,
-          "canonical_periods": [
-            13,
-            11,
-            8
-          ],
+          "title": "Reserved for practice",
+          "weight": 10,
+          "exact_share": 10.0,
+          "recommended_periods": 10,
+          "canonical_minutes": 500,
+          "floor_minutes": 300.0,
+          "floor_periods_at_standard": 6,
+          "canonical_periods": [],
           "placeholder": true,
-          "canonical_plan": {
-            "counts": [
-              13,
-              11,
-              8
-            ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
-          }
-        },
-        {
-          "chapter": 16,
-          "title": "Chapter 16: (Placeholder — awaiting NCERT release)",
-          "weight": 9.9375,
-          "exact_share": 13.12,
-          "recommended_periods": 13,
-          "canonical_minutes": 650,
-          "floor_minutes": 390.0,
-          "floor_periods_at_standard": 8,
-          "canonical_periods": [
-            13,
-            11,
-            8
-          ],
-          "placeholder": true,
-          "canonical_plan": {
-            "counts": [
-              13,
-              11,
-              8
-            ],
-            "provisional": true,
-            "basis": "arithmetic",
-            "registry_sections": null,
-            "authored": []
-          }
+          "reserve": true
         }
       ]
     },

@@ -1,10 +1,14 @@
 CANONICAL BRIEF — 13 periods (platform-computed; binding)
 
-- This is a COMPLETE, self-sufficient lesson plan for the whole chapter at 13 periods x 45 minutes (period_schedule: exactly one row {45, 13}). It is NOT a compression, summary, or edit of any other plan of this chapter — author it from the chapter summary as if it were the only plan.
+- This is a COMPLETE, self-sufficient lesson plan for the whole chapter at 13 periods x 50 minutes (period_schedule: exactly one row {50, 13}). It is NOT a compression, summary, or edit of any other plan of this chapter — author it from the chapter summary as if it were the only plan.
 - SECTION REGISTRY (verbatim; the chapter's ordered sections):
-    1. section 5.1
-    2. section 5.2
-  Every unit's section reference MUST be drawn verbatim from this list, in the field your own constitution already defines for it (a unit teaching several sections lists them all, in list order). Sections must FIRST APPEAR in registry order. The closing whole-chapter SYNTHESIS is RESERVED to the chapter's standard canonical. Emit `"synthesis": false` on every unit.
+    1. 12.1
+    2. 12.2
+    3. 12.3
+    4. 12.3.1
+    5. 12.3.2
+    6. 12.4
+  Every unit's section_anchor MUST be drawn verbatim from this list (a multi-section unit joins its sections with " / " in list order). Sections must FIRST APPEAR in registry order. The token `synthesis` is RESERVED to the chapter's standard canonical — never use it here.
 - A canonical covers the whole chapter: section_coverage_note is not available here.
 - ITS UNITS ARE SERVED WHOLE AND IN PARTS. A teacher whose budget differs receives another plan's first X-1 units followed by ONE unit borrowed from this plan — the unit that FIRST introduces the section her class has reached. So ANY unit of this plan may be somebody's last sitting, met by a class that never had the units before it.
 - Therefore every unit CLOSES ON ITS OWN GROUND. Write each unit as though it were the only sitting this class receives: it stands up on the material it teaches inside its own minutes. Where continuity helps, name the CONTENT already taught — the idea, text, method or phenomenon — never a unit's position or existence.

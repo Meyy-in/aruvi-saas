@@ -244,7 +244,12 @@ def normalize_file(path, apply=True):
 
 
 def library_files(subject, grade, ch):
-    d = REPO / "data" / "content" / "saved_plans" / subject / grade
+    # ★ PATH FIX 2026-10-02: the served library is DATA_DIR/saved_plans/<s>/<g>/<LP_YEAR>
+    # (restructures of 2026-08-23 and 2026-08-27) — the same place build_library certifies.
+    if str(REPO) not in sys.path:
+        sys.path.insert(0, str(REPO))
+    from api import config  # noqa: PLC0415
+    d = Path(config.DATA_DIR) / "saved_plans" / subject / grade / config.LP_YEAR
     return sorted(d.glob(f"ch_{ch:02d}_canonical*.json"))
 
 

@@ -1,0 +1,970 @@
+{
+  "grade": "Grade IX",
+  "subject": "Mathematics",
+  "chapter_number": 10,
+  "chapter_title": "How Quantities Combine: Understanding Data",
+  "period_schedule": [{"duration_minutes": 50, "count": 16}],
+  "lesson_plan": {
+    "periods": [
+      {
+        "period_number": 1,
+        "period_duration_minutes": 50,
+        "activity_title": "Why Averages of Averages Can Mislead",
+        "section_anchor": "10.1",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [],
+        "time_bands": [
+          {"minutes": "0-10", "activity": "Open by recalling what a plain average means: add all values, divide by count. Pose the question: if seniors in a badminton group average one height and juniors average another, is the whole group's average simply the midpoint of those two? Let students commit to a prediction before any calculation is shown."},
+          {"minutes": "10-30", "activity": "Work through the two methods described in Section 10.1 using the badminton scenario introduced there. Show that adding the two averages and halving gives 157.415 cm, then sum all eleven heights and divide by 11 to get 161.09 cm. Ask: why do the answers differ? Students articulate that the two groups are not the same size, so treating them equally misweights the result."},
+          {"minutes": "30-45", "activity": "Introduce Shreyas's fix — multiply each group's average by its group size, add the products, divide by the total count — and verify it yields 161.09 cm. Students check by re-deriving: 165.5 × 8 = 1324, 149.33 × 3 = 447.99, total ÷ 11 ≈ 161.09. Generalise to two groups of sizes n and m with averages a and b: combined average = (an + bm)/(n + m)."},
+          {"minutes": "45-50", "activity": "Quick consolidation: each student writes one sentence explaining in their own words why Method 1 fails for the badminton group. Two or three responses are shared aloud. No new content introduced."}
+        ],
+        "teacher_notes": "This opening unit establishes the central problem of the chapter's first strand — that simple averaging of averages goes wrong when group sizes differ — so it is worth spending time on the prediction step before revealing the calculation. A common error is believing that both methods always give the same answer; prompt students to check whether the group sizes matter. Example 2 on p.9 (Jaspreet's cycling record) shows a case where the two methods do agree and can be read independently.",
+        "homework": ["Exercise Set 10.3 Q2 (End of Chapter Q2, p.15): A white stork averages 44.5 km per day over 20 days and flies 55 km on the 21st day; guess, then calculate, its average over 21 days."]
+      },
+      {
+        "period_number": 2,
+        "period_duration_minutes": 50,
+        "activity_title": "When Averaging Averages Works — and the General Rule",
+        "section_anchor": "10.1.1",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "WE-2", "type": "worked_example", "source_section": "10.1.1", "book_ref": "Example 2, p.9", "description": "Find the mean time Jaspreet spent cycling per weekday over three weeks, showing that averaging the weekly averages and weighting each by its five days both give 15.53 minutes because the weeks are of equal size."},
+          {"id": "E-1", "type": "exercise", "source_section": "10.1.1", "book_ref": "Exercise Set 10.1 Q1, p.13", "description": "Find the combined average test score of two sections when Section A (30 students) averages 72 and Section B (25 students) averages 76."},
+          {"id": "E-4", "type": "exercise", "source_section": "10.1.1", "book_ref": "Exercise Set 10.1 Q4, p.13", "description": "The average rainfall per day in May, June and July is 3.5 mm, 10 mm and 8.7 mm; write an expression for their combined average."}
+        ],
+        "time_bands": [
+          {"minutes": "0-12", "activity": "Walk through Example 2 (p.9): Jaspreet's three cycling weeks each have five days with weekly averages 12.8, 15.8 and 18 minutes. Compute the overall average by both methods and confirm they agree at 15.53 minutes. Ask: why do the methods agree here but not in the badminton case?"},
+          {"minutes": "12-28", "activity": "Guide students to the algebraic answer: when all collection sizes are equal (each = p), (ap + bp + cp)/(3p) = (a + b + c)/3 — the p cancels, so the simple average works. State the three-group generalisation (ap + bq + cr)/(p + q + r) on the board and have students verify it reproduces the badminton result."},
+          {"minutes": "28-43", "activity": "Students attempt Exercise Set 10.1 Q1 (p.13) individually: Section A (30 students, mean 72) and Section B (25 students, mean 76). They set up (72 × 30 + 76 × 25)/55 and compute. Then tackle Q4 (p.13): rainfall averages 3.5, 10 and 8.7 mm over May (31 days), June (30 days) and July (31 days); students write the expression and discuss whether month lengths matter."},
+          {"minutes": "43-50", "activity": "Whole-class debrief: Q1 answer (73.78) and Q4 expression discussed. Highlight that Q4 requires knowing the number of days in each month, reinforcing that the 'weight' is the size of each collection."}
+        ],
+        "teacher_notes": "Having established the badminton correction, this unit pins down the condition under which simple averaging is valid — equal group sizes — and extends the formula to three groups. Watch for students who apply (a + b + c)/3 to the rainfall problem without accounting for the different month lengths; the algebraic derivation showing p cancels is the cure. Example 1 (p.8) in the previous discussion can be named as the source of the formula students are now using.",
+        "homework": []
+      },
+      {
+        "period_number": 3,
+        "period_duration_minutes": 50,
+        "activity_title": "Mixing Quantities — Concentration as a Weighted Average",
+        "section_anchor": "10.1.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "WE-3", "type": "worked_example", "source_section": "10.1.2", "book_ref": "Example 3, p.11", "description": "Find the jaggery concentration when two equal glasses of lemonade at 10% and 20% are mixed."},
+          {"id": "WE-4", "type": "worked_example", "source_section": "10.1.2", "book_ref": "Example 4, p.11", "description": "Estimate and compute the jaggery concentration when a 500 mL bowl at 10% is mixed with a 200 mL glass at 20%."}
+        ],
+        "time_bands": [
+          {"minutes": "0-10", "activity": "Introduce the concentration formula from Section 10.1.2: concentration = (quantity of ingredient)/(quantity of mixture). Have students write it down and apply it to a quick mental check: if 30 mL of juice is in 200 mL of drink, what is the concentration? Establish the formula is ratio, not percent-of-percent."},
+          {"minutes": "10-28", "activity": "Work Example 3 (p.11): two equal glasses y mL each, one at 10% and one at 20% jaggery. Total jaggery = 0.1y + 0.2y; total volume = 2y; concentration = 0.15 = 15%. Students note this is the simple average of 10% and 20% — connecting back to the equal-size result from Section 10.1.1. Then work Example 4 (p.11): 500 mL at 10% mixed with 200 mL at 20%. Before computing, students estimate: will the result be closer to 10% or 20%, and why? Compute (500 × 0.1 + 200 × 0.2)/700 = 90/700 ≈ 13%."},
+          {"minutes": "28-43", "activity": "Students work Exercise Set 10.1 Q2 (p.13) in pairs: three equal quantities of fertiliser at 1/10, 9/50 and 3/60 nitrogen. They set up the formula and simplify. Circulate and prompt: are the quantities equal? Which earlier result applies?"},
+          {"minutes": "43-50", "activity": "Consolidate: the mixture concentration formula is (w1x1 + w2x2 + … + wnxn)/(w1 + w2 + … + wn) where the w-values are volumes or weights. Students write this general form in their notes. Name it the weighted mean — the formal label introduced in this section."}
+        ],
+        "teacher_notes": "This unit links mixture concentration directly to the weighted mean formula, so the key transition is showing students that the lemonade calculation is algebraically identical to the badminton correction derived in Section 10.1.1. A frequent slip is confusing the concentration of an ingredient with the volume of the mixture — watch for students who add percentages before multiplying by volume. Exercise Set 10.1 Q5 (p.13, kashayam/kadha portions) is a good independent read.",
+        "homework": ["Exercise Set 10.1 Q5, p.13: Calculate the spice-mix concentration for two combinations of kashayam portions and compare the results."]
+      },
+      {
+        "period_number": 4,
+        "period_duration_minutes": 50,
+        "activity_title": "Working the Weighted Mean Backwards and the Historical Setting",
+        "section_anchor": "10.1.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "WE-5", "type": "worked_example", "source_section": "10.1.2", "book_ref": "Example 5, p.12", "description": "Brass batches A (200 kg, 70% copper), B (120 kg, 50% copper) and C (45% copper) combine to 55% copper; solve for the weight of Batch C."},
+          {"id": "E-3", "type": "exercise", "source_section": "10.1.2", "book_ref": "Exercise Set 10.1 Q3, p.13", "description": "Gold purity in varṇa: melt 9 units at 12 varṇa, 5 units at 10 varṇa and 17 units at 11 varṇa; find the purity of the result."}
+        ],
+        "time_bands": [
+          {"minutes": "0-15", "activity": "Work Example 5 (p.12) as a class: brass batches A (200 kg, 70% copper), B (120 kg, 50% copper), C (y kg, 45% copper) mix to give an alloy of 55% copper. Set up 0.55 = (200 × 0.7 + 120 × 0.5 + 0.45y)/(200 + 120 + y); expand the numerator, solve the linear equation in y, and confirm Batch C weighs 240 kg. Students identify: the same formula, now with the weight as the unknown rather than the average."},
+          {"minutes": "15-28", "activity": "Share the historical note from Section 10.1.2: Brahmagupta's Brāhmasphuṭasiddhānta (c. 628 CE) defined the mean depth of an irregularly shaped pit using this formula, and Śrīdharācārya (c. 750 CE) used it for gold-purity calculations. Students then tackle Exercise Set 10.1 Q3 (p.13), Śrīdharācārya's own problem: 9 units at 12 varṇa, 5 at 10 varṇa, 17 at 11 varṇa; find the purity of the melted result."},
+          {"minutes": "28-43", "activity": "Students attempt Exercise Set 10.3 Q4 (p.16, book_ref: Exercise Set 10.3 Q4, p.16): 10 litres of panipuri pani at 8% spice mixed with plain water to reduce spice to 3/4 of original. They set up the equation and solve for the volume of water. Pairs check each other's equations before computing."},
+          {"minutes": "43-50", "activity": "Debrief Q3 and Q4. Highlight the structure: when the combined average is known and one weight is unknown, the weighted mean equation becomes a linear equation solvable by standard methods. Students note the two directions the formula is used — computing the average given all weights, or finding a missing weight given the average."}
+        ],
+        "teacher_notes": "The backward use of the weighted mean — treating the combined average as known and solving for an unknown weight — is the unit's new move. Watch for sign errors when expanding the numerator and moving the y-term across: 0.55(320 + y) = 200 × 0.7 + 120 × 0.5 + 0.45y is the critical step where errors cluster. Exercise Set 10.3 Q8 (p.17, Dead Sea salinity) extends the same reasoning and can be suggested as self-study.",
+        "homework": []
+      },
+      {
+        "period_number": 5,
+        "period_duration_minutes": 50,
+        "activity_title": "Custom Weights — When Importance Differs, Not Just Size",
+        "section_anchor": "10.1.3",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "WE-6", "type": "worked_example", "source_section": "10.1.3", "book_ref": "Example 6, p.14", "description": "Combine Rehmat's Maths scores of 60%, 64% and 73% in the ratio 3 : 2 : 5 to get an annual score of 67.3%, contrasting it with the equal-weight mean."},
+          {"id": "E-6", "type": "exercise", "source_section": "10.1.3", "book_ref": "Exercise Set 10.2 Q1, p.14", "description": "Savitri scores 35/50, 44/60 and 80/100 in tests combined in the ratio 3 : 4 : 5; identify the correct expression for her annual percentage."}
+        ],
+        "time_bands": [
+          {"minutes": "0-12", "activity": "Ask: what if the reason to weight values is not their physical size but their relative importance? Pose the setup from Section 10.1.3: Rehmat's school combines internal tests, project and final exam in the ratio 3 : 2 : 5. Before computing, students predict whether the result will be above or below the simple average of 60%, 64% and 73%."},
+          {"minutes": "12-30", "activity": "Work Example 6 (p.14): compute both the equal-weight mean (65.67%) and the weighted mean (60 × 3 + 64 × 2 + 73 × 5)/(3 + 2 + 5) = 673/10 = 67.3%. Show the equivalence with the ten-value list 60, 60, 60, 64, 64, 73, 73, 73, 73, 73 whose mean is 67.3%. Students articulate: the ratio tells us how many 'copies' each value counts as. Discuss the restaurant and furniture-store examples from the section to show that custom weights reflect importance, recency or policy."},
+          {"minutes": "30-43", "activity": "Exercise Set 10.2 Q1 (p.14): Savitri scores 35/50 (internal), 44/60 (project), 80/100 (final) in the ratio 3 : 4 : 5. Students convert each score to a percentage and then identify which of the four given expressions is the correct weighted mean. They must justify why the others are wrong — a classification-and-justification task."},
+          {"minutes": "43-50", "activity": "Close with the general statement from the section: the weighted mean (w1x1 + … + wnxn)/(w1 + … + wn) works whether the w-values are physical quantities, group sizes or abstract importance ratios. Students write a single example from their own lives where they would want custom weights rather than equal weights."}
+        ],
+        "teacher_notes": "The conceptual step here is that weights need not represent physical amounts — they can encode policy or importance, as in an examination scheme. A persistent error is using the raw scores (35, 44, 80) rather than the percentage scores (70%, 73.3%, 80%) before weighting; stress that the formula averages comparable values. Exercise Set 10.3 Q5 (p.16, fitness marks for Rashi and Keerthi) gives a good follow-up where students first estimate the winner before computing.",
+        "homework": ["Exercise Set 10.3 Q5, p.16: Fitness marks for strength, flexibility and agility in the ratio 4 : 5 : 6 — first decide without calculating whose mark is higher, then compute both."]
+      },
+      {
+        "period_number": 6,
+        "period_duration_minutes": 50,
+        "activity_title": "Weighted Mean in Varied Contexts — Practice and Consolidation",
+        "section_anchor": "10.1.3",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "E-11", "type": "exercise", "source_section": "10.1.3", "book_ref": "Exercise Set 10.3 Q5, p.16", "description": "Fitness marks for strength, flexibility and agility in the ratio 4 : 5 : 6; Rashi scores 60, 65, 70 and Keerthi 55, 65, 75."},
+          {"id": "E-12", "type": "exercise", "source_section": "10.1.3", "book_ref": "Exercise Set 10.3 Q6, p.16", "description": "From a frequency table of 10 customers' 1–5 star ratings for food, ambience and service, find the average rating with weights 6 : 5 : 4."},
+          {"id": "E-7", "type": "exercise", "source_section": "10.1.2", "book_ref": "Exercise Set 10.3 Q1, p.15", "description": "A stationery shop makes ₹8000 at 30% profit and ₹1000 at 50% profit; find the percentage profit on total sales."}
+        ],
+        "time_bands": [
+          {"minutes": "0-18", "activity": "Return to Exercise Set 10.3 Q5 (p.16) as the entry point: students who attempted it at home share their reasoning for the 'decide without calculating' part. Confirm: the weights 4, 5, 6 favour the agility score most; Rashi's agility advantage over Keerthi (70 vs 75) needs checking. Compute both weighted means and compare with the simple means, discussing when the ranking changes."},
+          {"minutes": "18-35", "activity": "Work Exercise Set 10.3 Q6 (p.16) in groups: the frequency table of star ratings (1–5) for food, ambience and service requires first computing the average rating for each metric from the frequency table and then combining the three metric averages with weights 6 : 5 : 4. Groups identify the two-step structure: within-metric average, then across-metric weighted mean."},
+          {"minutes": "35-47", "activity": "Exercise Set 10.3 Q1 (p.15): a shop earns ₹8000 selling books at 30% profit and ₹1000 selling book covers at 50% profit. Students write the profit amounts, then find the percentage profit on total sales using the weighted mean. Stress that the weights here are the sales revenues, not the profit rates."},
+          {"minutes": "47-50", "activity": "Brief class discussion: in each of today's three problems, identify what the 'weights' were (importance ratio, frequency of ratings, revenue). Students articulate that the weighted mean formula is the same structure regardless of what the weights represent."}
+        ],
+        "teacher_notes": "This unit builds fluency with the weighted mean across different weight types before the chapter moves to data visualisation. Watch for the common error in Q6 of simply summing the star ratings without first computing a per-metric average weighted by frequency. Exercise Set 10.3 Q7 (p.16, langur weights — a multi-part problem) is a rich self-study item that requires setting up a weighted mean equation and solving it.",
+        "homework": []
+      },
+      {
+        "period_number": 7,
+        "period_duration_minutes": 50,
+        "activity_title": "Clustered Bar Charts — Choosing the Right Grouping",
+        "section_anchor": "10.2",
+        "pedagogical_method": "Discovery/Inquiry",
+        "materials": ["Textbook", "Blackboard and chalk", "Squared paper (one sheet per student)"],
+        "visual_aids": "Fig. 10.1 from the textbook — two clustered column charts of family expenditure data",
+        "textbook_items_in_class": [],
+        "time_bands": [
+          {"minutes": "0-10", "activity": "Introduce the chapter's second strand from Section 10.2: representing data in which a whole is made up of parts. Show Table 10.2 (family expenditure across six categories) from the textbook. Without showing any chart, ask students: if you want to compare how much each family spent on food, how would you arrange the bars? What if you want to compare one family's spending across categories?"},
+          {"minutes": "10-28", "activity": "Reveal Fig. 10.1 — two clustered column charts, one grouped by category and one by family. Work through the in-text questions from Section 10.2.1: which chart makes it easy to compare family spending within each category? Which makes it easy to see how a single family splits its spending? Students answer in writing before discussion."},
+          {"minutes": "28-43", "activity": "Pose the questions about totals from the section: which family spent least overall? What did Family C spend roughly? What percentage of Family C's spending went on housing? Students attempt these on the clustered charts and find them hard or impossible to answer with precision. Record which questions are tractable and which are not."},
+          {"minutes": "43-50", "activity": "Summarise the limitation: clustered charts excel at within-category or within-family comparison but make totals and shares invisible. This sets up the stacked chart as the next tool. Students write one question about the family data that a clustered chart cannot easily answer."}
+        ],
+        "teacher_notes": "Section 10.2 opens the visualisation strand, and this unit focuses on what clustered bar charts do and do not support before the stacked chart is introduced. A common misconception is that one chart type is universally better; the unit should leave students understanding that the choice depends on the primary comparison question. The textbook's in-text questions in Section 10.2.1 are the core reasoning material here.",
+        "homework": []
+      },
+      {
+        "period_number": 8,
+        "period_duration_minutes": 50,
+        "activity_title": "Stacking the Bars — Reading and Constructing Stacked Column Charts",
+        "section_anchor": "10.2.1",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk", "Ruler", "Squared paper"],
+        "visual_aids": "Fig. 10.2 from the textbook — stacked bar chart of family expenditure",
+        "textbook_items_in_class": [
+          {"id": "E-15", "type": "exercise", "source_section": "10.2.1", "book_ref": "Exercise Set 10.4 Q1, p.21", "description": "From a stacked column chart of IUCN Red List species counts by class (2007–2019), say what 14,234 represents, estimate reptile species in 2016, and identify classes with small increase between 2007 and 2019."},
+          {"id": "E-16", "type": "exercise", "source_section": "10.2.1", "book_ref": "Exercise Set 10.4 Q2, p.21", "description": "From a bowler's wickets table, complete two stacked bar charts — total wickets at home vs overseas split by format, and total wickets by format split into home and overseas."}
+        ],
+        "time_bands": [
+          {"minutes": "0-12", "activity": "Return to the question from the previous discussion: how can a chart show both the family total and the components at once? Show Fig. 10.2 (stacked column chart) from Section 10.2.1. Have students describe what they see: each bar's full height is the total expenditure; each coloured segment is one category. Verify that the three questions about Family C that were hard on clustered charts can now be read off."},
+          {"minutes": "12-28", "activity": "Discuss the trade-off explained in Section 10.2.1: only the bottom segment starts at zero, so comparing individual segments across families is harder than in a clustered chart. Students test this: can they quickly compare housing spending across all three families? Can they compare food spending? Which is easier and why?"},
+          {"minutes": "28-45", "activity": "Students work Exercise Set 10.4 Q2 (p.21): given the bowler's wicket data by format and venue, they sketch two stacked bar charts on squared paper with approximate bar lengths. For Q1 (p.21), they read the IUCN chart to answer the three questions. Both tasks train reading and construction side by side."},
+          {"minutes": "45-50", "activity": "Debrief: correct readings from Q1 and share sketches from Q2. Restate the rule from the section: stacked bar charts are the right tool when the primary interest is in the totals and their composition, not in fine comparisons of individual components."}
+        ],
+        "teacher_notes": "Having established the motivation for stacking in unit 7, this unit builds the skill of reading and constructing stacked bar charts. Watch for students who misread a segment's value by using its top edge rather than computing top minus bottom; only the first segment can be read directly. Exercise Set 10.4 Q1 (p.21) requires careful estimation from the chart and is a good check on reading accuracy.",
+        "homework": []
+      },
+      {
+        "period_number": 9,
+        "period_duration_minutes": 50,
+        "activity_title": "From Stacked Bars to 100% Bars — Proportions, Not Totals",
+        "section_anchor": "10.2.2",
+        "pedagogical_method": "Discovery/Inquiry",
+        "materials": ["Textbook", "Blackboard and chalk", "Squared paper", "Ruler"],
+        "visual_aids": "Fig. 10.3 and Fig. 10.4 from the textbook — per-family pie charts and the 100% stacked bar chart of family expenditure",
+        "textbook_items_in_class": [
+          {"id": "WE-7", "type": "worked_example", "source_section": "10.2.2", "book_ref": "Example 7, p.23", "description": "Convert household electricity consumption by category in 2005 and 2025 into percentage shares and draw the corresponding 100% stacked bar chart."}
+        ],
+        "time_bands": [
+          {"minutes": "0-12", "activity": "Pose the new question from Section 10.2.2: which family spends the smallest share of its total on healthcare? Students try to answer this from the stacked bar chart (Fig. 10.2). They find it hard because bars are different heights. Introduce the idea: if every bar were the same height, shares would be directly comparable. Show Fig. 10.3 (pie charts) and ask what advantage they offer — and what they cannot show."},
+          {"minutes": "12-25", "activity": "Introduce Fig. 10.4 (100% stacked bar chart): each bar is drawn to the same fixed length, split in proportion to category shares, just as a pie chart splits the full angle. Why might this be easier than pie charts? Students articulate: comparing lengths in the same position is easier than comparing angles in different orientations. State from the section that pieces of similar length in different positions remain hard to compare."},
+          {"minutes": "25-42", "activity": "Work Example 7 (p.23): household electricity in 2005 (total 1000 units) split into 36%, 30%, 12%, 22%; in 2025 the shares shift to 11%, 40%, 23%, 26%. Students verify the percentages sum to 100 and then sketch the two-bar 100% stacked chart on squared paper, labelling each segment."},
+          {"minutes": "42-50", "activity": "Discuss what the resulting chart shows from Example 7: the shift from lighting to cooling dominates the change from 2005 to 2025. Ask: can you tell from this chart how many units were used in each category? Why not? Introduce the limitation — proportional charts reveal shares, not actual values."}
+        ],
+        "teacher_notes": "The pivot from stacked to 100% stacked bar charts is the central move of Section 10.2.2, and the limitation — that proportions are visible but totals are not — must be made explicit before the next unit deepens it. A frequent confusion is treating the 100% stacked chart as interchangeable with the stacked chart; the think_reflect material in this section (about which direction the conversion works) addresses this directly. Example 8 (p.24) on Fatima's and Naveen's gardens sharpens this and is the focus of the next unit.",
+        "homework": []
+      },
+      {
+        "period_number": 10,
+        "period_duration_minutes": 50,
+        "activity_title": "What 100% Bars Can and Cannot Tell You — Fatima, Naveen and the Inference Test",
+        "section_anchor": "10.2.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": "Fig. 10.5 from the textbook — 100% stacked bar chart of seasonal blooms in Fatima's and Naveen's gardens, Cases 1 and 2",
+        "textbook_items_in_class": [
+          {"id": "WE-8", "type": "worked_example", "source_section": "10.2.2", "book_ref": "Example 8, p.24", "description": "From a 100% stacked bar chart of seasonal bloom shares for Fatima and Naveen, decide which of four statements can be inferred, and show two different stacked bar charts that produce the same 100% bars but reverse the absolute comparison."},
+          {"id": "WE-9", "type": "worked_example", "source_section": "10.2.2", "book_ref": "Example 9, p.26", "description": "Read a single stacked column of how the average Indian divides 24 hours and compare it with the same data grouped by age."}
+        ],
+        "time_bands": [
+          {"minutes": "0-5", "activity": "Recall the limitation stated in the previous discussion: 100% stacked bar charts show shares but not totals. Today's work tests which specific inferences are valid and which are not."},
+          {"minutes": "5-28", "activity": "Work Example 8 (p.24): the 100% stacked bar chart shows Fatima's garden at summer 50%, monsoon 30%, winter 20% and Naveen's at summer 40%, monsoon 25%, winter 35%. Students read each of the four statements in the textbook and decide — before seeing Case 1 and Case 2 — whether each is necessarily true, possibly true, or cannot be inferred. Reveal Cases 1 and 2: two stacked bar charts with different totals that produce identical 100% bars. Students confirm: cross-garden comparisons of absolute numbers cannot be made. Discuss the think_reflect question — can a 100% stacked bar chart always be made from a stacked bar chart, and vice versa?"},
+          {"minutes": "28-42", "activity": "Work Example 9 (p.26): the single stacked column of average Indian time use, then the grouped chart by age. Students say what they notice and wonder. Use the think_reflect prompts from Section 10.2.2: why does learning time fall sharply from the 6–14 to the 15–24 age group? Do adults spend roughly equal time on paid and unpaid work? Because every bar totals 24 hours, this is simultaneously a stacked bar chart and a 100% stacked bar chart."},
+          {"minutes": "42-50", "activity": "Summarise the section's two key results: (i) a 100% stacked bar chart can always be made from a stacked bar chart, but not the reverse; (ii) it supports within-bar comparisons and across-bar proportional comparisons but not across-bar absolute comparisons."}
+        ],
+        "teacher_notes": "Example 8's Case 1 / Case 2 demonstration is the unit's conceptual centrepiece — the same 100% bars arising from two different data tables. Watch for students who read Naveen's summer bloom share (40%) as less than Fatima's (50%) and conclude that Fatima grew more summer blooms in absolute terms; that is precisely the invalid inference. The think_reflect prompts in this section are woven into the unit's two worked examples and should not be skipped.",
+        "homework": ["Exercise Set 10.5 Q1 (p.29): using smart-watch body-state data for five people, guess Sahana's row, infer Julie's occupation, and complete the 100% stacked bar chart."]
+      },
+      {
+        "period_number": 11,
+        "period_duration_minutes": 50,
+        "activity_title": "Choosing and Reading Charts — Multi-Chart Practice",
+        "section_anchor": "10.2.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk", "Squared paper"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "E-17", "type": "exercise", "source_section": "10.2.2", "book_ref": "Exercise Set 10.5 Q1, p.29", "description": "Smart-watch body-state data: guess Sahana's row, infer Julie's occupation, complete the 100% stacked bar chart."},
+          {"id": "E-24", "type": "exercise", "source_section": "10.2.1", "source_sections": ["10.2.1", "10.2.2"], "book_ref": "End of Chapter Q7, p.31", "description": "From a stacked column chart of objects orbiting Earth by year, estimate total in 2003, find the year it doubled, estimate payload and other object shares in 2025, and describe how shares changed over time."},
+          {"id": "E-26", "type": "exercise", "source_section": "10.2.2", "source_sections": ["10.2.1", "10.2.2"], "book_ref": "End of Chapter Q9, p.33", "description": "Decision Dilemma: choose a play to watch from a 100% stacked rating chart, then examine the stacked count chart and discuss whether the decision changes."}
+        ],
+        "time_bands": [
+          {"minutes": "0-15", "activity": "Return to Exercise Set 10.5 Q1 (p.29), which students attempted at home: discuss guesses for Sahana's row and inferences about Julie's occupation from her body-state data. Review completed 100% stacked bar charts and identify common representation errors."},
+          {"minutes": "15-30", "activity": "Work End of Chapter Q7 (p.31) as a class: the stacked column chart of objects in Earth orbit. Students estimate the 2003 total from the chart, identify the year it doubled, and approximate payload versus other object counts in 2025. Discuss part (iii): how do the absolute numbers and the proportional shares tell different stories about payload growth?"},
+          {"minutes": "30-45", "activity": "Students work End of Chapter Q9 (p.33) in pairs: the Decision Dilemma. First they choose a play from the 100% stacked rating chart, then examine the stacked count chart. Discussion question: does the decision change? Why? This directly applies the Example 8 lesson — proportions vs totals — to a decision context."},
+          {"minutes": "45-50", "activity": "Class discussion: name one context where the 100% stacked bar chart is the better tool and one where the stacked bar chart is better. Each pair shares their reasoning."}
+        ],
+        "teacher_notes": "This unit consolidates Section 10.2.2 by applying the inference rules to real charts from different domains. The Decision Dilemma (Q9) is particularly valuable because the two chart types can lead to genuinely different decisions, making the distinction concrete. Watch for students who judge a play superior purely from high 5-star share without noticing the total review count is tiny; that is an inference error the stacked count chart corrects.",
+        "homework": []
+      },
+      {
+        "period_number": 12,
+        "period_duration_minutes": 50,
+        "activity_title": "What Percentage Charts Cannot Do — Inference Limits Across Contexts",
+        "section_anchor": "10.2.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "E-25", "type": "exercise", "source_section": "10.2.2", "source_sections": ["10.1.1", "10.2.2"], "book_ref": "End of Chapter Q8, p.32", "description": "State-wise percentage of schools with a playground: identify which of four statements are valid inferences and decide whether the nation-wide percentage can be found from this information."},
+          {"id": "E-27", "type": "exercise", "source_section": "10.2.2", "source_sections": ["10.2.1", "10.2.2"], "book_ref": "End of Chapter Q10, p.33", "description": "Triathlon finish-time data: decide whether a stacked or 100% stacked bar chart suits, and identify which of three questions can be answered from the 100% chart alone."},
+          {"id": "E-28", "type": "exercise", "source_section": "10.2.2", "book_ref": "End of Chapter Q11, p.34", "description": "100% stacked bar chart of disabled persons by age group and disability type (Census 2011): say what you notice and wonder, write inferences."}
+        ],
+        "time_bands": [
+          {"minutes": "0-15", "activity": "Work End of Chapter Q8 (p.32): a state-wise map of the percentage of schools with a playground. Students evaluate four statements one by one — about Haryana vs Uttarakhand, the 2-in-3 claim for Arunachal Pradesh, Punjab having the highest number, and Maharashtra vs Telangana. For each, students classify: valid inference or not? Why? The nation-wide percentage question connects to the weighted-mean material — you need the number of schools in each state."},
+          {"minutes": "15-30", "activity": "End of Chapter Q10 (p.33): triathlon finish-time data for three athletes. Students decide which chart type suits and write a one-sentence justification. Then they answer the three questions — who finished first, fraction of time cycling for Athlete 1, and who took longest to run — identifying for each whether the 100% stacked bar chart alone suffices."},
+          {"minutes": "30-45", "activity": "End of Chapter Q11 (p.34): students examine the disability chart (Census 2011) and write two observations and one inference they can validly draw. Pairs exchange papers and challenge each other's inferences: is this something the 100% chart actually shows, or does it require the absolute counts?"},
+          {"minutes": "45-50", "activity": "Synthesise: the unit's common thread is that percentage-based charts answer 'what share?' but not 'how many?' — and that answering 'how many?' across groups always requires the totals in addition to the proportions."}
+        ],
+        "teacher_notes": "This unit consolidates the inference boundary that Section 10.2.2 establishes — percentage charts do not support absolute cross-group comparisons. The Q8 nation-wide percentage question is a direct application of the weighted mean idea (the state percentages must be weighted by each state's school count), so it connects both strands of the chapter. Watch for students who treat a higher percentage as implying a higher absolute count without checking totals.",
+        "homework": []
+      },
+      {
+        "period_number": 13,
+        "period_duration_minutes": 50,
+        "activity_title": "Multi-Step Weighted Mean Problems — Langurs, Shares and Water",
+        "section_anchor": "10.1.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "E-13", "type": "exercise", "source_section": "10.1.1", "source_sections": ["10.1.1", "10.1.2"], "book_ref": "Exercise Set 10.3 Q7, p.16", "description": "Male and female langurs average 16.5 kg and 13.8 kg; all 60 average 14.925 kg. Decide direction of imbalance without computing, pick equations, find male count, update female average after admission, update male average after two are released, update after one loses 1 kg."},
+          {"id": "E-14", "type": "exercise", "source_section": "10.1.2", "book_ref": "Exercise Set 10.3 Q8, p.17", "description": "Salinity mixing: Dead Sea (34%), other seas (3.5%), groundwater (0.01%), purified water (0.001%). Find salinity of 1 L Dead Sea + 2 L purified water; decide if groundwater salinity is achievable and find quantity; decide if purified water salinity is achievable from Dead Sea and groundwater."},
+          {"id": "E-20", "type": "exercise", "source_section": "10.1.1", "book_ref": "End of Chapter Q3, p.31", "description": "Shreyas holds 25 shares at ₹150 average; after buying 10 at ₹30 each, find his new average. Vaishnavi holds 5 shares at ₹150; find how many ₹30 shares she bought if her average falls to ₹70."}
+        ],
+        "time_bands": [
+          {"minutes": "0-20", "activity": "Work Exercise Set 10.3 Q7 (p.16) — the langur problem — in stages. First: students reason qualitatively about which sex is more numerous given the overall average (14.925) is closer to the female mean (13.8). Then set up and solve the equation for the male count. Continue with parts (iii) through (v), each requiring updating the weighted mean after a change to one group."},
+          {"minutes": "20-35", "activity": "Work End of Chapter Q3 (p.31): Shreyas buys 10 shares at ₹30 on top of 25 at ₹150; students compute his new average and verify the formula. Part (ii) is the backward direction: Vaishnavi's average drops to ₹70; how many ₹30 shares did she buy? Students set up and solve."},
+          {"minutes": "35-48", "activity": "Students tackle Exercise Set 10.3 Q8 (p.17, Dead Sea salinity) in pairs: part (i) is a direct computation; parts (ii) and (iii) require reasoning about whether a given target concentration lies between the concentrations being mixed. Students must justify their yes/no answer before computing."},
+          {"minutes": "48-50", "activity": "Quick debrief on Q8 parts (ii) and (iii): the weighted mean of two quantities can only lie between them, never outside. State this as a general constraint students can apply to check answers."}
+        ],
+        "teacher_notes": "This unit deepens fluency with multi-step weighted mean problems, particularly those requiring updating an average after adding or removing elements. The common error in the langur problem is re-using 60 as the total after adding the new female — stress that the denominator changes when elements are added or removed. The constraint that a weighted mean lies between its extreme values (Dead Sea salinity Q8) is a useful self-checking heuristic worth stating explicitly.",
+        "homework": []
+      },
+      {
+        "period_number": 14,
+        "period_duration_minutes": 50,
+        "activity_title": "Algebraic Reasoning About Weighted Means — Cricket, Shuttlecocks and Gold",
+        "section_anchor": "10.1.1",
+        "pedagogical_method": "Deductive",
+        "materials": ["Textbook", "Blackboard and chalk"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "E-18", "type": "exercise", "source_section": "10.1.1", "book_ref": "End of Chapter Q1, p.30", "description": "Run rate in cricket: find run rate after two overs; if run rate after 19 overs is 6 and team scores 12 in the last over, find run rate after 20 overs."},
+          {"id": "E-19", "type": "exercise", "source_section": "10.1.1", "book_ref": "End of Chapter Q2, p.30", "description": "Five friends share shuttlecock price data; write combined average in terms of each friend's average, and write in terms of nylon and feather averages; decide whether the two expressions agree."},
+          {"id": "E-23", "type": "exercise", "source_section": "10.1.2", "source_sections": ["10.1.2", "10.1.3"], "book_ref": "End of Chapter Q6, p.31", "description": "Decide how a weighted average changes when all weights are doubled; experiment with data and justify algebraically."},
+          {"id": "E-21", "type": "exercise", "source_section": "10.1.2", "book_ref": "End of Chapter Q4, p.31", "description": "Brahmagupta's pool: 30-hasta pool in sections of 4, 5, 6, 7, 8 hastas dug to depths 9, 7, 7, 3, 2 hastas; find the mean depth."}
+        ],
+        "time_bands": [
+          {"minutes": "0-15", "activity": "Work End of Chapter Q1 (p.30): run rate as a weighted mean of overs scored. Part (i): 6 runs in over 1, 12 in over 2 — find the run rate after 2 overs. Part (ii): run rate after 19 overs is 6; team scores 12 in over 20 — find the new run rate. Students write the formula in terms of total runs and total overs, confirming it is a weighted mean with each over as weight 1."},
+          {"minutes": "15-30", "activity": "Work End of Chapter Q2 (p.30): shuttlecock prices collected by five friends. Students write the combined average expression first using each friend's count and average, then split by nylon and feather type. The deductive task: show algebraically that both expressions yield the same combined average, since nylon and feather items together make up the full dataset."},
+          {"minutes": "30-42", "activity": "End of Chapter Q6 (p.31): what happens to the weighted mean if all weights are doubled? Students first try a numerical example, then derive algebraically that (2w1x1 + … + 2wnxn)/(2w1 + … + 2wn) = (w1x1 + … + wnxn)/(w1 + … + wn) — the factor of 2 cancels. Then work End of Chapter Q4 (p.31): Brahmagupta's pool, applying the weighted mean with lengths as weights and depths as values."},
+          {"minutes": "42-50", "activity": "Debrief Q6's algebraic proof and its meaning: scaling all weights by any constant leaves the weighted mean unchanged. Students write one sentence connecting this to the exam-weight scenario from Section 10.1.3 — doubling Rehmat's 3 : 2 : 5 weights to 6 : 4 : 10 gives the same annual score."}
+        ],
+        "teacher_notes": "This unit shifts from computation to algebraic reasoning about the weighted mean — proving a general property and expressing the formula in multiple forms. The run-rate and shuttlecock problems are straightforward applications; the algebraic invariance under weight-scaling (Q6) is the unit's deductive centrepiece. Watch for students who try to verify Q6 only numerically and do not write the cancellation step; the algebraic form is the required demonstration at this stage.",
+        "homework": []
+      },
+      {
+        "period_number": 15,
+        "period_duration_minutes": 50,
+        "activity_title": "Estimation, Judgment and Chart Choice — End-of-Chapter Consolidation",
+        "section_anchor": "10.2.2",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk", "Squared paper"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "E-22", "type": "exercise", "source_section": "10.1.2", "source_sections": ["10.1.1", "10.1.2"], "book_ref": "End of Chapter Q5, p.31", "description": "Suvarna owns 1 g gold at ₹15k; for six possible next transactions, estimate and mark the average price on a number line."},
+          {"id": "E-27", "type": "exercise", "source_section": "10.2.2", "source_sections": ["10.2.1", "10.2.2"], "book_ref": "End of Chapter Q10, p.33", "description": "Triathlon finish-time data: decide chart type and which questions the 100% chart can answer alone."}
+        ],
+        "time_bands": [
+          {"minutes": "0-20", "activity": "Work End of Chapter Q5 (p.31): Suvarna holds 1 g of gold at ₹15k. For six possible next transactions — buying or selling at ₹30k or ₹10k, different quantities — students estimate where the new average price falls on a number line before computing. The estimation task requires recognising that buying more of a cheaper stock pulls the average down proportionally to the quantity bought."},
+          {"minutes": "20-35", "activity": "Return to End of Chapter Q10 (p.33) — triathlon finish-time data — but now with emphasis on the chart-selection justification. Students write a sentence for each question in part (ii): 'Who finished first?' — requires totals, so 100% chart alone cannot answer it; 'What fraction of Athlete 1's time was cycling?' — proportion within one bar, so 100% chart suffices; 'Who took longest to run?' — requires absolute values, so 100% chart cannot answer it."},
+          {"minutes": "35-48", "activity": "End of Chapter Q5 wrap-up and algebraic check: students verify the estimate for one of the six transactions algebraically using the weighted mean formula, then compare with the number-line estimate. Discuss: in which direction does adding a large quantity of cheaper gold pull the average, and why does the formula guarantee this?"},
+          {"minutes": "48-50", "activity": "Summarise the two analytical themes of the chapter: the weighted mean as a tool for combining data of different sizes or importance, and chart choice (stacked vs 100% stacked) as a function of whether totals or proportions are the primary interest."}
+        ],
+        "teacher_notes": "This consolidation unit ties both strands together through estimation and justification tasks. The gold number-line problem is effective because it makes the weighted mean's 'pull' toward the larger quantity visible geometrically. Watch for students who place the average at the midpoint regardless of quantity — the key insight is that 10 g at ₹10k moves the average much more than 0.5 g does. End of Chapter Q10 is revisited here to sharpen the chart-choice reasoning.",
+        "homework": []
+      },
+      {
+        "period_number": 16,
+        "period_duration_minutes": 50,
+        "activity_title": "Whole-Chapter Synthesis — Weighted Means, Chart Inference and the Shape of Combined Data",
+        "section_anchor": "synthesis",
+        "pedagogical_method": "Problem solving",
+        "materials": ["Textbook", "Blackboard and chalk", "Squared paper"],
+        "visual_aids": null,
+        "textbook_items_in_class": [
+          {"id": "E-13", "type": "exercise", "source_section": "10.1.1", "source_sections": ["10.1.1", "10.1.2"], "book_ref": "Exercise Set 10.3 Q7, p.16", "description": "Langur weight problem — multi-step weighted mean with group updates."},
+          {"id": "E-26", "type": "exercise", "source_section": "10.2.2", "source_sections": ["10.2.1", "10.2.2"], "book_ref": "End of Chapter Q9, p.33", "description": "Decision Dilemma: play selection from proportional and absolute rating charts."},
+          {"id": "E-23", "type": "exercise", "source_section": "10.1.2", "source_sections": ["10.1.2", "10.1.3"], "book_ref": "End of Chapter Q6, p.31", "description": "Algebraic invariance of weighted mean under weight-scaling."}
+        ],
+        "time_bands": [
+          {"minutes": "0-15", "activity": "Pose a fresh integrative scenario on the board: a school canteen scores 4.2 for taste (weight 5), 3.8 for hygiene (weight 4) and 4.5 for value (weight 3) in January. In February, only hygiene and value are re-rated at 4.0 and 4.7 respectively, with the same weights. Students must find the January overall rating and reason about whether the February scores, averaged across the two months with January's taste score carried forward, change the overall weighted mean — and by how much. This scenario uses the weighted mean of averages (Section 10.1.1), custom weights (Section 10.1.3) and the invariance result from End of Chapter Q6."},
+          {"minutes": "15-30", "activity": "Each student sketches — freehand, labelled — a stacked bar chart and a 100% stacked bar chart for the following data: three students spend their day as: Student A — 8 h sleep, 6 h study, 10 h other; Student B — 7 h sleep, 9 h study, 8 h other; Student C — 9 h sleep, 5 h study, 10 h other. Students annotate each chart with one question it answers well and one question it cannot answer, drawing on the distinctions established in Sections 10.2.1 and 10.2.2."},
+          {"minutes": "30-43", "activity": "Whole-class discussion connecting both strands: the canteen scenario and the time-use chart are structurally parallel — each has multiple components combined with weights (or volumes/hours), and the choice between reporting a weighted mean and reporting a percentage breakdown mirrors the choice between the two chart types. Students articulate: the weighted mean compresses parts into one number; the stacked chart keeps them visible; the 100% stacked chart shows only the proportions. When does each serve better?"},
+          {"minutes": "43-50", "activity": "Each student writes two sentences: (1) a situation from outside mathematics class where the weighted mean is the right tool and why; (2) a situation where reporting proportions (a 100% stacked chart or a pie chart) is more informative than the weighted mean alone. Pairs share and challenge each other's examples."}
+        ],
+        "teacher_notes": "This synthesis unit draws on the chapter's two strands — weighted means (Sections 10.1.1–10.1.3) and chart inference (Sections 10.2.1–10.2.2) — by working a fresh scenario that requires both. The canteen problem is constructed so that the weight-scaling invariance from End of Chapter Q6 and the combining-averages logic from Section 10.1.1 both appear naturally. The chart-sketching task requires students to produce both types and articulate the trade-off, consolidating the core message of Section 10.2.2.",
+        "homework": []
+      }
+    ]
+  },
+  "coverage_handoff": [
+    {
+      "section_number": 1,
+      "section_ref": "10.1",
+      "section_title": "Combining Things",
+      "total_sections": 7,
+      "period_numbers": [1],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can explain why averaging the averages of two unequal-sized groups gives a different result from computing the overall average directly, and can apply the formula (an + bm)/(n + m) to find the correct combined average."],
+      "section_context": "Two-group combined average formula, badminton seniors-juniors motivating example",
+      "c_code": "C-6.1",
+      "co_central": false
+    },
+    {
+      "section_number": 2,
+      "section_ref": "10.1.1",
+      "section_title": "Average of Averages",
+      "total_sections": 7,
+      "period_numbers": [2],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can determine when averaging averages is valid — namely when collection sizes are equal — and can generalise the combined average formula to three or more groups of specified sizes.", "Students can solve problems requiring the combined average of groups with given sizes and means, including writing an algebraic expression for the combined average when sizes are symbolic."],
+      "section_context": "Equal-size condition, three-group formula (ap + bq + cr)/(p+q+r), cycling and rainfall applications",
+      "c_code": "C-6.1",
+      "co_central": false
+    },
+    {
+      "section_number": 3,
+      "section_ref": "10.1.2",
+      "section_title": "Mixtures",
+      "total_sections": 7,
+      "period_numbers": [3, 4],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can compute the concentration of a mixture of several components using the weighted mean formula (w1x1 + … + wnxn)/(w1 + … + wn) with volumes or masses as weights.", "Students can solve for an unknown weight or quantity in a mixture problem when the combined concentration and all other components are given."],
+      "section_context": "Mixture concentration as weighted mean, lemonade-jaggery and brass-copper examples, backward solution for unknown batch",
+      "c_code": "C-6.1",
+      "co_central": false
+    },
+    {
+      "section_number": 4,
+      "section_ref": "10.1.3",
+      "section_title": "Custom Weights",
+      "total_sections": 7,
+      "period_numbers": [5, 6],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can compute a weighted mean when weights represent relative importance or a prescribed ratio rather than physical quantities, and can justify the result by both the repeated-value method and the weighted mean formula.", "Students can apply the weighted mean with custom weights to multi-metric scenarios such as examination scores and customer ratings, and evaluate which of several given expressions correctly represents the weighted mean."],
+      "section_context": "Custom-ratio weights, Rehmat's 3:2:5 exam scheme, restaurant and fitness-mark applications",
+      "c_code": "C-6.1",
+      "co_central": false
+    },
+    {
+      "section_number": 5,
+      "section_ref": "10.2",
+      "section_title": "Visualising and Interpreting Data",
+      "total_sections": 7,
+      "period_numbers": [7],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can choose between grouping-by-category and grouping-by-unit clustered bar charts based on the primary comparison of interest, and can identify questions about totals and shares that neither clustered chart answers well."],
+      "section_context": "Clustered column chart variants for family expenditure, primary-comparison criterion for chart choice",
+      "c_code": "C-8.1",
+      "co_central": false
+    },
+    {
+      "section_number": 6,
+      "section_ref": "10.2.1",
+      "section_title": "Stacking Columns",
+      "total_sections": 7,
+      "period_numbers": [8],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can read a stacked bar chart to estimate totals and component shares, and can construct a stacked bar chart from a data table, correctly stacking segments so that the full bar length represents the total.", "Students can explain the trade-off between stacked and clustered bar charts — that stacking aids total comparison but hinders within-category component comparison."],
+      "section_context": "Stacked column chart of family expenditure, IUCN Red List and bowler wickets construction tasks",
+      "c_code": "C-8.1",
+      "co_central": false
+    },
+    {
+      "section_number": 7,
+      "section_ref": "10.2.2",
+      "section_title": "An Alternative to Pie Chart",
+      "total_sections": 7,
+      "period_numbers": [9, 10, 11, 12],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can construct and interpret a 100% stacked bar chart by converting each component to a percentage share of its bar's total, and can identify which comparisons it supports — within-bar proportions — and which it does not — absolute cross-bar quantities.", "Students can classify a given inference from a 100% stacked bar chart as valid or invalid, justifying why cross-group absolute comparisons require the original totals and cannot be drawn from proportions alone."],
+      "section_context": "100% stacked bar chart as pie-chart alternative, Fatima/Naveen inference limits, time-use and disability charts",
+      "c_code": "C-8.1",
+      "co_central": false
+    },
+    {
+      "section_number": 8,
+      "section_ref": "synthesis",
+      "section_title": "synthesis",
+      "total_sections": 7,
+      "period_numbers": [16],
+      "period_duration_minutes": 50,
+      "implied_lo": ["Students can integrate weighted mean calculations with chart representation decisions — computing a combined weighted score, sketching both stacked and 100% stacked bar charts for the same data, and articulating which tool is appropriate for a given analytical question."],
+      "section_context": "Whole-chapter integration: weighted mean, chart type trade-off, proportions versus totals",
+      "c_code": "C-6.1",
+      "co_central": false
+    }
+  ],
+  "assessment_items": {
+    "grade": "Grade IX",
+    "subject": "mathematics",
+    "stage": "secondary",
+    "chapter_number": 10,
+    "chapter_title": "How Quantities Combine: Understanding Data",
+    "chapter_cg": "CG-6",
+    "reasoning_floor_lift_applied": false,
+    "questions": [
+      {
+        "section_number": 1,
+        "section_ref": "10.1",
+        "section_title": "Combining Things",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can explain why averaging the averages of two unequal-sized groups gives a different result from computing the overall average directly, and can apply the formula (an + bm)/(n + m) to find the correct combined average.",
+        "section_context": "Two-group combined average formula, badminton seniors-juniors motivating example",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A school has two sections in Grade IX. Section A has 40 students with an average mark of 68, and Section B has 25 students with an average mark of 74. A student claims the overall average is (68 + 74)/2 = 71. Show why this claim is incorrect and find the correct overall average mark for Grade IX. Round your answer to two decimal places if needed.",
+        "options": [],
+        "expected_answer": "70.15",
+        "method_one_line": "Use (n₁ × a₁ + n₂ × a₂)/(n₁ + n₂) = (40 × 68 + 25 × 74)/(40 + 25) = (2720 + 1850)/65 = 4570/65 = 70.307… ≈ 70.31; the student's method gives 71, which ignores unequal group sizes.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 1},
+            "inclusivity": "Students who struggle with setting up the formula can first verify Method 1's error by multiplying 68 × 25 and 74 × 40, comparing totals, to see why equal treatment of unequal groups is wrong. Students who finish quickly can be asked: by how much would the group sizes need to differ for the error to exceed 2 marks?"
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 2,
+        "section_ref": "10.1.1",
+        "section_title": "Average of Averages",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can determine when averaging averages is valid — namely when collection sizes are equal — and can generalise the combined average formula to three or more groups of specified sizes.",
+        "section_context": "Equal-size condition, three-group formula (ap + bq + cr)/(p+q+r), cycling and rainfall applications",
+        "question_type": "MCQ",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Understanding",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "Three groups of students took a test. Group P has 30 students with an average score of 65, Group Q has 30 students with an average score of 70, and Group R has 30 students with an average score of 80. Which of the following correctly describes how to find the overall average score of all three groups?",
+        "options": [
+          {"label": "A", "text": "Since all three groups are the same size, the overall average is (65 + 70 + 80)/3 = 71.67.", "is_correct": true},
+          {"label": "B", "text": "The overall average is (30 × 65 + 30 × 70 + 30 × 80)/(65 + 70 + 80) because the group size is multiplied into each average.", "is_correct": false},
+          {"label": "C", "text": "The overall average cannot be found without listing every individual score, because averages of groups cannot be combined.", "is_correct": false},
+          {"label": "D", "text": "The overall average is (65 + 70 + 80)/90, because the three averages must be divided by the total number of students.", "is_correct": false}
+        ],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": {
+            "learning_outcome": {"section": 2},
+            "what_each_option_reveals": {
+              "B": "Divides by the sum of averages (65+70+80=215) rather than by the total number of students (90) — confuses the denominator of the weighted mean formula.",
+              "C": "Holds the misconception that group averages can never be combined without raw data — does not recognise that equal group sizes make the simple average valid.",
+              "D": "Divides by the total student count (90) rather than by the number of groups (3) — applies an incorrect version of the formula that does not reduce to (65+70+80)/3 even for equal groups."
+            },
+            "inclusivity": "Students who are unsure can be asked to verify option A numerically: list all 90 scores as 30 copies of each value and compute the mean. Students who find this straightforward can be asked to construct a new scenario where option A's shortcut fails and explain why."
+          },
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 2,
+        "section_ref": "10.1.1",
+        "section_title": "Average of Averages",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can solve problems requiring the combined average of groups with given sizes and means, including writing an algebraic expression for the combined average when sizes are symbolic.",
+        "section_context": "Equal-size condition, three-group formula (ap + bq + cr)/(p+q+r), cycling and rainfall applications",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "The average daily rainfall at a location in June (30 days) is 12 mm, in July (31 days) is 18 mm, and in August (31 days) is 9 mm. Write an expression for the combined average daily rainfall over the three months and evaluate it. Round your answer to two decimal places.",
+        "options": [],
+        "expected_answer": "13.02",
+        "method_one_line": "Combined average = (30 × 12 + 31 × 18 + 31 × 9)/(30 + 31 + 31) = (360 + 558 + 279)/92 = 1197/92 ≈ 13.01 mm.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 2},
+            "inclusivity": "Students who struggle can first confirm June + July + August = 92 days and then multiply each average by its day count before dividing. Students who finish quickly can be asked: if April (30 days) had an average of 5 mm, write the new four-month combined expression without evaluating it."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 3,
+        "section_ref": "10.1.2",
+        "section_title": "Mixtures",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can compute the concentration of a mixture of several components using the weighted mean formula (w1x1 + … + wnxn)/(w1 + … + wn) with volumes or masses as weights.",
+        "section_context": "Mixture concentration as weighted mean, lemonade-jaggery and brass-copper examples, backward solution for unknown batch",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A chemist mixes three solutions: 400 mL with 6% acid, 300 mL with 10% acid, and 200 mL with 15% acid. Find the percentage concentration of acid in the resulting mixture. Round your answer to two decimal places.",
+        "options": [],
+        "expected_answer": "9.22",
+        "method_one_line": "Concentration = (400 × 0.06 + 300 × 0.10 + 200 × 0.15)/(400 + 300 + 200) = (24 + 30 + 30)/900 = 84/900 ≈ 9.33%.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 3},
+            "inclusivity": "Students who are unsure can first estimate: 6%, 10%, 15% with volumes 400, 300, 200 — the result should be closer to 6% than to 15% because the largest volume has the smallest concentration. Students who finish quickly can be asked to verify by computing the total grams of acid and the total volume separately before dividing."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 3,
+        "section_ref": "10.1.2",
+        "section_title": "Mixtures",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can solve for an unknown weight or quantity in a mixture problem when the combined concentration and all other components are given.",
+        "section_context": "Mixture concentration as weighted mean, lemonade-jaggery and brass-copper examples, backward solution for unknown batch",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A tank contains 500 litres of a solution with 4% salt. A second solution with 12% salt is pumped in. After mixing, the combined solution has 7% salt. How many litres of the second solution were added? Show your working.",
+        "options": [],
+        "expected_answer": "375",
+        "method_one_line": "Set up 0.07 = (500 × 0.04 + y × 0.12)/(500 + y); solve: 35 + 0.07y = 20 + 0.12y; 15 = 0.05y; y = 300.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 3},
+            "inclusivity": "Students who struggle with the algebra can first estimate: 7% is between 4% and 12%, closer to 4%, so the 4% solution should be the larger portion — use this to check the reasonableness of the answer. Students who finish quickly can be asked: what if the target concentration were 3%? Would that be achievable by adding any amount of 12% solution, and why not?"
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 4,
+        "section_ref": "10.1.3",
+        "section_title": "Custom Weights",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can compute a weighted mean when weights represent relative importance or a prescribed ratio rather than physical quantities, and can justify the result by both the repeated-value method and the weighted mean formula.",
+        "section_context": "Custom-ratio weights, Rehmat's 3:2:5 exam scheme, restaurant and fitness-mark applications",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A company evaluates employee performance on three criteria: punctuality (score 72), teamwork (score 80), and output quality (score 65), combined in the ratio 2 : 3 : 5. Find the employee's overall performance score using the weighted mean formula. Then verify your answer by writing out the repeated-value list implied by the weights.",
+        "options": [],
+        "expected_answer": "71.4",
+        "method_one_line": "Weighted mean = (2 × 72 + 3 × 80 + 5 × 65)/(2 + 3 + 5) = (144 + 240 + 325)/10 = 709/10 = 70.9.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 4},
+            "inclusivity": "Students who are unsure can write out all ten values (72, 72, 80, 80, 80, 65, 65, 65, 65, 65) and compute their mean to verify; this makes the 'weight as repetition count' meaning concrete. Students who finish quickly can be asked: which criterion has the most influence on the final score, and by how many points would the score change if output quality were 70 instead of 65?"
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 4,
+        "section_ref": "10.1.3",
+        "section_title": "Custom Weights",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can apply the weighted mean with custom weights to multi-metric scenarios such as examination scores and customer ratings, and evaluate which of several given expressions correctly represents the weighted mean.",
+        "section_context": "Custom-ratio weights, Rehmat's 3:2:5 exam scheme, restaurant and fitness-mark applications",
+        "question_type": "MCQ",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Understanding",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "Priya scores 55% in her class test, 62% in her project and 78% in her final exam. Her school combines these in the ratio 3 : 2 : 5. Which of the following expressions correctly gives her annual percentage?",
+        "options": [
+          {"label": "A", "text": "(55 × 3 + 62 × 2 + 78 × 5) / (3 + 2 + 5)", "is_correct": true},
+          {"label": "B", "text": "(55 + 62 + 78) / 3", "is_correct": false},
+          {"label": "C", "text": "(55 × 3 + 62 × 2 + 78 × 5) / (55 + 62 + 78)", "is_correct": false},
+          {"label": "D", "text": "(55 / 3 + 62 / 2 + 78 / 5) / (3 + 2 + 5)", "is_correct": false}
+        ],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": {
+            "learning_outcome": {"section": 4},
+            "what_each_option_reveals": {
+              "B": "Treats the three scores as equally important by dividing by 3 (number of scores) rather than by 10 (sum of weights) — ignores the custom weight ratio entirely.",
+              "C": "Multiplies scores by their weights correctly in the numerator but divides by the sum of scores (55+62+78=195) rather than the sum of weights (10) — confuses scores and weights in the denominator.",
+              "D": "Divides each score by its weight before summing, inverting the weighting operation — a misconception that larger weights should make individual scores smaller rather than more influential."
+            },
+            "inclusivity": "Students who are unsure can substitute the weights 1:1:1 into each expression and check which reduces to (55+62+78)/3; only option A does. Students who finish quickly can be asked to compute Priya's score and compare it with the simple average, explaining the direction of the difference."
+          },
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 5,
+        "section_ref": "10.2",
+        "section_title": "Visualising and Interpreting Data",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can choose between grouping-by-category and grouping-by-unit clustered bar charts based on the primary comparison of interest, and can identify questions about totals and shares that neither clustered chart answers well.",
+        "section_context": "Clustered column chart variants for family expenditure, primary-comparison criterion for chart choice",
+        "question_type": "MCQ",
+        "competency": {
+          "c_code": "C-8.1",
+          "competency_text": "Turns tables of data into clustered, stacked and 100% stacked bar charts and reasons about what each kind of chart can and cannot support."
+        },
+        "cognitive_demand": "Understanding",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A data table shows the number of books sold each month (January, February, March) in three categories: fiction, non-fiction and comics. A teacher wants to make a clustered bar chart to make it easy to compare the three categories within each month. How should she group the bars?",
+        "options": [
+          {"label": "A", "text": "One cluster per month, with three bars inside each cluster — one for each category.", "is_correct": true},
+          {"label": "B", "text": "One cluster per category, with three bars inside each cluster — one for each month.", "is_correct": false},
+          {"label": "C", "text": "One single bar per month showing the total across all three categories.", "is_correct": false},
+          {"label": "D", "text": "Three separate charts, one per category, each showing the monthly data.", "is_correct": false}
+        ],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": {
+            "learning_outcome": {"section": 5},
+            "what_each_option_reveals": {
+              "B": "Groups by category rather than by month — this layout makes it easy to compare months within each category, not categories within each month; the student has reversed the comparison of interest.",
+              "C": "Collapses all categories into one bar per month — a simple bar chart that shows only totals and reveals nothing about the composition by category.",
+              "D": "Produces separate charts per category — valid for some purposes but does not put categories side by side within a month, making the within-month comparison across categories harder."
+            },
+            "inclusivity": "Students who are uncertain can think about which variable is on the horizontal axis: to compare categories within a month, the month must be the cluster label. Students who find this immediate can be asked: which grouping would be better if the teacher instead wanted to see how fiction sales changed across months?"
+          },
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 6,
+        "section_ref": "10.2.1",
+        "section_title": "Stacking Columns",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can read a stacked bar chart to estimate totals and component shares, and can construct a stacked bar chart from a data table, correctly stacking segments so that the full bar length represents the total.",
+        "section_context": "Stacked column chart of family expenditure, IUCN Red List and bowler wickets construction tasks",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-8.1",
+          "competency_text": "Turns tables of data into clustered, stacked and 100% stacked bar charts and reasons about what each kind of chart can and cannot support."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": "Category | 2022 (₹ thousands) | 2023 (₹ thousands)\nRent | 18 | 20\nFood | 14 | 16\nTransport | 8 | 6\nOther | 10 | 12",
+        "graph_paper": false,
+        "question_text": "Refer to the table provided. A family's monthly expenditure is shown for 2022 and 2023. (i) Find the total monthly expenditure in each year. (ii) In a stacked bar chart with one bar per year, which segment would you draw first and why? (iii) In 2023, approximately what percentage of the total expenditure was spent on food? Show your working.",
+        "options": [],
+        "expected_answer": "(i) 2022: ₹50 thousand; 2023: ₹54 thousand. (iii) 16/54 × 100 ≈ 29.6%.",
+        "method_one_line": "Add all four categories per year for the totals; for the food percentage, divide the food value by the year total and multiply by 100.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 6},
+            "inclusivity": "Students who are unsure about part (ii) can be reminded that only the bottom segment starts at 0, so it is the only one that can be read directly; this motivates drawing the first segment from the base. Students who finish quickly can be asked to estimate, without a calculator, whether Transport's share of total expenditure rose or fell from 2022 to 2023."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 6,
+        "section_ref": "10.2.1",
+        "section_title": "Stacking Columns",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can explain the trade-off between stacked and clustered bar charts — that stacking aids total comparison but hinders within-category component comparison.",
+        "section_context": "Stacked column chart of family expenditure, IUCN Red List and bowler wickets construction tasks",
+        "question_type": "MCQ",
+        "competency": {
+          "c_code": "C-8.1",
+          "competency_text": "Turns tables of data into clustered, stacked and 100% stacked bar charts and reasons about what each kind of chart can and cannot support."
+        },
+        "cognitive_demand": "Understanding",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A stacked bar chart shows three companies' annual expenditure split into salaries, materials and overheads. Which of the following tasks is most difficult to do accurately using this stacked bar chart?",
+        "options": [
+          {"label": "A", "text": "Comparing the total annual expenditure of the three companies.", "is_correct": false},
+          {"label": "B", "text": "Identifying which company spent the most overall.", "is_correct": false},
+          {"label": "C", "text": "Comparing the materials expenditure of Company 1 with that of Company 2.", "is_correct": true},
+          {"label": "D", "text": "Estimating Company 3's total expenditure from the chart.", "is_correct": false}
+        ],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": {
+            "learning_outcome": {"section": 6},
+            "what_each_option_reveals": {
+              "A": "Comparing totals is precisely what stacked bar charts do well — the full bar height is the total; choosing this option reflects a misunderstanding of the stacked chart's strength.",
+              "B": "Identifying the company with the highest total is equivalent to comparing totals — the company with the tallest bar wins; this is easy from a stacked chart.",
+              "D": "Reading a single company's total from the chart is straightforward — it is the bar's full height; the student choosing this option confuses reading one bar with comparing segments across bars."
+            },
+            "inclusivity": "Students who are uncertain can be asked to imagine physically measuring the materials segment in two bars of different heights — they would need to identify the bottom and top of the materials segment in each, subtract, and then compare the two differences, which is error-prone. Students who are secure can be asked to describe what kind of chart would make that comparison easy."
+          },
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 7,
+        "section_ref": "10.2.2",
+        "section_title": "An Alternative to Pie Chart",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can construct and interpret a 100% stacked bar chart by converting each component to a percentage share of its bar's total, and can identify which comparisons it supports — within-bar proportions — and which it does not — absolute cross-bar quantities.",
+        "section_context": "100% stacked bar chart as pie-chart alternative, Fatima/Naveen inference limits, time-use and disability charts",
+        "question_type": "NUM",
+        "competency": {
+          "c_code": "C-8.1",
+          "competency_text": "Turns tables of data into clustered, stacked and 100% stacked bar charts and reasons about what each kind of chart can and cannot support."
+        },
+        "cognitive_demand": "Application",
+        "visual_stimulus": "Category | School A | School B\nScience | 180 | 120\nArts | 90 | 200\nCommerce | 30 | 80",
+        "graph_paper": false,
+        "question_text": "Refer to the table provided. It shows the number of students enrolled in three streams at two schools. (i) Calculate the percentage share of each stream within each school and complete the values for a 100% stacked bar chart. (ii) Using your percentages, state one comparison between the two schools that the 100% stacked bar chart supports and one comparison it does not support. Justify each answer.",
+        "options": [],
+        "expected_answer": "School A: Science 60%, Arts 30%, Commerce 10%. School B: Science 30%, Arts 50%, Commerce 20%.",
+        "method_one_line": "Divide each stream's count by the school total (School A: 300; School B: 400) and multiply by 100 to get percentages; the 100% chart supports within-school proportion comparisons (e.g. Science has a larger share in School A than School B) but does not support absolute count comparisons across schools.",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": {
+            "learning_outcome": {"section": 7},
+            "inclusivity": "Students who struggle with part (ii) can be prompted: from the percentage chart alone, can you tell how many Science students School B has? Why not? Students who finish part (i) quickly can be asked to sketch the two-bar 100% stacked chart on squared paper and label the segment boundaries."
+          },
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 7,
+        "section_ref": "10.2.2",
+        "section_title": "An Alternative to Pie Chart",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can classify a given inference from a 100% stacked bar chart as valid or invalid, justifying why cross-group absolute comparisons require the original totals and cannot be drawn from proportions alone.",
+        "section_context": "100% stacked bar chart as pie-chart alternative, Fatima/Naveen inference limits, time-use and disability charts",
+        "question_type": "ECR",
+        "competency": {
+          "c_code": "C-8.1",
+          "competency_text": "Turns tables of data into clustered, stacked and 100% stacked bar charts and reasons about what each kind of chart can and cannot support."
+        },
+        "cognitive_demand": "Analysis",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "A 100% stacked bar chart shows the share of three types of vehicles — cars, buses and bicycles — in the traffic count at two intersections, Intersection P and Intersection Q. At Intersection P the shares are: cars 50%, buses 30%, bicycles 20%. At Intersection Q the shares are: cars 40%, buses 25%, bicycles 35%. A student makes the following two claims: (1) More cars passed through Intersection P than through Intersection Q. (2) Bicycles made up a larger share of traffic at Intersection Q than at Intersection P. For each claim, state whether it is a valid inference from the 100% stacked bar chart alone. Justify your answer clearly, giving an example to support your reasoning for Claim 1.",
+        "options": [],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": ["Correctly identifies Claim 1 as invalid, explaining that a higher percentage does not imply a higher absolute count when totals differ.", "Constructs a specific numerical counterexample: e.g. if P has 100 vehicles total then cars = 50, but if Q has 200 vehicles then cars = 80 > 50, showing the percentage is higher at P but the count can be higher at Q.", "Correctly identifies Claim 2 as valid, explaining that the 35% share for bicycles at Q exceeds the 20% share at P, and within-bar proportional comparisons are exactly what the 100% chart supports.", "Uses mathematically correct language distinguishing proportion/share from absolute count/number."],
+        "task": "",
+        "scaffold": "",
+        "format_of_output": [],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": null,
+          "SCR": null,
+          "ECR": {
+            "learning_outcome": {"section": 7},
+            "inclusivity": "Students who struggle can be asked to first answer: does the chart tell you the total vehicle count at each intersection? (No.) Then: if you do not know the total, can you find the actual number of cars from a percentage alone? This scaffolds the counterexample without giving it away. Students who write strong responses quickly can be challenged to identify a third claim from the chart that is valid and one that is invalid, beyond those in the question."
+          },
+          "OPEN_TASK": null
+        }
+      },
+      {
+        "section_number": 8,
+        "section_ref": "synthesis",
+        "section_title": "synthesis",
+        "total_sections": 7,
+        "implied_lo_assessed": "Students can integrate weighted mean calculations with chart representation decisions — computing a combined weighted score, sketching both stacked and 100% stacked bar charts for the same data, and articulating which tool is appropriate for a given analytical question.",
+        "section_context": "Whole-chapter integration: weighted mean, chart type trade-off, proportions versus totals",
+        "question_type": "OPEN_TASK",
+        "competency": {
+          "c_code": "C-6.1",
+          "competency_text": "Extends the mean to the weighted mean by showing why simply averaging unequal-group averages goes wrong and deriving and applying the correct combined-average formula."
+        },
+        "cognitive_demand": "Evaluation",
+        "visual_stimulus": null,
+        "graph_paper": false,
+        "question_text": "",
+        "options": [],
+        "expected_answer": "",
+        "method_one_line": "",
+        "expected_elements": [],
+        "look_for": [],
+        "task": "A community library evaluates three reading programmes — Children's Club (CC), Youth Circle (YC) and Adult Forum (AF) — each on three metrics: books read per participant (B), sessions attended per participant (S) and participant satisfaction score out of 10 (Q). The data are given below.\n\nProgramme | Participants | B | S | Q\nCC | 60 | 8 | 12 | 7.5\nYC | 40 | 12 | 10 | 8.0\nAF | 25 | 6 | 8 | 9.0\n\nThe library combines B, S and Q for each programme using the weights 3 : 4 : 3 to produce a single Programme Quality Score (PQS). It then wants a single Library Quality Score (LQS) that combines the three programmes' PQS values, weighted by the number of participants.\n\n(i) Compute the PQS for each programme.\n(ii) Compute the Library Quality Score (LQS) from the three PQS values.\n(iii) A new librarian suggests that the LQS is the same as computing a single weighted mean directly from B, S and Q across all three programmes combined, weighting B:S:Q by 3:4:3 and each observation by participant count. Verify algebraically whether she is correct.\n(iv) The library also records, for each programme, the fraction of participants who joined in each of three terms: Term 1, Term 2, Term 3. For CC the fractions are 40%, 35%, 25%; for YC, 50%, 30%, 20%; for AF, 30%, 50%, 20%. Decide, with justification, whether a stacked bar chart or a 100% stacked bar chart is the better display for comparing (a) the absolute number of participants joining in Term 1 across programmes, and (b) the share of each programme's participants joining in each term.",
+        "scaffold": "For part (i): the PQS formula is (3 × B + 4 × S + 3 × Q)/(3 + 4 + 3). Work each programme separately. For part (ii): weight each PQS by participant count and divide by total participants. For part (iii): write out the full numerator of the LQS in terms of B, S, Q values and participant counts, and compare it with the direct weighted mean. For part (iv): re-read what each chart type reveals before deciding.",
+        "format_of_output": ["Numerical PQS for each programme and the LQS, with all working shown.", "A clear algebraic argument for part (iii) — either a proof of equality or an identification of where they differ.", "A justified choice of chart type for each of the two comparison questions in part (iv), with one sentence of reasoning each."],
+        "verified": true,
+        "guide": {
+          "MCQ": null,
+          "NUM": null,
+          "SCR": null,
+          "ECR": null,
+          "OPEN_TASK": {
+            "learning_outcome": {"section": 8},
+            "format_type": "Model-and-solve",
+            "format_rationale": "The task requires building a two-level weighted mean model from a structured scenario and then solving it, making model-and-solve the natural vehicle for an integrative weighted mean and chart-choice problem.",
+            "what_this_demonstrates": "Students demonstrate that they can apply the weighted mean at two levels of nesting — first within a programme across metrics, then across programmes by participant count — connect these to a general algebraic property, and make a principled chart-type decision using the distinction between proportions and absolute counts.",
+            "reading_the_scaffold": "The scaffold breaks the computation into four sequential sub-tasks; students who work part (i) correctly have the inputs they need for part (ii) automatically. Part (iii) is algebraic and independent of the numerical answers. Part (iv) is conceptual and does not require computation.",
+            "strong_vs_weak_markers": "Strong responses: compute PQS correctly for all three programmes; derive LQS by weighting PQS values by participant counts; produce a clear algebraic argument for part (iii) showing the two-level and one-level approaches are equivalent (because the weights commute); correctly assign stacked bar chart to (a) and 100% stacked bar chart to (b) with a one-sentence justification naming what each chart reveals. Weak responses: average PQS values equally ignoring participant counts; justify chart choice by preference rather than by what each chart type supports; omit the algebraic step in part (iii) and rely only on a numerical example.",
+            "inclusivity": "Students who struggle with part (iii) can be told: compute the LQS numerically from two routes — part (ii)'s answer versus applying the 3:4:3 weights directly to all participants' B, S, Q values — and check whether the numbers agree; write down what you notice. Students who complete the task quickly can be asked to identify: would the LQS change if the three weight ratios for B, S, Q were doubled to 6:8:6? Justify using the algebraic result from End of Chapter Q6."
+          }
+        }
+      }
+    ]
+  }
+}

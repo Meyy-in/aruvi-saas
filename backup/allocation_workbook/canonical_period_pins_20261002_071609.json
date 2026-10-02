@@ -1,0 +1,82 @@
+{
+  "_meta": {
+    "what": "Per-chapter overrides for canonical_periods, applied by genon/master_plan.py.",
+    "why": "A chapter whose library is ALREADY AUTHORED must not have its counts moved by a later change to the counts rule — the row would then disagree with the files on disk and certification's 'library complete' check would fail on a perfectly good library. The choice is regenerate (metered) or pin (free). Pinning is the default for an authored chapter; the rule applies to everything not yet built.",
+    "how": "key = '<subject>|<CLASS ROMAN>|<chapter>' -> {counts, reason, date}. master_plan.py reads this file AFTER computing counts and substitutes the pinned list. Nothing else reads it.",
+    "created": "2026-08-07",
+    "note": "This file survives master_plan.py regeneration; a hand-edit of master_plan.json does not (2026-08-07: an edit pinning science VIII ch 6 was wiped by the next regeneration within the hour). Remove a pin once its chapter is regenerated to the current rule."
+  },
+  "pins": {
+    "science|VIII|6": {
+      "counts": [
+        12,
+        10,
+        8,
+        7
+      ],
+      "reason": "S6 pilot chapter, authored 2026-08-07 at [12,10,8,7] for Rs 116.31 BEFORE the floor concession landed. The concession would move the lowest canonical 7 -> 6; regenerating p07 as p06 would cost ~Rs 26 and discard a good plan. Founder ruling 2026-08-07: keep it. The band [7,12] is still hole-free (7,8 identity - 9 = 8+synthesis - 10 identity - 11 = 10+synthesis - 12 identity), so nothing about the serve law is compromised; the chapter simply starts one period higher than its siblings. It also leaves a 7-unit and a 6-unit arc of comparable chapters to read side by side at the human gate.",
+      "date": "2026-08-07"
+    },
+    "english|IX|2": {
+      "counts": [
+        6,
+        5
+      ],
+      "reason": "S11 · english·IX floor raise, founder ruling 2026-08-14. These six are the SHORT chapters — the companion poem/prose of each textbook unit — and their floor canonical is where english·secondary's six-spine obligation stops fitting. The 0.6 ratio floor is content-proportional, but the spine obligation is not: every section carries exactly ONE Writing Task whatever its size (15 of 16 chapters), so at 4-5 sittings a fixed-cost spine is competing with reading for room. Raising each floor by exactly one period buys that room without touching the effort index, which allocates periods to CHAPTERS and never sees how a chapter spends them.\n\nSEPARATE FROM, AND LANDED WITH, ARV-D-157: these six compacts were ALSO briefed against an incomplete section registry (writing and beyond_text were taught only in the standard's synthesis unit, which `section_registry` skips), so the brief forbade the very spine that went missing. That is fixed at source in serve.authored_registry. The floor raise is the founder's additional margin, not the bug fix — both apply, and the regeneration carries both.\n\nCOST TO KEEP IN VIEW: the authored band now starts one period higher, so a teacher at the OLD floor falls below the lowest canonical and is served a truncation with declared drops. Truncation cuts from the end, which is where writing and beyond_text sit — so at that count the omission becomes visible and declared rather than silently authored. Read those serve sweeps at the human gate.",
+      "date": "2026-08-14"
+    },
+    "english|IX|4": {
+      "counts": [
+        7,
+        5
+      ],
+      "reason": "S11 · english·IX floor raise, founder ruling 2026-08-14. These six are the SHORT chapters — the companion poem/prose of each textbook unit — and their floor canonical is where english·secondary's six-spine obligation stops fitting. The 0.6 ratio floor is content-proportional, but the spine obligation is not: every section carries exactly ONE Writing Task whatever its size (15 of 16 chapters), so at 4-5 sittings a fixed-cost spine is competing with reading for room. Raising each floor by exactly one period buys that room without touching the effort index, which allocates periods to CHAPTERS and never sees how a chapter spends them.\n\nSEPARATE FROM, AND LANDED WITH, ARV-D-157: these six compacts were ALSO briefed against an incomplete section registry (writing and beyond_text were taught only in the standard's synthesis unit, which `section_registry` skips), so the brief forbade the very spine that went missing. That is fixed at source in serve.authored_registry. The floor raise is the founder's additional margin, not the bug fix — both apply, and the regeneration carries both.\n\nCOST TO KEEP IN VIEW: the authored band now starts one period higher, so a teacher at the OLD floor falls below the lowest canonical and is served a truncation with declared drops. Truncation cuts from the end, which is where writing and beyond_text sit — so at that count the omission becomes visible and declared rather than silently authored. Read those serve sweeps at the human gate.",
+      "date": "2026-08-14"
+    },
+    "english|IX|6": {
+      "counts": [
+        6,
+        5
+      ],
+      "reason": "S11 · english·IX floor raise, founder ruling 2026-08-14. These six are the SHORT chapters — the companion poem/prose of each textbook unit — and their floor canonical is where english·secondary's six-spine obligation stops fitting. The 0.6 ratio floor is content-proportional, but the spine obligation is not: every section carries exactly ONE Writing Task whatever its size (15 of 16 chapters), so at 4-5 sittings a fixed-cost spine is competing with reading for room. Raising each floor by exactly one period buys that room without touching the effort index, which allocates periods to CHAPTERS and never sees how a chapter spends them.\n\nSEPARATE FROM, AND LANDED WITH, ARV-D-157: these six compacts were ALSO briefed against an incomplete section registry (writing and beyond_text were taught only in the standard's synthesis unit, which `section_registry` skips), so the brief forbade the very spine that went missing. That is fixed at source in serve.authored_registry. The floor raise is the founder's additional margin, not the bug fix — both apply, and the regeneration carries both.\n\nCOST TO KEEP IN VIEW: the authored band now starts one period higher, so a teacher at the OLD floor falls below the lowest canonical and is served a truncation with declared drops. Truncation cuts from the end, which is where writing and beyond_text sit — so at that count the omission becomes visible and declared rather than silently authored. Read those serve sweeps at the human gate.",
+      "date": "2026-08-14"
+    },
+    "english|IX|8": {
+      "counts": [
+        7,
+        5
+      ],
+      "reason": "S11 · english·IX floor raise, founder ruling 2026-08-14. These six are the SHORT chapters — the companion poem/prose of each textbook unit — and their floor canonical is where english·secondary's six-spine obligation stops fitting. The 0.6 ratio floor is content-proportional, but the spine obligation is not: every section carries exactly ONE Writing Task whatever its size (15 of 16 chapters), so at 4-5 sittings a fixed-cost spine is competing with reading for room. Raising each floor by exactly one period buys that room without touching the effort index, which allocates periods to CHAPTERS and never sees how a chapter spends them.\n\nSEPARATE FROM, AND LANDED WITH, ARV-D-157: these six compacts were ALSO briefed against an incomplete section registry (writing and beyond_text were taught only in the standard's synthesis unit, which `section_registry` skips), so the brief forbade the very spine that went missing. That is fixed at source in serve.authored_registry. The floor raise is the founder's additional margin, not the bug fix — both apply, and the regeneration carries both.\n\nCOST TO KEEP IN VIEW: the authored band now starts one period higher, so a teacher at the OLD floor falls below the lowest canonical and is served a truncation with declared drops. Truncation cuts from the end, which is where writing and beyond_text sit — so at that count the omission becomes visible and declared rather than silently authored. Read those serve sweeps at the human gate.",
+      "date": "2026-08-14"
+    },
+    "english|IX|10": {
+      "counts": [
+        8,
+        6
+      ],
+      "reason": "S11 · english·IX floor raise, founder ruling 2026-08-14. These six are the SHORT chapters — the companion poem/prose of each textbook unit — and their floor canonical is where english·secondary's six-spine obligation stops fitting. The 0.6 ratio floor is content-proportional, but the spine obligation is not: every section carries exactly ONE Writing Task whatever its size (15 of 16 chapters), so at 4-5 sittings a fixed-cost spine is competing with reading for room. Raising each floor by exactly one period buys that room without touching the effort index, which allocates periods to CHAPTERS and never sees how a chapter spends them.\n\nSEPARATE FROM, AND LANDED WITH, ARV-D-157: these six compacts were ALSO briefed against an incomplete section registry (writing and beyond_text were taught only in the standard's synthesis unit, which `section_registry` skips), so the brief forbade the very spine that went missing. That is fixed at source in serve.authored_registry. The floor raise is the founder's additional margin, not the bug fix — both apply, and the regeneration carries both.\n\nCOST TO KEEP IN VIEW: the authored band now starts one period higher, so a teacher at the OLD floor falls below the lowest canonical and is served a truncation with declared drops. Truncation cuts from the end, which is where writing and beyond_text sit — so at that count the omission becomes visible and declared rather than silently authored. Read those serve sweeps at the human gate.",
+      "date": "2026-08-14"
+    },
+    "english|IX|12": {
+      "counts": [
+        5,
+        4
+      ],
+      "reason": "S11 · english·IX floor raise, founder ruling 2026-08-14. These six are the SHORT chapters — the companion poem/prose of each textbook unit — and their floor canonical is where english·secondary's six-spine obligation stops fitting. The 0.6 ratio floor is content-proportional, but the spine obligation is not: every section carries exactly ONE Writing Task whatever its size (15 of 16 chapters), so at 4-5 sittings a fixed-cost spine is competing with reading for room. Raising each floor by exactly one period buys that room without touching the effort index, which allocates periods to CHAPTERS and never sees how a chapter spends them.\n\nSEPARATE FROM, AND LANDED WITH, ARV-D-157: these six compacts were ALSO briefed against an incomplete section registry (writing and beyond_text were taught only in the standard's synthesis unit, which `section_registry` skips), so the brief forbade the very spine that went missing. That is fixed at source in serve.authored_registry. The floor raise is the founder's additional margin, not the bug fix — both apply, and the regeneration carries both.\n\nCOST TO KEEP IN VIEW: the authored band now starts one period higher, so a teacher at the OLD floor falls below the lowest canonical and is served a truncation with declared drops. Truncation cuts from the end, which is where writing and beyond_text sit — so at that count the omission becomes visible and declared rather than silently authored. Read those serve sweeps at the human gate.",
+      "date": "2026-08-14"
+    }
+  },
+  "_lifted": {
+    "mathematics|IX|4@20260809_094739": {
+      "counts": [
+        14,
+        11,
+        8
+      ],
+      "reason": "S4 pilot chapter, authored 2026-08-08 at [14,11,8] for Rs 106.52 and certified ALL PASS. Ch 3's regeneration re-weighted it (effort_index 15 -> 13), which reprices every sibling: ch 4 moves 14 -> 15 recommended periods and its counts would become [15,12,9], disagreeing with three good files on disk. Founder ruling 2026-08-09: pin, do not re-author. NOTE the pin holds canonical_periods only — recommended_periods reads 15 and canonical_minutes 750 against a 700-minute library. Lift this pin if ch 4 is ever re-authored.",
+      "date": "2026-08-09",
+      "lifted_on": "2026-08-09",
+      "lifted_because": "ch 4 is being re-authored at 15 periods against the corrected summary and LP v1.2, so the counts SHOULD move to [15,12,9]. The pin existed only to protect the superseded library."
+    }
+  }
+}
