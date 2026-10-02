@@ -1028,13 +1028,17 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
               <div className="dash-nudge-title">
                 {yearInfo.current_year} has begun — start your classes fresh?
               </div>
+              {/* WALK-A-161 (founder's wording, 2026-10-02): purpose first, then what the
+                  button does — it EMPTIES the class cards — then that her lessons stay. No
+                  "folders"/"archive": she finds the year by looking. */}
               <div className="dash-nudge-sub">
-                You are still tracking last year&rsquo;s chapters, so you can finish
-                anything you were part-way through. When you&rsquo;re ready for the new
-                batch, clear them and your section cards start empty. Your class list stays
-                as it is, and nothing is deleted — every{" "}
-                {(yearInfo.prior_years || []).slice(-1)[0] || "earlier"} lesson plan and
-                note stays in My Lessons under that year.
+                It is time to begin your classes all over again. When you have finished last
+                year&rsquo;s teaching, tap <strong>Start my classes fresh</strong> below.
+              </div>
+              <div className="dash-nudge-sub" style={{ marginTop: 6 }}>
+                This removes the lessons attached to your class cards, so each class begins
+                the new year empty. Your lessons themselves are not affected: every lesson you
+                have prepared stays available in My Lessons.
               </div>
             </div>
           </div>

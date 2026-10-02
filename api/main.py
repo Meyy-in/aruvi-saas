@@ -1941,6 +1941,9 @@ def get_academic_year(identity: tuple = Depends(_current_identity)) -> Dict[str,
         "cleanup_due": cleanup_due,
         # Retained for older clients; the year itself is no longer hers to trigger.
         "cutover_due": cleanup_due,
+        # WALK-A-163: when she started fresh in this year ("" = never). A device that did not
+        # press the button learns of it here and clears its own cached cards.
+        "fresh_started_at": (cur.fresh_started_at if cur else "") or "",
         "cutover_date": due_on.isoformat() if due_on else None,
         "today": _today().isoformat(),
         "simulated": bool(config.SIMULATED_TODAY),
@@ -1986,6 +1989,7 @@ def do_cutover(req: CutoverRequest,
         # the bindings: 9A's trail of chapters belongs to the children who sat through them.
         section_history_repo.clear_all(tenant_id, user_id, current_id)
         cur.cleanup_pending = False
+        cur.fresh_started_at = datetime.now(timezone.utc).isoformat()   # WALK-A-163
         academic_year_repo.open_year(tenant_id, user_id, cur)   # idempotent in-place update
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Could not start fresh: {str(e)}")

@@ -271,6 +271,10 @@ class AcademicYear:
     # to start fresh" — the one thing the teacher-side clean-up offer is waiting on.
     # Cleared when she confirms. (founder, 2026-08-26)
     cleanup_pending: bool = False
+    # WALK-A-163 (2026-10-02): ISO time she pressed "Start my classes fresh" for this year.
+    # Other devices compare it with the one they last saw and drop their cached section state
+    # and history when it moves — the server's empty year cannot delete a cached row on its own.
+    fresh_started_at: str = ""
 
 
 @runtime_checkable

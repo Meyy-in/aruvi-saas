@@ -9,6 +9,7 @@ import { cachedPlans } from "@aruvi/shared/plans";
 import { invalidatePlans, confirmListed } from "./lib/plans";
 import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
+import { noteFreshStart } from "./lib/year";
 import { signOutAuth } from "./lib/auth";
 import { onSessionRefused } from "./lib/shared-setup";
 import { clearTeacherCaches, forgetDevice } from "@aruvi/shared/signout";
@@ -1130,7 +1131,8 @@ export default function Home() {
     if (!ready || !user) { setYearInfo(null); return; }
     let live = true;
     const read = () => getJSON("/academic-year")
-      .then((y) => { if (live && y) setYearInfo(y); })
+      /* WALK-A-163: a fresh start pressed on ANOTHER device clears this browser's cached cards. */
+      .then((y) => { if (live && y) { noteFreshStart(y); setYearInfo(y); } })
       .catch(() => {});
     read();
     const onWake = () => { if (document.visibilityState !== "hidden") read(); };

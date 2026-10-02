@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T05:11:50",
+  "updated_at": "2026-10-02T08:48:45",
   "items": {
     "04.19": {
       "ios": {
@@ -5209,6 +5209,29 @@
         "comment": "027 (paid), subject with every class removed: subject stays; My Lessons lists it; Prepare offers only subjects with a class; Word + PDF export show '— · —' (Android: straight to the share sheet).",
         "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
       }
+    },
+    "01.30": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T08:44:23",
+        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. ✓ Start my classes fresh (pressed here): 'Ready for 2027-28.' result with counts + Got it (founder: wording perfect); 7A/7B stay, emptied; 2026-27 lessons + chapter note still in My Lessons; offer never returns.",
+        "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pending",
+        "by": "Kumar",
+        "at": "2026-10-02T08:42:55",
+        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. OWED: pressing Start my classes fresh.",
+        "build": "Expo Go (tunnel → Render)"
+      },
+      "and_emu": {
+        "status": "pending",
+        "by": "Kumar",
+        "at": "2026-10-02T08:42:55",
+        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. OWED: pressing Start my classes fresh.",
+        "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
+      }
     }
   },
   "gate": {
@@ -8538,6 +8561,67 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-10-02T04:49:07"
+    },
+    {
+      "id": "WALK-A-161",
+      "opened": "2026-10-02T08:33:37",
+      "closed": "",
+      "feature": "01.30",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "New-year offer: plain wording that says the class cards are emptied",
+      "what": "Founder, cutover walk on 028, 2026-10-02: the offer's text ('You are still tracking last year's chapters… nothing is deleted…') was confusing and gave the wrong impression that everything stays — pressing the button actually removes every attachment, leaving empty class cards. Founder wrote the replacement wording.",
+      "fix": "[FIXED web+phone 2026-10-02T08:33:37] MyPlans.jsx + mobile/components/YearNudge.jsx: title unchanged ('{year} has begun — start your classes fresh?'); body now two paragraphs — 'It is time to begin your classes all over again. When you have finished last year's teaching, tap **Start my classes fresh** below.' / 'This removes the lessons attached to your class cards, so each class begins the new year empty. Your lessons themselves are not affected: every lesson you have prepared stays available in My Lessons.' No folders/archive named (founder). Parse-checked. Awaiting the walk.",
+      "files": "web/app/components/MyPlans.jsx; mobile/components/YearNudge.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-10-02T08:33:37"
+    },
+    {
+      "id": "WALK-A-162",
+      "opened": "2026-10-02T08:35:47",
+      "closed": "",
+      "feature": "01.30",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "New-year offer: 'Not yet' should look like a button",
+      "what": "Founder, cutover walk on 028, 2026-10-02: 'Not yet' beside 'Start my classes fresh' read as plain text; it should be within a button.",
+      "fix": "[FIXED web+phone 2026-10-02T08:35:47] .yr-nudge-later (globals.css) + yr_nudge_later (mobile/theme/web.js): an OUTLINED pine button the same size as the filled start button (8/15 padding + 1px edge = 9/16), pine label, faint pine tint on hover (web). Still secondary — no fill. Parse-checked. Awaiting the walk.",
+      "files": "web/app/globals.css; mobile/theme/web.js; mobile/components/YearNudge.jsx",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-10-02T08:35:47"
+    },
+    {
+      "id": "WALK-A-163",
+      "opened": "2026-10-02T08:48:45",
+      "closed": "",
+      "feature": "01.30",
+      "found_on": [
+        "ios",
+        "and_emu"
+      ],
+      "applies_to": "api+shared+web+phone",
+      "title": "Start my classes fresh on one device leaves the other devices showing last year's attachments",
+      "what": "Cutover walk, 028, 2026-10-02: 'Start my classes fresh' pressed on the WEB; after reloading, both phones still showed 7A/7B with last year's chapters attached (offer gone, My Lessons fine). Cause: the press clears the server's section state + history and the pressing device's caches; other devices keep theirs, and pullSectionState refuses to delete on a wholesale-empty answer while the history pull unions — so a stale cache can never self-heal.",
+      "fix": "[FIXED 2026-10-02T08:48:45] AcademicYear.fresh_started_at (ports + file adapter) stamped by POST /academic-year/cutover and returned by GET /academic-year. @aruvi/shared/year noteFreshStart(info): a stamp this device has not acted on clears the local section cache + history cache, records the stamp per teacher, and pulls. Called from fetchYear (phone: launch + foreground) and from page.jsx's year read (web, new lib/year.js wrapper). Tests: tests/test_test_cutover.py (stamp set + reported); shared suite 252/252; cutover + academic-year suites green. NEEDS PUSH + REDEPLOY. 028 pressed before the stamp existed → backfill its stamp once to re-walk.",
+      "files": "aruvi_core/ports.py; aruvi_core/adapters/academic_year_repository_file.py; api/main.py; packages/shared/src/year.js; web/app/lib/year.js (new); web/app/page.jsx; tests/test_test_cutover.py",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "fixed-awaiting-rewalk",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-10-02T08:48:45"
     }
   ],
   "renewal_check": {

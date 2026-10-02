@@ -21,23 +21,27 @@ import { View, Pressable } from "react-native";
 import { Text } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
+import { body } from "../theme/fonts";
 
 export function CutoverOffer({ info, busy, onStart, onDismiss }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   if (!info) return null;
-  const priorYear = (info.prior_years || []).slice(-1)[0] || "earlier";
   return (
     <View style={[ws.dash_nudge, { backgroundColor: t.tint_pine, borderColor: t.pine,
                                    borderLeftWidth: 3, borderLeftColor: t.ochre }]}>
       <Text style={[ws.dash_nudge_title, ws.yr_title_pad, { color: t.pine_d }]}>
         {info.current_year} has begun — start your classes fresh?
       </Text>
+      {/* WALK-A-161 (founder's wording, 2026-10-02) — the web's two paragraphs. */}
       <Text style={[ws.dash_nudge_sub, { color: t.ink_soft }]}>
-        You are still tracking last year’s chapters, so you can finish anything you were
-        part-way through. When you’re ready for the new batch, clear them and your section cards
-        start empty. Your class list stays as it is, and nothing is deleted — every {priorYear}{" "}
-        lesson plan and note stays in My Lessons under that year.
+        It is time to begin your classes all over again. When you have finished last year’s
+        teaching, tap <Text style={{ fontFamily: body(600), color: t.ink }}>Start my classes fresh</Text> below.
+      </Text>
+      <Text style={[ws.dash_nudge_sub, { color: t.ink_soft, marginTop: 6 }]}>
+        This removes the lessons attached to your class cards, so each class begins the new year
+        empty. Your lessons themselves are not affected: every lesson you have prepared stays
+        available in My Lessons.
       </Text>
       <View style={ws.yr_nudge_row}>
         <Pressable onPress={busy ? undefined : onStart} disabled={busy}
@@ -48,7 +52,7 @@ export function CutoverOffer({ info, busy, onStart, onDismiss }) {
           </Text>
         </Pressable>
         <Pressable onPress={onDismiss} accessibilityRole="button" style={ws.yr_nudge_later}>
-          <Text style={[ws.yr_nudge_go_t, { color: t.ink_soft }]}>Not yet</Text>
+          <Text style={[ws.yr_nudge_go_t, { color: t.pine }]}>Not yet</Text>
         </Pressable>
       </View>
       {/* Rendered LAST so it is painted above the body — the `ap_close` lesson (`63adafaf`):

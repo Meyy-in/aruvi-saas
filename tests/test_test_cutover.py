@@ -35,6 +35,22 @@ def test_off_by_default():
     assert m._resolve_year("9000000030", "9000000030") == y
 
 
+def test_fresh_start_is_stamped_and_reported():
+    """WALK-A-163: other devices learn of a fresh start from `fresh_started_at`."""
+    config.TEST_CUTOVER = {"9000000031"}
+    try:
+        ident = ("9000000031", "9000000031")
+        m._resolve_year(*ident); m._resolve_year(*ident)            # bootstrap, then roll
+        assert m.get_academic_year(identity=ident)["fresh_started_at"] == ""
+        out = m.do_cutover(m.CutoverRequest(confirm=True), identity=ident)
+        assert out["status"] == "cutover"
+        stamp = m.get_academic_year(identity=ident)["fresh_started_at"]
+        assert stamp                                                 # set, and survives a read
+        assert m.get_academic_year(identity=ident)["fresh_started_at"] == stamp
+    finally:
+        config.TEST_CUTOVER = set()
+
+
 if __name__ == "__main__":
     for n, f in list(globals().items()):
         if n.startswith("test_"):

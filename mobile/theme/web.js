@@ -1578,8 +1578,9 @@ export function webStyles(t, scheme = "light") {
     yr_nudge_go:     { paddingVertical: 9, paddingHorizontal: 16, borderRadius: 6 },
     yr_nudge_go_t:   { fontFamily: F.mono(400), fontSize: 11.5, letterSpacing: 0.575,
                        textTransform: UP },
-    /* The quiet twin: a real control, weighted so it never competes with the primary one. */
-    yr_nudge_later:  { paddingVertical: 9, paddingHorizontal: 14, borderRadius: 6 },
+    /* The quiet twin — an OUTLINED button (WALK-A-162), the web's .yr-nudge-later. */
+    yr_nudge_later:  { paddingVertical: 8, paddingHorizontal: 15, borderRadius: 6,
+                       borderWidth: 1, borderColor: t.pine },
 
     /* ── the shell's "notice updated" bar (`.pn-note`, globals.css 5296-5306) — 6a F10 ──
        Measured 2026-09-16. Quiet by design: nothing is WRONG, so it is paper rather than the

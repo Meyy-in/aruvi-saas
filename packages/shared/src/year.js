@@ -44,6 +44,32 @@ import { clearLocalHistoryCache } from "./sectionHistory.js";
 import { invalidatePlans, notePlansYear } from "./plans.js";
 import { invalidateReadiness, fetchReadiness } from "./readiness.js";
 
+import { storage } from "./storage.js";
+
+/* ★ A FRESH START MADE ON ANOTHER DEVICE (WALK-A-163, 2026-10-02 — found on the cutover walk:
+ * the web pressed "Start my classes fresh", and both phones went on showing 7A and 7B with last
+ * year's chapters attached). The press clears the SERVER's section state and history, and the
+ * device that pressed clears its own caches — but every other device keeps its cache, and
+ * neither cache can delete a row from an empty server answer (see the header). So the server now
+ * stamps `fresh_started_at`, and whoever reads the year compares it with the stamp this device
+ * last acted on: a new stamp means "drop the cached cards and history, then pull". First sight of
+ * a stamp also clears — the cache may well predate it, and clearing a cache that is already empty
+ * costs nothing. Keyed by teacher. Returns true when it cleared. */
+const freshKey = (u) => `aruvi_fresh_start_${u}`;
+export function noteFreshStart(info) {
+  const u = getUser();
+  const stamp = info && info.fresh_started_at;
+  if (!u || !stamp) return false;
+  let seen = null;
+  try { seen = storage.getItem(freshKey(u)); } catch {}
+  if (seen === stamp) return false;
+  try { clearLocalSectionCache(); } catch {}
+  try { clearLocalHistoryCache(); } catch {}
+  try { storage.setItem(freshKey(u), stamp); } catch {}
+  try { pullSectionState().catch(() => {}); } catch {}
+  return true;
+}
+
 let state = { user: null, info: null, busy: false, result: null, dismissed: false };
 let inflight = null;
 
@@ -87,6 +113,7 @@ export function fetchYear() {
            first, which is here. A known → different known year invalidates; unknown → known is
            just the year arriving, and is not a change. */
         notePlansYear(y.current_year);
+        noteFreshStart(y);                 // WALK-A-163: a fresh start made elsewhere
         emit();
       }
     } catch { /* offer nothing */ }
