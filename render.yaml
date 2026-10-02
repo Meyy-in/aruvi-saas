@@ -82,6 +82,10 @@ services:
       # account is created. Leave EMPTY in normal running. api/config.TEST_SUBJECTS_FAIL.
       - key: ARUVI_TEST_SUBJECTS_FAIL
         sync: false
+      # TEST-ONLY (cutover walk): numbers that roll into next academic year NOW, once.
+      # Leave EMPTY in normal running. api/config.TEST_CUTOVER.
+      - key: ARUVI_TEST_CUTOVER
+        sync: false
       - key: ARUVI_LP_YEAR
         value: "2026-27"
       # Outbound mail — same three-variable seam as dev.sh; absent → file outbox.

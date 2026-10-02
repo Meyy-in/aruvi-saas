@@ -1,15 +1,27 @@
 {
-  "stage": "secondary",
-  "subject": "mathematics",
-  "grade": "ix",
-  "chapter_number": 9,
-  "chapter_title": "Chapter 9: (Placeholder — awaiting NCERT release)",
-  "core_cg": null,
-  "core_competencies": [],
-  "adjunct_competencies": [],
-  "co_central": false,
-  "dissolution_test": "",
-  "effort_index": 10.1875,
-  "_dummy": true,
-  "_note": "PLACEHOLDER — not a real NCERT chapter. Created to simulate the effect on period allocation of the additional chapters NCERT is expected to publish. Carries the average weight of the existing real chapters. No summary is generated for dummy chapters. Replace with the real mapping when NCERT publishes."
+    "stage":          "secondary",
+    "subject":        "mathematics",
+    "grade":          "ix",
+    "chapter_number": 9,
+    "chapter_title":  "Propositions and their Converses",
+
+    "core_cg": "CG-7",
+
+    "core_competencies": [
+        { "c_code": "C-7.1", "justification": "The whole chapter is about proving and disproving mathematical statements: it defines a proposition and its converse, shows through worked examples — rain and a wet road, multiples of 6 and of 3, perfect squares and an odd number of factors, equal-area and congruent triangles, and the converse of the Baudhāyana–Pythagoras theorem — that the truth of a statement does not settle the truth of its converse, and builds full arguments from definitions (the factor-partner argument proving both directions for perfect squares, the SSS-congruence proof that a^2 + b^2 = c^2 forces a right angle) alongside counterexamples such as Euler's refutation of Fermat's claim about numbers of the form 2^(2^n) + 1. The exercises then ask the student, again and again, to frame a converse, decide whether each statement is true, and either justify it or give a counterexample." }
+    ],
+
+    "adjunct_competencies": [
+        { "c_code": "C-4.1", "justification": "Many of the statements tested are about geometric shapes: the student decides whether equal area forces two triangles to be congruent, uses the SSS criterion to show that a triangle with a^2 + b^2 = c^2 is right-angled, and in the exercises tests propositions and converses about corresponding angles on parallel lines, the angles of a square, and the kind of quadrilateral formed by joining the ends of two sticks laid as diagonals." },
+        { "c_code": "C-1.1", "justification": "The other half of the propositions concern properties of numbers — that a perfect square has an odd number of factors, divisibility by 24 or 60 versus divisibility by a pair of smaller numbers, the factor counts of the square of a prime and of a product of two distinct primes, whether x = y and x^2 = y^2 (or x^3 = y^3) imply each other for real numbers, and expressions such as 4n^2 + 1 and 2^n − 1 that seem to give only primes — so the student reasons directly about how numbers are built from their factors." }
+    ],
+
+    "co_central": false,
+
+    "dissolution_test": "This chapter builds the student's ability to prove or disprove mathematical statements and their converses by framing propositions in 'if X then Y' form, justifying the true ones through deductive arguments from definitions and known results, and refuting the false ones with counterexamples.",
+
+    "conceptual_demand": 2,
+    "reasoning_load":    3,
+    "exec_load":         1,
+    "effort_index":     11.5
 }

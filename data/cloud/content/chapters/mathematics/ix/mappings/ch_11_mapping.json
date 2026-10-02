@@ -1,15 +1,28 @@
 {
-  "stage": "secondary",
-  "subject": "mathematics",
-  "grade": "ix",
-  "chapter_number": 11,
-  "chapter_title": "Chapter 11: (Placeholder — awaiting NCERT release)",
-  "core_cg": null,
-  "core_competencies": [],
-  "adjunct_competencies": [],
-  "co_central": false,
-  "dissolution_test": "",
-  "effort_index": 10.1875,
-  "_dummy": true,
-  "_note": "PLACEHOLDER — not a real NCERT chapter. Created to simulate the effect on period allocation of the additional chapters NCERT is expected to publish. Carries the average weight of the existing real chapters. No summary is generated for dummy chapters. Replace with the real mapping when NCERT publishes."
+    "stage":          "secondary",
+    "subject":        "mathematics",
+    "grade":          "ix",
+    "chapter_number": 11,
+    "chapter_title":  "The World of Algorithms",
+
+    "core_cg": "CG-9",
+
+    "core_competencies": [
+        { "c_code": "C-9.4", "justification": "The chapter teaches students to design algorithms: it writes out a precise step-by-step algorithm for column addition, builds one for listing the divisors of a number and from it a first algorithm for the gcd, refines that algorithm three times (computing both divisor lists together, keeping only common divisors up to the smaller number, and keeping only the most recent common divisor), and arrives at Euclid's subtraction algorithm and Āryabhaṭa's division algorithm. The exercises ask students to write algorithms of their own — for the elements of one list missing from another, for the lcm of two numbers, and for testing whether a number is prime." },
+        { "c_code": "C-9.2", "justification": "Alongside designing them, students repeatedly follow and analyse given sequences of instructions — executing the divisors and gcd algorithms step by step for 18, 375 and 825, tracing Euclid's algorithm through gcd(99, 2), checking whether the addition steps still work when a step is left out or when the two numbers have different numbers of digits, and comparing how the work grows with the size of the numbers (tenfold for each extra digit when counting dots or scanning divisors) against growth with the number of digits for column addition and the division algorithm." }
+    ],
+
+    "adjunct_competencies": [
+        { "c_code": "C-7.1", "justification": "Every algorithm is required to be justified: the chapter argues from place value why digit-by-digit addition gives the sum, explains why the gcd is the rightmost entry of the list of common divisors, and proves in both directions that gcd(m, n) = gcd(n, m − n) — and then gcd(n, m mod n) — because the two pairs have exactly the same common divisors, a verification the student repeats in the end-of-chapter exercises." },
+        { "c_code": "C-10.1", "justification": "The two efficient gcd methods are presented as the work of named mathematicians — Euclid's algorithm from the Elements, and the division-by-remainder method of Āryabhaṭa's Āryabhaṭīya (499 CE) laid out in the Indian long-division format — and the chapter closes by tracing the word 'algorithm' to Al-Khwārizmī's treatise on Indian arithmetic." }
+    ],
+
+    "co_central": true,
+
+    "dissolution_test": "This chapter builds the student's ability to design and analyse algorithms by breaking a computation such as addition or the greatest common divisor into precisely stated steps, executing and justifying those steps, and refining them — from listing divisors to Euclid's and Āryabhaṭa's methods — until the work grows with the number of digits rather than the size of the numbers.",
+
+    "conceptual_demand": 2,
+    "reasoning_load":    2,
+    "exec_load":         1,
+    "effort_index":      9.5
 }

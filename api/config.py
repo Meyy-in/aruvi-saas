@@ -120,6 +120,17 @@ TEST_SUBJECTS_FAIL = {
 }
 SUBJECTS_FAIL_SECONDS = 60
 
+# TEST_CUTOVER (walk row 01.30 + the cutover session, 2026-10-02): TEST-ONLY. Comma-separated
+# mobile numbers. For a listed account still in TODAY's academic year, `_resolve_year` treats the
+# next year's cutover as already due, so `_auto_roll_year` runs for her alone — ONCE (after the
+# roll her current year is no longer today's year, so it never rolls again). Everyone else stays
+# on the real calendar. ARUVI_TODAY is the dev-wide clock seam and must never be used on Render.
+# Empty (the default) = off for everyone.
+TEST_CUTOVER = {
+    "".join(c for c in n if c.isdigit())[-10:]
+    for n in os.environ.get("ARUVI_TEST_CUTOVER", "").split(",") if n.strip()
+}
+
 # TRIAL LEDGER (founder, 2026-09-18): a free trial is once per mobile number, including across
 # an account erasure. The number is stored only as an HMAC under this key — SET IT on every real
 # deployment (Render secret) and never rotate it casually: a new key orphans every entry, which

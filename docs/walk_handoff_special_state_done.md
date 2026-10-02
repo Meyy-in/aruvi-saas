@@ -26,7 +26,13 @@ rolls every teacher into the new year automatically on **1 June** (`config.CUTOV
 **1 June 2027, with real teachers in it** — one morning, everyone at once. Walk it before launch.
 
 **Plan:**
-1. **Build a third TEST-ONLY switch** (not yet built): `ARUVI_TEST_CUTOVER` = mobile numbers for
+1. ✅ **BUILT 2026-10-02** — `ARUVI_TEST_CUTOVER` (api/config.py + `_test_cutover_due` in
+   api/main.py; tests/test_test_cutover.py; render.yaml). A listed number still in TODAY's year
+   rolls into the next on its next request — ONCE — and logs `TEST cutover applied for …NNNN →
+   2027-28`. ⚠️ Build 028's state with the switch OFF: the roll fires on the first request after
+   it is on. Note the lesson LIBRARY stays on the 2026-27 edition (config.LP_YEAR), so a plan
+   prepared AFTER the roll is still a 2026-27 edition — only the TEACHER's year moves. Original
+   spec: `ARUVI_TEST_CUTOVER` = mobile numbers for
    which `_resolve_year` treats the cutover as already due — same pattern as the two below (env,
    default empty, per-number, logged, declared in render.yaml, tested). Never a global clock
    change: everyone else must stay in 2026-27.

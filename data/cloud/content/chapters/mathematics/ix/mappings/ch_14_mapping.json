@@ -1,15 +1,27 @@
 {
-  "stage": "secondary",
-  "subject": "mathematics",
-  "grade": "ix",
-  "chapter_number": 14,
-  "chapter_title": "Chapter 14: (Placeholder — awaiting NCERT release)",
-  "core_cg": null,
-  "core_competencies": [],
-  "adjunct_competencies": [],
-  "co_central": false,
-  "dissolution_test": "",
-  "effort_index": 10.1875,
-  "_dummy": true,
-  "_note": "PLACEHOLDER — not a real NCERT chapter. Created to simulate the effect on period allocation of the additional chapters NCERT is expected to publish. Carries the average weight of the existing real chapters. No summary is generated for dummy chapters. Replace with the real mapping when NCERT publishes."
+    "stage":          "secondary",
+    "subject":        "mathematics",
+    "grade":          "ix",
+    "chapter_number": 14,
+    "chapter_title":  "Math of Space: Surface Area and Volume",
+
+    "core_cg": "CG-5",
+
+    "core_competencies": [
+        { "c_code": "C-5.2", "justification": "The whole chapter derives and uses surface-area and volume formulas for solids: the cuboid and cube from their nets and from unit cubes, the cylinder by cutting open its curved surface and stacking thin circular slices, the cone in two ways from its unrolled sector and checked by filling a cylinder with salt three times, the one-third rule for pyramids, Archimedes' result for the sphere with the string-winding activity that shows 4πr^2, and the hemisphere. The exercises use these formulas for recasting a metal cube into rods, painting a hemispherical dome, comparing the volumes of planets and finding the liquid left around spheres packed in a box." }
+    ],
+
+    "adjunct_competencies": [
+        { "c_code": "C-8.2", "justification": "Students repeatedly move between solids and flat representations of them: the net of a cuboid gives its surface area, the curved surface of a cylinder is cut open into a rectangle and that of a cone unrolled into a sector of radius l, cross-sections of cylinders and fruits are drawn, and the surface of a sphere is matched by string to four flat circles." },
+        { "c_code": "C-8.1", "justification": "The closing sections model everyday situations to estimate quantities: guesstimating how many golgappas a vessel of pani can serve, how many tennis balls fill a classroom, scoops of ice cream in a box, chapatis from a ball of dough and the area the world's population would cover, and measuring and approximating the volumes of a gas cylinder, a water tank, the ink in a refill and one's own house." }
+    ],
+
+    "co_central": false,
+
+    "dissolution_test": "This chapter builds the student's ability to derive and apply formulae for the surface areas and volumes of cuboids, cubes, cylinders, cones, pyramids, spheres and hemispheres by unfolding curved surfaces into flat shapes, picturing solids as stacks of thin slices and checking results by experiment, and then using the formulae to model and estimate quantities in everyday objects.",
+
+    "conceptual_demand": 2,
+    "reasoning_load":    2,
+    "exec_load":         2,
+    "effort_index":     11.0
 }

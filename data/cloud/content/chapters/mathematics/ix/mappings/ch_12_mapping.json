@@ -1,15 +1,28 @@
 {
-  "stage": "secondary",
-  "subject": "mathematics",
-  "grade": "ix",
-  "chapter_number": 12,
-  "chapter_title": "Chapter 12: (Placeholder — awaiting NCERT release)",
-  "core_cg": null,
-  "core_competencies": [],
-  "adjunct_competencies": [],
-  "co_central": false,
-  "dissolution_test": "",
-  "effort_index": 10.1875,
-  "_dummy": true,
-  "_note": "PLACEHOLDER — not a real NCERT chapter. Created to simulate the effect on period allocation of the additional chapters NCERT is expected to publish. Carries the average weight of the existing real chapters. No summary is generated for dummy chapters. Replace with the real mapping when NCERT publishes."
+    "stage":          "secondary",
+    "subject":        "mathematics",
+    "grade":          "ix",
+    "chapter_number": 12,
+    "chapter_title":  "Quadrilaterals",
+
+    "core_cg": "CG-4",
+
+    "core_competencies": [
+        { "c_code": "C-4.2", "justification": "The spine of the chapter is a chain of proved theorems about quadrilaterals and triangles: the properties of a parallelogram and their converses (opposite sides equal, opposite angles equal, diagonals bisecting each other, one pair of sides equal and parallel), then the Midpoint Theorem and its converse, the Centroid Theorem and Varignon's Midpoint Theorem for Quadrilaterals, each proved through triangle congruence and parallel lines. The exercises apply these results — showing, for instance, that the angle bisectors of a parallelogram meet in a rectangle, that DM and BN trisect a diagonal of a parallelogram, and that a line through the midpoint of one leg of a trapezium parallel to its bases bisects the other leg." },
+        { "c_code": "C-4.1", "justification": "Two whole sections deal with the characteristics of shapes rather than with proof: the opening section works out what should count as a quadrilateral — ruling out collinear, non-planar and self-intersecting figures, defining convexity and sorting 4-gons in a Venn diagram — and the closing section fits congruent copies of an arbitrary 4-gon four around a point, or rotates them through 180° about edge midpoints, to conjecture and test how any quadrilateral tiles the plane." }
+    ],
+
+    "adjunct_competencies": [
+        { "c_code": "C-7.1", "justification": "The chapter makes the logic of definition and proof explicit: it builds a precise definition of a quadrilateral from stated requirements, proves converses by running the original proofs backwards, warns with 'if x = y then x^2 = y^2' that not every argument can be reversed, gives a second proof of the converse of the Midpoint Theorem that uses the theorem itself, and asks students to complete alternative proofs of the Midpoint and Centroid theorems." },
+        { "c_code": "C-7.4", "justification": "Several exercises are constructions under constraints: marking the midpoint of a segment drawn across equally spaced ruled lines, devising a procedure that trisects any given segment using the parallelogram trisection result, and recreating a congruent copy of a quadrilateral from its Varignon parallelogram alone." }
+    ],
+
+    "co_central": true,
+
+    "dissolution_test": "This chapter builds the student's ability to analyse the properties of quadrilaterals and triangles and explain them by deductive argument — defining a quadrilateral precisely, proving the parallelogram properties and their converses through triangle congruence, and using parallelograms to prove the Midpoint, Centroid and Varignon theorems and to show that any 4-gon tiles the plane.",
+
+    "conceptual_demand": 2,
+    "reasoning_load":    3,
+    "exec_load":         1,
+    "effort_index":     11.5
 }

@@ -1,15 +1,27 @@
 {
-  "stage": "secondary",
-  "subject": "mathematics",
-  "grade": "ix",
-  "chapter_number": 13,
-  "chapter_title": "Chapter 13: (Placeholder — awaiting NCERT release)",
-  "core_cg": null,
-  "core_competencies": [],
-  "adjunct_competencies": [],
-  "co_central": false,
-  "dissolution_test": "",
-  "effort_index": 10.1875,
-  "_dummy": true,
-  "_note": "PLACEHOLDER — not a real NCERT chapter. Created to simulate the effect on period allocation of the additional chapters NCERT is expected to publish. Carries the average weight of the existing real chapters. No summary is generated for dummy chapters. Replace with the real mapping when NCERT publishes."
+    "stage":          "secondary",
+    "subject":        "mathematics",
+    "grade":          "ix",
+    "chapter_number": 13,
+    "chapter_title":  "Two Variables, One Line",
+
+    "core_cg": "CG-3",
+
+    "core_competencies": [
+        { "c_code": "C-3.2", "justification": "The chapter models everyday situations as linear equations in two variables and solves them — Radha's fruit purchase as 60x + 50y = 280, exhibition and sports-meet tickets, incomes and expenditures in given ratios, a two-digit number and its reverse, taxi fares and mobile-phone plans — teaching three ways to solve a pair of such equations (substitution, elimination and graphing) and checking each answer against the situation, together with the coefficient-ratio rules that tell in advance whether a pair has one solution, none or infinitely many." }
+    ],
+
+    "adjunct_competencies": [
+        { "c_code": "C-4.5", "justification": "Coordinate geometry carries a large part of the chapter: solutions are plotted as points on the line of the equation, lines are drawn through their intercepts, slope is defined as rise over run between two points and shown to be m in y = mx + d, and a pair of equations is solved graphically by reading the intersection of the two lines, with parallel and coincident lines matched to pairs that have no solution or infinitely many." },
+        { "c_code": "C-8.1", "justification": "Tables and graphs are used to draw conclusions about real situations: the steepness of ramps and ski hills is compared through slope, the Celsius–Fahrenheit line is drawn and read to convert between the scales, two mobile plans are compared to find for how many minutes each is cheaper, and the paths of two robots are checked for a meeting point." }
+    ],
+
+    "co_central": false,
+
+    "dissolution_test": "This chapter builds the student's ability to model real-life situations as linear equations in two variables and solve them by representing each equation's solutions as a line with a slope and intercept, and finding the common solution of a pair of equations by substitution, elimination or graphing, with the coefficient ratios deciding whether there is one solution, none or infinitely many.",
+
+    "conceptual_demand": 2,
+    "reasoning_load":    2,
+    "exec_load":         2,
+    "effort_index":     11.0
 }

@@ -1,15 +1,27 @@
 {
-  "stage": "secondary",
-  "subject": "mathematics",
-  "grade": "ix",
-  "chapter_number": 10,
-  "chapter_title": "Chapter 10: (Placeholder — awaiting NCERT release)",
-  "core_cg": null,
-  "core_competencies": [],
-  "adjunct_competencies": [],
-  "co_central": false,
-  "dissolution_test": "",
-  "effort_index": 10.1875,
-  "_dummy": true,
-  "_note": "PLACEHOLDER — not a real NCERT chapter. Created to simulate the effect on period allocation of the additional chapters NCERT is expected to publish. Carries the average weight of the existing real chapters. No summary is generated for dummy chapters. Replace with the real mapping when NCERT publishes."
+    "stage":          "secondary",
+    "subject":        "mathematics",
+    "grade":          "ix",
+    "chapter_number": 10,
+    "chapter_title":  "How Quantities Combine: Understanding Data",
+
+    "core_cg": "CG-6",
+
+    "core_competencies": [
+        { "c_code": "C-6.1", "justification": "The chapter's first strand extends the mean to the weighted mean: it shows why simply averaging the averages of unequal groups goes wrong (the badminton group of 8 seniors and 3 juniors) and derives the rule (an + bm)/(n + m), computes the concentrations of mixed lemonade, brass and kashayam, and combines marks and ratings with custom weights such as Rehmat's 3 : 2 : 5 scheme, arriving at the general weighted mean (w1x1 + … + wnxn)/(w1 + … + wn). The exercises apply it to class averages, cricket run rates, share prices, the salinity of mixed waters and Brahmagupta's mean depth of a pool." }
+    ],
+
+    "adjunct_competencies": [
+        { "c_code": "C-8.1", "justification": "The second strand, on visualising and interpreting data, has students turn tables of family expenditure, household electricity use and time use into clustered, stacked and 100% stacked bar charts and decide what each kind of chart can and cannot support — for example, that two different stacked charts of Fatima's and Naveen's gardens give the same 100% stacked bars — before drawing conclusions from real charts of endangered species, objects orbiting Earth and schools with playgrounds." },
+        { "c_code": "C-11.1", "justification": "The data are drawn from across the curriculum and daily life — the IUCN Red List of endangered species, the salinity of seas and groundwater, objects in Earth orbit, the National Time Use Survey and Census figures on disability, cricket run rates and triathlon times, and the copper content of brass — so the weighted mean and the charts are used to analyse questions from science, social science and sport." }
+    ],
+
+    "co_central": false,
+
+    "dissolution_test": "This chapter builds the student's ability to analyse and interpret combined data by weighting each value by its size, amount or importance — so that averages of averages, mixture concentrations and custom-weighted scores are all computed as weighted means — and by judging what stacked and 100% stacked bar charts do and do not allow one to infer.",
+
+    "conceptual_demand": 2,
+    "reasoning_load":    2,
+    "exec_load":         2,
+    "effort_index":     11.0
 }

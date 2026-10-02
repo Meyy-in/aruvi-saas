@@ -475,9 +475,28 @@ def _resolve_year(tenant_id: str, user_id: str, year_id: Optional[str] = None) -
         return current.year_id
     nxt = YearCutoverFileImpl.next_year_id(current.year_id)
     due_on = YearCutoverFileImpl.cutover_date(nxt, config.CUTOVER_MONTH_DAY)
-    if nxt != current.year_id and due_on and _today() >= due_on:
+    if nxt != current.year_id and due_on and (_today() >= due_on
+                                              or _test_cutover_due(user_id, current)):
         current = _auto_roll_year(tenant_id, user_id, current)
+        if config.TEST_CUTOVER:
+            print(f"[aruvi] TEST cutover applied for …{str(user_id)[-4:]} → {current.year_id}",
+                  flush=True)
     return current.year_id
+
+
+def _test_cutover_due(user_id: str, current: AcademicYear) -> bool:
+    """TEST-ONLY (config.TEST_CUTOVER): a listed number still in today's academic year is
+    treated as past the cutover. Rolls exactly once — afterwards her current year is ahead of
+    today's, so this answers False. Never raises."""
+    try:
+        if not config.TEST_CUTOVER:
+            return False
+        digits = "".join(c for c in str(user_id or "") if c.isdigit())
+        if not digits or digits[-10:] not in config.TEST_CUTOVER:
+            return False
+        return current.year_id == _default_academic_year().year_id
+    except Exception:
+        return False
 
 
 # ── Entitlement gate (administrative architecture Step 5) ───────────────────────
@@ -1405,6 +1424,9 @@ def _readback_skew_listed(tenant_id: str, user_id: str) -> bool:
     return False
 
 
+if config.TEST_CUTOVER:
+    print(f"[aruvi] TEST cutover ON for {len(config.TEST_CUTOVER)} number(s) — the cutover walk only",
+          flush=True)
 if config.TEST_SUBJECTS_FAIL:
     print(f"[aruvi] TEST /subjects failure ON for {len(config.TEST_SUBJECTS_FAIL)} number(s) — walk row X.13 only",
           flush=True)
