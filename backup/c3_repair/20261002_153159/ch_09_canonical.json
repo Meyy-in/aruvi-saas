@@ -416,129 +416,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:31:59",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C9-101": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U15",
-        "field": "time_bands[2].activity",
-        "old": "Part (ii)(a): if the converse holds ('equal diagonals implies type Q'), must the sticks be equal? Yes — to get a type-Q quadrilateral with equal diagonals.",
-        "new": "Part (ii)(a): if the converse holds ('equal diagonals implies type Q'), should the sticks be equal? Yes — equal sticks guarantee a type-Q quadrilateral, though the property does not say that every type-Q quadrilateral has equal diagonals."
-       }
-      ]
-     },
-     "C9-106": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U4",
-        "field": "time_bands[1].activity",
-        "old": "if no student finds one, offer the prompt: consider a statement about a very specific kind of number that is false in both directions.",
-        "new": "if no student finds one, offer: 'If a number is odd, then it is prime' is false (9 is odd but not prime), and its converse 'If a number is prime, then it is odd' is false too (2 is prime but not odd)."
-       }
-      ]
-     },
-     "C9-107": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U16",
-        "field": "time_bands[3].activity",
-        "old": "Ask: from the chapter, name one example in each category.",
-        "new": "Ask: from the chapter or from class, name one example in each category."
-       }
-      ]
-     },
-     "C9-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U3",
-        "field": "time_bands[3].activity",
-        "old": "hold the full discussion for later.",
-        "new": "collect the attempts without resolving them yet."
-       },
-       {
-        "where": "U8",
-        "field": "time_bands[1].activity",
-        "old": "For n² + n + 11: n = 11 gives 121 + 11 + 11 = 143 = 11 × 13 — composite.",
-        "new": "For n² + n + 11: n = 10 gives 100 + 10 + 11 = 121 = 11 × 11 — composite (n = 11 gives 143 = 11 × 13 too)."
-       },
-       {
-        "where": "U12",
-        "field": "time_bands[1].activity",
-        "old": "Type B finds n = 11 gives 143 = 11 × 13;",
-        "new": "Type B finds n = 10 gives 121 = 11 × 11;"
-       },
-       {
-        "where": "U9",
-        "field": "time_bands[0].activity",
-        "old": "8 = 2 × 4 and 8 = 8 × 1; since 8 is a multiple of 2 and of 4,",
-        "new": "8 = 2 × 4, so 8 is a multiple of 2 and of 4, and"
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[0].activity",
-        "old": "Write the counterexample clearly in 'if X then Y' form.",
-        "new": "Write the counterexample clearly: the 'if' part holds (x² = y² = 4) but the 'then' part fails (2 ≠ −2)."
-       },
-       {
-        "where": "U4",
-        "field": "teacher_notes",
-        "old": "help students see that the converse is the safer, weaker claim here.",
-        "new": "help students see that congruence forces equal area, but equal area does not force congruence."
-       },
-       {
-        "where": "U2",
-        "field": "time_bands[3].activity",
-        "old": "ask the class to rank the three examples",
-        "new": "ask the class to classify the three examples"
-       },
-       {
-        "where": "U2",
-        "field": "time_bands[3].activity",
-        "old": "Students write their ranking",
-        "new": "Students write their classification"
-       },
-       {
-        "where": "U15",
-        "field": "time_bands[0].activity",
-        "old": "(pp.6)",
-        "new": "(p.6)"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can, given a novel mathematical proposition, frame its converse, classify the truth of each using deductive argument or counterexample, and place the pair correctly among the four logical possibilities for a proposition and its converse.'}",
-        "field": "guide.OPEN_TASK.format_rationale",
-        "old": "for two novel propositions,",
-        "new": "for two propositions,"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can, given a novel mathematical proposition, frame its converse, classify the truth of each using deductive argument or counterexample, and place the pair correctly among the four logical possibilities for a proposition and its converse.'}",
-        "field": "guide.OPEN_TASK.what_this_demonstrates",
-        "old": "applied to fresh propositions they have not seen before,",
-        "new": "applied to two propositions,"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can, given a novel mathematical proposition, frame its converse, classify the truth of each using deductive argument or counterexample, and place the pair correctly among the four logical possibilities for a proposition and its converse.'}",
-        "field": "guide.OPEN_TASK.reading_the_scaffold",
-        "old": "guides students who know that divisibility by both 5 and 12 does not automatically give divisibility by 60 unless lcm(5,12) = 60 — which it does, making Proposition A true;",
-        "new": "lets students see that lcm(5, 12) = 60, so divisibility by both 5 and 12 implies divisibility by 60, making Proposition A true;"
-       },
-       {
-        "where": "U6",
-        "field": "time_bands[2].activity",
-        "old": "(a) equal sticks are enough — any quadrilateral with equal diagonals is of type Q;",
-        "new": "(a) yes, use equal sticks — any quadrilateral with equal diagonals is of type Q (though the property does not say that type Q needs equal diagonals);"
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -637,7 +514,7 @@
       },
       {
        "minutes": "40-50",
-       "activity": "Quick consolidation: ask the class to classify the three examples covered so far — (a) rain and wet road, (b) multiples of 6 and 3, (c) equality and addition — by the relationship between proposition and converse: only proposition true, only converse true (is this possible?), both true, or both false. Students write their classification and one sentence of justification. Collect as a quick written check."
+       "activity": "Quick consolidation: ask the class to rank the three examples covered so far — (a) rain and wet road, (b) multiples of 6 and 3, (c) equality and addition — by the relationship between proposition and converse: only proposition true, only converse true (is this possible?), both true, or both false. Students write their ranking and one sentence of justification. Collect as a quick written check."
       }
      ],
      "teacher_notes": "Having established the definitions of proposition, converse, and counterexample, this unit sharpens the argument skill on numerical and algebraic examples. A common error is justifying 'A is a multiple of 6 implies it is a multiple of 3' by citing examples rather than the factor relationship 6 = 2 × 3 — press for a one-line deductive reason. Exercise Set 9.1 Q4, p.6 can be read on its own for the algebra-equations connection.",
@@ -680,7 +557,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Ask students to write a two-sentence summary in their notebooks: what is the factor-partner argument, and what does it prove? Then pose the Think and Reflect question from the chapter: can both a proposition and its converse be false? Ask for a quick show of hands on yes/no, then invite one student to attempt an example; collect the attempts without resolving them yet."
+       "activity": "Ask students to write a two-sentence summary in their notebooks: what is the factor-partner argument, and what does it prove? Then pose the Think and Reflect question from the chapter: can both a proposition and its converse be false? Ask for a quick show of hands on yes/no, then invite one student to attempt an example; hold the full discussion for later."
       }
      ],
      "teacher_notes": "The factor-partner argument is the chapter's most sustained deductive proof; the key sticking point is students proving Q (from odd factors to perfect square) and then believing they have also proved P — walk back through the direction of the chain explicitly. A common slip is assuming the chain runs both ways automatically once one direction is established; the unit's second half demonstrates that the reverse direction needs its own separate argument. Example 3, p.2 repays careful rereading for the precise wording of each step.",
@@ -723,7 +600,7 @@
       },
       {
        "minutes": "15-28",
-       "activity": "Draw the four-case table on the board: P true and Q true, P true and Q false, P false and Q true, P false and Q false. Label the examples covered so far: rain/road (P true, Q false); perfect squares and odd factors (both true); area and congruence (P false, Q true). Ask: is the fourth case — both false — possible? Introduce the Think and Reflect box from the chapter. Invite students to try to construct an example in pairs. Then share and discuss; if no student finds one, offer: 'If a number is odd, then it is prime' is false (9 is odd but not prime), and its converse 'If a number is prime, then it is odd' is false too (2 is prime but not odd)."
+       "activity": "Draw the four-case table on the board: P true and Q true, P true and Q false, P false and Q true, P false and Q false. Label the examples covered so far: rain/road (P true, Q false); perfect squares and odd factors (both true); area and congruence (P false, Q true). Ask: is the fourth case — both false — possible? Introduce the Think and Reflect box from the chapter. Invite students to try to construct an example in pairs. Then share and discuss; if no student finds one, offer the prompt: consider a statement about a very specific kind of number that is false in both directions."
       },
       {
        "minutes": "28-42",
@@ -734,7 +611,7 @@
        "activity": "Consolidation exercise: ask students to write, in their own words, a one-paragraph explanation of why the truth of a proposition does not settle the truth of its converse. Students exchange with a neighbour, read, and underline the clearest sentence in the neighbour's paragraph. Two or three students read their neighbour's underlined sentence aloud."
       }
      ],
-     "teacher_notes": "Having established both directions of the perfect-square equivalence, this unit confronts students with a case where the proposition is false and the converse is true — the third of the four logical possibilities. A common error is confusing 'same area implies congruent' with 'congruent implies same area'; help students see that congruence forces equal area, but equal area does not force congruence. Exercise Set 9.1 Q2, p.5 provides a clean geometric counterexample to consolidate.",
+     "teacher_notes": "Having established both directions of the perfect-square equivalence, this unit confronts students with a case where the proposition is false and the converse is true — the third of the four logical possibilities. A common error is confusing 'same area implies congruent' with 'congruent implies same area'; help students see that the converse is the safer, weaker claim here. Exercise Set 9.1 Q2, p.5 provides a clean geometric counterexample to consolidate.",
      "homework": [
       "Exercise Set 9.1 Q6, p.6 and Q7, p.6 — for the propositions about x = y implying x² = y² and x³ = y³ respectively, frame each converse, decide whether proposition and converse are true, and give counterexamples for any that are false."
      ]
@@ -828,7 +705,7 @@
       },
       {
        "minutes": "30-42",
-       "activity": "Work through part (ii) of Exercise Set 9.1 Q17, p.7: now Q satisfies the converse — 'If a quadrilateral has equal diagonals, then it is of type Q.' Ask: (a) must the sticks be of equal length? (b) does it matter how they cross? Discussion: (a) yes, use equal sticks — any quadrilateral with equal diagonals is of type Q (though the property does not say that type Q needs equal diagonals); (b) no — however the equal sticks are placed, the quadrilateral has equal diagonals and is therefore of type Q (a rectangle and an isosceles trapezium both qualify)."
+       "activity": "Work through part (ii) of Exercise Set 9.1 Q17, p.7: now Q satisfies the converse — 'If a quadrilateral has equal diagonals, then it is of type Q.' Ask: (a) must the sticks be of equal length? (b) does it matter how they cross? Discussion: (a) equal sticks are enough — any quadrilateral with equal diagonals is of type Q; (b) no — however the equal sticks are placed, the quadrilateral has equal diagonals and is therefore of type Q (a rectangle and an isosceles trapezium both qualify)."
       },
       {
        "minutes": "42-50",
@@ -935,7 +812,7 @@
       },
       {
        "minutes": "8-28",
-       "activity": "Students work individually to evaluate the three expressions systematically. For 4n² + 1: n = 1 gives 5 (prime), n = 2 gives 17 (prime), n = 3 gives 37 (prime), n = 4 gives 65 = 5 × 13 — composite. For n² + n + 11: n = 10 gives 100 + 10 + 11 = 121 = 11 × 11 — composite (n = 11 gives 143 = 11 × 13 too). For 4ⁿ + 3: n = 1 gives 7 (prime), n = 2 gives 19 (prime), n = 3 gives 67 (prime), n = 4 gives 259 = 7 × 37 — composite. Students then compare their findings with a neighbour."
+       "activity": "Students work individually to evaluate the three expressions systematically. For 4n² + 1: n = 1 gives 5 (prime), n = 2 gives 17 (prime), n = 3 gives 37 (prime), n = 4 gives 65 = 5 × 13 — composite. For n² + n + 11: n = 11 gives 121 + 11 + 11 = 143 = 11 × 13 — composite. For 4ⁿ + 3: n = 1 gives 7 (prime), n = 2 gives 19 (prime), n = 3 gives 67 (prime), n = 4 gives 259 = 7 × 37 — composite. Students then compare their findings with a neighbour."
       },
       {
        "minutes": "28-42",
@@ -988,7 +865,7 @@
      "time_bands": [
       {
        "minutes": "0-18",
-       "activity": "Take up Exercise Set 9.1 Q15, p.6. Part (i): justify 'If a number is divisible by 8, then it is divisible by both 2 and 4.' A student writes the justification: 8 = 2 × 4, so 8 is a multiple of 2 and of 4, and any multiple of 8 is also a multiple of 2 and of 4. Write the deductive chain on the board. Part (ii): is the converse true? Is divisibility by both 2 and 4 enough to guarantee divisibility by 8? No: 12 is divisible by 2 and 4 but not by 8. Identify why: lcm(2,4) = 4, not 8, so the converse fails. Compare with Q8 (lcm(4,6) = 12 ≠ 24) to show the pattern."
+       "activity": "Take up Exercise Set 9.1 Q15, p.6. Part (i): justify 'If a number is divisible by 8, then it is divisible by both 2 and 4.' A student writes the justification: 8 = 2 × 4 and 8 = 8 × 1; since 8 is a multiple of 2 and of 4, any multiple of 8 is also a multiple of 2 and of 4. Write the deductive chain on the board. Part (ii): is the converse true? Is divisibility by both 2 and 4 enough to guarantee divisibility by 8? No: 12 is divisible by 2 and 4 but not by 8. Identify why: lcm(2,4) = 4, not 8, so the converse fails. Compare with Q8 (lcm(4,6) = 12 ≠ 24) to show the pattern."
       },
       {
        "minutes": "18-33",
@@ -1045,7 +922,7 @@
      "time_bands": [
       {
        "minutes": "0-18",
-       "activity": "Present Exercise Set 9.1 Q6, p.6. Write P: 'If x = y (real numbers), then x² = y².' Frame the converse Q: 'If x² = y², then x = y.' Students work individually: is P true? (Yes — squaring both sides of x = y gives x² = y².) Is Q true? Give students time to think, then ask for a specific counterexample. Accept x = 2, y = −2: x² = y² = 4, but x ≠ y. Write the counterexample clearly: the 'if' part holds (x² = y² = 4) but the 'then' part fails (2 ≠ −2). Now discuss: what does x² = y² actually imply? It implies x = y or x = −y. The converse Q confuses the case x = −y."
+       "activity": "Present Exercise Set 9.1 Q6, p.6. Write P: 'If x = y (real numbers), then x² = y².' Frame the converse Q: 'If x² = y², then x = y.' Students work individually: is P true? (Yes — squaring both sides of x = y gives x² = y².) Is Q true? Give students time to think, then ask for a specific counterexample. Accept x = 2, y = −2: x² = y² = 4, but x ≠ y. Write the counterexample clearly in 'if X then Y' form. Now discuss: what does x² = y² actually imply? It implies x = y or x = −y. The converse Q confuses the case x = −y."
       },
       {
        "minutes": "18-33",
@@ -1151,7 +1028,7 @@
       },
       {
        "minutes": "10-30",
-       "activity": "Students work in pairs on Exercise Set 9.1 Q13, p.6. Each pair is assigned one expression: Pair type A: 4n² + 1. Pair type B: n² + n + 11. Pair type C: 4ⁿ + 3. Pairs test n = 1, 2, 3, … systematically, recording results. When pairs have searched, they share findings: Type B finds n = 10 gives 121 = 11 × 11; Type C finds n = 4 gives 259 = 7 × 37; Type A finds n = 4 gives 65 = 5 × 13. Full class confirms each counterexample by checking the factorisation."
+       "activity": "Students work in pairs on Exercise Set 9.1 Q13, p.6. Each pair is assigned one expression: Pair type A: 4n² + 1. Pair type B: n² + n + 11. Pair type C: 4ⁿ + 3. Pairs test n = 1, 2, 3, … systematically, recording results. When pairs have searched, they share findings: Type B finds n = 11 gives 143 = 11 × 13; Type C finds n = 4 gives 259 = 7 × 37; Type A finds n = 4 gives 65 = 5 × 13. Full class confirms each counterexample by checking the factorisation."
       },
       {
        "minutes": "30-44",
@@ -1311,7 +1188,7 @@
      "time_bands": [
       {
        "minutes": "0-20",
-       "activity": "Assign Exercise Set 9.1 Q10, Q11 and Q12 (p.6) as a timed independent set. Students work through all three, writing the converse and the verdict with justification or counterexample for each. Teacher circulates. Q10: converse of 'n = p² implies exactly 3 factors' is 'exactly 3 factors implies n = p²' — both true. Q11: converse of 'n = pq (p ≠ q primes) implies exactly 4 factors' is '4 factors implies n = pq' — false; counterexample n = p³ (factors 1, p, p², p³). Q12: both proposition and converse are true; the brief gcd argument is the key justification."
+       "activity": "Assign Exercise Set 9.1 Q10, Q11 and Q12 (pp.6) as a timed independent set. Students work through all three, writing the converse and the verdict with justification or counterexample for each. Teacher circulates. Q10: converse of 'n = p² implies exactly 3 factors' is 'exactly 3 factors implies n = p²' — both true. Q11: converse of 'n = pq (p ≠ q primes) implies exactly 4 factors' is '4 factors implies n = pq' — false; counterexample n = p³ (factors 1, p, p², p³). Q12: both proposition and converse are true; the brief gcd argument is the key justification."
       },
       {
        "minutes": "20-35",
@@ -1319,7 +1196,7 @@
       },
       {
        "minutes": "35-47",
-       "activity": "Work through Exercise Set 9.1 Q17, p.7 as a class discussion. Read both parts and draw diagrams of the diagonal-sticking construction on the board. Part (i)(a): must the sticks be equal? The proposition says type-Q implies equal diagonals, so to construct a type-Q quadrilateral the diagonals must be equal — yes. Part (i)(b): does placement matter? It may — equal diagonals are needed for type Q but need not be enough, so some crossings of equal sticks may not give a type-Q quadrilateral. Part (ii)(a): if the converse holds ('equal diagonals implies type Q'), should the sticks be equal? Yes — equal sticks guarantee a type-Q quadrilateral, though the property does not say that every type-Q quadrilateral has equal diagonals. Part (ii)(b): does placement matter? No — every crossing of equal sticks gives equal diagonals, and every quadrilateral with equal diagonals is of type Q."
+       "activity": "Work through Exercise Set 9.1 Q17, p.7 as a class discussion. Read both parts and draw diagrams of the diagonal-sticking construction on the board. Part (i)(a): must the sticks be equal? The proposition says type-Q implies equal diagonals, so to construct a type-Q quadrilateral the diagonals must be equal — yes. Part (i)(b): does placement matter? It may — equal diagonals are needed for type Q but need not be enough, so some crossings of equal sticks may not give a type-Q quadrilateral. Part (ii)(a): if the converse holds ('equal diagonals implies type Q'), must the sticks be equal? Yes — to get a type-Q quadrilateral with equal diagonals. Part (ii)(b): does placement matter? No — every crossing of equal sticks gives equal diagonals, and every quadrilateral with equal diagonals is of type Q."
       },
       {
        "minutes": "47-50",
@@ -1356,7 +1233,7 @@
       },
       {
        "minutes": "40-50",
-       "activity": "Class closing discussion. Write on the board the four logical possibilities for a proposition P and its converse Q: (a) P true, Q true; (b) P true, Q false; (c) P false, Q true; (d) P false, Q false. Ask: from the chapter or from class, name one example in each category. After the class names examples, ask: which category do you find most surprising, and why? Draw out the mathematical moral: the truth of a proposition and the truth of its converse are logically independent, and the chapter's entire work — worked examples, proofs, counterexamples — is the demonstration of this single deep idea. Students write a three-sentence summary of the chapter's central claim in their own words."
+       "activity": "Class closing discussion. Write on the board the four logical possibilities for a proposition P and its converse Q: (a) P true, Q true; (b) P true, Q false; (c) P false, Q true; (d) P false, Q false. Ask: from the chapter, name one example in each category. After the class names examples, ask: which category do you find most surprising, and why? Draw out the mathematical moral: the truth of a proposition and the truth of its converse are logically independent, and the chapter's entire work — worked examples, proofs, counterexamples — is the demonstration of this single deep idea. Students write a three-sentence summary of the chapter's central claim in their own words."
       }
      ],
      "teacher_notes": "This closing unit draws every thread of the chapter together under the single organising question: what is the relationship between the truth of a proposition and the truth of its converse? The novel n²-even-implies-n-even problem is designed to make students practice the full three-step process one more time on fresh material. A common error in the group presentations is restating 'the converse is false' without naming a specific counterexample — insist on a number or a diagram that witnesses the failure.",
@@ -1574,9 +1451,9 @@
         "section": 2
        },
        "format_type": "Procedure / argument evaluation",
-       "format_rationale": "The task requires students to evaluate and construct deductive arguments or counterexamples for two propositions, synthesising the chapter's full frame-test-justify method across both number-theoretic and algebraic contexts.",
-       "what_this_demonstrates": "Students demonstrate integrative command of the chapter's three core operations — converse formation, deductive justification, and counterexample construction — applied to two propositions, and can articulate the logical independence of a proposition's truth from its converse's truth.",
-       "reading_the_scaffold": "The scaffold's lcm hint for Proposition A lets students see that lcm(5, 12) = 60, so divisibility by both 5 and 12 implies divisibility by 60, making Proposition A true; its converse is true because 5 and 12 both divide 60. The hint for Proposition B points to the ±y root structure, which is the counterexample mechanism for Proposition B itself; its converse (if x = y then x² = y²) is true.",
+       "format_rationale": "The task requires students to evaluate and construct deductive arguments or counterexamples for two novel propositions, synthesising the chapter's full frame-test-justify method across both number-theoretic and algebraic contexts.",
+       "what_this_demonstrates": "Students demonstrate integrative command of the chapter's three core operations — converse formation, deductive justification, and counterexample construction — applied to fresh propositions they have not seen before, and can articulate the logical independence of a proposition's truth from its converse's truth.",
+       "reading_the_scaffold": "The scaffold's lcm hint for Proposition A guides students who know that divisibility by both 5 and 12 does not automatically give divisibility by 60 unless lcm(5,12) = 60 — which it does, making Proposition A true; its converse is true because 5 and 12 both divide 60. The hint for Proposition B points to the ±y root structure, which is the counterexample mechanism for Proposition B itself; its converse (if x = y then x² = y²) is true.",
        "strong_vs_weak_markers": "Strong: converse correctly formed in all cases; justification for true statements gives a one-line deductive chain (e.g., 'lcm(5,12) = 60, so divisibility by both implies divisibility by 60'); counterexample for false statements names a specific value and verifies both the 'if' and the failure of the 'then'; final sentence uses the word 'independent' or equivalent. Weak: converse formed by negation rather than swapping; examples used as justifications for true statements; counterexample stated without checking the 'if' condition; final sentence merely repeats 'the converse need not be true' without connecting to both examples.",
        "inclusivity": "A student who is unsure how to start can be directed to the scaffold and asked to evaluate Proposition A only, writing the converse first and then testing n = 60 and n = 120. A student who completes the task fully can be challenged to find a third proposition — of their own invention, about numbers or geometry — whose proposition is false and whose converse is also false, demonstrating the fourth logical category."
       }

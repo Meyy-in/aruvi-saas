@@ -128,42 +128,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:52:53",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C13-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U1",
-        "field": "time_bands[3].activity",
-        "old": " Briefly preview that the chapter will develop how to read, graph and solve such equations and pairs of them.",
-        "new": ""
-       },
-       {
-        "where": "U8",
-        "field": "time_bands[3].activity",
-        "old": " Close by noting that these methods reduce the pair but say nothing yet about how many solutions exist — that analysis comes from examining the equations' structure.",
-        "new": ""
-       },
-       {
-        "where": "U4",
-        "field": "teacher_notes",
-        "old": "Example 3, p.90 part (ii) offers a rich self-study opportunity for checking slope consistency across points on the same line.",
-        "new": "students can choose another x-value for 2x + 5y = 0, compute y and check that the point lies on the drawn line."
-       },
-       {
-        "where": "U5",
-        "field": "teacher_notes",
-        "old": "because it proves that the order of the points does not matter — the negative signs cancel —",
-        "new": "because it illustrates that the order of the points does not matter — (y1 − y2)/(x1 − x2) = (y2 − y1)/(x2 − x1), since the negative signs cancel —"
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -205,7 +169,7 @@
       },
       {
        "minutes": "40-50",
-       "activity": "Consolidate: draw out from students the key features of a linear equation in two variables — two distinct unknowns, each to the first power, an equals sign."
+       "activity": "Consolidate: draw out from students the key features of a linear equation in two variables — two distinct unknowns, each to the first power, an equals sign. Briefly preview that the chapter will develop how to read, graph and solve such equations and pairs of them."
       }
      ],
      "teacher_notes": "This unit opens the chapter by grounding the new object — a linear equation in two variables — in a familiar purchasing scenario, so students immediately connect the formalism to a real situation. Watch for students who write the equation with the variables swapped (50x + 60y = 280) and use it as an opportunity to discuss that the variable names must be defined consistently with the quantities they represent. Exercise Set 13.1 Q3, p.87 works well as a quick diagnostic of whether students can distinguish a correctly formed equation from a plausible-sounding but wrong one.",
@@ -398,7 +362,7 @@
        "activity": "Whole-class discussion: what does the exercise with C(2, 3) reveal about the relationship between lying on the line and satisfying the equation? Ensure students can articulate that a point lies on the graph of an equation if and only if its coordinates satisfy the equation."
       }
      ],
-     "teacher_notes": "The key conceptual step here is the bridge between the algebraic notion of a solution (an ordered pair satisfying the equation) and its geometric counterpart (a point on the line); this equivalence underpins everything that follows in the chapter. A common confusion is the equation 2x + 5y = 0, where students try to use x = 0 and y = 0 separately but both give the origin, leaving only one point; watch for this and use it to reinforce why a second non-intercept point is needed. For a student who finishes early, students can choose another x-value for 2x + 5y = 0, compute y and check that the point lies on the drawn line.",
+     "teacher_notes": "The key conceptual step here is the bridge between the algebraic notion of a solution (an ordered pair satisfying the equation) and its geometric counterpart (a point on the line); this equivalence underpins everything that follows in the chapter. A common confusion is the equation 2x + 5y = 0, where students try to use x = 0 and y = 0 separately but both give the origin, leaving only one point; watch for this and use it to reinforce why a second non-intercept point is needed. For a student who finishes early, Example 3, p.90 part (ii) offers a rich self-study opportunity for checking slope consistency across points on the same line.",
      "homework": [
       "Complete Exercise Set 13.2 Q4, p.93 for all four equations, plotting each line on graph paper and identifying the quadrant of each solution found."
      ]
@@ -471,7 +435,7 @@
        "activity": "Take up the three exercises and the think-and-reflect on the board. For the think-and-reflect, show how the slope 3/2 from A and B lets you compute that moving from x = 4 to x = 8 (a run of 4) gives a rise of 6, so the point is (8, 9). Consolidate: slope is a property of the whole line, not just two specific points."
       }
      ],
-     "teacher_notes": "Having established that the graph of a linear equation is a line, students now learn to measure a line's steepness through slope. The most common error is computing rise/run in the wrong order — students sometimes write (x2 - x1)/(y2 - y1); reinforce the vertical change in the numerator and horizontal in the denominator by referring back to the physical hill metaphor. Example 6, p.97 is especially worth dwelling on because it illustrates that the order of the points does not matter — (y1 − y2)/(x1 − x2) = (y2 − y1)/(x2 − x1), since the negative signs cancel — which is a fact students often doubt.",
+     "teacher_notes": "Having established that the graph of a linear equation is a line, students now learn to measure a line's steepness through slope. The most common error is computing rise/run in the wrong order — students sometimes write (x2 - x1)/(y2 - y1); reinforce the vertical change in the numerator and horizontal in the denominator by referring back to the physical hill metaphor. Example 6, p.97 is especially worth dwelling on because it proves that the order of the points does not matter — the negative signs cancel — which is a fact students often doubt.",
      "homework": []
     },
     {
@@ -673,7 +637,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Pose the think-and-reflect: re-solve the incomes problem by eliminating x instead of y. Students try this briefly. Discuss: both methods always give the same answer; the choice is one of convenience."
+       "activity": "Pose the think-and-reflect: re-solve the incomes problem by eliminating x instead of y. Students try this briefly. Discuss: both methods always give the same answer; the choice is one of convenience. Close by noting that these methods reduce the pair but say nothing yet about how many solutions exist — that analysis comes from examining the equations' structure."
       }
      ],
      "teacher_notes": "The two algebraic methods — substitution and elimination — are the computational heart of the chapter. A common error in substitution is to substitute the expression back into the equation it was drawn from, not the other equation, producing a trivially true identity rather than a value; reinforce that the expression from one equation is substituted into the other. In elimination, students frequently forget to multiply both sides of an equation by the chosen factor and only multiply the coefficient, producing an incorrect equation; one or two board examples with explicit checking can prevent this.",

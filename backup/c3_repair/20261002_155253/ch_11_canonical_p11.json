@@ -69,88 +69,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:52:53",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C11-101": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': \"Students can compare the number of reductions required by Euclid's subtraction algorithm and Āryabhaṭa's division algorithm for the same pair, and explain why the division algorithm is more efficient.\"}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "correctly counts 48 reductions in part (a) and 2 in part (b), identifies k = 48 in part (c), and in part (d) explicitly states that each subtraction of 2 from an odd number is replaced by computing the remainder in a single step — Āryabhaṭa's algorithm performs in one step what Euclid's needs about 48 steps to accomplish.",
-        "new": "correctly counts 50 reductions in part (a) (k + 2, i.e. about k) and 2 in part (b), identifies k = 48 in part (c), and in part (d) explicitly states that one remainder computation replaces all the repeated subtractions of 2 — Āryabhaṭa's algorithm does in one step what Euclid's needs about 48 steps to accomplish."
-       }
-      ]
-     },
-     "C11-117": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U10",
-        "field": "time_bands[3].activity",
-        "old": "Verify the student's claim for gcd(2k+1, 2) — the section asserts it always takes two reductions.",
-        "new": "Check the book's statement that every gcd(2k+1, 2) takes only two reductions: (2k+1) mod 2 = 1, then 2 mod 1 = 0."
-       }
-      ]
-     },
-     "C11-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U1",
-        "field": "time_bands[3].activity",
-        "old": "Preview that justifying why it works is as important as executing it.",
-        "new": "Note that justifying why it works is as important as executing it."
-       },
-       {
-        "where": "U1",
-        "field": "teacher_notes",
-        "old": "that distinction is exactly what the chapter will unpack.",
-        "new": "that distinction matters."
-       },
-       {
-        "where": "U3",
-        "field": "time_bands[3].activity",
-        "old": "The next stage of the chapter develops the 'list divisors of n' algorithm as the first subproblem. ",
-        "new": "The 'list divisors of n' algorithm is the first subproblem. "
-       },
-       {
-        "where": "U4",
-        "field": "teacher_notes",
-        "old": ", which plants the seed for the efficiency discussion in section 11.3.2.",
-        "new": "."
-       },
-       {
-        "where": "U1",
-        "field": "time_bands[1].activity",
-        "old": "(4+6+1=11, write 11)",
-        "new": "(4+6+1=11, write 1 and carry 1; with no digits left, write the carry 1 on the left)"
-       },
-       {
-        "where": "U8",
-        "field": "time_bands[0].activity",
-        "old": "Refinements 1 and 2 only change the order of scanning and the data kept;",
-        "new": "Refinement 1 merges the two scans and Refinement 2 scans only up to min(m, n), which is safe because no common divisor exceeds min(m, n);"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can describe and trace the three successive refinements of the gcd algorithm and explain what each refinement gains.'}",
-        "field": "expected_answer",
-        "old": "gcd(12, 30) = 6.",
-        "new": "gcd(12, 30) = 6, and the scan stops at 12 because no common divisor of 12 and 30 can exceed the smaller number, 12."
-       },
-       {
-        "where": "U11",
-        "field": "time_bands[1].activity",
-        "old": "are Indian procedures of the kind Al-Khwārizmī transmitted to Europe.",
-        "new": "are Indian procedures; Al-Khwārizmī's treatise carried the Indian place-value system and its methods for the four operations to Europe."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -176,7 +94,7 @@
       },
       {
        "minutes": "10-25",
-       "activity": "Introduce the column method: write 473 below 695 with digits aligned from the right. Walk through the addition column by column — units first (3+5=8), then tens (7+9=16, write 6 carry 1), then hundreds (4+6+1=11, write 1 and carry 1; with no digits left, write the carry 1 on the left) — arriving at 1168. Contrast visually with the dot picture: the column method scales one additional column per extra digit, while counting dots scales tenfold per extra digit. Record both approaches side by side on the board."
+       "activity": "Introduce the column method: write 473 below 695 with digits aligned from the right. Walk through the addition column by column — units first (3+5=8), then tens (7+9=16, write 6 carry 1), then hundreds (4+6+1=11, write 11) — arriving at 1168. Contrast visually with the dot picture: the column method scales one additional column per extra digit, while counting dots scales tenfold per extra digit. Record both approaches side by side on the board."
       },
       {
        "minutes": "25-40",
@@ -184,10 +102,10 @@
       },
       {
        "minutes": "40-50",
-       "activity": "Consolidate: the chapter asks two questions — what is an algorithm, and what does it have to do with mathematics? Establish that the column addition method is a first example of an algorithm: a systematic, step-by-step procedure. Note that justifying why it works is as important as executing it."
+       "activity": "Consolidate: the chapter asks two questions — what is an algorithm, and what does it have to do with mathematics? Establish that the column addition method is a first example of an algorithm: a systematic, step-by-step procedure. Preview that justifying why it works is as important as executing it."
       }
      ],
-     "teacher_notes": "This opening unit establishes the chapter's motivating question by letting students feel the difference between counting dots and column addition before any formal definition is offered. Watch for students who conflate 'faster' with 'more correct' — the dot method is correct, just impractical, and that distinction matters. The dot-vs-column contrast is the entry point for the meaning of algorithm efficiency.",
+     "teacher_notes": "This opening unit establishes the chapter's motivating question by letting students feel the difference between counting dots and column addition before any formal definition is offered. Watch for students who conflate 'faster' with 'more correct' — the dot method is correct, just impractical, and that distinction is exactly what the chapter will unpack. The dot-vs-column contrast is the entry point for the meaning of algorithm efficiency.",
      "homework": []
     },
     {
@@ -276,7 +194,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Consolidate: the problem-decomposition strategy — understand what is required, break it into subproblems already solvable — is itself an algorithmic way of thinking. The 'list divisors of n' algorithm is the first subproblem. Pose the question to carry forward: for a large number, how do you know when you have found every divisor?"
+       "activity": "Consolidate: the problem-decomposition strategy — understand what is required, break it into subproblems already solvable — is itself an algorithmic way of thinking. The next stage of the chapter develops the 'list divisors of n' algorithm as the first subproblem. Pose the question to carry forward: for a large number, how do you know when you have found every divisor?"
       }
      ],
      "teacher_notes": "Students often approach gcd via prime factorisation and may resist a more elementary approach — acknowledge that prime factorisation works but that the chapter's goal is to understand what an algorithm is and how to justify it from first principles, which prime factorisation alone does not address. Watch for students who list divisors unsystematically and miss some; this will motivate the need for a step-by-step divisors algorithm. No textbook items are assigned in class here; the unit is purely exploratory.",
@@ -321,7 +239,7 @@
        "activity": "Introduce End of Chapter Q3 (p.50): write an algorithm prime(n) using divisors(n), given that a prime has exactly two distinct factors, 1 and p. Students draft the algorithm in their notebooks — just the steps in words. Share one or two drafts aloud and refine them. Leave the full write-up as homework if needed."
       }
      ],
-     "teacher_notes": "The most common error here is students checking only up to n/2 for divisors, missing n itself — the algorithm explicitly runs from 1 to n, and the justification (any divisor lies between 1 and the number itself) should be stated clearly. The think-reflect execution for 135 and 775 gives students practice noticing that the number of steps equals the value of n. End of Chapter Q3 (p.50) is a creative algorithm-design task and a good self-study challenge.",
+     "teacher_notes": "The most common error here is students checking only up to n/2 for divisors, missing n itself — the algorithm explicitly runs from 1 to n, and the justification (any divisor lies between 1 and the number itself) should be stated clearly. The think-reflect execution for 135 and 775 gives students practice noticing that the number of steps equals the value of n, which plants the seed for the efficiency discussion in section 11.3.2. End of Chapter Q3 (p.50) is a creative algorithm-design task and a good self-study challenge.",
      "homework": [
       "End of Chapter Q3, p.50 — write out the full algorithm prime(n) cleanly, using the divisors algorithm, and test it on n = 7, n = 9, and n = 13."
      ]
@@ -480,7 +398,7 @@
      "time_bands": [
       {
        "minutes": "0-15",
-       "activity": "Address correctness first: the basic gcd algorithm was derived directly from the definition of gcd, and each refinement improves efficiency without changing what is computed. Work through the argument on the board: Refinement 1 merges the two scans and Refinement 2 scans only up to min(m, n), which is safe because no common divisor exceeds min(m, n); Refinement 3 keeps only the most recent common divisor because each subsequent one is strictly larger. Establish that proving correctness is part of what makes a procedure an algorithm."
+       "activity": "Address correctness first: the basic gcd algorithm was derived directly from the definition of gcd, and each refinement improves efficiency without changing what is computed. Work through the argument on the board: Refinements 1 and 2 only change the order of scanning and the data kept; Refinement 3 keeps only the most recent common divisor because each subsequent one is strictly larger. Establish that proving correctness is part of what makes a procedure an algorithm."
       },
       {
        "minutes": "15-30",
@@ -579,7 +497,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Compare the number of reductions: gcd(99, 2) needed about 49 steps under Euclid's subtraction algorithm but just 2 under Āryabhaṭa's. Check the book's statement that every gcd(2k+1, 2) takes only two reductions: (2k+1) mod 2 = 1, then 2 mod 1 = 0. State without proof (left to later grades) that the number of reductions in Āryabhaṭa's algorithm is proportional to the number of digits in m and n. Ask students to articulate what this means for large numbers."
+       "activity": "Compare the number of reductions: gcd(99, 2) needed about 49 steps under Euclid's subtraction algorithm but just 2 under Āryabhaṭa's. Verify the student's claim for gcd(2k+1, 2) — the section asserts it always takes two reductions. State without proof (left to later grades) that the number of reductions in Āryabhaṭa's algorithm is proportional to the number of digits in m and n. Ask students to articulate what this means for large numbers."
       }
      ],
      "teacher_notes": "The most important distinction in this unit is between the reduction step of Euclid's algorithm (gcd(m,n) → gcd(n, m−n)) and Āryabhaṭa's (gcd(m,n) → gcd(n, m mod n)) — students sometimes think they are different algorithms rather than the same algorithm with one step improved. Watch for confusion between 'remainder' and 'difference'; confirming with 17 mod 5 = 2 (not 12) is worth spending time on. End of Chapter Q1 (p.50) parts (iii) and (iv) involve large numbers and are good challenge items for faster students.",
@@ -615,7 +533,7 @@
       },
       {
        "minutes": "15-30",
-       "activity": "Connect the history to the chapter's content: the column addition algorithm (section 11.1.1) and Āryabhaṭa's division algorithm (section 11.3.4) are Indian procedures; Al-Khwārizmī's treatise carried the Indian place-value system and its methods for the four operations to Europe. Ask students: which of the algorithms in this chapter did we justify from first principles? (Column addition from place value; gcd algorithms from the tiling/divisibility argument.) Why does the chapter insist on justification alongside every algorithm? Students discuss in pairs, then share."
+       "activity": "Connect the history to the chapter's content: the column addition algorithm (section 11.1.1) and Āryabhaṭa's division algorithm (section 11.3.4) are Indian procedures of the kind Al-Khwārizmī transmitted to Europe. Ask students: which of the algorithms in this chapter did we justify from first principles? (Column addition from place value; gcd algorithms from the tiling/divisibility argument.) Why does the chapter insist on justification alongside every algorithm? Students discuss in pairs, then share."
       },
       {
        "minutes": "30-45",
@@ -1237,7 +1155,7 @@
      "graph_paper": false,
      "question_text": "Using the most-refined version of the gcd algorithm from section 11.3.1 — scanning k from 2 to min(m, n) and updating most-recent-common-divisor to k whenever k divides both m and n — trace the algorithm for m = 12 and n = 30. Write the value of most-recent-common-divisor after each update and state the final gcd. Also state the value of min(12, 30) and explain in one sentence why the scan can stop there.",
      "options": [],
-     "expected_answer": "min(12, 30) = 12. Trace: start with most-recent-common-divisor = 1. k=2: divides both 12 and 30, update to 2. k=3: divides both, update to 3. k=4: divides 12 but not 30, no update. k=5: divides 30 but not 12, no update. k=6: divides both, update to 6. k=7 to 11: none divide both. k=12: divides 12 but not 30 (30/12 is not an integer), no update. Final most-recent-common-divisor = 6; gcd(12, 30) = 6, and the scan stops at 12 because no common divisor of 12 and 30 can exceed the smaller number, 12.",
+     "expected_answer": "min(12, 30) = 12. Trace: start with most-recent-common-divisor = 1. k=2: divides both 12 and 30, update to 2. k=3: divides both, update to 3. k=4: divides 12 but not 30, no update. k=5: divides 30 but not 12, no update. k=6: divides both, update to 6. k=7 to 11: none divide both. k=12: divides 12 but not 30 (30/12 is not an integer), no update. Final most-recent-common-divisor = 6; gcd(12, 30) = 6.",
      "method_one_line": "Start most-recent-common-divisor at 1; for k from 2 to min(m,n), update it to k whenever k divides both m and n; the final value is the gcd.",
      "expected_elements": [],
      "look_for": [],
@@ -1426,7 +1344,7 @@
        "format_rationale": "The implied_lo requires comparing the two algorithms' efficiency and explaining why one is better — a cross-operational analysis that requires both executing each algorithm and reasoning about the relationship between repeated subtraction and division, which is precisely what this format demands.",
        "what_this_demonstrates": "Students demonstrate that they can execute both algorithms on the same input, count and compare their steps, identify the structural reason (repeated subtraction compressed into one division) for the efficiency difference, and communicate that reasoning in clear sentences.",
        "reading_the_scaffold": "The scaffold breaks the task into four ordered parts; parts (a) and (b) are execution tasks that produce the data for parts (c) and (d), which are reasoning tasks. A student who completes (a) and (b) but struggles with (d) has demonstrated execution without the analytical explanation — the guide should note this distinction when reviewing responses.",
-       "strong_vs_weak_markers": "A strong response correctly counts 50 reductions in part (a) (k + 2, i.e. about k) and 2 in part (b), identifies k = 48 in part (c), and in part (d) explicitly states that one remainder computation replaces all the repeated subtractions of 2 — Āryabhaṭa's algorithm does in one step what Euclid's needs about 48 steps to accomplish. A weak response may miscount the reductions, identify k incorrectly, or offer a vague explanation in part (d) such as 'it uses division which is faster' without explaining why fewer reductions result.",
+       "strong_vs_weak_markers": "A strong response correctly counts 48 reductions in part (a) and 2 in part (b), identifies k = 48 in part (c), and in part (d) explicitly states that each subtraction of 2 from an odd number is replaced by computing the remainder in a single step — Āryabhaṭa's algorithm performs in one step what Euclid's needs about 48 steps to accomplish. A weak response may miscount the reductions, identify k incorrectly, or offer a vague explanation in part (d) such as 'it uses division which is faster' without explaining why fewer reductions result.",
        "inclusivity": "A student who finds the counting in part (a) overwhelming can be told to carry out the first five reductions and then look for a pattern — what happens to the first argument at each step when n = 2? A student who masters all four parts quickly can be asked to generalise: for gcd(3k + 1, 3), how many reductions would each algorithm need, and can they verify this for a specific small value of k?"
       }
      }

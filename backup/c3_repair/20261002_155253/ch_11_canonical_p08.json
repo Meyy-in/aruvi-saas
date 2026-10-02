@@ -184,65 +184,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:52:53",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C11-118": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can write and execute the first complete gcd(m,n) algorithm that combines the divisors and common-divisors steps, and adapt the same structure to describe an algorithm for lcm.'}",
-        "field": "task",
-        "old": "has four steps: (1) compute divisors(m) and call it divisors-of-m; (2) compute divisors(n) and call it divisors-of-n; (3) for each x in divisors-of-m, add x to common-divisors if it also appears in divisors-of-n; (4) report",
-        "new": "has five steps: (1) compute divisors(m) and call it divisors-of-m; (2) compute divisors(n) and call it divisors-of-n; (3) start with an empty list common-divisors; (4) for each x in divisors-of-m, add x to common-divisors if it also appears in divisors-of-n; (5) report"
-       }
-      ]
-     },
-     "C11-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U8",
-        "field": "time_bands[0].activity",
-        "old": "how his name — latinised as algorismus — gave us the word 'algorithm'",
-        "new": "how his name — Algoritmi in Latin, which gave 'algorismus' — gave us the word 'algorithm'"
-       },
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "the carry variable is what makes each column's addition independent and fully describable.",
-        "new": "the carry variable is what passes a group of ten from one column to the next."
-       },
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "whose units digit is at most 9 with carry 1.",
-        "new": "whose tens digit is 1, so the carry is at most 1."
-       },
-       {
-        "where": "U6",
-        "field": "time_bands[1].activity",
-        "old": "Write the converse: if d divides n and m−n, then m = n + (m−n) = (x+y)d.",
-        "new": "Write the converse: if d divides n and m−n, write n = xd and m − n = yd; then m = n + (m−n) = (x+y)d."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can write and execute the first complete gcd(m,n) algorithm that combines the divisors and common-divisors steps, and adapt the same structure to describe an algorithm for lcm.'}",
-        "field": "guide.OPEN_TASK.reading_the_scaffold",
-        "old": "the scaffold hints that lcm involves a different combination of divisors and a different element to report.",
-        "new": "the scaffold hints at lists of multiples, or at lcm × gcd = m × n."
-       },
-       {
-        "where": "U8",
-        "field": "time_bands[2].activity",
-        "old": "This revisits Section 11.1.1 to consolidate algorithm robustness — a theme running through the whole chapter.",
-        "new": "This revisits Section 11.1.1 to check that the steps are stated generally enough to handle numbers of different lengths."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -328,7 +269,7 @@
        "activity": "Think-and-reflect discussion: the textbook asks students to complete the argument about grouping by units, tens, hundreds that justifies why the algorithm works, and then to work out how the algorithm should be modified to add two decimal fractions. Students discuss in pairs and share proposed modifications, which the teacher records on the board without resolving them fully — leaving the idea open as an extension."
       }
      ],
-     "teacher_notes": "The algorithm's five steps are precise by design — a common error is for students to perform an implicit mental step (e.g. silently handling a carry from the units column before reading Step 2). Emphasise that the carry variable is what passes a group of ten from one column to the next. Exercise Set 11.1 Q4 (p.38) is the key justification item: the bound 'carry ≤ 1' follows from the fact that two single digits sum to at most 18, so the column total including carry is at most 19, whose tens digit is 1, so the carry is at most 1.",
+     "teacher_notes": "The algorithm's five steps are precise by design — a common error is for students to perform an implicit mental step (e.g. silently handling a carry from the units column before reading Step 2). Emphasise that the carry variable is what makes each column's addition independent and fully describable. Exercise Set 11.1 Q4 (p.38) is the key justification item: the bound 'carry ≤ 1' follows from the fact that two single digits sum to at most 18, so the column total including carry is at most 19, whose units digit is at most 9 with carry 1.",
      "homework": [
       "Exercise Set 11.1 Q3 (p.38): explain why aligning columns from right to left is essential. Write a brief argument, not just an example.",
       "Exercise Set 11.1 Q5 (p.38): find out what happens when the final carry step is omitted — give one example where the algorithm still works and one where it fails."
@@ -501,7 +442,7 @@
       },
       {
        "minutes": "12-28",
-       "activity": "Prove the key reduction from Section 11.3.3: for m ≥ n, gcd(m, n) = gcd(n, m−n). Write the forward direction on the board: if d divides m and n, then m = ad and n = bd, so m−n = (a−b)d is divisible by d. Write the converse: if d divides n and m−n, write n = xd and m − n = yd; then m = n + (m−n) = (x+y)d. Draw the tiling figure — m tiled by d-blocks, n tiled, m−n tiled — showing the common divisors are identical. Students annotate their own copy of the proof."
+       "activity": "Prove the key reduction from Section 11.3.3: for m ≥ n, gcd(m, n) = gcd(n, m−n). Write the forward direction on the board: if d divides m and n, then m = ad and n = bd, so m−n = (a−b)d is divisible by d. Write the converse: if d divides n and m−n, then m = n + (m−n) = (x+y)d. Draw the tiling figure — m tiled by d-blocks, n tiled, m−n tiled — showing the common divisors are identical. Students annotate their own copy of the proof."
       },
       {
        "minutes": "28-40",
@@ -592,7 +533,7 @@
      "time_bands": [
       {
        "minutes": "0-12",
-       "activity": "Open with the chapter's closing historical narrative: Al-Khwārizmī in Baghdad, his 820 CE treatise on the Indian number system, its 12th-century Latin translation Liber Algorismi de numero Indorum, and how his name — Algoritmi in Latin, which gave 'algorismus' — gave us the word 'algorithm'. Students note two facts about the history that surprised them."
+       "activity": "Open with the chapter's closing historical narrative: Al-Khwārizmī in Baghdad, his 820 CE treatise on the Indian number system, its 12th-century Latin translation Liber Algorismi de numero Indorum, and how his name — latinised as algorismus — gave us the word 'algorithm'. Students note two facts about the history that surprised them."
       },
       {
        "minutes": "12-28",
@@ -600,7 +541,7 @@
       },
       {
        "minutes": "28-42",
-       "activity": "Students work Exercise Set 11.1 Q2 (p.38) as a short written task: what happens when a 5-digit number is added to a 3-digit number under the column algorithm? Do the five steps handle it? After individual work, small groups compare and the class agrees on the answer. This revisits Section 11.1.1 to check that the steps are stated generally enough to handle numbers of different lengths."
+       "activity": "Students work Exercise Set 11.1 Q2 (p.38) as a short written task: what happens when a 5-digit number is added to a 3-digit number under the column algorithm? Do the five steps handle it? After individual work, small groups compare and the class agrees on the answer. This revisits Section 11.1.1 to consolidate algorithm robustness — a theme running through the whole chapter."
       },
       {
        "minutes": "42-50",
@@ -1269,7 +1210,7 @@
      "method_one_line": "",
      "expected_elements": [],
      "look_for": [],
-     "task": "The first gcd(m, n) algorithm in Section 11.2.3 has five steps: (1) compute divisors(m) and call it divisors-of-m; (2) compute divisors(n) and call it divisors-of-n; (3) start with an empty list common-divisors; (4) for each x in divisors-of-m, add x to common-divisors if it also appears in divisors-of-n; (5) report the rightmost element of common-divisors as gcd(m, n).\n\n(a) Execute this algorithm for m = 42 and n = 56. Show each intermediate list.\n(b) Adapt the algorithm to compute lcm(m, n) for m = 42 and n = 56. State clearly which step(s) you changed and why, then execute your lcm algorithm and give the answer.",
+     "task": "The first gcd(m, n) algorithm in Section 11.2.3 has four steps: (1) compute divisors(m) and call it divisors-of-m; (2) compute divisors(n) and call it divisors-of-n; (3) for each x in divisors-of-m, add x to common-divisors if it also appears in divisors-of-n; (4) report the rightmost element of common-divisors as gcd(m, n).\n\n(a) Execute this algorithm for m = 42 and n = 56. Show each intermediate list.\n(b) Adapt the algorithm to compute lcm(m, n) for m = 42 and n = 56. State clearly which step(s) you changed and why, then execute your lcm algorithm and give the answer.",
      "scaffold": "For part (a): begin by listing divisors(42) and divisors(56). Then build common-divisors by scanning divisors(42). For part (b): recall that the lcm is the smallest number divisible by both m and n — instead of lists of divisors, think about lists of multiples — or use the fact that lcm(m, n) × gcd(m, n) = m × n.",
      "format_of_output": [
       "Intermediate lists for part (a): divisors(42), divisors(56), common-divisors, and gcd.",
@@ -1310,7 +1251,7 @@
        "format_type": "Proof or derivation",
        "format_rationale": "The LO requires both executing an algorithm and adapting its structure to a related problem — a multi-step algorithmic design task that is most naturally demonstrated by writing the algorithm, running it, and explaining the modification, which is a procedure/argument task closest to the proof-or-derivation format at this stage.",
        "what_this_demonstrates": "Students demonstrate that they can execute the complete gcd algorithm by keeping track of multiple intermediate lists, and that they can adapt algorithmic structure by identifying which step encodes the 'greatest' criterion and modifying it to encode the 'smallest multiple' criterion for lcm.",
-       "reading_the_scaffold": "Part (a) is fully guided by the four steps in the task — students just execute. Part (b) requires the adaptation; the scaffold hints at lists of multiples, or at lcm × gcd = m × n. A strong response for (b) replaces the divisor lists with lists of multiples of m and of n (up to m × n) and reports the smallest number in both, or computes m × n ÷ gcd(m, n) = 42 × 56 ÷ 14 = 168; any correct algorithmic formulation is acceptable.",
+       "reading_the_scaffold": "Part (a) is fully guided by the four steps in the task — students just execute. Part (b) requires the adaptation; the scaffold hints that lcm involves a different combination of divisors and a different element to report. A strong response for (b) replaces the divisor lists with lists of multiples of m and of n (up to m × n) and reports the smallest number in both, or computes m × n ÷ gcd(m, n) = 42 × 56 ÷ 14 = 168; any correct algorithmic formulation is acceptable.",
        "strong_vs_weak_markers": "Strong: correct divisors(42)=[1,2,3,6,7,14,21,42] and divisors(56)=[1,2,4,7,8,14,28,56], common-divisors=[1,2,7,14], gcd=14; lcm algorithm clearly states the modified step and produces lcm=168. Weak: lists one or both divisor lists incorrectly, or describes the lcm algorithm in words without identifying which step changed, or gives lcm=84 (a common slip from a partial product).",
        "inclusivity": "Students who struggle with part (b) may be told the answer lcm(42,56)=168 and asked only to work backwards: where would 168 appear if the algorithm listed multiples of 42 and of 56 instead of divisors, and which element should it report? Students who finish quickly may be asked to write a single combined algorithm that computes both gcd and lcm in one pass."
       }

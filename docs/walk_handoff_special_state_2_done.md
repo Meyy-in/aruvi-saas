@@ -17,6 +17,18 @@ records what changed since.
   The founder reports the WhatsApp invoice template is approved and delivering to his own
   phone, so 158 may now be only a check with a real number.
 
+## ★ PLAN FOR THE NEXT SESSION (founder, 2026-10-02)
+1. **Close the last 19 checks of the walk** (614/633 done; only real-build checks remain after):
+   04.37 web (wording re-look) · 06.14 ×3 (notes read-only while lapsed — revoke/grant 027) ·
+   05.11, 05.12, 05.19 ×3 (prior-year lessons — 028; re-add its Supabase OTP) · 01.25 ×3
+   ("That didn't save" caption — ARUVI_TEST_READBACK_SKEW on Render, as for X.02) · 02.07 ×3
+   (empty trial profile — unreachable since WALK-A-114; founder to decide: n/a or a fresh number).
+2. **Then, as the priority: the held web changes** — `docs/web_desktop_view.md` (held until the
+   walk ended so web ticks stayed valid; `web/app/globals.css` is free to touch from then on).
+   Re-walk the web screens they touch.
+3. Later: the real-build pass (X.12, 077 phone half, Android-real column) with the Play
+   internal-track build.
+
 ## Still pending in the tracker (not special-state)
 - 05.11, 05.12, 05.19 (web): need an account with a prior academic year. **028 now has one**
   (2026-27 → 2027-28 cutover); 164/165 already exercised most of it. Supabase OTP for 028 was

@@ -129,53 +129,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:52:53",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C13-106": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U10",
-        "field": "teacher_notes",
-        "old": "with c1 and c2 as they appear on the left-hand side rather than in the standard form ax + by + c = 0",
-        "new": "with c1 and c2 read from equations written in different forms (one constant on the right-hand side, the other on the left)"
-       }
-      ]
-     },
-     "C13-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U8",
-        "field": "teacher_notes",
-        "old": " using substitution before encountering the elimination trick.",
-        "new": ", using substitution."
-       },
-       {
-        "where": "U4",
-        "field": "time_bands[0].activity",
-        "old": "Take the solutions of 3x + 2y = 12 from the previous unit's work —",
-        "new": "Tabulate four solutions of 3x + 2y = 12 —"
-       },
-       {
-        "where": "U11",
-        "field": "time_bands[1].activity",
-        "old": "Rotate: fractions (v, vi),",
-        "new": "Rotate: numbers (ii), bats and balls (iii), taxi fares (iv), fractions (v, vi),"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can rewrite a linear equation in two variables in standard form ax + by + c = 0 and identify the coefficients a, b and constant c.'}",
-        "field": "question_text",
-        "old": "by clearing fractions,",
-        "new": "by multiplying through by the LCM of the denominators (6),"
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -396,7 +349,7 @@
      "time_bands": [
       {
        "minutes": "0-15",
-       "activity": "Tabulate four solutions of 3x + 2y = 12 — (-1, 7.5), (0, 6), (1, 4.5), (4, 0) — and ask students to plot them on graph paper. Ask: what shape do these points seem to form? Draw the line through them. Rephrase as y = -(3/2)x + 6 and connect to the graph of a linear polynomial. Conclude: the graph of a linear equation in two variables is a straight line."
+       "activity": "Take the solutions of 3x + 2y = 12 from the previous unit's work — (-1, 7.5), (0, 6), (1, 4.5), (4, 0) — and ask students to plot them on graph paper. Ask: what shape do these points seem to form? Draw the line through them. Rephrase as y = -(3/2)x + 6 and connect to the graph of a linear polynomial. Conclude: the graph of a linear equation in two variables is a straight line."
       },
       {
        "minutes": "15-28",
@@ -655,7 +608,7 @@
        "activity": "Students solve Exercise Set 13.5 Q5, p.118 individually: half-perimeter gives l + w = 36 and the second condition gives l = w + 4; substitute to find l = 20 m and w = 16 m. Ask students to verify by adding to get the perimeter."
       }
      ],
-     "teacher_notes": "The substitution method is the first formal algebraic method for solving a pair; students often make the error of substituting the expressed variable back into the same equation it came from, which gives a tautology — remind them to substitute into the OTHER equation. The verification step in Example 7, p.106 is not optional: it is the habit of checking both equations that confirms correctness. For self-study, students may try Exercise Set 13.5 Q7, p.118 (Mahāvīrāchārya's citron problem), using substitution.",
+     "teacher_notes": "The substitution method is the first formal algebraic method for solving a pair; students often make the error of substituting the expressed variable back into the same equation it came from, which gives a tautology — remind them to substitute into the OTHER equation. The verification step in Example 7, p.106 is not optional: it is the habit of checking both equations that confirms correctness. For self-study, students may try Exercise Set 13.5 Q7, p.118 (Mahāvīrāchārya's citron problem) using substitution before encountering the elimination trick.",
      "homework": []
     },
     {
@@ -780,7 +733,7 @@
        "activity": "Students attempt End of Chapter Q10, p.121 (find k for coincident lines) and End of Chapter Q9, p.121 (find a and b for infinitely many solutions). Share and verify solutions as a class."
       }
      ],
-     "teacher_notes": "The ratio rules are derived here, not just stated; the derivation through the elimination process ties back to what students did in the previous two units. A persistent error is applying the rule a1/a2 = b1/b2 = c1/c2 with c1 and c2 read from equations written in different forms (one constant on the right-hand side, the other on the left) — confirm that the equations must be in standard form before computing the ratios. End of Chapter Q9, p.121 provides further practice with parameterised coefficient problems.",
+     "teacher_notes": "The ratio rules are derived here, not just stated; the derivation through the elimination process ties back to what students did in the previous two units. A persistent error is applying the rule a1/a2 = b1/b2 = c1/c2 with c1 and c2 as they appear on the left-hand side rather than in the standard form ax + by + c = 0 — confirm that the equations must be in standard form before computing the ratios. End of Chapter Q9, p.121 provides further practice with parameterised coefficient problems.",
      "homework": []
     },
     {
@@ -826,7 +779,7 @@
       },
       {
        "minutes": "10-35",
-       "activity": "Divide the class into groups, each tackling two or three of the remaining sub-parts of Exercise Set 13.5 Q1, p.116. Rotate: numbers (ii), bats and balls (iii), taxi fares (iv), fractions (v, vi), ages (vii), two-digit numbers (viii), note-counting (ix), library charges (x). Each group writes the pair of equations and the solution on the board, then explains their variable definitions and method choice."
+       "activity": "Divide the class into groups, each tackling two or three of the remaining sub-parts of Exercise Set 13.5 Q1, p.116. Rotate: fractions (v, vi), ages (vii), two-digit numbers (viii), note-counting (ix), library charges (x). Each group writes the pair of equations and the solution on the board, then explains their variable definitions and method choice."
       },
       {
        "minutes": "35-47",
@@ -1231,7 +1184,7 @@
      "cognitive_demand": "Application",
      "visual_stimulus": null,
      "graph_paper": false,
-     "question_text": "Write the equation (x/3) - (5/6)y = 2 in the standard form ax + by + c = 0 by multiplying through by the LCM of the denominators (6), then state the values of a, b and c (choosing the set in which a is positive).",
+     "question_text": "Write the equation (x/3) - (5/6)y = 2 in the standard form ax + by + c = 0 by clearing fractions, then state the values of a, b and c (choosing the set in which a is positive).",
      "options": [],
      "expected_answer": "Multiplying by 6: 2x - 5y - 12 = 0; a = 2, b = -5, c = -12.",
      "method_one_line": "Multiply every term by the LCM of the denominators (6), rearrange all terms to the left-hand side, and read off a, b and c.",

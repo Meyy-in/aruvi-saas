@@ -176,118 +176,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:50:56",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C10-107": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U6",
-        "field": "time_bands[1].activity",
-        "old": "Pose the in-text questions aloud: 'Which family spent most on education? Which family spent least overall?'",
-        "new": "Pose the book's in-text questions aloud, for example: 'Which family spent the least on housing? Which category did Family B spend most on?'"
-       }
-      ]
-     },
-     "C10-108": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can compute the concentration of a mixture of two or more quantities using the weighted mean formula (w₁x₁ + w₂x₂ + … + wₙxₙ)/(w₁ + w₂ + … + wₙ) and explain why the result is closer to the concentration of the larger-volume component.'}",
-        "field": "guide.NUM.inclusivity",
-        "old": "ask what volume of the 6% solution would need to replace the 4% solution to bring the mixture concentration to exactly 3%.",
-        "new": "ask what volume of 2% solution would need to replace the 4% solution to bring the mixture concentration to exactly 3% (answer: 50 mL, from (8 + 9 + 0.02v)/(550 + v) = 0.03)."
-       }
-      ]
-     },
-     "C10-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U6",
-        "field": "visual_aids",
-        "old": "clustered and stacked column charts, p.19–20",
-        "new": "clustered column and stacked bar charts, p.19–20"
-       },
-       {
-        "where": "U6",
-        "field": "time_bands[2].activity",
-        "old": "Show Fig. 10.2 (stacked column chart).",
-        "new": "Show Fig. 10.2 (stacked bar chart)."
-       },
-       {
-        "where": "U7",
-        "field": "visual_aids",
-        "old": "(stacked column chart of family expenditure, p.20)",
-        "new": "(stacked bar chart of family expenditure, p.20)"
-       },
-       {
-        "where": "U1",
-        "field": "time_bands[0].activity",
-        "old": " — and note that the next problem is different.",
-        "new": "."
-       },
-       {
-        "where": "U1",
-        "field": "time_bands[1].activity",
-        "old": "Highlight that the chapter will look at this question through three lenses — combining averages, mixing quantities, and assigning custom importance — before turning to charts that display such combinations visually.",
-        "new": "Highlight three ways of looking at this question: combining averages, mixing quantities, and assigning custom importance."
-       },
-       {
-        "where": "U1",
-        "field": "time_bands[3].activity",
-        "old": "Preview that the chapter's first worked example will show the exact calculation that fixes this — building the idea that each group's size must count.",
-        "new": "Draw out the idea that each group's size must count."
-       },
-       {
-        "where": "U6",
-        "field": "teacher_notes",
-        "old": "The unit closes on an open question to motivate the 100% stacked chart — this is intentional.",
-        "new": "The unit closes on an open question — this is intentional."
-       },
-       {
-        "where": "U5",
-        "field": "teacher_notes",
-        "old": "students adding the weights to the denominator count rather than summing the weights themselves: for ratio 3 : 2 : 5 the denominator is 10, not 3.",
-        "new": "students dividing by the number of components instead of the sum of the weights: for ratio 3 : 2 : 5 the denominator is 10, not 3."
-       },
-       {
-        "where": "U7",
-        "field": "teacher_notes",
-        "old": "Exercise Set 10.4 Q2, p.21 part (ii) is the harder chart to plan — students who are ready can attempt it as self-study.",
-        "new": "Exercise Set 10.4 Q2, p.21 part (ii) is the harder chart to plan — give extra support there."
-       },
-       {
-        "where": "U9",
-        "field": "teacher_notes",
-        "old": "The weighted-mean ideas from the first strand re-enter quietly here: because every bar totals 24 hours,",
-        "new": "Because every bar totals 24 hours,"
-       },
-       {
-        "where": "U9",
-        "field": "visual_aids",
-        "old": "Textbook Fig. 10.6 (age-group time-use stacked column chart, p.26–27)",
-        "new": "Textbook Fig. 10.5 (p.26) and Fig. 10.6 (age-group time-use chart, p.27)"
-       },
-       {
-        "where": "U10",
-        "field": "teacher_notes",
-        "old": "remind them it shows totals only when drawn at an absolute scale, not when proportional.",
-        "new": "remind them that a stacked bar chart shows totals, but a 100% stacked bar chart does not."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can compute a weighted mean when weights reflect importance or policy rather than quantity, and justify why the result differs from the simple equal-weight mean.'}",
-        "field": "guide.ECR.inclusivity",
-        "old": "the reversal in ranking under equal weights versus the tie under 5:3:2",
-        "new": "Dev leading under equal weights but the two tying under 5:3:2"
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -309,11 +197,11 @@
      "time_bands": [
       {
        "minutes": "0-10",
-       "activity": "Open with a quick recall: ask students what the word 'average' brings to mind and how they have used it. Take two or three responses, then pose a puzzle: 'A cricket team scores an average of 8 runs per over in the first 10 overs and 6 runs per over in the next 10 overs. Is the match average 7 runs per over?' Let students agree or disagree briefly, then confirm it is 7 — both halves have 10 overs."
+       "activity": "Open with a quick recall: ask students what the word 'average' brings to mind and how they have used it. Take two or three responses, then pose a puzzle: 'A cricket team scores an average of 8 runs per over in the first 10 overs and 6 runs per over in the next 10 overs. Is the match average 7 runs per over?' Let students agree or disagree briefly, then confirm it is 7 — both halves have 10 overs — and note that the next problem is different."
       },
       {
        "minutes": "10-25",
-       "activity": "Introduce the chapter's opening strand: when a whole is built from parts, how should those parts be combined to describe the whole? Read through the introductory paragraphs of Section 10.1 together. Highlight three ways of looking at this question: combining averages, mixing quantities, and assigning custom importance."
+       "activity": "Introduce the chapter's opening strand: when a whole is built from parts, how should those parts be combined to describe the whole? Read through the introductory paragraphs of Section 10.1 together. Highlight that the chapter will look at this question through three lenses — combining averages, mixing quantities, and assigning custom importance — before turning to charts that display such combinations visually."
       },
       {
        "minutes": "25-40",
@@ -321,7 +209,7 @@
       },
       {
        "minutes": "40-50",
-       "activity": "Consolidate by asking students to write one sentence in their notebooks: 'When combining two averages, what goes wrong if we just add them and divide by 2?' Take two or three written sentences aloud. Draw out the idea that each group's size must count."
+       "activity": "Consolidate by asking students to write one sentence in their notebooks: 'When combining two averages, what goes wrong if we just add them and divide by 2?' Take two or three written sentences aloud. Preview that the chapter's first worked example will show the exact calculation that fixes this — building the idea that each group's size must count."
       }
      ],
      "teacher_notes": "This opening unit orients students to the chapter's central question — how to combine partial data fairly — using their intuition about averages built in earlier grades. A common entry misconception is that the average of two averages is always their arithmetic mean; this unit surfaces that belief deliberately so that Section 10.1.1 can dismantle it. Students who finish early can look at Example 1, p.8.",
@@ -554,7 +442,7 @@
        "activity": "Discuss Exercise Set 10.3 Q5 part (i) as a class: since Keerthi scores lower on strength, the same on flexibility and higher on agility — which has the highest weight — one needs to compare. Students complete part (ii) numerically. Consolidate the key distinction: weights here reflect importance or policy, not physical quantity. Weights can be any positive numbers; doubling all weights does not change the result."
       }
      ],
-     "teacher_notes": "The key conceptual step in this unit is separating the meaning of 'weight' from physical mass or group size — weights now encode policy or importance. A recurring error is students dividing by the number of components instead of the sum of the weights: for ratio 3 : 2 : 5 the denominator is 10, not 3. Exercise Set 10.3 Q6, p.16 (restaurant ratings from a frequency table) provides a good self-study challenge combining custom weights with tabular data.",
+     "teacher_notes": "The key conceptual step in this unit is separating the meaning of 'weight' from physical mass or group size — weights now encode policy or importance. A recurring error is students adding the weights to the denominator count rather than summing the weights themselves: for ratio 3 : 2 : 5 the denominator is 10, not 3. Exercise Set 10.3 Q6, p.16 (restaurant ratings from a frequency table) provides a good self-study challenge combining custom weights with tabular data.",
      "homework": [
       "Exercise Set 10.3 Q6, p.16: From a table of how many of 10 customers gave each 1–5 star rating to a restaurant's food, ambience and service, find the average rating when the three metrics are combined with weights 6 : 5 : 4."
      ]
@@ -571,7 +459,7 @@
       "Notebooks",
       "Ruler"
      ],
-     "visual_aids": "Textbook figures Fig. 10.1 and Fig. 10.2 (family expenditure clustered column and stacked bar charts, p.19–20)",
+     "visual_aids": "Textbook figures Fig. 10.1 and Fig. 10.2 (family expenditure clustered and stacked column charts, p.19–20)",
      "textbook_items_in_class": [],
      "time_bands": [
       {
@@ -580,18 +468,18 @@
       },
       {
        "minutes": "10-25",
-       "activity": "Direct students to Fig. 10.1 in the textbook. Pose the book's in-text questions aloud, for example: 'Which family spent the least on housing? Which category did Family B spend most on?' Let pairs attempt answers from each of the two clustered charts. Establish that the chart grouped by category answers the first question well, but that neither clustered chart shows a family's overall total at a glance. Ask: 'What would make total spending visible at a glance?'"
+       "activity": "Direct students to Fig. 10.1 in the textbook. Pose the in-text questions aloud: 'Which family spent most on education? Which family spent least overall?' Let pairs attempt answers from each of the two clustered charts. Establish that the chart grouped by category answers the first question well, but that neither clustered chart shows a family's overall total at a glance. Ask: 'What would make total spending visible at a glance?'"
       },
       {
        "minutes": "25-38",
-       "activity": "Show Fig. 10.2 (stacked bar chart). Walk through the construction principle: the bars of a cluster are placed end-to-end so the full bar equals the family's total expenditure. Pose the questions from the text: 'Which family spent least overall? Roughly what did Family C spend? What percentage of Family C's spending went on housing?' Students answer each from the stacked chart."
+       "activity": "Show Fig. 10.2 (stacked column chart). Walk through the construction principle: the bars of a cluster are placed end-to-end so the full bar equals the family's total expenditure. Pose the questions from the text: 'Which family spent least overall? Roughly what did Family C spend? What percentage of Family C's spending went on housing?' Students answer each from the stacked chart."
       },
       {
        "minutes": "38-50",
        "activity": "Ask students to articulate what a stacked bar chart makes easy and what it makes hard. Record on the board: easy — comparing totals; harder — comparing individual components that do not share a common base. Introduce the question that opens Section 10.2.2: 'Which family spends the smallest share of its total on healthcare?' — and establish that the stacked chart does not answer this cleanly either, motivating the 100% stacked bar chart."
       }
      ],
-     "teacher_notes": "This unit introduces the chapter's second strand by having students discover the strengths and limitations of clustered and stacked bar charts through the family expenditure data. A common confusion is reading a stacked bar's middle segment as if it starts at zero; emphasise that only the first segment has a zero base and that the others must be read by subtraction. The unit closes on an open question — this is intentional.",
+     "teacher_notes": "This unit introduces the chapter's second strand by having students discover the strengths and limitations of clustered and stacked bar charts through the family expenditure data. A common confusion is reading a stacked bar's middle segment as if it starts at zero; emphasise that only the first segment has a zero base and that the others must be read by subtraction. The unit closes on an open question to motivate the 100% stacked chart — this is intentional.",
      "homework": []
     },
     {
@@ -606,7 +494,7 @@
       "Graph paper or squared paper",
       "Pencil and coloured pens"
      ],
-     "visual_aids": "Textbook Fig. 10.2 (stacked bar chart of family expenditure, p.20)",
+     "visual_aids": "Textbook Fig. 10.2 (stacked column chart of family expenditure, p.20)",
      "textbook_items_in_class": [
       {
        "id": "E-15",
@@ -641,7 +529,7 @@
        "activity": "Summarise: stacked bar charts reveal totals and approximate shares but not precise component comparisons across groups. Ask students to write one situation where a stacked bar chart would be more informative than a clustered bar chart. One or two responses shared aloud to consolidate the principle."
       }
      ],
-     "teacher_notes": "Working from the weighted-mean strand already established, this unit builds fluency with stacked bar chart construction and reading using real data — the IUCN Red List and cricket wickets. A predictable error when constructing is not stacking the segments cumulatively (e.g. drawing ODI from zero instead of on top of Test). Remind students that only the first segment can be read directly; the rest must be subtracted. Exercise Set 10.4 Q2, p.21 part (ii) is the harder chart to plan — give extra support there.",
+     "teacher_notes": "Working from the weighted-mean strand already established, this unit builds fluency with stacked bar chart construction and reading using real data — the IUCN Red List and cricket wickets. A predictable error when constructing is not stacking the segments cumulatively (e.g. drawing ODI from zero instead of on top of Test). Remind students that only the first segment can be read directly; the rest must be subtracted. Exercise Set 10.4 Q2, p.21 part (ii) is the harder chart to plan — students who are ready can attempt it as self-study.",
      "homework": []
     },
     {
@@ -705,7 +593,7 @@
       "Notebooks",
       "Board and chalk/markers"
      ],
-     "visual_aids": "Textbook Fig. 10.5 (p.26) and Fig. 10.6 (age-group time-use chart, p.27)",
+     "visual_aids": "Textbook Fig. 10.6 (age-group time-use stacked column chart, p.26–27)",
      "textbook_items_in_class": [
       {
        "id": "WE-9",
@@ -740,7 +628,7 @@
        "activity": "Discuss the think-and-reflect point about the smart-watch chart: would a different teacher from Zakir show similar bars? Would including all seven days of the week change the bars? Could people in other professions show similar distributions? Students offer brief conjectures, reinforcing that the chart is a starting point for inference, not a final verdict."
       }
      ],
-     "teacher_notes": "Because every bar totals 24 hours, the 100% stacked bar and the stacked bar coincide — a neat connection that rewards students who ask why. A common inference error is reading a proportional pattern from a 100% stacked bar and assuming it holds for counts — for example, in the family-expenditure chart, that the family with the highest share of spending on healthcare necessarily spends the most on healthcare. Exercise Set 10.5 Q1, p.29 part (ii) is deliberately open; value diverse occupational guesses rather than converging on one.",
+     "teacher_notes": "The weighted-mean ideas from the first strand re-enter quietly here: because every bar totals 24 hours, the 100% stacked bar and the stacked bar coincide — a neat connection that rewards students who ask why. A common inference error is reading a proportional pattern from a 100% stacked bar and assuming it holds for counts — for example, in the family-expenditure chart, that the family with the highest share of spending on healthcare necessarily spends the most on healthcare. Exercise Set 10.5 Q1, p.29 part (ii) is deliberately open; value diverse occupational guesses rather than converging on one.",
      "homework": []
     },
     {
@@ -808,7 +696,7 @@
        "activity": "Consolidate the whole chapter with a two-column summary on the board: 'What weighted mean does' vs 'What 100% stacked bar chart does'. Students contribute one entry each. Close by asking: 'In what situation would you use a weighted mean? In what situation a 100% stacked bar chart?' Take three responses, drawing out that both tools handle 'parts that contribute differently to a whole' but in complementary ways — one numerical, one visual."
       }
      ],
-     "teacher_notes": "End of Chapter Q9, p.33 is designed to create productive disagreement — students who switch their decision when moving from the proportional to the count chart have grasped the chapter's deepest point: that shares and totals are complementary information, and neither alone suffices. A common closure error is students stating that a stacked bar chart 'always' shows totals — remind them that a stacked bar chart shows totals, but a 100% stacked bar chart does not. End of Chapter Q12, p.34 (individual project on body-state tracking) is a rich take-home for students who want a sustained application.",
+     "teacher_notes": "End of Chapter Q9, p.33 is designed to create productive disagreement — students who switch their decision when moving from the proportional to the count chart have grasped the chapter's deepest point: that shares and totals are complementary information, and neither alone suffices. A common closure error is students stating that a stacked bar chart 'always' shows totals — remind them it shows totals only when drawn at an absolute scale, not when proportional. End of Chapter Q12, p.34 (individual project on body-state tracking) is a rich take-home for students who want a sustained application.",
      "homework": []
     }
    ]
@@ -1145,7 +1033,7 @@
        "learning_outcome": {
         "section": 3
        },
-       "inclusivity": "Students who struggle with part (a) can be guided to compare the volumes: 400 mL at 2% is the largest component, so its concentration will pull the result down toward 2%. For a challenge, ask what volume of 2% solution would need to replace the 4% solution to bring the mixture concentration to exactly 3% (answer: 50 mL, from (8 + 9 + 0.02v)/(550 + v) = 0.03)."
+       "inclusivity": "Students who struggle with part (a) can be guided to compare the volumes: 400 mL at 2% is the largest component, so its concentration will pull the result down toward 2%. For a challenge, ask what volume of the 6% solution would need to replace the 4% solution to bring the mixture concentration to exactly 3%."
       },
       "SCR": null,
       "ECR": null,
@@ -1229,7 +1117,7 @@
        "learning_outcome": {
         "section": 4
        },
-       "inclusivity": "Students who struggle with part (b) can be directed to compute the equal-weight mean first (Mira: 76.7; Dev: 78.3) and compare it with the weighted result — Dev leading under equal weights but the two tying under 5:3:2 is itself evidence about what the scheme privileges. For a stretch challenge, ask: is it possible to choose weights so that Mira ranks above Dev? Find one such set of weights and justify."
+       "inclusivity": "Students who struggle with part (b) can be directed to compute the equal-weight mean first (Mira: 76.7; Dev: 78.3) and compare it with the weighted result — the reversal in ranking under equal weights versus the tie under 5:3:2 is itself evidence about what the scheme privileges. For a stretch challenge, ask: is it possible to choose weights so that Mira ranks above Dev? Find one such set of weights and justify."
       },
       "OPEN_TASK": null
      }

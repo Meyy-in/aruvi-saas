@@ -191,144 +191,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:51:00",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C14-101": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can select among the surface-area and volume formulas for cuboids, cubes, cylinders, cones, pyramids, spheres and hemispheres to solve composite-solid and real-world estimation problems, justifying their formula choice and handling shared surfaces correctly.'}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "V_cylinder = π(9)(10) = 90π ≈ 2827.8 m³ ... wait — using r = 3: V_cylinder = π(3²)(10) = 90π ≈ 285.7 m³ (with π=22/7: 2970/7 ≈ 282.86 m³)",
-        "new": "V_cylinder = π(3²)(10) = 90π ≈ 282.86 m³ (π = 22/7: 1980/7)"
-       }
-      ]
-     },
-     "C14-102": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can select among the surface-area and volume formulas for cuboids, cubes, cylinders, cones, pyramids, spheres and hemispheres to solve composite-solid and real-world estimation problems, justifying their formula choice and handling shared surfaces correctly.'}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "78π ≈ 244.57 m² (no ground base, no shared ring)",
-        "new": "78π ≈ 245.14 m² (no ground base, no shared circular face)"
-       }
-      ]
-     },
-     "C14-103": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can select among the surface-area and volume formulas for cuboids, cubes, cylinders, cones, pyramids, spheres and hemispheres to solve composite-solid and real-world estimation problems, justifying their formula choice and handling shared surfaces correctly.'}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "mass ≈ 254.6 × 600 ≈ 152 760 kg.",
-        "new": "mass ≈ 254.6 × 1300 ≈ 331 000 kg."
-       }
-      ]
-     },
-     "C14-104": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can select among the surface-area and volume formulas for cuboids, cubes, cylinders, cones, pyramids, spheres and hemispheres to solve composite-solid and real-world estimation problems, justifying their formula choice and handling shared surfaces correctly.'}",
-        "field": "task",
-        "old": "has a mass of about 600 kg per m³.",
-        "new": "has a mass of about 1300 kg per m³."
-       }
-      ]
-     },
-     "C14-107": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can justify the cylinder volume formula V = πr²h by the stacking-thin-circular-slices argument, connecting it to the analogous playing-cards model for the cuboid.'}",
-        "field": "look_for[3]",
-        "old": "i.e. the cylinder is a right circular cylinder, not oblique or tapering.",
-        "new": "i.e. the cross-section is constant (the solid does not taper), with h the perpendicular height."
-       }
-      ]
-     },
-     "C14-108": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U6",
-        "field": "homework[1]",
-        "old": "End of Chapter Q7, p.144 (surface area of sphere and CSA of cone linked — find height and volume of cone)",
-        "new": "Exercise Set 14.3 Q9, p.134 (a conical cup filled to half its depth — what fraction of its volume holds water?)"
-       }
-      ]
-     },
-     "C14-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can describe and carry out the string-winding activity to verify that the surface area of a sphere of radius r equals the area of four circles of radius r, and articulate the distinction between experimental verification and deductive proof.'}",
-        "field": "question_text",
-        "old": "The string fills exactly four such circles.",
-        "new": "The string fills very nearly four such circles."
-       },
-       {
-        "where": "U6",
-        "field": "time_bands[1].activity",
-        "old": "mirrors the pyramid formula introduced later in section 14.4.",
-        "new": "is the pattern for cones (and, in the book, pyramids)."
-       },
-       {
-        "where": "U7",
-        "field": "time_bands[3].activity",
-        "old": "unifies cone, pyramid and the future sphere formula.",
-        "new": "unifies cone and pyramid."
-       },
-       {
-        "where": "U8",
-        "field": "teacher_notes",
-        "old": ", which the hands-on activity in section 14.5.1 will confirm by string-winding.",
-        "new": "."
-       },
-       {
-        "where": "U15",
-        "field": "homework[0]",
-        "old": "Review all six formula pairs (CSA and Volume for cylinder, cone and sphere; TSA and Volume for cuboid/cube; TSA for hemisphere)",
-        "new": "Review the surface-area and volume formulas for the cuboid, cube, cylinder, cone, sphere and hemisphere"
-       },
-       {
-        "where": "U14",
-        "field": "activity_title",
-        "old": "Cone and Pyramid Volume in Applied and Rotational Problems",
-        "new": "Cone Surface Area and Volume in Applied and Rotational Problems"
-       },
-       {
-        "where": "U5",
-        "field": "time_bands[1].activity",
-        "old": "State that these two derivations for the same result is itself a check.",
-        "new": "Note that two different derivations reaching the same result is itself a check."
-       },
-       {
-        "where": "U1",
-        "field": "teacher_notes",
-        "old": ", or computing area of base × height but forgetting that the 'base' changes depending on orientation — emphasise that the formula is symmetric in l, w, h.",
-        "new": "; note that any face may serve as the base, since the formula is symmetric in l, w, h."
-       },
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "let them leave the answer in factored or expanded form, both are acceptable.",
-        "new": "accept the answer as (a+1)³ − a³ or expanded as 3a² + 3a + 1."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can derive and apply the total surface area formula TSA = 2(wl + hl + hw) and volume formula V = lwh for a cuboid and their special-case forms 6a² and a³ for a cube.'}",
-        "field": "guide.MCQ.inclusivity",
-        "old": "investigate how many distinct cuboids share both the volume and the integer-side constraint, and which has the smallest TSA.",
-        "new": "take a = 4 (volume 64 cm³), find other cuboids with whole-number sides and the same volume, and see which has the smallest TSA."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -388,7 +250,7 @@
        "activity": "Introduce the think-and-reflect prompt: the stacked-cards model explains volume = area of base × height — students write two or three sentences justifying this. Selected responses are shared and the class weighs the book's two pool options, (A) 8 ft deep × 50 ft × 20 ft and (B) 6 ft deep × 100 ft × 15 ft (8000 ft³ against 9000 ft³), naming the parameters (depth, footprint, volume in litres) they consider (1 cubic foot ≈ 28.3 litres)."
       }
      ],
-     "teacher_notes": "This unit opens the chapter at the point where students have already met nets of solids in the previous grade, so the net of a cuboid (Fig. 14.2) is a natural entry point rather than a novelty. A common error is omitting the factor 2 when pairing opposite faces in the surface-area formula; note that any face may serve as the base, since the formula is symmetric in l, w, h. For self-study, Example 1, p.125 is worth re-reading slowly for the packaging/heat-transfer discussion.",
+     "teacher_notes": "This unit opens the chapter at the point where students have already met nets of solids in the previous grade, so the net of a cuboid (Fig. 14.2) is a natural entry point rather than a novelty. A common error is omitting the factor 2 when pairing opposite faces in the surface-area formula, or computing area of base × height but forgetting that the 'base' changes depending on orientation — emphasise that the formula is symmetric in l, w, h. For self-study, Example 1, p.125 is worth re-reading slowly for the packaging/heat-transfer discussion.",
      "homework": [
       "Exercise Set 14.1 Q2, p.125 (how many small cubes of side 20 cm fit in a 2 m box)",
       "Exercise Set 14.1 Q4, p.125 (two cubes joined end to end — surface area of resulting cuboid)"
@@ -460,7 +322,7 @@
        "activity": "Consolidate by asking: when volume is fixed, what shape minimises surface area? Students articulate the cube-versus-cuboid principle from Example 1, p.125 in their own words, linking it to Q5's surface-area explosion on subdivision."
       }
      ],
-     "teacher_notes": "Having established the surface-area and volume formulas for cuboids and cubes, this unit builds fluency through packing and ratio problems. A frequent slip is forgetting to convert all lengths to the same unit before dividing volumes — insist on unit homogeneity before any calculation begins. End of Chapter Q2, p.144 is a good algebraic stretch; students often write (a+1)³ − a³ correctly but struggle to expand it — accept the answer as (a+1)³ − a³ or expanded as 3a² + 3a + 1.",
+     "teacher_notes": "Having established the surface-area and volume formulas for cuboids and cubes, this unit builds fluency through packing and ratio problems. A frequent slip is forgetting to convert all lengths to the same unit before dividing volumes — insist on unit homogeneity before any calculation begins. End of Chapter Q2, p.144 is a good algebraic stretch; students often write (a+1)³ − a³ correctly but struggle to expand it — let them leave the answer in factored or expanded form, both are acceptable.",
      "homework": [
       "Exercise Set 14.1 Q3, p.125 if not finished in class",
       "End of Chapter Q4, p.144 written justification"
@@ -628,7 +490,7 @@
       },
       {
        "minutes": "14-30",
-       "activity": "Derive CSA = πrl by Method 1: divide the unrolled sector into many thin triangles of height l, summing their bases to get 2πr, so CSA = ½ × 2πr × l = πrl. Then verify by Method 2: sector area = πl² × (θ/360°); arc length = 2πr gives θ/360° = r/l, confirming CSA = πrl. Add the base: TSA = πrl + πr². Note that two different derivations reaching the same result is itself a check."
+       "activity": "Derive CSA = πrl by Method 1: divide the unrolled sector into many thin triangles of height l, summing their bases to get 2πr, so CSA = ½ × 2πr × l = πrl. Then verify by Method 2: sector area = πl² × (θ/360°); arc length = 2πr gives θ/360° = r/l, confirming CSA = πrl. Add the base: TSA = πrl + πr². State that these two derivations for the same result is itself a check."
       },
       {
        "minutes": "30-42",
@@ -688,7 +550,7 @@
       },
       {
        "minutes": "12-24",
-       "activity": "Demonstrate the experiment: fill the paper cone with salt and pour into the cylinder; repeat. After three pourings the cylinder is exactly full, confirming V_cone = (1/3)V_cylinder = (1/3)πr²h. Invite students to articulate why V = (1/3) × area of base × height is the pattern for cones (and, in the book, pyramids)."
+       "activity": "Demonstrate the experiment: fill the paper cone with salt and pour into the cylinder; repeat. After three pourings the cylinder is exactly full, confirming V_cone = (1/3)V_cylinder = (1/3)πr²h. Invite students to articulate why V = (1/3) × area of base × height mirrors the pyramid formula introduced later in section 14.4."
       },
       {
        "minutes": "24-38",
@@ -702,7 +564,7 @@
      "teacher_notes": "The experimental three-pourings verification is the pedagogical centrepiece of section 14.3's volume discussion, so the experiment should be given enough time to be witnessed by the whole class rather than rushed. A common conceptual error is writing V = (1/3)πrhl (using slant height l instead of vertical height h in the volume formula) — insist that volume involves h because it counts the height of stacked slices, not the slant. Example 3, p.133 is a good model for the rotation problems in Q8.",
      "homework": [
       "Exercise Set 14.3 Q4, p.134 if not finished in class",
-      "Exercise Set 14.3 Q9, p.134 (a conical cup filled to half its depth — what fraction of its volume holds water?)"
+      "End of Chapter Q7, p.144 (surface area of sphere and CSA of cone linked — find height and volume of cone)"
      ]
     },
     {
@@ -732,7 +594,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Students create and solve their own pyramid problem: choose any polygon as the base (triangle, rectangle, hexagon), assign dimensions, and compute volume and surface area. Two students share problems with the class. Consolidate by confirming that the one-third factor unifies cone and pyramid."
+       "activity": "Students create and solve their own pyramid problem: choose any polygon as the base (triangle, rectangle, hexagon), assign dimensions, and compute volume and surface area. Two students share problems with the class. Consolidate by confirming that the one-third factor unifies cone, pyramid and the future sphere formula."
       }
      ],
      "teacher_notes": "Having verified V = (1/3)πr²h for the cone experimentally, this unit extends the same one-third formula to pyramids with any polygonal base, making clear that the cone is a circular-base pyramid. A common error is applying a cone-specific formula (πrl for CSA) to a pyramidal face — stress that each triangular face of a pyramid is a plain triangle whose area is (1/2) × base × slant height, and these are added individually. The images of the Shivling Peak and Matterhorn make the opening concrete.",
@@ -792,7 +654,7 @@
        "activity": "Exercise Set 14.4 Q6, p.140 (10% increase in radius → 33.1% increase in volume): students set up V_new/V_old = (1.1r)³/r³ = 1.331 and interpret the percentage. Close: ask how the surface-area formula would change for a 10% increase in radius — students derive SA_new/SA_old = 1.21, a 21% increase."
       }
      ],
-     "teacher_notes": "The key idea here is Archimedes' cylinder-matching result, which gives the surface area formula without calculus. Students often confuse SA = 4πr² with the area of a circle πr²; point out that the sphere's surface area is exactly four times the area of its great circle. Exercise Set 14.4 Q6, p.140 is a strong reasoning item — students who write (1.1)³ without connecting it to (1.1r)³/r³ should be asked to re-derive.",
+     "teacher_notes": "The key idea here is Archimedes' cylinder-matching result, which gives the surface area formula without calculus. Students often confuse SA = 4πr² with the area of a circle πr²; point out that the sphere's surface area is exactly four times the area of its great circle, which the hands-on activity in section 14.5.1 will confirm by string-winding. Exercise Set 14.4 Q6, p.140 is a strong reasoning item — students who write (1.1)³ without connecting it to (1.1r)³/r³ should be asked to re-derive.",
      "homework": [
       "Exercise Set 14.4 Q5, p.140 (16 spheres packed in a box — find volume of preservative liquid)",
       "End of Chapter Q8, p.145 (volume ratios of Jupiter and Sun relative to Earth)"
@@ -1110,7 +972,7 @@
     {
      "period_number": 14,
      "period_duration_minutes": 50,
-     "activity_title": "Cone Surface Area and Volume in Applied and Rotational Problems",
+     "activity_title": "Cone and Pyramid Volume in Applied and Rotational Problems",
      "section_anchor": "14.3",
      "pedagogical_method": "Problem solving",
      "materials": [
@@ -1233,7 +1095,7 @@
      ],
      "teacher_notes": "Sections 14.6 and 14.6.1 are completed here, ensuring all chapter content has been taught before the synthesis unit. A common difficulty is that students want a unique 'correct' answer to a guesstimate — reiterate that two students reaching 14 and 18 chapatis through different but reasonable assumptions have both done the mathematics correctly. End of Chapter Q18, p.146 requires unit conversion (feet to cm) that students find tricky; demonstrate this once, then let groups handle it.",
      "homework": [
-      "Review the surface-area and volume formulas for the cuboid, cube, cylinder, cone, sphere and hemisphere — write them out and note which derivation method applies to each."
+      "Review all six formula pairs (CSA and Volume for cylinder, cone and sphere; TSA and Volume for cuboid/cube; TSA for hemisphere) — write them out and note which derivation method applies to each."
      ]
     },
     {
@@ -1551,7 +1413,7 @@
         "B": "Applies the cube formula 6a² to the cuboid without substituting its actual dimensions into TSA = 2(wl + hl + hw); the cuboid's TSA = 2(2a·a + (a/2)·2a + (a/2)·a) = 2(2a² + a² + a²/2) = 2(3.5a²) = 7a².",
         "D": "Reasons qualitatively from the longest dimension rather than computing all face areas; the longest dimension alone does not determine TSA."
        },
-       "inclusivity": "Students who struggle may first draw the net of the cuboid and label each face's area before summing. As an extension, students can take a = 4 (volume 64 cm³), find other cuboids with whole-number sides and the same volume, and see which has the smallest TSA."
+       "inclusivity": "Students who struggle may first draw the net of the cuboid and label each face's area before summing. As an extension, students can investigate how many distinct cuboids share both the volume and the integer-side constraint, and which has the smallest TSA."
       },
       "NUM": null,
       "SCR": null,
@@ -1697,7 +1559,7 @@
       "States that each thin horizontal slice of the cylinder is a circle of radius r and area πr², so the cross-sectional area is constant throughout the height.",
       "Explains that the total volume is the sum of the volumes of all slices: volume of each slice = πr² × (slice thickness), and summing over all slices to total height h gives V = πr²h.",
       "Draws the explicit analogy with the cuboid/playing-cards model: in both cases, V = (cross-sectional area) × height applies because the cross-section is uniform (constant) along the axis.",
-      "States the key assumption: the cross-section is the same circle (same radius r) at every height, i.e. the cross-section is constant (the solid does not taper), with h the perpendicular height."
+      "States the key assumption: the cross-section is the same circle (same radius r) at every height, i.e. the cylinder is a right circular cylinder, not oblique or tapering."
      ],
      "task": "",
      "scaffold": "",
@@ -1909,7 +1771,7 @@
      "cognitive_demand": "Understanding",
      "visual_stimulus": null,
      "graph_paper": false,
-     "question_text": "In the string-winding activity for verifying the surface area of a sphere, the string wound around the ball is unwound and used to fill circles drawn on paper with the same radius as the ball. The string fills very nearly four such circles. What does this show, and why does it not count as a mathematical proof of SA = 4πr²?",
+     "question_text": "In the string-winding activity for verifying the surface area of a sphere, the string wound around the ball is unwound and used to fill circles drawn on paper with the same radius as the ball. The string fills exactly four such circles. What does this show, and why does it not count as a mathematical proof of SA = 4πr²?",
      "options": [
       {
        "label": "A",
@@ -2110,7 +1972,7 @@
      "method_one_line": "",
      "expected_elements": [],
      "look_for": [],
-     "task": "A storage silo is shaped like a cylinder with a hemispherical dome on top. The cylinder has radius 3 m and height 10 m. The hemisphere sits on top of the cylinder and has the same radius.\n\n(a) Find the total volume of the silo (cylinder + hemisphere). Use π = 22/7.\n(b) Find the total outer surface area of the silo that needs to be painted. Identify clearly which surfaces are included and which are not (the flat base of the cylinder rests on the ground and is not painted).\n(c) The silo is to be filled with grain. Grain can be packed to about 75% of any volume. Estimate the mass of grain the silo can hold if the grain itself (not counting the air gaps between grains) has a mass of about 1300 kg per m³. Show your reasoning.",
+     "task": "A storage silo is shaped like a cylinder with a hemispherical dome on top. The cylinder has radius 3 m and height 10 m. The hemisphere sits on top of the cylinder and has the same radius.\n\n(a) Find the total volume of the silo (cylinder + hemisphere). Use π = 22/7.\n(b) Find the total outer surface area of the silo that needs to be painted. Identify clearly which surfaces are included and which are not (the flat base of the cylinder rests on the ground and is not painted).\n(c) The silo is to be filled with grain. Grain can be packed to about 75% of any volume. Estimate the mass of grain the silo can hold if the grain itself (not counting the air gaps between grains) has a mass of about 600 kg per m³. Show your reasoning.",
      "scaffold": "Recall: cylinder volume = πr²h, curved surface area = 2πrh; hemisphere volume = (2/3)πr³, curved surface area = 2πr². For part (b), think carefully about which faces are on the outside of the assembled silo. For part (c), first find the effective grain volume, then apply the mass-per-cubic-metre figure.",
      "format_of_output": [
       "Volume calculation for cylinder and hemisphere with working, and total volume",
@@ -2131,7 +1993,7 @@
        "format_rationale": "A composite solid (cylinder topped by hemisphere) is the most natural synthesis vehicle for this chapter, requiring students to select and combine cylinder and hemisphere formulas, handle shared surfaces, and carry a volume result into a real-world mass estimate.",
        "what_this_demonstrates": "Students demonstrate the ability to choose the correct formula for each component of a composite solid, correctly exclude internal or ground-contact surfaces from the painted area, and extend a geometric volume result into a practical estimation.",
        "reading_the_scaffold": "The scaffold names the two relevant formulas without solving the problem; part (b)'s surface-identification instruction targets the most common error (including the shared circular face between cylinder top and hemisphere base); part (c) chains geometry to a density-and-packing estimate, mirroring the guesstimate methodology of section 14.6.1.",
-       "strong_vs_weak_markers": "Strong responses: V_cylinder = π(3²)(10) = 90π ≈ 282.86 m³ (π = 22/7: 1980/7) and V_hemisphere = (2/3)π(27) = 18π ≈ 56.57 m³ (with π=22/7: 396/7 ≈ 56.57 m³), total ≈ 339.43 m³; painted area = CSA of cylinder + CSA of hemisphere = 2π(3)(10) + 2π(9) = 60π + 18π = 78π ≈ 245.14 m² (no ground base, no shared circular face); grain volume = 0.75 × 339.43 ≈ 254.6 m³; mass ≈ 254.6 × 1300 ≈ 331 000 kg. Weak responses: include the shared circular ring (top of cylinder) in painted area; use TSA of hemisphere (3πr²) instead of CSA (2πr²); forget the 75% packing factor.",
+       "strong_vs_weak_markers": "Strong responses: V_cylinder = π(9)(10) = 90π ≈ 2827.8 m³ ... wait — using r = 3: V_cylinder = π(3²)(10) = 90π ≈ 285.7 m³ (with π=22/7: 2970/7 ≈ 282.86 m³) and V_hemisphere = (2/3)π(27) = 18π ≈ 56.57 m³ (with π=22/7: 396/7 ≈ 56.57 m³), total ≈ 339.43 m³; painted area = CSA of cylinder + CSA of hemisphere = 2π(3)(10) + 2π(9) = 60π + 18π = 78π ≈ 244.57 m² (no ground base, no shared ring); grain volume = 0.75 × 339.43 ≈ 254.6 m³; mass ≈ 254.6 × 600 ≈ 152 760 kg. Weak responses: include the shared circular ring (top of cylinder) in painted area; use TSA of hemisphere (3πr²) instead of CSA (2πr²); forget the 75% packing factor.",
        "inclusivity": "Students who find the composite solid confusing may sketch the silo in cross-section, shade the cylinder and hemisphere separately, and list each surface with its formula before computing. As a challenge, students can investigate how the grain mass changes if the radius is halved and the cylinder height is made four times as great (which keeps the cylinder's volume the same) — what happens to the dome's share of the total?"
       }
      }

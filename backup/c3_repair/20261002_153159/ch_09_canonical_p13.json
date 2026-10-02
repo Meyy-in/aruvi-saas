@@ -192,133 +192,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:31:59",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C9-102": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U7",
-        "field": "time_bands[1].activity",
-        "old": "Record the key distinction: when the two divisors are coprime, the converse holds.",
-        "new": "Record the key distinction: when the two divisors are coprime and their product is the original divisor (5 × 12 = 60), the converse holds."
-       }
-      ]
-     },
-     "C9-103": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U12",
-        "field": "time_bands[2].activity",
-        "old": "(converse true, because 5 and 12 are coprime)",
-        "new": "(converse true, because 5 and 12 are coprime and 5 × 12 = 60)"
-       }
-      ]
-     },
-     "C9-104": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U10",
-        "field": "time_bands[1].activity",
-        "old": "test small values until n = 11 gives 11² + 11 + 11 = 143 = 11 × 13.",
-        "new": "test small values until n = 10 gives 10² + 10 + 11 = 121 = 11 × 11 (n = 11 also fails: 143 = 11 × 13)."
-       }
-      ]
-     },
-     "C9-105": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U10",
-        "field": "time_bands[2].activity",
-        "old": "(n = 4: 2^4 + 1 = 17 (prime); try n = 6: 2^6 + 1 = 65 = 5 × 13)",
-        "new": "(n = 6: 2^6 + 1 = 65 = 5 × 13; n = 2 and n = 4 give the primes 5 and 17)"
-       }
-      ]
-     },
-     "C9-108": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U12",
-        "field": "time_bands[1].activity",
-        "old": "that they have not yet completed or reviewed.",
-        "new": "and write a complete solution for each from scratch."
-       }
-      ]
-     },
-     "C9-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U6",
-        "field": "time_bands[2].activity",
-        "old": "compare with the squaring case: the converse here is also true",
-        "new": "compare with the squaring case: unlike there, the converse here is true"
-       },
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "students sometimes write the counterexample as a number that is a multiple of 6 but not of 3, which would contradict P rather than Q;",
-        "new": "students sometimes offer a number that is a multiple of both 3 and 6 (such as 12), which shows nothing — a counterexample to the converse must be a multiple of 3 that is not a multiple of 6 (such as 9);"
-       },
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "unlike the multiplicity example.",
-        "new": "unlike the multiples example."
-       },
-       {
-        "where": "U7",
-        "field": "time_bands[3].activity",
-        "old": "'If n = a × b where a and b are coprime, then being divisible by both a and b is sufficient for divisibility by n.'",
-        "new": "'If N = a × b where a and b are coprime, then a number divisible by both a and b is divisible by N.'"
-       },
-       {
-        "where": "U11",
-        "field": "time_bands[1].activity",
-        "old": "(Yes — the diagonal lengths equal the stick lengths by construction.)",
-        "new": "(Yes — type Q forces equal diagonals, and the diagonals are the sticks.)"
-       },
-       {
-        "where": "U11",
-        "field": "time_bands[2].activity",
-        "old": "(Equal sticks are enough — any quadrilateral with equal diagonals is of type Q.)",
-        "new": "(Yes, use equal sticks: any quadrilateral with equal diagonals is of type Q, though the property does not say that type Q needs equal diagonals.)"
-       },
-       {
-        "where": "U12",
-        "field": "time_bands[0].activity",
-        "old": "(b) 'If a number ends in 0, then it is divisible by 10.'",
-        "new": "(b) 'If a number ends in 0, then it is divisible by 5.'"
-       },
-       {
-        "where": "U12",
-        "field": "teacher_notes",
-        "old": "Students who finish their summary table early can attempt Exercise Set 9.1 Q16, p.6 if they have not yet done so.",
-        "new": "Students who finish their summary table early can add two rows of their own invention."
-       },
-       {
-        "where": "U4",
-        "field": "time_bands[3].activity",
-        "old": "Accept any valid pair;",
-        "new": "Accept any valid pair (a model: 'If a number is odd, then it is prime' and its converse — false by 9 and by 2);"
-       },
-       {
-        "where": "U5",
-        "field": "teacher_notes",
-        "old": "is brief but important for later exercises where propositions are stated in non-standard form.",
-        "new": "is brief but important whenever a proposition is stated without 'if … then'."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -411,7 +284,7 @@
        "activity": "Consolidate by asking: what is the minimum evidence needed to declare a proposition true? What is the minimum to declare it false? Ensure students articulate that a general justification is needed for truth and a single counterexample suffices for falsehood. Record these two principles on the board as a reference."
       }
      ],
-     "teacher_notes": "Having established the concepts of proposition, converse, and counterexample through everyday language, this unit grounds them in number and geometry. A frequent error in Example 2, p.2 is confusing the direction — students sometimes offer a number that is a multiple of both 3 and 6 (such as 12), which shows nothing — a counterexample to the converse must be a multiple of 3 that is not a multiple of 6 (such as 9); press them to identify which statement the counterexample is meant to refute. Exercise Set 9.1 Q1, p.5 is a useful geometric companion because both directions here are true, unlike the multiples example.",
+     "teacher_notes": "Having established the concepts of proposition, converse, and counterexample through everyday language, this unit grounds them in number and geometry. A frequent error in Example 2, p.2 is confusing the direction — students sometimes write the counterexample as a number that is a multiple of 6 but not of 3, which would contradict P rather than Q; press them to identify which statement the counterexample is meant to refute. Exercise Set 9.1 Q1, p.5 is a useful geometric companion because both directions here are true, unlike the multiplicity example.",
      "homework": [
       "Exercise Set 9.1 Q2, p.5"
      ]
@@ -493,7 +366,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Whole-class discussion of student-generated examples where both P and Q are false. Accept any valid pair (a model: 'If a number is odd, then it is prime' and its converse — false by 9 and by 2); correct reasoning where a student mistakes a true statement for a false one. Close by having students write one sentence naming which of the four combinations they find most surprising and why."
+       "activity": "Whole-class discussion of student-generated examples where both P and Q are false. Accept any valid pair; correct reasoning where a student mistakes a true statement for a false one. Close by having students write one sentence naming which of the four combinations they find most surprising and why."
       }
      ],
      "teacher_notes": "Students frequently assume a proposition and its converse stand or fall together; this unit confronts that assumption with a false proposition whose converse is true, using a counterexample they construct themselves. The typical error in the counterexample for P is using congruent triangles (which trivially have the same area) rather than non-congruent triangles with equal areas — steer students to vary the shape while keeping the area. The Think and Reflect prompt about both being false is valuable for extending confident students within this unit.",
@@ -540,7 +413,7 @@
        "activity": "Return to the Note in the text: that 'If X then Y', 'X implies Y', and 'Y when X' all express the same logical relationship. Ask students to restate both the theorem and its converse using 'when' in place of 'If…then'. Confirm that the proof they wrote applies identically regardless of which phrasing is used."
       }
      ],
-     "teacher_notes": "This unit provides the chapter's most structured proof — a proof of a converse that requires auxiliary construction. Students commonly make the error of attempting to prove the converse of the Baudhāyana–Pythagoras theorem by assuming a right angle and deriving a² + b² = c², which proves the original theorem again rather than the converse; insist that the proof begins from a² + b² = c² with no right-angle assumption. The Note about equivalent phrasings ('Y when X') is brief but important whenever a proposition is stated without 'if … then'.",
+     "teacher_notes": "This unit provides the chapter's most structured proof — a proof of a converse that requires auxiliary construction. Students commonly make the error of attempting to prove the converse of the Baudhāyana–Pythagoras theorem by assuming a right angle and deriving a² + b² = c², which proves the original theorem again rather than the converse; insist that the proof begins from a² + b² = c² with no right-angle assumption. The Note about equivalent phrasings ('Y when X') is brief but important for later exercises where propositions are stated in non-standard form.",
      "homework": [
       "Exercise Set 9.1 Q5, p.6"
      ]
@@ -590,7 +463,7 @@
       },
       {
        "minutes": "28-42",
-       "activity": "Students attempt Exercise Set 9.1 Q7, p.6 independently: frame the converse of 'If x = y, then x³ = y³' and investigate truth. After individual work, compare with the squaring case: unlike there, the converse here is true because the cube function is injective over the reals (x³ = y³ implies x = y). Ask students to explain in writing why the cube case differs from the square case."
+       "activity": "Students attempt Exercise Set 9.1 Q7, p.6 independently: frame the converse of 'If x = y, then x³ = y³' and investigate truth. After individual work, compare with the squaring case: the converse here is also true because the cube function is injective over the reals (x³ = y³ implies x = y). Ask students to explain in writing why the cube case differs from the square case."
       },
       {
        "minutes": "42-50",
@@ -643,7 +516,7 @@
       },
       {
        "minutes": "15-30",
-       "activity": "Students move to Exercise Set 9.1 Q9, p.6: the same task for the 60 and (5, 12) pair. After individual work, take the converse statement (if n is divisible by both 5 and 12, then it is divisible by 60) and ask: is this the same structural situation as the 24 case? Guide students to notice that 5 and 12 are coprime (gcd = 1), so divisibility by both forces divisibility by 60, making the converse true — unlike the 24 case where 4 and 6 share the factor 2. Record the key distinction: when the two divisors are coprime and their product is the original divisor (5 × 12 = 60), the converse holds."
+       "activity": "Students move to Exercise Set 9.1 Q9, p.6: the same task for the 60 and (5, 12) pair. After individual work, take the converse statement (if n is divisible by both 5 and 12, then it is divisible by 60) and ask: is this the same structural situation as the 24 case? Guide students to notice that 5 and 12 are coprime (gcd = 1), so divisibility by both forces divisibility by 60, making the converse true — unlike the 24 case where 4 and 6 share the factor 2. Record the key distinction: when the two divisors are coprime, the converse holds."
       },
       {
        "minutes": "30-44",
@@ -651,7 +524,7 @@
       },
       {
        "minutes": "44-50",
-       "activity": "Formulate a conjecture on the board: 'If N = a × b where a and b are coprime, then a number divisible by both a and b is divisible by N.' Students note this conjecture in their notebooks. Clarify that they are conjecturing, not proving — the proof (using the fundamental theorem of arithmetic or properties of lcm) is beyond this unit."
+       "activity": "Formulate a conjecture on the board: 'If n = a × b where a and b are coprime, then being divisible by both a and b is sufficient for divisibility by n.' Students note this conjecture in their notebooks. Clarify that they are conjecturing, not proving — the proof (using the fundamental theorem of arithmetic or properties of lcm) is beyond this unit."
       }
      ],
      "teacher_notes": "The comparison between the 24 case and the 60 case — identical surface structure, opposite truth value for the converse — is the unit's central insight, and students who work only numerically (checking specific values) often miss why the coprimality of 5 and 12 is decisive. Encourage students to think about the lcm of the two divisors rather than their product. Students who want a further challenge within divisibility can attempt Exercise Set 9.1 Q11, p.6 independently.",
@@ -799,11 +672,11 @@
       },
       {
        "minutes": "8-25",
-       "activity": "Students work in groups of three on Exercise Set 9.1 Q13, p.6. Group A takes formula (i) 4n² + 1: n = 1, 2, 3 give 5, 17, 37 (prime), but n = 4 gives 65 = 5 × 13. Group B takes formula (ii) n² + n + 11: test small values until n = 10 gives 10² + 10 + 11 = 121 = 11 × 11 (n = 11 also fails: 143 = 11 × 13). Group C takes formula (iii) 4^n + 3: n = 1 gives 7 (prime), n = 2 gives 19 (prime), n = 3 gives 67 (prime), n = 4 gives 259 = 7 × 37. Groups record their counterexample with verification."
+       "activity": "Students work in groups of three on Exercise Set 9.1 Q13, p.6. Group A takes formula (i) 4n² + 1: n = 1, 2, 3 give 5, 17, 37 (prime), but n = 4 gives 65 = 5 × 13. Group B takes formula (ii) n² + n + 11: test small values until n = 11 gives 11² + 11 + 11 = 143 = 11 × 13. Group C takes formula (iii) 4^n + 3: n = 1 gives 7 (prime), n = 2 gives 19 (prime), n = 3 gives 67 (prime), n = 4 gives 259 = 7 × 37. Groups record their counterexample with verification."
       },
       {
        "minutes": "25-40",
-       "activity": "Each group presents its counterexample on the board, including the computation verifying the number is composite. After all three are presented, students individually attempt Exercise Set 9.1 Q14, p.6: find counterexamples to (i) 'If n is prime, 2^n − 1 is prime' (n = 11: 2^11 − 1 = 2047 = 23 × 89) and (ii) 'If n is even, 2^n + 1 is prime' (n = 6: 2^6 + 1 = 65 = 5 × 13; n = 2 and n = 4 give the primes 5 and 17)."
+       "activity": "Each group presents its counterexample on the board, including the computation verifying the number is composite. After all three are presented, students individually attempt Exercise Set 9.1 Q14, p.6: find counterexamples to (i) 'If n is prime, 2^n − 1 is prime' (n = 11: 2^11 − 1 = 2047 = 23 × 89) and (ii) 'If n is even, 2^n + 1 is prime' (n = 4: 2^4 + 1 = 17 (prime); try n = 6: 2^6 + 1 = 65 = 5 × 13)."
       },
       {
        "minutes": "40-50",
@@ -849,11 +722,11 @@
       },
       {
        "minutes": "12-35",
-       "activity": "Introduce Exercise Set 9.1 Q17, p.7. Each pair uses two pencils (or thin sticks) to form diagonals by crossing them at a point and joining the four endpoints as a quadrilateral. Part (i): the quadrilateral Q satisfies 'If it is of type Q, then its diagonals are equal.' Ask: must the two sticks be of equal length? (Yes — type Q forces equal diagonals, and the diagonals are the sticks.) Does it matter how they are placed — the angle at which they cross or where they cross? (It may — equal diagonals are required for type Q but need not be enough, so the angle or crossing point may decide whether the result is of type Q.) Students record answers with brief justifications."
+       "activity": "Introduce Exercise Set 9.1 Q17, p.7. Each pair uses two pencils (or thin sticks) to form diagonals by crossing them at a point and joining the four endpoints as a quadrilateral. Part (i): the quadrilateral Q satisfies 'If it is of type Q, then its diagonals are equal.' Ask: must the two sticks be of equal length? (Yes — the diagonal lengths equal the stick lengths by construction.) Does it matter how they are placed — the angle at which they cross or where they cross? (It may — equal diagonals are required for type Q but need not be enough, so the angle or crossing point may decide whether the result is of type Q.) Students record answers with brief justifications."
       },
       {
        "minutes": "35-47",
-       "activity": "Part (ii) of Exercise Set 9.1 Q17, p.7: now Q satisfies 'If a quadrilateral has equal diagonals, then it is of type Q.' This reverses the proposition. Ask: now must the sticks be equal? (Yes, use equal sticks: any quadrilateral with equal diagonals is of type Q, though the property does not say that type Q needs equal diagonals.) Does placement matter? (No — every placement of equal sticks gives equal diagonals, so every placement gives a quadrilateral of type Q.) Students discuss in pairs and write a response."
+       "activity": "Part (ii) of Exercise Set 9.1 Q17, p.7: now Q satisfies 'If a quadrilateral has equal diagonals, then it is of type Q.' This reverses the proposition. Ask: now must the sticks be equal? (Equal sticks are enough — any quadrilateral with equal diagonals is of type Q.) Does placement matter? (No — every placement of equal sticks gives equal diagonals, so every placement gives a quadrilateral of type Q.) Students discuss in pairs and write a response."
       },
       {
        "minutes": "47-50",
@@ -909,22 +782,22 @@
      "time_bands": [
       {
        "minutes": "0-10",
-       "activity": "Pose a quick oral warm-up: for each of the following, state in one sentence whether the converse is true or false and why — (a) 'If a triangle is equilateral, then all its angles are 60°'; (b) 'If a number ends in 0, then it is divisible by 5.' Take responses rapidly, aiming for correct and concise answers rather than extended arguments."
+       "activity": "Pose a quick oral warm-up: for each of the following, state in one sentence whether the converse is true or false and why — (a) 'If a triangle is equilateral, then all its angles are 60°'; (b) 'If a number ends in 0, then it is divisible by 10.' Take responses rapidly, aiming for correct and concise answers rather than extended arguments."
       },
       {
        "minutes": "10-30",
-       "activity": "Students choose two exercises from among Exercise Set 9.1 Q8, Q9, Q10, Q11 (p.6) and write a complete solution for each from scratch. They work individually: frame the converse, decide truth, and write a justification or counterexample. They then pair with a neighbour who chose different exercises and explain their reasoning to each other."
+       "activity": "Students choose two exercises from among Exercise Set 9.1 Q8, Q9, Q10, Q11 (p.6) that they have not yet completed or reviewed. They work individually: frame the converse, decide truth, and write a justification or counterexample. They then pair with a neighbour who chose different exercises and explain their reasoning to each other."
       },
       {
        "minutes": "30-45",
-       "activity": "Whole-class discussion of the most contested results. Focus especially on the distinction between Exercise Set 9.1 Q8 (converse false, counterexample 12) and Exercise Set 9.1 Q9 (converse true, because 5 and 12 are coprime and 5 × 12 = 60), reinforcing the coprimality principle. Also clarify the Q11 counterexample n = 8 for any student who used it as homework."
+       "activity": "Whole-class discussion of the most contested results. Focus especially on the distinction between Exercise Set 9.1 Q8 (converse false, counterexample 12) and Exercise Set 9.1 Q9 (converse true, because 5 and 12 are coprime), reinforcing the coprimality principle. Also clarify the Q11 counterexample n = 8 for any student who used it as homework."
       },
       {
        "minutes": "45-50",
        "activity": "Students compile a personal summary table in their notebooks with three columns: Proposition, Converse, Truth outcome (P true/false, Q true/false). They enter at least five rows from across the chapter, choosing examples that span all four truth combinations."
       }
      ],
-     "teacher_notes": "This unit is designed to consolidate the chapter's full exercise range through student choice and peer explanation — working exercises already encountered in earlier units and ensuring the reasoning is articulated, not just recalled. A common error at this stage is writing a counterexample that disproves P rather than Q, or vice versa — the warm-up is designed to surface this confusion quickly so it can be corrected before extended practice. Students who finish their summary table early can add two rows of their own invention.",
+     "teacher_notes": "This unit is designed to consolidate the chapter's full exercise range through student choice and peer explanation — working exercises already encountered in earlier units and ensuring the reasoning is articulated, not just recalled. A common error at this stage is writing a counterexample that disproves P rather than Q, or vice versa — the warm-up is designed to surface this confusion quickly so it can be corrected before extended practice. Students who finish their summary table early can attempt Exercise Set 9.1 Q16, p.6 if they have not yet done so.",
      "homework": [
       "Exercise Set 9.1 Q6, p.6",
       "Exercise Set 9.1 Q7, p.6"

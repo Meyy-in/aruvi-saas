@@ -135,71 +135,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:50:56",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C10-106": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can evaluate statements about a dataset represented as a 100% stacked bar chart, distinguishing valid inferences about proportional shares from invalid inferences about absolute totals or cross-group comparisons.'}",
-        "field": "question_text",
-        "old": "must be true, might be true, or cannot be inferred",
-        "new": "must be true or cannot be inferred"
-       }
-      ]
-     },
-     "C10-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U12",
-        "field": "teacher_notes",
-        "old": "a play with overwhelmingly positive ratings in the 100% chart may have very few total ratings, making it less reliable than one with a slightly lower share but far more responses.",
-        "new": "Play A's shares in the 100% chart look much like Play B's, but the count chart shows A has far fewer ratings, so its shares are less reliable; Play C has the largest 5-star share but also the largest 1-star share."
-       },
-       {
-        "where": "U9",
-        "field": "visual_aids",
-        "old": "Stacked column chart for family expenditure",
-        "new": "Stacked bar chart for family expenditure"
-       },
-       {
-        "where": "U9",
-        "field": "time_bands[0].activity",
-        "old": "Display the stacked column chart for family expenditure (Fig. 10.2).",
-        "new": "Display the stacked bar chart for family expenditure (Fig. 10.2)."
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[0].activity",
-        "old": "the healthcare segments sit at different heights in different bars",
-        "new": "the healthcare segments start at different points in different bars"
-       },
-       {
-        "where": "U11",
-        "field": "time_bands[0].activity",
-        "old": "whether it must be true, might be true, or cannot be inferred,",
-        "new": "whether it must be true or cannot be inferred,"
-       },
-       {
-        "where": "U1",
-        "field": "time_bands[2].activity",
-        "old": "Introduce the chapter's two strands — the weighted mean and data visualisation — through a brief reading of Section 10.1. Ask students to write one sentence each on what they think 'weighted' might mean and what a stacked bar chart might look like, then share with the class. Collect responses to orient the two threads that the chapter will develop.",
-        "new": "Read the opening of Section 10.1 together. Ask students to write one sentence on what they think 'weighted' might mean, then share with the class."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can identify that combining data from groups of different sizes requires a method that accounts for group size, not a simple average of averages.'}",
-        "field": "guide.MCQ.inclusivity",
-        "old": "invite them to try four numbers:",
-        "new": "invite them to try five numbers:"
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -229,7 +164,7 @@
       },
       {
        "minutes": "30-50",
-       "activity": "Read the opening of Section 10.1 together. Ask students to write one sentence on what they think 'weighted' might mean, then share with the class."
+       "activity": "Introduce the chapter's two strands — the weighted mean and data visualisation — through a brief reading of Section 10.1. Ask students to write one sentence each on what they think 'weighted' might mean and what a stacked bar chart might look like, then share with the class. Collect responses to orient the two threads that the chapter will develop."
       }
      ],
      "teacher_notes": "This opening unit sets the conceptual stage for both strands of the chapter. A common orientation error is for students to assume all averages can be combined by simple addition and division regardless of group size — surface this assumption explicitly so the correction in Section 10.1.1 lands with full force. There is no single textbook worked example for this section; the unit builds readiness for Example 1, p.8.",
@@ -594,7 +529,7 @@
       "Ruler",
       "Graph paper or squared paper"
      ],
-     "visual_aids": "Stacked bar chart for family expenditure (Fig. 10.2 from the textbook)",
+     "visual_aids": "Stacked column chart for family expenditure (Fig. 10.2 from the textbook)",
      "textbook_items_in_class": [
       {
        "id": "E-15",
@@ -614,7 +549,7 @@
      "time_bands": [
       {
        "minutes": "0-15",
-       "activity": "Display the stacked bar chart for family expenditure (Fig. 10.2). As a class, read off the total spending of each family, then estimate what percentage of Family C's bar is accounted for by the housing segment. Discuss: which segment is easiest to compare across families and why (the first, because it starts at zero)."
+       "activity": "Display the stacked column chart for family expenditure (Fig. 10.2). As a class, read off the total spending of each family, then estimate what percentage of Family C's bar is accounted for by the housing segment. Discuss: which segment is easiest to compare across families and why (the first, because it starts at zero)."
       },
       {
        "minutes": "15-30",
@@ -656,7 +591,7 @@
      "time_bands": [
       {
        "minutes": "0-12",
-       "activity": "Pose the question: which family spends the smallest share of its budget on healthcare? Ask students to try to answer this from the stacked bar chart (Fig. 10.2). Establish that it is difficult because the healthcare segments start at different points in different bars and have no common baseline. Introduce pie charts (Fig. 10.3) as one solution and ask what disadvantage they have when comparing slices across two or more pies."
+       "activity": "Pose the question: which family spends the smallest share of its budget on healthcare? Ask students to try to answer this from the stacked bar chart (Fig. 10.2). Establish that it is difficult because the healthcare segments sit at different heights in different bars and have no common baseline. Introduce pie charts (Fig. 10.3) as one solution and ask what disadvantage they have when comparing slices across two or more pies."
       },
       {
        "minutes": "12-28",
@@ -704,7 +639,7 @@
      "time_bands": [
       {
        "minutes": "0-20",
-       "activity": "Work through Example 8, p.24 (Fatima's and Naveen's flower gardens). For each of the four statements, ask students to decide individually whether it must be true or cannot be inferred, and write a reason. Then discuss as a class, using the two possible stacked bar charts (Case 1 and Case 2) to show concretely that the same 100% bars are compatible with different actual totals."
+       "activity": "Work through Example 8, p.24 (Fatima's and Naveen's flower gardens). For each of the four statements, ask students to decide individually whether it must be true, might be true, or cannot be inferred, and write a reason. Then discuss as a class, using the two possible stacked bar charts (Case 1 and Case 2) to show concretely that the same 100% bars are compatible with different actual totals."
       },
       {
        "minutes": "20-38",
@@ -779,7 +714,7 @@
        "activity": "Consolidate: the choice between a stacked bar chart and a 100% stacked bar chart is always driven by whether the question is about totals (stacked) or shares (100% stacked) — and some questions require both."
       }
      ],
-     "teacher_notes": "The Decision Dilemma in End of Chapter Q9, p.33 is the most conceptually rich exercise in this section — Play A's shares in the 100% chart look much like Play B's, but the count chart shows A has far fewer ratings, so its shares are less reliable; Play C has the largest 5-star share but also the largest 1-star share. This mirrors real-world rating-system reasoning and is worth extended discussion. In End of Chapter Q10, p.33, a common error is students claiming the 100% stacked chart can reveal total time — it cannot, as all three bars are drawn to the same length.",
+     "teacher_notes": "The Decision Dilemma in End of Chapter Q9, p.33 is the most conceptually rich exercise in this section — a play with overwhelmingly positive ratings in the 100% chart may have very few total ratings, making it less reliable than one with a slightly lower share but far more responses. This mirrors real-world rating-system reasoning and is worth extended discussion. In End of Chapter Q10, p.33, a common error is students claiming the 100% stacked chart can reveal total time — it cannot, as all three bars are drawn to the same length.",
      "homework": [
       "End of Chapter Q11, p.34 — study the 100% stacked bar chart of disabled persons by age group and type of disability (Census 2011), write two things you notice and two inferences you can draw."
      ]
@@ -1048,7 +983,7 @@
         "A": "Misapplies the rule that a combined average lies between the two group averages — 75 does lie between 65 and 85, so this distractor tests whether the student can correctly apply the range bound; it does not identify the real error in the claim.",
         "B": "Holds the misconception that averages from different groups are incommensurable — this would rule out the entire concept of a combined average, which the section explicitly builds."
        },
-       "inclusivity": "For a student who finds the abstract framing difficult, invite them to try five numbers: imagine Class P is 4 students all scoring 65 and Class Q is 1 student scoring 85, and ask what the five scores average to. For a student who grasps the idea quickly, ask them to compute the correct combined average for Class P and Q and verify that it is closer to 65 than to 85."
+       "inclusivity": "For a student who finds the abstract framing difficult, invite them to try four numbers: imagine Class P is 4 students all scoring 65 and Class Q is 1 student scoring 85, and ask what the five scores average to. For a student who grasps the idea quickly, ask them to compute the correct combined average for Class P and Q and verify that it is closer to 65 than to 85."
       },
       "NUM": null,
       "SCR": null,
@@ -1378,7 +1313,7 @@
      "cognitive_demand": "Evaluation",
      "visual_stimulus": null,
      "graph_paper": false,
-     "question_text": "A 100% stacked bar chart shows the share of three types of waste — organic, plastic and other — collected by two cities, City A and City B, in a given month. City A's bar shows 60% organic, 25% plastic and 15% other. City B's bar shows 45% organic, 35% plastic and 20% other. A student makes four claims: (1) City A collected more organic waste than City B in that month. (2) City B produces a higher proportion of plastic waste than City A. (3) The total waste collected by City A and City B was the same. (4) In City A, more organic waste was collected than plastic waste. For each claim, state whether it must be true or cannot be inferred from the 100% stacked bar chart alone. Justify each decision.",
+     "question_text": "A 100% stacked bar chart shows the share of three types of waste — organic, plastic and other — collected by two cities, City A and City B, in a given month. City A's bar shows 60% organic, 25% plastic and 15% other. City B's bar shows 45% organic, 35% plastic and 20% other. A student makes four claims: (1) City A collected more organic waste than City B in that month. (2) City B produces a higher proportion of plastic waste than City A. (3) The total waste collected by City A and City B was the same. (4) In City A, more organic waste was collected than plastic waste. For each claim, state whether it must be true, might be true, or cannot be inferred from the 100% stacked bar chart alone. Justify each decision.",
      "options": [],
      "expected_answer": "",
      "method_one_line": "",

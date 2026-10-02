@@ -194,60 +194,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:31:59",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C9-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U8",
-        "field": "time_bands[1].activity",
-        "old": "computes values for n = 0, 1, 2, 3, 4, 5, ...",
-        "new": "computes values for n = 1, 2, 3, 4, 5, ..."
-       },
-       {
-        "where": "U6",
-        "field": "teacher_notes",
-        "old": "students will meet 'Y when X' and 'X implies Y' in later chapters and in mathematical writing generally,",
-        "new": "students will meet 'Y when X' and 'X implies Y' throughout mathematical writing,"
-       },
-       {
-        "where": "U7",
-        "field": "time_bands[1].activity",
-        "old": ", and and x²",
-        "new": ", and x²"
-       },
-       {
-        "where": "U7",
-        "field": "teacher_notes",
-        "old": "observe numerically that no real cube root has two distinct real values",
-        "new": "observe that each real number has exactly one real cube root"
-       },
-       {
-        "where": "U1",
-        "field": "teacher_notes",
-        "old": ", and returning to them at the close gives continuity without requiring anything to have been taught before.",
-        "new": ", and they need nothing taught before."
-       },
-       {
-        "where": "U5",
-        "field": "teacher_notes",
-        "old": "uses the same structure of proving both directions of an equivalence.",
-        "new": "asks students to express a two-way relationship as two if-then sentences."
-       },
-       {
-        "where": "U10",
-        "field": "teacher_notes",
-        "old": "reinforcing that position in a chapter does not determine truth.",
-        "new": "reinforcing that the truth of a proposition does not settle the truth of its converse."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -292,7 +238,7 @@
        "activity": "Close by asking: can a proposition be true while its converse is false? Can both be true? Can both be false? Take brief oral responses. Write the three possibilities on the board as an open question, leaving the third case as a puzzle. Assign homework."
       }
      ],
-     "teacher_notes": "This unit is the chapter's entry point: the two triangle statements at the opening are the chapter's own motivating pair, and they need nothing taught before. A common error here is treating 'the converse is false' as meaning 'the proposition is false' — watch for students who conflate the truth of a statement with the truth of its converse. Example 3, p.2 (perfect squares and factor counts) is a rich self-study item students may read to see another early instance of the proposition–converse question.",
+     "teacher_notes": "This unit is the chapter's entry point: the two triangle statements at the opening are the chapter's own motivating pair, and returning to them at the close gives continuity without requiring anything to have been taught before. A common error here is treating 'the converse is false' as meaning 'the proposition is false' — watch for students who conflate the truth of a statement with the truth of its converse. Example 3, p.2 (perfect squares and factor counts) is a rich self-study item students may read to see another early instance of the proposition–converse question.",
      "homework": [
       "Write the converse of Exercise Set 9.1 Q1, p.5 (parallel lines and corresponding angles). State whether the original proposition is true or false, and whether the converse is true or false, in one sentence each — no justification needed yet."
      ]
@@ -490,7 +436,7 @@
        "activity": "Brief reflection: why did the proof need to construct a separate right triangle rather than working directly with ∆ABC? Take one or two responses. Establish that the construction creates an object with a known right angle that can then be compared to ∆ABC — a technique of indirect construction used in deductive proofs."
       }
      ],
-     "teacher_notes": "The Baudhāyana–Pythagoras theorem itself is treated as a known result here; the unit's purpose is the proof of its converse by construction and SSS. A common error is applying the Baudhāyana–Pythagoras theorem directly to ∆ABC (which is what needs to be proved right-angled) rather than to the freshly constructed ∆XYZ — make this logical order explicit. Exercise Set 9.1 Q16, p.6 (divisibility by 3 and digit sum) is a self-study item that asks students to express a two-way relationship as two if-then sentences.",
+     "teacher_notes": "The Baudhāyana–Pythagoras theorem itself is treated as a known result here; the unit's purpose is the proof of its converse by construction and SSS. A common error is applying the Baudhāyana–Pythagoras theorem directly to ∆ABC (which is what needs to be proved right-angled) rather than to the freshly constructed ∆XYZ — make this logical order explicit. Exercise Set 9.1 Q16, p.6 (divisibility by 3 and digit sum) is a self-study item that uses the same structure of proving both directions of an equivalence.",
      "homework": [
       "In three to four sentences, explain in writing why the proof of the converse of the Baudhāyana–Pythagoras theorem cannot simply apply the theorem directly to ∆ABC. What role does ∆XYZ play?"
      ]
@@ -548,7 +494,7 @@
        "activity": "Rapid-fire oral practice: teacher states a proposition about divisibility (e.g. 'If n is divisible by 15, then it is divisible by 3 and 5'); students write the converse and a quick true/false verdict with one word of justification. Two students share. Close by naming the pattern: the forward direction from a larger divisor to its factors is always true; the converse rarely is unless the parts together force the larger divisor."
       }
      ],
-     "teacher_notes": "The Note on language variants is short but important — students will meet 'Y when X' and 'X implies Y' throughout mathematical writing, and confusing the sentence structure with the direction of implication is a persistent error. In Q8 and Q9, watch for groups who test only one value and declare the converse true; insist on a general argument or a genuine counterexample. Exercise Set 9.1 Q12, p.6 (n and n+3 sharing no factors) offers a more subtle divisibility example for students who want additional challenge.",
+     "teacher_notes": "The Note on language variants is short but important — students will meet 'Y when X' and 'X implies Y' in later chapters and in mathematical writing generally, and confusing the sentence structure with the direction of implication is a persistent error. In Q8 and Q9, watch for groups who test only one value and declare the converse true; insist on a general argument or a genuine counterexample. Exercise Set 9.1 Q12, p.6 (n and n+3 sharing no factors) offers a more subtle divisibility example for students who want additional challenge.",
      "homework": [
       "Exercise Set 9.1 Q10, p.6 and Q11, p.6: for each, write the converse, classify the truth of each direction, and provide a brief justification or counterexample."
      ]
@@ -595,7 +541,7 @@
       },
       {
        "minutes": "12-28",
-       "activity": "Students work in pairs on Exercise Set 9.1 Q7, p.6: the proposition 'If x = y, then x³ = y³' and its converse. Forward: true (cubing preserves equality). Converse: 'If x³ = y³, then x = y' — ask pairs to decide. This converse is in fact true for real numbers because the function t ↦ t³ is strictly monotone (if x ≠ y then x³ ≠ y³). Students should argue: if x³ = y³ then x³ − y³ = 0, so (x − y)(x² + xy + y²) = 0, and x² + xy + y² = (x + y/2)² + 3y²/4 is zero only when x = y = 0, so in every case x − y = 0, that is, x = y. Contrast with the squaring case."
+       "activity": "Students work in pairs on Exercise Set 9.1 Q7, p.6: the proposition 'If x = y, then x³ = y³' and its converse. Forward: true (cubing preserves equality). Converse: 'If x³ = y³, then x = y' — ask pairs to decide. This converse is in fact true for real numbers because the function t ↦ t³ is strictly monotone (if x ≠ y then x³ ≠ y³). Students should argue: if x³ = y³ then x³ − y³ = 0, so (x − y)(x² + xy + y²) = 0, and and x² + xy + y² = (x + y/2)² + 3y²/4 is zero only when x = y = 0, so in every case x − y = 0, that is, x = y. Contrast with the squaring case."
       },
       {
        "minutes": "28-42",
@@ -606,7 +552,7 @@
        "activity": "Class debrief: compare squaring (where the converse fails) with cubing (where it holds) side by side. Why the difference? Elicit: squaring collapses sign information (x and −x have the same square); cubing does not. Connect to the general principle that an operation's invertibility on its domain determines whether the converse of an implication through that operation is true."
       }
      ],
-     "teacher_notes": "The contrast between the squaring and cubing cases is mathematically significant: the forward implication is true in both, but only cubing preserves enough information to make the converse true. A common error is claiming the converse of the squaring proposition is also true, often by thinking only of positive values; always prompt with x = 3, y = −3. For the cubing converse, students who cannot construct the algebraic factorisation argument may observe that each real number has exactly one real cube root — accept this as partial justification and encourage the algebraic form.",
+     "teacher_notes": "The contrast between the squaring and cubing cases is mathematically significant: the forward implication is true in both, but only cubing preserves enough information to make the converse true. A common error is claiming the converse of the squaring proposition is also true, often by thinking only of positive values; always prompt with x = 3, y = −3. For the cubing converse, students who cannot construct the algebraic factorisation argument may observe numerically that no real cube root has two distinct real values — accept this as partial justification and encourage the algebraic form.",
      "homework": [
       "Exercise Set 9.1 Q13, p.6 and Q14, p.6: find counterexamples to the given primality claims, showing all working."
      ]
@@ -646,7 +592,7 @@
       },
       {
        "minutes": "10-35",
-       "activity": "Groups of three take one formula each from Exercise Set 9.1 Q13, p.6: (i) 4n²+1, (ii) n²+n+11, (iii) 4^n+3. Each group computes values for n = 1, 2, 3, 4, 5, ... checking each for primality by testing divisibility by small primes, until they find a composite value. Groups record: the formula, the value of n, the resulting number, and its factorisation. Note: for (i), n = 1, 2, 3 give 5, 17, 37 (prime), but n = 4 gives 65 = 5 × 13. For (ii), n = 10 gives 121 = 11². For (iii), n = 1 gives 7 (prime), n = 2 gives 19 (prime), but n = 4 gives 259 = 7 × 37. Groups report."
+       "activity": "Groups of three take one formula each from Exercise Set 9.1 Q13, p.6: (i) 4n²+1, (ii) n²+n+11, (iii) 4^n+3. Each group computes values for n = 0, 1, 2, 3, 4, 5, ... checking each for primality by testing divisibility by small primes, until they find a composite value. Groups record: the formula, the value of n, the resulting number, and its factorisation. Note: for (i), n = 1, 2, 3 give 5, 17, 37 (prime), but n = 4 gives 65 = 5 × 13. For (ii), n = 10 gives 121 = 11². For (iii), n = 1 gives 7 (prime), n = 2 gives 19 (prime), but n = 4 gives 259 = 7 × 37. Groups report."
       },
       {
        "minutes": "35-47",
@@ -767,7 +713,7 @@
        "activity": "Class debrief on the consolidation exercise. Discuss any case where pairs disagreed and reason through it together. Close by articulating the chapter's central discipline: for any proposition of the form 'If X then Y', mathematics demands that you decide independently whether P and its converse Q are true, produce a deductive argument for the true ones, and a specific counterexample for the false ones. Students write this as a one-sentence summary in their own words."
       }
      ],
-     "teacher_notes": "Exercise Q17 is a rich geometric reasoning task: the key insight is that the two versions of the proposition (Q has equal diagonals vs any equal-diagonal quad is Q) impose different logical constraints on what the construction must satisfy. A common error is treating both parts of Q17 as equivalent because 'equal diagonals' appears in both — the asymmetry of the implication is exactly what distinguishes them. The consolidation activity at the end should revisit the four logical cases the class has encountered across the chapter, reinforcing that the truth of a proposition does not settle the truth of its converse.",
+     "teacher_notes": "Exercise Q17 is a rich geometric reasoning task: the key insight is that the two versions of the proposition (Q has equal diagonals vs any equal-diagonal quad is Q) impose different logical constraints on what the construction must satisfy. A common error is treating both parts of Q17 as equivalent because 'equal diagonals' appears in both — the asymmetry of the implication is exactly what distinguishes them. The consolidation activity at the end should revisit the four logical cases the class has encountered across the chapter, reinforcing that position in a chapter does not determine truth.",
      "homework": []
     }
    ]

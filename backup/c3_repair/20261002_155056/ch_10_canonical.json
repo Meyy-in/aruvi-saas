@@ -235,223 +235,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:50:56",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C10-101": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can explain why averaging the averages of two unequal-sized groups gives a different result from computing the overall average directly, and can apply the formula (an + bm)/(n + m) to find the correct combined average.'}",
-        "field": "guide.NUM.inclusivity",
-        "old": "by multiplying 68 × 25 and 74 × 40, comparing totals,",
-        "new": "by computing the two section totals, 68 × 40 = 2720 and 74 × 25 = 1850, and comparing (2720 + 1850)/65 ≈ 70.31 with 71,"
-       }
-      ]
-     },
-     "C10-102": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U9",
-        "field": "time_bands[3].activity",
-        "old": "the shift from lighting to cooling dominates the change from 2005 to 2025.",
-        "new": "lighting's share falls sharply (36% → 11%), while cooling (30% → 40%) and kitchen appliances (12% → 23%) each gain about 10 percentage points."
-       }
-      ]
-     },
-     "C10-103": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can read a stacked bar chart to estimate totals and component shares, and can construct a stacked bar chart from a data table, correctly stacking segments so that the full bar length represents the total.'}",
-        "field": "question_text",
-        "old": "(ii) In a stacked bar chart with one bar per year, which segment would you draw first and why?",
-        "new": "(ii) In a stacked bar chart with one bar per year, which category would you place at the base if you most wanted to compare it across the two years, and why?"
-       }
-      ]
-     },
-     "C10-104": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can read a stacked bar chart to estimate totals and component shares, and can construct a stacked bar chart from a data table, correctly stacking segments so that the full bar length represents the total.'}",
-        "field": "expected_answer",
-        "old": "2023: ₹54 thousand. (iii)",
-        "new": "2023: ₹54 thousand. (ii) Any category, justified by: only the base segment starts at zero in both bars, so it is the easiest to compare across years. (iii)"
-       }
-      ]
-     },
-     "C10-105": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can integrate weighted mean calculations with chart representation decisions — computing a combined weighted score, sketching both stacked and 100% stacked bar charts for the same data, and articulating which tool is appropriate for a given analytical question.'}",
-        "field": "task",
-        "old": "for AF, 30%, 50%, 20%.",
-        "new": "for AF, 40%, 40%, 20%."
-       }
-      ]
-     },
-     "C10-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U11",
-        "field": "teacher_notes",
-        "old": "Watch for students who judge a play superior purely from high 5-star share without noticing the total review count is tiny; that is an inference error the stacked count chart corrects.",
-        "new": "Watch for students who rank the plays from the 100% chart alone: Play A's shares look much like Play B's, but the count chart shows A has far fewer ratings; Play C has the largest 5-star share but also the largest 1-star share."
-       },
-       {
-        "where": "U8",
-        "field": "time_bands[0].activity",
-        "old": "Show Fig. 10.2 (stacked column chart) from Section 10.2.1.",
-        "new": "Show Fig. 10.2 (stacked bar chart) from Section 10.2.1."
-       },
-       {
-        "where": "U8",
-        "field": "time_bands[0].activity",
-        "old": "each bar's full height is the total expenditure;",
-        "new": "each bar's full length is the total expenditure;"
-       },
-       {
-        "where": "U8",
-        "field": "time_bands[0].activity",
-        "old": "Verify that the three questions about Family C that were hard on clustered charts can now be read off.",
-        "new": "Verify that the three totals questions (book Q6–Q8) that were hard on clustered charts can now be read off."
-       },
-       {
-        "where": "U9",
-        "field": "time_bands[0].activity",
-        "old": "They find it hard because bars are different heights.",
-        "new": "They find it hard because the bars are different lengths."
-       },
-       {
-        "where": "U9",
-        "field": "teacher_notes",
-        "old": "the think_reflect material in this section",
-        "new": "the Think and Reflect material in this section"
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[1].activity",
-        "old": "Discuss the think_reflect question",
-        "new": "Discuss the Think and Reflect question"
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[2].activity",
-        "old": "Use the think_reflect prompts from Section 10.2.2:",
-        "new": "Use the Think and Reflect prompts from Section 10.2.2:"
-       },
-       {
-        "where": "U10",
-        "field": "teacher_notes",
-        "old": "The think_reflect prompts in this section",
-        "new": "The Think and Reflect prompts in this section"
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[1].activity",
-        "old": "whether each is necessarily true, possibly true, or cannot be inferred.",
-        "new": "whether each must be true or cannot be inferred."
-       },
-       {
-        "where": "U10",
-        "field": "teacher_notes",
-        "old": "that is precisely the invalid inference.",
-        "new": "that is precisely the invalid inference. Note that the p.25 text swaps Naveen's monsoon and winter shares; the chart (25% monsoon, 35% winter) is correct."
-       },
-       {
-        "where": "U6",
-        "field": "teacher_notes",
-        "old": "before the chapter moves to data visualisation.",
-        "new": "."
-       },
-       {
-        "where": "U7",
-        "field": "time_bands[3].activity",
-        "old": "This sets up the stacked chart as the next tool. ",
-        "new": ""
-       },
-       {
-        "where": "U7",
-        "field": "teacher_notes",
-        "old": "before the stacked chart is introduced.",
-        "new": "."
-       },
-       {
-        "where": "U14",
-        "field": "activity_title",
-        "old": "Cricket, Shuttlecocks and Gold",
-        "new": "Cricket, Shuttlecocks and a Pool"
-       },
-       {
-        "where": "U14",
-        "field": "textbook_items_in_class[3].description",
-        "old": "Brahmagupta's pool:",
-        "new": "Pṛthūdakasvāmī's pool (commentary on Brahmagupta):"
-       },
-       {
-        "where": "U2",
-        "field": "time_bands[1].activity",
-        "old": "have students verify it reproduces the badminton result.",
-        "new": "have students verify it reproduces the cycling result (p = q = r)."
-       },
-       {
-        "where": "item{'implied_lo_assessed': \"Students can construct and interpret a 100% stacked bar chart by converting each component to a percentage share of its bar's total, and can identify which comparisons it supports — within-bar proportions — and which it does not — absolute cross-bar quantities.\"}",
-        "field": "method_one_line",
-        "old": "the 100% chart supports within-school proportion comparisons (e.g. Science has a larger share in School A than School B)",
-        "new": "the 100% chart supports share comparisons, within a bar and across bars (e.g. Science has a larger share in School A than in School B),"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can classify a given inference from a 100% stacked bar chart as valid or invalid, justifying why cross-group absolute comparisons require the original totals and cannot be drawn from proportions alone.'}",
-        "field": "look_for[2]",
-        "old": "and within-bar proportional comparisons are exactly what the 100% chart supports.",
-        "new": "and comparisons of shares, within a bar or across bars, are exactly what the 100% chart supports."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can compute the concentration of a mixture of several components using the weighted mean formula (w1x1 + … + wnxn)/(w1 + … + wn) with volumes or masses as weights.'}",
-        "field": "guide.NUM.inclusivity",
-        "old": "the total grams of acid",
-        "new": "the total amount (mL) of acid"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can integrate weighted mean calculations with chart representation decisions — computing a combined weighted score, sketching both stacked and 100% stacked bar charts for the same data, and articulating which tool is appropriate for a given analytical question.'}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "(because the weights commute)",
-        "new": "(because the participant-weighted sum of (3B + 4S + 3Q)/10 can be regrouped into one sum)"
-       },
-       {
-        "where": "U13",
-        "field": "teacher_notes",
-        "old": "is re-using 60 as the total after adding the new female",
-        "new": "is keeping 35 as the number of females after the new female is added"
-       },
-       {
-        "where": "U16",
-        "field": "time_bands[2].activity",
-        "old": ", and the choice between reporting a weighted mean and reporting a percentage breakdown mirrors the choice between the two chart types",
-        "new": ""
-       },
-       {
-        "where": "U4",
-        "field": "time_bands[3].activity",
-        "old": "Debrief Q3 and Q4.",
-        "new": "Debrief Exercise Set 10.1 Q3 and Exercise Set 10.3 Q4."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can explain the trade-off between stacked and clustered bar charts — that stacking aids total comparison but hinders within-category component comparison.'}",
-        "field": "question_text",
-        "old": "split into salaries, materials and overheads.",
-        "new": "split into salaries, materials and overheads, stacked in that order with salaries at the base."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -534,7 +317,7 @@
       },
       {
        "minutes": "12-28",
-       "activity": "Guide students to the algebraic answer: when all collection sizes are equal (each = p), (ap + bp + cp)/(3p) = (a + b + c)/3 — the p cancels, so the simple average works. State the three-group generalisation (ap + bq + cr)/(p + q + r) on the board and have students verify it reproduces the cycling result (p = q = r)."
+       "activity": "Guide students to the algebraic answer: when all collection sizes are equal (each = p), (ap + bp + cp)/(3p) = (a + b + c)/3 — the p cancels, so the simple average works. State the three-group generalisation (ap + bq + cr)/(p + q + r) on the board and have students verify it reproduces the badminton result."
       },
       {
        "minutes": "28-43",
@@ -640,7 +423,7 @@
       },
       {
        "minutes": "43-50",
-       "activity": "Debrief Exercise Set 10.1 Q3 and Exercise Set 10.3 Q4. Highlight the structure: when the combined average is known and one weight is unknown, the weighted mean equation becomes a linear equation solvable by standard methods. Students note the two directions the formula is used — computing the average given all weights, or finding a missing weight given the average."
+       "activity": "Debrief Q3 and Q4. Highlight the structure: when the combined average is known and one weight is unknown, the weighted mean equation becomes a linear equation solvable by standard methods. Students note the two directions the formula is used — computing the average given all weights, or finding a missing weight given the average."
       }
      ],
      "teacher_notes": "The backward use of the weighted mean — treating the combined average as known and solving for an unknown weight — is the unit's new move. Watch for sign errors when expanding the numerator and moving the y-term across: 0.55(320 + y) = 200 × 0.7 + 120 × 0.5 + 0.45y is the critical step where errors cluster. Exercise Set 10.3 Q8 (p.17, Dead Sea salinity) extends the same reasoning and can be suggested as self-study.",
@@ -748,7 +531,7 @@
        "activity": "Brief class discussion: in each of the three problems, identify what the 'weights' were (importance ratio, frequency of ratings, revenue). Students articulate that the weighted mean formula is the same structure regardless of what the weights represent."
       }
      ],
-     "teacher_notes": "This unit builds fluency with the weighted mean across different weight types . Watch for the common error in Q6 of simply summing the star ratings without first computing a per-metric average weighted by frequency. Exercise Set 10.3 Q7 (p.16, langur weights — a multi-part problem) is a rich self-study item that requires setting up a weighted mean equation and solving it.",
+     "teacher_notes": "This unit builds fluency with the weighted mean across different weight types before the chapter moves to data visualisation. Watch for the common error in Q6 of simply summing the star ratings without first computing a per-metric average weighted by frequency. Exercise Set 10.3 Q7 (p.16, langur weights — a multi-part problem) is a rich self-study item that requires setting up a weighted mean equation and solving it.",
      "homework": []
     },
     {
@@ -779,10 +562,10 @@
       },
       {
        "minutes": "43-50",
-       "activity": "Summarise the limitation: clustered charts excel at within-category or within-family comparison but make totals and shares invisible. Students write one question about the family data that a clustered chart cannot easily answer."
+       "activity": "Summarise the limitation: clustered charts excel at within-category or within-family comparison but make totals and shares invisible. This sets up the stacked chart as the next tool. Students write one question about the family data that a clustered chart cannot easily answer."
       }
      ],
-     "teacher_notes": "Section 10.2 opens the visualisation strand, and this unit focuses on what clustered bar charts do and do not support . A common misconception is that one chart type is universally better; the unit should leave students understanding that the choice depends on the primary comparison question. The textbook's in-text questions in Section 10.2.1 are the core reasoning material here.",
+     "teacher_notes": "Section 10.2 opens the visualisation strand, and this unit focuses on what clustered bar charts do and do not support before the stacked chart is introduced. A common misconception is that one chart type is universally better; the unit should leave students understanding that the choice depends on the primary comparison question. The textbook's in-text questions in Section 10.2.1 are the core reasoning material here.",
      "homework": []
     },
     {
@@ -817,7 +600,7 @@
      "time_bands": [
       {
        "minutes": "0-12",
-       "activity": "Return to the question from the previous discussion: how can a chart show both the family total and the components at once? Show Fig. 10.2 (stacked bar chart) from Section 10.2.1. Have students describe what they see: each bar's full length is the total expenditure; each coloured segment is one category. Verify that the three totals questions (book Q6–Q8) that were hard on clustered charts can now be read off."
+       "activity": "Return to the question from the previous discussion: how can a chart show both the family total and the components at once? Show Fig. 10.2 (stacked column chart) from Section 10.2.1. Have students describe what they see: each bar's full height is the total expenditure; each coloured segment is one category. Verify that the three questions about Family C that were hard on clustered charts can now be read off."
       },
       {
        "minutes": "12-28",
@@ -860,7 +643,7 @@
      "time_bands": [
       {
        "minutes": "0-12",
-       "activity": "Pose the new question from Section 10.2.2: which family spends the smallest share of its total on healthcare? Students try to answer this from the stacked bar chart (Fig. 10.2). They find it hard because the bars are different lengths. Introduce the idea: if every bar were the same height, shares would be directly comparable. Show Fig. 10.3 (pie charts) and ask what advantage they offer — and what they cannot show."
+       "activity": "Pose the new question from Section 10.2.2: which family spends the smallest share of its total on healthcare? Students try to answer this from the stacked bar chart (Fig. 10.2). They find it hard because bars are different heights. Introduce the idea: if every bar were the same height, shares would be directly comparable. Show Fig. 10.3 (pie charts) and ask what advantage they offer — and what they cannot show."
       },
       {
        "minutes": "12-25",
@@ -872,10 +655,10 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Discuss what the resulting chart shows from Example 7: lighting's share falls sharply (36% → 11%), while cooling (30% → 40%) and kitchen appliances (12% → 23%) each gain about 10 percentage points. Ask: can you tell from this chart how many units were used in each category? Why not? Introduce the limitation — proportional charts reveal shares, not actual values."
+       "activity": "Discuss what the resulting chart shows from Example 7: the shift from lighting to cooling dominates the change from 2005 to 2025. Ask: can you tell from this chart how many units were used in each category? Why not? Introduce the limitation — proportional charts reveal shares, not actual values."
       }
      ],
-     "teacher_notes": "The pivot from stacked to 100% stacked bar charts is the central move of Section 10.2.2, and the limitation — that proportions are visible but totals are not — must be made explicit. A frequent confusion is treating the 100% stacked chart as interchangeable with the stacked chart; the Think and Reflect material in this section (about which direction the conversion works) addresses this directly. Example 8 (p.24) on Fatima's and Naveen's gardens sharpens this.",
+     "teacher_notes": "The pivot from stacked to 100% stacked bar charts is the central move of Section 10.2.2, and the limitation — that proportions are visible but totals are not — must be made explicit. A frequent confusion is treating the 100% stacked chart as interchangeable with the stacked chart; the think_reflect material in this section (about which direction the conversion works) addresses this directly. Example 8 (p.24) on Fatima's and Naveen's gardens sharpens this.",
      "homework": []
     },
     {
@@ -912,18 +695,18 @@
       },
       {
        "minutes": "5-28",
-       "activity": "Work Example 8 (p.24): the 100% stacked bar chart shows Fatima's garden at summer 50%, monsoon 30%, winter 20% and Naveen's at summer 40%, monsoon 25%, winter 35%. Students read each of the four statements in the textbook and decide — before seeing Case 1 and Case 2 — whether each must be true or cannot be inferred. Reveal Cases 1 and 2: two stacked bar charts with different totals that produce identical 100% bars. Students confirm: cross-garden comparisons of absolute numbers cannot be made. Discuss the Think and Reflect question — can a 100% stacked bar chart always be made from a stacked bar chart, and vice versa?"
+       "activity": "Work Example 8 (p.24): the 100% stacked bar chart shows Fatima's garden at summer 50%, monsoon 30%, winter 20% and Naveen's at summer 40%, monsoon 25%, winter 35%. Students read each of the four statements in the textbook and decide — before seeing Case 1 and Case 2 — whether each is necessarily true, possibly true, or cannot be inferred. Reveal Cases 1 and 2: two stacked bar charts with different totals that produce identical 100% bars. Students confirm: cross-garden comparisons of absolute numbers cannot be made. Discuss the think_reflect question — can a 100% stacked bar chart always be made from a stacked bar chart, and vice versa?"
       },
       {
        "minutes": "28-42",
-       "activity": "Work Example 9 (p.26): the single stacked column of average Indian time use, then the grouped chart by age. Students say what they notice and wonder. Use the Think and Reflect prompts from Section 10.2.2: why does learning time fall sharply from the 6–14 to the 15–24 age group? Do adults spend roughly equal time on paid and unpaid work? Because every bar totals 24 hours, this is simultaneously a stacked bar chart and a 100% stacked bar chart."
+       "activity": "Work Example 9 (p.26): the single stacked column of average Indian time use, then the grouped chart by age. Students say what they notice and wonder. Use the think_reflect prompts from Section 10.2.2: why does learning time fall sharply from the 6–14 to the 15–24 age group? Do adults spend roughly equal time on paid and unpaid work? Because every bar totals 24 hours, this is simultaneously a stacked bar chart and a 100% stacked bar chart."
       },
       {
        "minutes": "42-50",
        "activity": "Summarise the section's two key results: (i) a 100% stacked bar chart can always be made from a stacked bar chart, but not the reverse; (ii) it supports within-bar comparisons and across-bar proportional comparisons but not across-bar absolute comparisons."
       }
      ],
-     "teacher_notes": "Example 8's Case 1 / Case 2 demonstration is the unit's conceptual centrepiece — the same 100% bars arising from two different data tables. Watch for students who read Naveen's summer bloom share (40%) as less than Fatima's (50%) and conclude that Fatima grew more summer blooms in absolute terms; that is precisely the invalid inference. Note that the p.25 text swaps Naveen's monsoon and winter shares; the chart (25% monsoon, 35% winter) is correct. The Think and Reflect prompts in this section are woven into the unit's two worked examples and should not be skipped.",
+     "teacher_notes": "Example 8's Case 1 / Case 2 demonstration is the unit's conceptual centrepiece — the same 100% bars arising from two different data tables. Watch for students who read Naveen's summer bloom share (40%) as less than Fatima's (50%) and conclude that Fatima grew more summer blooms in absolute terms; that is precisely the invalid inference. The think_reflect prompts in this section are woven into the unit's two worked examples and should not be skipped.",
      "homework": [
       "Exercise Set 10.5 Q1 (p.29): using smart-watch body-state data for five people, guess Sahana's row, infer Julie's occupation, and complete the 100% stacked bar chart."
      ]
@@ -989,7 +772,7 @@
        "activity": "Class discussion: name one context where the 100% stacked bar chart is the better tool and one where the stacked bar chart is better. Each pair shares their reasoning."
       }
      ],
-     "teacher_notes": "This unit consolidates Section 10.2.2 by applying the inference rules to real charts from different domains. The Decision Dilemma (Q9) is particularly valuable because the two chart types can lead to genuinely different decisions, making the distinction concrete. Watch for students who rank the plays from the 100% chart alone: Play A's shares look much like Play B's, but the count chart shows A has far fewer ratings; Play C has the largest 5-star share but also the largest 1-star share.",
+     "teacher_notes": "This unit consolidates Section 10.2.2 by applying the inference rules to real charts from different domains. The Decision Dilemma (Q9) is particularly valuable because the two chart types can lead to genuinely different decisions, making the distinction concrete. Watch for students who judge a play superior purely from high 5-star share without noticing the total review count is tiny; that is an inference error the stacked count chart corrects.",
      "homework": []
     },
     {
@@ -1111,13 +894,13 @@
        "activity": "Quick debrief on Q8 parts (ii) and (iii): the weighted mean of two quantities can only lie between them, never outside. State this as a general constraint students can apply to check answers."
       }
      ],
-     "teacher_notes": "This unit deepens fluency with multi-step weighted mean problems, particularly those requiring updating an average after adding or removing elements. The common error in the langur problem is keeping 35 as the number of females after the new female is added — stress that the denominator changes when elements are added or removed. The constraint that a weighted mean lies between its extreme values (Dead Sea salinity Q8) is a useful self-checking heuristic worth stating explicitly.",
+     "teacher_notes": "This unit deepens fluency with multi-step weighted mean problems, particularly those requiring updating an average after adding or removing elements. The common error in the langur problem is re-using 60 as the total after adding the new female — stress that the denominator changes when elements are added or removed. The constraint that a weighted mean lies between its extreme values (Dead Sea salinity Q8) is a useful self-checking heuristic worth stating explicitly.",
      "homework": []
     },
     {
      "period_number": 14,
      "period_duration_minutes": 50,
-     "activity_title": "Algebraic Reasoning About Weighted Means — Cricket, Shuttlecocks and a Pool",
+     "activity_title": "Algebraic Reasoning About Weighted Means — Cricket, Shuttlecocks and Gold",
      "section_anchor": "10.1.1",
      "pedagogical_method": "Deductive",
      "materials": [
@@ -1156,7 +939,7 @@
        "type": "exercise",
        "source_section": "10.1.2",
        "book_ref": "End of Chapter Q4, p.31",
-       "description": "Pṛthūdakasvāmī's pool (commentary on Brahmagupta): 30-hasta pool in sections of 4, 5, 6, 7, 8 hastas dug to depths 9, 7, 7, 3, 2 hastas; find the mean depth."
+       "description": "Brahmagupta's pool: 30-hasta pool in sections of 4, 5, 6, 7, 8 hastas dug to depths 9, 7, 7, 3, 2 hastas; find the mean depth."
       }
      ],
      "time_bands": [
@@ -1295,7 +1078,7 @@
       },
       {
        "minutes": "30-43",
-       "activity": "Whole-class discussion connecting both strands: the canteen scenario and the time-use chart are structurally parallel — each has multiple components combined with weights (or volumes/hours). Students articulate: the weighted mean compresses parts into one number; the stacked chart keeps them visible; the 100% stacked chart shows only the proportions. When does each serve better?"
+       "activity": "Whole-class discussion connecting both strands: the canteen scenario and the time-use chart are structurally parallel — each has multiple components combined with weights (or volumes/hours), and the choice between reporting a weighted mean and reporting a percentage breakdown mirrors the choice between the two chart types. Students articulate: the weighted mean compresses parts into one number; the stacked chart keeps them visible; the 100% stacked chart shows only the proportions. When does each serve better?"
       },
       {
        "minutes": "43-50",
@@ -1493,7 +1276,7 @@
        "learning_outcome": {
         "section": 1
        },
-       "inclusivity": "Students who struggle with setting up the formula can first verify Method 1's error by computing the two section totals, 68 × 40 = 2720 and 74 × 25 = 1850, and comparing (2720 + 1850)/65 ≈ 70.31 with 71, to see why equal treatment of unequal groups is wrong. Students who finish quickly can be asked: by how much would the group sizes need to differ for the error to exceed 2 marks?"
+       "inclusivity": "Students who struggle with setting up the formula can first verify Method 1's error by multiplying 68 × 25 and 74 × 40, comparing totals, to see why equal treatment of unequal groups is wrong. Students who finish quickly can be asked: by how much would the group sizes need to differ for the error to exceed 2 marks?"
       },
       "SCR": null,
       "ECR": null,
@@ -1633,7 +1416,7 @@
        "learning_outcome": {
         "section": 3
        },
-       "inclusivity": "Students who are unsure can first estimate: 6%, 10%, 15% with volumes 400, 300, 200 — the result should be closer to 6% than to 15% because the largest volume has the smallest concentration. Students who finish quickly can be asked to verify by computing the total amount (mL) of acid and the total volume separately before dividing."
+       "inclusivity": "Students who are unsure can first estimate: 6%, 10%, 15% with volumes 400, 300, 200 — the result should be closer to 6% than to 15% because the largest volume has the smallest concentration. Students who finish quickly can be asked to verify by computing the total grams of acid and the total volume separately before dividing."
       },
       "SCR": null,
       "ECR": null,
@@ -1859,9 +1642,9 @@
      "cognitive_demand": "Application",
      "visual_stimulus": "Category | 2022 (₹ thousands) | 2023 (₹ thousands)\nRent | 18 | 20\nFood | 14 | 16\nTransport | 8 | 6\nOther | 10 | 12",
      "graph_paper": false,
-     "question_text": "Refer to the table provided. A family's monthly expenditure is shown for 2022 and 2023. (i) Find the total monthly expenditure in each year. (ii) In a stacked bar chart with one bar per year, which category would you place at the base if you most wanted to compare it across the two years, and why? (iii) In 2023, approximately what percentage of the total expenditure was spent on food? Show your working.",
+     "question_text": "Refer to the table provided. A family's monthly expenditure is shown for 2022 and 2023. (i) Find the total monthly expenditure in each year. (ii) In a stacked bar chart with one bar per year, which segment would you draw first and why? (iii) In 2023, approximately what percentage of the total expenditure was spent on food? Show your working.",
      "options": [],
-     "expected_answer": "(i) 2022: ₹50 thousand; 2023: ₹54 thousand. (ii) Any category, justified by: only the base segment starts at zero in both bars, so it is the easiest to compare across years. (iii) 16/54 × 100 ≈ 29.6%.",
+     "expected_answer": "(i) 2022: ₹50 thousand; 2023: ₹54 thousand. (iii) 16/54 × 100 ≈ 29.6%.",
      "method_one_line": "Add all four categories per year for the totals; for the food percentage, divide the food value by the year total and multiply by 100.",
      "expected_elements": [],
      "look_for": [],
@@ -1897,7 +1680,7 @@
      "cognitive_demand": "Understanding",
      "visual_stimulus": null,
      "graph_paper": false,
-     "question_text": "A stacked bar chart shows three companies' annual expenditure split into salaries, materials and overheads, stacked in that order with salaries at the base. Which of the following tasks is most difficult to do accurately using this stacked bar chart?",
+     "question_text": "A stacked bar chart shows three companies' annual expenditure split into salaries, materials and overheads. Which of the following tasks is most difficult to do accurately using this stacked bar chart?",
      "options": [
       {
        "label": "A",
@@ -1964,7 +1747,7 @@
      "question_text": "Refer to the table provided. It shows the number of students enrolled in three streams at two schools. (i) Calculate the percentage share of each stream within each school and complete the values for a 100% stacked bar chart. (ii) Using your percentages, state one comparison between the two schools that the 100% stacked bar chart supports and one comparison it does not support. Justify each answer.",
      "options": [],
      "expected_answer": "School A: Science 60%, Arts 30%, Commerce 10%. School B: Science 30%, Arts 50%, Commerce 20%.",
-     "method_one_line": "Divide each stream's count by the school total (School A: 300; School B: 400) and multiply by 100 to get percentages; the 100% chart supports share comparisons, within a bar and across bars (e.g. Science has a larger share in School A than in School B), but does not support absolute count comparisons across schools.",
+     "method_one_line": "Divide each stream's count by the school total (School A: 300; School B: 400) and multiply by 100 to get percentages; the 100% chart supports within-school proportion comparisons (e.g. Science has a larger share in School A than School B) but does not support absolute count comparisons across schools.",
      "expected_elements": [],
      "look_for": [],
      "task": "",
@@ -2007,7 +1790,7 @@
      "look_for": [
       "Correctly identifies Claim 1 as invalid, explaining that a higher percentage does not imply a higher absolute count when totals differ.",
       "Constructs a specific numerical counterexample: e.g. if P has 100 vehicles total then cars = 50, but if Q has 200 vehicles then cars = 80 > 50, showing the percentage is higher at P but the count can be higher at Q.",
-      "Correctly identifies Claim 2 as valid, explaining that the 35% share for bicycles at Q exceeds the 20% share at P, and comparisons of shares, within a bar or across bars, are exactly what the 100% chart supports.",
+      "Correctly identifies Claim 2 as valid, explaining that the 35% share for bicycles at Q exceeds the 20% share at P, and within-bar proportional comparisons are exactly what the 100% chart supports.",
       "Uses mathematically correct language distinguishing proportion/share from absolute count/number."
      ],
      "task": "",
@@ -2048,7 +1831,7 @@
      "method_one_line": "",
      "expected_elements": [],
      "look_for": [],
-     "task": "A community library evaluates three reading programmes — Children's Club (CC), Youth Circle (YC) and Adult Forum (AF) — each on three metrics: books read per participant (B), sessions attended per participant (S) and participant satisfaction score out of 10 (Q). The data are given below.\n\nProgramme | Participants | B | S | Q\nCC | 60 | 8 | 12 | 7.5\nYC | 40 | 12 | 10 | 8.0\nAF | 25 | 6 | 8 | 9.0\n\nThe library combines B, S and Q for each programme using the weights 3 : 4 : 3 to produce a single Programme Quality Score (PQS). It then wants a single Library Quality Score (LQS) that combines the three programmes' PQS values, weighted by the number of participants.\n\n(i) Compute the PQS for each programme.\n(ii) Compute the Library Quality Score (LQS) from the three PQS values.\n(iii) A new librarian suggests that the LQS is the same as computing a single weighted mean directly from B, S and Q across all three programmes combined, weighting B:S:Q by 3:4:3 and each observation by participant count. Verify algebraically whether she is correct.\n(iv) The library also records, for each programme, the fraction of participants who joined in each of three terms: Term 1, Term 2, Term 3. For CC the fractions are 40%, 35%, 25%; for YC, 50%, 30%, 20%; for AF, 40%, 40%, 20%. Decide, with justification, whether a stacked bar chart or a 100% stacked bar chart is the better display for comparing (a) the absolute number of participants joining in Term 1 across programmes, and (b) the share of each programme's participants joining in each term.",
+     "task": "A community library evaluates three reading programmes — Children's Club (CC), Youth Circle (YC) and Adult Forum (AF) — each on three metrics: books read per participant (B), sessions attended per participant (S) and participant satisfaction score out of 10 (Q). The data are given below.\n\nProgramme | Participants | B | S | Q\nCC | 60 | 8 | 12 | 7.5\nYC | 40 | 12 | 10 | 8.0\nAF | 25 | 6 | 8 | 9.0\n\nThe library combines B, S and Q for each programme using the weights 3 : 4 : 3 to produce a single Programme Quality Score (PQS). It then wants a single Library Quality Score (LQS) that combines the three programmes' PQS values, weighted by the number of participants.\n\n(i) Compute the PQS for each programme.\n(ii) Compute the Library Quality Score (LQS) from the three PQS values.\n(iii) A new librarian suggests that the LQS is the same as computing a single weighted mean directly from B, S and Q across all three programmes combined, weighting B:S:Q by 3:4:3 and each observation by participant count. Verify algebraically whether she is correct.\n(iv) The library also records, for each programme, the fraction of participants who joined in each of three terms: Term 1, Term 2, Term 3. For CC the fractions are 40%, 35%, 25%; for YC, 50%, 30%, 20%; for AF, 30%, 50%, 20%. Decide, with justification, whether a stacked bar chart or a 100% stacked bar chart is the better display for comparing (a) the absolute number of participants joining in Term 1 across programmes, and (b) the share of each programme's participants joining in each term.",
      "scaffold": "For part (i): the PQS formula is (3 × B + 4 × S + 3 × Q)/(3 + 4 + 3). Work each programme separately. For part (ii): weight each PQS by participant count and divide by total participants. For part (iii): write out the full numerator of the LQS in terms of B, S, Q values and participant counts, and compare it with the direct weighted mean. For part (iv): re-read what each chart type reveals before deciding.",
      "format_of_output": [
       "Numerical PQS for each programme and the LQS, with all working shown.",
@@ -2069,7 +1852,7 @@
        "format_rationale": "The task requires building a two-level weighted mean model from a structured scenario and then solving it, making model-and-solve the natural vehicle for an integrative weighted mean and chart-choice problem.",
        "what_this_demonstrates": "Students demonstrate that they can apply the weighted mean at two levels of nesting — first within a programme across metrics, then across programmes by participant count — connect these to a general algebraic property, and make a principled chart-type decision using the distinction between proportions and absolute counts.",
        "reading_the_scaffold": "The scaffold breaks the computation into four sequential sub-tasks; students who work part (i) correctly have the inputs they need for part (ii) automatically. Part (iii) is algebraic and independent of the numerical answers. Part (iv) is conceptual and does not require computation.",
-       "strong_vs_weak_markers": "Strong responses: compute PQS correctly for all three programmes; derive LQS by weighting PQS values by participant counts; produce a clear algebraic argument for part (iii) showing the two-level and one-level approaches are equivalent (because the participant-weighted sum of (3B + 4S + 3Q)/10 can be regrouped into one sum); correctly assign stacked bar chart to (a) and 100% stacked bar chart to (b) with a one-sentence justification naming what each chart reveals. Weak responses: average PQS values equally ignoring participant counts; justify chart choice by preference rather than by what each chart type supports; omit the algebraic step in part (iii) and rely only on a numerical example.",
+       "strong_vs_weak_markers": "Strong responses: compute PQS correctly for all three programmes; derive LQS by weighting PQS values by participant counts; produce a clear algebraic argument for part (iii) showing the two-level and one-level approaches are equivalent (because the weights commute); correctly assign stacked bar chart to (a) and 100% stacked bar chart to (b) with a one-sentence justification naming what each chart reveals. Weak responses: average PQS values equally ignoring participant counts; justify chart choice by preference rather than by what each chart type supports; omit the algebraic step in part (iii) and rely only on a numerical example.",
        "inclusivity": "Students who struggle with part (iii) can be told: compute the LQS numerically from two routes — part (ii)'s answer versus applying the 3:4:3 weights directly to all participants' B, S, Q values — and check whether the numbers agree; write down what you notice. Students who complete the task quickly can be asked to identify: would the LQS change if the three weight ratios for B, S, Q were doubled to 6:8:6? Justify using the algebraic result from End of Chapter Q6."
       }
      }

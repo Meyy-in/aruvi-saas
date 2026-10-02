@@ -191,133 +191,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:52:53",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C13-101": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': \"Students can integrate the chapter's concepts — modelling with linear equations in two variables, representing solutions graphically using slope and intercept, and solving pairs by algebraic and graphical methods — to analyse a novel multi-condition problem and predict the nature of its solution set.\"}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "computes a1/a2 = 1/2 ≠ b1/b2 = 3/5",
-        "new": "computes a1/a2 = 3/5 ≠ b1/b2 = 1 (from 1.5x − y + 60 = 0 and 2.5x − y = 0)"
-       }
-      ]
-     },
-     "C13-102": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can explain the strategy of reducing a pair of linear equations in two variables to a single linear equation in one variable as the basis for algebraic solution methods.'}",
-        "field": "guide.MCQ.what_each_option_reveals.C",
-        "old": "Expresses p in terms of q rather than q in terms of p, so the substituted equation still contains q — does not complete the reduction to a single-variable equation.",
-        "new": "Substitutes p = 10 − q instead of her stated step (q = 10 − p). The resulting equation 2(10 − q) − q = 5 is in q alone, so the option's claim that it 'still involves two variables' is false; it also does not describe what she said she would do."
-       }
-      ]
-     },
-     "C13-103": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "Having established that a linear equation in two variables models a two-condition situation,",
-        "new": "Having established that a linear equation in two variables models one condition relating two unknown quantities,"
-       }
-      ]
-     },
-     "C13-104": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "A common slip is forgetting to move all terms to one side before reading off a, b and c — for example, leaving 1.5x - 1.3y on the right and reading a = 1.5 without negating.",
-        "new": "A common slip is changing the signs of some terms but not others when moving them across — for example, from 4 = 1.5x − 1.3y writing a = 1.5, b = −1.3 but c = +4."
-       }
-      ]
-     },
-     "C13-105": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U5",
-        "field": "teacher_notes",
-        "old": "many students initially believe two unknowns yield two equations and therefore a unique solution; use Exercise Set 13.2 Q7, p.94 to show that scaling an equation does not change its solution set.",
-        "new": "many students initially believe an equation has only one solution; use the book's construction (choose any value of x and solve for y) to show there are infinitely many, and Exercise Set 13.2 Q7, p.94 to show that scaling an equation does not change its solution set."
-       }
-      ]
-     },
-     "C13-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U5",
-        "field": "time_bands[3].activity",
-        "old": " This will connect to the analysis of pairs of equations later in the chapter.",
-        "new": ""
-       },
-       {
-        "where": "U6",
-        "field": "teacher_notes",
-        "old": "; section 13.3.2 proves it.",
-        "new": "."
-       },
-       {
-        "where": "U6",
-        "field": "time_bands[2].activity",
-        "old": "State — and note that the proof is in the next section — that slope",
-        "new": "State that slope"
-       },
-       {
-        "where": "U2",
-        "field": "time_bands[2].activity",
-        "old": "who write 3y = 5 without rearranging",
-        "new": "who write 3y = 1 without rearranging"
-       },
-       {
-        "where": "U3",
-        "field": "teacher_notes",
-        "old": "students can read Example 4, p.92 again and try reversing the order of substitution to confirm the result is unchanged.",
-        "new": "students can make up their own version of Example 4, p.92 with a different given pair and swap with a partner."
-       },
-       {
-        "where": "U7",
-        "field": "teacher_notes",
-        "old": "Students may read End of Chapter Q7, p.120 again and try extending it: what changes if the point is on the y-axis?",
-        "new": "Students may extend End of Chapter Q7, p.120: how many lines pass through one given point if no slope is given?"
-       },
-       {
-        "where": "U9",
-        "field": "teacher_notes",
-        "old": "Students who finish early can read Example 8, p.107 and solve it by expressing y first instead of x.",
-        "new": "Students who finish early can re-solve Example 8, p.107 by expressing x in terms of y (x = y/4)."
-       },
-       {
-        "where": "U11",
-        "field": "homework[0]",
-        "old": "End of Chapter Q8, p.120 — check the answer by substituting back and verify the condition for a unique solution.",
-        "new": "End of Chapter Q8, p.120 — take p = 4 and p = 3, and show that the first pair has no unique solution and the second has one."
-       },
-       {
-        "where": "U16",
-        "field": "time_bands[0].activity",
-        "old": "with slope m = -a/b and y-intercept d = -c/b;",
-        "new": "with slope m = -a/b and y-intercept d = -c/b (when b ≠ 0);"
-       },
-       {
-        "where": "U15",
-        "field": "teacher_notes",
-        "old": "watch for students who compute speed rather than slope.",
-        "new": "watch for students who compute speed instead of slope. If students trace the actual step paths, they meet earlier ((24, 28) in (i); the first moves overlap from (7, 0) to (8, 0) in (ii)) — accept either reading if it is stated, and discuss the modelling choice."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -410,14 +283,14 @@
       },
       {
        "minutes": "25-40",
-       "activity": "Students attempt Exercise Set 13.1 Q1, p.87 (write an equation with a = 3, b = 0, c = -1/5) and Exercise Set 13.1 Q2, p.87 (complete the table for five equations). Circulate and prompt students who write 3y = 1 without rearranging to ax + by + c = 0 form first."
+       "activity": "Students attempt Exercise Set 13.1 Q1, p.87 (write an equation with a = 3, b = 0, c = -1/5) and Exercise Set 13.1 Q2, p.87 (complete the table for five equations). Circulate and prompt students who write 3y = 5 without rearranging to ax + by + c = 0 form first."
       },
       {
        "minutes": "40-50",
        "activity": "Discuss Exercise Set 13.1 Q2, p.87 answers as a class. Reinforce that equations with rational coefficients such as (1/4)x + (3/5)y - 1/2 = 0 are already in standard form; multiplying by 20 gives 5x + 12y - 10 = 0. Confirm: recognising and reading off a, b and c is the core skill of this section."
       }
      ],
-     "teacher_notes": "Having established that a linear equation in two variables models one condition relating two unknown quantities, this unit formalises the standard form ax + by + c = 0. A common slip is changing the signs of some terms but not others when moving them across — for example, from 4 = 1.5x − 1.3y writing a = 1.5, b = −1.3 but c = +4. Insist on full rearrangement first.",
+     "teacher_notes": "Having established that a linear equation in two variables models a two-condition situation, this unit formalises the standard form ax + by + c = 0. A common slip is forgetting to move all terms to one side before reading off a, b and c — for example, leaving 1.5x - 1.3y on the right and reading a = 1.5 without negating. Insist on full rearrangement first.",
      "homework": [
       "Exercise Set 13.1 Q2, p.87 — complete any rows not finished in class, showing the rearrangement step explicitly."
      ]
@@ -481,7 +354,7 @@
        "activity": "Work through Example 4, p.92 with the class: given (-3, 4) satisfies both 3ax + 4y = -2 and 2x + by = 14, substitute x = -3, y = 4 to find a = 2 and b = 5. Students then attempt Exercise Set 13.2 Q3, p.93 (find m and n given (2, -1) satisfies both equations) independently."
       }
      ],
-     "teacher_notes": "This unit introduces the algebraic notion of a solution as an ordered pair, building on the standard-form work of section 13.1.1. A frequent error is ignoring the order of the pair — students may treat (2, 3) and (3, 2) as the same; stress that the first entry is always the x-value. For a self-study pointer, students can make up their own version of Example 4, p.92 with a different given pair and swap with a partner.",
+     "teacher_notes": "This unit introduces the algebraic notion of a solution as an ordered pair, building on the standard-form work of section 13.1.1. A frequent error is ignoring the order of the pair — students may treat (2, 3) and (3, 2) as the same; stress that the first entry is always the x-value. For a self-study pointer, students can read Example 4, p.92 again and try reversing the order of substitution to confirm the result is unchanged.",
      "homework": []
     },
     {
@@ -605,10 +478,10 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Synthesise: a linear equation in two variables has infinitely many solutions; scaling both sides by the same nonzero constant leaves the solution set unchanged. Address remaining questions."
+       "activity": "Synthesise: a linear equation in two variables has infinitely many solutions; scaling both sides by the same nonzero constant leaves the solution set unchanged. This will connect to the analysis of pairs of equations later in the chapter. Address remaining questions."
       }
      ],
-     "teacher_notes": "This unit deepens students' understanding of the solution set of a single equation by asking them to justify claims, not just compute. The most productive misconception to surface here is statement (i) — many students initially believe an equation has only one solution; use the book's construction (choose any value of x and solve for y) to show there are infinitely many, and Exercise Set 13.2 Q7, p.94 to show that scaling an equation does not change its solution set.",
+     "teacher_notes": "This unit deepens students' understanding of the solution set of a single equation by asking them to justify claims, not just compute. The most productive misconception to surface here is statement (i) — many students initially believe two unknowns yield two equations and therefore a unique solution; use Exercise Set 13.2 Q7, p.94 to show that scaling an equation does not change its solution set.",
      "homework": []
     },
     {
@@ -665,7 +538,7 @@
       },
       {
        "minutes": "22-32",
-       "activity": "Conduct the Think-and-Reflect from section 13.3.1: on the line through A(2, 0) and B(4, 3), find the y-coordinate of the point whose x-coordinate is 8, and the x-coordinate of the point whose y-coordinate is 6. Students work individually using the slope to extend the line, then share answers and strategies. State that slope does not depend on which two points are chosen."
+       "activity": "Conduct the Think-and-Reflect from section 13.3.1: on the line through A(2, 0) and B(4, 3), find the y-coordinate of the point whose x-coordinate is 8, and the x-coordinate of the point whose y-coordinate is 6. Students work individually using the slope to extend the line, then share answers and strategies. State — and note that the proof is in the next section — that slope does not depend on which two points are chosen."
       },
       {
        "minutes": "32-42",
@@ -676,7 +549,7 @@
        "activity": "Discuss answers. Ask: can slope ever be zero? Can it be undefined? Elicit: a horizontal line has zero rise so slope = 0; a vertical line has zero run so slope is undefined. Summarise the four cases on the board. Students may read Example 6, p.97 again for the reversal-of-order property."
       }
      ],
-     "teacher_notes": "This unit opens section 13.3 by making slope concrete and computable before its algebraic role in y = mx + d is established. A frequent error is computing run/rise instead of rise/run — insist that the vertical change is always the numerator. The Think-and-Reflect prompt about extending line AB suggests that slope is the same all along a line.",
+     "teacher_notes": "This unit opens section 13.3 by making slope concrete and computable before its algebraic role in y = mx + d is established. A frequent error is computing run/rise instead of rise/run — insist that the vertical change is always the numerator. The Think-and-Reflect prompt about extending line AB suggests that slope is the same all along a line; section 13.3.2 proves it.",
      "homework": [
       "Exercise Set 13.3 Q4, p.103 — wheelchair ramp problem: find the horizontal length given slope 1:12 and total height 18 cm."
      ]
@@ -743,7 +616,7 @@
        "activity": "End of Chapter Q5, p.120 (formula for x-intercept of y = mx + c) and End of Chapter Q7, p.120 (how many lines have a given slope; how many if a point is also given). Students work individually; selected students explain their reasoning to the class. Confirm: infinitely many lines share a slope, but exactly one line passes through a given point with a given slope."
       }
      ],
-     "teacher_notes": "Having computed slope numerically in section 13.3.1, this unit proves that the slope of y = mx + d is always m — a key result that also shows slope is independent of the chosen points. A common slip is confusing the sign: from ax + by + c = 0, the slope is -a/b, not a/b; the negation is easy to miss when rearranging. Students may extend End of Chapter Q7, p.120: how many lines pass through one given point if no slope is given?",
+     "teacher_notes": "Having computed slope numerically in section 13.3.1, this unit proves that the slope of y = mx + d is always m — a key result that also shows slope is independent of the chosen points. A common slip is confusing the sign: from ax + by + c = 0, the slope is -a/b, not a/b; the negation is easy to miss when rearranging. Students may read End of Chapter Q7, p.120 again and try extending it: what changes if the point is on the y-axis?",
      "homework": []
     },
     {
@@ -846,7 +719,7 @@
        "activity": "Students attempt one problem individually from Exercise Set 13.5 Q1, p.116 — choose (i) two integers with sum +5 and difference -21, or (iii) cost of a bat and ball. They write the modelling step and the substitution step separately, showing both before combining."
       }
      ],
-     "teacher_notes": "This unit introduces the first algebraic method for solving a pair, building directly on the modelling skills developed in section 13.4. A common slip is substituting into the same equation used to express one variable — the substitution must go into the OTHER equation; emphasise this explicitly. Students who finish early can re-solve Example 8, p.107 by expressing x in terms of y (x = y/4).",
+     "teacher_notes": "This unit introduces the first algebraic method for solving a pair, building directly on the modelling skills developed in section 13.4. A common slip is substituting into the same equation used to express one variable — the substitution must go into the OTHER equation; emphasise this explicitly. Students who finish early can read Example 8, p.107 and solve it by expressing y first instead of x.",
      "homework": [
       "Exercise Set 13.5 Q1, p.116 — attempt two further problems from the list using substitution, showing all steps."
      ]
@@ -968,7 +841,7 @@
      ],
      "teacher_notes": "This unit develops the most analytic part of section 13.5.1: predicting the number of solutions from the coefficient ratios without solving the pair. Students often confuse the coincident-line case (a1/a2 = b1/b2 = c1/c2, infinitely many solutions) with the unique case; stress that ALL THREE ratios must be equal for coincidence. End of Chapter Q9, p.121 requires solving a two-parameter system — ensure students equate each of the three ratios in turn.",
      "homework": [
-      "End of Chapter Q8, p.120 — take p = 4 and p = 3, and show that the first pair has no unique solution and the second has one."
+      "End of Chapter Q8, p.120 — check the answer by substituting back and verify the condition for a unique solution."
      ]
     },
     {
@@ -1277,7 +1150,7 @@
        "activity": "Debrief End of Chapter Q11, p.121: how does recognising the slope and starting point of each robot's path let you predict whether paths cross? Treating each path as a straight line from its starting point: in (i) the slopes 4/3 and 2 differ and the lines meet at (30, 40), a point both robots reach (Robot 1 after 10 moves, Robot 2 after 20). In (ii) the slopes 1 and -3/5 also differ and the lines meet at (4.5, 1.5); but Robot 2 never goes left of x = 7, so that point is not on its path. Different slopes guarantee that two lines meet, not that two paths starting from given points do. Summarise the unit's themes: graphical and algebraic methods reach the same conclusion and each offers a check on the other."
       }
      ],
-     "teacher_notes": "This unit applies the graphical and algebraic methods developed across sections 13.3 through 13.6 to multi-part and real-context problems. The Celsius-Fahrenheit problem in End of Chapter Q2, p.120 rewards interpreting slope and y-intercept in context — slope 9/5 means a 1 °C change corresponds to a 1.8 °F change. In the robot problem, students should identify each robot's path as a linear equation before attempting to solve; watch for students who compute speed instead of slope. If students trace the actual step paths, they meet earlier ((24, 28) in (i); the first moves overlap from (7, 0) to (8, 0) in (ii)) — accept either reading if it is stated, and discuss the modelling choice.",
+     "teacher_notes": "This unit applies the graphical and algebraic methods developed across sections 13.3 through 13.6 to multi-part and real-context problems. The Celsius-Fahrenheit problem in End of Chapter Q2, p.120 rewards interpreting slope and y-intercept in context — slope 9/5 means a 1 °C change corresponds to a 1.8 °F change. In the robot problem, students should identify each robot's path as a linear equation before attempting to solve; watch for students who compute speed rather than slope.",
      "homework": []
     },
     {
@@ -1297,7 +1170,7 @@
      "time_bands": [
       {
        "minutes": "0-10",
-       "activity": "Draw a three-column board summary connecting the chapter's main ideas: (1) a single linear equation in two variables — infinitely many solutions, each an ordered pair (x, y), all lying on one line with slope m = -a/b and y-intercept d = -c/b (when b ≠ 0); (2) a pair of linear equations — three cases decided by the ratios a1/a2, b1/b2, c1/c2: unique solution (intersection), no solution (parallel), infinitely many solutions (coincident); (3) two solution methods — substitution reduces one variable explicitly, elimination cancels a variable by combining equations. Ask students to identify which section each item comes from."
+       "activity": "Draw a three-column board summary connecting the chapter's main ideas: (1) a single linear equation in two variables — infinitely many solutions, each an ordered pair (x, y), all lying on one line with slope m = -a/b and y-intercept d = -c/b; (2) a pair of linear equations — three cases decided by the ratios a1/a2, b1/b2, c1/c2: unique solution (intersection), no solution (parallel), infinitely many solutions (coincident); (3) two solution methods — substitution reduces one variable explicitly, elimination cancels a variable by combining equations. Ask students to identify which section each item comes from."
       },
       {
        "minutes": "10-24",
@@ -1966,7 +1839,7 @@
        },
        "what_each_option_reveals": {
         "B": "Forms the correct substituted expression but substitutes into the wrong total — uses the right-hand side of the first equation (10) instead of the right-hand side of the second equation (5), confusing which equation receives the substitution.",
-        "C": "Substitutes p = 10 − q instead of her stated step (q = 10 − p). The resulting equation 2(10 − q) − q = 5 is in q alone, so the option's claim that it 'still involves two variables' is false; it also does not describe what she said she would do.",
+        "C": "Expresses p in terms of q rather than q in terms of p, so the substituted equation still contains q — does not complete the reduction to a single-variable equation.",
         "D": "Substitutes the expression for q into the right side of the second equation rather than replacing q in the left side, producing an equation that still involves both p and q in a confused form."
        },
        "inclusivity": "A student who is uncertain which variable to express first can choose q = 10 - p because q has coefficient 1 in the first equation, making the algebra easiest. A student ready for a challenge can check whether expressing p from the second equation (p = (5 + q)/2) and substituting into the first leads to the same solution for q."
@@ -2206,7 +2079,7 @@
        "format_rationale": "The task requires building two linear equations from a real scenario, reading off and interpreting slope and intercept, predicting solution behaviour using coefficient ratios, solving algebraically, graphing and interpreting — naturally integrating all major operations of the chapter in a single coherent problem.",
        "what_this_demonstrates": "A complete response shows the student can move fluently between modelling (writing equations from a context), algebraic representation (slope-intercept form), classification (ratio rules), computation (solving the pair), graphical representation (plotting and reading the intersection) and interpretation (advising based on the result) — the full chain of reasoning the chapter develops.",
        "reading_the_scaffold": "The scaffold breaks the task into five sequenced sub-parts. Students who need a starting point can work through each lettered part in order. Sub-part (a) is the modelling entry point; sub-parts (b) and (c) are analytical and algebraic; sub-part (d) connects to the graphical method; sub-part (e) brings the result back to the real-world context. A student who completes all five parts in order has demonstrated the integrative outcome.",
-       "strong_vs_weak_markers": "A strong response: correctly writes Plan P as y = 1.50x + 60 and Plan Q as y = 2.50x, interprets slope as cost per GB and y-intercept as fixed fee (or zero fixed fee), computes a1/a2 = 3/5 ≠ b1/b2 = 1 (from 1.5x − y + 60 = 0 and 2.5x − y = 0) and correctly concludes a unique intersection, solves 1.50x + 60 = 2.50x to get x = 60 GB and y = ₹150, plots both lines with at least two correct points each, marks (60, 150), and concludes Plan Q is cheaper for 40 GB (Plan P: ₹120, Plan Q: ₹100). A weak response: sets up only one equation, or confuses slope with y-intercept in the interpretation, or omits the verification step, or cannot connect the graphical intersection to the algebraic answer.",
+       "strong_vs_weak_markers": "A strong response: correctly writes Plan P as y = 1.50x + 60 and Plan Q as y = 2.50x, interprets slope as cost per GB and y-intercept as fixed fee (or zero fixed fee), computes a1/a2 = 1/2 ≠ b1/b2 = 3/5 and correctly concludes a unique intersection, solves 1.50x + 60 = 2.50x to get x = 60 GB and y = ₹150, plots both lines with at least two correct points each, marks (60, 150), and concludes Plan Q is cheaper for 40 GB (Plan P: ₹120, Plan Q: ₹100). A weak response: sets up only one equation, or confuses slope with y-intercept in the interpretation, or omits the verification step, or cannot connect the graphical intersection to the algebraic answer.",
        "inclusivity": "A student who is uncertain about the modelling step can start from a simple numerical example — 'if x = 10 GB, Plan P costs ₹60 + 10 × ₹1.50 = ₹75' — and then generalise to the formula. A student ready for a challenge can find for how many GB per month Plan P becomes cheaper than Plan Q and describe the full cost comparison as three intervals on the number line."
       }
      }
