@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T12:38:21",
+  "updated_at": "2026-10-02T14:26:37",
   "items": {
     "04.19": {
       "ios": {
@@ -5235,19 +5235,19 @@
     },
     "04.34": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-10-02T10:42:44",
-        "comment": "027 checkout (WhatsApp ON): 'You're subscribed' · 'We've sent a welcome message to your WhatsApp on +91 90000 00027…' · Open WhatsApp. Founder: amend the invoice line → WALK-A-166.",
+        "at": "2026-10-02T12:53:30",
+        "comment": "↻ after WALK-A-166: 027 renewal via Subscribe with WhatsApp ON → 'You're subscribed'; welcome already sent once for this account, so 'Say hello on WhatsApp'; line: 'Opens a chat with Meyy support with a short note ready to send. Your invoice is on its way by email. You can also download it anytime from Settings › Subscription.' Correct for what happened: whatsapp_invoice was not 'sent' (see 166).",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
     "01.29": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-10-02T11:36:47",
-        "comment": "027 revoked (enforcement ON) while on My Classes: moved to My Lessons within 20s, bar = My Lessons + Ask Meyy; lessons open and export; cold start straight to My Lessons, no flash; re-grant brought My Classes + Add back with cards in place. FAIL: the Year Plan budget pencil is still shown while lapsed and opens the editor → WALK-A-168.",
+        "at": "2026-10-02T12:53:30",
+        "comment": "027 revoked (enforcement ON) while on My Classes: moved to My Lessons within 20s, bar = My Lessons + Ask Meyy; lessons open and export; cold start straight to My Lessons, no flash; re-grant brought My Classes + Add back with cards in place. FAIL: the Year Plan budget pencil is still shown while lapsed and opens the editor → WALK-A-168. ↻ after WALK-A-168: lapsed 027 → Year Plan shows no pencil. PASS.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -5271,10 +5271,19 @@
     },
     "04.10": {
       "web": {
-        "status": "fail",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-10-02T12:38:21",
-        "comment": "v0.4 live (GET /legal/privacy shows 0.4). 003 and then 027 signed in on the web: no bar. Their records then read version 0.4, context 'trial_signin' — the sign-in itself stamped the new version. → WALK-A-172.",
+        "at": "2026-10-02T12:42:44",
+        "comment": "↻ after WALK-A-172 (sign-in no longer stamps a recorded version), 003/026/027 reset to 0.3: 003 sign-in → bar 'Meyy's Privacy Notice has been updated (version 0.4).' Read it → Settings › Legal on the Privacy notice pill, v0.4; bar gone after reload. 027 → bar, Dismiss → gone after reload.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.32": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T12:42:44",
+        "comment": "Bank V3.3 deployed (d38 'How do I get help, or contact Meyy support?' now names WhatsApp and 'We reply on the channel you wrote to us on.'); 027 on the web shows the new wording.",
         "build": "web dev (localhost:3000 → Render)"
       }
     }
@@ -8719,7 +8728,7 @@
       "applies_to": "web+phone",
       "title": "Done screen invoice line: founder's wording",
       "what": "Founder, 2026-10-02, 027 checkout with WhatsApp ON: the line read 'Opens your chat with Meyy support. Your invoice is on its way by email and is always in Settings › Subscription.' Amend to: 'Your invoice is on its way by email and WhatsApp. You can also download it anytime from Settings › Subscription.'\nFounder, same day: the WhatsApp invoice template is APPROVED by Meta and working. Say WhatsApp only where she has WhatsApp on (and it actually went).",
-      "fix": "[FIXED web+phone 2026-10-02T12:30:07] New shared `invoiceLine(waSent, emailSent)` in @aruvi/shared/format: names only the channels the invoice really went by, then 'You can also download it anytime from Settings › Subscription.' The welcomed case drops 'Opens your chat with Meyy support.' (web) / 'Meyy's number is …' (phone). The phone now reads whatsapp_invoice too (it ignored it). SubscribeFlow.jsx, SubscribeWizard.jsx. Parse-checked. Awaiting the walk.",
+      "fix": "[FIXED web+phone 2026-10-02T12:30:07] New shared `invoiceLine(waSent, emailSent)` in @aruvi/shared/format: names only the channels the invoice really went by, then 'You can also download it anytime from Settings › Subscription.' The welcomed case drops 'Opens your chat with Meyy support.' (web) / 'Meyy's number is …' (phone). The phone now reads whatsapp_invoice too (it ignored it). SubscribeFlow.jsx, SubscribeWizard.jsx. Parse-checked. Awaiting the walk.\n[WALKED 2026-10-02T12:53:30] web: wording pass. OPEN QUESTION: the invoice did not go on WhatsApp for 027 — either ARUVI_WA_INVOICE_TEMPLATE is unset on Render (status 'skipped') or Meta refused the made-up number. Check the env var / Render log ('send_invoice').\n[2026-10-02T12:54:28] Resolved: ARUVI_WA_INVOICE_TEMPLATE IS set (founder received an invoice on his own phone). For 027 Meta refused the made-up number +91 90000 00027, so whatsapp_invoice != 'sent' and the line correctly says 'by email'. Web: pass. Phones pending.",
       "files": "web/app/components/SubscribeFlow.jsx; mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "status": "fixed-awaiting-rewalk"
@@ -8735,7 +8744,7 @@
       "applies_to": "both",
       "title": "Buying a NEW stage of a subject she emptied adds no class",
       "what": "Founder, 2026-10-02, 027: bought Social Sciences · Middle; no default class was added. Cause: 027's Social Sciences record is EMPTIED (she removed SS · Secondary's classes in X.05), and _apply_subscription_profile (api/main.py) skips ALL seeding for an emptied subject — a rule written (2026-09-17) so a RE-purchase of a stage she emptied on purpose stays empty. It also blocks a stage she never had.\nFOUNDER RULE (same day): a newly bought stage always gets its first class (lowest class, Section A); a stage she already had and emptied stays empty.",
-      "fix": "[FIXED server 2026-10-02T12:30:07] _apply_subscription_profile takes `held_before` (paid scopes before this checkout; [] for a trial): a stage in this cart and NOT held before gets its lowest class, Section A, even in an emptied subject; a held-and-emptied stage stays empty. tests/test_subscription_profile.py +2 (new stage of an emptied subject; renewal of an emptied stage). Needs push + Render deploy. Awaiting the walk.",
+      "fix": "[FIXED server 2026-10-02T12:30:07] _apply_subscription_profile takes `held_before` (paid scopes before this checkout; [] for a trial): a stage in this cart and NOT held before gets its lowest class, Section A, even in an emptied subject; a held-and-emptied stage stays empty. tests/test_subscription_profile.py +2 (new stage of an emptied subject; renewal of an emptied stage). Needs push + Render deploy. Awaiting the walk.\n[WALKED 2026-10-02T13:04:07] web: server half PASS — 027 emptied Mathematics, bought Mathematics · Preparatory, Class 3 arrived. But no check window → WALK-A-173.\n[WALKED 2026-10-02T14:26:37] web: pass (Mathematics · Preparatory into emptied Mathematics → Class 3; English · Preparatory into emptied English → Class 3).",
       "files": "api/main.py",
       "commit": "",
       "status": "fixed-awaiting-rewalk"
@@ -8751,7 +8760,7 @@
       "applies_to": "web (check phone)",
       "title": "Lapsed: Year Plan's budget pencil still shown and opens the editor",
       "what": "Founder, 2026-10-02, 027 revoked: Year Plan shows the budget pencil beside Total periods and it opens the budget editor. Expected (01.29, 05.21): pencil gone while lapsed — the profile is read-only and the server refuses edits.",
-      "fix": "[FIXED web 2026-10-02T12:30:07] MyLessonPlans passes onEditBudget to YearPlan only when !lapsed, so no pencil while lapsed. The phone already did this (lessons.jsx: ent.lapsed ? null). Awaiting the walk.",
+      "fix": "[FIXED web 2026-10-02T12:30:07] MyLessonPlans passes onEditBudget to YearPlan only when !lapsed, so no pencil while lapsed. The phone already did this (lessons.jsx: ent.lapsed ? null). Awaiting the walk.\n[WALKED 2026-10-02T12:53:30] web: pass.",
       "files": "web/app/components/YearPlan.jsx; MyLessonPlans.jsx",
       "commit": "",
       "status": "fixed-awaiting-rewalk"
@@ -8791,7 +8800,7 @@
     {
       "id": "WALK-A-171",
       "opened": "2026-10-02T12:30:07",
-      "closed": "",
+      "closed": "2026-10-02T12:53:30",
       "feature": "01.29 / renewal via Subscribe",
       "found_on": [
         "test"
@@ -8799,15 +8808,15 @@
       "applies_to": "server",
       "title": "A revoked teacher was refused re-buying her own lapsed subject-stage",
       "what": "Found while testing WALK-A-167: onboarding_checkout's 'already have it' guard tested the scope's DATE only, so after a revoke (status expired, dates still ahead) checkout answered 409 'You already have X until …', although the Subscribe screen (using the server's live_scopes) offered it.",
-      "fix": "[FIXED server 2026-10-02T12:30:07] The guard uses _live_scopes(prior, today), which is empty for an expired record. Covered by test_renewing_a_stage_she_emptied_keeps_it_empty. Needs push + deploy.",
+      "fix": "[FIXED server 2026-10-02T12:30:07] The guard uses _live_scopes(prior, today), which is empty for an expired record. Covered by test_renewing_a_stage_she_emptied_keeps_it_empty. Needs push + deploy.\n[WALKED 2026-10-02T12:53:30] web: pass (027 revoked → renewed Science · Secondary through Subscribe, no refusal).",
       "files": "api/main.py",
       "commit": "",
-      "status": "fixed-awaiting-rewalk"
+      "status": "closed"
     },
     {
       "id": "WALK-A-172",
       "opened": "2026-10-02T12:36:14",
-      "closed": "",
+      "closed": "2026-10-02T12:42:44",
       "feature": "04.10",
       "found_on": [
         "web"
@@ -8815,8 +8824,24 @@
       "applies_to": "server",
       "title": "Signing in silently marks the new Privacy Notice as seen, so the 'updated' bar never shows",
       "what": "Founder, 2026-10-02: after v0.4 was deployed, 003 signed in on the web and no bar appeared. Its record read version 0.4, context 'trial_signin', stamped at that sign-in. POST /onboarding/verified calls _stamp_privacy_seen on EVERY sign-in (its comment says 'the moment of first collection'), so any returning teacher who signs in after a bump is recorded as having seen it and never gets the note — notice §12 promises she will see the new version 'with a short note of what changed'. Only a session that stays signed in across the bump ever sees the bar.",
-      "fix": "[FIXED server 2026-10-02T12:38:21] onboarding_verified stamps the notice only when the account has NO recorded version (first collection); a recorded version is moved only by the bar (Read it / Dismiss → /legal/privacy/seen) or the agreement signing. tests/test_privacy_notice.py now asserts a sign-in leaves an older version (and the bar) in place. Needs push + deploy.",
+      "fix": "[FIXED server 2026-10-02T12:38:21] onboarding_verified stamps the notice only when the account has NO recorded version (first collection); a recorded version is moved only by the bar (Read it / Dismiss → /legal/privacy/seen) or the agreement signing. tests/test_privacy_notice.py now asserts a sign-in leaves an older version (and the bar) in place. Needs push + deploy.\n[WALKED 2026-10-02T12:42:44] web: pass (04.10).",
       "files": "api/main.py (onboarding_verified)",
+      "commit": "",
+      "status": "closed"
+    },
+    {
+      "id": "WALK-A-173",
+      "opened": "2026-10-02T13:04:07",
+      "closed": "",
+      "feature": "01.18 / 167",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "A stage bought into an emptied subject raises no 'You've added…' window",
+      "what": "Founder, 2026-10-02, 027: after WALK-A-167 the purchase of Mathematics · Preparatory into an emptied Mathematics seeded Class 3, but opening Mathematics in My Lessons asked nothing. Founder: add the default class and trigger the same window used for a first-time subject/stage. Cause: setupCheckAdds (packages/shared/src/setupCheck.js) deliberately skips any new key in a subject that was EMPTY before (2026-09-18 rule: her own refill asks nothing) — the profile diff cannot tell a purchase from a refill.",
+      "fix": "[FIXED web+phone 2026-10-02T13:04:07] The checkout notes the scopes it bought (noteBoughtScopes, module memory in @aruvi/shared/setupCheck; called from SubscribeFlow and SubscribeWizard). setupCheckAdds takes them as a third argument (default: the noted list): a new key in an emptied subject earns the question when its subject·stage was just bought; her own refill still asks nothing. Shared tests +2, 252/252 green. Client-only — no deploy. Awaiting the walk.\n[REVISED 2026-10-02T14:26:37] First cut kept the bought list in module memory and the walk (English, 027) saw no window. Now kept in storage per teacher (key setup_check_pending_bought_{user}, swept at sign-out), noted BEFORE the checkout posts.\n[WALKED 2026-10-02T14:26:37] web: pass (026: emptied its subject, bought another stage of it → 'You've added…' window).",
+      "files": "packages/shared/src/setupCheck.js; packages/shared/test/setupCheck.test.js; web/app/components/SubscribeFlow.jsx; mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "status": "fixed-awaiting-rewalk"
     }

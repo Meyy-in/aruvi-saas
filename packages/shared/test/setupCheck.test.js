@@ -200,6 +200,13 @@ test("★ the question is for a SUBSCRIPTION, not for a class she added herself 
     ["Science|IX"], "a newly bought stage of a subject she teaches is asked about");
   assert.deepEqual(setupCheckAdds([{ name: "Science", grades: [] }], [{ name: "Science", grades: [g("VII")] }]),
     [], "refilling a subject she emptied asks nothing");
+  // WALK-A-173: …but a stage she just BOUGHT into an emptied subject arrives with Meyy's defaults
+  assert.deepEqual(setupCheckAdds([{ name: "Mathematics", grades: [] }],
+    [{ name: "Mathematics", grades: [g("III")] }], ["mathematics/preparatory"]),
+    ["Mathematics|III"], "a bought stage in an emptied subject is asked about");
+  assert.deepEqual(setupCheckAdds([{ name: "Mathematics", grades: [] }],
+    [{ name: "Mathematics", grades: [g("VI")] }], ["mathematics/preparatory"]),
+    [], "her own refill of another stage still asks nothing");
 });
 
 test("★ My Classes can spend a subscription's question too — oldest first, once (2026-09-18)", async () => {

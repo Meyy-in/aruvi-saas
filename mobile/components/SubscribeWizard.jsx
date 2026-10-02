@@ -51,6 +51,7 @@ import { storage } from "@aruvi/shared/storage";
 import { dateWords } from "@aruvi/shared/legalmd";
 import { syncEntitlement } from "@aruvi/shared/entitlement";
 import { notePurchase } from "../lib/purchase";
+import { noteBoughtScopes } from "@aruvi/shared/setupCheck";
 import { invalidateAccount } from "@aruvi/shared/account";
 import { fetchReadiness } from "@aruvi/shared/readiness";
 import Agreement from "./Agreement";
@@ -323,6 +324,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
 
   const doCheckout = () => {
     setPayBusy(true); setPayErr("");
+    noteBoughtScopes(cartScopes);   // WALK-A-173: noted BEFORE the post — see setupCheck.js
     postJSON("/onboarding/checkout", {
       scopes: cartScopes, name, email: emailStage === "ok" ? email.trim() : "",
       /* null on the known-profile skip = "leave the stored choice" (server rule). */

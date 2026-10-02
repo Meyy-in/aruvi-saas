@@ -7,6 +7,7 @@ import Agreement from "./Agreement";
 import Dropdown from "./Dropdown";
 import EmailEntry from "./EmailEntry";
 import MeyyMark from "./MeyyMark";
+import { noteBoughtScopes } from "../lib/setupCheck";
 import { dateWords as consentDateWords } from "../lib/legalmd";
 
 /* ★ THE TWO "already in use" SENTENCES MOVED to @aruvi/shared/format (2026-09-16), so the phone stops re-declaring
@@ -282,6 +283,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
 
   const doCheckout = async () => {
     setPayBusy(true); setPayErr("");
+    noteBoughtScopes(cartScopes);   // WALK-A-173: noted BEFORE the post — see setupCheck.js
     try {
       const r = await fetch(`${API}/onboarding/checkout`, {
         method: "POST",

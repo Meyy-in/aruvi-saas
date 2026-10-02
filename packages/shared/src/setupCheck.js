@@ -70,8 +70,29 @@ export function takeSetupCheck(key) {
  * the subject had classes before but none in this key's STAGE (a newly bought stage). A subject
  * that was present with no classes at all asks nothing.
  * Pure; `prev` null means "no baseline yet" and returns nothing, as the diff always has. */
-export function setupCheckAdds(prevSubjects, nextSubjects) {
+/* ★ …UNLESS THE REFILL WAS A PURCHASE (WALK-A-167/173, founder 2026-10-02). Since 167 a NEW stage
+ * bought into a subject she emptied arrives with a default class Meyy chose — exactly what the
+ * question exists for — but the profile diff alone cannot tell that from her own refill. The
+ * checkout notes the scopes it is buying ("{subjectSlug}/{stage}") BEFORE it posts, so no
+ * readiness refresh can beat it; a new key in an emptied subject earns the question when its
+ * subject·stage is among them. Kept in STORAGE, per teacher (not module memory: the first cut
+ * lived in a module variable and the walk saw no window — a hot-reloaded or second module instance
+ * reads its own empty copy). The key starts `setup_check_pending_`, so sign-out sweeps it. */
+const BKEY = () => userKey("setup_check_pending_bought");
+export function boughtScopes() {
+  if (!getUser()) return [];
+  try { const v = JSON.parse(storage.getItem(BKEY()) || "[]"); return Array.isArray(v) ? v : []; }
+  catch { return []; }
+}
+export function noteBoughtScopes(scopes) {
+  if (!getUser()) return;
+  const next = Array.from(new Set([...boughtScopes(), ...(scopes || []).filter(Boolean)]));
+  try { storage.setItem(BKEY(), JSON.stringify(next.slice(-SETUP_CHECK_CAP))); } catch {}
+}
+
+export function setupCheckAdds(prevSubjects, nextSubjects, boughtList) {
   if (!prevSubjects) return [];
+  const boughtSet = new Set(boughtList === undefined ? boughtScopes() : (boughtList || []));
   const prev = new Map((prevSubjects || []).map((s) => [s.name, s.grades || []]));
   const out = [];
   (nextSubjects || []).forEach((s) => {
@@ -82,7 +103,10 @@ export function setupCheckAdds(prevSubjects, nextSubjects) {
       const k = setupKey(s.name, g.grade);
       if (keysBefore.has(k)) return;
       if (before === undefined) { out.push(k); return; }          // a subject new to her
-      if (!before.length) return;                                  // she emptied it — her own refill
+      if (!before.length) {                                        // she emptied it…
+        if (boughtSet.has(`${subjectSlug(s.name)}/${stageOfGrade(g.grade)}`)) out.push(k); // …and bought a stage
+        return;                                                    // …or refilled it herself
+      }
       if (!stagesBefore.has(stageOfGrade(g.grade))) out.push(k);   // a newly bought stage
     });
   });
