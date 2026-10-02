@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import os
 import pathlib
 import re
 import shutil
@@ -34,8 +35,12 @@ import sys
 
 TOOL = "genon/repair_c3.py v1.0"
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-PLANS = ROOT / "data/content/saved_plans"
-CHAPTERS = ROOT / "data/content/chapters"
+# ★ PATH FIX 2026-10-02 (same fix extract_determinate.py and build_library.lib_dir_of got):
+# libraries live at DATA_DIR/saved_plans/<s>/<g>/<LP_YEAR>/, summaries under data/authoring.
+sys.path.insert(0, str(ROOT))
+from api import config as _config                                  # noqa: E402
+PLANS = pathlib.Path(_config.DATA_DIR) / "saved_plans"
+CHAPTERS = pathlib.Path(os.environ.get("ARUVI_AUTHORING_DIR", ROOT / "data/authoring")) / "chapters"
 BACKUP = ROOT / "backup/c3_repair"
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -1871,6 +1876,835 @@ DECLARED = {
             {"row": 6, "field": "c_code", "old": "C-3.1", "new": "C-9.3"},
         ],
     },
+    # ── C3 content-correctness check, Part II · chapter 9 (2026-10-02) ──────────────────
+    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C9-nn.
+    # Founder-approved the same day ("go ahead and apply fix"). Text-only edits; no unit,
+    # item, anchor or handoff structure changes.
+    "ch_09_canonical.json": {
+        "C9-01": [
+            {"unit": 6, "field": "time_bands[1].activity",
+             "old": "(b) no, it does not matter how they cross as long as the endpoints are joined.",
+             "new": "(b) it may matter — equal diagonals are only a necessary condition for type Q, so the way the equal sticks are crossed may decide whether the quadrilateral is of type Q."},
+        ],
+        "C9-02": [
+            {"unit": 6, "field": "time_bands[2].activity",
+             "old": "(a) yes — we want any quadrilateral with equal diagonals to be of type Q, so the construction must produce one by using equal sticks; (b) now it does matter — different placements of equal sticks produce different shapes (a rectangle versus an isosceles trapezium), and not all of them may be 'of type Q', so the placement constrains the category.",
+             "new": "(a) equal sticks are enough — any quadrilateral with equal diagonals is of type Q; (b) no — however the equal sticks are placed, the quadrilateral has equal diagonals and is therefore of type Q (a rectangle and an isosceles trapezium both qualify)."},
+        ],
+        "C9-03": [
+            {"unit": 15, "field": "time_bands[2].activity",
+             "old": "Part (i)(b): does placement matter? No — any crossing of equal sticks gives equal diagonals.",
+             "new": "Part (i)(b): does placement matter? It may — equal diagonals are needed for type Q but need not be enough, so some crossings of equal sticks may not give a type-Q quadrilateral."},
+        ],
+        "C9-04": [
+            {"unit": 15, "field": "time_bands[2].activity",
+             "old": "Part (ii)(b): does placement matter? Yes — different crossings of equal sticks give different quadrilaterals, and not all may be type Q.",
+             "new": "Part (ii)(b): does placement matter? No — every crossing of equal sticks gives equal diagonals, and every quadrilateral with equal diagonals is of type Q."},
+        ],
+        "C9-09": [
+            {"unit": 12, "field": "time_bands[1].activity",
+             "old": "Type A requires larger n (e.g. n = 10: 401 — prime; n = 15: 901 = 17 × 53).",
+             "new": "Type A finds n = 4 gives 65 = 5 × 13."},
+        ],
+        "C9-11": [
+            {"unit": 11, "field": "teacher_notes",
+             "old": "'e.g. 6 is divisible by 2 and 4 but not by 8, therefore the converse is false'",
+             "new": "'e.g. 12 is divisible by 2 and 4 but not by 8, therefore the converse is false'"},
+        ],
+        "C9-13": [
+            {"unit": 13, "field": "time_bands[2].activity",
+             "old": "Draw out that the altitude was chosen because it creates a right angle, enabling AAS — a different construction from A would have created a different pair of triangles without a known angle.",
+             "new": "Draw out that the altitude works because it gives a right angle on each side, enabling AAS; the bisector of angle A works too (equal angles at A and at B, C, with AD common), but the median from A does not lead to a congruence criterion."},
+        ],
+        "C9-14": [
+            {"item_where": {"question_type": "OPEN_TASK"}, "field": "guide.OPEN_TASK.reading_the_scaffold",
+             "old": "The hint for Proposition B points to the ±y root structure, which is the counterexample mechanism for the converse.",
+             "new": "The hint for Proposition B points to the ±y root structure, which is the counterexample mechanism for Proposition B itself; its converse (if x = y then x² = y²) is true."},
+        ],
+        "C9-17": [
+            {"unit": 11, "field": "time_bands[1].activity",
+             "old": "Step 1 applies 'if a + x = a + y then x = y' (add 3 to both sides), Step 2 applies the squaring analogue. Ask students to identify which proposition and which converse are being applied at each step, and why it is safe to apply the converse (both the proposition and converse are true for real-number addition).",
+             "new": "Step 1 adds 3 to both sides (the proposition of Q4: if x = y then a + x = a + y), Step 2 divides both sides by 2 (if x = y then x/2 = y/2). Ask students to identify the proposition applied at each step, and why each step can also be undone safely (for Step 1, Q4's converse — if a + x = a + y then x = y — is also true)."},
+        ],
+        "C9-18": [
+            {"unit": 1, "field": "homework[0]",
+             "old": "Exercise Set 9.1 Q2, p.5 — frame the converse of the given proposition about multiples of 6 and multiples of 3",
+             "new": "Exercise Set 9.1 Q2, p.5 — frame the converse of 'If a quadrilateral is a square, then all its angles are equal'"},
+        ],
+        "C9-19": [{"unit": 5, "field": "homework[0]", "old": "Exercise Set 9.1 Q10, p.6 —", "new": "Exercise Set 9.1 Q11, p.6 —"}],
+        "C9-20": [{"unit": 7, "field": "homework[0]", "old": "Exercise Set 9.1 Q12, p.6 —", "new": "Exercise Set 9.1 Q13, p.6 —"}],
+        "C9-21": [{"unit": 10, "field": "homework[0]", "old": "Exercise Set 9.1 Q11, p.6 —", "new": "Exercise Set 9.1 Q12, p.6 —"}],
+        "C9-25": [{"unit": 8, "field": "time_bands[2].activity",
+                   "old": "Discuss the Euler–Fermat connection from Example 1:",
+                   "new": "Discuss the Euler–Fermat note that precedes Example 2, p.2:"}],
+        "C9-26": [{"unit": 8, "field": "teacher_notes",
+                   "old": "The Euler–Fermat example from Example 1, p.1 is",
+                   "new": "The Euler–Fermat note before Example 2, p.2 is"}],
+        "C9-27": [{"unit": 7, "field": "time_bands[1].activity",
+                   "old": "For Q9: proposition true; converse is false — counterexample needed (a number divisible by both 5 and 12 is divisible by 60, so check: is divisibility by 5 and 12 enough? No — 60 is LCM(5,12), so divisibility by both does imply divisibility by 60; prompt groups to reconsider).",
+                   "new": "For Q9: proposition true; converse also true — lcm(5, 12) = 60, so a number divisible by both 5 and 12 is divisible by 60."}],
+        "C9-28": [{"unit": 16, "field": "time_bands[1].activity",
+                   "old": "Q: 'If n² is even, then n is even' — the converse of this is 'If n is even, then n² is even', which is also true",
+                   "new": "Q: 'If n is even, then n² is even' — also true"}],
+        "C9-29": [
+            {"unit": 8, "field": "time_bands[1].activity",
+             "old": "n = 5 gives 101 (prime), n = 5: try factoring 4(25) + 1 = 101 — prime; try n = 10: 4(100) + 1 = 401 — prime; n = 15: 4(225) + 1 = 901 = 901; is 901 prime? 901 = 17 × 53 — composite.",
+             "new": "n = 4 gives 65 = 5 × 13 — composite."},
+        ],
+        "C9-36": [{"item_where": {"question_type": "OPEN_TASK"}, "field": "scaffold",
+                   "old": "For the converse of A: try n = 60, n = 120 — do these satisfy both conditions? Is every such n divisible by 60?",
+                   "new": "For the converse of A: if n is divisible by 60, must it be divisible by 5 and by 12? Do 5 and 12 divide 60?"}],
+        "C9-37": [{"item_where": {"question_type": "OPEN_TASK"}, "field": "guide.OPEN_TASK.reading_the_scaffold",
+                   "old": "unless lcm(5,12) = 60 — which it does, making the converse also true.",
+                   "new": "unless lcm(5,12) = 60 — which it does, making Proposition A true; its converse is true because 5 and 12 both divide 60."}],
+        "C9-S3": [
+            {"unit": 12, "field": "time_bands[0].activity", "old": "Recall the Fermat Fermat numbers discussed in Unit 1", "new": "Recall the Fermat numbers from the start of the chapter"},
+            {"unit": 3, "field": "time_bands[3].activity", "old": "hold the full discussion for the next unit.", "new": "hold the full discussion for later."},
+            {"unit": 9, "field": "time_bands[0].activity", "old": "Compare with Q8 from the previous unit (", "new": "Compare with Q8 ("},
+            {"unit": 9, "field": "time_bands[3].activity", "old": "the propositions studied across units 6–9", "new": "the propositions studied so far"},
+            {"unit": 15, "field": "time_bands[1].activity", "old": "write the gcd argument from Unit 9.", "new": "write the gcd argument (any common factor of n and n + 3 divides 3)."},
+            {"unit": 5, "field": "time_bands[3].activity", "old": "one of today's proof steps", "new": "one of the proof steps"},
+            {"unit": 16, "field": "time_bands[3].activity", "old": "from today's chapter", "new": "from the chapter"},
+            {"unit": 13, "field": "time_bands[3].activity", "old": "Statement 1 was proved (presumably in an earlier grade) without a construction, while Statement 2 required one.", "new": "Statement 1 was proved in an earlier grade, while Statement 2 needed a construction here."},
+            {"unit": 14, "field": "time_bands[0].activity", "old": "(pp.6)", "new": "(p.6)"},
+            {"unit": 7, "field": "time_bands[1].activity", "old": "(24 = 4 × 6 with overlap managed by 24's prime factorisation 2³ × 3)", "new": "(4 and 6 both divide 24, so they divide every multiple of 24)"},
+            {"unit": 7, "field": "teacher_notes", "old": "A common error for Q8/Q9 is", "new": "A common error for Q8 is"},
+            {"unit": 7, "field": "time_bands[2].activity", "old": " Draw out the idea that tighter conclusions leave less room for the converse to fail.", "new": ""},
+            {"unit": 12, "field": "time_bands[3].activity", "old": "try large n; try n equal to the modulus.", "new": "try large n."},
+            {"unit": 16, "field": "time_bands[1].activity", "old": "the chapter's framework allows this deductive approach", "new": "this is a valid deductive approach"},
+            {"item_where": {"question_type": "OPEN_TASK"}, "field": "task", "old": "investigate two propositions about positive integers", "new": "investigate two propositions"},
+            # clock durations
+            {"unit": 2, "field": "time_bands[1].activity", "old": "Students work individually for eight minutes, then compare", "new": "Students work individually, then compare"},
+            {"unit": 4, "field": "time_bands[0].activity", "old": "After three minutes, take a class poll", "new": "Then take a class poll"},
+            {"unit": 4, "field": "time_bands[1].activity", "old": "After three minutes, share and discuss;", "new": "Then share and discuss;"},
+            {"unit": 6, "field": "time_bands[0].activity", "old": "After eight minutes, take up Q1:", "new": "Then take up Q1:"},
+            {"unit": 6, "field": "time_bands[1].activity", "old": "Students sketch and discuss in pairs for five minutes, then share answers.", "new": "Students sketch and discuss in pairs, then share answers."},
+            {"unit": 7, "field": "time_bands[0].activity", "old": " Give groups twelve minutes.", "new": ""},
+            {"unit": 8, "field": "time_bands[1].activity", "old": "Students compare their findings with a neighbour after twelve minutes.", "new": "Students then compare their findings with a neighbour."},
+            {"unit": 10, "field": "time_bands[0].activity", "old": "Give students three minutes, then ask", "new": "Give students time to think, then ask"},
+            {"unit": 12, "field": "time_bands[1].activity", "old": "After twelve minutes of searching, pairs share findings:", "new": "When pairs have searched, they share findings:"},
+            {"unit": 16, "field": "time_bands[0].activity", "old": "Students write answers individually for five minutes.", "new": "Students write answers individually."},
+            {"unit": 16, "field": "time_bands[1].activity", "old": "Students work individually for eight minutes.", "new": "Students work individually."},
+            {"unit": 16, "field": "time_bands[2].activity", "old": "Groups have eight minutes to write; then", "new": "Groups write; then"},
+        ],
+    },
+    "ch_09_canonical_p13.json": {
+        "C9-05": [{"unit": 11, "field": "time_bands[1].activity",
+                   "old": "(No — any angle and any crossing point will produce a quadrilateral of type Q as long as the sticks have equal length.)",
+                   "new": "(It may — equal diagonals are required for type Q but need not be enough, so the angle or crossing point may decide whether the result is of type Q.)"}],
+        "C9-06": [
+            {"unit": 11, "field": "time_bands[2].activity",
+             "old": "(Yes, same reason — equal diagonals require sticks of equal length.)",
+             "new": "(Equal sticks are enough — any quadrilateral with equal diagonals is of type Q.)"},
+            {"unit": 11, "field": "time_bands[2].activity",
+             "old": "(This time it might — if the angle or crossing point is constrained by the definition of Q, any deviation produces a quadrilateral not of type Q that still has equal diagonals, i.e. a counterexample to the converse.)",
+             "new": "(No — every placement of equal sticks gives equal diagonals, so every placement gives a quadrilateral of type Q.)"},
+        ],
+        "C9-07": [{"unit": 11, "field": "teacher_notes",
+                   "old": "students sometimes struggle to articulate why the placement matters differently in part (ii) — the key is that in (ii), any quadrilateral with equal diagonals is supposed to be of type Q, so any configuration not of type Q that still has equal diagonals is a counterexample to the converse.",
+                   "new": "students sometimes struggle to articulate why placement stops mattering in part (ii) — the key is that in (ii) any quadrilateral with equal diagonals is of type Q, so every placement of equal sticks gives a type-Q quadrilateral, whereas in (i) equal diagonals alone may not be enough."}],
+        "C9-10": [{"unit": 10, "field": "teacher_notes",
+                   "old": "The formula n² + n + 11 produces primes for n = 0 through 10 and fails at n = 11",
+                   "new": "The formula n² + n + 11 produces primes for n = 0 through 9 and fails first at n = 10 (121 = 11 × 11)"}],
+        "C9-12": [{"unit": 4, "field": "time_bands[2].activity",
+                   "old": "(a) P true, Q false (the rain example and this area example); (b) P true, Q true (the factor-count result from Example 3, p.2); (c) P false, Q true (the converse of the rain example could be taken as a proposition whose 'original' was false).",
+                   "new": "(a) P true, Q false (the rain example); (b) P true, Q true (the factor-count result from Example 3, p.2); (c) P false, Q true (this area example)."}],
+        "C9-15": [{"item_where": {"question_type": "MCQ"}, "field": "guide.MCQ.what_each_option_reveals.D",
+                   "old": "Confuses the converse with the contrapositive ('If not Y then not X'); also incorrectly claims it is true.",
+                   "new": "Confuses the converse with the contrapositive ('If not Y then not X'); the statement in D is true, but it is not the converse."}],
+        "C9-30": [{"unit": 10, "field": "time_bands[1].activity",
+                   "old": "Group A takes formula (i) 4n² + 1: test n = 1 (5, prime), n = 2 (17, prime), n = 3 (37, prime), n = 5 (101, prime), n = 10 (401 = 401, prime?) — direct them to n = 5: 4(25)+1 = 101 (prime), n = 10: 401 (prime); they may need to try n = 5 is prime but n = ... actually guide them to note 4(5²)+1 = 101; the counterexample appears at n with 4n²+1 composite — e.g. n = 5 gives 101 (prime) but n = 10 gives 401 (prime); direct groups to try n where the number factors: 4n²+1 factors when it equals (2n+1)(2n-1)+2 — actually the simplest counterexample is n = 5: 4(25)+1 = 101 prime; n = 10: 401; n = 15: 4(225)+1=901 = 17×53.",
+                   "new": "Group A takes formula (i) 4n² + 1: n = 1, 2, 3 give 5, 17, 37 (prime), but n = 4 gives 65 = 5 × 13."}],
+        "C9-33": [{"unit": 2, "field": "time_bands[2].activity",
+                   "old": "justify the true one, and give a counterexample for the false one.",
+                   "new": "justify each true statement, and give a counterexample for any that is false."}],
+        "C9-34": [{"unit": 4, "field": "teacher_notes",
+                   "old": "Students frequently assume that a true proposition guarantees a true converse; this unit directly confronts that assumption through a geometric counterexample they construct themselves.",
+                   "new": "Students frequently assume a proposition and its converse stand or fall together; this unit confronts that assumption with a false proposition whose converse is true, using a counterexample they construct themselves."}],
+        "C9-35": [{"unit": 9, "field": "time_bands[0].activity",
+                   "old": "Guide students to construct a deductive argument for P: if 3 | n and 3 | (n + 3), then 3 | their difference = 3 — true always — so 3 always divides gcd(n, n+3) when 3 | n, contradicting the hypothesis.",
+                   "new": "Guide students to construct a deductive argument for P: if 3 | n, then 3 | (n + 3) as well, so 3 is a common factor of n and n + 3 — contradicting the hypothesis."}],
+        "C9-S3": [
+            {"unit": 2, "field": "time_bands[0].activity", "old": "established in the previous unit", "new": "established earlier"},
+            {"unit": 12, "field": "time_bands[2].activity", "old": "the coprimality principle identified in Unit 7", "new": "the coprimality principle"},
+            {"unit": 13, "field": "teacher_notes", "old": "The fresh argument in the 15–30 band", "new": "The fresh argument in the second activity"},
+            {"unit": 4, "field": "teacher_notes", "old": "steer students to vary both shape and orientation", "new": "steer students to vary the shape while keeping the area"},
+            {"unit": 9, "field": "time_bands[0].activity", "old": "P is vacuously not being tested here", "new": "this n does not test P"},
+            {"unit": 12, "field": "time_bands[1].activity", "old": "After 15 minutes, they pair", "new": "They then pair"},
+            {"unit": 13, "field": "time_bands[1].activity", "old": "Collect written arguments after 12 minutes.", "new": "Collect written arguments."},
+        ],
+    },
+    "ch_09_canonical_p10.json": {
+        "C9-08": [
+            {"unit": 10, "field": "time_bands[0].activity",
+             "old": "(No — the length condition does not constrain where they cross or the angle between them.)",
+             "new": "(It may — equal diagonals are needed for type Q but need not be enough, so how the sticks cross may decide whether the result is of type Q.)"},
+            {"unit": 10, "field": "time_bands[0].activity",
+             "old": "In part (ii), for a quadrilateral to qualify as type Q it needs equal diagonals — same stick-length requirement — but now the converse puts the equal-diagonal condition on the hypothesis, meaning any equal-diagonal quadrilateral must be of type Q, so arrangement still does not affect length but may affect other properties.",
+             "new": "In part (ii), equal sticks are enough: any quadrilateral with equal diagonals is of type Q, so it no longer matters how the equal sticks are placed."},
+        ],
+        "C9-16": [{"unit": 8, "field": "teacher_notes",
+                   "old": "remind them that Fermat's formula gave four primes before failing",
+                   "new": "remind them that Fermat's formula gave five primes (n = 0 to 4) before failing"}],
+        "C9-22": [{"unit": 7, "field": "homework[0]",
+                   "old": "Exercise Set 9.1 Q12, p.6 and Q13, p.6",
+                   "new": "Exercise Set 9.1 Q13, p.6 and Q14, p.6"}],
+        "C9-23": [{"unit": 3, "field": "teacher_notes",
+                   "old": "Exercise Set 9.1 Q9, p.6 (square of a prime has exactly three factors)",
+                   "new": "Exercise Set 9.1 Q10, p.6 (square of a prime has exactly three factors)"}],
+        "C9-24": [{"unit": 6, "field": "teacher_notes",
+                   "old": "Exercise Set 9.1 Q11, p.6 (n and n+3 sharing no factors)",
+                   "new": "Exercise Set 9.1 Q12, p.6 (n and n+3 sharing no factors)"}],
+        "C9-31": [{"unit": 8, "field": "time_bands[1].activity",
+                   "old": "Note: for (i), n = 5 gives 4(25)+1 = 101 (prime); n = 10 gives 401 (prime); students may need guidance that n = 0 gives 1, which is not prime — discuss whether 1 counts.",
+                   "new": "Note: for (i), n = 1, 2, 3 give 5, 17, 37 (prime), but n = 4 gives 65 = 5 × 13."}],
+        "C9-32": [{"unit": 7, "field": "time_bands[1].activity",
+                   "old": "since x² + xy + y² > 0 for real x, y not both zero... guide the class toward the conclusion that x = y.",
+                   "new": "and x² + xy + y² = (x + y/2)² + 3y²/4 is zero only when x = y = 0, so in every case x − y = 0, that is, x = y."}],
+        "C9-38": [{"item_where": {"question_type": "MCQ"}, "field": "guide.MCQ.what_each_option_reveals.D",
+                   "old": "Confuses the converse ('If Y then X') with the contrapositive ('If not-Y then not-X')",
+                   "new": "Negates both parts instead of swapping them ('If not-X then not-Y' — the inverse, not the converse)"}],
+        "C9-S3": [
+            {"unit": 1, "field": "time_bands[3].activity", "old": "an open question the class will explore in upcoming units", "new": "an open question"},
+            {"unit": 1, "field": "time_bands[2].activity", "old": "(b) 'If it is noon, the sun is overhead.'", "new": "(b) 'If a number is divisible by 10, it is even.'"},
+            {"unit": 4, "field": "time_bands[1].activity", "old": "(ii) both proposition and converse true (perfect squares and odd factor count).", "new": "(ii) both proposition and converse true (perfect squares and odd factor count); (iii) a false proposition with a true converse (area and congruence, just worked)."},
+            {"unit": 5, "field": "time_bands[0].activity", "old": "Write the converse the class produces: 'If a² + b² = c², then the triangle is right-angled.'", "new": "Write the converse the class produces: 'Let a, b, c be the side lengths of a triangle. If a² + b² = c², then the triangle is right-angled.'"},
+            {"unit": 6, "field": "time_bands[3].activity", "old": "the forward direction from a larger divisor to its parts is usually true", "new": "the forward direction from a larger divisor to its factors is always true"},
+            # clock durations
+            {"unit": 2, "field": "time_bands[3].activity", "old": "Students write the converse on their notebooks in 60 seconds.", "new": "Students write the converse in their notebooks."},
+            {"unit": 4, "field": "time_bands[0].activity", "old": "After five minutes of individual work, pairs compare.", "new": "After individual work, pairs compare."},
+            {"unit": 4, "field": "time_bands[1].activity", "old": "Give them three minutes individually, then share.", "new": "Give them time to think individually, then share."},
+            {"unit": 6, "field": "time_bands[3].activity", "old": "with one word of justification in 90 seconds.", "new": "with one word of justification."},
+            {"unit": 7, "field": "time_bands[0].activity", "old": "Give students two minutes to think and write before sharing.", "new": "Give students time to think and write before sharing."},
+            {"unit": 9, "field": "time_bands[0].activity", "old": "Students think individually for two minutes.", "new": "Students think individually first."},
+        ],
+    },
+    # ── C3 content-correctness check, Part II · chapter 10 (2026-10-02, founder-approved) ──
+    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C10-nn.
+    'ch_10_canonical.json': {
+        'C10-01': [
+            {'item_where': {'question_text': 'A school has two sections in Grade IX. Section A has 40 students with an average mark of 68, and Section B has 25 students with an average mark of 74. A student claims the overall average is (68 + 74)/2 = 71. Show why this claim is incorrect and find the correct overall average mark for Grade IX. Round your answer to two decimal places if needed.'}, 'field': 'expected_answer', 'old': '70.15', 'new': '70.31'},
+        ],
+        'C10-02': [
+            {'item_where': {'question_text': 'The average daily rainfall at a location in June (30 days) is 12 mm, in July (31 days) is 18 mm, and in August (31 days) is 9 mm. Write an expression for the combined average daily rainfall over the three months and evaluate it. Round your answer to two decimal places.'}, 'field': 'expected_answer', 'old': '13.02', 'new': '13.01'},
+        ],
+        'C10-03': [
+            {'item_where': {'question_text': 'A chemist mixes three solutions: 400 mL with 6% acid, 300 mL with 10% acid, and 200 mL with 15% acid. Find the percentage concentration of acid in the resulting mixture. Round your answer to two decimal places.'}, 'field': 'expected_answer', 'old': '9.22', 'new': '9.33'},
+        ],
+        'C10-04': [
+            {'item_where': {'question_text': 'A tank contains 500 litres of a solution with 4% salt. A second solution with 12% salt is pumped in. After mixing, the combined solution has 7% salt. How many litres of the second solution were added? Show your working.'}, 'field': 'expected_answer', 'old': '375', 'new': '300'},
+        ],
+        'C10-05': [
+            {'item_where': {'question_text': "A company evaluates employee performance on three criteria: punctuality (score 72), teamwork (score 80), and output quality (score 65), combined in the ratio 2 : 3 : 5. Find the employee's overall performance score using the weighted mean formula. Then verify your answer by writing out the repeated-value list implied by the weights."}, 'field': 'expected_answer', 'old': '71.4', 'new': '70.9'},
+        ],
+        'C10-09': [
+            {'unit': 2, 'field': 'time_bands[3].activity', 'old': 'Q1 answer (73.78)', 'new': 'Q1 answer (73.82)'},
+        ],
+        'C10-10': [
+            {'unit': 6, 'field': 'time_bands[0].activity', 'old': "Rashi's agility advantage over Keerthi (70 vs 75) needs checking.", 'new': "Keerthi's agility advantage (75 vs 70) has to be set against Rashi's strength advantage (60 vs 55)."},
+        ],
+        'C10-13': [
+            {'item_where': {'question_text': 'Priya scores 55% in her class test, 62% in her project and 78% in her final exam. Her school combines these in the ratio 3 : 2 : 5. Which of the following expressions correctly gives her annual percentage?'}, 'field': 'guide.MCQ.inclusivity', 'old': 'check which reduces to (55+62+78)/3; only option A does.', 'new': 'check that option C, with weights 1 : 1 : 1, reduces to the simple mean (55+62+78)/3 — option A — which shows C is the weighted version of A.'},
+        ],
+        'C10-18': [
+            {'unit': 16, 'field': 'time_bands[1].activity', 'old': 'Students annotate each chart with one question it answers well and one question it cannot answer, drawing on the distinctions established in Sections 10.2.1 and 10.2.2.', 'new': "Students notice that, because every bar totals 24 hours, the two charts have the same shape (as with the 'average Indian' chart in Section 10.2.2), explain why, and say which chart they would need if the bars had different totals."},
+        ],
+        'C10-19': [
+            {'unit': 5, 'field': 'time_bands[2].activity', 'old': 'identify which of the four given expressions is the correct weighted mean. They must justify why the others are wrong', 'new': 'identify which of the four given expressions give the correct weighted mean — two do, (iii) and (iv). They must justify why (i) and (ii) are wrong'},
+        ],
+        'C10-23': [
+            {'unit': 1, 'field': 'homework[0]', 'old': 'Exercise Set 10.3 Q2 (End of Chapter Q2, p.15)', 'new': 'Exercise Set 10.3 Q2, p.15'},
+        ],
+        'C10-24': [
+            {'unit': 10, 'field': 'visual_aids', 'old': "Fig. 10.5 from the textbook — 100% stacked bar chart of seasonal blooms in Fatima's and Naveen's gardens, Cases 1 and 2", 'new': "Example 8 charts, pp.24–25 — 100% stacked bar chart of seasonal blooms in Fatima's and Naveen's gardens, and the stacked bar charts for Cases 1 and 2"},
+        ],
+        'C10-25': [
+            {'unit': 15, 'field': 'time_bands[0].activity', 'old': 'For six possible next transactions — buying or selling at ₹30k or ₹10k, different quantities — students estimate where the new average price falls on a number line before computing. The estimation task requires recognising that buying more of a cheaper stock pulls the average down proportionally to the quantity bought.', 'new': 'For six possible next purchases — at ₹30k, ₹10k or ₹15k, in different quantities — students estimate where the new average price falls on a number line before computing. The estimation task requires recognising that the more cheaper gold she buys, the further the average is pulled down — though never below ₹10k.'},
+        ],
+        'C10-26': [
+            {'unit': 16, 'field': 'time_bands[0].activity', 'old': "Students must find the January overall rating and reason about whether the February scores, averaged across the two months with January's taste score carried forward, change the overall weighted mean — and by how much. This scenario uses the weighted mean of averages (Section 10.1.1), custom weights (Section 10.1.3) and the invariance result from End of Chapter Q6.", 'new': "Students find the January overall rating, (5 × 4.2 + 4 × 3.8 + 3 × 4.5)/12 = 49.7/12 ≈ 4.14, and the February rating with January's taste score carried forward, (5 × 4.2 + 4 × 4.0 + 3 × 4.7)/12 = 51.1/12 ≈ 4.26, and explain why the rise is small. Then ask: if all three weights were doubled, would either rating change? (No — End of Chapter Q6.)"},
+        ],
+        'C10-27': [
+            {'unit': 16, 'field': 'teacher_notes', 'old': 'The canteen problem is constructed so that the weight-scaling invariance from End of Chapter Q6 and the combining-averages logic from Section 10.1.1 both appear naturally.', 'new': 'The canteen problem combines custom weights (Section 10.1.3) with a weight-scaling check (End of Chapter Q6).'},
+        ],
+        'C10-S3': [
+            {'unit': 4, 'field': 'time_bands[2].activity', 'old': '(p.16, book_ref: Exercise Set 10.3 Q4, p.16)', 'new': '(p.16)'},
+            {'unit': 6, 'field': 'time_bands[3].activity', 'old': "in each of today's three problems", 'new': 'in each of the three problems'},
+            {'unit': 8, 'field': 'teacher_notes', 'old': 'Having established the motivation for stacking in unit 7,', 'new': 'Having established the motivation for stacking,'},
+            {'unit': 9, 'field': 'teacher_notes', 'old': 'must be made explicit before the next unit deepens it.', 'new': 'must be made explicit.'},
+            {'unit': 9, 'field': 'teacher_notes', 'old': 'sharpens this and is the focus of the next unit.', 'new': 'sharpens this.'},
+            {'unit': 10, 'field': 'time_bands[0].activity', 'old': "Today's work tests", 'new': 'This unit tests'},
+        ],
+    },
+    'ch_10_canonical_p13.json': {
+        'C10-08': [
+            {'item_where': {'question_text': 'A chemist has two solutions of salt water: Solution X is 400 mL at 6% salt and Solution Y is 200 mL at 12% salt. She mixes them together, then adds an unknown volume V mL of pure water (0% salt) to bring the salt concentration of the final mixture down to 4%. Find V. Show your working.'}, 'field': 'expected_answer', 'old': 'V = 300 mL', 'new': 'V = 600 mL'},
+        ],
+        'C10-14': [
+            {'item_where': {'expected_answer': '2010 totals: 1000 units. Percentages: Heating 30%, Cooling 20%, Lighting 40%, Other 10%. 2020 totals: 1000 units. Percentages: Heating 15%, Cooling 50%, Lighting 20%, Other 15%.'}, 'field': 'guide.NUM.inclusivity', 'old': 'explain why the 100% stacked bar chart looks identical for both years even though total consumption may have changed — and in this specific case, to note that the totals happen to be the same (1000 units each year) but the proportional picture still changed markedly.', 'new': 'notice that because both years total 1000 units, the stacked bar chart and the 100% stacked bar chart of this data have the same shape, and explain why.'},
+        ],
+        'C10-15': [
+            {'item_where': {'question_text': 'A chemist has two solutions of salt water: Solution X is 400 mL at 6% salt and Solution Y is 200 mL at 12% salt. She mixes them together, then adds an unknown volume V mL of pure water (0% salt) to bring the salt concentration of the final mixture down to 4%. Find V. Show your working.'}, 'field': 'method_one_line', 'old': 'so V = 600. Wait — re-verify: 48/1200 = 0.04. So V = 600 mL.', 'new': 'so V = 600 mL.'},
+        ],
+        'C10-16': [
+            {'item_where': {'question_text': 'A chemist has two solutions of salt water: Solution X is 400 mL at 6% salt and Solution Y is 200 mL at 12% salt. She mixes them together, then adds an unknown volume V mL of pure water (0% salt) to bring the salt concentration of the final mixture down to 4%. Find V. Show your working.'}, 'field': 'guide.NUM.inclusivity', 'old': 'explain intuitively why more than 600 mL of water is needed', 'new': 'explain intuitively why as much as 600 mL of water is needed'},
+        ],
+        'C10-17': [
+            {'item_where': {'expected_answer': '2010 totals: 1000 units. Percentages: Heating 30%, Cooling 20%, Lighting 40%, Other 10%. 2020 totals: 1000 units. Percentages: Heating 15%, Cooling 50%, Lighting 20%, Other 15%.'}, 'field': 'question_text', 'old': 'state one thing the 100% stacked bar chart reveals that a stacked bar chart of the same data would not, and one thing the stacked bar chart would reveal that the 100% stacked bar chart would not.', 'new': 'state, in general, one thing a 100% stacked bar chart shows more easily than a stacked bar chart and one thing a stacked bar chart shows that a 100% stacked bar chart cannot; then explain why, for this data, the two charts look the same.'},
+        ],
+        'C10-20': [
+            {'unit': 5, 'field': 'time_bands[2].activity', 'old': 'They must identify which of the four given expressions is correct', 'new': 'They must identify which of the four given expressions are correct — (iii) and (iv) both are'},
+        ],
+        'C10-28': [
+            {'unit': 1, 'field': 'time_bands[1].activity', 'old': "Pose the chapter's opening question: a school has two groups", 'new': 'Pose an opening question: a school has two groups'},
+        ],
+        'C10-S3': [
+            {'unit': 8, 'field': 'time_bands[0].activity', 'old': 'Give students two minutes to think individually', 'new': 'Give students time to think individually'},
+            {'unit': 13, 'field': 'time_bands[0].activity', 'old': 'After two minutes of solo work', 'new': 'After solo work'},
+            {'item_where': {'question_text': "A school has two classes. Class P has 40 students with an average score of 65, and Class Q has 10 students with an average score of 85. A student claims the school's overall average score is (65 + 85) ÷ 2 = 75. Which statement best explains why this claim is incorrect?"}, 'field': 'guide.MCQ.what_each_option_reveals.A', 'old': 'Misremembers that the combined average must lie strictly between the two group averages — this is true, but', 'new': 'Misapplies the rule that a combined average lies between the two group averages —'},
+            {'item_where': {'question_text': "A school tracks three clubs' (Drama, Science, Sports) membership numbers across four years. A student wants to know: 'Which club grew the most in total membership from Year 1 to Year 4?' Which chart type is best suited for this comparison, and why?"}, 'field': 'guide.MCQ.what_each_option_reveals.C', 'old': 'Chooses clustered-by-year correctly but inverts the grouping variable —', 'new': 'Chooses a clustered chart but groups it by year —'},
+        ],
+    },
+    'ch_10_canonical_p10.json': {
+        'C10-06': [
+            {'item_where': {'question_text': 'A wildlife sanctuary records that its 12 adult elephants have an average mass of 4200 kg and its 5 juvenile elephants have an average mass of 1800 kg. Calculate the average mass of all 17 elephants at the sanctuary. Show your working.'}, 'field': 'expected_answer', 'old': '3,600 kg', 'new': '3,494 kg (approximately)'},
+        ],
+        'C10-07': [
+            {'item_where': {'question_text': 'A pharmacist mixes three saline solutions: 400 mL at 2% salt, 150 mL at 6% salt, and 200 mL at 4% salt. (a) Before calculating, explain in one sentence why you expect the resulting concentration to be closer to 2% than to 6%. (b) Calculate the salt concentration of the combined solution. Show your working.'}, 'field': 'expected_answer', 'old': '3.07% (approximately)', 'new': '3.33% (approximately)'},
+        ],
+        'C10-11': [
+            {'unit': 10, 'field': 'time_bands[0].activity', 'old': 'who finished first (yes, totals visible)', 'new': 'who finished first (no — every bar is drawn to the same length, so total times are hidden)'},
+        ],
+        'C10-12': [
+            {'unit': 5, 'field': 'time_bands[3].activity', 'old': 'since Keerthi scores lower on strength and flexibility but higher on agility', 'new': 'since Keerthi scores lower on strength, the same on flexibility and higher on agility'},
+        ],
+        'C10-21': [
+            {'unit': 5, 'field': 'time_bands[2].activity', 'old': 'identify which of the four expressions is structurally correct', 'new': 'identify which of the four expressions are correct — (iii) and (iv) both are'},
+        ],
+        'C10-22': [
+            {'unit': 5, 'field': 'time_bands[1].activity', 'old': '(food 4 stars, service 3 stars, ambience 5 stars, combined 4 : 3 : 2) as a second context. Students compute the weighted mean (4×4 + 3×3 + 2×5)/9 = (16+9+10)/9 = 35/9 ≈ 3.89', 'new': '(food 5 stars, service 3 stars, ambience 4 stars, combined 4 : 3 : 2) as a second context. Students compute the weighted mean (4×5 + 3×3 + 2×4)/9 = (20+9+8)/9 = 37/9 ≈ 4.11'},
+        ],
+        'C10-29': [
+            {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'Establish that the chart grouped by category answers the first question well but makes overall totals hard to see, while the chart grouped by family reverses this.', 'new': "Establish that the chart grouped by category answers the first question well, but that neither clustered chart shows a family's overall total at a glance."},
+        ],
+        'C10-30': [
+            {'unit': 9, 'field': 'teacher_notes', 'old': 'for example, that the group with the highest share of learning time necessarily spends the most hours learning.', 'new': 'for example, in the family-expenditure chart, that the family with the highest share of spending on healthcare necessarily spends the most on healthcare.'},
+        ],
+        'C10-S3': [
+            {'unit': 1, 'field': 'teacher_notes', 'old': 'can look at Example 1, p.8, ahead of the next unit.', 'new': 'can look at Example 1, p.8.'},
+            {'unit': 1, 'field': 'time_bands[2].activity', 'old': 'Ask pairs to discuss for a couple of minutes, then collect responses.', 'new': 'Ask pairs to discuss, then collect responses.'},
+            {'unit': 1, 'field': 'time_bands[2].activity', 'old': 'a key insight that the next unit will formalise.', 'new': 'a key insight that Example 1 formalises.'},
+            {'unit': 1, 'field': 'time_bands[2].activity', 'old': "Pose the chapter's entry problem in the students' own words:", 'new': "Pose Exercise Set 10.1 Q1, p.13 in the students' own words:"},
+            {'unit': 6, 'field': 'time_bands[3].activity', 'old': ', motivating the next unit.', 'new': ', motivating the 100% stacked bar chart.'},
+            {'unit': 8, 'field': 'teacher_notes', 'old': 'on their own before the next unit.', 'new': 'on their own.'},
+            {'unit': 8, 'field': 'visual_aids', 'old': 'Fig. 10.4 (100% stacked bar chart of family expenditure, p.22)', 'new': 'Fig. 10.4 (100% stacked bar chart of family expenditure, p.23)'},
+            {'unit': 1, 'field': 'time_bands[0].activity', 'old': 'Let students agree or disagree briefly before moving on.', 'new': 'Let students agree or disagree briefly, then confirm it is 7 — both halves have 10 overs — and note that the next problem is different.'},
+            {'item_where': {'question_type': 'SCR'}, 'field': 'question_text', 'old': 'On the axes below, sketch', 'new': 'On squared paper, sketch'},
+        ],
+    },
+    # ── C3 content-correctness check, Part II · chapter 11 (2026-10-02, founder-approved) ──
+    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C11-nn.
+    'ch_11_canonical_p08.json': {
+        'C11-01': [
+            {'item_where': {'question_text': "(a) Count the exact number of reductions that Euclid's subtraction algorithm (replacing gcd(m,n) with gcd(n, m−n)) needs to compute gcd(21, 3). Show each step.\n(b) Count the number of reductions that Āryabhaṭa's division algorithm (replacing gcd(m,n) with gcd(n, m mod n)) needs for the same pair. Show each step.\n(c) Explain in general terms why the division algorithm needs far fewer reductions than the subtraction algorithm when one of the two numbers is much smaller than the other."}, 'field': 'look_for[0]', 'old': 'That is 10 reductions (or the student may count differently depending on swap handling — accept any systematic count consistent with the algorithm as stated).', 'new': "That is 7 reductions (21 − 3 = 18, 18 − 3 = 15, 15 − 3 = 12, 12 − 3 = 9, 9 − 3 = 6, 6 − 3 = 3, then gcd(3, 3) → gcd(3, 0)); the swaps are not counted as reductions, as in the book's gcd(375, 825) example. A student who also counts the swaps (12 steps) has the method right."},
+        ],
+        'C11-02': [
+            {'item_where': {'question_text': "(a) Count the exact number of reductions that Euclid's subtraction algorithm (replacing gcd(m,n) with gcd(n, m−n)) needs to compute gcd(21, 3). Show each step.\n(b) Count the number of reductions that Āryabhaṭa's division algorithm (replacing gcd(m,n) with gcd(n, m mod n)) needs for the same pair. Show each step.\n(c) Explain in general terms why the division algorithm needs far fewer reductions than the subtraction algorithm when one of the two numbers is much smaller than the other."}, 'field': 'look_for[0]', 'old': 'Part (a): gcd(21,3)→gcd(3,18)? No — m≥n required; gcd(21,3): 21≥3, so gcd(3,18) is wrong. Correct trace: gcd(21,3)→gcd(3,18)? 21-3=18, gcd(3,18) but now 3<18 so swap: ', 'new': 'Part (a): gcd(21,3) → gcd(3,18), swap to '},
+        ],
+        'C11-03': [
+            {'item_where': {'question_text': "(a) Count the exact number of reductions that Euclid's subtraction algorithm (replacing gcd(m,n) with gcd(n, m−n)) needs to compute gcd(21, 3). Show each step.\n(b) Count the number of reductions that Āryabhaṭa's division algorithm (replacing gcd(m,n) with gcd(n, m mod n)) needs for the same pair. Show each step.\n(c) Explain in general terms why the division algorithm needs far fewer reductions than the subtraction algorithm when one of the two numbers is much smaller than the other."}, 'field': 'guide.ECR.inclusivity', 'old': "verify the chapter's claim that gcd(2k+1, 2) needs exactly one division-algorithm step but about k subtraction steps", 'new': "verify the chapter's claim that gcd(2k+1, 2) needs exactly two division-algorithm steps but about k subtraction steps"},
+        ],
+        'C11-04': [
+            {'item_where': {'question_text': 'The chapter decomposes the problem of finding gcd(m, n) into two smaller problems before writing any algorithm. Which of the following correctly identifies both sub-problems and explains why together they are sufficient?'}, 'field': 'guide.MCQ.inclusivity', 'old': 'explain in writing why option B, while it gives the correct gcd, is not the decomposition described in this section.', 'new': 'explain in writing why option D, although repeated subtraction can also lead to the gcd, is not the decomposition described in this section.'},
+        ],
+        'C11-05': [
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'guide.OPEN_TASK.reading_the_scaffold', 'old': 'A strong response for (b) replaces step (3) with building the all-divisors union and step (4) with reporting the smallest element greater than max(m,n), or equivalently finds multiples; any correct algorithmic formulation is acceptable.', 'new': 'A strong response for (b) replaces the divisor lists with lists of multiples of m and of n (up to m × n) and reports the smallest number in both, or computes m × n ÷ gcd(m, n) = 42 × 56 ÷ 14 = 168; any correct algorithmic formulation is acceptable.'},
+        ],
+        'C11-06': [
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'scaffold', 'old': 'consider what set of divisors you would combine and which element you would report.', 'new': 'instead of lists of divisors, think about lists of multiples — or use the fact that lcm(m, n) × gcd(m, n) = m × n.'},
+        ],
+        'C11-07': [
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'guide.OPEN_TASK.inclusivity', 'old': "which element of which list is 168, and what modification to the algorithm's reporting step would select it?", 'new': 'where would 168 appear if the algorithm listed multiples of 42 and of 56 instead of divisors, and which element should it report?'},
+        ],
+        'C11-12': [
+            {'unit': 4, 'field': 'teacher_notes', 'old': 'the lcm algorithm parallels the gcd algorithm but takes the rightmost element of the union rather than the intersection of divisors.', 'new': 'the lcm algorithm parallels the gcd algorithm but works with common multiples instead of common divisors, and reports the smallest one.'},
+        ],
+        'C11-14': [
+            {'unit': 5, 'field': 'teacher_notes', 'old': 'scanning backwards stops at the first common divisor found, which is the largest, so only one check is needed.', 'new': 'scanning backwards stops at the first common divisor found, which is the largest — though it may still check many values of k before it gets there (for gcd(97, 100), every k from 97 down to 1).'},
+        ],
+        'C11-15': [
+            {'item_where': {'question_text': "(a) Prove that for natural numbers m ≥ n, gcd(m, n) = gcd(n, m − n) by showing that d divides both m and n if and only if d divides both n and m − n. Write both directions of the argument clearly.\n(b) Use Euclid's subtraction algorithm to compute gcd(45, 30). Show each reduction step."}, 'field': 'look_for[3]', 'old': ' (Alternatively: gcd(45,30) → gcd(30,15) → gcd(15,0) = 15, noting 15 < 30 requires a swap step first depending on implementation.)', 'new': ''},
+        ],
+        'C11-16': [
+            {'unit': 6, 'field': 'time_bands[0].activity', 'old': 'Students calculate how many steps gcd(99, 2) takes under the scan algorithm versus the dot-counting method for addition.', 'new': 'Students calculate how many values of k the scan algorithm checks when min(m, n) is 99, 999 and 9999.'},
+        ],
+        'C11-17': [
+            {'unit': 1, 'field': 'teacher_notes', 'old': '(shown on p.35–36)', 'new': '(shown on p.37)'},
+        ],
+        'C11-S3': [
+            {'unit': 3, 'field': 'teacher_notes', 'old': 'an ordering property that is exploited heavily in the sections that follow.', 'new': 'an ordering property that the gcd algorithm relies on.'},
+            {'unit': 4, 'field': 'time_bands[1].activity', 'old': 'verify it gives 27000 for 54000 and 81000 (using the stated divisor counts)', 'new': "verify it gives 27000 for 54000 and 81000 (using the book's divisor lists, p.41–42)"},
+            {'unit': 7, 'field': 'time_bands[3].activity', 'old': 'reflect on the journey from listing all divisors to this two-step algorithm.', 'new': 'reflect on the journey from listing all divisors to this division algorithm.'},
+        ],
+    },
+    'ch_11_canonical_p11.json': {
+        'C11-11': [
+            {'unit': 6, 'field': 'teacher_notes', 'old': 'but take the leftmost rather than rightmost common multiple, confusing minimum with maximum.', 'new': "but take the rightmost (largest) common multiple instead of the leftmost (smallest), carrying over 'report the rightmost element' from the gcd."},
+        ],
+        'C11-S3': [
+            {'unit': 3, 'field': 'teacher_notes', 'old': 'a step-by-step divisors algorithm in the next unit.', 'new': 'a step-by-step divisors algorithm.'},
+            {'unit': 7, 'field': 'time_bands[3].activity', 'old': 'Leave the comparison open for the next unit.', 'new': 'Leave the comparison open.'},
+            {'unit': 9, 'field': 'teacher_notes', 'old': "this contrasts sharply with Āryabhaṭa's improvement in the next unit.", 'new': "this contrasts sharply with Āryabhaṭa's improvement."},
+            {'unit': 11, 'field': 'time_bands[1].activity', 'old': 'are precisely the Indian procedures Al-Khwārizmī transmitted to Europe.', 'new': 'are Indian procedures of the kind Al-Khwārizmī transmitted to Europe.'},
+        ],
+    },
+    'ch_11_canonical.json': {
+        'C11-08': [
+            {'item_where': {'question_type': 'SCR'}, 'field': 'expected_elements[4]', 'old': 'or equivalently finds the smallest multiple of m that appears in divisors-of-n (alternative valid formulation)', 'new': 'or equivalently finds the smallest multiple of m that is also a multiple of n (alternative valid formulation)'},
+        ],
+        'C11-09': [
+            {'item_where': {'question_type': 'SCR'}, 'field': 'guide.SCR.inclusivity', 'old': 'instead building the list of all multiples of m up to m×n and checking which appear in divisors-of-(m×n) — and discuss why this is less efficient.', 'new': 'instead building the list of all multiples of m up to m×n and keeping those that are also multiples of n — the smallest is the lcm — and discuss why this is less efficient.'},
+        ],
+        'C11-10': [
+            {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'or equivalently find all divisors of m that are also divisors of both m and n and take the smallest multiple.', 'new': 'or equivalently list the multiples of m and take the smallest one that is also a multiple of n.'},
+        ],
+        'C11-13': [
+            {'unit': 11, 'field': 'time_bands[1].activity', 'old': 'The number of reductions is proportional to the value of the smaller number, not to its digit count.', 'new': 'The number of reductions is proportional to the value of the larger number, not to its digit count.'},
+        ],
+        'C11-S3': [
+            {'unit': 3, 'field': 'time_bands[2].activity', 'old': 'Set up the structure that the next unit will execute in full.', 'new': 'Set up the structure the algorithm will use.'},
+            {'unit': 10, 'field': 'time_bands[3].activity', 'old': 'Close with the observation — to be explored next unit — that', 'new': 'Close with the observation that'},
+            {'unit': 11, 'field': 'time_bands[3].activity', 'old': "This motivates Āryabhaṭa's improvement introduced in the next unit.", 'new': "This motivates Āryabhaṭa's improvement."},
+            {'unit': 5, 'field': 'time_bands[1].activity', 'old': 'Trace the method briefly for a small example on the board to confirm it yields gcd(54000, 81000) = 27000.', 'new': "Trace the method briefly for a small example on the board, then state that, applied to the book's lists, it gives gcd(54000, 81000) = 27000."},
+            {'unit': 9, 'field': 'time_bands[1].activity', 'old': '3-digit minimum (about 100 candidates), 4-digit minimum (about 1000), 5-digit minimum (about 10000)', 'new': '3-digit minimum (up to 999 candidates), 4-digit minimum (up to 9999), 5-digit minimum (up to 99999)'},
+            {'unit': 14, 'field': 'time_bands[1].activity', 'old': '(Draw out: both process the numbers column by column or digit step by step rather than repeatedly counting or subtracting by value.)', 'new': '(Draw out: in both, the number of steps grows with the number of digits rather than with the value of the numbers.)'},
+            {'item_where': {'question_text': 'Use the five steps of the addition algorithm exactly as written in the chapter — write the numbers one below the other aligned from the right, add the rightmost digits first, set carry to 0 or 1 according to the rule, move left column by column, and write any final carry — to compute 3856 + 7479. Show the carry value after each column addition, and state the final sum.'}, 'field': 'guide.NUM.inclusivity', 'old': 'and explain how Step 5 applies when two leading carries accumulate.', 'new': 'and explain how Step 5 applies to the final carry.'},
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'task', 'old': '(c) whether its efficiency is proportional to the VALUE of the smaller input or to the NUMBER OF DIGITS of the inputs.', 'new': '(c) whether its efficiency is proportional to the VALUE of the inputs or to the NUMBER OF DIGITS of the inputs.'},
+        ],
+    },
+    # ── C3 content-correctness check, Part II · chapter 12 (2026-10-02, founder-approved) ──
+    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C12-nn.
+    'ch_12_canonical_p10.json': {
+        'C12-12': [
+            {'unit': 8, 'field': 'time_bands[0].activity', 'old': "Guide them: choose any point A' in the plane; since P is the midpoint of A'B', reflect A' through P to get B'; repeat at Q for B' and C', at R for C' and D'.", 'new': 'Guide them: place A′ in the same position relative to PQRS as A (copy triangle SPA from the original, so that PA′ = PA and SA′ = SA); since P is the midpoint of A′B′, reflect A′ through P to get B′; repeat at Q for B′ and C′, at R for C′ and D′.'},
+        ],
+        'C12-17': [
+            {'unit': 10, 'field': 'time_bands[2].activity', 'old': 'the angle sum of the two triangles formed gives ∠A + ∠B + ∠C + ∠D = (∠A + ∠B + ∠AEB) + (∠C + ∠D + ∠CED) − 180° = 360° − 180° = 180°, so the sum is strictly less than 360°. Ask: can it equal 2°? Yes — students construct an example with very thin angles.', 'new': 'the two triangles are AED and BEC: ∠A + ∠D = 180° − ∠AED and ∠B + ∠C = 180° − ∠BEC = 180° − ∠AED (vertically opposite), so ∠A + ∠B + ∠C + ∠D = 360° − 2∠AED, strictly less than 360°. Ask: can it equal 2°? Yes — make ∠AED = 179°.'},
+        ],
+        'C12-25': [
+            {'item_where': {'implied_lo_assessed': 'Students can prove the Centroid Theorem (the three medians of a triangle are concurrent and the centroid divides each median in the ratio 2:1) using the Midpoint Theorem applied to sub-triangles.'}, 'field': 'question_text', 'old': '(Q is the midpoint of AC, P is the midpoint of BC)', 'new': '(Q is the midpoint of AC, P is the midpoint of AB)'},
+        ],
+        'C12-26': [
+            {'item_where': {'implied_lo_assessed': 'Students can prove the Centroid Theorem (the three medians of a triangle are concurrent and the centroid divides each median in the ratio 2:1) using the Midpoint Theorem applied to sub-triangles.'}, 'field': 'expected_answer', 'old': 'In ∆ABC: P is the midpoint of BC and Q is the midpoint of AC', 'new': 'In ∆ABC: P is the midpoint of AB and Q is the midpoint of AC'},
+        ],
+        'C12-27': [
+            {'unit': 2, 'field': 'homework[0]', 'old': 'show that the angle bisectors of a non-square parallelogram meet in a rectangle.', 'new': 'show that the angle bisectors of a parallelogram with unequal adjacent sides (AB ≠ BC) meet in a rectangle.'},
+        ],
+        'C12-39': [
+            {'unit': 5, 'field': 'time_bands[1].activity', 'old': 'apply the Midpoint Theorem in triangles ABD and BDC to get EM and MF each parallel to the bases and each a known fraction of them, then combine.', 'new': 'apply the Midpoint Theorem in △ABD to get EM ∥ AB and EM = AB/2, so M lies on EF; then Theorem 7 in △BDC gives F as the midpoint of BC and MF = DC/2; combine.'},
+        ],
+        'C12-44': [
+            {'item_where': {'question_text': "A student claims: 'If the diagonals of a quadrilateral are equal in length, then the quadrilateral must be a rectangle.' Evaluate this claim. Either prove it, or give a specific counterexample and explain which additional condition would make the claim true."}, 'field': 'look_for[1]', 'old': 'Gives a valid counterexample: e.g. an isosceles trapezium, or a non-rectangular parallelogram whose diagonals happen to be equal only in the special rectangular case — the clearest counterexample is any isosceles trapezium', 'new': 'Gives a valid counterexample — the clearest is any isosceles trapezium'},
+        ],
+        'C12-45': [
+            {'unit': 5, 'field': 'time_bands[0].activity', 'old': 'introduce the midpoint of AD and apply the Midpoint Theorem in the appropriate triangle, using the converse to locate where the midpoint line meets BC.', 'new': 'apply Theorem 7 in triangle ABD (M is the midpoint of AB and MN ∥ BD) to show that MN meets AD at its midpoint.'},
+        ],
+        'C12-46': [
+            {'unit': 6, 'field': 'teacher_notes', 'old': 'End of Chapter Q13, p.79 (does the Centroid Theorem generalise to non-convex triangles?) is outside scope, but', 'new': ''},
+        ],
+        'C12-47': [
+            {'unit': 7, 'field': 'time_bands[1].activity', 'old': 'Students verify PQ ∥ SR still holds by the same argument on ∆ABD and ∆CBD.', 'new': 'Students verify that it gives the other pair, PS ∥ QR, by the same argument on ∆ABD and ∆CBD.'},
+        ],
+        'C12-48': [
+            {'unit': 8, 'field': 'time_bands[1].activity', 'old': "Key step — show that S is collinear with A' and D': since S is the midpoint of DA in the original, and the same construction gives ∆SDR ≅ ∆SD'R by SAS (SR = SR, ∠DSR = ∠D'SR, SD = SD' as S reflects D to D'), we get D'S = DS and D' lies on line A'S.", 'new': 'Key step — show that S is the midpoint of A′D′, so S is collinear with A′ and D′ (the book suggests proving ∆SDR ≅ ∆SD′R); then A′B′C′D′ has the same vertex A and the same side midpoints as ABCD, so it is congruent to ABCD.'},
+        ],
+        'C12-S3': [
+            {'unit': 3, 'field': 'time_bands[3].activity', 'old': 'Preview that the next unit introduces the Midpoint Theorem, whose proof', 'new': 'Preview the Midpoint Theorem, whose proof'},
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'task', 'old': 'the relationship between the diagonals of PQRS and those of ABCD.', 'new': 'the relationship between the sides of PQRS and the diagonals of ABCD.'},
+            {'unit': 5, 'field': 'visual_aids', 'old': 'auxiliary median BD', 'new': 'auxiliary diagonal BD'},
+        ],
+    },
+    'ch_12_canonical_p13.json': {
+        'C12-89': [
+            {'unit': 4, 'field': 'time_bands[2].activity', 'old': "Bridge to the chapter's internal purpose: the text presents", 'new': "Turn to the chapter's own use of them: the text presents"},
+        ],
+        'C12-07': [
+            {'unit': 10, 'field': 'time_bands[1].activity', 'old': "identify the shared sides (MP and MC/2) and prove congruence by SSS using the Centroid Theorem's 2 : 1 ratio.", 'new': 'place each pair of pieces along their equal half-sides (for example ∆MPB and ∆MPC along PB = PC) and show the angles at P are supplementary, so each pair forms a triangle with sides AM, BM, CM.'},
+        ],
+        'C12-16': [
+            {'unit': 13, 'field': 'time_bands[0].activity', 'old': 'express ∠A + ∠B + ∠C + ∠D in terms of the angles of triangles ABE and CDE, showing the sum is less than 360°. Then decide whether a self-intersecting quadrilateral with angle sum 2° is constructible (students argue a limiting case approaching two very thin triangles).', 'new': 'express ∠A + ∠B + ∠C + ∠D in terms of the angles of triangles AED and BEC, showing the sum is 360° − 2∠AED, which is less than 360°. Then decide whether a self-intersecting quadrilateral with angle sum 2° is constructible (yes — make ∠AED = 179°).'},
+        ],
+        'C12-18': [
+            {'unit': 13, 'field': 'time_bands[3].activity', 'old': 'convex, non-convex and even self-intersecting planar quadrilaterals all tile, each for the same reason.', 'new': 'convex and non-convex quadrilaterals both tile, for the same reason; a self-intersecting 4-gon is not a tile at all — its angles do not even sum to 360° (End of Chapter Q3).'},
+        ],
+        'C12-19': [
+            {'unit': 9, 'field': 'time_bands[1].activity', 'old': "For part (ii), students use the Varignon parallelogram's diagonal lengths: PR corresponds to diagonal BD (via the other pair of triangles) and QS to AC. They explore when the diagonals of PQRS are equal and perpendicular, linking to the condition AC = BD.", 'new': "For part (ii), students use the Varignon parallelogram's side lengths: PQ = SR = AC/2 and QR = PS = BD/2. If AC = BD, all four sides are equal, so PQRS is a rhombus and its diagonals PR and QS are perpendicular."},
+        ],
+        'C12-24': [
+            {'item_where': {'question_text': "A student proposes a tiling procedure: 'Take any quadrilateral ABCD and rotate a copy through 180° about the midpoint of side AB. Keep repeating this about the midpoints of newly created shared edges to fill the plane.' Which statement best describes whether this procedure works and why?"}, 'field': 'guide.MCQ.what_each_option_reveals.A', 'old': 'a 180° rotation does reverse orientation (it is a half-turn), but this is precisely what makes the copy share the full edge', 'new': 'a 180° rotation does not reverse orientation (only a reflection does), and the half-turn is precisely what makes the copy share the full edge'},
+        ],
+        'C12-38': [
+            {'unit': 7, 'field': 'time_bands[1].activity', 'old': 'Apply it in △BCD to get MF ∥ DC and MF = DC/2. Since EF ∥ AB ∥ DC and E, M, F are collinear, F is the midpoint of BC and EF = EM + MF = (AB + DC)/2.', 'new': 'Since EM ∥ AB and EF ∥ AB, M lies on EF. In △BCD, M is the midpoint of BD and MF ∥ DC, so by Theorem 7 F is the midpoint of BC and MF = DC/2; hence EF = EM + MF = (AB + DC)/2.'},
+        ],
+        'C12-40': [
+            {'unit': 13, 'field': 'time_bands[1].activity', 'old': '(connecting AB-BC-CD-DA, or AB-BD-DC-CA, or AB-BC-CD in all cyclic orders)', 'new': '(ABCD, ABDC and ACBD — every other ordering names one of these three)'},
+        ],
+        'C12-41': [
+            {'unit': 10, 'field': 'teacher_notes', 'old': 'the key insight is that DM can be viewed as a median of a triangle formed by extending sides of the parallelogram.', 'new': 'the key insight is that DM and AO (O the centre of the parallelogram) are medians of triangle ABD, so they meet at its centroid, one-third of the way along AC.'},
+        ],
+        'C12-42': [
+            {'item_where': {'question_text': "The chapter warns that not every mathematical argument can be reversed, using 'if x = y then x² = y²' as an example of an implication whose converse is false. Which of the following correctly describes why the proof of Theorem 2 (if opposite sides of a quadrilateral are equal, it is a parallelogram) can be obtained by reversing the proof of Theorem 1(a)?"}, 'field': 'options[0].text', 'old': 'and in both cases the conclusion follows from alternate angles on transversal AC.', 'new': 'using the alternate angles in Theorem 1(a) and producing them in Theorem 2.'},
+        ],
+        'C12-43': [
+            {'item_where': {'question_text': 'A pantograph is a drawing device built as a parallelogram linkage ABCD. As one vertex traces the original drawing, another vertex traces a scaled copy. Which property of a parallelogram is most directly responsible for the pantograph producing an exact copy (at a fixed scale) rather than a distorted one?'}, 'field': 'options[3].text', 'old': 'so every position of the moving vertex is a fixed ratio away from the tracing vertex.', 'new': 'so the fixed pivot, the tracing point and the copying point stay on one straight line at a fixed ratio of distances.'},
+        ],
+        'C12-S3': [
+            {'unit': 4, 'field': 'time_bands[2].activity', 'old': 'the text says parallelograms will be used as a tool to prove facts about triangles.', 'new': 'the text presents parallelograms as a tool for proving facts about triangles.'},
+            {'unit': 11, 'field': 'time_bands[3].activity', 'old': 'Preview that Method 2, using the Varignon parallelogram grid, will be developed next unit.', 'new': 'Note that Method 2 uses the Varignon parallelogram grid.'},
+            {'unit': 3, 'field': 'time_bands[2].activity', 'old': 'After five minutes, pairs compare', 'new': 'Then pairs compare'},
+            {'unit': 3, 'field': 'teacher_notes', 'old': 'Building on the Theorem 1 proofs completed in the previous unit,', 'new': 'Building on the Theorem 1 proofs,'},
+            {'unit': 13, 'field': 'time_bands[2].activity', 'old': '(it may cross itself for self-intersecting ones)', 'new': ''},
+            {'item_where': {'question_text': 'A pantograph is a drawing device built as a parallelogram linkage ABCD. As one vertex traces the original drawing, another vertex traces a scaled copy. Which property of a parallelogram is most directly responsible for the pantograph producing an exact copy (at a fixed scale) rather than a distorted one?'}, 'field': 'guide.MCQ.inclusivity', 'old': 'calculate the scale factor of the pantograph if AB = 10 cm and the extension arm beyond B is 5 cm.', 'new': 'explain, with a sketch, why the copy is larger when the pen is farther from the pivot than the tracer.'},
+        ],
+    },
+    'ch_12_canonical.json': {
+        'C12-01': [
+            {'unit': 9, 'field': 'time_bands[1].activity', 'old': 'For part (i): extend EF to meet line AB extended at a point; identify a triangle and apply Theorem 7 to conclude F is the midpoint of BC; then compute EF using the Midpoint Theorem in appropriate triangles to get EF = (AB + CD)/2.', 'new': 'For part (i): draw diagonal BD, meeting EF at M. In △ABD, E is the midpoint of AD and EM ∥ AB, so M is the midpoint of BD and EM = AB/2 (Theorem 7). In △BDC, M is the midpoint of BD and MF ∥ DC, so F is the midpoint of BC and MF = DC/2. Hence EF = EM + MF = (AB + CD)/2.'},
+        ],
+        'C12-02': [
+            {'unit': 9, 'field': 'teacher_notes', 'old': 'the key move is extending EF to the line through A and B to create a triangle in which E and F become midpoints; students who work only inside the trapezium get stuck.', 'new': 'the key move is drawing the diagonal BD, which splits the trapezium into two triangles in which Theorem 7 applies; students who do not draw it get stuck.'},
+        ],
+        'C12-03': [
+            {'item_where': {'question_text': 'In trapezium ABCD, AB is parallel to DC. E is the midpoint of AD. A line through E, parallel to AB, meets BC at F. Given that AB = 11 cm and DC = 5 cm, find the length EF. Show all steps of your working.'}, 'field': 'method_one_line', 'old': 'Extend EF to meet line AB extended at a point G; apply the Converse Midpoint Theorem in triangle DAG to show F is the midpoint of BC; then use the Midpoint Theorem in triangle DAG to compute EF = (AB + DC)/2.', 'new': 'Draw diagonal BD meeting EF at G; in △ABD, E is the midpoint of AD and EG ∥ AB, so G is the midpoint of BD and EG = AB/2; in △BDC, GF ∥ DC, so F is the midpoint of BC and GF = DC/2; EF = (11 + 5)/2 = 8 cm.'},
+        ],
+        'C12-04': [
+            {'item_where': {'question_text': 'In trapezium ABCD, AB is parallel to DC. E is the midpoint of AD. A line through E, parallel to AB, meets BC at F. Given that AB = 11 cm and DC = 5 cm, find the length EF. Show all steps of your working.'}, 'field': 'guide.NUM.inclusivity', 'old': 'suggest extending the line EF beyond F until it meets line AB (or line AB extended), creating a triangle in which E and F become midpoints.', 'new': 'suggest drawing the diagonal BD and looking at the two triangles it makes with the trapezium.'},
+        ],
+        'C12-05': [
+            {'unit': 10, 'field': 'time_bands[2].activity', 'old': 'show ∆MPB ≅ ∆MPC by SSS (using MP = MP, PB = PC since P is midpoint of BC, and BM = CM by 2:1 ratio); assemble these into a larger triangle.', 'new': 'place ∆MPB and ∆MPC together along the equal sides PB and PC (P with P, B with C); since ∠MPB + ∠MPC = 180°, the two pieces form a triangle with sides MB, MC and 2MP = AM.'},
+        ],
+        'C12-06': [
+            {'unit': 10, 'field': 'time_bands[2].activity', 'old': 'Find side lengths of the assembled triangles using the 2:1 ratio.', 'new': 'Show that each assembled triangle has sides AM, BM and CM — two-thirds of the three medians.'},
+        ],
+        'C12-08': [
+            {'unit': 5, 'field': 'time_bands[1].activity', 'old': 'Discuss why AB = BC would make adjacent bisectors parallel (no intersection inside the figure).', 'new': 'Discuss why AB = BC would make the four bisectors lie along the two diagonals, so they all meet at one point and the rectangle shrinks to a point.'},
+        ],
+        'C12-09': [
+            {'unit': 7, 'field': 'time_bands[1].activity', 'old': "With BP = CR and BP ∥ CR (both parallel to AC's direction), invoke Theorem 5", 'new': 'With BP = CR and BP ∥ CR (BP lies along AB, and CR was drawn parallel to BA), invoke Theorem 5'},
+        ],
+        'C12-10': [
+            {'unit': 11, 'field': 'time_bands[2].activity', 'old': 'if AC = BD, then PQ = QR = BC/2 = half-diagonal, making PQRS a rhombus', 'new': 'if AC = BD, then PQ = AC/2 = BD/2 = QR, making PQRS a rhombus'},
+        ],
+        'C12-11': [
+            {'unit': 12, 'field': 'time_bands[0].activity', 'old': "Discuss a counterexample: choose P at one-third of AB, Q at one-third of BC, etc. and show PQRS can still be a parallelogram. Ask: what extra condition would force them to be midpoints? (Answer: if ABCD is any quadrilateral and the parallelogram is specifically the one from Varignon's Theorem, then the midpoints are exactly what produce it.)", 'new': 'Discuss a counterexample: take P with AP = AB/3, Q with BQ = 2BC/3, R with CR = CD/3 and S with AS = AD/3; then PQ and SR are both parallel to AC and PS and QR are both parallel to BD, so PQRS is a parallelogram though no point is a midpoint. Ask: what extra condition would force the midpoints? (For example, PQRS having sides of length exactly AC/2 and BD/2.)'},
+        ],
+        'C12-13': [
+            {'unit': 12, 'field': 'time_bands[3].activity', 'old': 'why knowing only the Varignon parallelogram is enough to reconstruct the original quadrilateral (up to a free choice of where to place A).', 'new': 'why the Varignon parallelogram together with the position of one vertex is enough to reconstruct the original quadrilateral.'},
+        ],
+        'C12-14': [
+            {'unit': 13, 'field': 'teacher_notes', 'old': 'clarify that Method 1 produces one specific tiling and the three vertex-arrangements are just alternative descriptions of local vertex configurations that all arise in it.', 'new': 'clarify that Method 1 produces one specific tiling, and only one of the three vertex arrangements occurs in it — the book asks students to find which.'},
+        ],
+        'C12-15': [
+            {'unit': 15, 'field': 'teacher_notes', 'old': 'the AAS congruence requires verifying the angle at Q (vertical angles) and the angle at A (alternate angles via PQ ∥ CS).', 'new': 'the congruence is SAS: AQ = QC, PQ = QS by construction, and the vertical angles at Q are equal; it then gives CS = AP = PB and CS ∥ AB (alternate angles).'},
+        ],
+        'C12-20': [
+            {'item_where': {'question_text': 'Quadrilateral PQRS has all four vertices in one plane, no three vertices collinear, and no self-intersection. Its diagonals PR and QS are drawn. Diagonal PR lies entirely inside the quadrilateral, but diagonal QS passes partly outside it. Which of the following correctly describes PQRS?'}, 'field': 'options[3].text', 'old': 'PQRS is non-convex, because its diagonals do not intersect each other inside the figure.', 'new': 'PQRS is non-convex, because one of its diagonals is longer than the other.'},
+        ],
+        'C12-21': [
+            {'item_where': {'question_text': 'Quadrilateral PQRS has all four vertices in one plane, no three vertices collinear, and no self-intersection. Its diagonals PR and QS are drawn. Diagonal PR lies entirely inside the quadrilateral, but diagonal QS passes partly outside it. Which of the following correctly describes PQRS?'}, 'field': 'guide.MCQ.what_each_option_reveals.D', 'old': 'Applies the intersection test correctly in direction (non-convex ↔ diagonals do not cross inside) but the stated reason is incomplete — the issue is that QS passes outside the figure, not merely that the diagonals fail to intersect inside; a student choosing D has partially correct reasoning but conflates the failure modes.', 'new': 'Reaches the right verdict for an irrelevant reason — the lengths of the diagonals say nothing about convexity; the test is where the diagonals lie.'},
+        ],
+        'C12-22': [
+            {'item_where': {'question_text': "Quadrilateral ABCD has the property that its diagonals AC and BD bisect each other at point E (that is, AE = CE and BE = DE). A student writes the following proof that ABCD is a parallelogram:\n\n'Since AE = CE and BE = DE, triangles AEB and CED are congruent by SAS, using the vertical angles at E. Therefore AB = CD. Since the opposite sides are equal, ABCD is a parallelogram.'\n\n(i) Identify the logical error or gap in this proof. (ii) Write a complete, correct proof that ABCD is a parallelogram, naming every congruence criterion and theorem you use."}, 'field': 'look_for[1]', 'old': 'such as a kite', 'new': 'such as an isosceles trapezium'},
+        ],
+        'C12-23': [
+            {'item_where': {'question_text': 'A pantograph is a mechanical device that uses four rigid links forming a parallelogram to produce a scaled copy of a drawing. As one vertex of the parallelogram traces the original figure, a second vertex traces the copy. Which property of a parallelogram is the essential reason the copy has the same shape and orientation as the original?'}, 'field': 'options[3].text', 'old': 'The opposite sides of a parallelogram are equal and parallel, so the direction and relative displacement between the tracing vertex and the copying vertex remain constant as the device moves.', 'new': 'The opposite sides of a parallelogram stay equal and parallel as the device moves, so the fixed pivot, the tracing point and the copying point stay on one straight line at a fixed ratio of distances.'},
+        ],
+        'C12-30': [
+            {'unit': 16, 'field': 'time_bands[2].activity', 'old': '(2) for PQRS to be a rectangle, the diagonals AC and BD of ABCD must be equal (by the square condition in Exercise E-13 part (iii) — not perpendicular for rectangle); identify the exact condition (AC = BD makes PQRS a rhombus, AC ⊥ BD makes PQRS a rectangle since then PQ ⊥ QR) and correct the claim.', 'new': '(2) PQRS is a rectangle exactly when PQ ⊥ QR, that is when AC ⊥ BD (AC = BD instead makes it a rhombus); for a parallelogram ABCD this happens only when ABCD is a rhombus, so the claim is false in general — correct it.'},
+        ],
+        'C12-31': [
+            {'unit': 7, 'field': 'time_bands[2].activity', 'old': 'Preview the proof strategy (running the proof backwards) to be developed in the next unit.', 'new': 'Note that the book returns to this question in End of Chapter Q22; the next result, Theorem 7, answers a different question — the line through a midpoint parallel to a side.'},
+        ],
+        'C12-32': [
+            {'unit': 8, 'field': 'time_bands[0].activity', 'old': "applying Theorem 6 to triangles ABD or ACD to locate MN's relationship to AD.", 'new': 'applying Theorem 7 in triangle ABD (M is the midpoint of AB and MN ∥ BD) to show that MN passes through the midpoint of AD.'},
+        ],
+        'C12-33': [
+            {'unit': 12, 'field': 'time_bands[1].activity', 'old': 'this means A′ is the reflection of both B′ through P and D′ through S; use a ruler to place A′ at 2·SP – S (the point such that S is the midpoint of A′D′), then construct B′, C′, D′ in turn. Part (ii): show ∆SDR ≅ ∆SD′R by SAS (SD = SD′ since S is the midpoint, SR = SR, ∠DSR = ∠D′SR as constructed), so D = D′ in position and S is correctly collinear with A′ and D′.', 'new': "place A′ where A sits relative to PQRS (copy triangle SPA), then reflect A′ in P to get B′, B′ in Q to get C′, and C′ in R to get D′. Part (ii): show that S is the midpoint of A′D′ — for example via ∆SDR ≅ ∆SD′R, as the book's hint suggests — so A′B′C′D′ has the same side midpoints and the same vertex A as ABCD, and is congruent to it."},
+        ],
+        'C12-34': [
+            {'unit': 14, 'field': 'time_bands[1].activity', 'old': "each gap is bounded by the midpoint-segments of the four surrounding copies, which by Varignon's Theorem form a parallelogram congruent to the Varignon parallelogram of SOME, so it has the right shape to hold another copy.", 'new': 'each gap is bounded by one side of each of the four surrounding copies, and its own Varignon parallelogram is the unshaded cell of the grid; matching sides and midpoints is what makes it a copy of SOME.'},
+        ],
+        'C12-35': [
+            {'unit': 15, 'field': 'time_bands[0].activity', 'old': 'By the Converse Midpoint Theorem, the midpoints of the portions of the crossing lines between the ruled lines are collinear — use this to locate the midpoint of the drawn segment.', 'new': 'Because the ruled lines are equally spaced and parallel, they cut the drawn segment into equal parts (apply Theorem 7, or End of Chapter Q7, repeatedly) — so its midpoint is where it crosses the ruled line halfway between its two ends.'},
+        ],
+        'C12-36': [
+            {'unit': 15, 'field': 'time_bands[2].activity', 'old': 'argue that APCS is a parallelogram (AP ∥ CS with AP = CS from the congruence ∆APQ ≅ ∆CSQ by AAS), giving PQ ∥ BC.', 'new': 'argue that ∆APQ ≅ ∆CSQ by SAS, so CS = AP = PB and CS ∥ AB; then PBCS is a parallelogram (Theorem 5), giving PQ ∥ BC and PS = BC, so PQ = BC/2.'},
+        ],
+        'C12-37': [
+            {'item_where': {'question_text': "Quadrilateral ABCD has the property that its diagonals AC and BD bisect each other at point E (that is, AE = CE and BE = DE). A student writes the following proof that ABCD is a parallelogram:\n\n'Since AE = CE and BE = DE, triangles AEB and CED are congruent by SAS, using the vertical angles at E. Therefore AB = CD. Since the opposite sides are equal, ABCD is a parallelogram.'\n\n(i) Identify the logical error or gap in this proof. (ii) Write a complete, correct proof that ABCD is a parallelogram, naming every congruence criterion and theorem you use."}, 'field': 'guide.ECR.inclusivity', 'old': 'ask them to also verify that the correct proof cannot be shortened by using Theorem 5 (one pair of equal and parallel sides) — and to explain why that theorem does not apply directly here (we do not yet know the sides are parallel, only equal).', 'new': 'ask them to notice that the same congruence also gives ∠ABE = ∠CDE, so AB ∥ CD — and with AB = CD, Theorem 5 finishes the proof in one step.'},
+        ],
+        'C12-49': [
+            {'unit': 12, 'field': 'visual_aids', 'old': '(for End of Chapter Q13 variant and Exercise E-13)', 'new': '(for Exercise Set 12.3 Q5)'},
+        ],
+        'C12-S3': [
+            {'unit': 2, 'field': 'time_bands[3].activity', 'old': '(Exercise E-24, p.78', 'new': '(p.78'},
+            {'unit': 2, 'field': 'homework[0]', 'old': ' (Exercise E-4)', 'new': ''},
+            {'unit': 4, 'field': 'homework[0]', 'old': ' (Exercise E-7)', 'new': ''},
+            {'unit': 7, 'field': 'homework[0]', 'old': ' (Exercise E-10)', 'new': ''},
+            {'unit': 9, 'field': 'teacher_notes', 'old': ' (Exercise E-29)', 'new': ''},
+            {'unit': 11, 'field': 'homework[0]', 'old': ' (Exercise E-28)', 'new': ''},
+            {'unit': 13, 'field': 'homework[0]', 'old': ' (Exercise E-16)', 'new': ''},
+            {'unit': 12, 'field': 'time_bands[2].activity', 'old': 'Exercise E-13', 'new': 'Exercise Set 12.3 Q5'},
+            {'unit': 16, 'field': 'teacher_notes', 'old': 'from Exercise E-13', 'new': 'from Exercise Set 12.3 Q5'},
+            {'unit': 3, 'field': 'time_bands[2].activity', 'old': 'note that this is exactly Theorem 3, which the class will prove in the next unit.', 'new': 'note that this is exactly Theorem 3.'},
+            {'unit': 3, 'field': 'time_bands[2].activity', 'old': 'Students work individually for a few minutes then share', 'new': 'Students work individually, then share'},
+            {'unit': 6, 'field': 'time_bands[2].activity', 'old': 'This is the Midpoint Theorem, to be proved formally in the next unit.', 'new': 'This is the Midpoint Theorem, to be proved formally.'},
+            {'unit': 13, 'field': 'time_bands[0].activity', 'old': 'and experiment for a few minutes trying to arrange', 'new': 'and experiment, trying to arrange'},
+            {'unit': 13, 'field': 'time_bands[3].activity', 'old': 'the formal argument is developed in the next unit.', 'new': 'the formal argument comes later.'},
+            {'unit': 4, 'field': 'time_bands[3].activity', 'old': "as a concise restatement of Theorem 3's converse.", 'new': 'as a concise restatement of Theorem 3.'},
+            {'unit': 7, 'field': 'time_bands[1].activity', 'old': '(alternate angles, PQ extended and CR ∥ AP)', 'new': '(alternate angles, transversal AC, since CR ∥ AP)'},
+            {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'folds and cuts along PQ, MN (midpoints of the other two sides), producing four small triangles.', 'new': 'folds and cuts along the three segments joining the three midpoints, producing four small triangles.'},
+            {'unit': 15, 'field': 'visual_aids', 'old': 'Board diagram for End of Chapter Q13 showing ABCD as a non-convex quadrilateral with its Varignon parallelogram PQRS still intact', 'new': 'Board diagrams for End of Chapter Q2 (the ruled-paper segment) and Q12 (parallelogram ABCD with DM and BN trisecting AC)'},
+            {'unit': 16, 'field': 'time_bands[1].activity', 'old': '(d) if the diagonal of ∆ABC (where the diagonal AC is drawn) has its midpoint marked, state what Theorem 7 says about the line through that midpoint parallel to BC.', 'new': '(d) in ∆ABC (cut off by the diagonal AC), mark the midpoint P of AB and state what Theorem 7 says about the line through P parallel to BC.'},
+            {'item_where': {'question_text': "A student wants to tile the entire plane using congruent copies of a single irregular quadrilateral SOME, whose four interior angles are labelled 1, 2, 3 and 4.\n\n(i) Explain why four copies of SOME can always be arranged around a common point so that their angles fit together with no gap and no overlap.\n\n(ii) Describe Method 1 (rotation about an edge midpoint) precisely, and justify why each new copy placed by this method fits perfectly along its shared edge and why the angles at each vertex of the tiling always sum to 360°.\n\n(iii) The student claims: 'This only works if SOME is convex.' State whether this claim is correct and give a brief justification."}, 'field': 'look_for[1]', 'old': 'the midpoint M of edge OM', 'new': 'the midpoint of edge OM'},
+        ],
+    },
+    # ── C3 content-correctness check, Part II · chapter 13 (2026-10-02, founder-approved) ──
+    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C13-nn.
+    'ch_13_canonical_p10.json': {
+        'C13-07': [
+            {'unit': 2, 'field': 'time_bands[3].activity', 'old': 'and that a rational coefficient such as √2 is valid.', 'new': 'and that an irrational coefficient such as √2 is valid, since a, b and c may be any real numbers.'},
+        ],
+        'C13-08': [
+            {'item_where': {'question_text': 'The ordered pair (2, -1) is a solution of the equation 2mx + 3y = 7 and also a solution of the equation 4x + ny = -10. Find the values of m and n. Show your working and verify each value in its respective equation.'}, 'field': 'expected_answer', 'old': 'm = 2, n = 6', 'new': 'm = 5/2, n = 18'},
+        ],
+        'C13-09': [
+            {'item_where': {'expected_answer': 'x = 4, y = 3'}, 'field': 'question_text', 'old': '2x - y = 3', 'new': '2x - y = 5'},
+        ],
+        'C13-10': [
+            {'item_where': {'expected_answer': 'x = 4, y = 3'}, 'field': 'guide.NUM.inclusivity', 'old': 'from 2x - y = 3, write y = 2x - 3,', 'new': 'from 2x - y = 5, write y = 2x - 5,'},
+        ],
+        'C13-23': [
+            {'unit': 2, 'field': 'time_bands[1].activity', 'old': 'and to the case with decimal coefficients cleared by multiplication.', 'new': 'and to (i) and (iii), where the book keeps the decimal coefficients and shows that multiplying through by -1 gives another valid set of values.'},
+        ],
+        'C13-24': [
+            {'item_where': {'question_text': 'The ordered pair (2, -1) is a solution of the equation 2mx + 3y = 7 and also a solution of the equation 4x + ny = -10. Find the values of m and n. Show your working and verify each value in its respective equation.'}, 'field': 'method_one_line', 'old': 'Substitute x = 2, y = -1 into each equation separately: 2m(2) + 3(-1) = 7 gives 4m = 10 so m = 2.5 — re-check: 2(2)(2) + 3(-1) = 8 - 3 = 5 ≠ 7. Re-derive: 4m - 3 = 7, 4m = 10, m = 5/2; and 4(2) + n(-1) = -10 gives 8 - n = -10, n = 18.', 'new': 'Substitute x = 2, y = -1 into each equation separately: 2m(2) + 3(-1) = 7 gives 4m - 3 = 7, so m = 5/2; 4(2) + n(-1) = -10 gives 8 - n = -10, so n = 18.'},
+        ],
+        'C13-25': [
+            {'item_where': {'question_text': 'Argue, with full justification, why the equation 3x + 4y = 12 has infinitely many solutions. In your argument, explain the role of choosing a value for one variable and show how to generate three distinct solutions. Also explain why each solution you generate is guaranteed to be different from the others.'}, 'field': 'look_for[2]', 'old': 'Argues that different x-values produce different ordered pairs — if (u1, v1) and (u2, v2) were the same with u1 ≠ u2, this contradicts the uniqueness of the solution for each chosen x.', 'new': 'Notes that solutions generated from different x-values are different ordered pairs, because their first coordinates differ.'},
+        ],
+        'C13-26': [
+            {'item_where': {'implied_lo_assessed': 'Students can determine the number of solutions of a pair of linear equations by comparing the coefficient ratios a1/a2, b1/b2 and c1/c2, and find parameter values that produce a specified outcome.'}, 'field': 'question_text', 'old': '(b) For what value of k does the pair have no solution? Justify.', 'new': '(b) Is there a value of k for which the pair has no solution? Justify.'},
+        ],
+        'C13-S3': [
+            {'unit': 9, 'field': 'time_bands[1].activity', 'old': "Briefly mention the 'Pinch of History' context: this type of elegant manipulation was known to Āryabhaṭa and Brahmagupta long before Gauss.", 'new': "Briefly mention the 'Pinch of History' context: elimination was used in China's Nine Chapters and studied by Āryabhaṭa and Brahmagupta, centuries before Gauss's name became attached to it; this problem itself comes from Mahāvīrāchārya's Gaṇita sāra saṅgraha (c. 850 CE)."},
+        ],
+    },
+    'ch_13_canonical_p13.json': {
+        'C13-11': [
+            {'item_where': {'question_text': 'The ordered pair (4, -1) is a solution of both 5x + py = 17 and qx - 3y = 19. Find the values of p and q.'}, 'field': 'expected_answer', 'old': 'p = -3/1 = -3 (from 20 + p(-1) = 17 ⟹ p = 3; recheck: 5(4) + p(-1) = 17 ⟹ 20 - p = 17 ⟹ p = 3). q: q(4) - 3(-1) = 19 ⟹ 4q + 3 = 19 ⟹ q = 4. So p = 3, q = 4.', 'new': 'p = 3, q = 4. Substituting (4, -1): 5(4) + p(-1) = 17 gives 20 - p = 17, so p = 3; q(4) - 3(-1) = 19 gives 4q + 3 = 19, so q = 4.'},
+        ],
+        'C13-12': [
+            {'item_where': {'question_text': 'Solve the pair of equations 3x + 5y = 26 and x - 2y = -4 using the elimination method. Verify your solution in both equations.'}, 'field': 'expected_answer', 'old': 'x = 2, y = 4. Verification: 3(2) + 5(4) = 6 + 20 = 26 ✓; 2 - 2(4) = 2 - 8 = -6 ≠ -4. Recheck: x = 2, y = 4: x - 2y = 2 - 8 = -6. Re-solve: multiply x - 2y = -4 by 3: 3x - 6y = -12. Subtract from 3x + 5y = 26: 11y = 38, y = 38/11. Back-substitute: x = -4 + 2(38/11) = (-44 + 76)/11 = 32/11. Verification: 3(32/11) + 5(38/11) = 96/11 + 190/11 = 286/11 = 26 ✓; 32/11 - 2(38/11) = 32/11 - 76/11 = -44/11 = -4 ✓. Answer: x = 32/11, y = 38/11.', 'new': 'x = 32/11, y = 38/11. Multiply x - 2y = -4 by 3 to get 3x - 6y = -12; subtract from 3x + 5y = 26 to get 11y = 38, so y = 38/11; then x = 2y - 4 = 76/11 - 44/11 = 32/11. Check: 3(32/11) + 5(38/11) = 286/11 = 26 ✓ and 32/11 - 2(38/11) = -44/11 = -4 ✓.'},
+        ],
+        'C13-18': [
+            {'unit': 9, 'field': 'time_bands[1].activity', 'old': 'Ask: why is 42 the unique answer?', 'new': 'Ask: the solution assumed that the tens digit is the larger one — what if it is the smaller? (Then x - y = -2, giving 24, and 24 + 42 = 66 as well, so two numbers fit the conditions.)'},
+        ],
+        'C13-19': [
+            {'unit': 10, 'field': 'time_bands[2].activity', 'old': 'Students apply the rules to Exercise Set 13.5 Q8, p.118 (End of Chapter Q8):', 'new': 'Students apply the rules to End of Chapter Q8, p.120:'},
+        ],
+        'C13-20': [
+            {'unit': 10, 'field': 'textbook_items_in_class[0].book_ref', 'old': 'Exercise Set 13.5 Q8, p.118', 'new': 'End of Chapter Q8, p.120'},
+        ],
+        'C13-21': [
+            {'unit': 10, 'field': 'time_bands[3].activity', 'old': 'and Exercise Set 13.5 Q9, p.121 (find a and b', 'new': 'and End of Chapter Q9, p.121 (find a and b'},
+        ],
+        'C13-22': [
+            {'unit': 10, 'field': 'textbook_items_in_class[1].book_ref', 'old': 'Exercise Set 13.5 Q9, p.121', 'new': 'End of Chapter Q9, p.121'},
+        ],
+        'C13-S3': [
+            {'unit': 1, 'field': 'teacher_notes', 'old': ', ahead of the next unit.', 'new': '.'},
+            {'unit': 11, 'field': 'time_bands[3].activity', 'old': 'one problem type from today where', 'new': 'one problem type from these problems where'},
+            {'unit': 13, 'field': 'teacher_notes', 'old': 'A common error in Exercise Set 13.5 Q3, p.117 is computing c1/c2 from the equations before moving c to the standard-form side — remind students to rearrange to ax + by + c = 0 first.', 'new': 'The pairs in Exercise Set 13.5 Q3, p.117 are already in standard form; when a pair is not (as in End of Chapter Q3, p.120), a common error is to take c1 and c2 from the right-hand side without changing sign — remind students to rearrange to ax + by + c = 0 first.'},
+        ],
+    },
+    'ch_13_canonical.json': {
+        'C13-01': [
+            {'unit': 5, 'field': 'time_bands[1].activity', 'old': '(vi) (1, 2) is a solution of 2x + 3y = 7 — TRUE by substitution.', 'new': '(vi) (1, 2) is a solution of 2x + 3y = 7 — FALSE: 2(1) + 3(2) = 8 ≠ 7.'},
+        ],
+        'C13-02': [
+            {'item_where': {'implied_lo_assessed': 'Students can rewrite a linear equation in two variables in the standard form ax + by + c = 0 and correctly identify the coefficients a and b and the constant c.'}, 'field': 'question_text', 'old': 'is rewritten in the standard form ax + by + c = 0. Which set', 'new': 'is rewritten in the standard form ax + by + c = 0 with integer coefficients and a = 1. Which set'},
+        ],
+        'C13-03': [
+            {'item_where': {'implied_lo_assessed': 'Students can rewrite a linear equation in two variables in the standard form ax + by + c = 0 and correctly identify the coefficients a and b and the constant c.'}, 'field': 'guide.MCQ.what_each_option_reveals.C', 'old': 'Multiplies through by -3 instead of 3, reversing all signs and giving a = -1, b = 2, c = 6 — a valid representation (multiplying by -1 gives another valid set), but with the wrong sign choice relative to option A; confuses valid sign-reversal with the required rearrangement.', 'new': 'Multiplies through by -3 instead of 3. This is also a valid standard form of the same line (multiplying by -1 gives another valid set), but it does not meet the condition a = 1 in the question.'},
+        ],
+        'C13-04': [
+            {'item_where': {'implied_lo_assessed': 'Students can rewrite a linear equation in two variables in the standard form ax + by + c = 0 and correctly identify the coefficients a and b and the constant c.'}, 'field': 'guide.MCQ.what_each_option_reveals.D', 'old': 'Reads off the coefficients before multiplying through by 3 — treats the fractional form x/3 - (2/3)y - 2 = 0 as the standard form without clearing fractions, leaving a = 1/3 and b = -2/3.', 'new': 'Reads off the coefficients before multiplying through by 3: x/3 - (2/3)y - 2 = 0 is a valid standard form (the book allows fractional coefficients), but the question asks for integer coefficients with a = 1.'},
+        ],
+        'C13-05': [
+            {'item_where': {'implied_lo_assessed': 'Students can rewrite a linear equation in two variables in the standard form ax + by + c = 0 and correctly identify the coefficients a and b and the constant c.'}, 'field': 'guide.MCQ.inclusivity', 'old': 'verify that option D is also a mathematically valid standard form (obtained by multiplying through by -3) and discuss why the section notes that multiplying by -1 gives another equally valid set of values.', 'new': "explain why options C and D describe the same line as option A (C is A multiplied by -1; D is A divided by 3), and why the condition 'integer coefficients with a = 1' picks out exactly one set."},
+        ],
+        'C13-06': [
+            {'item_where': {'question_text': 'Solve the pair of equations 5x + 3y = 29 and 2x - y = 4 using elimination. Show your working and verify the solution in both equations.'}, 'field': 'expected_answer', 'old': 'x = 41/11, y = 37/11. Verification: 5(41/11) + 3(37/11) = 205/11 + 111/11 = 316/11 ≠ 29... Correction: solve correctly. From 2x - y = 4, multiply by 3: 6x - 3y = 12. Add to 5x + 3y = 29: 11x = 41, so x = 41/11. Then y = 2(41/11) - 4 = 82/11 - 44/11 = 38/11. Verification: 5(41/11) + 3(38/11) = 205/11 + 114/11 = 319/11 ≠ 29. Re-solve: multiply 2x - y = 4 by 3 gives 6x - 3y = 12. Add to 5x + 3y = 29: 11x = 41, x = 41/11. y = 2(41/11) - 4 = 82/11 - 44/11 = 38/11. Check: 5(41/11) + 3(38/11) = (205 + 114)/11 = 319/11. This does not equal 29 = 319/11? 29 × 11 = 319. Yes! 319/11 = 29. Verified. x = 41/11, y = 38/11.', 'new': 'x = 41/11, y = 38/11. Multiply 2x - y = 4 by 3 to get 6x - 3y = 12; add to 5x + 3y = 29 to get 11x = 41, so x = 41/11; then y = 2x - 4 = 82/11 - 44/11 = 38/11. Check: 5(41/11) + 3(38/11) = 319/11 = 29 ✓ and 2(41/11) - 38/11 = 44/11 = 4 ✓.'},
+        ],
+        'C13-13': [
+            {'item_where': {'question_text': 'Priya buys x notebooks at ₹15 each and y pens at ₹8 each, spending exactly ₹79 in total. Which equation correctly models this situation?'}, 'field': 'guide.MCQ.what_each_option_reveals.D', 'old': 'Moves the total to the left as a negative constant (standard form), but uses -79 when the standard form from ax + by + c = 0 would require +79 as c and a correct rearrangement gives 15x + 8y - 79 = 0; this option uses +79 instead of -79, incorrectly.', 'new': 'Moves the total to the left-hand side without changing its sign: 15x + 8y = 79 rearranges to 15x + 8y - 79 = 0, not 15x + 8y + 79 = 0.'},
+        ],
+        'C13-14': [
+            {'item_where': {'question_text': 'A line passes through the points P(−3, 7) and Q(5, −1). What is the slope of this line?'}, 'field': 'options[1].text', 'old': '3/4', 'new': '3'},
+        ],
+        'C13-15': [
+            {'item_where': {'question_text': 'A line passes through the points P(−3, 7) and Q(5, −1). What is the slope of this line?'}, 'field': 'guide.MCQ.what_each_option_reveals.B', 'old': 'Reverses the formula, computing run/rise = (5 - (-3))/(-1 - 7) = 8/(-8) with a sign error, or confuses the order of subtraction partially.', 'new': 'Adds the coordinates instead of subtracting them: (7 + (-1))/((-3) + 5) = 6/2 = 3.'},
+        ],
+        'C13-16': [
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'scaffold', 'old': 'For part (b): read a, b, c from each equation in the standard form ax + by + c = 0 and compute the three ratios.', 'new': "For part (b): write each equation in the standard form ax + by + c = 0 and compare a1/a2 with b1/b2 (Plan Q's equation has c = 0, so c1/c2 cannot be formed; it is not needed once a1/a2 ≠ b1/b2)."},
+        ],
+        'C13-17': [
+            {'unit': 15, 'field': 'time_bands[3].activity', 'old': 'Connect to the parallel-line criterion: equal slopes mean no intersection. Confirm the results algebraically.', 'new': 'Treating each path as a straight line from its starting point: in (i) the slopes 4/3 and 2 differ and the lines meet at (30, 40), a point both robots reach (Robot 1 after 10 moves, Robot 2 after 20). In (ii) the slopes 1 and -3/5 also differ and the lines meet at (4.5, 1.5); but Robot 2 never goes left of x = 7, so that point is not on its path. Different slopes guarantee that two lines meet, not that two paths starting from given points do.'},
+        ],
+        'C13-S3': [
+            {'unit': 5, 'field': 'time_bands[1].activity', 'old': 'After five minutes, pairs compare verdicts.', 'new': 'Pairs then compare verdicts.'},
+            {'unit': 5, 'field': 'teacher_notes', 'old': ', which foreshadows the infinite-solution case for pairs.', 'new': '.'},
+            {'unit': 6, 'field': 'teacher_notes', 'old': 'The Think-and-Reflect prompt about extending line AB foreshadows the constancy of slope, which the next unit proves formally.', 'new': 'The Think-and-Reflect prompt about extending line AB suggests that slope is the same all along a line; section 13.3.2 proves it.'},
+            {'unit': 16, 'field': 'teacher_notes', 'old': ' — without requiring any specific prior activity to have taken place', 'new': ''},
+            {'unit': 16, 'field': 'time_bands[1].activity', 'old': 'Students work individually for five minutes, then pairs compare.', 'new': 'Students work individually, then pairs compare.'},
+            {'item_where': {'question_text': 'A school canteen sells sandwiches for ₹x each and juice cartons for ₹y each. On Monday, a group bought 3 sandwiches and 5 juice cartons for ₹115. On Tuesday, another group bought 5 sandwiches and 2 juice cartons for ₹130. Which pair of equations models this situation correctly?'}, 'field': 'guide.MCQ.inclusivity', 'old': 'A student ready for a challenge can find the actual price of a sandwich and juice carton and verify both original conditions.', 'new': 'A student ready for a challenge can solve the pair, find that the prices are not whole rupees (x = 420/19, y = 185/19), and suggest a Tuesday total that would make them whole (for example ₹141 gives x = 25, y = 8).'},
+        ],
+    },
+    # ── C3 content-correctness check, Part II · chapter 14 (2026-10-02, founder-approved) ──
+    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C14-nn.
+    'ch_14_canonical_p10.json': {
+        'C14-10': [
+            {'item_where': {'question_text': 'A cuboid has dimensions 8 cm × 5 cm × 4 cm and a cube has the same volume as this cuboid. Find (i) the side length of the cube and (ii) the difference between the total surface area of the cuboid and the total surface area of the cube.'}, 'field': 'expected_answer', 'old': '(i) side of cube = 4√10^(1/3) — wait, let us compute exactly. Volume of cuboid = 8×5×4 = 160 cm³. Cube side a: a³ = 160, so a = ∛160 ≈ 5.43 cm. TSA of cuboid = 2(8×5 + 5×4 + 4×8) = 2(40+20+32) = 2(92) = 184 cm². TSA of cube = 6a² = 6×(∛160)² ≈ 6×29.49 ≈ 176.9 cm². Difference ≈ 184 − 176.9 ≈ 7.1 cm². To give a clean problem: use volume 125 cm³ (cube side 5 cm) and cuboid 25 cm × 5 cm × 1 cm. TSA cuboid = 2(125+25+5) = 310 cm². TSA cube = 6×25 = 150 cm². Difference = 160 cm². Using cuboid 5 cm × 5 cm × 5 cm is the cube itself. Use cuboid 10 cm × 5 cm × 2.5 cm, V = 125 cm³. TSA cuboid = 2(50+12.5+25) = 2(87.5) = 175 cm². TSA cube = 150 cm². Difference = 25 cm². Final answer: side of cube = 5 cm; TSA of cuboid = 175 cm²; TSA of cube = 150 cm²; difference = 25 cm².', 'new': "(i) Volume of cuboid = 8 × 5 × 4 = 160 cm³, so the cube's side is a = ∛160 ≈ 5.43 cm. (ii) TSA of cuboid = 2(40 + 20 + 32) = 184 cm²; TSA of cube = 6a² = 6 × (∛160)² ≈ 176.8 cm². Difference ≈ 184 − 176.8 = 7.2 cm²; the cuboid has the larger surface area."},
+        ],
+        'C14-11': [
+            {'item_where': {'question_text': 'A right triangle with legs 9 cm and 12 cm and hypotenuse 15 cm is rotated through 360° about its 9 cm leg. Which of the following correctly gives the volume of the solid formed?'}, 'field': 'options[1].text', 'old': '(1/3) × π × 12² × 9 cm³ — wait, rotation about 9 cm leg makes r = 12 cm and h = 9 cm. V = (1/3)π(12²)(9) = (1/3)π×144×9 = 432π cm³. Correct option should state r=12, h=9.', 'new': '(1/3) × π × 12² × 9 cm³'},
+        ],
+        'C14-12': [
+            {'item_where': {'question_text': 'A right triangle with legs 9 cm and 12 cm and hypotenuse 15 cm is rotated through 360° about its 9 cm leg. Which of the following correctly gives the volume of the solid formed?'}, 'field': 'options[0].text', 'old': '(1/3) × π × 12² × 9 cm³', 'new': 'π × 12² × 9 cm³'},
+        ],
+        'C14-13': [
+            {'item_where': {'implied_lo_assessed': 'Students can derive and apply the curved surface area CSA = 2πr², total surface area TSA = 3πr², and volume V = (2/3)πr³ of a hemisphere, distinguishing which surface area formula applies to a given real-world context.'}, 'field': 'question_text', 'old': 'a curved surface area of 1386 m²', 'new': 'a curved surface area of 2772 m²'},
+        ],
+        'C14-14': [
+            {'item_where': {'implied_lo_assessed': 'Students can derive and apply the curved surface area CSA = 2πr², total surface area TSA = 3πr², and volume V = (2/3)πr³ of a hemisphere, distinguishing which surface area formula applies to a given real-world context.'}, 'field': 'expected_answer', 'old': '(i) CSA = 2πr² = 1386. So r² = 1386/(2 × 22/7) = 1386 × 7/44 = 9702/44 = 220.5. Hmm, not a perfect square. Adjust: use CSA = 2πr² and set r² = 1386 × 7 / (2 × 22) = 9702/44 = 220.5. Let me try a clean value: if r = 21 m then CSA = 2 × (22/7) × 441 = 2 × 22 × 63 = 2772 m². Use CSA = 693 m²: r² = 693 × 7/44 = 4851/44 = 110.25, r = 10.5 m. Clean: r = 10.5 m, CSA = 2×(22/7)×(10.5)² = 2×(22/7)×110.25 = 2×22×15.75 = 693 m². Use the problem as stated with CSA = 1386: r² = 1386/(2π) = 1386×7/(2×22) = 9702/44 = 220.5. Not clean. Use CSA = 2772 m²: r = 21 m, volume = (2/3)πr³ = (2/3)×(22/7)×9261 = (2/3)×22×1323 = (2×22×1323)/3 = 58212/3 = 19404 m³. Final clean problem answer: CSA = 2772 m², r = 21 m, V = 19404 m³. (Note: question text says 1386 m² — adjusting: r² = 1386×7/44 = 220.5, r ≈ 14.85 m, not clean. The problem will be re-stated with CSA = 2772 m² in the verified version. Using CSA = 2772: (i) r = 21 m; (ii) V = (2/3)×(22/7)×21³ = (2/3)×(22/7)×9261 = (44×9261)/21 = (44×441) = 19404 m³.)', 'new': '(i) 2πr² = 2772, so r² = 2772 × 7 / 44 = 441 and r = 21 m. (ii) V = (2/3)πr³ = (2/3) × (22/7) × 9261 = 19404 m³.'},
+        ],
+        'C14-15': [
+            {'item_where': {'implied_lo_assessed': 'Students can model an unfamiliar quantity-estimation problem by identifying the relevant solid shapes, stating explicit assumptions, applying appropriate volume or area formulas, and interpreting different answers arising from different assumptions.'}, 'field': 'question_text', 'old': "Student B assumes only 80% of each slice's volume is edible, because she accounts for the rind.", 'new': "Student B assumes only 80% of the watermelon's volume is edible flesh, because she accounts for the rind, and that each slice is cut from the flesh."},
+        ],
+        'C14-16': [
+            {'item_where': {'implied_lo_assessed': 'Students can model an unfamiliar quantity-estimation problem by identifying the relevant solid shapes, stating explicit assumptions, applying appropriate volume or area formulas, and interpreting different answers arising from different assumptions.'}, 'field': 'look_for[1]', 'old': 'Student B: edible volume per slice = 0.8 × 432π = 345.6π cm³; slices = 4500π / 345.6π = 4500/345.6 ≈ 13.0, so 13 complete slices.', 'new': 'Student B: edible volume = 0.8 × 4500π = 3600π cm³; slices = 3600π / 432π ≈ 8.3, so 8 complete slices.'},
+        ],
+        'C14-17': [
+            {'item_where': {'implied_lo_assessed': 'Students can model an unfamiliar quantity-estimation problem by identifying the relevant solid shapes, stating explicit assumptions, applying appropriate volume or area formulas, and interpreting different answers arising from different assumptions.'}, 'field': 'look_for[2]', 'old': '(10 vs 13)', 'new': '(10 vs 8)'},
+        ],
+        'C14-32': [
+            {'unit': 7, 'field': 'time_bands[1].activity', 'old': 'the string length equals the surface area of the ball, and each circle has area πr².', 'new': "the string covers the whole surface of the ball, so the area it fills on paper equals the ball's surface area; each circle has area πr²."},
+        ],
+        'C14-33': [
+            {'item_where': {'question_text': "In the string-winding activity, a string is wound tightly over the entire surface of a rubber ball of radius r, then unwound and used to fill circles of radius r drawn on paper. The string is found to fill exactly four such circles. (i) Explain, step by step, how this result verifies the formula Surface Area = 4πr². (ii) A student claims: 'This activity proves that the surface area of any sphere is 4πr².' Is this claim correct? Justify your answer by distinguishing between experimental verification and mathematical proof."}, 'field': 'look_for[0]', 'old': 'states that the string length represents the surface area of the ball;', 'new': "states that the string covers the ball's surface, so the area it fills on paper equals the ball's surface area;"},
+        ],
+        'C14-34': [
+            {'item_where': {'question_text': "In the string-winding activity, a string is wound tightly over the entire surface of a rubber ball of radius r, then unwound and used to fill circles of radius r drawn on paper. The string is found to fill exactly four such circles. (i) Explain, step by step, how this result verifies the formula Surface Area = 4πr². (ii) A student claims: 'This activity proves that the surface area of any sphere is 4πr².' Is this claim correct? Justify your answer by distinguishing between experimental verification and mathematical proof."}, 'field': 'look_for[0]', 'old': 'the total string length covers 4 × πr² = 4πr²;', 'new': 'the string covers 4 × πr² = 4πr²;'},
+        ],
+        'C14-35': [
+            {'unit': 7, 'field': 'teacher_notes', 'old': 'End of Chapter Q31 (p.145) can guide self-study for students who want to work through the enclosing-cylinder argument more carefully.', 'new': 'Students who want more can redo End of Chapter Q9 (p.145) for a hemisphere and its enclosing cylinder of height r (the ratio is again 2/3).'},
+        ],
+        'C14-36': [
+            {'unit': 10, 'field': 'teacher_notes', 'old': 'End of Chapter Q36 (p.146)', 'new': 'End of Chapter Q18(i) (p.146)'},
+        ],
+        'C14-S3': [
+            {'item_where': {'question_type': 'SCR'}, 'field': 'expected_elements[0]', 'old': 'Names the solid as a rectangular pyramid (or square-based pyramid if student notes 9 ≠ 4 and correctly calls it rectangular).', 'new': 'Names the solid as a pyramid with a rectangular base (a rectangular pyramid).'},
+        ],
+    },
+    'ch_14_canonical_p13.json': {
+        'C14-06': [
+            {'unit': 9, 'field': 'time_bands[2].activity', 'old': '882π ≈ 2771.3 cm²; TSA = 3π × 441 = 1323π ≈ 4156.9 cm²', 'new': '882π = 2772 cm² (π = 22/7); TSA = 3π × 441 = 1323π = 4158 cm²'},
+        ],
+        'C14-07': [
+            {'item_where': {'question_text': 'A solid wooden cuboid measures 10 cm × 6 cm × 4 cm. A solid wooden cube is made from wood of the same volume as this cuboid. Find (i) the side length of the cube, correct to one decimal place, and (ii) the difference in total surface areas between the cuboid and the cube, correct to one decimal place. State clearly which solid has the greater total surface area.'}, 'field': 'expected_answer', 'old': 'TSA of cube = 6 × (6.2)² = 6 × 38.44 = 230.6 cm². Difference = 248 − 230.6 = 17.4 cm²;', 'new': 'TSA of cube = 6 × (∛240)² ≈ 6 × 38.62 ≈ 231.7 cm² (using the rounded side 6.2 here gives 230.6, which is too small). Difference ≈ 248 − 231.7 = 16.3 cm²;'},
+        ],
+        'C14-08': [
+            {'item_where': {'question_text': 'A solid wooden cuboid measures 10 cm × 6 cm × 4 cm. A solid wooden cube is made from wood of the same volume as this cuboid. Find (i) the side length of the cube, correct to one decimal place, and (ii) the difference in total surface areas between the cuboid and the cube, correct to one decimal place. State clearly which solid has the greater total surface area.'}, 'field': 'guide.NUM.inclusivity', 'old': 'use 6² = 216 and 7² = 343 to bracket the cube root', 'new': 'use 6³ = 216 and 7³ = 343 to bracket the cube root'},
+        ],
+        'C14-09': [
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'guide.OPEN_TASK.reading_the_scaffold', 'old': 'Ordered packing: diameter 14 cm ÷ 2 cm = 7 marbles per row, 7 rows per layer (square grid), 20 cm ÷ 2 cm = 10 layers; estimate = 7 × 7 × 10 = 490. The gap between 735 and 490 reflects packing inefficiency.', 'new': 'Ordered packing: the base is a circle of diameter 14 cm, so rows get shorter away from the centre; a square grid of 2 cm marbles fits about 32 per layer (7 × 7 = 49 would need a 14 cm × 14 cm square base), and 20 cm ÷ 2 cm = 10 layers, so the estimate is about 320. The gap between 735 and 320 reflects the gaps between marbles and the space lost at the curved wall.'},
+        ],
+        'C14-22': [
+            {'unit': 13, 'field': 'time_bands[4].activity', 'old': "the chapter's formulas all follow from one of two geometric ideas — unfolding a curved surface into a flat shape or picturing a solid as a stack of thin slices —", 'new': "the chapter's formulas come from flattening or matching surfaces (nets; Archimedes' cylinder for the sphere) and from stacking slices or comparing with a cylinder (the one-third rule) —"},
+        ],
+        'C14-25': [
+            {'unit': 2, 'field': 'time_bands[1].activity', 'old': 'cut along a slant edge of the curved surface and unroll it into a rectangle', 'new': 'cut straight down the curved surface, parallel to the axis, and unroll it into a rectangle'},
+        ],
+        'C14-26': [
+            {'unit': 4, 'field': 'teacher_notes', 'old': 'Exercise Set 14.3 Q3 (p.133)', 'new': 'Exercise Set 14.3 Q3 (p.134)'},
+        ],
+        'C14-27': [
+            {'unit': 4, 'field': 'homework[0]', 'old': 'Exercise Set 14.3 Q3, p.133', 'new': 'Exercise Set 14.3 Q3, p.134'},
+        ],
+        'C14-28': [
+            {'unit': 5, 'field': 'time_bands[3].activity', 'old': 'CSA = πrl = π × 6 × 10 = 60π cm³.', 'new': 'CSA = πrl = π × 6 × 10 = 60π cm².'},
+        ],
+        'C14-29': [
+            {'unit': 9, 'field': 'time_bands[3].activity', 'old': 'CSA = 2π × (5.6)² ≈ 197.1 m² = 1,971,000 cm²; cost = (1,971,000 / 100) × 10 = ₹197,100.', 'new': 'with π = 22/7, CSA = 2 × (22/7) × (5.6)² = 197.12 m² = 1,971,200 cm²; cost = (1,971,200 / 100) × 10 = ₹1,97,120.'},
+        ],
+        'C14-30': [
+            {'unit': 9, 'field': 'teacher_notes', 'old': 'which applies to a dome but not to a solid or a bowl', 'new': 'which is right for a dome or an open bowl but not for a solid hemisphere'},
+        ],
+        'C14-31': [
+            {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'scaffold', 'old': 'Ordered packing: find how many marbles fit along the diameter, how many rows fit along the diameter at right angles, and how many layers fit along the height. Multiply to get the realistic estimate.', 'new': 'Ordered packing: draw the circular base to scale and count how many marbles fit in one layer (rows are shorter away from the centre), then multiply by the number of layers that fit along the height.'},
+        ],
+        'C14-S3': [
+            {'unit': 2, 'field': 'time_bands[4].activity', 'old': 'Preview that the next unit revisits why these formulas hold through a slice-stacking argument.', 'new': 'Note that a slice-stacking argument also explains why these formulas hold.'},
+            {'unit': 3, 'field': 'time_bands[3].activity', 'old': '(No — this foreshadows the cone.)', 'new': '(No — the base area would change from slice to slice.)'},
+            {'unit': 4, 'field': 'time_bands[4].activity', 'old': '— to be established experimentally in the next unit.', 'new': '— a result the book checks by experiment.'},
+            {'unit': 10, 'field': 'homework[0]', 'old': 'bring your measurements and estimate to the next unit.', 'new': 'bring your measurements and estimate to class.'},
+            {'unit': 12, 'field': 'teacher_notes', 'old': 'A frequent error in the marble problem (End of Chapter Q15, p.146) is computing the volume of marbles needed and forgetting that the water is also displaced — make sure students set up the displacement equation correctly.', 'new': "A frequent error in the marble problem (End of Chapter Q15, p.146) is dividing the rise in height, or the extra water volume by a marble's surface area — make sure students write 'extra volume = n × marble volume' before solving."},
+        ],
+    },
+    'ch_14_canonical.json': {
+        'C14-01': [
+            {'unit': 13, 'field': 'time_bands[0].activity', 'old': 'the water level must rise from 16 cm to 20 cm in a cylinder of radius 3.5 cm. Students compute the extra volume needed: π(3.5)²(4) = 49π cm³. Each marble has volume (4/3)π(1)³ = (4/3)π cm³. Number of marbles = 49π ÷ (4/3)π = 49 × 3/4 ≈ 36.75, so 37 marbles.', 'new': 'the water level must rise from 16 cm to 20 cm in a cylinder of radius 4 cm. Students compute the extra volume needed: π(4)²(4) = 64π cm³. Each marble has volume (4/3)π(1)³ = (4/3)π cm³. Number of marbles = 64π ÷ (4/3)π = 64 × 3/4 = 48 marbles.'},
+        ],
+        'C14-02': [
+            {'unit': 13, 'field': 'teacher_notes', 'old': 'frequently leads to the error of computing the number of marbles as 49 (forgetting to divide by the marble volume)', 'new': 'frequently leads to the error of giving the number of marbles as 64 (forgetting to divide by the marble volume)'},
+        ],
+        'C14-03': [
+            {'unit': 13, 'field': 'textbook_items_in_class[0].description', 'old': 'cylindrical glass (diameter 7 cm, water height 16 cm)', 'new': 'cylindrical glass (radius 4 cm, water height 16 cm)'},
+        ],
+        'C14-04': [
+            {'item_where': {'question_type': 'ECR'}, 'field': 'guide.ECR.inclusivity', 'old': 'As a challenge, ask: would the argument still work for an oblique cylinder sliced parallel to the base (giving elliptical cross-sections)? What changes?', 'new': 'As a challenge, ask: would the argument still work for an oblique circular cylinder? (Slices parallel to the base are still circles of area πr², so V = πr²h still holds, with h the perpendicular height.)'},
+        ],
+        'C14-05': [
+            {'item_where': {'implied_lo_assessed': 'Students can select among the surface-area and volume formulas for cuboids, cubes, cylinders, cones, pyramids, spheres and hemispheres to solve composite-solid and real-world estimation problems, justifying their formula choice and handling shared surfaces correctly.'}, 'field': 'guide.OPEN_TASK.inclusivity', 'old': 'if the cylinder height is doubled but the radius is halved (same cylinder volume) — does the hemispherical dome change things?', 'new': "if the radius is halved and the cylinder height is made four times as great (which keeps the cylinder's volume the same) — what happens to the dome's share of the total?"},
+        ],
+        'C14-18': [
+            {'unit': 1, 'field': 'time_bands[3].activity', 'old': 'the class decides whether the cube or the elongated cuboid makes a better swimming pool for a given capacity,', 'new': "the class weighs the book's two pool options, (A) 8 ft deep × 50 ft × 20 ft and (B) 6 ft deep × 100 ft × 15 ft (8000 ft³ against 9000 ft³),"},
+        ],
+        'C14-19': [
+            {'unit': 9, 'field': 'teacher_notes', 'old': 'End of Chapter Q9, p.145 is the formal companion — a short algebraic argument that is the true proof.', 'new': 'End of Chapter Q9, p.145 is a short algebraic argument, but it starts from the stated formula V = (4/3)πr³; it is not a proof of SA = 4πr², which the book takes from Archimedes.'},
+        ],
+        'C14-20': [
+            {'unit': 16, 'field': 'time_bands[0].activity', 'old': "for pyramids, cones and — as the sphere's V = (1/3) × 4πr² × r shows — the sphere itself.", 'new': 'for pyramids and cones; the sphere fits a related pattern, V = (1/3) × surface area × radius = (1/3) × 4πr² × r, from the thin cones that meet at its centre.'},
+        ],
+        'C14-21': [
+            {'unit': 16, 'field': 'time_bands[3].activity', 'old': "Close by locating the chapter's big idea: every solid's surface area comes from unfolding its faces into flat shapes, and every solid's volume comes from stacking thin cross-sectional slices.", 'new': "Close by locating the chapter's two big ideas: surface area is found by flattening or matching surfaces (nets for cuboids, cylinders and cones; Archimedes' cylinder for the sphere), and volume by stacking thin slices or comparing with a cylinder (the one-third rule for cones and pyramids)."},
+        ],
+        'C14-23': [
+            {'item_where': {'question_text': 'A cylindrical tin closed at both ends has radius 3.5 cm and height 10 cm. Find its total surface area in cm², using π = 22/7. Show all working.'}, 'field': 'guide.NUM.inclusivity', 'old': 'As a challenge, ask students to find the height that minimises the TSA for a fixed volume of 385π cm³, leading to h = 2r.', 'new': "As a challenge, keep the volume fixed at this tin's 385 cm³ and compare the TSA for radii 2.5, 3.5, 4 and 5 cm; the smallest TSA is at r = 4 cm, the tin whose height (about 7.7 cm) is closest to its diameter."},
+        ],
+        'C14-24': [
+            {'item_where': {'implied_lo_assessed': 'Students can select among the surface-area and volume formulas for cuboids, cubes, cylinders, cones, pyramids, spheres and hemispheres to solve composite-solid and real-world estimation problems, justifying their formula choice and handling shared surfaces correctly.'}, 'field': 'task', 'old': 'if 1 m³ of grain (at 75% packing) has a mass of about 600 kg', 'new': 'if the grain itself (not counting the air gaps between grains) has a mass of about 600 kg per m³'},
+        ],
+        'C14-S3': [
+            {'unit': 5, 'field': 'teacher_notes', 'old': 'Exercise Set 14.3 Q5, p.134 is a good diagnostic: students who substitute h instead of l will get an inconsistent radius.', 'new': 'Exercise Set 14.3 Q3, p.134 is a good diagnostic: it gives h = 16 and r = 12, and students who put h into πrl instead of first finding l = 20 get the wrong CSA.'},
+            {'unit': 6, 'field': 'time_bands[3].activity', 'old': 'what is the ratio of their lateral surface areas for the same r and h?', 'new': 'what is the ratio of their curved surface areas for the same r and h? (Not 1 : 3 — it is πrl : 2πrh = l : 2h, which depends on the shape.)'},
+            {'unit': 9, 'field': 'time_bands[0].activity', 'old': "using pins at the 'fullest' part to mark the equator,", 'new': "using pins at the 'fullest' part to hold the string in place,"},
+            {'unit': 16, 'field': 'time_bands[2].activity', 'old': 'approximately 540 times', 'new': 'approximately 250 times'},
+            {'item_where': {'question_text': 'Cylinder P has radius r and height h. Cylinder Q has radius 3r and height h/3. Find (i) the ratio of the volume of P to the volume of Q, and (ii) the ratio of the curved surface area of P to the curved surface area of Q. Show all working.'}, 'field': 'guide.NUM.inclusivity', 'old': 'As a challenge, ask students to find a scaling of r and h that keeps both volume and CSA unchanged simultaneously.', 'new': 'As a challenge, ask students whether any change of r and h, other than leaving both alone, keeps both volume and CSA unchanged, and to explain why not.'},
+            {'item_where': {'question_text': 'In the string-winding activity for verifying the surface area of a sphere, the string wound around the ball is unwound and used to fill circles drawn on paper with the same radius as the ball. The string fills exactly four such circles. What does this show, and why does it not count as a mathematical proof of SA = 4πr²?'}, 'field': 'guide.MCQ.inclusivity', 'old': "As a challenge, students can read about Archimedes' cylinder-enclosing argument from section 14.5 and explain why that IS a proof.", 'new': "As a challenge, students can explain why a deductive argument such as Archimedes' (which section 14.5 describes but does not reproduce) would count as a proof."},
+        ],
+    },
   },
   ("science", "viii"): {
     # ── ARV-D-177 (continued) · the mangrove data table's salinity row is the one
@@ -1954,7 +2788,17 @@ def unit_of(result, number):
     raise KeyError(f"no unit {number}")
 
 
+def _dotted(field):
+    # Dotted dict path (2026-10-02): reaches a guide sub-field such as
+    # guide.MCQ.what_each_option_reveals.D, which the name[idx].leaf form cannot.
+    return re.fullmatch(r"\w+(?:\.\w+)+", field) is not None
+
+
 def get_nested(container, field):
+    if _dotted(field):
+        for key in field.split("."):
+            container = container[key]
+        return container
     match = re.fullmatch(r"(\w+)\[(\d+)\](?:\.(\w+))?", field)
     if not match:
         # An ABSENT top-level field reads as None rather than raising (2026-08-17,
@@ -1970,6 +2814,12 @@ def get_nested(container, field):
 
 
 def set_nested(container, field, value):
+    if _dotted(field):
+        *path, last = field.split(".")
+        for key in path:
+            container = container[key]
+        container[last] = value
+        return
     match = re.fullmatch(r"(\w+)\[(\d+)\](?:\.(\w+))?", field)
     if not match:
         container[field] = value
@@ -2103,7 +2953,7 @@ def main() -> int:
     parser.add_argument("--pass", dest="one_pass", metavar="ARV-D-nnn")
     args = parser.parse_args()
 
-    folder = PLANS / args.subject / args.grade
+    folder = PLANS / args.subject / args.grade / _config.LP_YEAR
     files = sorted(folder.glob(f"ch_{args.chapter:02d}_canonical*.json"))
     if not files:
         print(f"no library at {folder}")

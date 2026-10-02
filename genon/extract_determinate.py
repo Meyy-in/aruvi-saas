@@ -39,7 +39,12 @@ import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-PLANS = ROOT / "data/cloud/content/saved_plans"
+sys.path.insert(0, str(ROOT))
+from api import config                                             # noqa: E402
+# ★ PATH FIX 2026-10-02. Libraries live in an edition-year folder since 2026-08-27:
+# DATA_DIR/saved_plans/<subject>/<grade>/<LP_YEAR>/. Read the same api.config values as
+# build_library.lib_dir_of, so the worksheet sees exactly the files certification saw.
+PLANS = pathlib.Path(config.DATA_DIR) / "saved_plans"
 OUT = ROOT / "genon/out/answer_checks"
 
 HEADER = '''#!/usr/bin/env python3
@@ -147,7 +152,7 @@ def main() -> int:
               f"for mathematics only (testing.md C3, maths sub-check). Generating anyway.",
               file=sys.stderr)
 
-    folder = PLANS / args.subject / args.grade
+    folder = PLANS / args.subject / args.grade / config.LP_YEAR
     files = sorted(folder.glob(f"ch_{args.chapter:02d}_canonical*.json"))
     if not files:
         print(f"no installed library at {folder}/ch_{args.chapter:02d}_canonical*.json")

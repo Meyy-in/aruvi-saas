@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T14:26:37",
+  "updated_at": "2026-10-02T14:52:54",
   "items": {
     "04.19": {
       "ios": {
@@ -2062,6 +2062,20 @@
         "at": "2026-10-02T11:44:39",
         "comment": "026 (ledger-forget + trial-reset, enforcement ON): Prepare counter rose 1→2→3 of 3 free chapters used; re-preparing a used chapter worked; a 4th new chapter opened the paywall window (see 01.27), no failed card left.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "Fresh trial (9000000029): first run, then Prepare counter 1→2→3 of 3; re-preparing a used chapter works; a 4th opens the paywall, no failed card.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "Fresh trial (9000000030): first run, then Prepare counter 1→2→3 of 3; re-preparing a used chapter works; a 4th opens the paywall, no failed card.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "05.27": {
@@ -3568,18 +3582,18 @@
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
-        "status": "parked",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T09:10:36",
-        "comment": "Lapsed account — parked with the expired-subscription session (with 048, 06.14).",
-        "build": ""
+        "at": "2026-10-02T14:52:54",
+        "comment": "027 lapsed: no Add on the bar; Teaching profile shows subjects with no '+ add a subject'.",
+        "build": "Expo Go (iPhone 16) → Render"
       },
       "and_emu": {
-        "status": "parked",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T09:10:36",
-        "comment": "Lapsed account — parked with the expired-subscription session (with 048, 06.14).",
-        "build": ""
+        "at": "2026-10-02T14:52:54",
+        "comment": "027 lapsed: no Add on the bar; Teaching profile shows subjects with no '+ add a subject'.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "01.01": {
@@ -3888,6 +3902,20 @@
         "at": "2026-10-02T10:42:44",
         "comment": "027 (active, enforcement ON): bought English · Middle via Settings › Subscription & billing › Add subjects & stages; back in the app with no relaunch. First open of English in My Lessons raised 'You've added English. Middle stage.' with Class · Section · Periods a week · Annual period budget and values; after ✕ and a tab round-trip it did NOT ask again.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:46:03",
+        "comment": "9000000029: bought Science · Middle → first open in My Lessons raised 'You've added Science. Middle stage.' with values; after closing and a tab round-trip, no window again.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:46:03",
+        "comment": "9000000030: bought Science · Middle → first open in My Lessons raised 'You've added Science. Middle stage.' with values; after closing and a tab round-trip, no window again.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "01.19": {
@@ -3897,6 +3925,20 @@
         "at": "2026-10-02T11:31:40",
         "comment": "027, English · Secondary bought: 'You've added English. Secondary stage.' with values; Periods a week +1 → Save → window returned showing the new value. PASS on 'live'. ✓ SILENT HALF PASS (Science · Middle bought: window with values; Class 7 ticked → values still shown; Periods a week changed for Class 7 only → that row showed nothing on the right, others kept values). Was owed: the 'silent when classes disagree' half — Class 10 is not offered (no Class X books released yet), so English Secondary has one class; redo on a stage with several classes.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:46:03",
+        "comment": "9000000029: in that window Class 7 ticked → values still shown; Periods a week changed for Class 7 only → row shows nothing on the right, others keep values.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:46:03",
+        "comment": "9000000030: in that window Class 7 ticked → values still shown; Periods a week changed for Class 7 only → row shows nothing on the right, others keep values.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "01.20": {
@@ -5240,6 +5282,20 @@
         "at": "2026-10-02T12:53:30",
         "comment": "↻ after WALK-A-166: 027 renewal via Subscribe with WhatsApp ON → 'You're subscribed'; welcome already sent once for this account, so 'Say hello on WhatsApp'; line: 'Opens a chat with Meyy support with a short note ready to send. Your invoice is on its way by email. You can also download it anytime from Settings › Subscription.' Correct for what happened: whatsapp_invoice was not 'sent' (see 166).",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000029 checkout with WhatsApp ON, no email: 'You're subscribed', WhatsApp button, no Meyy number shown, one invoice line 'You can download your invoice anytime from Settings › Subscription.' (WALK-A-166 wording).",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000030 checkout with WhatsApp ON, no email: 'You're subscribed', WhatsApp button, no Meyy number shown, one invoice line 'You can download your invoice anytime from Settings › Subscription.' (WALK-A-166 wording).",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "01.29": {
@@ -5249,6 +5305,20 @@
         "at": "2026-10-02T12:53:30",
         "comment": "027 revoked (enforcement ON) while on My Classes: moved to My Lessons within 20s, bar = My Lessons + Ask Meyy; lessons open and export; cold start straight to My Lessons, no flash; re-grant brought My Classes + Add back with cards in place. FAIL: the Year Plan budget pencil is still shown while lapsed and opens the editor → WALK-A-168. ↻ after WALK-A-168: lapsed 027 → Year Plan shows no pencil. PASS.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:52:54",
+        "comment": "027 revoked: moved to My Lessons, bar = My Lessons + Ask Meyy; lessons open; Year Plan has no pencil; Settings reachable; cold start straight to My Lessons, no flash; re-grant brought My Classes + Add back.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:52:54",
+        "comment": "027 revoked: moved to My Lessons, bar = My Lessons + Ask Meyy; lessons open; Year Plan has no pencil; Settings reachable; cold start straight to My Lessons, no flash; re-grant brought My Classes + Add back. Signed in lapsed; hardware Back cannot reach My Classes; two-item bar evenly spaced.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "01.27": {
@@ -5258,6 +5328,20 @@
         "at": "2026-10-02T11:44:39",
         "comment": "026 trial spent: 4th new chapter → preparing card withdrawn, centred window with kicker, the server's sentence in chapters, pine Subscribe, italic Not now; Not now and a tap outside both close it.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000029 trial spent: centred paywall (kicker, sentence in chapters, pine Subscribe, italic Not now); Not now closes.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000030 trial spent: centred paywall (kicker, sentence in chapters, pine Subscribe, italic Not now); Not now closes; hardware Back closes it too.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "04.37": {
@@ -5267,6 +5351,20 @@
         "at": "2026-10-02T12:23:16",
         "comment": "026 subscribed on the web with WhatsApp ON and no email (About you continued without one; done screen's invoice line fine). Support: Chat on WhatsApp, no Write-to-us form, Email support box with 'Add an email address →' → Personal profile; email added + confirmed → form back. All as expected. FAIL on wording only → WALK-A-170.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000029 WhatsApp-only: Settings › Support shows Chat on WhatsApp, no Write-to-us form, Email support box with the WALK-A-170 wording and 'Add an email address →' → Personal profile.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000030 WhatsApp-only: Settings › Support shows Chat on WhatsApp, no Write-to-us form, Email support box with the WALK-A-170 wording and 'Add an email address →' → Personal profile.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "04.10": {
@@ -5276,6 +5374,20 @@
         "at": "2026-10-02T12:42:44",
         "comment": "↻ after WALK-A-172 (sign-in no longer stamps a recorded version), 003/026/027 reset to 0.3: 003 sign-in → bar 'Meyy's Privacy Notice has been updated (version 0.4).' Read it → Settings › Legal on the Privacy notice pill, v0.4; bar gone after reload. 027 → bar, Dismiss → gone after reload.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:50:21",
+        "comment": "027 (reset to 0.3) signed in → bar 'updated (version 0.4)'; Read it → Settings › Legal on the Privacy notice pill, v0.4; after a full relaunch the bar does not return.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:50:21",
+        "comment": "003 (reset to 0.3) signed in → bar; Dismiss; after a full relaunch the bar does not return.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     },
     "04.32": {
@@ -5285,6 +5397,36 @@
         "at": "2026-10-02T12:42:44",
         "comment": "Bank V3.3 deployed (d38 'How do I get help, or contact Meyy support?' now names WhatsApp and 'We reply on the channel you wrote to us on.'); 027 on the web shows the new wording.",
         "build": "web dev (localhost:3000 → Render)"
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:50:21",
+        "comment": "027: Ask Meyy d38 shows the V3.3 wording ('…We reply on the channel you wrote to us on.').",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:50:21",
+        "comment": "003: Ask Meyy d38 shows the V3.3 wording.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
+      }
+    },
+    "01.28": {
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000029: Subscribe on the paywall opens the in-app subscribe wizard; completed a purchase.",
+        "build": "Expo Go (iPhone 16) → Render"
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T14:39:45",
+        "comment": "9000000030: Subscribe on the paywall opens the in-app subscribe wizard; completed a purchase.",
+        "build": "Expo Go (Pixel 7 API 34) → Render"
       }
     }
   },
@@ -8226,7 +8368,7 @@
     {
       "id": "WALK-A-142",
       "opened": "2026-09-29T07:57:54",
-      "closed": "",
+      "closed": "2026-10-02T14:39:45",
       "feature": "04.33",
       "found_on": [
         "ios",
@@ -8235,11 +8377,11 @@
       "applies_to": "phone",
       "title": "Port WhatsApp support to the phone (04.33–04.37)",
       "what": "Founder 2026-09-29, from 04.18 on the phones: WhatsApp support exists on the web only. DECIDED: port it now, in this phone fix point — the subscribe wizard's 'Support on WhatsApp?' question (email optional on Yes), the hello screen after a WhatsApp checkout, Personal profile's WhatsApp switch with the at-least-one-channel lock, Support's 'Chat on WhatsApp' card for opted-in teachers, and the WhatsApp-only no-email box.",
-      "fix": "[FIXED phone 2026-09-29T08:14:28] SubscribeWizard.jsx: 'Support on WhatsApp? *' (neither preselected; email optional on Yes), whatsapp sent at checkout, the hello screen ('You're subscribed' · Say hello / Open WhatsApp via Linking) before landing; settings/personal.jsx: WhatsApp switch with the at-least-one-channel lock, saved with the form; settings/support.jsx: 'Chat on WhatsApp' card for opted-in teachers, WhatsApp-only no-email box → Personal profile. Tracker 04.33–04.37 divergence notes updated. Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS for 04.33, 04.35, 04.36. 04.34 (hello after checkout) and 04.37 (WhatsApp-only) held for the special-state session.",
+      "fix": "[FIXED phone 2026-09-29T08:14:28] SubscribeWizard.jsx: 'Support on WhatsApp? *' (neither preselected; email optional on Yes), whatsapp sent at checkout, the hello screen ('You're subscribed' · Say hello / Open WhatsApp via Linking) before landing; settings/personal.jsx: WhatsApp switch with the at-least-one-channel lock, saved with the form; settings/support.jsx: 'Chat on WhatsApp' card for opted-in teachers, WhatsApp-only no-email box → Personal profile. Tracker 04.33–04.37 divergence notes updated. Parse-checked.\n[RE-WALKED phone 2026-09-29T08:21:38] PASS for 04.33, 04.35, 04.36. 04.34 (hello after checkout) and 04.37 (WhatsApp-only) held for the special-state session.\n[2026-10-02T14:39:45] 04.34 and 04.37 walked on iPhone + Android: pass. All WhatsApp phone rows done.",
       "files": "mobile SubscribeWizard.jsx, settings/personal.jsx, settings/support.jsx",
       "commit": "",
       "native_rebuild": false,
-      "status": "fixed-awaiting-rewalk",
+      "status": "closed",
       "recheck": [
         "04.33",
         "04.34",
@@ -8720,7 +8862,7 @@
     {
       "id": "WALK-A-166",
       "opened": "2026-10-02T10:42:44",
-      "closed": "",
+      "closed": "2026-10-02T14:39:45",
       "feature": "04.34",
       "found_on": [
         "web"
@@ -8728,15 +8870,15 @@
       "applies_to": "web+phone",
       "title": "Done screen invoice line: founder's wording",
       "what": "Founder, 2026-10-02, 027 checkout with WhatsApp ON: the line read 'Opens your chat with Meyy support. Your invoice is on its way by email and is always in Settings › Subscription.' Amend to: 'Your invoice is on its way by email and WhatsApp. You can also download it anytime from Settings › Subscription.'\nFounder, same day: the WhatsApp invoice template is APPROVED by Meta and working. Say WhatsApp only where she has WhatsApp on (and it actually went).",
-      "fix": "[FIXED web+phone 2026-10-02T12:30:07] New shared `invoiceLine(waSent, emailSent)` in @aruvi/shared/format: names only the channels the invoice really went by, then 'You can also download it anytime from Settings › Subscription.' The welcomed case drops 'Opens your chat with Meyy support.' (web) / 'Meyy's number is …' (phone). The phone now reads whatsapp_invoice too (it ignored it). SubscribeFlow.jsx, SubscribeWizard.jsx. Parse-checked. Awaiting the walk.\n[WALKED 2026-10-02T12:53:30] web: wording pass. OPEN QUESTION: the invoice did not go on WhatsApp for 027 — either ARUVI_WA_INVOICE_TEMPLATE is unset on Render (status 'skipped') or Meta refused the made-up number. Check the env var / Render log ('send_invoice').\n[2026-10-02T12:54:28] Resolved: ARUVI_WA_INVOICE_TEMPLATE IS set (founder received an invoice on his own phone). For 027 Meta refused the made-up number +91 90000 00027, so whatsapp_invoice != 'sent' and the line correctly says 'by email'. Web: pass. Phones pending.",
+      "fix": "[FIXED web+phone 2026-10-02T12:30:07] New shared `invoiceLine(waSent, emailSent)` in @aruvi/shared/format: names only the channels the invoice really went by, then 'You can also download it anytime from Settings › Subscription.' The welcomed case drops 'Opens your chat with Meyy support.' (web) / 'Meyy's number is …' (phone). The phone now reads whatsapp_invoice too (it ignored it). SubscribeFlow.jsx, SubscribeWizard.jsx. Parse-checked. Awaiting the walk.\n[WALKED 2026-10-02T12:53:30] web: wording pass. OPEN QUESTION: the invoice did not go on WhatsApp for 027 — either ARUVI_WA_INVOICE_TEMPLATE is unset on Render (status 'skipped') or Meta refused the made-up number. Check the env var / Render log ('send_invoice').\n[2026-10-02T12:54:28] Resolved: ARUVI_WA_INVOICE_TEMPLATE IS set (founder received an invoice on his own phone). For 027 Meta refused the made-up number +91 90000 00027, so whatsapp_invoice != 'sent' and the line correctly says 'by email'. Web: pass. Phones pending.\n[WALKED 2026-10-02T14:39:45] iPhone + Android: pass.",
       "files": "web/app/components/SubscribeFlow.jsx; mobile/components/SubscribeWizard.jsx",
       "commit": "",
-      "status": "fixed-awaiting-rewalk"
+      "status": "closed"
     },
     {
       "id": "WALK-A-167",
       "opened": "2026-10-02T10:51:13",
-      "closed": "",
+      "closed": "2026-10-02T14:46:03",
       "feature": "01.18 / checkout provisioning",
       "found_on": [
         "web"
@@ -8744,15 +8886,15 @@
       "applies_to": "both",
       "title": "Buying a NEW stage of a subject she emptied adds no class",
       "what": "Founder, 2026-10-02, 027: bought Social Sciences · Middle; no default class was added. Cause: 027's Social Sciences record is EMPTIED (she removed SS · Secondary's classes in X.05), and _apply_subscription_profile (api/main.py) skips ALL seeding for an emptied subject — a rule written (2026-09-17) so a RE-purchase of a stage she emptied on purpose stays empty. It also blocks a stage she never had.\nFOUNDER RULE (same day): a newly bought stage always gets its first class (lowest class, Section A); a stage she already had and emptied stays empty.",
-      "fix": "[FIXED server 2026-10-02T12:30:07] _apply_subscription_profile takes `held_before` (paid scopes before this checkout; [] for a trial): a stage in this cart and NOT held before gets its lowest class, Section A, even in an emptied subject; a held-and-emptied stage stays empty. tests/test_subscription_profile.py +2 (new stage of an emptied subject; renewal of an emptied stage). Needs push + Render deploy. Awaiting the walk.\n[WALKED 2026-10-02T13:04:07] web: server half PASS — 027 emptied Mathematics, bought Mathematics · Preparatory, Class 3 arrived. But no check window → WALK-A-173.\n[WALKED 2026-10-02T14:26:37] web: pass (Mathematics · Preparatory into emptied Mathematics → Class 3; English · Preparatory into emptied English → Class 3).",
+      "fix": "[FIXED server 2026-10-02T12:30:07] _apply_subscription_profile takes `held_before` (paid scopes before this checkout; [] for a trial): a stage in this cart and NOT held before gets its lowest class, Section A, even in an emptied subject; a held-and-emptied stage stays empty. tests/test_subscription_profile.py +2 (new stage of an emptied subject; renewal of an emptied stage). Needs push + Render deploy. Awaiting the walk.\n[WALKED 2026-10-02T13:04:07] web: server half PASS — 027 emptied Mathematics, bought Mathematics · Preparatory, Class 3 arrived. But no check window → WALK-A-173.\n[WALKED 2026-10-02T14:26:37] web: pass (Mathematics · Preparatory into emptied Mathematics → Class 3; English · Preparatory into emptied English → Class 3).\n[WALKED 2026-10-02T14:46:03] iPhone + Android: pass (Science emptied, Science · Secondary bought → Class 9 · 9A + 'You've added…' window).",
       "files": "api/main.py",
       "commit": "",
-      "status": "fixed-awaiting-rewalk"
+      "status": "closed"
     },
     {
       "id": "WALK-A-168",
       "opened": "2026-10-02T11:36:47",
-      "closed": "",
+      "closed": "2026-10-02T14:52:54",
       "feature": "01.29",
       "found_on": [
         "web"
@@ -8760,10 +8902,10 @@
       "applies_to": "web (check phone)",
       "title": "Lapsed: Year Plan's budget pencil still shown and opens the editor",
       "what": "Founder, 2026-10-02, 027 revoked: Year Plan shows the budget pencil beside Total periods and it opens the budget editor. Expected (01.29, 05.21): pencil gone while lapsed — the profile is read-only and the server refuses edits.",
-      "fix": "[FIXED web 2026-10-02T12:30:07] MyLessonPlans passes onEditBudget to YearPlan only when !lapsed, so no pencil while lapsed. The phone already did this (lessons.jsx: ent.lapsed ? null). Awaiting the walk.\n[WALKED 2026-10-02T12:53:30] web: pass.",
+      "fix": "[FIXED web 2026-10-02T12:30:07] MyLessonPlans passes onEditBudget to YearPlan only when !lapsed, so no pencil while lapsed. The phone already did this (lessons.jsx: ent.lapsed ? null). Awaiting the walk.\n[WALKED 2026-10-02T12:53:30] web: pass.\n[WALKED 2026-10-02T14:52:54] iPhone + Android: pass (no pencil while lapsed).",
       "files": "web/app/components/YearPlan.jsx; MyLessonPlans.jsx",
       "commit": "",
-      "status": "fixed-awaiting-rewalk"
+      "status": "closed"
     },
     {
       "id": "WALK-A-169",
@@ -8784,7 +8926,7 @@
     {
       "id": "WALK-A-170",
       "opened": "2026-10-02T12:23:16",
-      "closed": "",
+      "closed": "2026-10-02T14:39:45",
       "feature": "04.37",
       "found_on": [
         "web"
@@ -8792,10 +8934,10 @@
       "applies_to": "web+phone",
       "title": "Email support box: drop 'our replies need somewhere to go.'",
       "what": "Founder, 2026-10-02: remove the text 'our replies need somewhere to go.' from the Email support box ('To use email support, first add an email address to your account — our replies need somewhere to go. Meanwhile, you can reach us on WhatsApp above.').",
-      "fix": "[FIXED web+phone 2026-10-02T12:30:07] 'To use email support, first add an email address to your account. Meanwhile, you can reach us on WhatsApp above.' Settings.jsx; mobile settings/support.jsx. Awaiting the walk.",
+      "fix": "[FIXED web+phone 2026-10-02T12:30:07] 'To use email support, first add an email address to your account. Meanwhile, you can reach us on WhatsApp above.' Settings.jsx; mobile settings/support.jsx. Awaiting the walk.\n[WALKED 2026-10-02T14:39:45] iPhone + Android: pass.",
       "files": "web/app/components/Settings.jsx; mobile/app/(app)/settings/support.jsx",
       "commit": "",
-      "status": "fixed-awaiting-rewalk"
+      "status": "closed"
     },
     {
       "id": "WALK-A-171",
@@ -8832,7 +8974,7 @@
     {
       "id": "WALK-A-173",
       "opened": "2026-10-02T13:04:07",
-      "closed": "",
+      "closed": "2026-10-02T14:46:03",
       "feature": "01.18 / 167",
       "found_on": [
         "web"
@@ -8840,10 +8982,10 @@
       "applies_to": "web+phone",
       "title": "A stage bought into an emptied subject raises no 'You've added…' window",
       "what": "Founder, 2026-10-02, 027: after WALK-A-167 the purchase of Mathematics · Preparatory into an emptied Mathematics seeded Class 3, but opening Mathematics in My Lessons asked nothing. Founder: add the default class and trigger the same window used for a first-time subject/stage. Cause: setupCheckAdds (packages/shared/src/setupCheck.js) deliberately skips any new key in a subject that was EMPTY before (2026-09-18 rule: her own refill asks nothing) — the profile diff cannot tell a purchase from a refill.",
-      "fix": "[FIXED web+phone 2026-10-02T13:04:07] The checkout notes the scopes it bought (noteBoughtScopes, module memory in @aruvi/shared/setupCheck; called from SubscribeFlow and SubscribeWizard). setupCheckAdds takes them as a third argument (default: the noted list): a new key in an emptied subject earns the question when its subject·stage was just bought; her own refill still asks nothing. Shared tests +2, 252/252 green. Client-only — no deploy. Awaiting the walk.\n[REVISED 2026-10-02T14:26:37] First cut kept the bought list in module memory and the walk (English, 027) saw no window. Now kept in storage per teacher (key setup_check_pending_bought_{user}, swept at sign-out), noted BEFORE the checkout posts.\n[WALKED 2026-10-02T14:26:37] web: pass (026: emptied its subject, bought another stage of it → 'You've added…' window).",
+      "fix": "[FIXED web+phone 2026-10-02T13:04:07] The checkout notes the scopes it bought (noteBoughtScopes, module memory in @aruvi/shared/setupCheck; called from SubscribeFlow and SubscribeWizard). setupCheckAdds takes them as a third argument (default: the noted list): a new key in an emptied subject earns the question when its subject·stage was just bought; her own refill still asks nothing. Shared tests +2, 252/252 green. Client-only — no deploy. Awaiting the walk.\n[REVISED 2026-10-02T14:26:37] First cut kept the bought list in module memory and the walk (English, 027) saw no window. Now kept in storage per teacher (key setup_check_pending_bought_{user}, swept at sign-out), noted BEFORE the checkout posts.\n[WALKED 2026-10-02T14:26:37] web: pass (026: emptied its subject, bought another stage of it → 'You've added…' window).\n[WALKED 2026-10-02T14:46:03] iPhone + Android: pass (Science emptied, Science · Secondary bought → Class 9 · 9A + 'You've added…' window).",
       "files": "packages/shared/src/setupCheck.js; packages/shared/test/setupCheck.test.js; web/app/components/SubscribeFlow.jsx; mobile/components/SubscribeWizard.jsx",
       "commit": "",
-      "status": "fixed-awaiting-rewalk"
+      "status": "closed"
     }
   ],
   "renewal_check": {

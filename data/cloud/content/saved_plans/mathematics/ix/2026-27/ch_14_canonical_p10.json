@@ -21,7 +21,170 @@
     "constitution": "LP v1.3 / assessment v1.2",
     "source": "generate_canonical.py one mathematics ix 14",
     "ledger_ts": "20261002_154136",
-    "validation": "clean"
+    "validation": "clean",
+    "repairs": [
+      {
+        "tool": "genon/repair_c3.py v1.0",
+        "at": "2026-10-02T14:22:56",
+        "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
+        "defects": {
+          "C14-10": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'question_text': 'A cuboid has dimensions 8 cm × 5 cm × 4 cm and a cube has the same volume as this cuboid. Find (i) the side length of the cube and (ii) the difference between the total surface area of the cuboid and the total surface area of the cube.'}",
+                "field": "expected_answer",
+                "old": "(i) side of cube = 4√10^(1/3) — wait, let us compute exactly. Volume of cuboid = 8×5×4 = 160 cm³. Cube side a: a³ = 160, so a = ∛160 ≈ 5.43 cm. TSA of cuboid = 2(8×5 + 5×4 + 4×8) = 2(40+20+32) = 2(92) = 184 cm². TSA of cube = 6a² = 6×(∛160)² ≈ 6×29.49 ≈ 176.9 cm². Difference ≈ 184 − 176.9 ≈ 7.1 cm². To give a clean problem: use volume 125 cm³ (cube side 5 cm) and cuboid 25 cm × 5 cm × 1 cm. TSA cuboid = 2(125+25+5) = 310 cm². TSA cube = 6×25 = 150 cm². Difference = 160 cm². Using cuboid 5 cm × 5 cm × 5 cm is the cube itself. Use cuboid 10 cm × 5 cm × 2.5 cm, V = 125 cm³. TSA cuboid = 2(50+12.5+25) = 2(87.5) = 175 cm². TSA cube = 150 cm². Difference = 25 cm². Final answer: side of cube = 5 cm; TSA of cuboid = 175 cm²; TSA of cube = 150 cm²; difference = 25 cm².",
+                "new": "(i) Volume of cuboid = 8 × 5 × 4 = 160 cm³, so the cube's side is a = ∛160 ≈ 5.43 cm. (ii) TSA of cuboid = 2(40 + 20 + 32) = 184 cm²; TSA of cube = 6a² = 6 × (∛160)² ≈ 176.8 cm². Difference ≈ 184 − 176.8 = 7.2 cm²; the cuboid has the larger surface area."
+              }
+            ]
+          },
+          "C14-11": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'question_text': 'A right triangle with legs 9 cm and 12 cm and hypotenuse 15 cm is rotated through 360° about its 9 cm leg. Which of the following correctly gives the volume of the solid formed?'}",
+                "field": "options[1].text",
+                "old": "(1/3) × π × 12² × 9 cm³ — wait, rotation about 9 cm leg makes r = 12 cm and h = 9 cm. V = (1/3)π(12²)(9) = (1/3)π×144×9 = 432π cm³. Correct option should state r=12, h=9.",
+                "new": "(1/3) × π × 12² × 9 cm³"
+              }
+            ]
+          },
+          "C14-12": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'question_text': 'A right triangle with legs 9 cm and 12 cm and hypotenuse 15 cm is rotated through 360° about its 9 cm leg. Which of the following correctly gives the volume of the solid formed?'}",
+                "field": "options[0].text",
+                "old": "(1/3) × π × 12² × 9 cm³",
+                "new": "π × 12² × 9 cm³"
+              }
+            ]
+          },
+          "C14-13": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'implied_lo_assessed': 'Students can derive and apply the curved surface area CSA = 2πr², total surface area TSA = 3πr², and volume V = (2/3)πr³ of a hemisphere, distinguishing which surface area formula applies to a given real-world context.'}",
+                "field": "question_text",
+                "old": "a curved surface area of 1386 m²",
+                "new": "a curved surface area of 2772 m²"
+              }
+            ]
+          },
+          "C14-14": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'implied_lo_assessed': 'Students can derive and apply the curved surface area CSA = 2πr², total surface area TSA = 3πr², and volume V = (2/3)πr³ of a hemisphere, distinguishing which surface area formula applies to a given real-world context.'}",
+                "field": "expected_answer",
+                "old": "(i) CSA = 2πr² = 1386. So r² = 1386/(2 × 22/7) = 1386 × 7/44 = 9702/44 = 220.5. Hmm, not a perfect square. Adjust: use CSA = 2πr² and set r² = 1386 × 7 / (2 × 22) = 9702/44 = 220.5. Let me try a clean value: if r = 21 m then CSA = 2 × (22/7) × 441 = 2 × 22 × 63 = 2772 m². Use CSA = 693 m²: r² = 693 × 7/44 = 4851/44 = 110.25, r = 10.5 m. Clean: r = 10.5 m, CSA = 2×(22/7)×(10.5)² = 2×(22/7)×110.25 = 2×22×15.75 = 693 m². Use the problem as stated with CSA = 1386: r² = 1386/(2π) = 1386×7/(2×22) = 9702/44 = 220.5. Not clean. Use CSA = 2772 m²: r = 21 m, volume = (2/3)πr³ = (2/3)×(22/7)×9261 = (2/3)×22×1323 = (2×22×1323)/3 = 58212/3 = 19404 m³. Final clean problem answer: CSA = 2772 m², r = 21 m, V = 19404 m³. (Note: question text says 1386 m² — adjusting: r² = 1386×7/44 = 220.5, r ≈ 14.85 m, not clean. The problem will be re-stated with CSA = 2772 m² in the verified version. Using CSA = 2772: (i) r = 21 m; (ii) V = (2/3)×(22/7)×21³ = (2/3)×(22/7)×9261 = (44×9261)/21 = (44×441) = 19404 m³.)",
+                "new": "(i) 2πr² = 2772, so r² = 2772 × 7 / 44 = 441 and r = 21 m. (ii) V = (2/3)πr³ = (2/3) × (22/7) × 9261 = 19404 m³."
+              }
+            ]
+          },
+          "C14-15": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'implied_lo_assessed': 'Students can model an unfamiliar quantity-estimation problem by identifying the relevant solid shapes, stating explicit assumptions, applying appropriate volume or area formulas, and interpreting different answers arising from different assumptions.'}",
+                "field": "question_text",
+                "old": "Student B assumes only 80% of each slice's volume is edible, because she accounts for the rind.",
+                "new": "Student B assumes only 80% of the watermelon's volume is edible flesh, because she accounts for the rind, and that each slice is cut from the flesh."
+              }
+            ]
+          },
+          "C14-16": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'implied_lo_assessed': 'Students can model an unfamiliar quantity-estimation problem by identifying the relevant solid shapes, stating explicit assumptions, applying appropriate volume or area formulas, and interpreting different answers arising from different assumptions.'}",
+                "field": "look_for[1]",
+                "old": "Student B: edible volume per slice = 0.8 × 432π = 345.6π cm³; slices = 4500π / 345.6π = 4500/345.6 ≈ 13.0, so 13 complete slices.",
+                "new": "Student B: edible volume = 0.8 × 4500π = 3600π cm³; slices = 3600π / 432π ≈ 8.3, so 8 complete slices."
+              }
+            ]
+          },
+          "C14-17": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'implied_lo_assessed': 'Students can model an unfamiliar quantity-estimation problem by identifying the relevant solid shapes, stating explicit assumptions, applying appropriate volume or area formulas, and interpreting different answers arising from different assumptions.'}",
+                "field": "look_for[2]",
+                "old": "(10 vs 13)",
+                "new": "(10 vs 8)"
+              }
+            ]
+          },
+          "C14-32": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "U7",
+                "field": "time_bands[1].activity",
+                "old": "the string length equals the surface area of the ball, and each circle has area πr².",
+                "new": "the string covers the whole surface of the ball, so the area it fills on paper equals the ball's surface area; each circle has area πr²."
+              }
+            ]
+          },
+          "C14-33": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'question_text': \"In the string-winding activity, a string is wound tightly over the entire surface of a rubber ball of radius r, then unwound and used to fill circles of radius r drawn on paper. The string is found to fill exactly four such circles. (i) Explain, step by step, how this result verifies the formula Surface Area = 4πr². (ii) A student claims: 'This activity proves that the surface area of any sphere is 4πr².' Is this claim correct? Justify your answer by distinguishing between experimental verification and mathematical proof.\"}",
+                "field": "look_for[0]",
+                "old": "states that the string length represents the surface area of the ball;",
+                "new": "states that the string covers the ball's surface, so the area it fills on paper equals the ball's surface area;"
+              }
+            ]
+          },
+          "C14-34": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'question_text': \"In the string-winding activity, a string is wound tightly over the entire surface of a rubber ball of radius r, then unwound and used to fill circles of radius r drawn on paper. The string is found to fill exactly four such circles. (i) Explain, step by step, how this result verifies the formula Surface Area = 4πr². (ii) A student claims: 'This activity proves that the surface area of any sphere is 4πr².' Is this claim correct? Justify your answer by distinguishing between experimental verification and mathematical proof.\"}",
+                "field": "look_for[0]",
+                "old": "the total string length covers 4 × πr² = 4πr²;",
+                "new": "the string covers 4 × πr² = 4πr²;"
+              }
+            ]
+          },
+          "C14-35": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "U7",
+                "field": "teacher_notes",
+                "old": "End of Chapter Q31 (p.145) can guide self-study for students who want to work through the enclosing-cylinder argument more carefully.",
+                "new": "Students who want more can redo End of Chapter Q9 (p.145) for a hemisphere and its enclosing cylinder of height r (the ratio is again 2/3)."
+              }
+            ]
+          },
+          "C14-36": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "U10",
+                "field": "teacher_notes",
+                "old": "End of Chapter Q36 (p.146)",
+                "new": "End of Chapter Q18(i) (p.146)"
+              }
+            ]
+          },
+          "C14-S3": {
+            "note": "declared edit",
+            "edits": [
+              {
+                "where": "item{'question_type': 'SCR'}",
+                "field": "expected_elements[0]",
+                "old": "Names the solid as a rectangular pyramid (or square-based pyramid if student notes 9 ≠ 4 and correctly calls it rectangular).",
+                "new": "Names the solid as a pyramid with a rectangular base (a rectangular pyramid)."
+              }
+            ]
+          }
+        }
+      }
+    ]
   },
   "result": {
     "lesson_plan": {
@@ -398,7 +561,7 @@
             },
             {
               "minutes": "12-27",
-              "activity": "Work through the reasoning of section 14.5.1 with the class: the string length equals the surface area of the ball, and each circle has area πr². So the number of circles filled = surface area ÷ πr². If the formula 4πr² is correct, the string fills exactly four circles. Discuss what a physical discrepancy (e.g., filling 3.8 or 4.2 circles) would mean for the formula — distinguishing experimental error from theoretical error. Refer to Fig. 14.14."
+              "activity": "Work through the reasoning of section 14.5.1 with the class: the string covers the whole surface of the ball, so the area it fills on paper equals the ball's surface area; each circle has area πr². So the number of circles filled = surface area ÷ πr². If the formula 4πr² is correct, the string fills exactly four circles. Discuss what a physical discrepancy (e.g., filling 3.8 or 4.2 circles) would mean for the formula — distinguishing experimental error from theoretical error. Refer to Fig. 14.14."
             },
             {
               "minutes": "27-42",
@@ -409,7 +572,7 @@
               "activity": "Class discussion of Q9: if the sphere's volume is 2/3 of the enclosing cylinder, and the sphere's surface area equals the cylinder's curved surface, what does this say about the efficiency of the sphere as a container? Close by noting that physical verification (string experiment) and algebraic derivation (Archimedes argument) both point to the same formula — this double confirmation is a hallmark of good mathematical reasoning."
             }
           ],
-          "teacher_notes": "Students sometimes treat the string experiment as proof rather than verification — help them see the distinction: physical experiments can support a formula but theoretical derivation establishes it. The most common algebraic error in Q9 is writing the enclosing cylinder's volume as πr²h without substituting h = 2r; prompt students to identify r and h of the smallest enclosing cylinder before computing. End of Chapter Q31 (p.145) can guide self-study for students who want to work through the enclosing-cylinder argument more carefully.",
+          "teacher_notes": "Students sometimes treat the string experiment as proof rather than verification — help them see the distinction: physical experiments can support a formula but theoretical derivation establishes it. The most common algebraic error in Q9 is writing the enclosing cylinder's volume as πr²h without substituting h = 2r; prompt students to identify r and h of the smallest enclosing cylinder before computing. Students who want more can redo End of Chapter Q9 (p.145) for a hemisphere and its enclosing cylinder of height r (the ratio is again 2/3).",
           "homework": []
         },
         {
@@ -592,7 +755,7 @@
               "activity": "Two or three pairs share their reasoning for Q5 or Q1, comparing assumptions and results. Close by returning to the section's closing statement: different people may reach different answers, but the reasoning matters most. A guesstimate is not a guess — it is a structured, assumption-explicit, formula-driven estimate, and its value lies in the modelling process, not a single numerical result."
             }
           ],
-          "teacher_notes": "Students often feel that a guesstimate problem without a unique answer is somehow incomplete; reinforce that explicitly stating and defending assumptions is the mathematical skill being developed. In Example 6, the key insight about spheres leaving gaps — and why spheres unlike cubes cannot serve as volume units — deserves emphasis and connects back to the unit-cube definition of volume from section 14.1. End of Chapter Q17 (p.146) — chapatis from a ball of dough — and End of Chapter Q36 (p.146) — textbook pages covering a classroom floor — are rich additional guesstimates students can pursue independently.",
+          "teacher_notes": "Students often feel that a guesstimate problem without a unique answer is somehow incomplete; reinforce that explicitly stating and defending assumptions is the mathematical skill being developed. In Example 6, the key insight about spheres leaving gaps — and why spheres unlike cubes cannot serve as volume units — deserves emphasis and connects back to the unit-cube definition of volume from section 14.1. End of Chapter Q17 (p.146) — chapatis from a ball of dough — and End of Chapter Q18(i) (p.146) — textbook pages covering a classroom floor — are rich additional guesstimates students can pursue independently.",
           "homework": [
             "End of Chapter Q17, p.146 — estimate how many chapatis from a ball of dough of radius 6 cm.",
             "End of Chapter Q18, p.146 — estimate how many textbooks fit in a storeroom of 15 ft × 20 ft × 30 ft."
@@ -798,7 +961,7 @@
           "graph_paper": false,
           "question_text": "A cuboid has dimensions 8 cm × 5 cm × 4 cm and a cube has the same volume as this cuboid. Find (i) the side length of the cube and (ii) the difference between the total surface area of the cuboid and the total surface area of the cube.",
           "options": [],
-          "expected_answer": "(i) side of cube = 4√10^(1/3) — wait, let us compute exactly. Volume of cuboid = 8×5×4 = 160 cm³. Cube side a: a³ = 160, so a = ∛160 ≈ 5.43 cm. TSA of cuboid = 2(8×5 + 5×4 + 4×8) = 2(40+20+32) = 2(92) = 184 cm². TSA of cube = 6a² = 6×(∛160)² ≈ 6×29.49 ≈ 176.9 cm². Difference ≈ 184 − 176.9 ≈ 7.1 cm². To give a clean problem: use volume 125 cm³ (cube side 5 cm) and cuboid 25 cm × 5 cm × 1 cm. TSA cuboid = 2(125+25+5) = 310 cm². TSA cube = 6×25 = 150 cm². Difference = 160 cm². Using cuboid 5 cm × 5 cm × 5 cm is the cube itself. Use cuboid 10 cm × 5 cm × 2.5 cm, V = 125 cm³. TSA cuboid = 2(50+12.5+25) = 2(87.5) = 175 cm². TSA cube = 150 cm². Difference = 25 cm². Final answer: side of cube = 5 cm; TSA of cuboid = 175 cm²; TSA of cube = 150 cm²; difference = 25 cm².",
+          "expected_answer": "(i) Volume of cuboid = 8 × 5 × 4 = 160 cm³, so the cube's side is a = ∛160 ≈ 5.43 cm. (ii) TSA of cuboid = 2(40 + 20 + 32) = 184 cm²; TSA of cube = 6a² = 6 × (∛160)² ≈ 176.8 cm². Difference ≈ 184 − 176.8 = 7.2 cm²; the cuboid has the larger surface area.",
           "method_one_line": "Compute volume = lwh for the cuboid, find cube side a = ∛V, then apply TSA = 2(wl+hl+hw) for the cuboid and TSA = 6a² for the cube, and subtract.",
           "expected_elements": [],
           "look_for": [],
@@ -1086,16 +1249,16 @@
             {
               "label": "A",
               "text": "(1/3) × π × 12² × 9 cm³",
-              "is_correct": false
-            },
-            {
-              "label": "B",
-              "text": "(1/3) × π × 12² × 9 cm³ — wait, rotation about 9 cm leg makes r = 12 cm and h = 9 cm. V = (1/3)π(12²)(9) = (1/3)π×144×9 = 432π cm³. Correct option should state r=12, h=9.",
               "is_correct": true
             },
             {
-              "label": "C",
+              "label": "B",
               "text": "(1/3) × π × 9² × 12 cm³",
+              "is_correct": false
+            },
+            {
+              "label": "C",
+              "text": "π × 12² × 9 cm³",
               "is_correct": false
             },
             {
@@ -1118,9 +1281,9 @@
                 "section": 4
               },
               "what_each_option_reveals": {
-                "C": "Identifies the axis of rotation correctly as the 9 cm leg but assigns r = 9 and h = 12, swapping the roles of the two legs — the leg along the axis is the height, not the radius.",
+                "B": "Identifies the axis of rotation correctly as the 9 cm leg but assigns r = 9 and h = 12, swapping the roles of the two legs — the leg along the axis is the height, not the radius.",
                 "D": "Applies the cylinder volume formula πr²h instead of the cone volume (1/3)πr²h, omitting the one-third factor.",
-                "A": "Assigns r = 12 and h = 9 correctly but writes the formula without the one-third, giving the volume of the enclosing cylinder instead of the cone."
+                "C": "Assigns r = 12 and h = 9 correctly but writes the formula without the one-third, giving the volume of the enclosing cylinder instead of the cone."
               },
               "inclusivity": "A student who is confused about which leg becomes r and which becomes h can be guided to picture the triangle standing upright with the 9 cm leg vertical — rotating it sweeps the horizontal 12 cm leg around the vertical axis, tracing out the base circle; a student who answers correctly quickly can be asked to compute the volume of the enclosing cylinder and confirm that the cone's volume is exactly one-third of it."
             },
@@ -1150,7 +1313,7 @@
           "expected_answer": "",
           "method_one_line": "",
           "expected_elements": [
-            "Names the solid as a rectangular pyramid (or square-based pyramid if student notes 9 ≠ 4 and correctly calls it rectangular).",
+            "Names the solid as a pyramid with a rectangular base (a rectangular pyramid).",
             "Identifies the base as a rectangle with area = 9 × 4 = 36 cm².",
             "Computes volume = (1/3) × 36 × 10 = 120 cm³.",
             "Sets (1/3) × π × r² × 10 = 120 and solves: r² = (120 × 3)/(10π) = 36/π = 36 × 7/22 = 252/22 ≈ 11.45; r ≈ 3.38 cm. Or using exact form r² = 252/22 and r = √(252/22).",
@@ -1297,7 +1460,7 @@
           "method_one_line": "",
           "expected_elements": [],
           "look_for": [
-            "Part (i): states that the string length represents the surface area of the ball; each circle has area πr²; if the string fills exactly four circles, the total string length covers 4 × πr² = 4πr²; therefore the surface area = 4πr².",
+            "Part (i): states that the string covers the ball's surface, so the area it fills on paper equals the ball's surface area; each circle has area πr²; if the string fills exactly four circles, the string covers 4 × πr² = 4πr²; therefore the surface area = 4πr².",
             "Part (ii): identifies the claim as incorrect — the activity is experimental verification, not proof; it confirms the formula for one particular ball and shows consistency with the result, but physical experiments can have measurement errors and do not cover all possible spheres.",
             "Distinguishes 'verification' (a physical check consistent with the formula) from 'proof' (a logically watertight argument valid for all spheres of any radius, such as the Archimedes cylinder argument).",
             "Does not reject the value of the experiment — a strong response notes that experimental evidence is a meaningful and necessary complement to theoretical derivation."
@@ -1334,9 +1497,9 @@
           "cognitive_demand": "Application",
           "visual_stimulus": null,
           "graph_paper": false,
-          "question_text": "A hemispherical dome has a curved surface area of 1386 m². (i) Find the radius of the dome. (ii) Find the volume of the hemispherical dome. Use π = 22/7.",
+          "question_text": "A hemispherical dome has a curved surface area of 2772 m². (i) Find the radius of the dome. (ii) Find the volume of the hemispherical dome. Use π = 22/7.",
           "options": [],
-          "expected_answer": "(i) CSA = 2πr² = 1386. So r² = 1386/(2 × 22/7) = 1386 × 7/44 = 9702/44 = 220.5. Hmm, not a perfect square. Adjust: use CSA = 2πr² and set r² = 1386 × 7 / (2 × 22) = 9702/44 = 220.5. Let me try a clean value: if r = 21 m then CSA = 2 × (22/7) × 441 = 2 × 22 × 63 = 2772 m². Use CSA = 693 m²: r² = 693 × 7/44 = 4851/44 = 110.25, r = 10.5 m. Clean: r = 10.5 m, CSA = 2×(22/7)×(10.5)² = 2×(22/7)×110.25 = 2×22×15.75 = 693 m². Use the problem as stated with CSA = 1386: r² = 1386/(2π) = 1386×7/(2×22) = 9702/44 = 220.5. Not clean. Use CSA = 2772 m²: r = 21 m, volume = (2/3)πr³ = (2/3)×(22/7)×9261 = (2/3)×22×1323 = (2×22×1323)/3 = 58212/3 = 19404 m³. Final clean problem answer: CSA = 2772 m², r = 21 m, V = 19404 m³. (Note: question text says 1386 m² — adjusting: r² = 1386×7/44 = 220.5, r ≈ 14.85 m, not clean. The problem will be re-stated with CSA = 2772 m² in the verified version. Using CSA = 2772: (i) r = 21 m; (ii) V = (2/3)×(22/7)×21³ = (2/3)×(22/7)×9261 = (44×9261)/21 = (44×441) = 19404 m³.)",
+          "expected_answer": "(i) 2πr² = 2772, so r² = 2772 × 7 / 44 = 441 and r = 21 m. (ii) V = (2/3)πr³ = (2/3) × (22/7) × 9261 = 19404 m³.",
           "method_one_line": "Set 2πr² equal to the given CSA, solve for r, then substitute into V = (2/3)πr³.",
           "expected_elements": [],
           "look_for": [],
@@ -1420,15 +1583,15 @@
           "cognitive_demand": "Evaluation",
           "visual_stimulus": null,
           "graph_paper": false,
-          "question_text": "A spherical watermelon has an outer radius of 15 cm. A vendor cuts it into slices and sells each slice modelled as a cylinder of radius 12 cm and height 3 cm. Student A assumes each slice is entirely edible (no waste). Student B assumes only 80% of each slice's volume is edible, because she accounts for the rind. (i) First, make a quick intuitive guess: how many slices can the watermelon provide? (ii) For each student's model, compute the number of complete slices. (iii) Whose model gives the more realistic answer, and why? What does this tell us about the role of assumptions in a guesstimate?",
+          "question_text": "A spherical watermelon has an outer radius of 15 cm. A vendor cuts it into slices and sells each slice modelled as a cylinder of radius 12 cm and height 3 cm. Student A assumes each slice is entirely edible (no waste). Student B assumes only 80% of the watermelon's volume is edible flesh, because she accounts for the rind, and that each slice is cut from the flesh. (i) First, make a quick intuitive guess: how many slices can the watermelon provide? (ii) For each student's model, compute the number of complete slices. (iii) Whose model gives the more realistic answer, and why? What does this tell us about the role of assumptions in a guesstimate?",
           "options": [],
           "expected_answer": "",
           "method_one_line": "",
           "expected_elements": [],
           "look_for": [
             "Part (i): states a quick intuitive guess (any reasonable integer, e.g., 5–15 slices) before computing.",
-            "Part (ii): Volume of watermelon = (4/3)π(15³) = (4/3)π×3375 = 4500π cm³ ≈ 14137 cm³. Volume of one cylindrical slice = π(12²)(3) = 432π cm³ ≈ 1357 cm³. Student A: number of slices = 4500π / 432π = 4500/432 ≈ 10.4, so 10 complete slices. Student B: edible volume per slice = 0.8 × 432π = 345.6π cm³; slices = 4500π / 345.6π = 4500/345.6 ≈ 13.0, so 13 complete slices.",
-            "Part (iii): identifies that Student B's answer accounts for the rind realistically and is likely closer to what a vendor would actually obtain; explains that the two different assumptions lead to meaningfully different counts (10 vs 13), illustrating that in guesstimates the assumptions drive the answer.",
+            "Part (ii): Volume of watermelon = (4/3)π(15³) = (4/3)π×3375 = 4500π cm³ ≈ 14137 cm³. Volume of one cylindrical slice = π(12²)(3) = 432π cm³ ≈ 1357 cm³. Student A: number of slices = 4500π / 432π = 4500/432 ≈ 10.4, so 10 complete slices. Student B: edible volume = 0.8 × 4500π = 3600π cm³; slices = 3600π / 432π ≈ 8.3, so 8 complete slices.",
+            "Part (iii): identifies that Student B's answer accounts for the rind realistically and is likely closer to what a vendor would actually obtain; explains that the two different assumptions lead to meaningfully different counts (10 vs 8), illustrating that in guesstimates the assumptions drive the answer.",
             "Articulates that neither answer is 'wrong' — both are consistent with their stated assumptions — and that the quality of a guesstimate lies in stating assumptions clearly and reasoning from them consistently."
           ],
           "task": "",
