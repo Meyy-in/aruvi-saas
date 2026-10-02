@@ -490,8 +490,7 @@ function SupportForm({ onOpenProfile, onAsk, trial = false }) {
           <div className="set-cap">Email support</div>
           <div className="set-card set-card-pad">
             <p className="set-plan-txt">To use email support, first add an email address to
-              your account — our replies need somewhere to go. Meanwhile, you can reach us on
-              WhatsApp above.</p>
+              your account. Meanwhile, you can reach us on WhatsApp above.</p>
             <button className="fr-link sup-addmail"
               onClick={() => onOpenProfile && onOpenProfile()}>
               Add an email address →</button>

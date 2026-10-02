@@ -15,7 +15,7 @@ import { dateWords as consentDateWords } from "../lib/legalmd";
 /* ⚠️ Imported AND re-exported: `export … from` alone serves importers without binding the names
  * in this module's own scope, and the email path below calls EMAIL_TAKEN (the PPW_CHOICES /
  * setupKey lesson, third sighting). */
-import { EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK, ROLE_OTHER, roleChoice, roleOtherText, roleToSave,
+import { invoiceLine, EMAIL_TAKEN, MOBILE_TAKEN, ROLES, STATES, EMAIL_OK, ROLE_OTHER, roleChoice, roleOtherText, roleToSave,
          waLink, mobileWords } from "../lib/format";
 /* ⚠️ ROLES/STATES/EMAIL_OK moved to @aruvi/shared/format on 2026-09-16 — the phone's
    Personal profile needed them and could otherwise only RETYPE them. Re-exported so
@@ -664,16 +664,11 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
               "_blank", "noopener");
           }}>{welcomed ? "Open WhatsApp" : "Say hello on WhatsApp"}</button>
           <p className="ob-quiet">{welcomed
-            ? <>Opens your chat with Meyy support. </>
+            ? null
             : <>Opens a chat with Meyy support with a short note ready to send. </>}
+            {/* WALK-A-166: one line, naming only the channels the invoice really went by. */}
             {done && done.invoice_number
-              ? (done.whatsapp_invoice === "sent"
-                ? (emailStage === "ok"
-                  ? "Your invoice is on its way on WhatsApp and by email, and is always in Settings › Subscription."
-                  : "Your invoice is on its way on WhatsApp, and is always in Settings › Subscription.")
-                : emailStage === "ok"
-                  ? "Your invoice is on its way by email and is always in Settings › Subscription."
-                  : "Your invoice is always in Settings › Subscription.")
+              ? invoiceLine(done.whatsapp_invoice === "sent", emailStage === "ok")
               : ""}</p>
         </div>
         <div className="ob-foot">

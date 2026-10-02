@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T09:28:16",
+  "updated_at": "2026-10-02T12:30:07",
   "items": {
     "04.19": {
       "ios": {
@@ -2057,10 +2057,10 @@
     },
     "05.26": {
       "web": {
-        "status": "pending",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-22T10:41:07",
-        "comment": "PARKED — needs a TRIAL account with ARUVI_ENTITLEMENT_ENFORCED on. It defaults off, turning it on for 9000000003 would change the state under every remaining row, and the API deploy for the trial-quota rule (WALK-A-048) is not live yet. The session brief §5 already lists the paywall as a skip. Walk it in ONE entitlement sitting on a throwaway account together with 05.21's lapsed half (bar not rendered, Year Plan budget pencil inert) — same dependency, and the two states are adjacent: trial-exhausted keeps plans + tracker, lapsed keeps plans but not the tracker.",
+        "at": "2026-10-02T11:44:39",
+        "comment": "026 (ledger-forget + trial-reset, enforcement ON): Prepare counter rose 1→2→3 of 3 free chapters used; re-preparing a used chapter worked; a 4th new chapter opened the paywall window (see 01.27), no failed card left.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -3561,11 +3561,11 @@
     },
     "02.30": {
       "web": {
-        "status": "parked",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T09:10:36",
-        "comment": "Lapsed account — parked with the expired-subscription session (with 048, 06.14).",
-        "build": ""
+        "at": "2026-10-02T11:36:47",
+        "comment": "027 lapsed: no Add on the bar; Settings › Teaching profile shows subjects, classes and numbers with no '+ add a subject' row.",
+        "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
         "status": "parked",
@@ -3883,19 +3883,19 @@
     },
     "01.18": {
       "web": {
-        "status": "pending",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T11:45:16",
-        "comment": "Not walkable on 9000000003. Adding a class to a subject-stage she already holds correctly raises NO window (founder rule 2026-09-18, shared setupCheckAdds: only a newly bought subject-stage earns the question); the new class does appear in the My Lessons drop-down. The row's 'add a class' route is out of date - it needs a NEW subject-stage arriving by checkout. Park with the subscribe session (01.27/01.28).",
+        "at": "2026-10-02T10:42:44",
+        "comment": "027 (active, enforcement ON): bought English · Middle via Settings › Subscription & billing › Add subjects & stages; back in the app with no relaunch. First open of English in My Lessons raised 'You've added English. Middle stage.' with Class · Section · Periods a week · Annual period budget and values; after ✕ and a tab round-trip it did NOT ask again.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
     "01.19": {
       "web": {
-        "status": "pending",
+        "status": "pass",
         "by": "Kumar",
-        "at": "2026-09-27T11:45:16",
-        "comment": "Depends on 01.18 (a check-mood window). What was seen - no values on the right after Save - was the ADD window, which by design shows none (values are check-mood only). Park with 01.18.",
+        "at": "2026-10-02T11:31:40",
+        "comment": "027, English · Secondary bought: 'You've added English. Secondary stage.' with values; Periods a week +1 → Save → window returned showing the new value. PASS on 'live'. ✓ SILENT HALF PASS (Science · Middle bought: window with values; Class 7 ticked → values still shown; Periods a week changed for Class 7 only → that row showed nothing on the right, others kept values). Was owed: the 'silent when classes disagree' half — Class 10 is not offered (no Class X books released yet), so English Secondary has one class; redo on a stage with several classes.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -5231,6 +5231,42 @@
         "at": "2026-10-02T08:55:55",
         "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. ✓ After the press (made on the web): offer gone, 2026-27 lessons fine; cards were STALE (last year's attachments) → WALK-A-163 → re-walked: 7A and 7B empty.",
         "build": "Expo Go (Pixel 7 emu, API 34, tunnel → Render)"
+      }
+    },
+    "04.34": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-10-02T10:42:44",
+        "comment": "027 checkout (WhatsApp ON): 'You're subscribed' · 'We've sent a welcome message to your WhatsApp on +91 90000 00027…' · Open WhatsApp. Founder: amend the invoice line → WALK-A-166.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "01.29": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-10-02T11:36:47",
+        "comment": "027 revoked (enforcement ON) while on My Classes: moved to My Lessons within 20s, bar = My Lessons + Ask Meyy; lessons open and export; cold start straight to My Lessons, no flash; re-grant brought My Classes + Add back with cards in place. FAIL: the Year Plan budget pencil is still shown while lapsed and opens the editor → WALK-A-168.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "01.27": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T11:44:39",
+        "comment": "026 trial spent: 4th new chapter → preparing card withdrawn, centred window with kicker, the server's sentence in chapters, pine Subscribe, italic Not now; Not now and a tap outside both close it.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
+    },
+    "04.37": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-10-02T12:23:16",
+        "comment": "026 subscribed on the web with WhatsApp ON and no email (About you continued without one; done screen's invoice line fine). Support: Chat on WhatsApp, no Write-to-us form, Email support box with 'Add an email address →' → Personal profile; email added + confirmed → form back. All as expected. FAIL on wording only → WALK-A-170.",
+        "build": "web dev (localhost:3000 → Render)"
       }
     }
   },
@@ -8662,6 +8698,102 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-10-02T09:19:50"
+    },
+    {
+      "id": "WALK-A-166",
+      "opened": "2026-10-02T10:42:44",
+      "closed": "",
+      "feature": "04.34",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "Done screen invoice line: founder's wording",
+      "what": "Founder, 2026-10-02, 027 checkout with WhatsApp ON: the line read 'Opens your chat with Meyy support. Your invoice is on its way by email and is always in Settings › Subscription.' Amend to: 'Your invoice is on its way by email and WhatsApp. You can also download it anytime from Settings › Subscription.'\nFounder, same day: the WhatsApp invoice template is APPROVED by Meta and working. Say WhatsApp only where she has WhatsApp on (and it actually went).",
+      "fix": "[FIXED web+phone 2026-10-02T12:30:07] New shared `invoiceLine(waSent, emailSent)` in @aruvi/shared/format: names only the channels the invoice really went by, then 'You can also download it anytime from Settings › Subscription.' The welcomed case drops 'Opens your chat with Meyy support.' (web) / 'Meyy's number is …' (phone). The phone now reads whatsapp_invoice too (it ignored it). SubscribeFlow.jsx, SubscribeWizard.jsx. Parse-checked. Awaiting the walk.",
+      "files": "web/app/components/SubscribeFlow.jsx; mobile/components/SubscribeWizard.jsx",
+      "commit": "",
+      "status": "fixed-awaiting-rewalk"
+    },
+    {
+      "id": "WALK-A-167",
+      "opened": "2026-10-02T10:51:13",
+      "closed": "",
+      "feature": "01.18 / checkout provisioning",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "Buying a NEW stage of a subject she emptied adds no class",
+      "what": "Founder, 2026-10-02, 027: bought Social Sciences · Middle; no default class was added. Cause: 027's Social Sciences record is EMPTIED (she removed SS · Secondary's classes in X.05), and _apply_subscription_profile (api/main.py) skips ALL seeding for an emptied subject — a rule written (2026-09-17) so a RE-purchase of a stage she emptied on purpose stays empty. It also blocks a stage she never had.\nFOUNDER RULE (same day): a newly bought stage always gets its first class (lowest class, Section A); a stage she already had and emptied stays empty.",
+      "fix": "[FIXED server 2026-10-02T12:30:07] _apply_subscription_profile takes `held_before` (paid scopes before this checkout; [] for a trial): a stage in this cart and NOT held before gets its lowest class, Section A, even in an emptied subject; a held-and-emptied stage stays empty. tests/test_subscription_profile.py +2 (new stage of an emptied subject; renewal of an emptied stage). Needs push + Render deploy. Awaiting the walk.",
+      "files": "api/main.py",
+      "commit": "",
+      "status": "fixed-awaiting-rewalk"
+    },
+    {
+      "id": "WALK-A-168",
+      "opened": "2026-10-02T11:36:47",
+      "closed": "",
+      "feature": "01.29",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web (check phone)",
+      "title": "Lapsed: Year Plan's budget pencil still shown and opens the editor",
+      "what": "Founder, 2026-10-02, 027 revoked: Year Plan shows the budget pencil beside Total periods and it opens the budget editor. Expected (01.29, 05.21): pencil gone while lapsed — the profile is read-only and the server refuses edits.",
+      "fix": "[FIXED web 2026-10-02T12:30:07] MyLessonPlans passes onEditBudget to YearPlan only when !lapsed, so no pencil while lapsed. The phone already did this (lessons.jsx: ent.lapsed ? null). Awaiting the walk.",
+      "files": "web/app/components/YearPlan.jsx; MyLessonPlans.jsx",
+      "commit": "",
+      "status": "fixed-awaiting-rewalk"
+    },
+    {
+      "id": "WALK-A-169",
+      "opened": "2026-10-02T11:59:20",
+      "closed": "2026-10-02T12:29:20",
+      "feature": "04.37 / Personal profile",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "both",
+      "title": "An email cannot be removed, even with WhatsApp on",
+      "what": "Founder, 2026-10-02, 027 (WhatsApp ON): in Settings › Personal profile the email cannot be cleared — Save will not go without a replacement address. At sign-up WhatsApp makes email optional, but afterwards the email is forced. Cause: EmailEntry (WALK-A-125's one way to put an email on record) offers only 'change' → two boxes → Confirm; there is no way to REMOVE an address, although the at-least-one-channel rule (server 409 _ONE_CHANNEL) allows clearing it while WhatsApp is on. Proposed: a 'remove' beside 'change', shown only while WhatsApp is on.",
+      "fix": "[DECLINED 2026-10-02T12:29:20] Founder: do not do 169. Once an email is on record it can be changed, not removed. Behaviour unchanged.",
+      "files": "web/app/components/EmailEntry.jsx; Settings.jsx; mobile Personal profile",
+      "commit": "",
+      "status": "closed"
+    },
+    {
+      "id": "WALK-A-170",
+      "opened": "2026-10-02T12:23:16",
+      "closed": "",
+      "feature": "04.37",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web+phone",
+      "title": "Email support box: drop 'our replies need somewhere to go.'",
+      "what": "Founder, 2026-10-02: remove the text 'our replies need somewhere to go.' from the Email support box ('To use email support, first add an email address to your account — our replies need somewhere to go. Meanwhile, you can reach us on WhatsApp above.').",
+      "fix": "[FIXED web+phone 2026-10-02T12:30:07] 'To use email support, first add an email address to your account. Meanwhile, you can reach us on WhatsApp above.' Settings.jsx; mobile settings/support.jsx. Awaiting the walk.",
+      "files": "web/app/components/Settings.jsx; mobile/app/(app)/settings/support.jsx",
+      "commit": "",
+      "status": "fixed-awaiting-rewalk"
+    },
+    {
+      "id": "WALK-A-171",
+      "opened": "2026-10-02T12:30:07",
+      "closed": "",
+      "feature": "01.29 / renewal via Subscribe",
+      "found_on": [
+        "test"
+      ],
+      "applies_to": "server",
+      "title": "A revoked teacher was refused re-buying her own lapsed subject-stage",
+      "what": "Found while testing WALK-A-167: onboarding_checkout's 'already have it' guard tested the scope's DATE only, so after a revoke (status expired, dates still ahead) checkout answered 409 'You already have X until …', although the Subscribe screen (using the server's live_scopes) offered it.",
+      "fix": "[FIXED server 2026-10-02T12:30:07] The guard uses _live_scopes(prior, today), which is empty for an expired record. Covered by test_renewing_a_stage_she_emptied_keeps_it_empty. Needs push + deploy.",
+      "files": "api/main.py",
+      "commit": "",
+      "status": "fixed-awaiting-rewalk"
     }
   ],
   "renewal_check": {

@@ -131,8 +131,51 @@ def test_only_this_cart_seeds_a_class():
     print("✓ Only the scopes in THIS cart seed a class")
 
 
+def test_a_new_stage_of_an_emptied_subject_gets_its_first_class():
+    """★ WALK-A-167 (founder, 2026-10-02): 027 emptied Social Sciences·Secondary, then
+    bought Social Sciences·MIDDLE and got no class at all. A stage she never had is a new
+    purchase and gets its lowest class, Section A — even inside a subject she emptied."""
+    c, _ = _client()
+    H = _headers("NewStageBuyer")
+    accept_current(c, H)
+    _buy(c, H, ["science/secondary"])
+    prof = _profile(c, H)
+    prof["Science"]["grades"] = []
+    prof["Science"]["grids"] = []
+    prof["Science"]["budget"] = {}
+    _save(c, H, list(prof.values()))
+
+    _buy(c, H, ["science/middle"])
+    after = sorted(g["grade"].lower() for g in _profile(c, H)["Science"]["grades"])
+    assert after == ["vi"], \
+        f"the newly bought stage arrives with its lowest class; the emptied one stays empty: {after}"
+    print("✓ A new stage of an emptied subject gets its first class")
+
+
+def test_renewing_a_stage_she_emptied_keeps_it_empty():
+    """The other half of WALK-A-167's rule: a stage she HELD and emptied stays empty when
+    she buys it again after a lapse."""
+    c, m = _client()
+    H = _headers("RenewEmptied")
+    accept_current(c, H)
+    _buy(c, H, ["science/middle"])
+    prof = _profile(c, H)
+    prof["Science"]["grades"] = []
+    prof["Science"]["grids"] = []
+    prof["Science"]["budget"] = {}
+    _save(c, H, list(prof.values()))
+
+    m.billing_provider.cancel("RenewEmptied")                      # lapse
+    _buy(c, H, ["science/middle"])                                  # renew the same stage
+    assert _profile(c, H)["Science"]["grades"] == [], \
+        "a stage she emptied herself is not handed its class back on renewal"
+    print("✓ Renewing a stage she emptied keeps it empty")
+
+
 if __name__ == "__main__":
     test_a_purchase_still_seeds_the_stages_lowest_class()
     test_an_emptied_subject_is_kept_and_never_reseeded()
     test_only_this_cart_seeds_a_class()
+    test_a_new_stage_of_an_emptied_subject_gets_its_first_class()
+    test_renewing_a_stage_she_emptied_keeps_it_empty()
     print("\n✅ All subscription-profile tests passed!")

@@ -319,8 +319,7 @@ export default function Support() {
           <View style={[ws.set_card, ws.set_card_pad,
                         { borderColor: t.line, backgroundColor: t.card_bg }]}>
             <Text style={[ws.set_plan_txt, { color: t.ink }]}>To use email support, first add an
-              email address to your account — our replies need somewhere to go. Meanwhile, you
-              can reach us on WhatsApp above.</Text>
+              email address to your account. Meanwhile, you can reach us on WhatsApp above.</Text>
             <Link title="Add an email address →" style={{ textAlign: "left" }}
               onPress={() => router.push("/settings/personal")} />
           </View>

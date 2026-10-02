@@ -45,7 +45,7 @@ import { Text, TextInput } from "./Text";
 import { getJSON, postJSON, pretty, subjectStageMap, idInUse,
          ROLES, STATES, EMAIL_OK, EMAIL_TAKEN,
          ROLE_OTHER, roleChoice, roleOtherText, roleToSave,
-         getUser, waLink, mobileWords, WHATSAPP_DISPLAY } from "@aruvi/shared/format";
+         getUser, waLink, mobileWords, WHATSAPP_DISPLAY, invoiceLine } from "@aruvi/shared/format";
 import EmailEntry from "./EmailEntry";
 import { storage } from "@aruvi/shared/storage";
 import { dateWords } from "@aruvi/shared/legalmd";
@@ -691,12 +691,12 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
             onPress={() => { Linking.openURL(waLink(welcomed ? "" : hello, done && done.whatsapp_number))
               .catch(() => {}); }} />
           <Quiet>{welcomed
-            ? `Meyy’s number is ${WHATSAPP_DISPLAY}. `
+            ? ""
             : `Opens a chat with Meyy (${WHATSAPP_DISPLAY}) with a short note ready to send. `}
+            {/* WALK-A-166: one line, naming only the channels the invoice really went by
+                (the phone used to ignore whatsapp_invoice). */}
             {done && done.invoice_number
-              ? (emailStage === "ok"
-                ? "Your invoice is on its way by email and is always in Settings › Subscription."
-                : "Your invoice is always in Settings › Subscription.")
+              ? invoiceLine(done.whatsapp_invoice === "sent", emailStage === "ok")
               : ""}</Quiet>
         </ScrollView>
         <View style={[ws.ob_foot, footPad, { backgroundColor: t.paper }]}>

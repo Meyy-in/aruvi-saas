@@ -1203,7 +1203,7 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
           /* The pencil beside the budget figure. Bound to the pane's OWN subject·class — the
              display name and Roman class the profile keys on, not the slugs YearPlan fetches
              with, since the scope is matched against `s.name` / `g.grade` in TeachingProfile. */
-          onEditBudget={onEditYearBudget
+          onEditBudget={onEditYearBudget && !lapsed   /* WALK-A-168: read-only while lapsed */
             ? () => onEditYearBudget(current.name, activeGrade) : undefined} />
       ) : (
       <>

@@ -1,6 +1,6 @@
 {
-  "version": "V3.2",
-  "last_refreshed": "2026-09-17",
+  "version": "V3.3",
+  "last_refreshed": "2026-10-02",
   "maintained": "Hand-written. Edit THIS file — it is the only copy — then run python3 aruvi-scripts/sync_ask_aruvi.py to re-index, and commit. Keywords are computed, never typed. The bank is served by GET /ask-aruvi and must NEVER be copied into web/app/ask-aruvi/: it would ship in a public page chunk and be readable before sign-in.",
   "categories": [
     {
@@ -1416,14 +1416,14 @@
       "id": "d38",
       "category": "cat_d",
       "question": "How do I get help, or contact Meyy support?",
-      "answer": "For how something works, Ask Meyy — this guide — is the fastest answer. For anything else, open Settings › Support: choose what your message is about, write it, and send. A reference number appears on screen at once and reaches you by email with the reply window we work to. We reply by email, and it is the one channel we use, so nothing is lost in a chat window.",
+      "answer": "For how something works, Ask Meyy — this guide — is the fastest answer. For anything else, open Settings › Support: choose what your message is about, write it, and send. A reference number appears on screen at once and reaches you by email with the reply window we work to. If you turned on WhatsApp support (Settings › Personal profile), you can also message us on WhatsApp from Settings › Support. We reply on the channel you wrote to us on.",
       "keywords": [
-        "contact",
         "support",
-        "email",
+        "contact",
         "reply",
-        "window",
-        "fastest"
+        "whatsapp",
+        "settings",
+        "message"
       ]
     },
     {

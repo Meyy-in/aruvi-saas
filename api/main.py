@@ -3027,7 +3027,8 @@ def _default_grade_record(subject_slug: str, grade_slug: str) -> Dict[str, Any]:
 
 def _apply_subscription_profile(tenant_id: str, user_id: str,
                                 scopes: List[str],
-                                buying: Optional[List[str]] = None) -> None:
+                                buying: Optional[List[str]] = None,
+                                held_before: Optional[List[str]] = None) -> None:
     """★ SUBSCRIPTION CREATES THE DEFAULT PROFILE (founder, 2026-08-25). Every
     purchased scope lands as a profile entry immediately — the founder bought SS +
     English and found only SS in My Lessons' dropdown, because first run creates one
@@ -3056,9 +3057,18 @@ def _apply_subscription_profile(tenant_id: str, user_id: str,
     `{name, grades: []}` is a real state a teacher can put her profile in — and this function
     would have read it as "no class in the purchased stage" and handed her back a Class 6
     Section A on her next checkout, on a path where nobody is looking at the profile. An
-    emptied subject is KEPT (it is hers) and left alone."""
+    emptied subject is KEPT (it is hers) and left alone.
+
+    ★ …BUT A STAGE SHE NEVER HAD STILL GETS ITS FIRST CLASS (WALK-A-167, founder 2026-10-02).
+    027 had emptied Social Sciences·Secondary, then bought Social Sciences·Middle and got no
+    class at all — the emptied guard blocked every stage of the subject, not just the one she
+    emptied. Rule: a NEWLY bought stage (in this cart, not in `held_before`) always gets its
+    lowest class, Section A; a stage she already held and emptied stays empty. `held_before`
+    is the paid scopes she held before this checkout; absent (None), an emptied subject is
+    left wholly alone, as before."""
     slugify = lambda name: (name or "").lower().replace(" ", "_")
     buying_set = {s.strip() for s in (scopes if buying is None else buying) if s and s.strip()}
+    held_before_set = None if held_before is None else {s.strip() for s in held_before if s}
     by_subj: Dict[str, List[str]] = {}
     for sc in scopes:
         subj, stage = (sc.split("/") + [""])[:2]
@@ -3080,14 +3090,15 @@ def _apply_subscription_profile(tenant_id: str, user_id: str,
         if prior:
             grades = [g for g in (prior.get("grades") or [])
                       if (g.get("grade") or "").lower() in allowed]
-        if not emptied:
-            for st in stages:
-                if f"{subj}/{st}" not in buying_set:
-                    continue          # a scope she already held is not a reason to seed
-                stage_grades = [g for g in _STAGE_GRADES.get(st, []) if g in offered]
-                if stage_grades and not any((g.get("grade") or "").lower() in stage_grades
-                                            for g in grades):
-                    grades.append(_default_grade_record(subj, stage_grades[0]))
+        for st in stages:
+            if f"{subj}/{st}" not in buying_set:
+                continue          # a scope she already held is not a reason to seed
+            if emptied and (held_before_set is None or f"{subj}/{st}" in held_before_set):
+                continue          # she emptied it herself — it stays empty (WALK-A-167)
+            stage_grades = [g for g in _STAGE_GRADES.get(st, []) if g in offered]
+            if stage_grades and not any((g.get("grade") or "").lower() in stage_grades
+                                        for g in grades):
+                grades.append(_default_grade_record(subj, stage_grades[0]))
         # No classes AND no prior record means there is nothing to carry and nothing was
         # bought into it — skip. An emptied record she owns is kept, classes and all zero of
         # them, because dropping it here is the very loss this whole change is about.
@@ -3437,9 +3448,13 @@ def onboarding_checkout(req: CheckoutRequest,
     #   remaining time, which is the only fact that makes the refusal make sense.
     prior = entitlement_repo.load(tenant_id)
     today = _today().isoformat()
+    # ★ WALK-A-171: "live" means USABLE today — `_live_scopes` is empty for an EXPIRED
+    #   (revoked) record, whose scope dates may still lie ahead. Testing the dates alone
+    #   refused a lapsed teacher the very renewal the Subscribe screen offered her.
     if prior is not None and prior.status != "trial":
+        live_now = set(_live_scopes(prior, today))
         for s in scopes:
-            if s in prior.scopes and _scope_live(prior, s, today):
+            if s in live_now:
                 raise HTTPException(status_code=409, detail=(
                     f"You already have {_scope_words(s)} until "
                     f"{_date_words(_scope_until(prior, s))}. You can add it again when "
@@ -3473,7 +3488,10 @@ def onboarding_checkout(req: CheckoutRequest,
     try:
         # `held` is everything she owns (so nothing bought earlier is dropped); `scopes` is
         # THIS cart, and only a scope in it may seed a default class.
-        _apply_subscription_profile(tenant_id, user_id, held, buying=scopes)
+        _apply_subscription_profile(
+            tenant_id, user_id, held, buying=scopes,
+            held_before=(list(prior.scopes or []) if prior is not None
+                         and prior.status != "trial" else []))
     except Exception:
         pass   # a profile hiccup must never fail an activation
     # ★ FIRST purchase only: clear what the trial left in subjects she did not buy

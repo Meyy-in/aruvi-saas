@@ -285,6 +285,17 @@ export const EMAIL_OK = (e) => /^\S+@\S+\.\S+$/.test((e || "").trim());
  * writing without her having to type it. */
 export const WHATSAPP_NUMBER = "919363795723";
 export const WHATSAPP_DISPLAY = "+91 93637 95723";
+/* The done screen's invoice line (WALK-A-166, founder 2026-10-02). Names ONLY the channels the
+ * invoice actually went by — WhatsApp when Meta accepted it (`whatsapp_invoice === "sent"`,
+ * which happens only for a teacher who turned WhatsApp on), email when the mail went — and
+ * always says where to download it. One source for web and phone. */
+export const invoiceLine = (waSent, emailSent) => {
+  const tail = "You can also download it anytime from Settings › Subscription.";
+  if (waSent && emailSent) return `Your invoice is on its way by email and WhatsApp. ${tail}`;
+  if (waSent) return `Your invoice is on its way on WhatsApp. ${tail}`;
+  if (emailSent) return `Your invoice is on its way by email. ${tail}`;
+  return "You can download your invoice anytime from Settings › Subscription.";
+};
 export const waLink = (text = "", number = WHATSAPP_NUMBER) =>
   `https://wa.me/${String(number || WHATSAPP_NUMBER).replace(/\D/g, "")}` +
   (text ? `?text=${encodeURIComponent(text)}` : "");
