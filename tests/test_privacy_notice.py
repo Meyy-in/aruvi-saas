@@ -137,7 +137,15 @@ def test_routes_open_status_seen_export():
     api_main.account_repo.save(acct)
     s = c.get("/legal/privacy/status", headers=h).json()
     assert s["updated"] is True and s["seen_version"] == "0.0"
-    # ── Registration stamps the version current at that moment ──
+    # ── A SIGN-IN does not swallow the bar (WALK-A-172): a recorded older version stays ──
+    assert c.post("/onboarding/verified", headers=h).status_code == 200
+    s = c.get("/legal/privacy/status", headers=h).json()
+    assert s["updated"] is True and s["seen_version"] == "0.0", \
+        "signing in must not mark a newer notice as seen — the bar is how she sees it"
+    # ── FIRST registration (nothing recorded) stamps the version current at that moment ──
+    acct = api_main.account_repo.load(uid, uid)
+    acct.privacy_notice = None
+    api_main.account_repo.save(acct)
     assert c.post("/onboarding/verified", headers=h).status_code == 200
     s = c.get("/legal/privacy/status", headers=h).json()
     assert s["updated"] is False and s["seen_version"] == d["current_version"]

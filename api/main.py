@@ -2943,7 +2943,13 @@ def onboarding_verified(identity: tuple = Depends(_current_identity)) -> Dict[st
     # of first collection, which is when DPDP §5 wants it given. Recorded here, on the
     # server, so the record names the version that was CURRENT at that moment rather
     # than whatever a client thought it was. Never blocks registration.
-    _stamp_privacy_seen(tenant_id, user_id, "trial_signin")
+    # ★ FIRST collection only (WALK-A-172, 2026-10-02). This ran on EVERY sign-in, so a
+    #   returning teacher who signed in after a version bump was recorded as having seen it
+    #   and never got the "updated" note that notice §12 promises. A recorded version is
+    #   now left alone; the shell's bar (Read it / Dismiss → /legal/privacy/seen) moves it.
+    _acct_pn = account_repo.load(tenant_id, user_id)
+    if not ((_acct_pn.privacy_notice or {}).get("version") if _acct_pn else None):
+        _stamp_privacy_seen(tenant_id, user_id, "trial_signin")
     # ★ How much free trial this number has left (2026-09-18) — 0 when it was used up before an
     #   erasure. The front door reads it to say so plainly and offer Subscribe, instead of
     #   letting her walk into first run and meet a paywall on her very first lesson.

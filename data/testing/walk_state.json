@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T12:30:07",
+  "updated_at": "2026-10-02T12:38:21",
   "items": {
     "04.19": {
       "ios": {
@@ -5268,6 +5268,15 @@
         "comment": "026 subscribed on the web with WhatsApp ON and no email (About you continued without one; done screen's invoice line fine). Support: Chat on WhatsApp, no Write-to-us form, Email support box with 'Add an email address →' → Personal profile; email added + confirmed → form back. All as expected. FAIL on wording only → WALK-A-170.",
         "build": "web dev (localhost:3000 → Render)"
       }
+    },
+    "04.10": {
+      "web": {
+        "status": "fail",
+        "by": "Kumar",
+        "at": "2026-10-02T12:38:21",
+        "comment": "v0.4 live (GET /legal/privacy shows 0.4). 003 and then 027 signed in on the web: no bar. Their records then read version 0.4, context 'trial_signin' — the sign-in itself stamped the new version. → WALK-A-172.",
+        "build": "web dev (localhost:3000 → Render)"
+      }
     }
   },
   "gate": {
@@ -8792,6 +8801,22 @@
       "what": "Found while testing WALK-A-167: onboarding_checkout's 'already have it' guard tested the scope's DATE only, so after a revoke (status expired, dates still ahead) checkout answered 409 'You already have X until …', although the Subscribe screen (using the server's live_scopes) offered it.",
       "fix": "[FIXED server 2026-10-02T12:30:07] The guard uses _live_scopes(prior, today), which is empty for an expired record. Covered by test_renewing_a_stage_she_emptied_keeps_it_empty. Needs push + deploy.",
       "files": "api/main.py",
+      "commit": "",
+      "status": "fixed-awaiting-rewalk"
+    },
+    {
+      "id": "WALK-A-172",
+      "opened": "2026-10-02T12:36:14",
+      "closed": "",
+      "feature": "04.10",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "server",
+      "title": "Signing in silently marks the new Privacy Notice as seen, so the 'updated' bar never shows",
+      "what": "Founder, 2026-10-02: after v0.4 was deployed, 003 signed in on the web and no bar appeared. Its record read version 0.4, context 'trial_signin', stamped at that sign-in. POST /onboarding/verified calls _stamp_privacy_seen on EVERY sign-in (its comment says 'the moment of first collection'), so any returning teacher who signs in after a bump is recorded as having seen it and never gets the note — notice §12 promises she will see the new version 'with a short note of what changed'. Only a session that stays signed in across the bump ever sees the bar.",
+      "fix": "[FIXED server 2026-10-02T12:38:21] onboarding_verified stamps the notice only when the account has NO recorded version (first collection); a recorded version is moved only by the bar (Read it / Dismiss → /legal/privacy/seen) or the agreement signing. tests/test_privacy_notice.py now asserts a sign-in leaves an older version (and the bar) in place. Needs push + deploy.",
+      "files": "api/main.py (onboarding_verified)",
       "commit": "",
       "status": "fixed-awaiting-rewalk"
     }
