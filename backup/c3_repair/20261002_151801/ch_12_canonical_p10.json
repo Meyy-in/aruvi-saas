@@ -173,190 +173,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:18:01",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C12-107": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U9",
-        "field": "teacher_notes",
-        "old": "help students see that exactly alternate cells are shaded (like a checkerboard on the parallelogram grid) and that each unshaded gap between shaded copies is itself a copy.",
-        "new": "help students see that one cell in four is shaded (every second cell along both directions, as in Fig. 12.32) and that each gap between the placed copies is itself a copy."
-       }
-      ]
-     },
-     "C12-117": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U6",
-        "field": "time_bands[1].activity",
-        "old": "making PQYX (or PQYX reordered as needed) a parallelogram.",
-        "new": "making PQYX a parallelogram (Theorem 5)."
-       }
-      ]
-     },
-     "C12-118": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can prove the Midpoint Theorem (the segment joining midpoints of two sides of a triangle is parallel to the third side and half its length) using an auxiliary parallelogram construction.'}",
-        "field": "look_for[1]",
-        "old": "Identifies the three matching elements for the AAS congruence (alternate angles at A and C, vertically opposite angles at Q, and AQ = CQ as the included side between the equal angles).",
-        "new": "Identifies the three matching elements for the congruence (alternate angles at A and C, vertically opposite angles at Q, and AQ = CQ, the side between them) and names ASA (AAS also accepted)."
-       }
-      ]
-     },
-     "C12-119": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can prove the Midpoint Theorem (the segment joining midpoints of two sides of a triangle is parallel to the third side and half its length) using an auxiliary parallelogram construction.'}",
-        "field": "expected_answer",
-        "old": "So ∆APQ ≅ ∆CRQ by AAS.",
-        "new": "So ∆APQ ≅ ∆CRQ by ASA."
-       }
-      ]
-     },
-     "C12-120": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': \"Students can prove Varignon's Theorem (the midpoints of the sides of any quadrilateral are the vertices of a parallelogram) and apply it to determine properties of the Varignon parallelogram.\"}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "in part (c) proves both directions (PQRS square ⟹ AC = BD and AC ⊥ BD, and also the converse).",
-        "new": "in part (c) proves the claim (PQRS square ⟹ AC = BD and AC ⊥ BD), linking each property of the square to a diagonal condition; the converse is a welcome extra."
-       }
-      ]
-     },
-     "C12-121": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': \"Students can prove Varignon's Theorem (the midpoints of the sides of any quadrilateral are the vertices of a parallelogram) and apply it to determine properties of the Varignon parallelogram.\"}",
-        "field": "guide.OPEN_TASK.strong_vs_weak_markers",
-        "old": "addresses only one direction in part (c).",
-        "new": "asserts the claim in part (c) without linking the square's equal sides and right angle to AC = BD and AC ⊥ BD."
-       }
-      ]
-     },
-     "C12-122": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': \"Students can prove Varignon's Theorem (the midpoints of the sides of any quadrilateral are the vertices of a parallelogram) and apply it to determine properties of the Varignon parallelogram.\"}",
-        "field": "guide.OPEN_TASK.reading_the_scaffold",
-        "old": "both forward and converse directions need to be addressed.",
-        "new": "the converse is a worthwhile extra but is not required."
-       }
-      ]
-     },
-     "C12-S3": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U3",
-        "field": "time_bands[3].activity",
-        "old": "Preview the Midpoint Theorem, whose proof",
-        "new": "Mention the Midpoint Theorem, whose proof"
-       }
-      ]
-     },
-     "C12-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U4",
-        "field": "time_bands[1].activity",
-        "old": "Establish ∆APQ ≅ ∆CRQ by AAS",
-        "new": "Establish ∆APQ ≅ ∆CRQ by ASA"
-       },
-       {
-        "where": "U9",
-        "field": "time_bands[0].activity",
-        "old": "cut out roughly 8–10 copies",
-        "new": "cut out 15 copies"
-       },
-       {
-        "where": "U1",
-        "field": "time_bands[2].activity",
-        "old": "ask students to consider which of the named figures tile the plane and what definition",
-        "new": "ask students which of the named figures they would call quadrilaterals and what definition"
-       },
-       {
-        "where": "U1",
-        "field": "visual_aids",
-        "old": "OPENS side by side",
-        "new": "OPENS and BENT side by side"
-       },
-       {
-        "where": "U2",
-        "field": "teacher_notes",
-        "old": "The most common error is asserting that because a quadrilateral has equal opposite sides it must have equal opposite angles without independent proof; stress that each converse needs its own argument.",
-        "new": "The most common error is assuming a converse without proving it (for example, 'equal diagonals ⇒ rectangle' for any quadrilateral); stress that each converse needs its own argument."
-       },
-       {
-        "where": "U2",
-        "field": "time_bands[3].activity",
-        "old": "(diagonal bisects both angles implies rhombus)",
-        "new": "(in a parallelogram, if diagonal AC bisects ∠A it bisects ∠C and ABCD is a rhombus)"
-       },
-       {
-        "where": "U6",
-        "field": "teacher_notes",
-        "old": "when stating the ratio.  End of Chapter Q6 part (iii) — reassembling into 2 congruent triangles using a median of a sub-triangle — is a useful self-study challenge.",
-        "new": "when stating the ratio. End of Chapter Q6 part (iii) — reassembling into 2 congruent triangles using a median of a sub-triangle — is set as homework."
-       },
-       {
-        "where": "U8",
-        "field": "teacher_notes",
-        "old": "The most common error in the reconstruction is placing A' arbitrarily but then forgetting that the position of A' determines all subsequent vertices; stress that once A' is chosen the rest of the construction is forced.",
-        "new": "The most common error in the reconstruction is placing A′ anywhere: every choice of A′ closes up into a quadrilateral with the same Varignon parallelogram, but only A′ placed exactly where A sits relative to PQRS gives a copy of ABCD; once A′ is placed, the rest is forced."
-       },
-       {
-        "where": "U9",
-        "field": "time_bands[2].activity",
-        "old": "Ask students to explain why this works using Theorem 9.",
-        "new": "Ask students to explore why this works (the book leaves the justification as a challenge)."
-       },
-       {
-        "where": "U10",
-        "field": "teacher_notes",
-        "old": "the parallelogram tiling (chapter opening) → any triangle tiles (via the parallelogram) → any 4-gon tiles (via 180° rotation or the Varignon grid).",
-        "new": "the parallelogram tiling (chapter opening) gives the triangle tiling (via the parallelogram); separately, any 4-gon tiles (via 180° rotation or the Varignon grid)."
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[3].activity",
-        "old": "and the tiling theorem —",
-        "new": "and the tiling methods (checked by experiment; the book leaves their proof open) —"
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[1].activity",
-        "old": "(iii) every copy used, whichever neighbour it was rotated from, is a rotation of SOME and hence congruent to it.",
-        "new": "(iii) a new copy reached by a half-turn from either of two neighbours lands in the same place (the book asks students to explain this)."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can define adjacent and opposite sides and angles of a quadrilateral and justify which vertex orderings name the same quadrilateral.'}",
-        "field": "guide.MCQ.what_each_option_reveals.A",
-        "old": "produces a different (self-intersecting) figure.",
-        "new": "produces a different 4-gon (self-intersecting when ABCD is convex)."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can justify why any quadrilateral tiles the plane by explaining Method 1 (180° rotation about edge midpoints) or Method 2 (Varignon parallelogram grid) using the angle-sum and parallelogram properties.'}",
-        "field": "look_for[3]",
-        "old": "no overlaps (rotations do not superimpose interiors).",
-        "new": "no overlaps (each half-turn puts the new copy on the other side of the shared edge)."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -374,7 +190,7 @@
       "Blackboard and chalk",
       "Ruler"
      ],
-     "visual_aids": "Board sketch of figures ABCD, NOPE, SILY, DART, CUTS, OPENS and BENT side by side for classification",
+     "visual_aids": "Board sketch of figures ABCD, NOPE, SILY, DART, CUTS, OPENS side by side for classification",
      "textbook_items_in_class": [
       {
        "id": "E-1",
@@ -402,7 +218,7 @@
       },
       {
        "minutes": "25-38",
-       "activity": "Introduce convexity: a convex quadrilateral has every internal angle less than 180° — DART is non-convex because its angle at D exceeds 180°. Give the diagonal test: diagonals of a convex quadrilateral intersect inside; those of a non-convex one do not. Draw the Venn diagram (non-planar, self-intersecting, non-convex, convex) on the board and place each named figure in the correct region. Pause for the think-and-reflect discussion: ask students which of the named figures they would call quadrilaterals and what definition would cleanly separate the ones they want to include."
+       "activity": "Introduce convexity: a convex quadrilateral has every internal angle less than 180° — DART is non-convex because its angle at D exceeds 180°. Give the diagonal test: diagonals of a convex quadrilateral intersect inside; those of a non-convex one do not. Draw the Venn diagram (non-planar, self-intersecting, non-convex, convex) on the board and place each named figure in the correct region. Pause for the think-and-reflect discussion: ask students to consider which of the named figures tile the plane and what definition would cleanly separate the ones they want to include."
       },
       {
        "minutes": "38-50",
@@ -457,10 +273,10 @@
       },
       {
        "minutes": "40-50",
-       "activity": "Students work on Exercise Set 12.2 Q1, p.60 (true/false on rectangle and rhombus properties) and Exercise Set 12.2 Q2, p.60 (in a parallelogram, if diagonal AC bisects ∠A it bisects ∠C and ABCD is a rhombus). Discuss answers: for Q1(ii), students often confuse 'rhombus with perpendicular diagonals' with 'square' — draw a counterexample on the board."
+       "activity": "Students work on Exercise Set 12.2 Q1, p.60 (true/false on rectangle and rhombus properties) and Exercise Set 12.2 Q2, p.60 (diagonal bisects both angles implies rhombus). Discuss answers: for Q1(ii), students often confuse 'rhombus with perpendicular diagonals' with 'square' — draw a counterexample on the board."
       }
      ],
-     "teacher_notes": "Building on the precise definition established for quadrilaterals, this unit moves to the most important special family — parallelograms — and makes the logic of converse explicit for the first time in the chapter. The most common error is assuming a converse without proving it (for example, 'equal diagonals ⇒ rectangle' for any quadrilateral); stress that each converse needs its own argument. Exercise Set 12.2 Q3, p.60 is a good self-study item on further converses involving diagonals.",
+     "teacher_notes": "Building on the precise definition established for quadrilaterals, this unit moves to the most important special family — parallelograms — and makes the logic of converse explicit for the first time in the chapter. The most common error is asserting that because a quadrilateral has equal opposite sides it must have equal opposite angles without independent proof; stress that each converse needs its own argument. Exercise Set 12.2 Q3, p.60 is a good self-study item on further converses involving diagonals.",
      "homework": [
       "Exercise Set 12.2 Q4, p.60 — show that the angle bisectors of a parallelogram with unequal adjacent sides (AB ≠ BC) meet in a rectangle."
      ]
@@ -508,7 +324,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Brief class discussion: in what situations within this chapter will a parallelogram appear as an auxiliary construction rather than as the main object? Mention the Midpoint Theorem, whose proof deliberately constructs a parallelogram to solve a seemingly unrelated triangle problem."
+       "activity": "Brief class discussion: in what situations within this chapter will a parallelogram appear as an auxiliary construction rather than as the main object? Preview the Midpoint Theorem, whose proof deliberately constructs a parallelogram to solve a seemingly unrelated triangle problem."
       }
      ],
      "teacher_notes": "Having established all five parallelogram theorems, this unit pivots to their role as a problem-solving instrument; the real and geometric applications make the abstraction concrete before it is used in proof. Students frequently try to prove APCQ is a parallelogram by showing two pairs of equal sides rather than using the diagonal bisection criterion from Theorem 4 — encourage them to see which criterion they can reach most directly from the given information. End of Chapter Q8, p.77 has several valid proofs; asking students which is simplest builds the habit of evaluating arguments.",
@@ -544,7 +360,7 @@
       },
       {
        "minutes": "10-30",
-       "activity": "Guide students through the proof of Theorem 6 (Midpoint Theorem). With P and Q the midpoints of AB and AC, draw on the board the auxiliary line through C parallel to BA, meeting line PQ extended at R. Establish ∆APQ ≅ ∆CRQ by ASA (∠AQP = ∠CQR vertically opposite, ∠PAQ = ∠RCQ alternate angles, AQ = CQ). Read off PQ = QR and CR = AP = PB. Show BCRP is a parallelogram by Theorem 5 (equal and parallel sides BP and CR). Conclude PQ is parallel to BC and PQ = BC/2. Reflect briefly on how the auxiliary line — invisible in the problem statement — is the key move, and that such constructions are learnt by reading many proofs. Introduce the think-and-reflect prompt: if a segment PQ joins a point on one side to a point on a second side, is parallel to the third side, and is half its length, must P and Q be midpoints?"
+       "activity": "Guide students through the proof of Theorem 6 (Midpoint Theorem). With P and Q the midpoints of AB and AC, draw on the board the auxiliary line through C parallel to BA, meeting line PQ extended at R. Establish ∆APQ ≅ ∆CRQ by AAS (∠AQP = ∠CQR vertically opposite, ∠PAQ = ∠RCQ alternate angles, AQ = CQ). Read off PQ = QR and CR = AP = PB. Show BCRP is a parallelogram by Theorem 5 (equal and parallel sides BP and CR). Conclude PQ is parallel to BC and PQ = BC/2. Reflect briefly on how the auxiliary line — invisible in the problem statement — is the key move, and that such constructions are learnt by reading many proofs. Introduce the think-and-reflect prompt: if a segment PQ joins a point on one side to a point on a second side, is parallel to the third side, and is half its length, must P and Q be midpoints?"
       },
       {
        "minutes": "30-42",
@@ -652,7 +468,7 @@
       },
       {
        "minutes": "10-35",
-       "activity": "Prove Theorem 8 (Centroid Theorem) following the textbook argument. Focus first on medians CP and BQ meeting at M; mark midpoints X of BM and Y of CM. The Midpoint Theorem in ∆ABC gives PQ ∥ BC and PQ = BC/2; the Midpoint Theorem in ∆MBC gives XY ∥ BC and XY = BC/2. So PQ = XY and PQ ∥ XY, making PQYX a parallelogram (Theorem 5). Conclude MQ = MX = XB, so BM = 2MQ; similarly CM = 2MP. Thus M divides BQ in ratio 2:1 and CP in ratio 2:1. Repeat for medians AR and BQ meeting at N to get BN:NQ = 2:1, and since only one point divides BQ in that ratio, N = M. Introduce the think-and-reflect prompt: give an alternative proof by extending AM to a carefully chosen point S so that BSCM is a parallelogram, and decide where M must lie on AS."
+       "activity": "Prove Theorem 8 (Centroid Theorem) following the textbook argument. Focus first on medians CP and BQ meeting at M; mark midpoints X of BM and Y of CM. The Midpoint Theorem in ∆ABC gives PQ ∥ BC and PQ = BC/2; the Midpoint Theorem in ∆MBC gives XY ∥ BC and XY = BC/2. So PQ = XY and PQ ∥ XY, making PQYX (or PQYX reordered as needed) a parallelogram. Conclude MQ = MX = XB, so BM = 2MQ; similarly CM = 2MP. Thus M divides BQ in ratio 2:1 and CP in ratio 2:1. Repeat for medians AR and BQ meeting at N to get BN:NQ = 2:1, and since only one point divides BQ in that ratio, N = M. Introduce the think-and-reflect prompt: give an alternative proof by extending AM to a carefully chosen point S so that BSCM is a parallelogram, and decide where M must lie on AS."
       },
       {
        "minutes": "35-48",
@@ -663,7 +479,7 @@
        "activity": "Brief oral check: ask two students to state the Centroid Theorem in their own words, including the ratio and which part of each median is longer."
       }
      ],
-     "teacher_notes": "The experimental opening is important here — students who measure the ratio 2:1 across multiple triangles arrive at the proof already convinced it is true and curious about why. A persistent error is confusing which segment is twice the other: students sometimes say the segment from vertex to centroid is the shorter half; insist they name the vertices when stating the ratio. End of Chapter Q6 part (iii) — reassembling into 2 congruent triangles using a median of a sub-triangle — is set as homework.",
+     "teacher_notes": "The experimental opening is important here — students who measure the ratio 2:1 across multiple triangles arrive at the proof already convinced it is true and curious about why. A persistent error is confusing which segment is twice the other: students sometimes say the segment from vertex to centroid is the shorter half; insist they name the vertices when stating the ratio.  End of Chapter Q6 part (iii) — reassembling into 2 congruent triangles using a median of a sub-triangle — is a useful self-study challenge.",
      "homework": [
       "End of Chapter Q6, p.76 part (iii) — cut ∆ABC into 2 congruent triangles using the median AP and then a median of ∆APB."
      ]
@@ -786,7 +602,7 @@
        "activity": "End of Chapter Q14, p.79 as a brief group discussion: must P, Q, R, S be midpoints if PQRS is a parallelogram? Students recall that the converse of Theorem 9 is not necessarily true — a counterexample (a specific non-midpoint placement that still yields a parallelogram) is sketched on the board."
       }
      ],
-     "teacher_notes": "Having proved Varignon's Theorem, this unit tests whether students can use it in reverse — a genuine problem-solving demand that the theorem enables rather than merely illustrates. The most common error in the reconstruction is placing A′ anywhere: every choice of A′ closes up into a quadrilateral with the same Varignon parallelogram, but only A′ placed exactly where A sits relative to PQRS gives a copy of ABCD; once A′ is placed, the rest is forced. End of Chapter Q12, p.79 (trisecting a diagonal using midpoints of a parallelogram, then generalising to three methods of segment trisection) is a rich self-study extension.",
+     "teacher_notes": "Having proved Varignon's Theorem, this unit tests whether students can use it in reverse — a genuine problem-solving demand that the theorem enables rather than merely illustrates. The most common error in the reconstruction is placing A' arbitrarily but then forgetting that the position of A' determines all subsequent vertices; stress that once A' is chosen the rest of the construction is forced. End of Chapter Q12, p.79 (trisecting a diagonal using midpoints of a parallelogram, then generalising to three methods of segment trisection) is a rich self-study extension.",
      "homework": []
     },
     {
@@ -823,7 +639,7 @@
      "time_bands": [
       {
        "minutes": "0-10",
-       "activity": "Return to the chapter's opening question: can any quadrilateral tile the plane? Students trace an irregular 4-gon SOME from the board, cut out 15 copies, and attempt to tile a region of their desk. Ask: what happens at each vertex where copies meet? What must the angles at that vertex sum to? Establish that the angles around any interior vertex of a tiling total 360°."
+       "activity": "Return to the chapter's opening question: can any quadrilateral tile the plane? Students trace an irregular 4-gon SOME from the board, cut out roughly 8–10 copies, and attempt to tile a region of their desk. Ask: what happens at each vertex where copies meet? What must the angles at that vertex sum to? Establish that the angles around any interior vertex of a tiling total 360°."
       },
       {
        "minutes": "10-25",
@@ -831,14 +647,14 @@
       },
       {
        "minutes": "25-42",
-       "activity": "Introduce Method 1 formally: rotate a copy of SOME through 180° about the midpoint of one edge (e.g. edge OM) to get a second copy sharing that edge; repeat at every edge of every copy placed. Students describe on paper why each new copy is identical to SOME (a 180° rotation preserves shape) and why the angles at each shared vertex sum to 360°. Then introduce Method 2: the Varignon parallelograms of all copies in the tiling form a grid; draw that grid, place copies of SOME on the shaded cells so each copy's Varignon parallelogram is its cell, and observe that the gaps are automatically further copies of SOME. Ask students to explore why this works (the book leaves the justification as a challenge)."
+       "activity": "Introduce Method 1 formally: rotate a copy of SOME through 180° about the midpoint of one edge (e.g. edge OM) to get a second copy sharing that edge; repeat at every edge of every copy placed. Students describe on paper why each new copy is identical to SOME (a 180° rotation preserves shape) and why the angles at each shared vertex sum to 360°. Then introduce Method 2: the Varignon parallelograms of all copies in the tiling form a grid; draw that grid, place copies of SOME on the shaded cells so each copy's Varignon parallelogram is its cell, and observe that the gaps are automatically further copies of SOME. Ask students to explain why this works using Theorem 9."
       },
       {
        "minutes": "42-50",
        "activity": "Students work on Exercise Set 12.4 Q2, p.75: draw non-convex 4-gon DART and show it tiles the plane by both methods, then state which they prefer and why. The think-and-reflect prompt is embedded here: take four copies of SOME and fit them around a common point so each angle appears once, and confirm this is consistent with the method chosen."
       }
      ],
-     "teacher_notes": "The chapter's opening promise — that any quadrilateral tiles the plane — is answered here; the payoff is genuinely motivating for students who have been carrying that question. The most common confusion in Method 2 is identifying which cells of the Varignon grid to shade; help students see that one cell in four is shaded (every second cell along both directions, as in Fig. 12.32) and that each gap between the placed copies is itself a copy. Exercise Set 12.4 Q2, p.75 is done in class, but End of Chapter Q1, p.75 (tiling with any triangle using the parallelogram tiling) is a natural extension for homework.",
+     "teacher_notes": "The chapter's opening promise — that any quadrilateral tiles the plane — is answered here; the payoff is genuinely motivating for students who have been carrying that question. The most common confusion in Method 2 is identifying which cells of the Varignon grid to shade; help students see that exactly alternate cells are shaded (like a checkerboard on the parallelogram grid) and that each unshaded gap between shaded copies is itself a copy. Exercise Set 12.4 Q2, p.75 is done in class, but End of Chapter Q1, p.75 (tiling with any triangle using the parallelogram tiling) is a natural extension for homework.",
      "homework": [
       "End of Chapter Q1, p.75 — using a fact about parallelograms, show how to tile the plane with copies of any given triangle."
      ]
@@ -882,7 +698,7 @@
       },
       {
        "minutes": "15-30",
-       "activity": "Students work in pairs to write a complete justification of why Method 1 of the 4-gon tiling always works: (i) a 180° rotation about an edge midpoint produces a copy identical to SOME sharing that full edge; (ii) when four copies meet at any vertex of the tiling, the four angles present are ∠1, ∠2, ∠3 and ∠4, which sum to 360°, so there are no gaps or overlaps; (iii) a new copy reached by a half-turn from either of two neighbours lands in the same place (the book asks students to explain this). Pairs share their justifications and the class agrees on a complete version."
+       "activity": "Students work in pairs to write a complete justification of why Method 1 of the 4-gon tiling always works: (i) a 180° rotation about an edge midpoint produces a copy identical to SOME sharing that full edge; (ii) when four copies meet at any vertex of the tiling, the four angles present are ∠1, ∠2, ∠3 and ∠4, which sum to 360°, so there are no gaps or overlaps; (iii) every copy used, whichever neighbour it was rotated from, is a rotation of SOME and hence congruent to it. Pairs share their justifications and the class agrees on a complete version."
       },
       {
        "minutes": "30-42",
@@ -890,10 +706,10 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Chapter synthesis: students name, in order, the main results proved — Definition 1, Theorems 1–5 on parallelograms, Theorems 6–7 on midpoints of triangles, Theorem 8 on the centroid, Theorem 9 (Varignon), and the tiling methods (checked by experiment; the book leaves their proof open) — and identify which result depended on which. Pose the chapter's final think-and-reflect: four copies of any 4-gon can always be fitted around a common point with each angle used once; use this to explain, without further calculation, why the tiling of Method 1 has no gaps."
+       "activity": "Chapter synthesis: students name, in order, the main results proved — Definition 1, Theorems 1–5 on parallelograms, Theorems 6–7 on midpoints of triangles, Theorem 8 on the centroid, Theorem 9 (Varignon), and the tiling theorem — and identify which result depended on which. Pose the chapter's final think-and-reflect: four copies of any 4-gon can always be fitted around a common point with each angle used once; use this to explain, without further calculation, why the tiling of Method 1 has no gaps."
       }
      ],
-     "teacher_notes": "Bringing the triangle tiling result back at the start of this unit completes the logical chain: the parallelogram tiling (chapter opening) gives the triangle tiling (via the parallelogram); separately, any 4-gon tiles (via 180° rotation or the Varignon grid). The most common difficulty with the self-intersecting angle sum is setting up the two-triangle decomposition correctly — ask students to identify the two triangles and their angle sums separately before combining. End of Chapter Q10, p.78 (counting quadrilaterals formed by four points in general position) is a good self-study problem revisiting Section 12.1 definitions.",
+     "teacher_notes": "Bringing the triangle tiling result back at the start of this unit completes the logical chain: the parallelogram tiling (chapter opening) → any triangle tiles (via the parallelogram) → any 4-gon tiles (via 180° rotation or the Varignon grid). The most common difficulty with the self-intersecting angle sum is setting up the two-triangle decomposition correctly — ask students to identify the two triangles and their angle sums separately before combining. End of Chapter Q10, p.78 (counting quadrilaterals formed by four points in general position) is a good self-study problem revisiting Section 12.1 definitions.",
      "homework": []
     }
    ]
@@ -1135,7 +951,7 @@
         "section": 1
        },
        "what_each_option_reveals": {
-        "A": "ABDC reverses the order of C and D, connecting non-adjacent vertices in sequence — this changes which segments are the sides and produces a different 4-gon (self-intersecting when ABCD is convex).",
+        "A": "ABDC reverses the order of C and D, connecting non-adjacent vertices in sequence — this changes which segments are the sides and produces a different (self-intersecting) figure.",
         "B": "ACBD skips B in the cyclic order; this connects A to C directly as a side rather than as a diagonal, forming a different figure.",
         "C": "BACD reverses only the first pair before continuing in a non-cyclic order, skipping C as an adjacent vertex of B in the original figure."
        },
@@ -1283,10 +1099,10 @@
      "graph_paper": false,
      "question_text": "In triangle ABC, P is the midpoint of AB and Q is the midpoint of AC. Prove that PQ is parallel to BC and PQ = BC/2. Your proof must introduce the auxiliary line through C parallel to AB, name the congruence criterion used, and state which parallelogram theorem you apply to conclude the result.",
      "options": [],
-     "expected_answer": "Draw line l through C parallel to AB, meeting line PQ extended at R. In triangles APQ and CRQ: ∠PAQ = ∠RCQ (alternate angles, since AB ∥ CR and AC is a transversal), ∠AQP = ∠CQR (vertically opposite), and AQ = CQ (Q is the midpoint of AC). So ∆APQ ≅ ∆CRQ by ASA. Therefore PQ = QR and CR = AP = PB (since P is the midpoint of AB). Now BP = CR and BP ∥ CR (both parallel to AB), so by Theorem 5 BCRP is a parallelogram. Hence PR ∥ BC and PR = BC. Since PQ = QR = PR/2, we get PQ = BC/2 and PQ ∥ BC.",
+     "expected_answer": "Draw line l through C parallel to AB, meeting line PQ extended at R. In triangles APQ and CRQ: ∠PAQ = ∠RCQ (alternate angles, since AB ∥ CR and AC is a transversal), ∠AQP = ∠CQR (vertically opposite), and AQ = CQ (Q is the midpoint of AC). So ∆APQ ≅ ∆CRQ by AAS. Therefore PQ = QR and CR = AP = PB (since P is the midpoint of AB). Now BP = CR and BP ∥ CR (both parallel to AB), so by Theorem 5 BCRP is a parallelogram. Hence PR ∥ BC and PR = BC. Since PQ = QR = PR/2, we get PQ = BC/2 and PQ ∥ BC.",
      "look_for": [
       "Correctly introduces the auxiliary line through C parallel to AB.",
-      "Identifies the three matching elements for the congruence (alternate angles at A and C, vertically opposite angles at Q, and AQ = CQ, the side between them) and names ASA (AAS also accepted).",
+      "Identifies the three matching elements for the AAS congruence (alternate angles at A and C, vertically opposite angles at Q, and AQ = CQ as the included side between the equal angles).",
       "Concludes CR = AP = PB from the congruence.",
       "Recognises BCRP as a parallelogram by Theorem 5 (one pair of sides BP and CR equal and parallel) and reads off PR ∥ BC and PR = BC.",
       "Concludes PQ = BC/2 using PQ = QR = PR/2."
@@ -1429,8 +1245,8 @@
        "format_type": "Proof or derivation",
        "format_rationale": "The implied LO requires students to prove Varignon's Theorem and evaluate a claim about the Varignon parallelogram — a multi-step deductive argument whose quality lives in the written reasoning, making the proof/derivation vehicle the natural choice.",
        "what_this_demonstrates": "Students demonstrate that they can construct a deductive proof using the Midpoint Theorem as a tool (not just state it), identify the shape of the Varignon parallelogram from diagonal conditions, and critically evaluate a further claim about the relationship between the Varignon parallelogram and the original quadrilateral's diagonals.",
-       "reading_the_scaffold": "Part (a) scaffold points to the auxiliary diagonal; a strong response uses AC in ∆ABC and ∆ADC to get PQ ∥ AC ∥ SR and PQ = SR = AC/2, then invokes Theorem 5. Part (b) scaffold points to PQ = AC/2 and QR = BD/2; when AC = BD, all four sides of PQRS are equal, so PQRS is a rhombus. Part (c) follows from part (b): if PQRS is a square it is both a rhombus (AC = BD, from equal sides) and a rectangle (PQ ⊥ QR, so AC ⊥ BD); the converse is a worthwhile extra but is not required.",
-       "strong_vs_weak_markers": "Strong: introduces one diagonal and applies the Midpoint Theorem twice explicitly; names Theorem 5 to conclude PQRS is a parallelogram; in part (b) connects side lengths of PQRS to halves of the diagonals of ABCD and names 'rhombus'; in part (c) proves the claim (PQRS square ⟹ AC = BD and AC ⊥ BD), linking each property of the square to a diagonal condition; the converse is a welcome extra. Weak: draws a specific quadrilateral and measures rather than proving; states PQRS is a parallelogram without the two Midpoint Theorem applications; identifies the rhombus in part (b) without justification; asserts the claim in part (c) without linking the square's equal sides and right angle to AC = BD and AC ⊥ BD.",
+       "reading_the_scaffold": "Part (a) scaffold points to the auxiliary diagonal; a strong response uses AC in ∆ABC and ∆ADC to get PQ ∥ AC ∥ SR and PQ = SR = AC/2, then invokes Theorem 5. Part (b) scaffold points to PQ = AC/2 and QR = BD/2; when AC = BD, all four sides of PQRS are equal, so PQRS is a rhombus. Part (c) follows from part (b): if PQRS is a square it is both a rhombus (AC = BD, from equal sides) and a rectangle (PQ ⊥ QR, so AC ⊥ BD); both forward and converse directions need to be addressed.",
+       "strong_vs_weak_markers": "Strong: introduces one diagonal and applies the Midpoint Theorem twice explicitly; names Theorem 5 to conclude PQRS is a parallelogram; in part (b) connects side lengths of PQRS to halves of the diagonals of ABCD and names 'rhombus'; in part (c) proves both directions (PQRS square ⟹ AC = BD and AC ⊥ BD, and also the converse). Weak: draws a specific quadrilateral and measures rather than proving; states PQRS is a parallelogram without the two Midpoint Theorem applications; identifies the rhombus in part (b) without justification; addresses only one direction in part (c).",
        "inclusivity": "Students who find the general quadrilateral abstract can start with a specific example (a rectangle) to verify Varignon's Theorem holds before writing the general proof. As a challenge, ask: does the Varignon construction still yield a parallelogram when ABCD is self-intersecting, and does your proof in part (a) still apply — which step, if any, would need modification?"
       }
      }
@@ -1459,7 +1275,7 @@
       "States that a 180° rotation about the midpoint of an edge maps the edge onto itself (reversing its endpoints), so the rotated copy shares the full edge with its neighbour with no gap.",
       "Identifies that at each interior vertex of the tiling, the four angles from four copies of the quadrilateral present are exactly the four interior angles of the quadrilateral (each used once), which sum to 360° since the angles of any quadrilateral sum to 360°.",
       "Argues that every copy is produced by one or more 180° rotations from the original, and a rotation is an isometry (it preserves shape and size), so every copy is congruent to the original.",
-      "Recognises that together these three points guarantee no gaps (angles fill 360° at every vertex, edges match exactly) and no overlaps (each half-turn puts the new copy on the other side of the shared edge)."
+      "Recognises that together these three points guarantee no gaps (angles fill 360° at every vertex, edges match exactly) and no overlaps (rotations do not superimpose interiors)."
      ],
      "task": "",
      "scaffold": "",

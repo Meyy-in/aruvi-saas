@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T15:17:30",
+  "updated_at": "2026-10-02T15:21:41",
   "items": {
     "04.19": {
       "ios": {
@@ -5427,6 +5427,36 @@
         "at": "2026-10-02T14:39:45",
         "comment": "9000000030: Subscribe on the paywall opens the in-app subscribe wizard; completed a purchase.",
         "build": "Expo Go (Pixel 7 API 34) → Render"
+      },
+      "web": {
+        "status": "n/a",
+        "by": "Kumar",
+        "at": "2026-10-02T15:21:41",
+        "comment": "Phone-only row ('What Subscribe does on the phone'); the web's Subscribe was walked in 01.27/04.34.",
+        "build": ""
+      }
+    },
+    "01.24": {
+      "web": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T15:21:41",
+        "comment": "Same feature as 04.10, walked 2026-10-02 after Privacy Notice v0.4 + WALK-A-172 (003 Read it / 027 Dismiss). Ticked from that walk.",
+        "build": ""
+      },
+      "ios": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T15:21:41",
+        "comment": "Same feature as 04.10, walked 2026-10-02 after Privacy Notice v0.4 + WALK-A-172 (027 Read it). Ticked from that walk.",
+        "build": ""
+      },
+      "and_emu": {
+        "status": "pass",
+        "by": "Kumar",
+        "at": "2026-10-02T15:21:41",
+        "comment": "Same feature as 04.10, walked 2026-10-02 after Privacy Notice v0.4 + WALK-A-172 (003 Dismiss). Ticked from that walk.",
+        "build": ""
       }
     }
   },

@@ -2283,7 +2283,10 @@ DECLARED = {
         ],
     },
     # ── C3 content-correctness check, Part II · chapter 12 (2026-10-02, founder-approved) ──
-    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C12-nn.
+    # Findings: genon/out/content_checks/mathematics_ix_part2_findings.md, ids C12-nn;
+    # C12-101 … C12-122 and C12-S3b from the independent cold review (mathematics_ix_ch12_cold_review.md).
+    # Where a cold-review edit rewrote text an earlier C12 edit had produced, the two were merged into one
+    # entry so the table replays cleanly both on the original files and on the repaired ones.
     'ch_12_canonical_p10.json': {
         'C12-12': [
             {'unit': 8, 'field': 'time_bands[0].activity', 'old': "Guide them: choose any point A' in the plane; since P is the midpoint of A'B', reflect A' through P to get B'; repeat at Q for B' and C', at R for C' and D'.", 'new': 'Guide them: place A′ in the same position relative to PQRS as A (copy triangle SPA from the original, so that PA′ = PA and SA′ = SA); since P is the midpoint of A′B′, reflect A′ through P to get B′; repeat at Q for B′ and C′, at R for C′ and D′.'},
@@ -2319,15 +2322,49 @@ DECLARED = {
             {'unit': 8, 'field': 'time_bands[1].activity', 'old': "Key step — show that S is collinear with A' and D': since S is the midpoint of DA in the original, and the same construction gives ∆SDR ≅ ∆SD'R by SAS (SR = SR, ∠DSR = ∠D'SR, SD = SD' as S reflects D to D'), we get D'S = DS and D' lies on line A'S.", 'new': 'Key step — show that S is the midpoint of A′D′, so S is collinear with A′ and D′ (the book suggests proving ∆SDR ≅ ∆SD′R); then A′B′C′D′ has the same vertex A and the same side midpoints as ABCD, so it is congruent to ABCD.'},
         ],
         'C12-S3': [
-            {'unit': 3, 'field': 'time_bands[3].activity', 'old': 'Preview that the next unit introduces the Midpoint Theorem, whose proof', 'new': 'Preview the Midpoint Theorem, whose proof'},
+            {'unit': 3, 'field': 'time_bands[3].activity', 'old': 'Preview that the next unit introduces the Midpoint Theorem, whose proof', 'new': 'Mention the Midpoint Theorem, whose proof'},
             {'item_where': {'question_type': 'OPEN_TASK'}, 'field': 'task', 'old': 'the relationship between the diagonals of PQRS and those of ABCD.', 'new': 'the relationship between the sides of PQRS and the diagonals of ABCD.'},
             {'unit': 5, 'field': 'visual_aids', 'old': 'auxiliary median BD', 'new': 'auxiliary diagonal BD'},
         ],
+        'C12-107': [
+            {'unit': 9, 'field': 'teacher_notes', 'old': 'help students see that exactly alternate cells are shaded (like a checkerboard on the parallelogram grid) and that each unshaded gap between shaded copies is itself a copy.', 'new': 'help students see that one cell in four is shaded (every second cell along both directions, as in Fig. 12.32) and that each gap between the placed copies is itself a copy.'},
+        ],
+        'C12-117': [
+            {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'making PQYX (or PQYX reordered as needed) a parallelogram.', 'new': 'making PQYX a parallelogram (Theorem 5).'},
+        ],
+        'C12-118': [
+            {'item_where': {'implied_lo_assessed': 'Students can prove the Midpoint Theorem (the segment joining midpoints of two sides of a triangle is parallel to the third side and half its length) using an auxiliary parallelogram construction.'}, 'field': 'look_for[1]', 'old': 'Identifies the three matching elements for the AAS congruence (alternate angles at A and C, vertically opposite angles at Q, and AQ = CQ as the included side between the equal angles).', 'new': 'Identifies the three matching elements for the congruence (alternate angles at A and C, vertically opposite angles at Q, and AQ = CQ, the side between them) and names ASA (AAS also accepted).'},
+        ],
+        'C12-119': [
+            {'item_where': {'implied_lo_assessed': 'Students can prove the Midpoint Theorem (the segment joining midpoints of two sides of a triangle is parallel to the third side and half its length) using an auxiliary parallelogram construction.'}, 'field': 'expected_answer', 'old': 'So ∆APQ ≅ ∆CRQ by AAS.', 'new': 'So ∆APQ ≅ ∆CRQ by ASA.'},
+        ],
+        'C12-120': [
+            {'item_where': {'implied_lo_assessed': "Students can prove Varignon's Theorem (the midpoints of the sides of any quadrilateral are the vertices of a parallelogram) and apply it to determine properties of the Varignon parallelogram."}, 'field': 'guide.OPEN_TASK.strong_vs_weak_markers', 'old': 'in part (c) proves both directions (PQRS square ⟹ AC = BD and AC ⊥ BD, and also the converse).', 'new': 'in part (c) proves the claim (PQRS square ⟹ AC = BD and AC ⊥ BD), linking each property of the square to a diagonal condition; the converse is a welcome extra.'},
+        ],
+        'C12-121': [
+            {'item_where': {'implied_lo_assessed': "Students can prove Varignon's Theorem (the midpoints of the sides of any quadrilateral are the vertices of a parallelogram) and apply it to determine properties of the Varignon parallelogram."}, 'field': 'guide.OPEN_TASK.strong_vs_weak_markers', 'old': 'addresses only one direction in part (c).', 'new': "asserts the claim in part (c) without linking the square's equal sides and right angle to AC = BD and AC ⊥ BD."},
+        ],
+        'C12-122': [
+            {'item_where': {'implied_lo_assessed': "Students can prove Varignon's Theorem (the midpoints of the sides of any quadrilateral are the vertices of a parallelogram) and apply it to determine properties of the Varignon parallelogram."}, 'field': 'guide.OPEN_TASK.reading_the_scaffold', 'old': 'both forward and converse directions need to be addressed.', 'new': 'the converse is a worthwhile extra but is not required.'},
+        ],
+        'C12-S3b': [
+            {'unit': 4, 'field': 'time_bands[1].activity', 'old': 'Establish ∆APQ ≅ ∆CRQ by AAS', 'new': 'Establish ∆APQ ≅ ∆CRQ by ASA'},
+            {'unit': 9, 'field': 'time_bands[0].activity', 'old': 'cut out roughly 8–10 copies', 'new': 'cut out 15 copies'},
+            {'unit': 1, 'field': 'time_bands[2].activity', 'old': 'ask students to consider which of the named figures tile the plane and what definition', 'new': 'ask students which of the named figures they would call quadrilaterals and what definition'},
+            {'unit': 1, 'field': 'visual_aids', 'old': 'OPENS side by side', 'new': 'OPENS and BENT side by side'},
+            {'unit': 2, 'field': 'teacher_notes', 'old': 'The most common error is asserting that because a quadrilateral has equal opposite sides it must have equal opposite angles without independent proof; stress that each converse needs its own argument.', 'new': "The most common error is assuming a converse without proving it (for example, 'equal diagonals ⇒ rectangle' for any quadrilateral); stress that each converse needs its own argument."},
+            {'unit': 2, 'field': 'time_bands[3].activity', 'old': '(diagonal bisects both angles implies rhombus)', 'new': '(in a parallelogram, if diagonal AC bisects ∠A it bisects ∠C and ABCD is a rhombus)'},
+            {'unit': 6, 'field': 'teacher_notes', 'old': 'when stating the ratio.  End of Chapter Q6 part (iii) — reassembling into 2 congruent triangles using a median of a sub-triangle — is a useful self-study challenge.', 'new': 'when stating the ratio. End of Chapter Q6 part (iii) — reassembling into 2 congruent triangles using a median of a sub-triangle — is set as homework.'},
+            {'unit': 8, 'field': 'teacher_notes', 'old': "The most common error in the reconstruction is placing A' arbitrarily but then forgetting that the position of A' determines all subsequent vertices; stress that once A' is chosen the rest of the construction is forced.", 'new': 'The most common error in the reconstruction is placing A′ anywhere: every choice of A′ closes up into a quadrilateral with the same Varignon parallelogram, but only A′ placed exactly where A sits relative to PQRS gives a copy of ABCD; once A′ is placed, the rest is forced.'},
+            {'unit': 9, 'field': 'time_bands[2].activity', 'old': 'Ask students to explain why this works using Theorem 9.', 'new': 'Ask students to explore why this works (the book leaves the justification as a challenge).'},
+            {'unit': 10, 'field': 'teacher_notes', 'old': 'the parallelogram tiling (chapter opening) → any triangle tiles (via the parallelogram) → any 4-gon tiles (via 180° rotation or the Varignon grid).', 'new': 'the parallelogram tiling (chapter opening) gives the triangle tiling (via the parallelogram); separately, any 4-gon tiles (via 180° rotation or the Varignon grid).'},
+            {'unit': 10, 'field': 'time_bands[3].activity', 'old': 'and the tiling theorem —', 'new': 'and the tiling methods (checked by experiment; the book leaves their proof open) —'},
+            {'unit': 10, 'field': 'time_bands[1].activity', 'old': '(iii) every copy used, whichever neighbour it was rotated from, is a rotation of SOME and hence congruent to it.', 'new': '(iii) a new copy reached by a half-turn from either of two neighbours lands in the same place (the book asks students to explain this).'},
+            {'item_where': {'implied_lo_assessed': 'Students can define adjacent and opposite sides and angles of a quadrilateral and justify which vertex orderings name the same quadrilateral.'}, 'field': 'guide.MCQ.what_each_option_reveals.A', 'old': 'produces a different (self-intersecting) figure.', 'new': 'produces a different 4-gon (self-intersecting when ABCD is convex).'},
+            {'item_where': {'implied_lo_assessed': 'Students can justify why any quadrilateral tiles the plane by explaining Method 1 (180° rotation about edge midpoints) or Method 2 (Varignon parallelogram grid) using the angle-sum and parallelogram properties.'}, 'field': 'look_for[3]', 'old': 'no overlaps (rotations do not superimpose interiors).', 'new': 'no overlaps (each half-turn puts the new copy on the other side of the shared edge).'},
+        ],
     },
     'ch_12_canonical_p13.json': {
-        'C12-89': [
-            {'unit': 4, 'field': 'time_bands[2].activity', 'old': "Bridge to the chapter's internal purpose: the text presents", 'new': "Turn to the chapter's own use of them: the text presents"},
-        ],
         'C12-07': [
             {'unit': 10, 'field': 'time_bands[1].activity', 'old': "identify the shared sides (MP and MC/2) and prove congruence by SSS using the Centroid Theorem's 2 : 1 ratio.", 'new': 'place each pair of pieces along their equal half-sides (for example ∆MPB and ∆MPC along PB = PC) and show the angles at P are supplementary, so each pair forms a triangle with sides AM, BM, CM.'},
         ],
@@ -2360,11 +2397,56 @@ DECLARED = {
         ],
         'C12-S3': [
             {'unit': 4, 'field': 'time_bands[2].activity', 'old': 'the text says parallelograms will be used as a tool to prove facts about triangles.', 'new': 'the text presents parallelograms as a tool for proving facts about triangles.'},
-            {'unit': 11, 'field': 'time_bands[3].activity', 'old': 'Preview that Method 2, using the Varignon parallelogram grid, will be developed next unit.', 'new': 'Note that Method 2 uses the Varignon parallelogram grid.'},
+            {'unit': 11, 'field': 'time_bands[3].activity', 'old': 'Preview that Method 2, using the Varignon parallelogram grid, will be developed next unit.', 'new': "The book's Method 2 uses the Varignon parallelogram grid; students answer Exercise Set 12.4 Q2's 'Which do you prefer?' once they have tried both."},
             {'unit': 3, 'field': 'time_bands[2].activity', 'old': 'After five minutes, pairs compare', 'new': 'Then pairs compare'},
             {'unit': 3, 'field': 'teacher_notes', 'old': 'Building on the Theorem 1 proofs completed in the previous unit,', 'new': 'Building on the Theorem 1 proofs,'},
             {'unit': 13, 'field': 'time_bands[2].activity', 'old': '(it may cross itself for self-intersecting ones)', 'new': ''},
             {'item_where': {'question_text': 'A pantograph is a drawing device built as a parallelogram linkage ABCD. As one vertex traces the original drawing, another vertex traces a scaled copy. Which property of a parallelogram is most directly responsible for the pantograph producing an exact copy (at a fixed scale) rather than a distorted one?'}, 'field': 'guide.MCQ.inclusivity', 'old': 'calculate the scale factor of the pantograph if AB = 10 cm and the extension arm beyond B is 5 cm.', 'new': 'explain, with a sketch, why the copy is larger when the pen is farther from the pivot than the tracer.'},
+        ],
+        'C12-104': [
+            {'unit': 12, 'field': 'time_bands[0].activity', 'old': 'Shade alternating parallelograms in the grid.', 'new': 'Shade one cell, then every second cell along both directions of the grid — one cell in four, as in Fig. 12.32.'},
+        ],
+        'C12-105': [
+            {'unit': 12, 'field': 'teacher_notes', 'old': 'Students sometimes place SOME on every parallelogram in the grid rather than on alternating ones — show that placing on all cells causes overlaps at shared edges.', 'new': 'Students sometimes shade too many cells: a copy on every cell makes copies overlap, and a copy on every other cell (a checkerboard) is already the whole tiling with no gaps to discover — the book shades one cell in four.'},
+        ],
+        'C12-106': [
+            {'unit': 12, 'field': 'visual_aids', 'old': 'nine copies of SOME placed on alternating shaded parallelograms', 'new': 'nine copies of SOME placed on shaded parallelograms (one cell in four)'},
+        ],
+        'C12-108': [
+            {'item_where': {'implied_lo_assessed': 'Students can analyse a proposed tiling procedure for a polygon and decide whether it works, using the angle-sum and parallelogram properties to support or refute the claim.'}, 'field': 'guide.MCQ.inclusivity', 'old': 'fold a paper cut-out of a non-convex quadrilateral in half along one edge to simulate the 180° rotation and check physically that the copy fits', 'new': 'trace a paper cut-out of a non-convex quadrilateral, pin the tracing at the midpoint of one edge and turn it through 180° to see the half-turn, then check physically that the copy fits'},
+        ],
+        'C12-114': [
+            {'unit': 1, 'field': 'time_bands[1].activity', 'old': 'Discuss the think-reflect prompt: can the tiling question tell us which quadrilaterals are convex?', 'new': 'Discuss the think-reflect prompt: can we define a quadrilateral ABCD the same way as a triangle?'},
+        ],
+        'C12-115': [
+            {'unit': 8, 'field': 'time_bands[0].activity', 'old': "locate each median (fold a vertex to the opposite side's midpoint)", 'new': 'locate each median (fold a side end to end to find its midpoint, then fold or draw the line from the opposite vertex through it)'},
+        ],
+        'C12-116': [
+            {'unit': 11, 'field': 'time_bands[3].activity', 'old': 'Whole-class share: which method (rotate through 180° or arrange four around a point) produced a tiling of DART most easily? Students justify their preference.', 'new': 'Whole-class share: how did Method 1 handle the non-convex DART? Students describe any difficulty.'},
+        ],
+        'C12-S3b': [
+            {'unit': 5, 'field': 'time_bands[2].activity', 'old': 'Show △APQ ≅ △CRQ by AAS', 'new': 'Show △APQ ≅ △CRQ by ASA'},
+            {'item_where': {'implied_lo_assessed': 'Students can prove the Midpoint Theorem (the segment joining the midpoints of two sides of a triangle is parallel to the third side and half its length) and its converse, identifying the auxiliary construction and the congruence and parallelogram tests used.'}, 'field': 'look_for[1]', 'old': 'Identifies △APQ ≅ △CRQ by AAS', 'new': 'Identifies △APQ ≅ △CRQ by ASA (AAS also accepted)'},
+            {'unit': 7, 'field': 'time_bands[3].activity', 'old': 'the crease crosses AC at its midpoint by the Converse of the Midpoint Theorem applied to the folded image.', 'new': 'since BC ⊥ AB too, the crease ∥ BC, so by the Converse of the Midpoint Theorem it crosses AC at its midpoint.'},
+            {'unit': 11, 'field': 'time_bands[0].activity', 'old': 'cut out 8–10 copies', 'new': 'cut out 15 copies'},
+            {'unit': 3, 'field': 'teacher_notes', 'old': 'Exercise Set 12.2 Q4, p.60 (angle bisectors of a parallelogram forming a rectangle) makes a good independent self-study item for curious students.', 'new': 'Exercise Set 12.2 Q4, p.60 (angle bisectors of a parallelogram forming a rectangle) is set as homework.'},
+            {'unit': 5, 'field': 'time_bands[3].activity', 'old': 'Preview the converse.', 'new': 'Ask: is the converse true?'},
+            {'unit': 9, 'field': 'time_bands[3].activity', 'old': 'Preview the tiling application: the Varignon parallelograms of all copies in a tiling form a regular grid.', 'new': 'Note that the book uses the grid formed by Varignon parallelograms again in Section 12.4.'},
+            {'unit': 5, 'field': 'time_bands[0].activity', 'old': 'locates the midpoints P and Q of sides AB and AC by folding.', 'new': 'locates the midpoints P, Q and R of sides AB, AC and BC by folding.'},
+            {'unit': 5, 'field': 'teacher_notes', 'old': 'confusing Q as the midpoint of AC with the role Q plays as the point where the auxiliary line meets PQ extended — stress that Q is fixed first as the midpoint, and R is the new point created by the auxiliary line.', 'new': 'confusing Q (the midpoint of AC) with R (where the auxiliary line meets PQ extended) — stress that Q is fixed first as the midpoint, and R is the new point created by the auxiliary line.'},
+            {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'then argue that the original triangle can be reconstructed from the medial triangle because all side lengths are known.', 'new': 'then argue that the original triangle can be reconstructed from the medial triangle: through each vertex of PQR draw the line parallel to the opposite side; the three lines meet at A, B and C.'},
+            {'unit': 10, 'field': 'time_bands[0].activity', 'old': 'Students copy the key congruences that make DM pass through AC at AC/3 from A.', 'new': 'Students copy the key step: DM and AO are medians of ∆ABD, so they meet at its centroid, and AE = (2/3)AO = AC/3.'},
+            {'unit': 13, 'field': 'time_bands[3].activity', 'old': 'Students answer in one sentence using the angle-sum argument (four copies around a vertex use exactly 360°).', 'new': 'Students answer in one sentence: yes — four copies fit around a point because the angles sum to 360°, and Method 1 or 2 extends this to the whole plane (a procedure the book checks by experiment).'},
+            {'unit': 13, 'field': 'time_bands[2].activity', 'old': 'as a segment , so', 'new': 'as a segment, so'},
+            {'item_where': {'implied_lo_assessed': 'Students can apply Definition 1 to classify a given figure as a valid quadrilateral, a self-intersecting quadrilateral, a non-convex quadrilateral or a non-planar 4-gon, with justification.'}, 'field': 'guide.MCQ.what_each_option_reveals.C', 'old': 'Confuses the diagonal-intersection criterion with convexity — diagonals intersecting inside is the test for a convex quadrilateral, so this answer picks the wrong category.', 'new': 'Picks the convexity test: diagonals meeting inside the figure mark a convex quadrilateral, not a non-convex one.'},
+            {'item_where': {'implied_lo_assessed': 'Students can prove that a quadrilateral is a parallelogram by applying one of the five characterisation theorems (opposite sides equal, opposite angles equal, diagonals bisect each other, one pair of sides equal and parallel, or opposite angles equal via angle sum), identifying the congruence test used.'}, 'field': 'question_text', 'old': 'why the condition AE = CE and BE = DE is necessary', 'new': 'why the condition AE = CE and BE = DE cannot be dropped'},
+            {'item_where': {'implied_lo_assessed': 'Students can prove that a quadrilateral is a parallelogram by applying one of the five characterisation theorems (opposite sides equal, opposite angles equal, diagonals bisect each other, one pair of sides equal and parallel, or opposite angles equal via angle sum), identifying the congruence test used.'}, 'field': 'look_for[4]', 'old': '(opposite sides not equal, so Theorem 2 fails;', 'new': '(opposite sides not equal, so it is not a parallelogram;'},
+            {'item_where': {'implied_lo_assessed': 'Students can identify the parallelogram property (from Theorems 1–5) that underpins a given physical or geometric application of parallelograms, such as a mechanical linkage or a force-combination law.'}, 'field': 'guide.MCQ.what_each_option_reveals.B', 'old': 'the diagonals bisecting each other keeps the centroid fixed but does not directly produce scaling.', 'new': 'the property is true, but the centre of the linkage moves as it works, and bisecting diagonals say nothing about the pivot, tracer and pen staying in line.'},
+            {'item_where': {'implied_lo_assessed': 'Students can prove the Centroid Theorem (the three medians of a triangle are concurrent and the centroid divides each median in the ratio 2:1 from the vertex) using the Midpoint Theorem applied twice.'}, 'field': 'question_text', 'old': 'stating clearly each application of the Midpoint Theorem and the congruence test used.', 'new': 'stating clearly each application of the Midpoint Theorem and the parallelogram theorem used.'},
+            {'item_where': {'implied_lo_assessed': 'Students can justify that any quadrilateral tiles the plane by arguing from the angle-sum property (four copies placed around a common vertex use exactly 360°) and describe Method 1 (180° rotation about an edge midpoint) and Method 2 (Varignon parallelogram grid) as tiling procedures.'}, 'field': 'guide.OPEN_TASK.inclusivity', 'old': 'and explain which property proved in Section 12.3.2 guarantees that the gaps in Method 2 are further copies of the original quadrilateral.', 'new': "and explain how Varignon's Theorem (Section 12.3.2) is used in it, and why the gaps look like copies of the original quadrilateral."},
+        ],
+        'C12-89': [
+            {'unit': 4, 'field': 'time_bands[2].activity', 'old': "Bridge to the chapter's internal purpose: the text presents", 'new': "Turn to the chapter's own use of them: the text presents"},
         ],
     },
     'ch_12_canonical.json': {
@@ -2396,7 +2478,7 @@ DECLARED = {
             {'unit': 11, 'field': 'time_bands[2].activity', 'old': 'if AC = BD, then PQ = QR = BC/2 = half-diagonal, making PQRS a rhombus', 'new': 'if AC = BD, then PQ = AC/2 = BD/2 = QR, making PQRS a rhombus'},
         ],
         'C12-11': [
-            {'unit': 12, 'field': 'time_bands[0].activity', 'old': "Discuss a counterexample: choose P at one-third of AB, Q at one-third of BC, etc. and show PQRS can still be a parallelogram. Ask: what extra condition would force them to be midpoints? (Answer: if ABCD is any quadrilateral and the parallelogram is specifically the one from Varignon's Theorem, then the midpoints are exactly what produce it.)", 'new': 'Discuss a counterexample: take P with AP = AB/3, Q with BQ = 2BC/3, R with CR = CD/3 and S with AS = AD/3; then PQ and SR are both parallel to AC and PS and QR are both parallel to BD, so PQRS is a parallelogram though no point is a midpoint. Ask: what extra condition would force the midpoints? (For example, PQRS having sides of length exactly AC/2 and BD/2.)'},
+            {'unit': 12, 'field': 'time_bands[0].activity', 'old': "Discuss a counterexample: choose P at one-third of AB, Q at one-third of BC, etc. and show PQRS can still be a parallelogram. Ask: what extra condition would force them to be midpoints? (Answer: if ABCD is any quadrilateral and the parallelogram is specifically the one from Varignon's Theorem, then the midpoints are exactly what produce it.)", 'new': 'Discuss a counterexample: take P with AP = AB/3, Q with BQ = 2BC/3, R with CR = CD/3 and S with AS = AD/3; then PQ and SR are both parallel to AC and PS and QR are both parallel to BD, so PQRS is a parallelogram though no point is a midpoint. Ask: what extra condition would force the midpoints? (For example: PQ ∥ AC with PQ = AC/2 makes P and Q midpoints; PS ∥ BD then makes S a midpoint, and QR ∥ BD makes R one — Theorem 7 each time.)'},
         ],
         'C12-13': [
             {'unit': 12, 'field': 'time_bands[3].activity', 'old': 'why knowing only the Varignon parallelogram is enough to reconstruct the original quadrilateral (up to a free choice of where to place A).', 'new': 'why the Varignon parallelogram together with the position of one vertex is enough to reconstruct the original quadrilateral.'},
@@ -2408,10 +2490,10 @@ DECLARED = {
             {'unit': 15, 'field': 'teacher_notes', 'old': 'the AAS congruence requires verifying the angle at Q (vertical angles) and the angle at A (alternate angles via PQ ∥ CS).', 'new': 'the congruence is SAS: AQ = QC, PQ = QS by construction, and the vertical angles at Q are equal; it then gives CS = AP = PB and CS ∥ AB (alternate angles).'},
         ],
         'C12-20': [
-            {'item_where': {'question_text': 'Quadrilateral PQRS has all four vertices in one plane, no three vertices collinear, and no self-intersection. Its diagonals PR and QS are drawn. Diagonal PR lies entirely inside the quadrilateral, but diagonal QS passes partly outside it. Which of the following correctly describes PQRS?'}, 'field': 'options[3].text', 'old': 'PQRS is non-convex, because its diagonals do not intersect each other inside the figure.', 'new': 'PQRS is non-convex, because one of its diagonals is longer than the other.'},
+            {'item_where': {'implied_lo_assessed': 'Students can determine whether a quadrilateral is convex or non-convex using the internal-angle criterion and the diagonal-intersection test.'}, 'field': 'options[3].text', 'old': 'PQRS is non-convex, because its diagonals do not intersect each other inside the figure.', 'new': 'PQRS is non-convex, because one of its diagonals is longer than the other.'},
         ],
         'C12-21': [
-            {'item_where': {'question_text': 'Quadrilateral PQRS has all four vertices in one plane, no three vertices collinear, and no self-intersection. Its diagonals PR and QS are drawn. Diagonal PR lies entirely inside the quadrilateral, but diagonal QS passes partly outside it. Which of the following correctly describes PQRS?'}, 'field': 'guide.MCQ.what_each_option_reveals.D', 'old': 'Applies the intersection test correctly in direction (non-convex ↔ diagonals do not cross inside) but the stated reason is incomplete — the issue is that QS passes outside the figure, not merely that the diagonals fail to intersect inside; a student choosing D has partially correct reasoning but conflates the failure modes.', 'new': 'Reaches the right verdict for an irrelevant reason — the lengths of the diagonals say nothing about convexity; the test is where the diagonals lie.'},
+            {'item_where': {'implied_lo_assessed': 'Students can determine whether a quadrilateral is convex or non-convex using the internal-angle criterion and the diagonal-intersection test.'}, 'field': 'guide.MCQ.what_each_option_reveals.D', 'old': 'Applies the intersection test correctly in direction (non-convex ↔ diagonals do not cross inside) but the stated reason is incomplete — the issue is that QS passes outside the figure, not merely that the diagonals fail to intersect inside; a student choosing D has partially correct reasoning but conflates the failure modes.', 'new': 'Reaches the right verdict for an irrelevant reason — the lengths of the diagonals say nothing about convexity; the test is where the diagonals lie.'},
         ],
         'C12-22': [
             {'item_where': {'question_text': "Quadrilateral ABCD has the property that its diagonals AC and BD bisect each other at point E (that is, AE = CE and BE = DE). A student writes the following proof that ABCD is a parallelogram:\n\n'Since AE = CE and BE = DE, triangles AEB and CED are congruent by SAS, using the vertical angles at E. Therefore AB = CD. Since the opposite sides are equal, ABCD is a parallelogram.'\n\n(i) Identify the logical error or gap in this proof. (ii) Write a complete, correct proof that ABCD is a parallelogram, naming every congruence criterion and theorem you use."}, 'field': 'look_for[1]', 'old': 'such as a kite', 'new': 'such as an isosceles trapezium'},
@@ -2425,14 +2507,8 @@ DECLARED = {
         'C12-31': [
             {'unit': 7, 'field': 'time_bands[2].activity', 'old': 'Preview the proof strategy (running the proof backwards) to be developed in the next unit.', 'new': 'Note that the book returns to this question in End of Chapter Q22; the next result, Theorem 7, answers a different question — the line through a midpoint parallel to a side.'},
         ],
-        'C12-32': [
-            {'unit': 8, 'field': 'time_bands[0].activity', 'old': "applying Theorem 6 to triangles ABD or ACD to locate MN's relationship to AD.", 'new': 'applying Theorem 7 in triangle ABD (M is the midpoint of AB and MN ∥ BD) to show that MN passes through the midpoint of AD.'},
-        ],
         'C12-33': [
             {'unit': 12, 'field': 'time_bands[1].activity', 'old': 'this means A′ is the reflection of both B′ through P and D′ through S; use a ruler to place A′ at 2·SP – S (the point such that S is the midpoint of A′D′), then construct B′, C′, D′ in turn. Part (ii): show ∆SDR ≅ ∆SD′R by SAS (SD = SD′ since S is the midpoint, SR = SR, ∠DSR = ∠D′SR as constructed), so D = D′ in position and S is correctly collinear with A′ and D′.', 'new': "place A′ where A sits relative to PQRS (copy triangle SPA), then reflect A′ in P to get B′, B′ in Q to get C′, and C′ in R to get D′. Part (ii): show that S is the midpoint of A′D′ — for example via ∆SDR ≅ ∆SD′R, as the book's hint suggests — so A′B′C′D′ has the same side midpoints and the same vertex A as ABCD, and is congruent to it."},
-        ],
-        'C12-34': [
-            {'unit': 14, 'field': 'time_bands[1].activity', 'old': "each gap is bounded by the midpoint-segments of the four surrounding copies, which by Varignon's Theorem form a parallelogram congruent to the Varignon parallelogram of SOME, so it has the right shape to hold another copy.", 'new': 'each gap is bounded by one side of each of the four surrounding copies, and its own Varignon parallelogram is the unshaded cell of the grid; matching sides and midpoints is what makes it a copy of SOME.'},
         ],
         'C12-35': [
             {'unit': 15, 'field': 'time_bands[0].activity', 'old': 'By the Converse Midpoint Theorem, the midpoints of the portions of the crossing lines between the ruled lines are collinear — use this to locate the midpoint of the drawn segment.', 'new': 'Because the ruled lines are equally spaced and parallel, they cut the drawn segment into equal parts (apply Theorem 7, or End of Chapter Q7, repeatedly) — so its midpoint is where it crosses the ruled line halfway between its two ends.'},
@@ -2455,18 +2531,68 @@ DECLARED = {
             {'unit': 11, 'field': 'homework[0]', 'old': ' (Exercise E-28)', 'new': ''},
             {'unit': 13, 'field': 'homework[0]', 'old': ' (Exercise E-16)', 'new': ''},
             {'unit': 12, 'field': 'time_bands[2].activity', 'old': 'Exercise E-13', 'new': 'Exercise Set 12.3 Q5'},
-            {'unit': 16, 'field': 'teacher_notes', 'old': 'from Exercise E-13', 'new': 'from Exercise Set 12.3 Q5'},
             {'unit': 3, 'field': 'time_bands[2].activity', 'old': 'note that this is exactly Theorem 3, which the class will prove in the next unit.', 'new': 'note that this is exactly Theorem 3.'},
             {'unit': 3, 'field': 'time_bands[2].activity', 'old': 'Students work individually for a few minutes then share', 'new': 'Students work individually, then share'},
             {'unit': 6, 'field': 'time_bands[2].activity', 'old': 'This is the Midpoint Theorem, to be proved formally in the next unit.', 'new': 'This is the Midpoint Theorem, to be proved formally.'},
             {'unit': 13, 'field': 'time_bands[0].activity', 'old': 'and experiment for a few minutes trying to arrange', 'new': 'and experiment, trying to arrange'},
-            {'unit': 13, 'field': 'time_bands[3].activity', 'old': 'the formal argument is developed in the next unit.', 'new': 'the formal argument comes later.'},
+            {'unit': 13, 'field': 'time_bands[3].activity', 'old': 'the formal argument is developed in the next unit.', 'new': 'the book leaves the justification as a challenge.'},
             {'unit': 4, 'field': 'time_bands[3].activity', 'old': "as a concise restatement of Theorem 3's converse.", 'new': 'as a concise restatement of Theorem 3.'},
             {'unit': 7, 'field': 'time_bands[1].activity', 'old': '(alternate angles, PQ extended and CR ∥ AP)', 'new': '(alternate angles, transversal AC, since CR ∥ AP)'},
             {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'folds and cuts along PQ, MN (midpoints of the other two sides), producing four small triangles.', 'new': 'folds and cuts along the three segments joining the three midpoints, producing four small triangles.'},
             {'unit': 15, 'field': 'visual_aids', 'old': 'Board diagram for End of Chapter Q13 showing ABCD as a non-convex quadrilateral with its Varignon parallelogram PQRS still intact', 'new': 'Board diagrams for End of Chapter Q2 (the ruled-paper segment) and Q12 (parallelogram ABCD with DM and BN trisecting AC)'},
             {'unit': 16, 'field': 'time_bands[1].activity', 'old': '(d) if the diagonal of ∆ABC (where the diagonal AC is drawn) has its midpoint marked, state what Theorem 7 says about the line through that midpoint parallel to BC.', 'new': '(d) in ∆ABC (cut off by the diagonal AC), mark the midpoint P of AB and state what Theorem 7 says about the line through P parallel to BC.'},
             {'item_where': {'question_text': "A student wants to tile the entire plane using congruent copies of a single irregular quadrilateral SOME, whose four interior angles are labelled 1, 2, 3 and 4.\n\n(i) Explain why four copies of SOME can always be arranged around a common point so that their angles fit together with no gap and no overlap.\n\n(ii) Describe Method 1 (rotation about an edge midpoint) precisely, and justify why each new copy placed by this method fits perfectly along its shared edge and why the angles at each vertex of the tiling always sum to 360°.\n\n(iii) The student claims: 'This only works if SOME is convex.' State whether this claim is correct and give a brief justification."}, 'field': 'look_for[1]', 'old': 'the midpoint M of edge OM', 'new': 'the midpoint of edge OM'},
+        ],
+        'C12-102': [
+            {'unit': 14, 'field': 'time_bands[1].activity', 'old': 'Shade alternate parallelograms in a checkerboard pattern.', 'new': 'Shade one cell, then every second cell along both directions of the grid — one cell in four, as in Fig. 12.32.'},
+        ],
+        'C12-103': [
+            {'unit': 14, 'field': 'time_bands[1].activity', 'old': "Now argue why the gaps between the placed copies are also congruent to SOME: each gap is bounded by the midpoint-segments of the four surrounding copies, which by Varignon's Theorem form a parallelogram congruent to the Varignon parallelogram of SOME, so it has the right shape to hold another copy. Invite students to connect this to Exercise Set 12.3 Q5 (reconstructing ABCD from PQRS) — the reconstruction procedure explains why each gap is an exact copy of SOME.", 'new': 'Now ask why each gap is also a copy of SOME: each gap is bounded by one side from each of the four surrounding copies, and the unshaded cell at its centre would be its Varignon parallelogram. Invite students to connect this to Exercise Set 12.3 Q5 (reconstructing ABCD from PQRS); the book leaves the full justification as a challenge.'},
+        ],
+        'C12-109': [
+            {'unit': 4, 'field': 'time_bands[1].activity', 'old': 'identify triangles AED and CEB, apply SAS (vertical angles at E), read off alternate angles to get AB ∥ CD and AD ∥ BC.', 'new': 'identify triangles AED and CEB, apply SAS (vertical angles at E) and read off alternate angles to get AD ∥ BC; similarly ∆AEB ≅ ∆CED (SAS) gives AB ∥ CD.'},
+        ],
+        'C12-110': [
+            {'unit': 8, 'field': 'time_bands[0].activity', 'old': "ask a student to present the key step — applying Theorem 6 to triangles ABD or ACD to locate MN's relationship to AD. Correct any gap in the midpoint identification. This also consolidates Theorem 6 before moving to its converse.", 'new': 'ask a student to present the key step — Theorem 6 in ∆ABC gives MN ∥ BC; then in ∆ABD the line through the midpoint M parallel to BD meets AD at its midpoint. That second step is exactly Theorem 7, proved next, so use the review to motivate the proof.'},
+        ],
+        'C12-111': [
+            {'unit': 15, 'field': 'teacher_notes', 'old': 'point students to draw DM and locate its intersection with AC by applying the Midpoint Theorem to triangle ABX (where X is on AC).', 'new': 'point students to draw DM and the centre O of the parallelogram: DM and AO are medians of ∆ABD, so DM meets AC at the centroid of ∆ABD, and AX = (2/3)AO = AC/3.'},
+        ],
+        'C12-112': [
+            {'unit': 16, 'field': 'time_bands[3].activity', 'old': 'Each sentence names one theorem and one way it was used to build the tiling argument.', 'new': 'Each sentence names one theorem and one place it was used in the chapter (a proof, a construction or the tiling).'},
+        ],
+        'C12-113': [
+            {'item_where': {'implied_lo_assessed': 'Students can determine whether a quadrilateral is convex or non-convex using the internal-angle criterion and the diagonal-intersection test.'}, 'field': 'guide.MCQ.what_each_option_reveals.A', 'old': 'Misreads the diagonal test — the student believes both diagonals must lie inside for the quadrilateral to be non-convex; they have reversed or misremembered the criterion (one diagonal outside is sufficient for non-convexity).', 'new': 'Ignores the stem, which says QS lies outside; treats both diagonals as inside and so wrongly concludes PQRS is convex (one diagonal outside is enough for non-convexity).'},
+        ],
+        'C12-S3b': [
+            {'item_where': {'implied_lo_assessed': 'Students can determine whether a quadrilateral is convex or non-convex using the internal-angle criterion and the diagonal-intersection test.'}, 'field': 'question_text', 'old': 'but diagonal QS passes partly outside it.', 'new': 'but diagonal QS lies outside it.'},
+            {'unit': 7, 'field': 'time_bands[1].activity', 'old': 'apply AAS to get ∆APQ ≅ ∆CRQ;', 'new': 'apply ASA to get ∆APQ ≅ ∆CRQ;'},
+            {'item_where': {'implied_lo_assessed': 'Students can prove the Midpoint Theorem (Theorem 6) and its converse (Theorem 7) using the auxiliary-line construction and parallelogram tests.'}, 'field': 'look_for[1]', 'old': 'and states AAS congruence:', 'new': 'and states the congruence (ASA; AAS also accepted):'},
+            {'unit': 7, 'field': 'teacher_notes', 'old': 'A common sign error is to apply AAS in the wrong order for triangles APQ and CRQ;', 'new': 'A common error is to match the vertices of triangles APQ and CRQ in the wrong order;'},
+            {'unit': 9, 'field': 'time_bands[0].activity', 'old': 'and then apply Theorem 7 or its converse to show the crease meets AC at its midpoint.', 'new': 'and then, since the crease ⊥ AB and BC ⊥ AB, the crease ∥ BC, so by Theorem 7 it meets AC at its midpoint.'},
+            {'unit': 10, 'field': 'time_bands[1].activity', 'old': '(Theorem 5 or 2)', 'new': '(Theorem 5)'},
+            {'unit': 11, 'field': 'time_bands[2].activity', 'old': 'Special case: if ABCD is such that all four midpoints are collinear, the Varignon parallelogram collapses to a segment.', 'new': 'Special case: when AC ∥ BD (possible only for a self-intersecting ABCD), PQ and QR are parallel and the Varignon parallelogram collapses to a segment.'},
+            {'unit': 11, 'field': 'teacher_notes', 'old': 'requires the four sides of ABCD to be such that AC and BD are parallel', 'new': 'requires the diagonals AC and BD to be parallel'},
+            {'unit': 11, 'field': 'time_bands[3].activity', 'old': 'Think-and-reflect: the section closes with an invitation', 'new': "Think-and-reflect: return to the section's invitation"},
+            {'unit': 12, 'field': 'visual_aids', 'old': 'by reflecting PQRS vertices through each other', 'new': 'by reflecting A′ in P, B′ in Q and C′ in R'},
+            {'unit': 12, 'field': 'time_bands[2].activity', 'old': 'to catch sign errors in the reflection step.', 'new': 'to catch placement errors in the reflection step.'},
+            {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'Bridge to geometry: announce that', 'new': 'Announce that'},
+            {'unit': 6, 'field': 'time_bands[1].activity', 'old': 'marks the midpoints P (of AB) and Q (of AC) by folding,', 'new': 'marks the midpoints P (of AB), Q (of AC) and R (of BC) by folding,'},
+            {'unit': 4, 'field': 'teacher_notes', 'old': 'Theorems 3, 4 and 5 are all converses,', 'new': 'Theorems 3 and 4 are converses and Theorem 5 is a further test,'},
+            {'unit': 13, 'field': 'time_bands[1].activity', 'old': 'Ask students to explain why the new copy is the same shape regardless of which neighbour it is rotated from,', 'new': 'Ask students to explain why a new copy reached by rotating either of its neighbours lands in the same place,'},
+            {'item_where': {'implied_lo_assessed': 'Students can justify why any quadrilateral tiles the plane using Method 1 (rotation through 180° about an edge midpoint) or Method 2 (Varignon-grid placement), citing the angle-sum and Varignon conditions.'}, 'field': 'look_for[2]', 'old': 'Explains why the new copy is the same shape regardless of which neighbour it is rotated from — a 180° rotation is an isometry, so the copy is always congruent to SOME.', 'new': 'Explains that a 180° rotation is an isometry, so every copy is congruent to SOME (and, for a strong answer, why rotating from either neighbour puts a new copy in the same place).'},
+            {'unit': 13, 'field': 'time_bands[0].activity', 'old': 'cut out 10–12 copies', 'new': 'cut out 15 copies'},
+            {'unit': 14, 'field': 'time_bands[3].activity', 'old': 'Close by noting that the Varignon-grid method requires a justification, which the class has now constructed.', 'new': 'Close by noting that the Varignon-grid method requires a justification, which the book leaves as a challenge; the class has argued it informally.'},
+            {'unit': 15, 'field': 'time_bands[3].activity', 'old': "Varignon's Theorem (Theorem 9), and that any 4-gon tiles the plane.", 'new': "Varignon's Theorem (Theorem 9), and argued that any 4-gon tiles the plane."},
+            {'unit': 12, 'field': 'time_bands[3].activity', 'old': 'This connects to the tiling method in Section 12.4, previewed briefly.', 'new': 'The same idea is used for the tiling method in Section 12.4.'},
+            {'unit': 12, 'field': 'teacher_notes', 'old': 'can be mentioned to give students a preview of where this is heading.', 'new': 'can be mentioned.'},
+            {'unit': 13, 'field': 'time_bands[3].activity', 'old': 'Preview Method 2 on the board:', 'new': 'Sketch Method 2 on the board:'},
+            {'unit': 15, 'field': 'activity_title', 'old': 'Completing the Tiling Chapter — Harder Problems on Section 12.4', 'new': 'Harder Problems Across the Chapter — Midpoints and Parallelograms'},
+            {'unit': 16, 'field': 'textbook_items_in_class[0].description', 'old': 'and how many are self-intersecting and convex.', 'new': 'how many are self-intersecting, and how many are convex.'},
+            {'item_where': {'implied_lo_assessed': 'Students can justify why any quadrilateral tiles the plane using Method 1 (rotation through 180° about an edge midpoint) or Method 2 (Varignon-grid placement), citing the angle-sum and Varignon conditions.'}, 'field': 'look_for[3]', 'old': '(it was established for non-convex quadrilaterals in Section 12.1)', 'new': '(known from earlier grades; the book uses it in Section 12.2 and End of Chapter Q3)'},
+            {'item_where': {'implied_lo_assessed': "Students can integrate the chapter's definitions, parallelogram tests, Midpoint Theorem, Centroid Theorem, and Varignon's Theorem to analyse a novel quadrilateral scenario, selecting and combining the appropriate results to reach and justify a conclusion."}, 'field': 'task', 'old': '(4) Method 2 for tiling uses the Varignon parallelogram. Describe,', 'new': '(4) Describe,'},
+            {'item_where': {'implied_lo_assessed': "Students can integrate the chapter's definitions, parallelogram tests, Midpoint Theorem, Centroid Theorem, and Varignon's Theorem to analyse a novel quadrilateral scenario, selecting and combining the appropriate results to reach and justify a conclusion."}, 'field': 'guide.OPEN_TASK.strong_vs_weak_markers', 'old': 'gives all three matching parts for each congruence, ', 'new': ''},
+            {'unit': 16, 'field': 'teacher_notes', 'old': 'the diagonals-equal condition from Exercise E-13 is the key:', 'new': 'the diagonals-equal condition from Exercise Set 12.3 Q4(ii) and Q5(iii) is the key:'},
         ],
     },
     # ── C3 content-correctness check, Part II · chapter 13 (2026-10-02, founder-approved) ──

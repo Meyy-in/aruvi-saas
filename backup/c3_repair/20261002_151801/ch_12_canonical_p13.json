@@ -198,209 +198,6 @@
       ]
      }
     }
-   },
-   {
-    "tool": "genon/repair_c3.py v1.0",
-    "at": "2026-10-02T15:18:01",
-    "reason": "C3 defect repair (testing.md C3 · S4 mathematics·secondary). Generic passes derive their value from the summary, the Pedagogy document or the schema; declared edits are hand-written per instance and listed with their defect id. No pedagogical content was regenerated: register and continuity edits delete or rephrase a clause whose content is already named, and word-count edits shorten a label without adding a fact.",
-    "defects": {
-     "C12-104": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U12",
-        "field": "time_bands[0].activity",
-        "old": "Shade alternating parallelograms in the grid.",
-        "new": "Shade one cell, then every second cell along both directions of the grid — one cell in four, as in Fig. 12.32."
-       }
-      ]
-     },
-     "C12-105": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U12",
-        "field": "teacher_notes",
-        "old": "Students sometimes place SOME on every parallelogram in the grid rather than on alternating ones — show that placing on all cells causes overlaps at shared edges.",
-        "new": "Students sometimes shade too many cells: a copy on every cell makes copies overlap, and a copy on every other cell (a checkerboard) is already the whole tiling with no gaps to discover — the book shades one cell in four."
-       }
-      ]
-     },
-     "C12-106": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U12",
-        "field": "visual_aids",
-        "old": "nine copies of SOME placed on alternating shaded parallelograms",
-        "new": "nine copies of SOME placed on shaded parallelograms (one cell in four)"
-       }
-      ]
-     },
-     "C12-108": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "item{'implied_lo_assessed': 'Students can analyse a proposed tiling procedure for a polygon and decide whether it works, using the angle-sum and parallelogram properties to support or refute the claim.'}",
-        "field": "guide.MCQ.inclusivity",
-        "old": "fold a paper cut-out of a non-convex quadrilateral in half along one edge to simulate the 180° rotation and check physically that the copy fits",
-        "new": "trace a paper cut-out of a non-convex quadrilateral, pin the tracing at the midpoint of one edge and turn it through 180° to see the half-turn, then check physically that the copy fits"
-       }
-      ]
-     },
-     "C12-114": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U1",
-        "field": "time_bands[1].activity",
-        "old": "Discuss the think-reflect prompt: can the tiling question tell us which quadrilaterals are convex?",
-        "new": "Discuss the think-reflect prompt: can we define a quadrilateral ABCD the same way as a triangle?"
-       }
-      ]
-     },
-     "C12-115": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U8",
-        "field": "time_bands[0].activity",
-        "old": "locate each median (fold a vertex to the opposite side's midpoint)",
-        "new": "locate each median (fold a side end to end to find its midpoint, then fold or draw the line from the opposite vertex through it)"
-       }
-      ]
-     },
-     "C12-116": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U11",
-        "field": "time_bands[3].activity",
-        "old": "Whole-class share: which method (rotate through 180° or arrange four around a point) produced a tiling of DART most easily? Students justify their preference. Note that Method 2 uses the Varignon parallelogram grid.",
-        "new": "Whole-class share: how did Method 1 handle the non-convex DART? Students describe any difficulty. The book's Method 2 uses the Varignon parallelogram grid; students answer Exercise Set 12.4 Q2's 'Which do you prefer?' once they have tried both."
-       }
-      ]
-     },
-     "C12-S3b": {
-      "note": "declared edit",
-      "edits": [
-       {
-        "where": "U5",
-        "field": "time_bands[2].activity",
-        "old": "Show △APQ ≅ △CRQ by AAS",
-        "new": "Show △APQ ≅ △CRQ by ASA"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can prove the Midpoint Theorem (the segment joining the midpoints of two sides of a triangle is parallel to the third side and half its length) and its converse, identifying the auxiliary construction and the congruence and parallelogram tests used.'}",
-        "field": "look_for[1]",
-        "old": "Identifies △APQ ≅ △CRQ by AAS",
-        "new": "Identifies △APQ ≅ △CRQ by ASA (AAS also accepted)"
-       },
-       {
-        "where": "U7",
-        "field": "time_bands[3].activity",
-        "old": "the crease crosses AC at its midpoint by the Converse of the Midpoint Theorem applied to the folded image.",
-        "new": "since BC ⊥ AB too, the crease ∥ BC, so by the Converse of the Midpoint Theorem it crosses AC at its midpoint."
-       },
-       {
-        "where": "U11",
-        "field": "time_bands[0].activity",
-        "old": "cut out 8–10 copies",
-        "new": "cut out 15 copies"
-       },
-       {
-        "where": "U3",
-        "field": "teacher_notes",
-        "old": "Exercise Set 12.2 Q4, p.60 (angle bisectors of a parallelogram forming a rectangle) makes a good independent self-study item for curious students.",
-        "new": "Exercise Set 12.2 Q4, p.60 (angle bisectors of a parallelogram forming a rectangle) is set as homework."
-       },
-       {
-        "where": "U5",
-        "field": "time_bands[3].activity",
-        "old": "Preview the converse.",
-        "new": "Ask: is the converse true?"
-       },
-       {
-        "where": "U9",
-        "field": "time_bands[3].activity",
-        "old": "Preview the tiling application: the Varignon parallelograms of all copies in a tiling form a regular grid.",
-        "new": "Note that the book uses the grid formed by Varignon parallelograms again in Section 12.4."
-       },
-       {
-        "where": "U5",
-        "field": "time_bands[0].activity",
-        "old": "locates the midpoints P and Q of sides AB and AC by folding.",
-        "new": "locates the midpoints P, Q and R of sides AB, AC and BC by folding."
-       },
-       {
-        "where": "U5",
-        "field": "teacher_notes",
-        "old": "confusing Q as the midpoint of AC with the role Q plays as the point where the auxiliary line meets PQ extended — stress that Q is fixed first as the midpoint, and R is the new point created by the auxiliary line.",
-        "new": "confusing Q (the midpoint of AC) with R (where the auxiliary line meets PQ extended) — stress that Q is fixed first as the midpoint, and R is the new point created by the auxiliary line."
-       },
-       {
-        "where": "U6",
-        "field": "time_bands[1].activity",
-        "old": "then argue that the original triangle can be reconstructed from the medial triangle because all side lengths are known.",
-        "new": "then argue that the original triangle can be reconstructed from the medial triangle: through each vertex of PQR draw the line parallel to the opposite side; the three lines meet at A, B and C."
-       },
-       {
-        "where": "U10",
-        "field": "time_bands[0].activity",
-        "old": "Students copy the key congruences that make DM pass through AC at AC/3 from A.",
-        "new": "Students copy the key step: DM and AO are medians of ∆ABD, so they meet at its centroid, and AE = (2/3)AO = AC/3."
-       },
-       {
-        "where": "U13",
-        "field": "time_bands[3].activity",
-        "old": "Students answer in one sentence using the angle-sum argument (four copies around a vertex use exactly 360°).",
-        "new": "Students answer in one sentence: yes — four copies fit around a point because the angles sum to 360°, and Method 1 or 2 extends this to the whole plane (a procedure the book checks by experiment)."
-       },
-       {
-        "where": "U13",
-        "field": "time_bands[2].activity",
-        "old": "as a segment , so",
-        "new": "as a segment, so"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can apply Definition 1 to classify a given figure as a valid quadrilateral, a self-intersecting quadrilateral, a non-convex quadrilateral or a non-planar 4-gon, with justification.'}",
-        "field": "guide.MCQ.what_each_option_reveals.C",
-        "old": "Confuses the diagonal-intersection criterion with convexity — diagonals intersecting inside is the test for a convex quadrilateral, so this answer picks the wrong category.",
-        "new": "Picks the convexity test: diagonals meeting inside the figure mark a convex quadrilateral, not a non-convex one."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can prove that a quadrilateral is a parallelogram by applying one of the five characterisation theorems (opposite sides equal, opposite angles equal, diagonals bisect each other, one pair of sides equal and parallel, or opposite angles equal via angle sum), identifying the congruence test used.'}",
-        "field": "question_text",
-        "old": "why the condition AE = CE and BE = DE is necessary",
-        "new": "why the condition AE = CE and BE = DE cannot be dropped"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can prove that a quadrilateral is a parallelogram by applying one of the five characterisation theorems (opposite sides equal, opposite angles equal, diagonals bisect each other, one pair of sides equal and parallel, or opposite angles equal via angle sum), identifying the congruence test used.'}",
-        "field": "look_for[4]",
-        "old": "(opposite sides not equal, so Theorem 2 fails;",
-        "new": "(opposite sides not equal, so it is not a parallelogram;"
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can identify the parallelogram property (from Theorems 1–5) that underpins a given physical or geometric application of parallelograms, such as a mechanical linkage or a force-combination law.'}",
-        "field": "guide.MCQ.what_each_option_reveals.B",
-        "old": "the diagonals bisecting each other keeps the centroid fixed but does not directly produce scaling.",
-        "new": "the property is true, but the centre of the linkage moves as it works, and bisecting diagonals say nothing about the pivot, tracer and pen staying in line."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can prove the Centroid Theorem (the three medians of a triangle are concurrent and the centroid divides each median in the ratio 2:1 from the vertex) using the Midpoint Theorem applied twice.'}",
-        "field": "question_text",
-        "old": "stating clearly each application of the Midpoint Theorem and the congruence test used.",
-        "new": "stating clearly each application of the Midpoint Theorem and the parallelogram theorem used."
-       },
-       {
-        "where": "item{'implied_lo_assessed': 'Students can justify that any quadrilateral tiles the plane by arguing from the angle-sum property (four copies placed around a common vertex use exactly 360°) and describe Method 1 (180° rotation about an edge midpoint) and Method 2 (Varignon parallelogram grid) as tiling procedures.'}",
-        "field": "guide.OPEN_TASK.inclusivity",
-        "old": "and explain which property proved in Section 12.3.2 guarantees that the gaps in Method 2 are further copies of the original quadrilateral.",
-        "new": "and explain how Varignon's Theorem (Section 12.3.2) is used in it, and why the gaps look like copies of the original quadrilateral."
-       }
-      ]
-     }
-    }
    }
   ]
  },
@@ -443,7 +240,7 @@
       },
       {
        "minutes": "12-28",
-       "activity": "Work through the formal requirements one by one, using each figure as a test case: no three vertices collinear (eliminating NOPE and SILY), all vertices in one plane (eliminating BENT), no self-intersection (eliminating CUTS, using the definition that every non-vertex point lies on exactly one side). Let students argue how OPENS is ruled out. State Definition 1 and have students copy it. Introduce convexity: internal angles all less than 180°; diagonals intersect inside for convex, do not for non-convex. Classify DART as non-convex because its angle at D exceeds 180°. Discuss the think-reflect prompt: can we define a quadrilateral ABCD the same way as a triangle?"
+       "activity": "Work through the formal requirements one by one, using each figure as a test case: no three vertices collinear (eliminating NOPE and SILY), all vertices in one plane (eliminating BENT), no self-intersection (eliminating CUTS, using the definition that every non-vertex point lies on exactly one side). Let students argue how OPENS is ruled out. State Definition 1 and have students copy it. Introduce convexity: internal angles all less than 180°; diagonals intersect inside for convex, do not for non-convex. Classify DART as non-convex because its angle at D exceeds 180°. Discuss the think-reflect prompt: can the tiling question tell us which quadrilaterals are convex?"
       },
       {
        "minutes": "28-42",
@@ -554,7 +351,7 @@
        "activity": "Collect one solution to End of Chapter Q4, p.75 on the board: use the symmetry DP = BQ and the midpoint-bisection property (Theorem 1c) to show the diagonals of APCQ bisect each other, then invoke Theorem 4. Summarise the full set of parallelogram tests developed in Section 12.2."
       }
      ],
-     "teacher_notes": "Building on the Theorem 1 proofs, this unit consolidates all five parallelogram characterisations through problem work. The most common error here is applying Theorem 4 (diagonals bisect each other) without first establishing that E is the midpoint of both diagonals — students need to show two midpoint equalities, not one. Exercise Set 12.2 Q4, p.60 (angle bisectors of a parallelogram forming a rectangle) is set as homework.",
+     "teacher_notes": "Building on the Theorem 1 proofs, this unit consolidates all five parallelogram characterisations through problem work. The most common error here is applying Theorem 4 (diagonals bisect each other) without first establishing that E is the midpoint of both diagonals — students need to show two midpoint equalities, not one. Exercise Set 12.2 Q4, p.60 (angle bisectors of a parallelogram forming a rectangle) makes a good independent self-study item for curious students.",
      "homework": [
       "Exercise Set 12.2 Q4, p.60 — show that the angle bisectors of a parallelogram with unequal adjacent sides meet in a rectangle."
      ]
@@ -612,7 +409,7 @@
      "time_bands": [
       {
        "minutes": "0-12",
-       "activity": "Each student draws a moderately large triangle ABC on plain paper and locates the midpoints P, Q and R of sides AB, AC and BC by folding. They mark PQ and measure: its length relative to BC, and whether it appears parallel to BC. Students record their measurements and share with a neighbour."
+       "activity": "Each student draws a moderately large triangle ABC on plain paper and locates the midpoints P and Q of sides AB and AC by folding. They mark PQ and measure: its length relative to BC, and whether it appears parallel to BC. Students record their measurements and share with a neighbour."
       },
       {
        "minutes": "12-28",
@@ -620,14 +417,14 @@
       },
       {
        "minutes": "28-44",
-       "activity": "Begin the proof of Theorem 6 (Midpoint Theorem) at the board. Draw the auxiliary line through C parallel to BA meeting line PQ extended at R. Show △APQ ≅ △CRQ by ASA (vertical angles at Q, alternate angles, AQ = QC). Deduce PQ = QR (so PR = 2PQ), CR = AP = BP. Apply Theorem 5: since CR = BP and CR ∥ BP, BCRP is a parallelogram, so BC ∥ PR and BC = PR = 2PQ. State Theorem 6 clearly: the segment joining the midpoints of two sides of a triangle is parallel to the third side and half its length."
+       "activity": "Begin the proof of Theorem 6 (Midpoint Theorem) at the board. Draw the auxiliary line through C parallel to BA meeting line PQ extended at R. Show △APQ ≅ △CRQ by AAS (vertical angles at Q, alternate angles, AQ = QC). Deduce PQ = QR (so PR = 2PQ), CR = AP = BP. Apply Theorem 5: since CR = BP and CR ∥ BP, BCRP is a parallelogram, so BC ∥ PR and BC = PR = 2PQ. State Theorem 6 clearly: the segment joining the midpoints of two sides of a triangle is parallel to the third side and half its length."
       },
       {
        "minutes": "44-50",
-       "activity": "Quick verbal check: students state the theorem in their own words without looking at the board. Ask: what was the role of the auxiliary line? Why did we need Theorem 5 rather than just the definition of a parallelogram? Ask: is the converse true?"
+       "activity": "Quick verbal check: students state the theorem in their own words without looking at the board. Ask: what was the role of the auxiliary line? Why did we need Theorem 5 rather than just the definition of a parallelogram? Preview the converse."
       }
      ],
-     "teacher_notes": "The paper-folding opening grounds the Midpoint Theorem in physical observation before the formal proof — the think-reflect prompt, which asks why no congruence test applies directly, is the pivotal move that motivates the auxiliary construction. A frequent error in the proof is confusing Q (the midpoint of AC) with R (where the auxiliary line meets PQ extended) — stress that Q is fixed first as the midpoint, and R is the new point created by the auxiliary line. Students interested in more can read End of Chapter Q15, p.79 on the alternative proof of the Midpoint Theorem for self-study.",
+     "teacher_notes": "The paper-folding opening grounds the Midpoint Theorem in physical observation before the formal proof — the think-reflect prompt, which asks why no congruence test applies directly, is the pivotal move that motivates the auxiliary construction. A frequent error in the proof is confusing Q as the midpoint of AC with the role Q plays as the point where the auxiliary line meets PQ extended — stress that Q is fixed first as the midpoint, and R is the new point created by the auxiliary line. Students interested in more can read End of Chapter Q15, p.79 on the alternative proof of the Midpoint Theorem for self-study.",
      "homework": []
     },
     {
@@ -665,7 +462,7 @@
       },
       {
        "minutes": "18-35",
-       "activity": "Students work on Exercise Set 12.3 Q1, p.67 in pairs: use the Midpoint Theorem to show that each of the four smaller triangles is congruent to the others by SSS, then argue that the original triangle can be reconstructed from the medial triangle: through each vertex of PQR draw the line parallel to the opposite side; the three lines meet at A, B and C. Circulate and prompt: what does 'reconstructed' mean — unique up to congruence?"
+       "activity": "Students work on Exercise Set 12.3 Q1, p.67 in pairs: use the Midpoint Theorem to show that each of the four smaller triangles is congruent to the others by SSS, then argue that the original triangle can be reconstructed from the medial triangle because all side lengths are known. Circulate and prompt: what does 'reconstructed' mean — unique up to congruence?"
       },
       {
        "minutes": "35-47",
@@ -732,7 +529,7 @@
       },
       {
        "minutes": "42-50",
-       "activity": "Brief class discussion of End of Chapter Q5, p.76 (crease-line problem): folding so A meets B creates a perpendicular bisector of AB; since BC ⊥ AB too, the crease ∥ BC, so by the Converse of the Midpoint Theorem it crosses AC at its midpoint. Confirm the result; students record the key step in their notebooks."
+       "activity": "Brief class discussion of End of Chapter Q5, p.76 (crease-line problem): folding so A meets B creates a perpendicular bisector of AB; the crease crosses AC at its midpoint by the Converse of the Midpoint Theorem applied to the folded image. Confirm the result; students record the key step in their notebooks."
       }
      ],
      "teacher_notes": "This unit applies the Midpoint Theorem and its converse to trapezium and folding contexts that require identifying the right auxiliary midpoint — the midpoint M of the diagonal BD in the trapezium proof. A common error is trying to apply the Midpoint Theorem in a triangle that does not have the required midpoints as its vertices; encourage students to name the triangle clearly before invoking the theorem. End of Chapter Q11, p.78 (point P on AB with AP = 1, PB = 2) is a good extension for students who finish quickly.",
@@ -756,7 +553,7 @@
      "time_bands": [
       {
        "minutes": "0-10",
-       "activity": "Students draw three different triangles (acute, obtuse, right-angled) and, by folding, locate each median (fold a side end to end to find its midpoint, then fold or draw the line from the opposite vertex through it). They draw all three medians and observe that they appear to meet at a single point. Students estimate by eye where the common point divides each median."
+       "activity": "Students draw three different triangles (acute, obtuse, right-angled) and, by folding, locate each median (fold a vertex to the opposite side's midpoint). They draw all three medians and observe that they appear to meet at a single point. Students estimate by eye where the common point divides each median."
       },
       {
        "minutes": "10-32",
@@ -816,7 +613,7 @@
       },
       {
        "minutes": "48-50",
-       "activity": "Brief summary: Theorem 9 turns any quadrilateral into a parallelogram by joining midpoints — a surprising unification. Note that the book uses the grid formed by Varignon parallelograms again in Section 12.4."
+       "activity": "Brief summary: Theorem 9 turns any quadrilateral into a parallelogram by joining midpoints — a surprising unification. Preview the tiling application: the Varignon parallelograms of all copies in a tiling form a regular grid."
       }
      ],
      "teacher_notes": "Theorem 9 reuses the Midpoint Theorem in two different triangles sharing the diagonal AC; students sometimes draw BD instead of AC as the auxiliary diagonal and end up with a different (but valid) proof — accept it and point out that either diagonal works. The critical error to watch for is claiming PQRS is a parallelogram after showing only one pair of parallel sides without establishing equality or using Theorem 5 explicitly. End of Chapter Q13, p.79 on non-convex and self-intersecting quadrilaterals is suitable for self-study.",
@@ -865,7 +662,7 @@
      "time_bands": [
       {
        "minutes": "0-18",
-       "activity": "Work End of Chapter Q12, p.79 as a class: in parallelogram ABCD with M and N the midpoints of AB and CD, DM and BN are drawn meeting AC at E and F. Apply the Centroid Theorem to identify E and F as the trisection points of AC. Students copy the key step: DM and AO are medians of ∆ABD, so they meet at its centroid, and AE = (2/3)AO = AC/3. Then formulate the trisection procedure: given any segment PQ, embed it as a diagonal of a parallelogram and use the midpoint trick."
+       "activity": "Work End of Chapter Q12, p.79 as a class: in parallelogram ABCD with M and N the midpoints of AB and CD, DM and BN are drawn meeting AC at E and F. Apply the Centroid Theorem to identify E and F as the trisection points of AC. Students copy the key congruences that make DM pass through AC at AC/3 from A. Then formulate the trisection procedure: given any segment PQ, embed it as a diagonal of a parallelogram and use the midpoint trick."
       },
       {
        "minutes": "18-38",
@@ -917,7 +714,7 @@
      "time_bands": [
       {
        "minutes": "0-14",
-       "activity": "Students trace a general irregular quadrilateral SOME onto card, cut out 15 copies, and experiment on their desks: can all copies be fitted together without gaps? They first try fitting four around a single vertex. The section's think-reflect prompt is used: label the four angles of SOME as 1, 2, 3, 4 and arrange one copy of each angle around the common point. Since 1 + 2 + 3 + 4 = 360° (quadrilateral angle sum), exactly four copies fit perfectly around any vertex."
+       "activity": "Students trace a general irregular quadrilateral SOME onto card, cut out 8–10 copies, and experiment on their desks: can all copies be fitted together without gaps? They first try fitting four around a single vertex. The section's think-reflect prompt is used: label the four angles of SOME as 1, 2, 3, 4 and arrange one copy of each angle around the common point. Since 1 + 2 + 3 + 4 = 360° (quadrilateral angle sum), exactly four copies fit perfectly around any vertex."
       },
       {
        "minutes": "14-28",
@@ -929,7 +726,7 @@
       },
       {
        "minutes": "44-50",
-       "activity": "Whole-class share: how did Method 1 handle the non-convex DART? Students describe any difficulty. The book's Method 2 uses the Varignon parallelogram grid; students answer Exercise Set 12.4 Q2's 'Which do you prefer?' once they have tried both."
+       "activity": "Whole-class share: which method (rotate through 180° or arrange four around a point) produced a tiling of DART most easily? Students justify their preference. Note that Method 2 uses the Varignon parallelogram grid."
       }
      ],
      "teacher_notes": "The key insight — that four copies of any quadrilateral tile around a vertex because its angle sum is exactly 360° — should emerge from the students' own experiment before being stated formally. A common confusion is thinking the 180° rotation always places the copy in the correct orientation; help students check that the image shares a full edge, not just an endpoint, with the original. Exercise Set 12.4 Q1, p.74 (regular pentagon) makes the argument tight and is worth doing carefully before moving to Method 2.",
@@ -949,7 +746,7 @@
       "Scissors",
       "Card cutouts of quadrilateral SOME"
      ],
-     "visual_aids": "Board diagram of the Varignon parallelogram grid for SOME with nine copies of SOME placed on shaded parallelograms (one cell in four)",
+     "visual_aids": "Board diagram of the Varignon parallelogram grid for SOME with nine copies of SOME placed on alternating shaded parallelograms",
      "textbook_items_in_class": [
       {
        "id": "E-16",
@@ -966,7 +763,7 @@
      "time_bands": [
       {
        "minutes": "0-16",
-       "activity": "Explain Method 2: draw the Varignon parallelogram of SOME (joining the midpoints of its sides), then tile the plane with copies of this Varignon parallelogram (possible because any parallelogram tiles, as shown at the chapter's opening). Shade one cell, then every second cell along both directions of the grid — one cell in four, as in Fig. 12.32. Place a copy of SOME on each shaded parallelogram, with the shaded parallelogram as its Varignon parallelogram. Observe that the placed copies meet only at vertices and that the gaps between them are further copies of SOME."
+       "activity": "Explain Method 2: draw the Varignon parallelogram of SOME (joining the midpoints of its sides), then tile the plane with copies of this Varignon parallelogram (possible because any parallelogram tiles, as shown at the chapter's opening). Shade alternating parallelograms in the grid. Place a copy of SOME on each shaded parallelogram, with the shaded parallelogram as its Varignon parallelogram. Observe that the placed copies meet only at vertices and that the gaps between them are further copies of SOME."
       },
       {
        "minutes": "16-34",
@@ -981,7 +778,7 @@
        "activity": "Whole-class comparison: Method 1 (rotation about edge midpoint) and Method 2 (Varignon grid) both tile any quadrilateral. Which method is easier to extend? Students argue briefly; wrap up by noting that both procedures require justification — the section's emphasis on 'prove that the method always works'."
       }
      ],
-     "teacher_notes": "Method 2 draws on Theorem 9 (Varignon's Theorem) proved in Section 12.3.2; the connection between the Varignon parallelogram and the tiling grid is the payoff for that earlier theorem. Students sometimes shade too many cells: a copy on every cell makes copies overlap, and a copy on every other cell (a checkerboard) is already the whole tiling with no gaps to discover — the book shades one cell in four. End of Chapter Q1, p.75 (triangle tiling) is a clean single-step application of Theorem 5 that rewards students who can identify the right pair of sides to use.",
+     "teacher_notes": "Method 2 draws on Theorem 9 (Varignon's Theorem) proved in Section 12.3.2; the connection between the Varignon parallelogram and the tiling grid is the payoff for that earlier theorem. Students sometimes place SOME on every parallelogram in the grid rather than on alternating ones — show that placing on all cells causes overlaps at shared edges. End of Chapter Q1, p.75 (triangle tiling) is a clean single-step application of Theorem 5 that rewards students who can identify the right pair of sides to use.",
      "homework": []
     },
     {
@@ -1036,11 +833,11 @@
       },
       {
        "minutes": "30-44",
-       "activity": "Students work in pairs on End of Chapter Q13, p.79: does Varignon's Theorem hold for non-convex or self-intersecting quadrilaterals? Yes — the diagonal AC still exists as a segment, so the Midpoint Theorem argument in the two triangles still applies. Find the special case where PQRS collapses: this happens when the quadrilateral is such that AC and BD are parallel, making the Varignon parallelogram degenerate."
+       "activity": "Students work in pairs on End of Chapter Q13, p.79: does Varignon's Theorem hold for non-convex or self-intersecting quadrilaterals? Yes — the diagonal AC still exists as a segment , so the Midpoint Theorem argument in the two triangles still applies. Find the special case where PQRS collapses: this happens when the quadrilateral is such that AC and BD are parallel, making the Varignon parallelogram degenerate."
       },
       {
        "minutes": "44-50",
-       "activity": "Whole-class close: return to the chapter's opening question — can any quadrilateral tile the plane? Students answer in one sentence: yes — four copies fit around a point because the angles sum to 360°, and Method 1 or 2 extends this to the whole plane (a procedure the book checks by experiment). Connect back to the Venn diagram: convex and non-convex quadrilaterals both tile, for the same reason; a self-intersecting 4-gon is not a tile at all — its angles do not even sum to 360° (End of Chapter Q3). The chapter's journey from definition to tiling is complete."
+       "activity": "Whole-class close: return to the chapter's opening question — can any quadrilateral tile the plane? Students answer in one sentence using the angle-sum argument (four copies around a vertex use exactly 360°). Connect back to the Venn diagram: convex and non-convex quadrilaterals both tile, for the same reason; a self-intersecting 4-gon is not a tile at all — its angles do not even sum to 360° (End of Chapter Q3). The chapter's journey from definition to tiling is complete."
       }
      ],
      "teacher_notes": "This consolidation unit draws on Definition 1 from Section 12.1 and Theorem 9 from Section 12.3.2 together with the tiling ideas from Section 12.4, giving students practice in selecting the right tool from the full chapter. A common error on End of Chapter Q3, p.75 is using 360° as the angle sum of a self-intersecting quadrilateral — stress that the 360° result requires the quadrilateral to be planar and non-self-intersecting. End of Chapter Q10, p.78 sharpens the understanding of 'how many quadrilaterals' by forcing students to be precise about what 'different' means when four labelled points are given.",
@@ -1226,7 +1023,7 @@
        "what_each_option_reveals": {
         "D": "Confuses non-convex with self-intersecting — a figure whose sides cross is self-intersecting (like CUTS), not merely non-convex.",
         "A": "Describes a convex quadrilateral, not a non-convex one; all angles less than 180° is the convexity criterion.",
-        "C": "Picks the convexity test: diagonals meeting inside the figure mark a convex quadrilateral, not a non-convex one."
+        "C": "Confuses the diagonal-intersection criterion with convexity — diagonals intersecting inside is the test for a convex quadrilateral, so this answer picks the wrong category."
        },
        "inclusivity": "A struggling student can draw DART on paper, measure its angles, and use the diagram to see which option matches; a student ready for extension can be asked why the diagonals of a non-convex quadrilateral do not intersect inside the figure and link this to the angle condition."
       },
@@ -1315,7 +1112,7 @@
      "cognitive_demand": "Evaluation",
      "visual_stimulus": null,
      "graph_paper": false,
-     "question_text": "In quadrilateral ABCD, the diagonals AC and BD intersect at E with AE = CE and BE = DE. A student claims: 'Since the diagonals bisect each other, ABCD is a parallelogram by Theorem 4.' Write a complete proof of this claim, naming every congruence test you use and stating precisely which theorem you invoke at each step. Then explain, in two to three sentences, why the condition AE = CE and BE = DE cannot be dropped — that is, give an example of a quadrilateral whose diagonals intersect but do not bisect each other, and state which parallelogram property it fails.",
+     "question_text": "In quadrilateral ABCD, the diagonals AC and BD intersect at E with AE = CE and BE = DE. A student claims: 'Since the diagonals bisect each other, ABCD is a parallelogram by Theorem 4.' Write a complete proof of this claim, naming every congruence test you use and stating precisely which theorem you invoke at each step. Then explain, in two to three sentences, why the condition AE = CE and BE = DE is necessary — that is, give an example of a quadrilateral whose diagonals intersect but do not bisect each other, and state which parallelogram property it fails.",
      "options": [],
      "expected_answer": "",
      "method_one_line": "",
@@ -1325,7 +1122,7 @@
       "Deduces AD = CB and ∠ADE = ∠CBE (alternate angles), concluding AD ∥ CB.",
       "Similarly obtains AB ∥ CD from the same or analogous triangles.",
       "Names Theorem 4 explicitly: a quadrilateral whose diagonals bisect each other is a parallelogram.",
-      "Gives a valid counterexample (e.g. a general quadrilateral like a kite, where the diagonals are perpendicular but do not bisect each other) and identifies which property fails (opposite sides not equal, so it is not a parallelogram; or diagonals not bisecting each other).",
+      "Gives a valid counterexample (e.g. a general quadrilateral like a kite, where the diagonals are perpendicular but do not bisect each other) and identifies which property fails (opposite sides not equal, so Theorem 2 fails; or diagonals not bisecting each other).",
       "Reasoning is complete, with every deductive step justified."
      ],
      "task": "",
@@ -1461,7 +1258,7 @@
         "section": 3
        },
        "what_each_option_reveals": {
-        "B": "Confuses the bisecting-diagonals property (Theorem 1c) with the mechanism of scaling; the property is true, but the centre of the linkage moves as it works, and bisecting diagonals say nothing about the pivot, tracer and pen staying in line.",
+        "B": "Confuses the bisecting-diagonals property (Theorem 1c) with the mechanism of scaling; the diagonals bisecting each other keeps the centroid fixed but does not directly produce scaling.",
         "C": "Misattributes the pantograph's action to the equal-angles property rather than to equal and parallel sides; equal opposite angles do not directly fix the ratio of distances between two points on the linkage.",
         "A": "Invents a perpendicularity claim not supported by the parallelogram's properties; adjacent angles summing to 180° is a co-interior angle property of parallel lines, not a perpendicularity condition."
        },
@@ -1495,7 +1292,7 @@
      "expected_elements": [],
      "look_for": [
       "Names the auxiliary construction: draw the line through C parallel to BA and let it meet line PQ extended at R.",
-      "Identifies △APQ ≅ △CRQ by ASA (AAS also accepted) (∠AQP = ∠CQR as vertical angles; ∠A = ∠QCR as alternate angles on transversal AC; AQ = CQ as Q is midpoint of AC).",
+      "Identifies △APQ ≅ △CRQ by AAS (∠AQP = ∠CQR as vertical angles; ∠A = ∠QCR as alternate angles on transversal AC; AQ = CQ as Q is midpoint of AC).",
       "Deduces PQ = QR (so PR = 2PQ) and CR = AP = PB from the congruence.",
       "Invokes Theorem 5 (one pair of equal and parallel sides) to conclude BCRP is a parallelogram, giving BC ∥ PR and BC = PR = 2PQ.",
       "Restates conclusion: PQ ∥ BC and PQ = BC/2.",
@@ -1571,7 +1368,7 @@
      "cognitive_demand": "Evaluation",
      "visual_stimulus": null,
      "graph_paper": false,
-     "question_text": "In triangle ABC, medians BQ and CP meet at point M. Let X be the midpoint of BM and Y be the midpoint of CM. (a) Prove that CM : MP = 2 : 1 and BM : MQ = 2 : 1, stating clearly each application of the Midpoint Theorem and the parallelogram theorem used. (b) Using the result of part (a) applied to a second pair of medians, explain in two to three sentences why all three medians must pass through M.",
+     "question_text": "In triangle ABC, medians BQ and CP meet at point M. Let X be the midpoint of BM and Y be the midpoint of CM. (a) Prove that CM : MP = 2 : 1 and BM : MQ = 2 : 1, stating clearly each application of the Midpoint Theorem and the congruence test used. (b) Using the result of part (a) applied to a second pair of medians, explain in two to three sentences why all three medians must pass through M.",
      "options": [],
      "expected_answer": "",
      "method_one_line": "",
@@ -1680,7 +1477,7 @@
        "what_this_demonstrates": "Students demonstrate that they can apply the quadrilateral angle-sum property (∠1 + ∠2 + ∠3 + ∠4 = 360°) as a logical argument for tileability, extend it to rule out a regular pentagon by arithmetic, and describe Method 1 precisely enough to show it always produces a gap-free tiling.",
        "reading_the_scaffold": "The scaffold steers students to the angle-sum in (a), directs them to compute 360/108 in (b), and points them to the edge midpoint in (c) — use it to check whether a student has identified the key geometric fact at each stage rather than just restating the scaffold.",
        "strong_vs_weak_markers": "A strong response states the angle-sum property, names all four angles as covering 360° with no surplus or deficit, calculates 360/108 = 3.33… (non-integer) for (b), and names the midpoint of a shared edge as the centre of the 180° rotation in (c) with a reason why the image shares the full edge. A weak response asserts tileability without the angle-sum argument, or gives the pentagon calculation without interpreting the non-integer as the reason for failure, or describes the rotation without specifying its centre.",
-       "inclusivity": "A student who finds the general argument abstract can start with a specific quadrilateral (e.g. a rectangle) and verify the four-angle fit numerically before generalising; a student ready for extension can be asked to describe Method 2 (the Varignon parallelogram grid) and explain how Varignon's Theorem (Section 12.3.2) is used in it, and why the gaps look like copies of the original quadrilateral."
+       "inclusivity": "A student who finds the general argument abstract can start with a specific quadrilateral (e.g. a rectangle) and verify the four-angle fit numerically before generalising; a student ready for extension can be asked to describe Method 2 (the Varignon parallelogram grid) and explain which property proved in Section 12.3.2 guarantees that the gaps in Method 2 are further copies of the original quadrilateral."
       }
      }
     },
@@ -1740,7 +1537,7 @@
         "A": "Confuses orientation with alignment; a 180° rotation does not reverse orientation (only a reflection does), and the half-turn is precisely what makes the copy share the full edge — the image of AB under the half-turn about its midpoint is BA, which coincides with AB.",
         "D": "Over-restricts the procedure to quadrilaterals with parallel sides; the tiling works for all quadrilaterals, and the parallelogram property is not required for Method 1 (though it does underpin Method 2 via the Varignon grid)."
        },
-       "inclusivity": "A student who is uncertain can trace a paper cut-out of a non-convex quadrilateral, pin the tracing at the midpoint of one edge and turn it through 180° to see the half-turn, then check physically that the copy fits; a student ready for extension can be asked to identify which of the three four-copy vertex configurations from the section appears at the vertices of the tiling produced by Method 1 applied to a specific quadrilateral they draw."
+       "inclusivity": "A student who is uncertain can fold a paper cut-out of a non-convex quadrilateral in half along one edge to simulate the 180° rotation and check physically that the copy fits; a student ready for extension can be asked to identify which of the three four-copy vertex configurations from the section appears at the vertices of the tiling produced by Method 1 applied to a specific quadrilateral they draw."
       },
       "NUM": null,
       "SCR": null,
