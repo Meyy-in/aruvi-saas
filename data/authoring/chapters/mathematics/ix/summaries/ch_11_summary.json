@@ -1,0 +1,143 @@
+{
+ "stage": "secondary",
+ "subject": "mathematics",
+ "grade": "ix",
+ "chapter_number": 11,
+ "chapter_title": "The World of Algorithms",
+ "sections": [
+  {
+   "ref": "11.1",
+   "title": "Adding Numbers"
+  },
+  {
+   "ref": "11.1.1",
+   "title": "Adding Numbers Digit by Digit",
+   "think_reflect": "Asks the student to complete the argument about grouping by units, tens, hundreds, … that justifies why the addition algorithm works, and to work out how the algorithm should be modified to add two decimal fractions."
+  },
+  {
+   "ref": "11.2",
+   "title": "Greatest Common Divisor"
+  },
+  {
+   "ref": "11.2.1",
+   "title": "Computing the Divisors of a Number",
+   "think_reflect": "Asks the student to execute the divisors algorithm for 15, 135 and 775 and to consider how the amount of work increases as the numbers grow."
+  },
+  {
+   "ref": "11.2.2",
+   "title": "Finding the Greatest Common Divisor"
+  },
+  {
+   "ref": "11.2.3",
+   "title": "First Algorithm for gcd"
+  },
+  {
+   "ref": "11.3",
+   "title": "Data Structures"
+  },
+  {
+   "ref": "11.3.1",
+   "title": "Improving the Algorithm"
+  },
+  {
+   "ref": "11.3.2",
+   "title": "Analysing these Algorithms"
+  },
+  {
+   "ref": "11.3.3",
+   "title": "Euclid's Subtraction Algorithm"
+  },
+  {
+   "ref": "11.3.4",
+   "title": "Āryabhaṭa's Division Algorithm"
+  }
+ ],
+ "prose_summary": "Section 11.1 introduces the chapter's opening questions — what exactly an algorithm is, and what it has to do with mathematics — through the familiar task of adding numbers: it contrasts the first way of adding, by drawing 5 dots and 7 more dots and counting all 12, which becomes impractical for large numbers such as 473 + 695, with the much faster method of writing the numbers one below the other in the Indian number system with the rightmost digits aligned and adding each column from right to left, carrying to the left whenever a column total is equal to or more than 10 (473 + 695 = 1168 is shown column by column beside the dot picture). Section 11.1.1 defines an algorithm — a step-by-step procedure to arrive at an answer, described by writing down its steps as precisely as possible — and justifies the column method, which it writes as a five-step 'Algorithm to add two numbers': write the numbers one below the other in the Indian base-ten place-value system with the digits aligned from right to left; add the rightmost digits, writing the sum directly below if it is less than 10 and setting carry to 0 or, if it is more than 10, writing the units digit of the sum and setting carry to 1; move to the next column on the left and add its two digits and the current value of carry under the same rule; repeat Step 3 until there are no more digits on the left; and, if carry is then 1, write 1 to the left of the bottom row. It points out that every algorithm is built from basic steps assumed to be directly performable — here, adding single-digit numbers without counting them out — and explains the method's speed: going from 3-digit to 4-digit numbers means 10 times as many dots to draw and count (100 times for 5-digit numbers) but only one more column (two more) to add, so that at one dot per second counting out 33 + 27, 334 + 272 and 3347 + 2729 takes about a minute, about ten minutes and over an hour and forty minutes, whereas at 15 seconds per single-digit addition with carry the column method takes about half a minute, 45 seconds and one minute. Insisting that whenever an algorithm is given it must also be justified, it explains why adding digit by digit gives the sum when addition is defined by combining and counting: each number is grouped into units, tens, hundreds, … and each group is added separately, a newly formed group of ten being carried over to the next group. Section 11.2 introduces the problem of computing the greatest common divisor (gcd), or highest common factor (hcf), of two numbers — already familiar through prime factorisation and other methods — and asks how to solve it directly from the definition of gcd and how to write an algorithm for it; the first step, it explains, is to understand what is required and break the problem into smaller pieces whose solution is already known: compute and note down the divisors of both numbers, then compare the two collections of divisors and find the largest number present in both. Section 11.2.1 introduces the list — a sequence of values, written in square brackets such as [1, 4, 9, 16] — as the way to keep track of divisors, together with the 'Algorithm to find the divisors of n': since any divisor of a number lies between 1 and the number itself, start with an empty list-of-divisors and, for each number j in the sequence 1, 2, 3, …, n, add j to the list if j divides n. It explains that naming the values an algorithm keeps track of (list-of-divisors, j) is what makes each step easy to describe, introduces executing an algorithm as running through it step by step, and executes it for 18, updating the list at each j to reach divisors(18) = [1, 2, 3, 6, 9, 18], noting that the list comes out in increasing order because the candidates are checked systematically from 1 to 18 and that the basic step assumed is knowing whether a smaller number divides a larger one; the same steps give divisors(375) = [1, 3, 5, 15, 25, 75, 125, 375] and divisors(825) = [1, 3, 5, 11, 15, 25, 33, 55, 75, 165, 275, 825]. Section 11.2.2 explains the second step, comparing the two lists of divisors to find the largest number that appears in both: for 375 and 825 inspection gives 75, but for 54000 and 81000, whose printed divisor lists have 80 entries each, inspection no longer works, so a new list of common divisors is built systematically — initially empty, with each divisor in the first list added if it also belongs to the second list — and it always contains at least 1, since 1 divides every number; because each divisor list is in increasing order, the list of common divisors is in increasing order too, so the gcd is its rightmost element, which gives gcd(54000, 81000) = 27000. Section 11.2.3 introduces the first complete algorithm for gcd(m, n), which combines the earlier steps and makes use of the divisors algorithm: let divisors-of-m and divisors-of-n be the lists obtained by computing divisors(m) and divisors(n); start with an empty list common-divisors; for each number x in divisors-of-m, add x to common-divisors if it also appears in divisors-of-n; and report the rightmost element of common-divisors as gcd(m, n). It then computes gcd(375, 825) with it: of the divisors of 375, the numbers 1, 3, 5, 15, 25 and 75 appear among the divisors of 825 while 125 and 375 do not, so the common divisors are [1, 3, 5, 15, 25, 75] and gcd(375, 825) = 75. Section 11.3 defines a data structure: the intermediate quantities an algorithm computes, such as the lists divisors-of-m and divisors-of-n, are given names so that they can be referred to later, which keeps the algorithm's description concise, and they are typically more complicated than single numbers — here, lists arranged in ascending order; a list is an example of a data structure, a way of organising information that helps make an algorithm more efficient, an idea to be explored in higher grades. Section 11.3.1 explains three successive refinements of the first gcd algorithm. Computing both lists of divisors together replaces the two separate scans, from 1 to m and from 1 to n (m + n possible divisors), by a single scan of each j from 1 to max(m, n), adding j to the divisors of m if it divides m and to the divisors of n if it divides n. Directly computing the list of common divisors adds j to that list whenever it divides both m and n, and since a common divisor cannot be larger than the smaller of the two numbers, the scan need only run up to min(m, n). Doing away with lists observes that each larger common divisor makes the ones found earlier useless, so a single quantity, most-recent-common-divisor, is kept instead: it starts at 1, which is always a common divisor, and is updated to k whenever k, running from 2 to min(m, n), divides both m and n, so that at the end of the scan it is the gcd — traced for m = 6, n = 12, where it is updated to 2, 3 and 6 and the scan ends with gcd(6, 12) = 6. Section 11.3.2 justifies the correctness of all the gcd algorithms so far — the basic algorithm was derived directly from the definition of gcd, and each successive refinement improves efficiency without substantially changing what is computed — and explains how inefficient they still are: even the final version examines every number from 1 to min(m, n), so, as with adding by counting dots, the work grows tenfold when the smaller number goes from 3 to 4 digits and a hundredfold when it goes from 3 to 5 digits; it ends by asking whether, as for addition, there is a gcd algorithm whose effort is proportional to the number of digits rather than to the value of the numbers. Section 11.3.3 proves the observation on which Euclid's algorithm rests and then introduces the algorithm — written down by Euclid in his Elements, though historians believe other Greek mathematicians knew it earlier. Reducing a problem to a simpler one, it shows that for m ≥ n, gcd(m, n) = gcd(n, m − n): if d divides m and n, then m = ad and n = bd for natural numbers a and b, so m − n = (a − b)d is also divisible by d; conversely, if d divides n and m − n, with n = xd and m − n = yd, then m = n + (m − n) = (x + y)d; pictured in Fig. 11.1 as tiling m, n and m − n with blocks of size d — the kind of pictorial proof Euclid used — this shows that m and n have exactly the same common divisors as n and m − n, and hence the same gcd. Because the new problem involves smaller numbers, the same reduction is applied again and again until gcd(m, 0) is reached, whose answer is m (as gcd(23, 23) reduces to gcd(23, 0)), giving Euclid's algorithm: if m < n, reverse the numbers and compute gcd(n, m); if n = 0, report the answer as m; otherwise reduce the problem to gcd(n, m − n). Executed for gcd(375, 825), it reaches gcd(75, 0) and the answer 75 after reducing the problem 7 times, but the section shows that the effort is still proportional to the value of the numbers rather than to their number of digits: gcd(99, 2) passes through gcd(97, 2), gcd(95, 2), …, gcd(3, 2), gcd(2, 1) and gcd(1, 1) to gcd(1, 0), and in general gcd(2k + 1, 2) needs about k reductions. Section 11.3.4 introduces Āryabhaṭa's division algorithm and justifies it. In Indian treatises such as Āryabhaṭa's Āryabhaṭīya (499 CE), the gcd is found by the 'long division' method with Indian place-value numerals, using repeated 'division by remainder' in place of repeated subtraction — subtracting 2 from 99 until no further subtraction is possible leaves exactly the remainder when 99 is divided by 2. The reduction step therefore becomes: reduce gcd(m, n) to gcd(n, m mod n), where m mod n is the remainder when m is divided by n (17 mod 5 is 2 and 33 mod 7 is 5), justified by the same tiling argument, since d divides both m and n exactly when it divides both n and m mod n. Only the third step of Euclid's algorithm changes and the stopping condition is the same; the improved algorithm settles gcd(99, 2) in just two reductions, through gcd(2, 1) and gcd(1, 0), and the student is asked to check that this happens for every gcd(2k + 1, 2). The computation is then laid out concisely in the long-division format used in India at least since Āryabhaṭa, for gcd(99, 2) = 1, gcd(825, 375) = 75 and gcd(60, 16) = 4, and the section states, leaving the justification to later grades, that the number of reductions is now proportional to the number of digits in m and n. It closes with 'A Pinch of History': the Persian mathematician Al-Khwārizmī (780–850 CE) of the House of Wisdom in Baghdad learnt Sanskrit and around 820 CE wrote a treatise on the Indian place-value number system and the Indian procedures for addition, subtraction, multiplication and division; its surviving 12th-century Latin translation, Liber Algorismi de numero Indorum, spread Indian arithmetic through medieval Europe, and the Latin form of his name gave the word algorismus, later algorism and then algorithm, which first meant an Indian method of arithmetic before broadening to any well-defined, step-by-step systematic procedure for solving a class of problems.",
+ "enumerated_worked_examples": [],
+ "enumerated_exercises": [
+  {
+   "id": "E-1",
+   "source_section": "11.1.1",
+   "book_ref": "Exercise Set 11.1 Q1, p.38",
+   "description": "Add two 4-digit numbers using the written steps of the addition algorithm, following them precisely and performing no action that is not explicitly mentioned, and check whether the correct result is obtained."
+  },
+  {
+   "id": "E-2",
+   "source_section": "11.1.1",
+   "book_ref": "Exercise Set 11.1 Q2, p.38",
+   "description": "Find out what happens when a 5-digit number is added to a 3-digit number, and decide whether the algorithm's steps handle this situation correctly."
+  },
+  {
+   "id": "E-3",
+   "source_section": "11.1.1",
+   "book_ref": "Exercise Set 11.1 Q3, p.38",
+   "description": "Explain why it is important to align the columns from right to left."
+  },
+  {
+   "id": "E-4",
+   "source_section": "11.1.1",
+   "book_ref": "Exercise Set 11.1 Q4, p.38",
+   "description": "Explain why, in Step 3 of the addition algorithm, the value of carry cannot be more than 1."
+  },
+  {
+   "id": "E-5",
+   "source_section": "11.1.1",
+   "book_ref": "Exercise Set 11.1 Q5, p.38",
+   "description": "Find out what happens if the fifth step (writing 1 to the left of the bottom row when the final carry is 1) is left out of the algorithm, giving examples where the algorithm still works correctly and examples where it fails."
+  },
+  {
+   "id": "E-6",
+   "source_section": "11.2.2",
+   "book_ref": "Exercise Set 11.2 Q1, p.43",
+   "description": "For two lists of numbers, List 1 and List 2, each in increasing order, write an algorithm to find (i) the elements of List 1 that are not present in List 2 and (ii) the elements of List 2 that are not present in List 1."
+  },
+  {
+   "id": "E-7",
+   "source_section": "11.2.3",
+   "book_ref": "Exercise Set 11.2 Q2, p.43",
+   "description": "Describe an algorithm to compute the least common multiple (lcm) of two numbers."
+  },
+  {
+   "id": "E-8",
+   "source_section": "11.2.3",
+   "source_sections": [
+    "11.2.1",
+    "11.2.2",
+    "11.2.3"
+   ],
+   "book_ref": "Exercise Set 11.3 Q1, p.45",
+   "description": "Explain how the original gcd algorithm would change if the divisors of a number n were computed by examining the numbers from 1 to n in reverse order, from n down to 1."
+  },
+  {
+   "id": "E-9",
+   "source_section": "11.3.1",
+   "book_ref": "Exercise Set 11.3 Q2, p.45",
+   "description": "For the last algorithm described (scanning k from 2 to min(m, n) and updating most-recent-common-divisor), find out what happens when the common divisors are examined starting from min(m, n) and working backwards to 1."
+  },
+  {
+   "id": "E-10",
+   "source_section": "11.3.4",
+   "book_ref": "End of Chapter Q1, p.50",
+   "description": "Compute, using the improved (division-by-remainder) version of Euclid's algorithm, (i) gcd(375, 825), (ii) gcd(51000, 81000), (iii) gcd(1789287, 237656) and (iv) gcd(2587392, 157656)."
+  },
+  {
+   "id": "E-11",
+   "source_section": "11.3.4",
+   "source_sections": [
+    "11.3.3",
+    "11.3.4"
+   ],
+   "book_ref": "End of Chapter Q2, p.50",
+   "description": "Assuming m ≥ n, verify that d divides m and n if and only if d divides both n and m mod n."
+  },
+  {
+   "id": "E-12",
+   "source_section": "11.2.1",
+   "book_ref": "End of Chapter Q3, p.50",
+   "description": "Write an algorithm prime(n) to check whether n is prime, using the hint that a prime p has exactly two distinct factors, 1 and p, so that divisors(n) can be used to write out prime(n)."
+  }
+ ],
+ "conceptual_demand": 2,
+ "reasoning_load": 2,
+ "exec_load": 1
+}

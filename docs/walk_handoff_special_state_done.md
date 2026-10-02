@@ -7,7 +7,7 @@ what changed since.
 - **Family X is now 19 of 19 done.** The six held rows — **X.02, X.03, X.04, X.05, X.13, X.14 —
   pass on web, iPhone and Android** (X.08/X.18 phone-only, X.19 n/a on web, as before).
   X.12's cold relaunch in airplane mode still needs a real build (Expo Go loses Metro).
-- **Last amendment: WALK-A-159. Next: 160.** Open: 048 and 077 (as before), 142 (WhatsApp on the
+- **Last amendment: WALK-A-160 (closed, no change). Next: 161.** Open: 048 and 077 (as before), 142 (WhatsApp on the
   phone — 04.34/04.37 still to walk), **158 PARKED** (invoice to both channels, see below).
 
 ## Still held for special states (not walked today)
@@ -46,7 +46,33 @@ rolls every teacher into the new year automatically on **1 June** (`config.CUTOV
    - the first-run heuristic must NOT fire for a veteran the morning after (prior year counts);
    - Settings › Your data export after the roll (both years represented correctly);
    - a lapsed or trial account crossing the cutover (optional, if time).
-5. **Turn the switch off** and record results; amendments from WALK-A-160.
+5. **Turn the switch off** and record results; amendments from WALK-A-161.
+
+## ✅ DONE 2026-10-02 — renewal after a lapse: PASS on web, iPhone and Android
+027 given real state (9A Science Ch 02 at unit 4, 3 completed, a chapter note), revoked →
+reading room (My Lessons + Ask Meyy; Ch 02 still readable in My Lessons), granted again → My
+Classes + Add back, 9A card at the same position, progress bar right, chapter note kept, Prepare
+open without a paywall — identical on all three surfaces. The CLI grant leaves an emptied
+paid subject empty (SS stayed classless). **WALK-A-160 closed, no change needed:** a renewal
+covering FEWER subject-stages keeps the rest — the provider merges previously paid scopes into
+`held`; only a trial is superseded. Pinned by tests/test_renewal_keeps_profile.py.
+The original plan for the check follows, kept for reference.
+
+## (plan) — renewal after a lapse (founder, 2026-09-29)
+The founder's promise: a lapse HIDES, it never deletes. While lapsed she keeps her lessons
+(read + export), her teaching profile (read-only; the server refuses edits), her class tracker
+(pointers, completions, chapter notes — kept server-side, only My Classes is off the bar) and
+Settings. On renewal My Classes and Add return with every card exactly where she left it.
+**The 2026-09-29 session walked the LAPSE on all three surfaces, not the RETURN.** Quick check
+with 027:
+```
+cd ~/main/kumar/AI/aruvi-saas && export $(grep -v '^#' .env | xargs) && export ARUVI_STATE_BACKEND=postgres && python3 aruvi-scripts/entitlement.py grant 9000000027 --scopes social_sciences/secondary,science/secondary,mathematics/middle
+```
+Then on web → iPhone → Android (a phone already open picks it up within ~20s or on foreground):
+My Classes and Add are back; the class cards show the same lesson, position and completions as
+before the revoke; chapter notes intact; the profile is editable again; Prepare returns. Also
+check a renewal through the SUBSCRIBE screen (not the CLI) restores the same state. Any
+difference is an amendment from WALK-A-161.
 
 ## The two TEST-ONLY server switches (built today, now OFF)
 Both are env-driven, default empty = off for everyone; code stays in `api/main.py` +

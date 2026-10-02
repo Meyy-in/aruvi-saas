@@ -1,0 +1,451 @@
+{
+ "stage": "secondary",
+ "subject": "mathematics",
+ "grade": "ix",
+ "chapter_number": 13,
+ "chapter_title": "Two Variables, One Line",
+ "sections": [
+  {
+   "ref": "13.1",
+   "title": "Linear Equations in Two Variables"
+  },
+  {
+   "ref": "13.1.1",
+   "title": "Standard Form of Linear Equations in Two Variables"
+  },
+  {
+   "ref": "13.2",
+   "title": "Solution of Linear Equation in Two Variables"
+  },
+  {
+   "ref": "13.2.1",
+   "title": "Algebraic Meaning of Solution",
+   "think_reflect": "Asks the student to check whether (1, 9/2), (0, 6), (4, 1) and (1/2, 21/4) are solutions of 3x + 2y = 12, to find other solutions, and to consider how many solutions can be found."
+  },
+  {
+   "ref": "13.2.2",
+   "title": "Geometric Visualisation of Solutions",
+   "think_reflect": "Presents four friends' reasoning — that x = 0, y = 0 satisfies ax + by = 0, checked on 2x + 3y = 0, and that 5x = 0 and 7y = 0 are the y-axis and the x-axis — for the claim that the line ax + by + c = 0 always passes through the origin whenever c = 0, whatever the values of a and b, and asks the student whether they agree."
+  },
+  {
+   "ref": "13.3",
+   "title": "Slope-intercept form of a Linear Equation in Two Variables"
+  },
+  {
+   "ref": "13.3.1",
+   "title": "Understanding Slope",
+   "think_reflect": "Asks the student to find the y-coordinate of the point on line AB (through A(2, 0) and B(4, 3)) whose x-coordinate is 8, and the x-coordinate of the point whose y-coordinate is 6, writing each as an ordered pair."
+  },
+  {
+   "ref": "13.3.2",
+   "title": "Slope-Intercept Form",
+   "think_reflect": "Asks the student to use the plotted points A(0, 3), B(1, -2) and C(-1, 8) to verify that the slope of y = -5x + 3 is indeed -5."
+  },
+  {
+   "ref": "13.4",
+   "title": "Pair of Linear Equations in Two Variables",
+   "think_reflect": "Asks the student to work out the cost of one paratha and of one bowl of dahi, given that one paratha with 2 bowls of dahi costs ₹90 and 2 parathas with 7 bowls of dahi cost ₹260, and to explain the reasoning."
+  },
+  {
+   "ref": "13.5",
+   "title": "Finding Solutions to a Pair of Linear Equations"
+  },
+  {
+   "ref": "13.5.1",
+   "title": "Algebraic Methods for Solving a Pair of Linear Equations",
+   "think_reflect": "Asks the student to solve a grid puzzle in which row and column totals fix the value of each shape and to discuss the strategy; to check whether writing y = (1/2)(3 - x) instead of x = 3 - 2y in Example 7 gives the same solution; to re-solve the incomes problem by eliminating x instead of y and by substitution, weighing the pros and cons of each method; to consider whether a pair always has a unique solution and what happens when both variables are eliminated together; to count the solutions of 10x - 5y = 20 and 4x - 2y = 8, give three more pairs that reduce to 0 = 0 and three more pairs with no solution, and find a simple rule for each case; to consider what happens if one of a2, b2, c2 is zero and whether a pair always has either a unique solution or infinitely many; to decide whether the converses of the three ratio rules are true; and to look for methods other than elimination and substitution for reducing a pair to a single linear equation in one variable."
+  },
+  {
+   "ref": "13.6",
+   "title": "Graphical Method for Solving A Pair of Linear Equations in Two Variables",
+   "think_reflect": "Asks the student how solutions can be found from a graph and what can be said about the number of solutions when the two lines intersect at a point, are parallel or are coincident, and to prove that two lines of equal slope are parallel by considering y = mx + d1 and y = mx + d2."
+  }
+ ],
+ "prose_summary": "Section 13.1 introduces linear equations in two variables, opening from the linear patterns and linear polynomials studied earlier and announcing the chapter's goal of learning to solve a pair of linear equations: Radha buys an unknown x kg of mangoes at ₹60 per kg and y kg of bananas at ₹50 per kg and pays ₹280 in all, a situation expressed as 60x + 50y = 280, whose two sides both represent the same quantity, the total cost, and which is named a linear equation in two variables. Section 13.1.1 defines the standard form: any equation that can be expressed as ax + by + c = 0, with a, b and c real numbers and a and b not both zero, is a linear equation in two variables, a and b being the coefficients of x and y and c the constant; it notes that the coefficients may be rational, so that (1/4)x + (3/5)y - 1/2 = 0 is already in standard form but is usually multiplied by 20 to give 5x + 12y - 10 = 0, and that equations of the type ax + c = 0 are special cases written ax + 0×y + c = 0 (7 + 4x = 0 becomes 4x + 0×y + 7 = 0); it then rewrites 5x + 2y = 2.7, x/2 - 4 = (3/2)y, 4 = 1.5x - 1.3y and 3y = 5 in standard form, reading off a, b and c in each and observing that multiplying through by -1 gives another valid set of values. Section 13.2 introduces the question of what a solution of a linear equation in two variables is, contrasting it with the linear equations in one variable solved in earlier grades, and answers it in two subsections, first algebraically and then geometrically. Section 13.2.1 defines a solution of a linear equation in two variables as a pair of values of x and y that satisfies the equation, written compactly as an ordered pair (x, y) in which the first number is the x-value and the second the y-value, so that order matters; it checks by substitution that (2, 3) and (4, 0) are solutions of 3x + 2y = 12 while (1, 3) is not, and explains that assigning any value u to x leaves a linear equation in y whose solution v makes (u, v) a solution, so that infinitely many solutions can be generated. Section 13.2.2 represents the solutions geometrically: rewriting 3x + 2y = 12 as y = -(3/2)x + 6 and plotting solutions such as (-1, 7.5), (0, 6), (1, 4.5) and (4, 0) shows that they lie on a straight line, so that, as with the graphs of y = mx + d met in the chapter on linear polynomials, the graph of a linear equation in two variables is a line on which every solution is a point; it draws the graph of 2x + y = 7 from the two tabulated solutions (0, 7) and (7/2, 0) and reads further solutions off the line, explains the shortcut of substituting x = 0 and y = 0 to find where a line meets the y-axis and the x-axis, graphs 4x + 3y = 12 through (0, 4) and (3, 0), and graphs 2x + 5y = 0, whose two intercept points coincide at the origin so that other values of x must be chosen, giving a line through the origin; and, returning to the algebraic meaning of a solution, it finds the unknown coefficients a and b in 3ax + 4y = -2 and 2x + by = 14 from their common solution (-3, 4). Section 13.3 introduces the slope-intercept form of a linear equation in two variables; it carries no text of its own beyond its heading and is developed through its two subsections, on the idea of slope and on the form y = mx + d. Section 13.3.1 defines the slope or gradient of a line as its steepness, motivated by the extra effort of cycling up a steep hill, with a positive slope going upward and a negative slope going downward as one moves from left to right; for two points A(x1, y1) and B(x2, y2) on a line it introduces the run x2 - x1 (the horizontal step, positive to the right) and the rise y2 - y1 (the vertical step, positive upward) and defines slope = rise/run = (y2 - y1)/(x2 - x1); it computes the slope 3/2 of the line through A(2, 0) and B(4, 3) and obtains the same value from points further along the extended line, concluding that the slope does not depend on where it is measured, finds the slope 1 of the line through (-1, 0), (1, 2) and (4, 5), and finds the slope -1 of the line through (-4, 5) and (-1, 2) with the points taken in either order, generalising that (y2 - y1)/(x2 - x1) is the same for any two points of a line and either order of the points, a result whose proof is deferred to the next subsection. Section 13.3.2 derives the slope-intercept form: recalling from the chapter on linear polynomials that in y = mx + d, m is the slope and d the y-intercept (the length cut off on the y-axis from the origin), it proves why m is the slope by substituting two points (x1, mx1 + d) and (x2, mx2 + d) of the line into (y2 - y1)/(x2 - x1) and simplifying to m, which also proves that the slope is the same for any two points of the line; it rewrites the standard form ax + by + c = 0 as y = -(a/b)x - c/b for b ≠ 0, so that m = -a/b and d = -c/b; it interprets 5x + y = 3, i.e. y = -5x + 3, as a line along which y decreases by 5 for every unit increase in x and which crosses the y-axis at (0, 3), drawing it from a table of values; and it explains the geometric meaning of slope in four cases — positive slope (m > 0, as in y = 2x + 1, rising from left to right), negative slope (m < 0, as in y = -3x + 4, falling), zero slope (the horizontal line y = 5, parallel to the x-axis) and undefined slope (the vertical line x = 2, parallel to the y-axis, which is not of the form y = mx + d and gives 0 in the denominator of the slope). Section 13.4 introduces a pair of linear equations in two variables: it recalls Rakesh's puzzle from Grade 7 — two numbers whose sum is 25 and whose difference is 11, earlier solved by tabulating possible combinations — and expresses it as x + y = 25 and x - y = 11, defines a solution of such a pair as an ordered pair that satisfies both equations, models a science exhibition's entry fees (2 adult and 3 child tickets for ₹600, 3 adult and 2 child tickets for ₹700) as 2x + 3y = 600 and 3x + 2y = 700, whose solution answers the question, and states the general form a1x + b1y + c1 = 0 and a2x + b2y + c2 = 0 with all coefficients real, a1 and b1 not both zero, and a2 and b2 not both zero. Section 13.5 introduces the task of finding solutions to a pair of linear equations, explaining that since a linear equation in one variable can already be solved, the methods to be studied work by reducing the pair to a single linear equation in one variable, and announces two such methods. Section 13.5.1 solves pairs of linear equations by two algebraic methods and then derives conditions for how many solutions a pair has. A grid puzzle of shapes with row and column totals, written as T + R = 14 and 2C + T + R = 22 and reduced to C = 4 by replacing T + R, leads into the method of substitution, in which one equation is used to express one variable in terms of the other and the result is substituted into the other equation to leave a linear equation in one variable: 7x - 15y = 2 and x + 2y = 3 give x = 49/29 and y = 19/29, to be verified in both equations, and a triangle with angles x°, y° = 4x° and 50° gives 26° and 104°. The method of elimination multiplies the equations so that one variable has equal coefficients and then subtracts them to remove it: incomes in the ratio 9 : 7 with expenditures in the ratio 4 : 3 and savings of ₹2000 each give 9x - 4y = 2000 and 7x - 3y = 2000 and hence incomes of ₹18,000 and ₹14,000, checked against both ratios, and a two-digit number whose sum with its reverse is 66 and whose digits differ by 2 gives x + y = 6 and x - y = 2 and the unique answer 42. Using elimination the section then analyses the possible outcomes: x - y = 10 and 10x - 10y = 100 become identical after multiplying by 10, so every solution of one is a solution of the other and there are infinitely many solutions, which happens when one equation is a constant multiple k of the other, i.e. a1/a2 = b1/b2 = c1/c2; x - y = 10 and 10x - 10y = 101 have equal left-hand sides but unequal right-hand sides after multiplication, so there is no solution, which happens when a1/a2 = b1/b2 ≠ c1/c2; and a variable survives elimination, giving a unique solution, only when a1/a2 ≠ b1/b2 — three simple rules for checking the nature of the solutions. The section closes with 'A Pinch of History' on systems of linear equations: traces on Babylonian cuneiform tablets (c. 2000 BCE), the fangcheng chapter of the Chinese Nine Chapters on the Mathematical Art, which cancelled variables by combining columns of counting rods in a procedure essentially identical to modern elimination eighteen centuries before Gauss, and the systematic reduction techniques of Āryabhaṭa (499 CE) and Brahmagupta (628 CE). Section 13.6 solves a pair of linear equations graphically by plotting the lines the two equations represent: after the student tabulates and plots four sample pairs (2x + y = 6 and x - y = 2; x + y = 4 and 2x + 2y = 8; 3x - 2y = 6 and 6x - 4y = 12; x - 2y = 4 and 2x - 4y = 6), it explains that solutions of the pair are the points lying on both lines, so that lines intersecting in a single point give a unique solution, parallel lines give no solution and coincident lines give infinitely many solutions; it solves x + 3y = 6 and 2x - 3y = 12 graphically, reading off the intersection (6, 0) as the unique solution and noting that a1/a2 = 1/2 ≠ b1/b2 = -1; it predicts from a1/a2 = b1/b2 = 1/2 ≠ c1/c2 = 1/3 that x + 2y - 4 = 0 and 2x + 4y - 12 = 0 have no solution and are parallel, and confirms this by graphing; and it represents Romila's and Sonali's purchases of erasers and A4 sheets, 2x + 3y = 9 and 4x + 6y = 18, as two coincident lines with a1/a2 = b1/b2 = c1/c2 = 1/2 and infinitely many solutions, so linking the coefficient-ratio rules to the geometry of intersecting, parallel and coincident lines.",
+ "enumerated_worked_examples": [
+  {
+   "id": "WE-1",
+   "source_section": "13.1.1",
+   "book_ref": "Example 1, p.86",
+   "description": "Write 5x + 2y = 2.7, x/2 - 4 = (3/2)y, 4 = 1.5x - 1.3y and 3y = 5 in the standard form ax + by + c = 0 and state a, b and c in each case, noting that multiplying through by -1 gives an equally valid set of values."
+  },
+  {
+   "id": "WE-2",
+   "source_section": "13.2.2",
+   "book_ref": "Example 2, p.89",
+   "description": "Find two solutions of 2x + y = 7 by substituting x = 0 and y = 0, giving (0, 7) and (7/2, 0), draw the graph through them, and read four more solutions — (1, 5), (2, 3), (3, 1) and (3/2, 4) — off the line."
+  },
+  {
+   "id": "WE-3",
+   "source_section": "13.2.2",
+   "book_ref": "Example 3, p.90",
+   "description": "Find two solutions of each equation and draw its graph: (i) 4x + 3y = 12, using the intercept points (0, 4) and (3, 0); (ii) 2x + 5y = 0, where x = 0 gives only the origin, so x = 1 and x = 5 are used to get (1, -2/5) and (5, -2) and the points are seen to lie on a line through the origin."
+  },
+  {
+   "id": "WE-4",
+   "source_section": "13.2.1",
+   "book_ref": "Example 4, p.92",
+   "description": "Given that (-3, 4) is the solution of both 3ax + 4y = -2 and 2x + by = 14, substitute x = -3 and y = 4 into each equation to find the unknown coefficients a = 2 and b = 5."
+  },
+  {
+   "id": "WE-5",
+   "source_section": "13.3.1",
+   "book_ref": "Example 5, p.97",
+   "description": "Plot A(-1, 0), B(1, 2) and C(4, 5) and find the slope of the line through them as rise/run = CP/BP = (5 - 2)/(4 - 1) = 1, noting that any two of the points give the same slope."
+  },
+  {
+   "id": "WE-6",
+   "source_section": "13.3.1",
+   "book_ref": "Example 6, p.97",
+   "description": "Find the slope of the line through A(-4, 5) and B(-1, 2) as (2 - 5)/(-1 - (-4)) = -1, and show that taking the points in the reverse order gives the same value."
+  },
+  {
+   "id": "WE-7",
+   "source_section": "13.5.1",
+   "book_ref": "Example 7, p.106",
+   "description": "Solve 7x - 15y = 2 and x + 2y = 3 by substitution: express x = 3 - 2y from the second equation, substitute it into the first to get y = 19/29, back-substitute to get x = 49/29, and verify the solution in both equations."
+  },
+  {
+   "id": "WE-8",
+   "source_section": "13.5.1",
+   "book_ref": "Example 8, p.107",
+   "description": "Two angles of a triangle are x° and y° with y = 4x and the third angle is 50°; combine the angle-sum equation x + y + 50 = 180 with y = 4x and substitute to get x = 26° and y = 104°."
+  },
+  {
+   "id": "WE-9",
+   "source_section": "13.5.1",
+   "book_ref": "Example 9, p.108",
+   "description": "The incomes of two persons are in the ratio 9 : 7 and their expenditures in the ratio 4 : 3, and each saves ₹2000 a month; form 9x - 4y = 2000 and 7x - 3y = 2000, eliminate y by multiplying by 3 and 4 and subtracting to get x = 2000 and y = 4000, give the incomes as ₹18,000 and ₹14,000, and verify both ratios."
+  },
+  {
+   "id": "WE-10",
+   "source_section": "13.5.1",
+   "book_ref": "Example 10, p.109",
+   "description": "The sum of a two-digit number and the number obtained by reversing its digits is 66 and the digits differ by 2; with tens digit x (the larger) and units digit y, form 11(x + y) = 66, i.e. x + y = 6, and x - y = 2, solve by elimination to get x = 4 and y = 2, and conclude that 42 is the unique such number."
+  },
+  {
+   "id": "WE-11",
+   "source_section": "13.6",
+   "book_ref": "Example 11, p.113",
+   "description": "Solve x + 3y = 6 and 2x - 3y = 12 graphically: tabulate (0, 2), (6, 0) and (0, -4), (3, -2), draw the two lines, read their intersection (6, 0) as the unique solution, and note that a1/a2 = 1/2 ≠ b1/b2 = -1."
+  },
+  {
+   "id": "WE-12",
+   "source_section": "13.6",
+   "book_ref": "Example 12, p.114",
+   "description": "Decide whether x + 2y - 4 = 0 and 2x + 4y - 12 = 0 intersect, coincide or are parallel by comparing a1/a2 = b1/b2 = 1/2 with c1/c2 = 1/3, conclude that there is no solution and the lines are parallel, and verify by graphing both lines through their intercept points."
+  },
+  {
+   "id": "WE-13",
+   "source_section": "13.6",
+   "book_ref": "Example 13, p.115",
+   "description": "Romila buys 2 erasers and 3 A4 sheets for ₹9 and Sonali buys 4 erasers and 6 A4 sheets for ₹18; represent 2x + 3y = 9 and 4x + 6y = 18 graphically, find that the two lines coincide, and match this with a1/a2 = b1/b2 = c1/c2 = 1/2 and infinitely many solutions."
+  }
+ ],
+ "enumerated_exercises": [
+  {
+   "id": "E-1",
+   "source_section": "13.1.1",
+   "book_ref": "Exercise Set 13.1 Q1, p.87",
+   "description": "Write a linear equation in two variables in which a = 3, b = 0 and c = -1/5."
+  },
+  {
+   "id": "E-2",
+   "source_section": "13.1.1",
+   "book_ref": "Exercise Set 13.1 Q2, p.87",
+   "description": "Complete a table by writing y - 15 = √2x, 3y - 2x = 0, 5x = 3y, x = 8 and 3y = 1 in standard form and identifying in each the coefficient of x, the coefficient of y and the constant term."
+  },
+  {
+   "id": "E-3",
+   "source_section": "13.1",
+   "book_ref": "Exercise Set 13.1 Q3, p.87",
+   "description": "Judge whether situations have been correctly expressed as linear equations in two variables: (i) a notebook costing twice as much as a pen, written t = 2p by Charlie and p = 2t by Meera; (ii) two batsmen together scoring 176 runs, written x + y = 176 by Manisha."
+  },
+  {
+   "id": "E-4",
+   "source_section": "13.2.1",
+   "book_ref": "Exercise Set 13.2 Q1, p.93",
+   "description": "Verify whether the ordered pair (4, 3) is a solution of 5x - 6y = 2, explaining the reasoning."
+  },
+  {
+   "id": "E-5",
+   "source_section": "13.2.1",
+   "book_ref": "Exercise Set 13.2 Q2, p.93",
+   "description": "Find any two solutions of each of (i) 7x - 3y = 21 and (ii) 2x + 3y = 5."
+  },
+  {
+   "id": "E-6",
+   "source_section": "13.2.1",
+   "book_ref": "Exercise Set 13.2 Q3, p.93",
+   "description": "Given that (2, -1) is the solution of both 2mx + 3y = 7 and 4x + ny = -10, find the unknown constants m and n."
+  },
+  {
+   "id": "E-7",
+   "source_section": "13.2.2",
+   "source_sections": [
+    "13.2.1",
+    "13.2.2"
+   ],
+   "book_ref": "Exercise Set 13.2 Q4, p.93",
+   "description": "For each of (i) 5x + 3y = 7, (ii) 5x - 3y = 7, (iii) -5x + 3y = 7 and (iv) -5x - 3y = 7, find two solutions lying in different quadrants, identify the quadrants, and verify by representing the lines on graph paper."
+  },
+  {
+   "id": "E-8",
+   "source_section": "13.2.2",
+   "source_sections": [
+    "13.2.1",
+    "13.2.2"
+   ],
+   "book_ref": "Exercise Set 13.2 Q5, p.93",
+   "description": "Using the given graph of 3x - 7y = 21 through A(7, 0) and B(0, -3), decide whether the point C(2, 3) lies on the line and whether it satisfies the equation, and whether points that do not lie on the line can satisfy the equation."
+  },
+  {
+   "id": "E-9",
+   "source_section": "13.2.1",
+   "source_sections": [
+    "13.1.1",
+    "13.2.1",
+    "13.2.2"
+   ],
+   "book_ref": "Exercise Set 13.2 Q6, p.94",
+   "description": "State with justification whether each statement is true or false: (i) a linear equation in two variables has only one solution; (ii) its graph always passes through the origin; (iii) it can never have rational solutions; (iv) x = 3 is a valid linear equation in two variables; (v) 2x + 3y = 7 has infinitely many solutions; (vi) (1, 2) is a solution of 2x + 3y = 7."
+  },
+  {
+   "id": "E-10",
+   "source_section": "13.2.1",
+   "book_ref": "Exercise Set 13.2 Q7, p.94",
+   "description": "(i) Compare the solutions of 3x + 4y = 7 and 6x + 8y = 14 and argue that every solution of one is also a solution of the other; (ii) show that ax + by = c and kax + kby = kc, with k ≠ 0, have the same set of solutions."
+  },
+  {
+   "id": "E-11",
+   "source_section": "13.3.1",
+   "book_ref": "Exercise Set 13.3 Q1, p.102",
+   "description": "Rank three ski hills — with rise and run of 60 m and 70 m, 60 m and 110 m, and 80 m and 100 m — in order of steepness from least to greatest."
+  },
+  {
+   "id": "E-12",
+   "source_section": "13.3.1",
+   "book_ref": "Exercise Set 13.3 Q2, p.102",
+   "description": "Find the slope of a loading-dock ramp that rises 2.5 metres over a run of 4 metres."
+  },
+  {
+   "id": "E-13",
+   "source_section": "13.3.1",
+   "source_sections": [
+    "13.3.1",
+    "13.3.2"
+   ],
+   "book_ref": "Exercise Set 13.3 Q3, p.102",
+   "description": "Find the slope of line l in four grid diagrams: (i) a horizontal line, (ii) a line falling from left to right through the origin, (iii) a line rising from left to right, the lines in (ii) and (iii) each carrying two marked points, and (iv) a vertical line."
+  },
+  {
+   "id": "E-14",
+   "source_section": "13.3.1",
+   "book_ref": "Exercise Set 13.3 Q4, p.103",
+   "description": "A wheelchair ramp beside a staircase must have a slope of 1 cm vertical rise to 12 cm horizontal length; find the horizontal length of the ramp if the total height of the stairs is 18 cm."
+  },
+  {
+   "id": "E-15",
+   "source_section": "13.4",
+   "book_ref": "Exercise Set 13.4 Q1, p.105",
+   "description": "Frame a pair of linear equations for a family's purchases, with a movie ticket costing ₹x and a snack box ₹y: 2 tickets and 3 snack boxes for ₹850 on the first day, and 4 tickets and 1 snack box for ₹1100 on the second."
+  },
+  {
+   "id": "E-16",
+   "source_section": "13.4",
+   "book_ref": "Exercise Set 13.4 Q2, p.105",
+   "description": "Frame a pair of linear equations for taxi fares with a fixed charge of ₹x per trip and ₹y per kilometre, given that Sahil paid ₹122 for 6 km and Meena paid ₹160 for 8 km."
+  },
+  {
+   "id": "E-17",
+   "source_section": "13.4",
+   "book_ref": "Exercise Set 13.4 Q3, p.105",
+   "description": "Frame a pair of linear equations for a sports meet with adult tickets at ₹150 and children's tickets at ₹100, attended by 200 people and collecting ₹25,000, taking x adult and y children's tickets sold."
+  },
+  {
+   "id": "E-18",
+   "source_section": "13.5.1",
+   "source_sections": [
+    "13.4",
+    "13.5.1"
+   ],
+   "book_ref": "Exercise Set 13.5 Q1, p.116",
+   "description": "Form a pair of linear equations for each of ten problems and solve it: (i) two integers with sum +5 and difference -21; (ii) two numbers that differ by 26, one three times the other; (iii) the cost of a bat and of a ball, from 7 bats and 6 balls for ₹8880 and 3 bats and 5 balls for ₹4000; (iv) a taxi's fixed charge and charge per km from fares of ₹155 for 10 km and ₹220 for 15 km, and the fare for 25 km; (v) a fraction that becomes 9/11 when 2 is added to numerator and denominator and 5/6 when 3 is added; (vi) a fraction that becomes 1 when 1 is added to the numerator and 1 subtracted from the denominator, and 1/2 when 1 is added only to the denominator; (vii) the ages of Nuri and Sonu, given that five years ago Nuri was thrice as old as Sonu and ten years later Nuri will be twice as old; (viii) a two-digit number with digit sum 9 for which nine times the number is twice the number with its digits reversed; (ix) the numbers of ₹50 and ₹100 notes in a withdrawal of ₹2000 made up of 25 notes; (x) a lending library's fixed charge for the first three days and charge per extra day, from ₹27 for seven days and ₹21 for five days."
+  },
+  {
+   "id": "E-19",
+   "source_section": "13.6",
+   "source_sections": [
+    "13.4",
+    "13.6"
+   ],
+   "book_ref": "Exercise Set 13.5 Q2, p.117",
+   "description": "Form a pair of linear equations and find the common solution graphically: 10 students of Grade 9 took part in a mathematics quiz and the number of girls was 4 more than the number of boys; find the number of boys and of girls."
+  },
+  {
+   "id": "E-20",
+   "source_section": "13.6",
+   "source_sections": [
+    "13.5.1",
+    "13.6"
+   ],
+   "book_ref": "Exercise Set 13.5 Q3, p.117",
+   "description": "Use the ratios a1/a2, b1/b2 and c1/c2 to decide whether the lines of each pair intersect at a point, are parallel or are coincident: (i) 5x - 4y + 8 = 0, 7x + 6y - 9 = 0; (ii) 9x + 3y + 12 = 0, 18x + 6y + 24 = 0; (iii) 6x - 3y + 10 = 0, 2x - y + 9 = 0."
+  },
+  {
+   "id": "E-21",
+   "source_section": "13.6",
+   "source_sections": [
+    "13.5.1",
+    "13.6"
+   ],
+   "book_ref": "Exercise Set 13.5 Q4, p.118",
+   "description": "Decide which of the pairs (i) x + y = 5, 2x + 2y = 10; (ii) x - y = 8, 3x - 3y = 16; (iii) 2x + y - 6 = 0, 4x - 2y - 4 = 0; (iv) 2x - 2y - 2 = 0, 4x - 4y - 5 = 0 have solutions, and find the solutions graphically where they exist."
+  },
+  {
+   "id": "E-22",
+   "source_section": "13.5.1",
+   "source_sections": [
+    "13.4",
+    "13.5.1"
+   ],
+   "book_ref": "Exercise Set 13.5 Q5, p.118",
+   "description": "Half the perimeter of a rectangular garden is 36 m and its length is 4 m more than its width; find the dimensions of the garden."
+  },
+  {
+   "id": "E-23",
+   "source_section": "13.6",
+   "source_sections": [
+    "13.5.1",
+    "13.6"
+   ],
+   "book_ref": "Exercise Set 13.5 Q6, p.118",
+   "description": "Given the linear equation 2x + 3y - 8 = 0, write another linear equation in two variables so that the pair represents (i) intersecting lines, (ii) parallel lines and (iii) coincident lines."
+  },
+  {
+   "id": "E-24",
+   "source_section": "13.5.1",
+   "book_ref": "Exercise Set 13.5 Q7, p.118",
+   "description": "Solve Mahāvīrāchārya's problem from Gaṇita sāra saṅgraha (c. 850 CE): 9 citrons and 7 fragrant wood-apples together cost 107 and 7 citrons and 9 fragrant wood-apples cost 101; find the price of each, using the hint that in the model 9x + 7y = 107, 7x + 9y = 101 the x and y coefficients are interchanged, so that adding and subtracting the equations, rather than direct elimination or substitution, leads to the answer."
+  },
+  {
+   "id": "E-25",
+   "source_section": "13.5.1",
+   "source_sections": [
+    "13.4",
+    "13.5.1"
+   ],
+   "book_ref": "Exercise Set 13.5 Q8, p.118",
+   "description": "5 pencils and 7 pens together cost ₹50, whereas 7 pencils and 5 pens together cost ₹46; find the cost of each pencil and each pen."
+  },
+  {
+   "id": "E-26",
+   "source_section": "13.5.1",
+   "source_sections": [
+    "13.4",
+    "13.5.1"
+   ],
+   "book_ref": "Exercise Set 13.5 Q9, p.118",
+   "description": "Find the height of a stool from a picture in which a cat sitting on the stool reaches 85 cm above the floor, while with the cat sitting on the floor the top of the stool is 25 cm above the cat."
+  },
+  {
+   "id": "E-27",
+   "source_section": "13.3.2",
+   "source_sections": [
+    "13.2.1",
+    "13.2.2",
+    "13.3.1",
+    "13.3.2"
+   ],
+   "book_ref": "End of Chapter Q1, p.119",
+   "description": "For the given graph of y = 3x through (0, 0) and (2, 6): (i) identify the slope from the graph and explain the calculation using the two points; (ii) state the y-intercept and explain its significance; (iii) treating the graph as the water level y (in cm) of a tank after x minutes, find (a) the height after 5 minutes and (b) the time taken to reach 21 cm; (iv) decide without drawing a new graph whether (4, 10) lies on the line, with justification; (v) plot the point where the line meets x = 3 and explain how its coordinates were found."
+  },
+  {
+   "id": "E-28",
+   "source_section": "13.2.1",
+   "source_sections": [
+    "13.2.1",
+    "13.2.2",
+    "13.5.1"
+   ],
+   "book_ref": "End of Chapter Q2, p.120",
+   "description": "For the Celsius-to-Fahrenheit conversion F = (9/5)C + 32: (i) draw its graph with Celsius on the x-axis and Fahrenheit on the y-axis; (ii) convert 30 °C to Fahrenheit; (iii) convert 95 °F to Celsius; (iv) convert 0 °C to Fahrenheit and 0 °F to Celsius; (v) decide whether some temperature has the same numerical value on both scales and, if so, find it."
+  },
+  {
+   "id": "E-29",
+   "source_section": "13.6",
+   "book_ref": "End of Chapter Q3, p.120",
+   "description": "Solve the pair of equations 2x + y = 6, 2x - y - 2 = 0 graphically."
+  },
+  {
+   "id": "E-30",
+   "source_section": "13.6",
+   "book_ref": "End of Chapter Q4, p.120",
+   "description": "Find the point of intersection of the lines shown on the cover page of the book."
+  },
+  {
+   "id": "E-31",
+   "source_section": "13.3.2",
+   "source_sections": [
+    "13.2.2",
+    "13.3.2"
+   ],
+   "book_ref": "End of Chapter Q5, p.120",
+   "description": "Give a formula for the x-intercept of the line y = mx + c."
+  },
+  {
+   "id": "E-32",
+   "source_section": "13.5.1",
+   "source_sections": [
+    "13.4",
+    "13.5.1",
+    "13.6"
+   ],
+   "book_ref": "End of Chapter Q6, p.120",
+   "description": "Compare two mobile plans — Plan A at ₹50 a month plus ₹0.20 per minute of calls and Plan B at ₹30 a month plus ₹0.30 per minute — to find for how many minutes of calling per month each plan is cheaper and the number of minutes at which both cost the same."
+  },
+  {
+   "id": "E-33",
+   "source_section": "13.3.2",
+   "book_ref": "End of Chapter Q7, p.120",
+   "description": "State how many lines exist that (i) have a given slope, and (ii) have a given slope and pass through a given point."
+  },
+  {
+   "id": "E-34",
+   "source_section": "13.5.1",
+   "book_ref": "End of Chapter Q8, p.120",
+   "description": "Find the values of p for which the pair 4x + py + 8 = 0 and 2x + 2y + 2 = 0 has a unique solution."
+  },
+  {
+   "id": "E-35",
+   "source_section": "13.5.1",
+   "book_ref": "End of Chapter Q9, p.121",
+   "description": "Find the values of a and b for which the pair (a + b)x - 2by = 5a + 2b + 1 and 3x - y = 14 has infinitely many solutions."
+  },
+  {
+   "id": "E-36",
+   "source_section": "13.5.1",
+   "source_sections": [
+    "13.5.1",
+    "13.6"
+   ],
+   "book_ref": "End of Chapter Q10, p.121",
+   "description": "Find the value of k for which x + 2y = 3 and (k - 1)x + (k + 1)y = k + 3 represent a pair of coincident lines."
+  },
+  {
+   "id": "E-37",
+   "source_section": "13.6",
+   "source_sections": [
+    "13.3.1",
+    "13.3.2",
+    "13.5.1",
+    "13.6"
+   ],
+   "book_ref": "End of Chapter Q11, p.121",
+   "description": "Decide whether, and where, the paths traced by two robots intersect: (i) Robot 1 starts at the origin and repeatedly moves 3 units right and then 4 units up, while Robot 2 starts at (10, 0) and repeatedly moves 1 unit right and then 2 units up; (ii) Robot 1 starts at (3, 0) and repeatedly moves 5 units right and then 5 units up, while Robot 2 starts at (7, 0) and repeatedly moves 5 units right and then 3 units down."
+  }
+ ],
+ "conceptual_demand": 2,
+ "reasoning_load": 2,
+ "exec_load": 2
+}

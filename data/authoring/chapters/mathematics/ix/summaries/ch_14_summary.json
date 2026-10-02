@@ -1,0 +1,362 @@
+{
+ "stage": "secondary",
+ "subject": "mathematics",
+ "grade": "ix",
+ "chapter_number": 14,
+ "chapter_title": "Math of Space: Surface Area and Volume",
+ "sections": [
+  {
+   "ref": "14.1",
+   "title": "Cuboids and Cubes",
+   "think_reflect": "Asks the student to work out why the stacked-playing-cards model explains volume = area of base × height and to write the surface-area and volume formulas of a cube, and to decide which of two proposed school swimming pools — 8 ft deep × 50 ft × 20 ft or 6 ft deep × 100 ft × 15 ft — would be suitable, explaining why and naming the parameters considered (1 cubic foot ≈ 28.3 litres)."
+  },
+  {
+   "ref": "14.2",
+   "title": "Right Circular Cylinder"
+  },
+  {
+   "ref": "14.2.1",
+   "title": "Another Way of Understanding Why the Above Formulas Are True"
+  },
+  {
+   "ref": "14.3",
+   "title": "Cones"
+  },
+  {
+   "ref": "14.4",
+   "title": "Pyramidal Shapes"
+  },
+  {
+   "ref": "14.5",
+   "title": "Spheres and Hemispheres"
+  },
+  {
+   "ref": "14.5.1",
+   "title": "Hands-on Activity to Verify the Formula for Surface Area of a Sphere"
+  },
+  {
+   "ref": "14.5.2",
+   "title": "Hemisphere"
+  },
+  {
+   "ref": "14.6",
+   "title": "Areas and Volumes Around Us"
+  },
+  {
+   "ref": "14.6.1",
+   "title": "Guesstimates: Did You Ever Wonder?"
+  }
+ ],
+ "prose_summary": "Section 14.1 defines a cuboid and derives its surface area and volume. Building on the nets of solids explored in the previous grade, it describes a cuboid as a 'three-dimensional version' of a rectangle with six rectangular faces, characterised by its length, width and height l, w, h, and obtains its total surface area TSA = 2(wl + hl + hw) by adding the areas of the faces shown in its net (Fig. 14.2); it then defines volume as the amount of three-dimensional space an object or container occupies, measured in cubic units relative to a unit cube, gives the volume of a cuboid V = lwh as the number of unit cubes that fit into it, compares this with the area of a rectangle, and explains it as volume = area of base × height by picturing the cuboid as thin rectangular sheets stacked like a pack of playing cards. The cube of side a is treated as the special case w = h = l, with total surface area 6a^2 and volume a^3; the section recalls the cube numbers 1, 8, 27, 64, … as the volumes of cubes of side 1, 2, 3, 4, … together with their cube roots, and in Example 1 compares a 6 cm cube with a 9 cm × 6 cm × 4 cm cuboid of the same volume 216 cm^3 to show that the cube has the smaller surface area (216 cm^2 against 228 cm^2), so that for the same capacity a cube needs less covering material while a cuboid exposes more area to its surroundings — a point that matters in packaging, heat transfer and engineering. Section 14.2 defines the right circular cylinder and derives its surface-area and volume formulas. The cylinder is called circular because its cross-section is a circle and right because its axis is perpendicular to its circular base, as distinct from an oblique circular cylinder whose axis is inclined; a cross-section is defined as the shape obtained by taking an extremely thin slice of a solid — circular when a cylinder is sliced parallel to its base and rectangular when it is sliced parallel to its axis — and is illustrated with a cylinder, a papaya and an apple and likened to an MRI scan. Cutting the curved surface open into a rectangle gives the curved surface area CSA = circumference × height = 2πrh; adding the flat ends gives the total surface area 2πrh + 2πr^2 = 2πr(h + r) for a cylinder closed at both ends like a biscuit tin and 2πrh + πr^2 = πr(2h + r) for one closed at one end like a tumbler; and the volume is V = cross-sectional area × height = πr^2h. Example 2 applies 2πrh to find the 550 cm^2 of chart paper needed for the curved surface of a kaleidoscope of length 25 cm and radius 3.5 cm. Section 14.2.1 explains another way of understanding why the curved-surface-area and volume formulas of the cylinder hold: think of the cylinder as a large number of thin circular khakhras stacked one on another, much as the cuboid was pictured as a stack of playing cards. Section 14.3 derives the surface area of a right circular cone and justifies its volume formula experimentally. A right circular cone is generated when a right triangle is rotated about one of its legs, and its slant length, height and base radius satisfy l^2 = h^2 + r^2 by the Baudhāyana–Pythagoras theorem; cutting the cone along a slant edge and unrolling it gives a sector of a circle of radius l. The curved surface area is derived in two ways — by cutting the unrolled sector into a large number of thin sectors, each regarded as a narrow isosceles triangle of height l, so that CSA = (1/2)(b1 + b2 + … + bn)l = (1/2)(2πr)l = πrl, and by writing the sector's area as πl^2 × θ/360° and equating the cone's base circumference 2πr with the sector's arc length (θ/360°) × 2πl to get θ/360° = r/l and again CSA = πrl — and the total surface area is πrl + πr^2. The volume V = (1/3)πr^2h = (1/3) × area of base × height, exactly one third of the volume of the cylinder on the same base and with the same height, is stated with the reason for the factor 1/3 deferred to calculus in Grade 12, and is verified experimentally: a paper cone with the same base radius and height as a cylindrical tin, filled with fine salt and emptied into the tin, fills it in exactly three pourings, and a modelling-clay cylinder can be reshaped into exactly three identical cones of the same radius and height. Example 3 recognises the solid generated by rotating a right triangle with sides 5 cm, 12 cm and 13 cm about its 12 cm side as a cone with r = 5 cm and h = 12 cm and finds its volume 100π cm^3. Section 14.4 defines a pyramidal shape as one whose base may be a triangle, a square or indeed any closed shape, with all points of the base connected to a single point, the apex, lying in a different plane, illustrated by the square-based pyramids of Egypt, a triangular-based puzzle (Fig. 14.11B) and pyramidal mountain peaks formed by glacier erosion such as the Shivling Peak in Uttarakhand and the Matterhorn in the Alps; it introduces the volume formula V = (1/3) × area of base × height, applicable whatever the shape of the base, notes that this is the same formula as for the cone, so that a cone may be thought of as a pyramid with a circular base, and observes that the surface area of a pyramidal shape is found by adding the areas of all its polygonal faces, so no separate formula is needed. Section 14.5 defines a sphere and introduces Archimedes' formulas for its surface area and volume. The sphere is the three-dimensional equivalent of a circle — the collection of all points in 3D space at a given distance r (the radius) from a given point O (the centre) — and rotating a circle about any diameter produces a hollow sphere. The surface area 4πr^2 is explained through Archimedes' result that the surface area of a sphere is exactly equal to the curved surface area of the cylinder of radius r and height 2r that fits tightly over it (Fig. 14.12), giving 2πr × 2r = 4πr^2; the volume V = (4/3)πr^3 is stated, with the derivations of both formulas deferred to calculus in later grades, and the student is invited to work out for themselves how the volume connects with the cone-volume formula by writing it as V = (1/3) × (4πr^2) × r, i.e., one third of the surface area times the radius. Section 14.5.1 justifies the surface-area formula of a sphere experimentally through a hands-on activity: a string is wound tightly around a rubber ball — supported by a nail driven into it, as when winding a top, and held with pins once the 'fullest' part of the ball is reached — until the surface is completely covered, then unwound and used to fill circles drawn with the ball's radius; the string exactly fills four such circles (Fig. 14.14), so the surface area of a sphere of radius r is four times the area of a circle of radius r, i.e., 4πr^2. Section 14.5.2 defines a hemisphere as the solid formed when a sphere is cut into two equal halves by a plane passing through its centre, with one curved surface and a flat circular base, illustrated by bowls, serving dishes, dome-shaped covers, planetariums and igloos and linked to the Northern and Southern Hemispheres of Geography, and derives its curved surface area 2πr^2 as half of the sphere's 4πr^2 and its total surface area 2πr^2 + πr^2 = 3πr^2, together with its volume (2/3)πr^3; Example 4 uses the volume formula to find that a hemispherical bowl of radius 3.5 cm holds about 89.8 cm^3 of water. Section 14.6 introduces the application of these formulas to the world around us, asking the student to identify and list objects or structures nearby that are cubical, cuboidal, cylindrical, conical, spherical or pyramidal in shape, or closely resemble these shapes, and setting an activity to find the approximate volumes of a gas cylinder, a bucket, any cylindrical vessel, a cupboard and a water tank, using 1000 cm^3 = 1 litre. Section 14.6.1 defines guesstimate questions and solves two of them. Guesstimate questions are problems in which one makes a reasonable estimate of a quantity when exact data are not available, using assumptions, approximations, logic and everyday knowledge to model the situation and arrive at a sensible estimate rather than a perfectly accurate answer. Example 5, after first inviting a guess, estimates how many golgappas Lallan can serve from 5000π cm^3 of pani in a cylindrical vessel, treating each golgappa as a sphere: two students' different assumptions about its radius and how full it is filled give about 1850 and about 870, showing that the answer depends on the assumptions and approximations made. Example 6 estimates how many tennis balls of radius 3 cm fit in a 30 ft × 30 ft × 15 ft classroom: dividing the room's volume by a ball's volume gives only an upper bound because spheres leave gaps, an ordered packing of 150 × 150 × 75 balls gives about 16,87,500, denser packings are left for the student to estimate, and the gaps are noted as the reason spheres, unlike cubes, are not used as units of volume. The section closes by stressing that different people may reach different answers but the reasoning matters most: make a quick intuitive guess, model the situation by identifying the relationships among the quantities, make reasonable assumptions, calculate with suitable approximations, and look back to compare the guess with the estimate.",
+ "enumerated_worked_examples": [
+  {
+   "id": "WE-1",
+   "source_section": "14.1",
+   "book_ref": "Example 1, p.125",
+   "description": "Compare Cube A of side 6 cm with Cuboid B of 9 cm × 6 cm × 4 cm, made of the same material: both have volume 216 cm^3, but their surface areas are 216 cm^2 and 228 cm^2, leading to the conclusion that for the same storage capacity a cube needs less covering material while a cuboid exposes more area to its surroundings, which matters in packaging, heat transfer and engineering."
+  },
+  {
+   "id": "WE-2",
+   "source_section": "14.2",
+   "book_ref": "Example 2, p.129",
+   "description": "Find the area of chart paper Savitri needs for the curved surface of a cylindrical kaleidoscope of length 25 cm and radius 3.5 cm, computing the curved surface area 2πrh with π = 22/7 to get 550 cm^2."
+  },
+  {
+   "id": "WE-3",
+   "source_section": "14.3",
+   "book_ref": "Example 3, p.133",
+   "description": "A right triangle ABC with sides 5 cm, 12 cm and 13 cm (right-angled since 5^2 + 12^2 = 13^2) is rotated through 360° about the 12 cm side; recognise the solid as a right circular cone with h = 12 cm and r = 5 cm and find its volume (1/3)πr^2h = 100π cm^3."
+  },
+  {
+   "id": "WE-4",
+   "source_section": "14.5.2",
+   "book_ref": "Example 4, p.140",
+   "description": "Find the volume of water a hemispherical bowl of radius 3.5 cm can contain, using (2/3)πr^3 with π = 22/7 to get about 89.8 cm^3."
+  },
+  {
+   "id": "WE-5",
+   "source_section": "14.6.1",
+   "book_ref": "Example 5, p.141",
+   "description": "Guesstimate how many golgappas Lallan can serve from a cylindrical vessel of radius 10 cm holding pani to a height of 50 cm (5000π cm^3), making a guess first and then comparing two students' models — spherical golgappas of radius 1.5 cm filled 60% with pani (about 8.5 cm^3 each, giving about 1850) and of radius 1.75 cm filled 80% (about 18 cm^3 each, giving about 870) — to show that the final answer depends on the assumptions, estimations and approximations made."
+  },
+  {
+   "id": "WE-6",
+   "source_section": "14.6.1",
+   "book_ref": "Example 6, p.142",
+   "description": "Guesstimate how many tennis balls of radius 3 cm fit in an empty 30 ft × 30 ft × 15 ft classroom: dividing the room's volume (13,500 ft^3 ≈ 37,80,00,000 cm^3) by a ball's volume (about 113 cm^3) gives about 33,45,132, which is only an upper bound because the balls leave gaps; placing 900/6 = 150 balls along the length and the width and 75 along the height in the first ordered packing configuration gives about 16,87,500, and the student is asked to estimate using the denser second and third configurations."
+  }
+ ],
+ "enumerated_exercises": [
+  {
+   "id": "E-1",
+   "source_section": "14.1",
+   "book_ref": "Exercise Set 14.1 Q1, p.125",
+   "description": "The volume of a cube is 64 cm^3; find its total surface area."
+  },
+  {
+   "id": "E-2",
+   "source_section": "14.1",
+   "book_ref": "Exercise Set 14.1 Q2, p.125",
+   "description": "Find how many small cubes of side 20 cm can be packed tight in a cubical box of side 2 m."
+  },
+  {
+   "id": "E-3",
+   "source_section": "14.1",
+   "book_ref": "Exercise Set 14.1 Q3, p.125",
+   "description": "A godown measuring 40 m × 25 m × 10 m is filled with cuboidal boxes each measuring 2 m × 1.25 m × 1 m; find the number of boxes."
+  },
+  {
+   "id": "E-4",
+   "source_section": "14.1",
+   "book_ref": "Exercise Set 14.1 Q4, p.125",
+   "description": "Two cubes, each of volume 125 cm^3, are joined end to end; find the surface area of the resulting cuboid."
+  },
+  {
+   "id": "E-5",
+   "source_section": "14.1",
+   "book_ref": "Exercise Set 14.1 Q5, p.126",
+   "description": "A cube of side 4 cm is cut into cubes of side 1 cm; find the ratio of the surface area of the original cube to that of all the cut-out cubes, noting that the volume is unchanged while the surface area changes greatly, a property with major consequences in the biological world."
+  },
+  {
+   "id": "E-6",
+   "source_section": "14.1",
+   "book_ref": "Exercise Set 14.1 Q6, p.126",
+   "description": "The three faces of a cuboid that meet at a corner have areas 6 cm^2, 15 cm^2 and 10 cm^2; find the volume of the cuboid."
+  },
+  {
+   "id": "E-7",
+   "source_section": "14.2",
+   "book_ref": "Exercise Set 14.2 Q1, p.129",
+   "description": "Cylinder B has twice the radius and half the height of cylinder A; find the ratio of the curved surface area of A to that of B, and the ratio of the volume of A to that of B."
+  },
+  {
+   "id": "E-8",
+   "source_section": "14.2",
+   "book_ref": "Exercise Set 14.2 Q2, p.129",
+   "description": "The radii of two cylinders are in the ratio 2:3 and their heights in the ratio 3:2; find (a) the ratio of their volumes and (b) the ratio of their curved surface areas."
+  },
+  {
+   "id": "E-9",
+   "source_section": "14.2",
+   "book_ref": "Exercise Set 14.2 Q3, p.129",
+   "description": "The largest possible right circular cylinder is cut out of a cube of edge r cm; find the volume of the cylinder (in cm^3)."
+  },
+  {
+   "id": "E-10",
+   "source_section": "14.2",
+   "source_sections": [
+    "14.1",
+    "14.2"
+   ],
+   "book_ref": "Exercise Set 14.2 Q5, p.129",
+   "description": "A solid metallic cube of side 12 cm is melted and recast into solid cylindrical rods of radius 2 cm and height 12 cm; find (i) the volume of the cube, (ii) the volume of one rod and (iii) the approximate number of complete rods that can be formed, taking π ≈ 22/7."
+  },
+  {
+   "id": "E-11",
+   "source_section": "14.3",
+   "book_ref": "Exercise Set 14.3 Q1, p.133",
+   "description": "Find the total surface area of a cone whose slant height is 21 m and whose base has diameter 24 m."
+  },
+  {
+   "id": "E-12",
+   "source_section": "14.3",
+   "book_ref": "Exercise Set 14.3 Q2, p.133",
+   "description": "Find the curved surface area of a right circular cone with slant height 10 cm and base radius 7 cm."
+  },
+  {
+   "id": "E-13",
+   "source_section": "14.3",
+   "book_ref": "Exercise Set 14.3 Q3, p.134",
+   "description": "A cone has height 16 cm and base radius 12 cm; find its curved surface area and total surface area, first finding the slant height from l^2 = h^2 + r^2."
+  },
+  {
+   "id": "E-14",
+   "source_section": "14.3",
+   "book_ref": "Exercise Set 14.3 Q4, p.134",
+   "description": "A cone of height 15 cm has volume 1570 cm^3; find the radius of its base."
+  },
+  {
+   "id": "E-15",
+   "source_section": "14.3",
+   "book_ref": "Exercise Set 14.3 Q5, p.134",
+   "description": "A cone has curved surface area 308 cm^2 and slant height 14 cm; find (i) the radius of its base and (ii) its total surface area."
+  },
+  {
+   "id": "E-16",
+   "source_section": "14.3",
+   "book_ref": "Exercise Set 14.3 Q6, p.134",
+   "description": "A joker's cap is a right circular cone of base radius 7 cm and height 24 cm; find the area of the sheet required to make 10 such caps."
+  },
+  {
+   "id": "E-17",
+   "source_section": "14.3",
+   "book_ref": "Exercise Set 14.3 Q8, p.134",
+   "description": "A right triangle with sides 6 cm, 8 cm and 10 cm is rotated through 360° about the 8 cm side; find the volume and the curved surface area of the solid so formed."
+  },
+  {
+   "id": "E-18",
+   "source_section": "14.5",
+   "book_ref": "Exercise Set 14.4 Q1, p.140",
+   "description": "Find the surface area of a ball bearing of radius 0.7 cm."
+  },
+  {
+   "id": "E-19",
+   "source_section": "14.5",
+   "book_ref": "Exercise Set 14.4 Q3, p.140",
+   "description": "The diameter of the moon is approximately one-fourth that of the earth; treating both as roughly spherical, find the ratio of their surface areas."
+  },
+  {
+   "id": "E-20",
+   "source_section": "14.5.2",
+   "book_ref": "Exercise Set 14.4 Q4, p.140",
+   "description": "Find (i) the curved surface area and (ii) the total surface area of a hemisphere of radius 21 cm."
+  },
+  {
+   "id": "E-21",
+   "source_section": "14.5",
+   "source_sections": [
+    "14.1",
+    "14.5"
+   ],
+   "book_ref": "Exercise Set 14.4 Q5, p.140",
+   "description": "Sixteen metal spheres of radius 2 cm are packed into a rectangular box with internal dimensions 16 cm × 8 cm × 8 cm, and the box is then filled with preservative liquid; find the volume of the liquid, rounded to the nearest integer."
+  },
+  {
+   "id": "E-22",
+   "source_section": "14.5",
+   "book_ref": "Exercise Set 14.4 Q6, p.140",
+   "description": "Show that increasing the radius of a sphere by 10% increases its volume by approximately 33.1%."
+  },
+  {
+   "id": "E-23",
+   "source_section": "14.5.2",
+   "book_ref": "Exercise Set 14.4 Q8, p.141",
+   "description": "The hemispherical dome of a building (Fig. 14.16) has a base circumference of 35.2 m; find the cost of painting it at ₹10 per 100 cm^2."
+  },
+  {
+   "id": "E-24",
+   "source_section": "14.6.1",
+   "source_sections": [
+    "14.1",
+    "14.5",
+    "14.6.1"
+   ],
+   "book_ref": "End of Chapter Q1, p.144",
+   "description": "Guesstimate, making a guess first, how many scoops of ice cream can be obtained from a cuboidal container of 10 cm × 15 cm × 20 cm, comparing the container's volume with that of a scoop modelled as a small sphere of assumed size."
+  },
+  {
+   "id": "E-25",
+   "source_section": "14.1",
+   "book_ref": "End of Chapter Q2, p.144",
+   "description": "A cube of integer side length a is made of unit cubes; write an expression for the number of unit cubes that must be added to make a cube of side length a + 1."
+  },
+  {
+   "id": "E-26",
+   "source_section": "14.1",
+   "book_ref": "End of Chapter Q4, p.144",
+   "description": "Decide which option gives more chocolate: (A) one chocolate cube of side 50 mm or (B) a hundred chocolate cubes of side 10 mm."
+  },
+  {
+   "id": "E-27",
+   "source_section": "14.6.1",
+   "book_ref": "End of Chapter Q5, p.144",
+   "description": "Guesstimate, making a guess first, how much area all the people in the world would cover if they were crowded together in one location."
+  },
+  {
+   "id": "E-28",
+   "source_section": "14.2",
+   "book_ref": "End of Chapter Q6, p.144",
+   "description": "A school serves milk in cylindrical glasses of diameter 7 cm, each filled to a height of 12 cm; find how many litres of milk are needed for 1600 students, using 1000 cm^3 = 1 litre."
+  },
+  {
+   "id": "E-29",
+   "source_section": "14.3",
+   "source_sections": [
+    "14.3",
+    "14.5"
+   ],
+   "book_ref": "End of Chapter Q7, p.144",
+   "description": "The surface area of a sphere of radius 5 cm is five times the curved surface area of a cone of radius 4 cm; find the height and the volume of the cone."
+  },
+  {
+   "id": "E-30",
+   "source_section": "14.5",
+   "book_ref": "End of Chapter Q8, p.145",
+   "description": "Taking Earth (radius 6370 km), Jupiter (radius 69,900 km) and the Sun (radius 6,95,700 km) to be perfect spheres, compute approximately (i) the ratio of the volume of Jupiter to that of the Earth and (ii) the ratio of the volume of the Sun to that of the Earth, using a calculator if needed."
+  },
+  {
+   "id": "E-31",
+   "source_section": "14.5",
+   "source_sections": [
+    "14.2",
+    "14.5"
+   ],
+   "book_ref": "End of Chapter Q9, p.145",
+   "description": "Show that the volume of a sphere is 2/3 of the volume of the smallest cylinder that encloses it."
+  },
+  {
+   "id": "E-32",
+   "source_section": "14.2",
+   "source_sections": [
+    "14.1",
+    "14.2"
+   ],
+   "book_ref": "End of Chapter Q12, p.145",
+   "description": "Choose from five given options the change in volume when (i) the length of a cuboid with dimensions l, w, h is increased by 1 unit and (ii) the radius of a cylinder with dimensions r, h is increased by 1 unit (asterisked part (iii) excluded)."
+  },
+  {
+   "id": "E-33",
+   "source_section": "14.2",
+   "source_sections": [
+    "14.2",
+    "14.5"
+   ],
+   "book_ref": "End of Chapter Q15, p.146",
+   "description": "A cylindrical glass of height 25 cm and radius 4 cm holds water up to a height of 16 cm, and a crow can drink only when the water reaches 20 cm; find how many marbles of radius 1 cm the crow should drop into the glass to raise the water to that height."
+  },
+  {
+   "id": "E-34",
+   "source_section": "14.6",
+   "source_sections": [
+    "14.2",
+    "14.6"
+   ],
+   "book_ref": "End of Chapter Q16, p.146",
+   "description": "Find the volume of ink in a new ball point pen, taking the necessary measurements and making approximations as needed, for instance by treating the ink column in the refill as a thin cylinder."
+  },
+  {
+   "id": "E-35",
+   "source_section": "14.6.1",
+   "source_sections": [
+    "14.2",
+    "14.5",
+    "14.6.1"
+   ],
+   "book_ref": "End of Chapter Q17, p.146",
+   "description": "Estimate, after making a guess, how many chapatis can be made from a ball of chapati dough of radius 6 cm, comparing the volume of the dough sphere with that of a chapati modelled as a thin disc (asterisked part (ii) excluded)."
+  },
+  {
+   "id": "E-36",
+   "source_section": "14.6.1",
+   "source_sections": [
+    "14.1",
+    "14.6.1"
+   ],
+   "book_ref": "End of Chapter Q18, p.146",
+   "description": "Looking at the Ganita Manjari, Grade 9, Part 2 textbook, Sheela wonders (i) whether all its pages laid out side by side on the floor would cover the entire classroom floor and (ii) what is the maximum number of such textbooks that can fit in an empty storeroom of 15 ft × 20 ft × 30 ft; estimate both."
+  },
+  {
+   "id": "E-37",
+   "source_section": "14.6",
+   "source_sections": [
+    "14.1",
+    "14.6"
+   ],
+   "book_ref": "End of Chapter Q22, p.147",
+   "description": "Project: find the volume of your house, making the necessary approximations (such as treating its rooms as cuboids), and present how you solved it."
+  }
+ ],
+ "conceptual_demand": 2,
+ "reasoning_load": 2,
+ "exec_load": 2
+}

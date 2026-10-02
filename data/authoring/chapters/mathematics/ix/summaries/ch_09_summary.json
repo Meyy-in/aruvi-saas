@@ -1,0 +1,148 @@
+{
+ "stage": "secondary",
+ "subject": "mathematics",
+ "grade": "ix",
+ "chapter_number": 9,
+ "chapter_title": "Propositions and their Converses",
+ "sections": [
+  {
+   "ref": "9.1",
+   "title": "Propositions and their Converses",
+   "think_reflect": "Asks the student to decide whether Statement 2 (if two angles of a triangle are equal, then the sides opposite the equal angles are equal) is true and to prove it by drawing the altitude from the vertex containing the third angle, to give an example in which both a proposition and its converse are false, and to identify real-life examples, and further examples from geometry and number theory, in which a proposition is true but its converse is not, each with a suitable counterexample."
+  }
+ ],
+ "prose_summary": "Section 9.1 defines a proposition as a statement that is either true or false and the converse of a proposition of the form 'if X then Y' as the proposition 'if Y then X', and then justifies, through worked examples, proofs and counterexamples, that the truth of a proposition does not settle the truth of its converse. It opens with Statement 1, 'If two sides of a triangle are equal, then the angles opposite the equal sides are equal', and Statement 2, 'If two angles of a triangle are equal, then the sides opposite the equal angles have equal lengths', identifies the second as the converse of the first, introduces 'X implies Y' as a formulation used interchangeably with 'if X then Y', and asks whether the converse of a true proposition is always true. Example 1 (if it rains, then the road is wet) gives a true proposition whose converse may fail, since the road may be wet because a tanker spilled water on it, and this leads to the definition of a counterexample as a situation that illustrates why a given proposition is not necessarily true — an example that contradicts the stated proposition; the text stresses that finding a suitable counterexample is an important ingredient of mathematics because it shows in a short and convincing way that a proposition is false, citing Fermat's claim that all numbers of the form 2^(2^n) + 1 (n = 0, 1, 2, 3, …) are prime, e.g. 2^(2^3) + 1 = 257, which Euler disproved by showing that 2^(2^5) + 1 is composite. Example 2 states that a multiple of 6 is always a multiple of 3, asks the student to justify this, and asks whether the converse — that every multiple of 3 is a multiple of 6 — is true, with a counterexample if not; Example 3 recalls from the previous grade the proposition that a perfect square n has an odd number of factors (P) and its converse that a number n with an odd number of factors is a perfect square (Q), and asks which of them are true. A Discussion takes this up through an argument built on factor-partner pairs — each factor of a number has a partner such that their product is the number, as with (1, 12), (2, 6) and (3, 4) for 12 — which reasons that a number with an odd number of factors must have a pair in which the same number repeats, and so is a perfect square; asked whether this argument proves P or Q, the student sees it reframed as the chain (i) 'n has an odd number of factors', which implies (ii) 'there is a factor-partner pair (f, f) in which the same number repeats', which implies (iii) 'n is a square number, n = f × f', so that it proves only Q, and the text then modifies the argument to prove P by starting from (iii): (iii) clearly implies (ii), but (ii) does not by itself imply (i), because it does not state how many pairs have repeating factors and two such pairs, say (f, f) and (g, g), would give an even number of factors; the gap is closed by the fact that a number cannot have more than one factor pair with repeating factors, so a square number necessarily has an odd number of factors and 'n is a perfect square' and 'n has an odd number of factors' imply each other. Example 4 asks the student to decide whether 'if two triangles have the same area, then they are congruent' and its converse 'if two triangles are congruent, then they have the same area' are true, justifying the true statements and giving a counterexample for each false one, and the text draws the conclusion that a proposition can be true while its converse is not, or both can be true, with a Think and Reflect box adding that both can also be false. Example 5 states the Baudhāyana–Pythagoras theorem in two sentences — 'Let a, b, c be the sidelengths of a triangle. If the triangle is right-angled, then a^2 + b^2 = c^2' — forms its converse by keeping the first sentence as it is and making the necessary change in the second, and proves that converse true in guided steps: given ∆ABC with a^2 + b^2 = c^2, construct a right triangle ∆XYZ whose perpendicular sides YZ and XZ have lengths a and b, use the Baudhāyana–Pythagoras theorem to find that XY = c, and use the SSS criterion to conclude that the two triangles are congruent, so that ∆ABC must be right-angled. Finally, under the heading 'A Note', the text explains that 'if X then Y' and 'X implies Y' are not the only ways to express this meaning — other words and sentence structures convey it too, 'Y when X' among them, so that 'If a number is a perfect square, then it has an odd number of factors' and 'A number has an odd number of factors when it is a perfect square' have the same meaning.",
+ "enumerated_worked_examples": [
+  {
+   "id": "WE-1",
+   "source_section": "9.1",
+   "book_ref": "Example 1, p.1",
+   "description": "Proposition P 'If it rains, then the road is wet' and its converse Q 'If the road is wet, then it has rained': P is true but Q may not be, since the road may be wet because a tanker spilled water on it — the situation the text then uses to define a counterexample."
+  },
+  {
+   "id": "WE-2",
+   "source_section": "9.1",
+   "book_ref": "Example 2, p.2",
+   "description": "Proposition P 'If a number is a multiple of 6, then it is a multiple of 3' and its converse Q 'If a number is a multiple of 3, then it is a multiple of 6': P is stated to be true and the student is asked to justify why, then to determine whether Q — that all multiples of 3 are also multiples of 6 — is true and, if not, to give a counterexample."
+  },
+  {
+   "id": "WE-3",
+   "source_section": "9.1",
+   "book_ref": "Example 3, p.2",
+   "description": "For any positive integer n, Proposition P 'If n is a perfect square, then it has an odd number of factors' and its converse Q 'If n has an odd number of factors, then it is a perfect square', met in the previous grade, with the question of which are true; the Discussion that follows uses factor-partner pairs to prove first Q and then P, so that the two statements imply each other."
+  },
+  {
+   "id": "WE-4",
+   "source_section": "9.1",
+   "book_ref": "Example 4, p.3",
+   "description": "Proposition P 'If two triangles have the same area, then they are congruent' and its converse Q 'If two triangles are congruent, then they have the same area': the student determines whether each is true, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "WE-5",
+   "source_section": "9.1",
+   "book_ref": "Example 5, p.4",
+   "description": "States the Baudhāyana–Pythagoras theorem as 'Let a, b, c be the sidelengths of a triangle. If the triangle is right-angled, then a^2 + b^2 = c^2', forms its converse by keeping the first sentence and changing the second ('If a^2 + b^2 = c^2, then the triangle is right-angled'), and proves the converse in guided steps: for ∆ABC with a^2 + b^2 = c^2, construct a right triangle ∆XYZ with perpendicular sides YZ = a and XZ = b, use the Baudhāyana–Pythagoras theorem to get XY = c, and use the SSS criterion to show ∆ABC and ∆XYZ are congruent, so ∆ABC is right-angled."
+  }
+ ],
+ "enumerated_exercises": [
+  {
+   "id": "E-1",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q1, p.5",
+   "description": "Frame the converse of the proposition 'If two lines are parallel, then the corresponding angles formed by a transversal are equal', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-2",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q2, p.5",
+   "description": "Frame the converse of the proposition 'If a quadrilateral is a square, then all its angles are equal', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-3",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q4, p.6",
+   "description": "Frame the converse of the proposition 'If x = y, then a + x = a + y, where x, y and a are any three numbers', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement; the book notes that this proposition and its converse are routinely used while solving equations."
+  },
+  {
+   "id": "E-4",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q5, p.6",
+   "description": "Frame the converse of the proposition 'If a and b are perfect squares, then ab is a perfect square', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-5",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q6, p.6",
+   "description": "With x and y real numbers, frame the converse of the proposition 'If x = y, then x^2 = y^2', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-6",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q7, p.6",
+   "description": "With x and y real numbers, frame the converse of the proposition 'If x = y, then x^3 = y^3', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-7",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q8, p.6",
+   "description": "With n a positive integer, frame the converse of the proposition 'If n is divisible by 24, then it is divisible by both 4 and 6', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-8",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q9, p.6",
+   "description": "With n a positive integer, frame the converse of the proposition 'If n is divisible by 60, then it is divisible by both 5 and 12', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-9",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q10, p.6",
+   "description": "With n a positive integer, frame the converse of the proposition 'If n is the square of a prime number, then it has exactly 3 factors', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-10",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q11, p.6",
+   "description": "With n a positive integer, frame the converse of the proposition 'If n is a product of two unequal prime numbers, then it has exactly 4 divisors', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-11",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q12, p.6",
+   "description": "With n a positive integer, frame the converse of the proposition 'If n and n + 3 have no factors in common, then n is not a multiple of 3', then determine whether each of the two statements is true or not, justifying the true statements and giving a counterexample for each false statement."
+  },
+  {
+   "id": "E-12",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q13, p.6",
+   "description": "Noting that there are no known 'neat' expressions that generate only primes, find counterexamples to the claims that all numbers of the form (i) 4n^2 + 1, (ii) n^2 + n + 11 and (iii) 4^n + 3 are prime."
+  },
+  {
+   "id": "E-13",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q14, p.6",
+   "description": "Find counterexamples to the statements (i) 'If n is a prime number, then 2^n − 1 is a prime number' and (ii) 'If n is an even number, then 2^n + 1 is a prime number'."
+  },
+  {
+   "id": "E-14",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q15, p.6",
+   "description": "For the statement 'If a number is divisible by 8, then it is divisible by both 2 and 4': (i) justify the statement; (ii) recalling the divisibility shortcuts studied for different numbers, decide whether checking that a number is divisible by 2 and 4 is enough to check that it is divisible by 8, and explain why or why not."
+  },
+  {
+   "id": "E-15",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q16, p.6",
+   "description": "Recalling the shortcut that a number is divisible by 3 when the sum of its digits is a multiple of 3, express the relationship between 'a number is divisible by 3' and 'sum of the digits is a multiple of 3' using 'If-then' sentences."
+  },
+  {
+   "id": "E-16",
+   "source_section": "9.1",
+   "book_ref": "Exercise Set 9.1 Q17, p.7",
+   "description": "Beyond squares, rectangles, parallelograms, rhombi, kites and trapezia, suppose a new category of quadrilaterals called Q has been identified and a quadrilateral of type Q is to be constructed by putting two thin sticks together as its diagonals and joining their endpoints (Fig. 9.2): (i) if Q satisfies 'If a quadrilateral is of type Q, then it has equal-length diagonals', decide (a) whether the two sticks should be of equal length, and why or why not, and (b) whether it matters how the two sticks are put together; (ii) answer (a) and (b) again if instead Q satisfies 'If a quadrilateral has equal diagonals, then it is of type Q'."
+  }
+ ],
+ "conceptual_demand": 2,
+ "reasoning_load": 3,
+ "exec_load": 1
+}

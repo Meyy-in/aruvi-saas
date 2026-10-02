@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-09-29T16:08:57",
+  "updated_at": "2026-10-02T05:11:50",
   "items": {
     "04.19": {
       "ios": {
@@ -8518,6 +8518,32 @@
       "recheck": [],
       "owner": "Kumar",
       "at": "2026-09-29T16:04:12"
+    },
+    {
+      "id": "WALK-A-160",
+      "opened": "2026-10-02T04:49:07",
+      "closed": "2026-10-02T05:11:50",
+      "feature": "renewal after lapse",
+      "found_on": [
+        "api"
+      ],
+      "applies_to": "api",
+      "title": "Renewal must never drop a subject she held before (only trial remnants may be cleared)",
+      "what": "Found reading the code during the renewal check (027), founder-confirmed 2026-10-02: _apply_subscription_profile (run by checkout AND entitlement.py grant) DROPS every subject outside the scopes being bought and clears its section pointers. Right for the trial → first purchase (trial remnants), wrong for a RENEWAL: a teacher with SS + Science who lapses and renews only SS would lose her Science classes and positions. Founder rule: 'trials can clear because they add remnants, but renewal must not drop previous'. A lapse hides, never deletes.",
+      "fix": "[NO CHANGE NEEDED 2026-10-02T05:11:50] Traced end to end: the billing provider MERGES — a revoke only marks the entitlement expired, and a renewal keeps every previously PAID scope in `held` (with its own, possibly past, date), so _apply_subscription_profile keeps those subjects; only a TRIAL prior is superseded, which is exactly the trial-remnant clearing the founder wants. Reproduced: SS+Science, revoke, renew SS only → profile still SS IX + Science IX. Pinned by tests/test_renewal_keeps_profile.py (renewal keeps the other subject; first purchase still clears a trial subject). Only the CLI's deliberate --replace wipes. The un-renewed subject's own lapse is per-scope (scope_valid_until), so it is hidden/read-only, not deleted.",
+      "files": "tests/test_renewal_keeps_profile.py (new)",
+      "commit": "",
+      "native_rebuild": false,
+      "status": "closed",
+      "recheck": [],
+      "owner": "Kumar",
+      "at": "2026-10-02T04:49:07"
     }
-  ]
+  ],
+  "renewal_check": {
+    "at": "2026-10-02T05:11:06",
+    "result": "pass web+ios+and_emu",
+    "account": "027",
+    "detail": "9A Science Ch 02 unit 4 / 3 done + chapter note survived revoke → grant; bar restored; Prepare open."
+  }
 }

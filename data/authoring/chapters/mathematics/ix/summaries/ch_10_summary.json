@@ -1,0 +1,323 @@
+{
+ "stage": "secondary",
+ "subject": "mathematics",
+ "grade": "ix",
+ "chapter_number": 10,
+ "chapter_title": "How Quantities Combine: Understanding Data",
+ "sections": [
+  {
+   "ref": "10.1",
+   "title": "Combining Things"
+  },
+  {
+   "ref": "10.1.1",
+   "title": "Average of Averages",
+   "think_reflect": "Asks the student why Method 1 — simply averaging the seniors' and the juniors' average heights — does not give the correct average height of the whole badminton group."
+  },
+  {
+   "ref": "10.1.2",
+   "title": "Mixtures"
+  },
+  {
+   "ref": "10.1.3",
+   "title": "Custom Weights"
+  },
+  {
+   "ref": "10.2",
+   "title": "Visualising and Interpreting Data"
+  },
+  {
+   "ref": "10.2.1",
+   "title": "Stacking Columns"
+  },
+  {
+   "ref": "10.2.2",
+   "title": "An Alternative to Pie Chart",
+   "think_reflect": "Asks the student what the two flower-garden cases say about the scope of stacked and 100% stacked bar charts, whether a 100% stacked bar chart can be made from a given stacked bar chart and vice versa, and what inferences or comparisons each kind supports; what can be inferred from the age-group time-use chart, including whether it fits last year's sleep-over-age trend, why learning time falls so sharply from the 6–14 to the 15–24 age group, and whether adults spend about equal time on paid and unpaid work; whether clubbing the activity strips of last year's 'What Can A Strip Say?' activity would give a 100% stacked bar chart like Fig. 10.6; and, for the smart-watch body-state chart, whether the bars would look similar for a different teacher than Zakir, would change if all seven days of the week were counted, and might also match people doing other kinds of work."
+  }
+ ],
+ "prose_summary": "Section 10.1 introduces the first strand of the chapter, recalling that in earlier grades the average conveyed the 'centre' of a set of data and announcing that the idea will be extended to a more general setting, the 'weighted average', which is built up through its three subsections on averages of averages, mixtures and custom weights. Section 10.1.1 explains why averaging averages can mislead and derives the correct rule for combining them. In Example 1 a badminton group of 8 seniors (average height 165.5 cm) and 3 juniors (149.33 cm) gives 157.415 cm when the two averages are simply added and halved (Method 1) but 161.09 cm when all eleven heights are added and divided by 11 (Method 2); Method 1 fails because it treats the two groups equally although there are many more seniors than juniors, while Shreyas's calculation (165.5 × 8 + 149.33 × 3)/(8 + 3) works because multiplying each average by its group size recovers that group's total. The section generalises this: for collections of n and m values with averages a and b the sums are an and bm, so the combined average is (an + bm)/(n + m), and for three collections of sizes p, q, r with averages a, b, c it is (ap + bq + cr)/(p + q + r). Jaspreet's cycling record (Example 2, Table 10.1), where three weeks of five cycling days give the same 15.53 minutes per weekday by both methods, prompts the question of when Method 1 works, answered algebraically by (ap + bp + cp)/(p + p + p) = (a + b + c)/3: the averages of collections may be added and divided by the number of collections exactly when the collections are of the same size. Section 10.1.2 computes the concentration of a mixture as (quantity of the ingredient in the mixture)/(quantity of the mixture) and from it defines the weighted mean. Mixing two equal glasses of lemonade with 10% and 20% jaggery gives (0.1y + 0.2y)/(y + y) = 15%, midway between the two, just as the equal-sized weeks did in the cycling example (Example 3); mixing a 500 mL bowl at 10% with a 200 mL glass at 20% gives (500 × 0.1 + 200 × 0.2)/700 = 90/700 ≈ 13%, which the student first estimates to be closer to 10% because the larger quantity has that concentration, each concentration influencing the result according to the quantity it contributes (Example 4); and Example 5 runs the reasoning backwards, solving 0.55 = (200 × 0.7 + 120 × 0.5 + 0.45y)/(200 + 120 + y) to find that a 45%-copper batch of brass must weigh 240 kg. Generalising, n things with concentrations x1, x2, …, xn and volumes or weights w1, w2, …, wn mix to the concentration x = (w1x1 + w2x2 + … + wnxn)/(w1 + w2 + … + wn), which is named the weighted mean or weighted average — an average in which each value is multiplied by how important or how big it is, the weights being abstract rather than necessarily physical. The section notes that Brahmagupta wrote this formula in his Brāhmasphuṭasiddhānta (c. 628 CE) to define the mean depth of an irregularly shaped pit from depths measured over given lengths, that Śrīdharācārya (c. 750 CE) used the weighted mean to estimate the purity of gold alloys, and that the idea later gained prominence in Europe by the 1700s and is now central to mathematics and statistics for combining data of different sizes or importance into one number. Section 10.1.3 introduces custom weights, used when parts of the data deserve different levels of importance rather than reflecting different sizes. In Example 6, Rehmat's Maths scores of 60% (internal tests), 64% (project) and 73% (final exam), combined in the ratio 3 : 2 : 5, give an annual score of 67.3% instead of the simple equal-weight mean, a result justified both by treating the data as the ten values 60, 60, 60, 64, 64, 73, 73, 73, 73, 73 and as a weighted mean with weights 3, 2 and 5; the section states that the weights assigned to values indicate the relative importance or emphasis each value gets with respect to the others. It then presents further uses of the weighted mean — a customer's overall restaurant rating that combines star ratings for food, service and ambience in the ratio 4 : 3 : 2 to give 4.11, and a furniture store that gives reviews from the last three months twice the weight of older reviews because its products keep changing — and concludes that a weighted mean is used whenever the combined result should reflect how much each part contributes to the whole, by amount, time or importance, rather than counting each part equally. Section 10.2 introduces the chapter's second strand, visualising and interpreting data in which a whole is made up of several parts, developed through its two subsections on stacked column (bar) charts and on the 100% stacked bar chart as an alternative to the pie chart. Section 10.2.1 represents the expenditure of three families across six categories — housing, food, education, transportation, healthcare and recreation (Table 10.2) — first as two cluster-column charts (Fig. 10.1), one clustering by category to compare the families within each category and one clustering by family to compare the categories within each family, and uses a set of in-text questions to show that the better choice of cluster depends on the primary comparison of interest. Questions about totals and shares (which family spent least overall, roughly how much Family C spent, and what percentage of Family C's spending went on housing) are hard to answer from either clustered chart, which motivates the stacked bar or column chart (Fig. 10.2), in which the bars of a cluster are joined one after another so that the full bar shows the family's total and each piece's fraction of it can be estimated by comparing lengths. The section explains that stacked bar charts are used when the totals are to be compared while keeping track of the components that make them up, but that because only the first piece starts at 0 and pieces in different clusters have no common base, comparing individual components within and across clusters becomes harder even as comparing the totals becomes easier. Section 10.2.2 introduces the 100% stacked bar chart as an alternative to the pie chart and explains what proportional charts can and cannot reveal. Asking which family spends the smallest share of its total on healthcare leads from the stacked bar chart to per-family pie charts (Fig. 10.3) and then to a 100% stacked bar chart (Fig. 10.4), in which each family's total is drawn as a bar of the same fixed length split in proportion to its components, just as a pie chart splits the complete angle; lengths are easier to compare than angles in different orientations, although pieces of similar length in different positions remain hard to compare. Example 7 converts a house's category-wise daily electricity consumption in 2005 and 2025 into percentage shares of each year's total (36%, 30%, 12% and 22% of 1000 units in 2005; 11%, 40%, 23% and 26% in 2025) and draws the corresponding 100% stacked bar chart. Example 8 uses the seasonal shares of blooms in Fatima's and Naveen's gardens to show that a 100% stacked bar chart supports comparisons within a bar but says nothing about actual numbers, so comparisons across gardens or of the yearly totals cannot be inferred, and it exhibits two different stacked bar charts (Case 1 and Case 2) that produce the same 100% bars while reversing which garden had more summer blooms — so a 100% stacked bar chart can be made from a stacked bar chart but not the other way round. Example 9 reads a single stacked column of how the average Indian spends the 24 hours of a day (National Time Use Survey 2024) and then the same data grouped by age (Fig. 10.6), showing that the average of a diverse population hides differences and nuances that finer grouping (by age, and potentially by gender, region or income) can reveal; the section notes that because every bar totals 24 hours this chart is both a stacked bar chart and a 100% stacked bar chart, and that a single stacked bar can always be read as a 100% stacked bar.",
+ "enumerated_worked_examples": [
+  {
+   "id": "WE-1",
+   "source_section": "10.1.1",
+   "book_ref": "Example 1, p.8",
+   "description": "Find the average height of a badminton group of 8 seniors (average 165.5 cm) and 3 juniors (average 149.33 cm), contrasting the incorrect average of the two averages (157.415 cm) with the correct sum of all eleven heights divided by 11 (161.09 cm), and showing that Shreyas's (165.5 × 8 + 149.33 × 3)/(8 + 3) gives the same correct value."
+  },
+  {
+   "id": "WE-2",
+   "source_section": "10.1.1",
+   "book_ref": "Example 2, p.9",
+   "description": "Find the mean time Jaspreet spent cycling per weekday over three weeks (Table 10.1, weekly averages 12.8, 15.8 and 18 minutes over five days each), showing that averaging the weekly averages and weighting each by its five days both give 15.53 minutes because the weeks are of equal size."
+  },
+  {
+   "id": "WE-3",
+   "source_section": "10.1.2",
+   "book_ref": "Example 3, p.11",
+   "description": "Find the jaggery concentration when two equal glasses of lemonade with 10% and 20% jaggery are mixed, showing (0.1y + 0.2y)/(y + y) = 0.15, i.e. 15%, midway between the two concentrations."
+  },
+  {
+   "id": "WE-4",
+   "source_section": "10.1.2",
+   "book_ref": "Example 4, p.11",
+   "description": "Estimate and then compute the jaggery concentration when a 500 mL bowl of lemonade at 10% is mixed with a 200 mL glass at 20%: (500 × 0.1 + 200 × 0.2)/(500 + 200) = 90/700 ≈ 0.13, closer to 10% because more of the mixture comes from the 10% bowl."
+  },
+  {
+   "id": "WE-5",
+   "source_section": "10.1.2",
+   "book_ref": "Example 5, p.12",
+   "description": "Brass batches A (200 kg, 70% copper), B (120 kg, 50% copper) and C (45% copper) combine into an alloy that is 55% copper; solve 0.55 = (200 × 0.7 + 120 × 0.5 + 0.45y)/(200 + 120 + y) to find that Batch C weighs 240 kg."
+  },
+  {
+   "id": "WE-6",
+   "source_section": "10.1.3",
+   "book_ref": "Example 6, p.14",
+   "description": "Combine Rehmat's Maths scores of 60% (internal tests), 64% (project) and 73% (final exam) in the ratio 3 : 2 : 5 to get an annual score of 67.3%, contrasting it with the equal-weight mean and obtaining it both as the mean of ten repeated values and as a weighted mean with weights 3, 2 and 5."
+  },
+  {
+   "id": "WE-7",
+   "source_section": "10.2.2",
+   "book_ref": "Example 7, p.23",
+   "description": "From a table and stacked bar chart of a house's average daily electricity consumption by category (lighting, cooling, kitchen appliances, other appliances) in 2005 and 2025, make the corresponding 100% stacked bar chart by converting each category to a percentage of that year's total — 36%, 30%, 12% and 22% of 1000 units in 2005, and 11%, 40%, 23% and 26% in 2025 — and discuss what the charts show."
+  },
+  {
+   "id": "WE-8",
+   "source_section": "10.2.2",
+   "book_ref": "Example 8, p.24",
+   "description": "From a 100% stacked bar chart of the share of blooms in summer, monsoon and winter in Fatima's garden (50%, 30%, 20%) and Naveen's (40%, 25%, 35%), decide which of four statements can be inferred: the within-garden comparison (more summer than monsoon blooms for Fatima) must be true, but the cross-garden comparisons and the claim that both gardens have the same total cannot be inferred, as two possible stacked bar charts with different totals (Case 1 and Case 2) confirm."
+  },
+  {
+   "id": "WE-9",
+   "source_section": "10.2.2",
+   "book_ref": "Example 9, p.26",
+   "description": "Read a single stacked column showing how the average Indian divides the 24 hours of a day among sleep, personal care, paid work, unpaid work and care, learning, and leisure, social and travel (National Time Use Survey 2024), say what is noticed and wondered about, recognise that it represents people of all ages, regions and backgrounds, and compare it with the same data regrouped by age group (children, youth, adults, elderly) in a stacked column chart."
+  }
+ ],
+ "enumerated_exercises": [
+  {
+   "id": "E-1",
+   "source_section": "10.1.1",
+   "book_ref": "Exercise Set 10.1 Q1, p.13",
+   "description": "Find the combined average test score of two sections when Section A (30 students) averages 72 and Section B (25 students) averages 76."
+  },
+  {
+   "id": "E-2",
+   "source_section": "10.1.2",
+   "book_ref": "Exercise Set 10.1 Q2, p.13",
+   "description": "A farmer mixes three equal quantities of fertilisers containing 1/10, 9/50 and 3/60 nitrogen; find the fraction of nitrogen in the mixture."
+  },
+  {
+   "id": "E-3",
+   "source_section": "10.1.2",
+   "book_ref": "Exercise Set 10.1 Q3, p.13",
+   "description": "(Śrīdharācārya, Pāṭīgaṇita, c. 750 CE) With gold purity measured in varṇa (16 varṇa is pure gold; k varṇa means the alloy is k/16 gold), find the purity of the gold obtained by melting together 9 units at 12 varṇa, 5 units at 10 varṇa and 17 units at 11 varṇa."
+  },
+  {
+   "id": "E-4",
+   "source_section": "10.1.1",
+   "book_ref": "Exercise Set 10.1 Q4, p.13",
+   "description": "The average rainfall per day at a place in May, June and July is 3.5 mm, 10 mm and 8.7 mm respectively; write an expression for their combined average."
+  },
+  {
+   "id": "E-5",
+   "source_section": "10.1.2",
+   "book_ref": "Exercise Set 10.1 Q5, p.13",
+   "description": "Calculate the concentration of spice mix when portions of kashayam/kadha are combined: (i) 100 mL at 5%, 200 mL at 10% and 300 mL at 15%; (ii) 300 mL at 5%, 200 mL at 10% and 100 mL at 15%."
+  },
+  {
+   "id": "E-6",
+   "source_section": "10.1.3",
+   "book_ref": "Exercise Set 10.2 Q1, p.14",
+   "description": "Savitri scores 35 out of 50 in internal tests, 44 out of 60 in the project and 80 out of 100 in the final exam, combined in the ratio 3 : 4 : 5; decide which of four given expressions (i)–(iv) correctly give her annual percentage score in Kashmiri."
+  },
+  {
+   "id": "E-7",
+   "source_section": "10.1.2",
+   "book_ref": "Exercise Set 10.3 Q1, p.15",
+   "description": "A stationery shop owner makes ₹8000 selling books at 30% profit and ₹1000 selling book covers at 50% profit; find the percentage of profit on the total sales."
+  },
+  {
+   "id": "E-8",
+   "source_section": "10.1.1",
+   "book_ref": "Exercise Set 10.3 Q2, p.15",
+   "description": "A white stork's average daily flight over 20 days is 44.5 km and on the 21st day it flies 55 km; guess, then calculate, its average daily distance over the 21 days."
+  },
+  {
+   "id": "E-9",
+   "source_section": "10.1.2",
+   "book_ref": "Exercise Set 10.3 Q3, p.16",
+   "description": "A 600 mL solution with 5% salt is mixed with a 300 mL solution with 8% sugar; choose the correct concentrations of salt and sugar in the mixture from six given options."
+  },
+  {
+   "id": "E-10",
+   "source_section": "10.1.2",
+   "book_ref": "Exercise Set 10.3 Q4, p.16",
+   "description": "Find how much plain water must be mixed into 10 litres of panipuri pani with 8% spice to reduce the spice level to 3/4 of the original concentration."
+  },
+  {
+   "id": "E-11",
+   "source_section": "10.1.3",
+   "book_ref": "Exercise Set 10.3 Q5, p.16",
+   "description": "Fitness marks for strength, flexibility and agility are combined in the ratio 4 : 5 : 6; Rashi scores 60, 65 and 70 and Keerthi 55, 65 and 75. (i) Decide without calculating whose final mark is higher; (ii) find both final marks."
+  },
+  {
+   "id": "E-12",
+   "source_section": "10.1.3",
+   "book_ref": "Exercise Set 10.3 Q6, p.16",
+   "description": "From a table of how many of 10 customers gave each 1–5 star rating to a restaurant's food, ambience and service, find the average rating when the three metrics are combined with weights food : ambience : service = 6 : 5 : 4."
+  },
+  {
+   "id": "E-13",
+   "source_section": "10.1.1",
+   "source_sections": [
+    "10.1.1",
+    "10.1.2"
+   ],
+   "book_ref": "Exercise Set 10.3 Q7, p.16",
+   "description": "Male and female langurs in a facility average 16.5 kg and 13.8 kg and all 60 langurs average 14.925 kg; decide without computing whether there are more males or more females, then (i) pick the equation(s) that describe the situation, (ii) find the number of male langurs, (iii) find the female average after a 15.2 kg female is admitted, (iv) find the male average after males of 16.9 kg and 16.1 kg are released, and (v) find the male average after one male loses 1 kg."
+  },
+  {
+   "id": "E-14",
+   "source_section": "10.1.2",
+   "book_ref": "Exercise Set 10.3 Q8, p.17",
+   "description": "Using a table of salinities (Dead Sea ≈ 34%, other seas and oceans ≈ 3.5%, groundwater ≈ 0.01%, purified drinking water ≈ 0.001%): (i) find the salinity of 1 litre of Dead Sea water mixed with 2 litres of purified drinking water; (ii) decide whether Dead Sea water and purified water can be mixed to give the salinity of groundwater, with reasons, and how much purified water to add to 1 litre of Dead Sea water; (iii) decide, with reasons, whether Dead Sea water and groundwater can be mixed to give the salinity of purified drinking water, and what quantity of groundwater that would need."
+  },
+  {
+   "id": "E-15",
+   "source_section": "10.2.1",
+   "book_ref": "Exercise Set 10.4 Q1, p.21",
+   "description": "From a stacked column chart of the number of animal species on the IUCN Red List by class (2007–2019), (i) say what the number 14,234 on top of the 2019 column represents, (ii) estimate how many reptile species were listed in 2016, and (iii) identify the class(es) with a relatively small increase in count between 2007 and 2019."
+  },
+  {
+   "id": "E-16",
+   "source_section": "10.2.1",
+   "book_ref": "Exercise Set 10.4 Q2, p.21",
+   "description": "From a table of a bowler's international wickets till 2025 (home: Test 62, ODI 100, T20 32; overseas: Test 172, ODI 49, T20 71), complete two stacked bar charts with approximate bar lengths: (i) total wickets at home versus overseas, split by format, and (ii) total wickets in each format, split into home and overseas."
+  },
+  {
+   "id": "E-17",
+   "source_section": "10.2.2",
+   "book_ref": "Exercise Set 10.5 Q1, p.29",
+   "description": "Using smart-watch data (Table 10.3) on the average hours per day that five people spend lying down, sitting, and standing or moving around, (i) make a reasonable guess for the student Sahana and fill in her row, (ii) guess from her data what work Julie might do and compare guesses with classmates, and (iii) complete the 100% stacked bar chart of the table."
+  },
+  {
+   "id": "E-18",
+   "source_section": "10.1.1",
+   "book_ref": "End of Chapter Q1, p.30",
+   "description": "The run rate in cricket is the average number of runs per over; a T20 team scores 6 runs in the first over. (i) Find the run rate after it scores 12 runs in the second over; (ii) if the run rate after 19 overs is 6 and the team scores 12 runs in the last over, find the run rate after 20 overs."
+  },
+  {
+   "id": "E-19",
+   "source_section": "10.1.1",
+   "book_ref": "End of Chapter Q2, p.30",
+   "description": "Five friends list shuttlecock prices they collected across brands and types (nylon N, feather F); describe how they can work together to find the average price, and (i) write the combined average in terms of each friend's own average a_y, a_s, a_k, a_p, a_g, and (ii) write the average price in terms of the nylon and feather averages a_n and a_f, deciding whether the two answers agree."
+  },
+  {
+   "id": "E-20",
+   "source_section": "10.1.1",
+   "book_ref": "End of Chapter Q3, p.31",
+   "description": "Shreyas holds 25 shares and Vaishnavi 5 shares of a company, each at an average price of ₹150. (i) Find Shreyas's average price per share after he buys 10 more at ₹30 each; (ii) find how many ₹30 shares Vaishnavi bought if her average price falls to ₹70."
+  },
+  {
+   "id": "E-21",
+   "source_section": "10.1.2",
+   "book_ref": "End of Chapter Q4, p.31",
+   "description": "(Pṛthūdakasvāmī's commentary on Brahmagupta's Brāhmasphuṭasiddhānta, c. 864 CE) A pool 30 hastas long is divided into sections of lengths 4, 5, 6, 7 and 8 hastas dug to depths of 9, 7, 7, 3 and 2 hastas respectively; find the mean depth of the pool."
+  },
+  {
+   "id": "E-22",
+   "source_section": "10.1.2",
+   "source_sections": [
+    "10.1.1",
+    "10.1.2"
+   ],
+   "book_ref": "End of Chapter Q5, p.31",
+   "description": "Suvarna owns 1 g of gold bought at ₹15k, marked as point O on a number line; for six possible next transactions — buying 1 g at ₹30k, 2 g at ₹30k, 1 g at ₹10k, 10 g at ₹10k, 0.5 g at ₹30k or 0.5 g at ₹15k — estimate and mark the average price of the gold she would then hold."
+  },
+  {
+   "id": "E-23",
+   "source_section": "10.1.2",
+   "source_sections": [
+    "10.1.2",
+    "10.1.3"
+   ],
+   "book_ref": "End of Chapter Q6, p.31",
+   "description": "Decide how a weighted average changes when all the weights are doubled, experimenting with some data if required, and justify the observation using algebra."
+  },
+  {
+   "id": "E-24",
+   "source_section": "10.2.1",
+   "source_sections": [
+    "10.2.1",
+    "10.2.2"
+   ],
+   "book_ref": "End of Chapter Q7, p.31",
+   "description": "From a stacked column chart of the cumulative number of objects currently orbiting Earth (payload objects and other objects) by year of launch, (i) estimate the total number in 2003 and the year in which it doubled, (ii) find the approximate number and share of payload objects and of other objects in 2025, and (iii) describe how the numbers, and the shares, of payload objects and other objects have changed over time."
+  },
+  {
+   "id": "E-25",
+   "source_section": "10.2.2",
+   "source_sections": [
+    "10.1.1",
+    "10.2.2"
+   ],
+   "book_ref": "End of Chapter Q8, p.32",
+   "description": "From a state-wise infographic map of the percentage of schools that have a playground, (i) identify which of four statements are correct inferences — about Haryana versus Uttarakhand, about 2 in 3 schools in Arunachal Pradesh, about Punjab having the highest number of schools with a playground, and about Maharashtra versus Telangana given that Maharashtra has more schools — and (ii) decide whether the nation-wide percentage of schools with a playground can be found from this information and, if not, what additional information is needed."
+  },
+  {
+   "id": "E-26",
+   "source_section": "10.2.2",
+   "source_sections": [
+    "10.2.1",
+    "10.2.2"
+   ],
+   "book_ref": "End of Chapter Q9, p.33",
+   "description": "Decision Dilemma: (i) choose which of three plays to watch from a 100% stacked bar chart of the share of 1- to 5-star ratings each received, then (ii) examine the corresponding stacked bar chart of rating counts and discuss whether, and why, the decision would change."
+  },
+  {
+   "id": "E-27",
+   "source_section": "10.2.2",
+   "source_sections": [
+    "10.2.1",
+    "10.2.2"
+   ],
+   "book_ref": "End of Chapter Q10, p.33",
+   "description": "Using the swimming, cycling and running finish times of three triathlon athletes (Table 10.4), (i) decide whether a stacked bar chart or a 100% stacked bar chart suits the data and explain why, and (ii) say which of three questions — who finished first, roughly what fraction of Athlete 1's race time was spent cycling, and which athlete took longest to run — can be answered from a 100% stacked bar chart alone."
+  },
+  {
+   "id": "E-28",
+   "source_section": "10.2.2",
+   "book_ref": "End of Chapter Q11, p.34",
+   "description": "Study a 100% stacked bar chart of the distribution of disabled persons in India by age group and type of disability (Census 2011), say what you notice and wonder, and write inferences."
+  },
+  {
+   "id": "E-29",
+   "source_section": "10.2.2",
+   "source_sections": [
+    "10.2.1",
+    "10.2.2"
+   ],
+   "book_ref": "End of Chapter Q12, p.34",
+   "description": "Individual project (at least one option): (i) record the approximate time you and at least two family members spent lying down, sitting and standing or moving around on the previous day (or track your own body-state on a weekday, a Saturday and a Sunday), show it in a stacked bar chart and discuss how the times were estimated; or (ii) identify your family's expense categories, collect at least three months of monthly expenditure data, represent it in a 100% stacked bar chart and write observations and inferences."
+  },
+  {
+   "id": "E-30",
+   "source_section": "10.1.3",
+   "source_sections": [
+    "10.1.3",
+    "10.2.2"
+   ],
+   "book_ref": "End of Chapter Q13, p.35",
+   "description": "Small-group project: design a custom rating scheme with weights for one scenario (shopping at a cloth store, travel in a bus, a nearby tourist spot, or a clinic/hospital visit) — choose and justify 4–6 aspects to rate and their relative weights, collect or imagine 1–5 ratings from at least 10 people, compute each individual's rating and the overall average, make a 100% stacked bar chart of the data, and write a short note on what the scheme captures well and what it misses."
+  },
+  {
+   "id": "E-31",
+   "source_section": "10.1.1",
+   "book_ref": "End of Chapter Q14, p.35",
+   "description": "Whole-class project: each student shares the average age of their family and the number of family members; discuss and devise a way to find the average age of all the families in the class."
+  }
+ ],
+ "conceptual_demand": 2,
+ "reasoning_load": 2,
+ "exec_load": 2
+}
