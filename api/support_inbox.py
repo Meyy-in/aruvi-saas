@@ -172,7 +172,8 @@ class Inbox:
         # the same message must not spend a second reference.
         report = parse_report(text)
         ref = ""
-        if report and not self.repo.has_message(n, m.get("id", "")):
+        is_new = not self.repo.has_message(n, m.get("id", ""))
+        if report and is_new:
             ref = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"),
                                            getattr(self.config, "WA_REPORT_START", 1234))
         before = self.repo.append(
@@ -189,7 +190,10 @@ class Inbox:
         # marked resolved comes back to "Needs reply" on her next message — a follow-up ("I do not
         # agree") must never sit unseen under "All". Same thread, same last reference: a follow-up
         # is not a new report, so it gets no new number.
-        self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID,
+        # ★ A DRAFT WRITTEN BEFORE HER NEW MESSAGE IS STALE (2026-10-03): it answers what she said
+        # earlier, not this. The drafting session's draft goes; one the founder typed is kept.
+        stale = {"draft": {}} if is_new and (before.get("draft") or {}).get("by") == "claude" else {}
+        self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID, **stale,
                         **({"status": "open"} if (before.get("status") or "open") == "done" else {}))
         now = datetime.now(timezone.utc)
         # Greeting: first ever, or first after the gap — and never in answer to STOP.
@@ -290,6 +294,15 @@ class Inbox:
             return "stranger"
         if message_id and any(m.get("id") == message_id for m in (c.thread or [])):
             return "duplicate"
+        # The same words sent twice (she pressed Send again, or resent because nothing seemed to
+        # happen) are one message, not two.
+        norm = " ".join(text.split())
+        if any(m.get("dir") == "in" and " ".join(str(m.get("text", "")).split()) == norm
+               for m in (c.thread or [])):
+            return "duplicate"
+        # A draft by the drafting session answered what she said BEFORE this — it is stale.
+        if (c.draft or {}).get("by") == "claude":
+            c.draft = {}
         c.thread = list(c.thread or []) + [{"at": at or datetime.now(timezone.utc).isoformat(),
                                             "dir": "in", "text": text, "id": message_id,
                                             "by": "email"}]

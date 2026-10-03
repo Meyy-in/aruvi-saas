@@ -183,6 +183,28 @@ def test_an_email_reply_joins_its_case_once_and_reopens_it():
     print("✓ Her email reply joins its case once, from her address only, and reopens it")
 
 
+
+def test_new_message_retires_a_stale_ai_draft_and_a_resend_is_one_message():
+    m, c, ref = _setup()
+    m.support_inbox.set_draft("case", ref, "Old AI answer", by="claude")
+    body = {"text": "I do not agree.", "message_id": "<s1>", "sender": "asha@example.com"}
+    assert c.post(f"/support-inbox/api/case/{ref}/inbound", json=body, headers=BEARER).json()["status"] == "added"
+    assert m.support_repo.find(ref).draft == {}
+    again = {**body, "message_id": "<s2>", "text": "I do not  agree.\n"}
+    assert c.post(f"/support-inbox/api/case/{ref}/inbound", json=again, headers=BEARER).json()["status"] == "duplicate"
+    m.support_inbox.set_draft("case", ref, "Kumar typing", by="founder")
+    c.post(f"/support-inbox/api/case/{ref}/inbound", json={**body, "message_id": "<s3>", "text": "Also Q8."},
+           headers=BEARER)
+    assert m.support_repo.find(ref).draft["text"] == "Kumar typing"
+    # WhatsApp: same rule; Meta re-delivering the SAME message does not clear a fresh draft.
+    n = "9800000302"
+    m.support_inbox.set_draft("wa", n, "AI reply", by="claude")
+    m.support_inbox.on_message({"from": "91" + n, "id": "q1", "type": "text", "text": {"body": "Hello"}})
+    assert m.wa_inbox_repo.load(n)["draft"]["text"] == "AI reply"
+    m.support_inbox.on_message({"from": "91" + n, "id": "q2", "type": "text", "text": {"body": "Anyone?"}})
+    assert not m.wa_inbox_repo.load(n).get("draft")
+    print("✓ Her new message retires a stale AI draft (not the founder's); a resend is one message")
+
 if __name__ == "__main__":
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()
@@ -190,3 +212,4 @@ if __name__ == "__main__":
     test_whatsapp_report_is_numbered_parsed_and_acknowledged_once()
     test_a_follow_up_reopens_a_resolved_whatsapp_thread_without_a_new_number()
     test_an_email_reply_joins_its_case_once_and_reopens_it()
+    test_new_message_retires_a_stale_ai_draft_and_a_resend_is_one_message()
