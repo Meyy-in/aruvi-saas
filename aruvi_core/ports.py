@@ -814,6 +814,12 @@ class SupportRequest:
     context: Dict[str, Any] = field(default_factory=dict)
     acknowledged: bool = False  # did the acknowledgement actually leave?
     status: str = "open"        # open | answered | closed
+    # The Support inbox's working state (2026-10-03). `thread` is what happened AFTER she wrote:
+    # Meyy's replies (and, later, her replies by email) — [{at, dir: "out"|"in", text, by}].
+    # `draft` is a proposed reply waiting for the founder — {text, by, at} — and is never sent
+    # by itself. Both are hers to export and erase with the case, like the message itself.
+    thread: List[Dict[str, Any]] = field(default_factory=list)
+    draft: Dict[str, Any] = field(default_factory=dict)
 
 
 @runtime_checkable

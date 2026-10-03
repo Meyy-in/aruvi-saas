@@ -2648,7 +2648,9 @@ def _wa_log(event: Dict[str, Any]) -> None:
 
 wa_inbox_repo = WhatsAppInboxFileImpl(state)
 support_inbox = _support_inbox_mod.Inbox(config=config, repo=wa_inbox_repo, wa_client=wa_client,
-                                         notifier=notifier, account_repo=account_repo, log=_wa_log)
+                                         notifier=notifier, account_repo=account_repo, log=_wa_log,
+                                         support_repo=support_repo,
+                                         category_label=mail_templates.support_category_label)
 app.include_router(_support_inbox_mod.build_router(support_inbox))
 
 

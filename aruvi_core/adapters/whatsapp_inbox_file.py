@@ -129,7 +129,11 @@ class WhatsAppInboxFileImpl:
                         "last_inbound_pn": t.get("last_inbound_pn", ""),
                         "last_activity_at": t.get("last_activity_at", ""),
                         "preview": (last.get("text") or "")[:120],
-                        "preview_dir": last.get("dir", "")})
+                        "preview_dir": last.get("dir", ""),
+                        # The integrated inbox (2026-10-03): the founder's own labels.
+                        "category": t.get("category", ""),
+                        "status": t.get("status", "open"),
+                        "has_draft": bool((t.get("draft") or {}).get("text"))})
         out.sort(key=lambda s: s.get("last_activity_at") or "", reverse=True)
         return out
 

@@ -111,3 +111,35 @@ class SupportRepositoryFileImpl(SupportRepository):
             out.append(SupportRequest(**fields))
         out.sort(key=lambda r: (r.created_at, r.reference), reverse=True)
         return out
+
+    def _from_raw(self, raw: dict, key: str, tenant_id: str, user_id: str) -> SupportRequest:
+        fields = {k: v for k, v in raw.items() if k in SupportRequest.__dataclass_fields__}
+        fields.setdefault("reference", key.rsplit("/", 1)[-1][:-5])
+        fields.setdefault("tenant_id", tenant_id)
+        fields.setdefault("user_id", user_id)
+        fields.setdefault("category", "")
+        fields.setdefault("message", "")
+        return SupportRequest(**fields)
+
+    def load_everyone(self) -> List[SupportRequest]:
+        """Every case from every teacher, newest first — the Support inbox's email column
+        (2026-10-03). Only the founder's inbox reads this; nothing a teacher can reach does.
+        The seller's counter (support/_series) is skipped by its leading underscore."""
+        out: List[SupportRequest] = []
+        for key in self.backend.list_keys("support"):
+            parts = key.split("/")
+            if len(parts) != 4 or parts[1].startswith("_") or not key.endswith(".json"):
+                continue
+            raw = self.backend.get_json(key)
+            if isinstance(raw, dict):
+                out.append(self._from_raw(raw, key, parts[1], parts[2]))
+        out.sort(key=lambda r: (r.created_at, r.reference), reverse=True)
+        return out
+
+    def find(self, reference: str):
+        """One case by its reference, from anyone, or None."""
+        want = str(reference or "").strip().upper()
+        for r in self.load_everyone():
+            if r.reference.upper() == want:
+                return r
+        return None

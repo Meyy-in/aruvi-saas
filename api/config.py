@@ -222,6 +222,11 @@ PUBLIC_API_URL = (os.environ.get("ARUVI_PUBLIC_API_URL", "").strip()
 # Who is emailed when a customer writes (at most once per conversation per ALERT_GAP_MIN).
 INBOX_ALERT_TO = os.environ.get("ARUVI_INBOX_ALERT_TO", "").strip() or SUPPORT_ADDRESS
 INBOX_ALERT_GAP_MIN = int(os.environ.get("ARUVI_INBOX_ALERT_GAP_MIN", "30"))
+# ★ THE DRAFTING KEY (2026-10-03). The founder's support session on his Mac (Cowork) reads the open
+# queue and writes DRAFT replies into it with this bearer token. It can read and draft — never
+# send, never change status: every reply still leaves only when he presses Send in the inbox,
+# which is the human gate by construction. Empty = drafting by token is off. Render only.
+SUPPORT_DRAFT_TOKEN = os.environ.get("ARUVI_SUPPORT_DRAFT_TOKEN", "").strip()
 # The automatic first reply — the WhatsApp Business app's "greeting message", now sent by the
 # server: on a customer's first message, or her first after GREETING_GAP_DAYS of silence.
 WA_GREETING = (os.environ.get("ARUVI_WA_GREETING", "").strip() or

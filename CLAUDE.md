@@ -7,6 +7,17 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
+**Integrated Support inbox (2026-10-03).** `/support-inbox` is now ONE queue: WhatsApp threads AND
+email cases (`support_repo.load_everyone()`), filters Needs reply / Open / All, tags (WhatsApp ·
+Email·MEY-S-… · category · Draft ready). Email cases show the app context ledger and are answered by
+email from the inbox (`case_reply_mail`, subject "Re: [MEY-S-…] We have your message — Meyy support",
+status → answered); Mark closed / Mark done; WhatsApp category select. Every item can hold a DRAFT
+(`SupportRequest.draft` / thread `draft`) that pre-fills the reply box. `ARUVI_SUPPORT_DRAFT_TOKEN`
+(Bearer) lets the founder's drafting session READ the queue (`/api/queue`, `/api/case/{ref}`,
+`/api/thread/{n}` — without marking read) and WRITE drafts (`POST /api/draft {kind, id, text,
+category}`); it can never reply, send or change status — the human gate by construction.
+Tests: tests/test_support_queue.py. Next: the drafting session itself (a Cowork skill).
+
 **Report an issue (2026-10-03, web + mobile built).** A right-aligned "REPORT AN ISSUE ›" pill (`ReportCard`
 in LessonView.jsx; the earlier "Spotted something wrong?" card was dropped as "too dominating")
 ends the Lesson tab ABOVE "Mark this unit complete", and ends the Assess tab — only those two
