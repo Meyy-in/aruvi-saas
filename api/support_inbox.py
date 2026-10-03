@@ -667,9 +667,17 @@ $('#tcat').onchange=async()=>{if(detail&&detail.kind==='wa'){await api('/thread/
    kinds — "Mark resolved" / "Reopen" — though a case stores `closed` and a chat `done`. */
 $('#tstatus').onclick=()=>{if(!detail)return;const wa=detail.kind==='wa';const now=detail.status||'open';
  const shutNow=now==='done'||now==='closed';const next=shutNow?'open':(wa?'done':'closed');
+ const myId=wa?detail.number:detail.reference,kind=detail.kind;
+ const before=items.filter(shown),pos=before.findIndex(i=>i.kind===kind&&i.id===myId);
  detail.status=next;$('#tstatus').textContent=shutNow?'Mark resolved':'Reopen';
- const it=items.find(i=>i.kind===detail.kind&&i.id===(wa?detail.number:detail.reference));if(it)it.status=next;
- renderList();
+ const it=items.find(i=>i.kind===kind&&i.id===myId);if(it)it.status=next;
+ /* ★ RESOLVED → OUT OF THE WAY, NEXT ONE UP (founder, 2026-10-03). In "Needs reply" and "Open" a
+    resolved item leaves the list at once and the conversation below it (or above, if it was the
+    last) opens in its place; with nothing left, the pane empties. Under "All" it stays, with Reopen. */
+ if(!shutNow&&filter!=='all'){const after=items.filter(shown);const nxt=after[Math.min(Math.max(pos,0),after.length-1)];
+  if(nxt)openItem(nxt.kind,nxt.id);else{cur=null;detail=null;history.replaceState(null,'',location.pathname);
+   $('.app').classList.remove('open');$('#thread').classList.add('hidden');renderList()}}
+ else renderList();
  api(wa?'/thread/'+encodeURIComponent(detail.number)+'/label':'/case/'+encodeURIComponent(detail.reference)+'/label',{method:'POST',body:JSON.stringify({status:next})})
   .then(()=>loadList()).catch(x=>{$('#err').textContent=x.message||'Could not save that.';refresh(false,false);loadList()})};
 $('#reopen').onclick=async()=>{if(!confirm('Send the re-open template to this customer?'))return;
