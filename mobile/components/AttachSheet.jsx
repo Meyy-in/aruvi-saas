@@ -61,7 +61,7 @@ import { useWebStyles } from "../theme/web";
  * Android, which is the pair those two platforms actually want.
  */
 export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, scroll = false,
-                        tour = null, children }) {
+                        tour = null, belowBar = false, children }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const tourRef = useTourAnchor(tour);   // only the attach picker passes a name (steps 9, 15)
@@ -113,8 +113,14 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
     const b = Keyboard.addListener(hideE, () => setKbH(0));
     return () => { a.remove(); b.remove(); };
   }, [scroll, visible]);
+  /* `belowBar` (Report an issue, founder 2026-10-03: "when cursor is placed inside box, it moves
+     up hiding part of top bar"): with the keyboard up the window still hangs from UNDER the app bar
+     and shrinks to the space between the bar and the keys, instead of re-centring over the bar.
+     Opt-in, so the WALK-A-108 windows keep the behaviour that was walked for them. */
+  const barBottomEarly = useBarBottom();
   const kbCap = scroll && kbH > 0
-    ? { maxHeight: Math.max(200, winH - kbH - Math.max(20, (insets.top || 0) + 12) - 20) }
+    ? { maxHeight: Math.max(200, winH - kbH
+          - (belowBar ? barBottomEarly + 8 : Math.max(20, (insets.top || 0) + 12)) - 20) }
     : null;
   /* ★ A SCROLLING WINDOW HANGS FROM UNDER THE APP BAR AND USES THE HEIGHT BELOW IT (WALK-A-113,
      founder 2026-09-27, iPhone: Add › Class hid its Save under an 82% cap, centred). Its top sits
@@ -123,8 +129,8 @@ export function Sheet({ visible, onClose, onBack, kicker, title, sub, confirm, s
      and the four-row menu keep the centred card. */
   const barBottom = useBarBottom();   // WALK-A-148: the MEASURED bar, + the status bar where Android left it out
   const hangTop = barBottom + 8;
-  const hang = scroll && !confirm && !kbCap;
-  const hangCap = hang ? { maxHeight: winH - hangTop - Math.max(20, (insets.bottom || 0) + 12) } : null;
+  const hang = scroll && !confirm && (!kbCap || belowBar);
+  const hangCap = hang && !kbCap ? { maxHeight: winH - hangTop - Math.max(20, (insets.bottom || 0) + 12) } : null;
   const body = scroll
     ? (
       <ScrollView ref={scrollRef} style={ws.ap_scrollbody} contentContainerStyle={ws.ap_scrollpad}

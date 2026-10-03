@@ -590,8 +590,11 @@ export function webStyles(t, scheme = "light") {
     assess_card:     { backgroundColor: "#fff", borderWidth: 1, borderRadius: 10,
                        paddingVertical: 13, paddingHorizontal: 15, marginBottom: 11 },
     /* Forward nav shares the panel's last row and wraps below it when that row is full. */
-    assess_qnavwrap: { flexDirection: "row", flexWrap: "wrap", alignItems: "flex-end" },
-    assess_qnavmain: { flex: 1, minWidth: 0 },
+    /* ⚠️ A COLUMN, NOT A ROW (founder, 2026-10-03, Science VII ch 8 unit 2 Q1): side by side, the
+       answer was squeezed left to make room for "Next question →". The content takes the full
+       width; the link drops to its own row, right-aligned (`assess_tabnav` is alignSelf flex-end). */
+    assess_qnavwrap: { flexDirection: "column" },
+    assess_qnavmain: { width: "100%", minWidth: 0 },
     /* A listening passage, marked rather than merely stated. */
     assess_audio:    { flexDirection: "row", alignItems: "center", columnGap: 8, marginTop: 9,
                        paddingVertical: 3, paddingLeft: 11, borderLeftWidth: 3 },
@@ -1934,14 +1937,10 @@ export function webStyles(t, scheme = "light") {
 
     /* ── "Report an issue" (2026-10-03) — the web's .lv-rcard card and ReportProblem's .rp-*,
        at phone width. ⚠️ NEW KEYS: invisible to Fast Refresh until a real app start. ── */
-    /* `color-mix(tint-clay 45%, paper)` on the web, computed here because RN has no color-mix. */
-    lv_rcard:        { flexDirection: "row", flexWrap: "wrap", alignItems: "flex-start", columnGap: 12, rowGap: 10,
-                       marginTop: 18, paddingVertical: 13, paddingHorizontal: 14, borderWidth: 1,
-                       borderColor: t.edge_clay, borderRadius: 8, backgroundColor: mixHex(t.tint_clay, t.paper, 0.45) },
-    lv_rcard_txt:    { flexGrow: 1, flexShrink: 1, flexBasis: "80%", minWidth: 0 },
-    lv_rcard_t:      { fontFamily: F.display(600), fontSize: 14.5, lineHeight: 18.125, color: t.ink },
-    lv_rcard_s:      { fontFamily: F.body(400), fontSize: 13, lineHeight: 18.2, color: t.ink_soft, marginTop: 2 },
-    lv_rcard_btn:    { marginLeft: 38, paddingVertical: 8, paddingHorizontal: 14, borderWidth: 1, borderColor: t.pine,
+    /* "Report an issue ›" — just the pill (.lv-rlink / .lv-rcard-btn), right-aligned under the
+       last phase. The two-row card was "too dominating" (founder, 2026-10-03). */
+    lv_rlink:        { flexDirection: "row", justifyContent: "flex-end", marginTop: 14 },
+    lv_rcard_btn:    { paddingVertical: 8, paddingHorizontal: 14, borderWidth: 1, borderColor: t.pine,
                        borderRadius: 999, backgroundColor: t.paper_2 },
     lv_rcard_btn_t:  { fontFamily: F.mono(600), fontSize: 11, letterSpacing: 0.88, textTransform: UP, color: t.pine },
     rp_ctx:          { marginBottom: 12, backgroundColor: t.tint_pine, borderWidth: 1, borderColor: t.edge_green,
@@ -1953,7 +1952,7 @@ export function webStyles(t, scheme = "light") {
     rp_lab:          { fontFamily: F.mono(400), fontSize: 9.5, lineHeight: 14.7, letterSpacing: 1.33, textTransform: UP,
                        color: t.ink_soft, marginBottom: 6 },
     rp_text:         { minHeight: 120, height: 120, borderWidth: 1, borderRadius: 3, paddingVertical: 10, paddingHorizontal: 12,
-                       fontFamily: F.body(400), fontSize: 16, lineHeight: 24.8 },
+                       fontFamily: F.body(400), fontSize: 14, lineHeight: 22 },   // two notches under 16, airier (founder, 2026-10-03)
     rp_two:          { flexDirection: "row", columnGap: 8, marginTop: 14 },
     rp_btn:          { flex: 1, minHeight: 44, borderRadius: 8, paddingVertical: 13, paddingHorizontal: 6,
                        alignItems: "center", justifyContent: "center" },
@@ -1961,14 +1960,6 @@ export function webStyles(t, scheme = "light") {
     rp_msg:          { fontFamily: F.body(400), fontSize: 14.5, lineHeight: 21.75, color: t.ink, marginTop: 9 },
     rp_err:          { fontFamily: F.body(400), fontSize: 13, lineHeight: 19.5, color: t.danger, marginTop: 8 },
   };
-}
-
-/* Blend two #rrggbb colours: `p` of `a`, the rest `b`. Falls back to `a` for anything else. */
-function mixHex(a, b, p) {
-  const h = (c) => (typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c)) ? [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16)) : null;
-  const x = h(a), y = h(b);
-  if (!x || !y) return a;
-  return "#" + x.map((v, i) => Math.round(v * p + y[i] * (1 - p)).toString(16).padStart(2, "0")).join("");
 }
 
 export function useWebStyles() {

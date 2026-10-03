@@ -447,7 +447,8 @@ function AssessBody({ ws, t, it, tab, qn, onNext, onTab, mathsMiddle, mathsSecon
   );
 }
 
-export default function AssessPanel({ ws, t, items, assessment }) {
+/* `footer` — "Report an issue ›" (2026-10-03), only under Question and Answer (not Overview or Inclusivity). */
+export default function AssessPanel({ ws, t, items, assessment, footer = null }) {
   const g = String((assessment && assessment.grade) || "").toLowerCase().replace(/grade|class/g, "").trim();
   const mathsMiddle = assessment && assessment.subject === "mathematics" && ["vi", "vii", "viii"].includes(g);
   const mathsSecondary = assessment && assessment.subject === "mathematics" && ["ix", "x"].includes(g);
@@ -488,6 +489,7 @@ export default function AssessPanel({ ws, t, items, assessment }) {
       </View>
       <AssessBody key={idx} ws={ws} t={t} it={it} tab={tab} qn={many ? idx + 1 : null} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary}
         onNext={many && idx < items.length - 1 ? () => goto(idx + 1) : null} onTab={setITab} />
+      {tab === "q" || tab === "an" ? footer : null}
     </View>
   );
 }

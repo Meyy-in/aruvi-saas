@@ -1527,7 +1527,7 @@ tr[data-sec="3"] .cell:not(.on) { background:var(--sec-d-bg); }
    content fills the width, so the nav settles onto its own right-aligned line beneath it —
    the "row is full, use the next row" case. A short question keeps the nav on the same line. */
 .assess-qnavwrap { display:flex; flex-wrap:wrap; align-items:flex-end; }
-.assess-qnavmain { flex:1 1 auto; min-width:0; }
+.assess-qnavmain { flex:1 1 100%; min-width:0; }   /* full width: the "Answer →" / "Next question →" link always drops to its own row, right-aligned — never squeezes the content (founder, 2026-10-03, Sci VII ch 8 u2 Q1) */
 .assess-qnavwrap > .assess-tabnav { margin-left:auto; margin-top:10px; }
 /* Flat re-palette of the shared item pieces (ABlock/ATicks/AReveals/options/otg) when
    rendered on paper instead of inside the old white green-edged card. */
@@ -5828,6 +5828,9 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
     max-width: none; display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; align-items: end;
   }
   .setwrap.setwrap-tight > .ob-cta { grid-column: 1; margin-top: 8px; }
+  /* The email block and WhatsApp share a row; both hang from the TOP so an open email change
+     grows downward under the current address instead of pushing WhatsApp to its foot. */
+  .setwrap.setwrap-tight > .pp-email, .setwrap.setwrap-tight > .pp-wa-field { align-self: start; }
 
   /* WALK-A-185 — the ⚙ in the brand bar two notches bigger on the web (founder): 18 → 22px. */
   .topbar .hdr-gear { font-size: 22px; }
@@ -5913,36 +5916,22 @@ button.rp-sec:disabled { opacity: .45; cursor: default; }
   .rp-text { font-size: 16px; }   /* 16px stops iOS zooming into the field */
 }
 
-/* "Spotted something wrong?" (founder's design, 2026-10-03) — ends the Lesson tab above "Mark
-   this unit complete", and the Assess tab. Clay flag on a soft clay tint; the button is PINE,
-   not red — an invitation, not an alarm. */
-.lv-rcard { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 13px 14px;
-  background: var(--tint-clay);
-  background: color-mix(in srgb, var(--tint-clay) 45%, var(--paper)); border: 1px solid var(--edge-clay);
-  border-radius: 8px; }
-.lv-rcard-flag { flex: none; width: 26px; height: 26px; fill: var(--clay); stroke: var(--clay); }
-.lv-rcard-txt { flex: 1; min-width: 0; }
-.lv-rcard-t { font-family: var(--f-display); font-weight: 600; font-size: 14.5px; color: var(--ink); line-height: 1.25; }
-.lv-rcard-s { font-size: 13px; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+/* "Report an issue ›" (2026-10-03) — just the pill, right-aligned under the last phase (the
+   card it replaced was "too dominating"). Pine, not red: an invitation, not an alarm. */
+.lv-rlink { display: flex; justify-content: flex-end; margin-top: 14px; }
 .lv-rcard-btn { all: unset; box-sizing: border-box; flex: none; cursor: pointer; white-space: nowrap;
   padding: 8px 14px; border: 1px solid var(--pine); border-radius: 999px; background: var(--paper-2);
   font-family: var(--f-mono); font-size: 11px; font-weight: 600; letter-spacing: .08em;
   text-transform: uppercase; color: var(--pine); }
 .lv-rcard-btn:hover { background: var(--pine); color: #f6f1e7; }
 .lv-rcard-btn:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
-.lv-rcard + .lv-markcard { margin-top: 12px; }
+.lv-rlink + .lv-markcard { margin-top: 12px; }
 .rp-ctx-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .rp-ctx-row .rp-ctx-v { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* The phase picker shares row 1 — compact, one notch under a form field (13px, tighter pad). */
 .rp-phase { flex: none; width: 168px; }
 /* One notch under the row's old 13px, in the field's own ink (clay was tried and dropped). */
 .rp-phase .dd-btn { font-size: 12px; padding: 4px 9px; border-radius: 6px; gap: 6px; }
-/* On a phone the button drops under the words, aligned with them, so the text keeps its width. */
-@media (max-width: 600px) {
-  .lv-rcard { flex-wrap: wrap; gap: 10px 12px; align-items: flex-start; }
-  .lv-rcard-txt { flex: 1 1 calc(100% - 40px); }
-  .lv-rcard-btn { margin-left: 40px; }
-}
 @media (max-width: 600px) {   /* after the base .rp-phase rule, so it wins */
   .rp-phase { width: 146px; }
   .rp-phase .dd-btn { padding: 4px 7px; }
@@ -5958,3 +5947,4 @@ button.rp-sec:disabled { opacity: .45; cursor: default; }
   .rp-head { cursor: move; user-select: none; touch-action: none; }
   .rp-head .rp-x { cursor: pointer; }
 }
+.pp-email { display: flex; flex-direction: column; min-width: 0; }

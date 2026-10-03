@@ -148,6 +148,7 @@ function specificity(sel) {
  *    the phone would make every dropdown two points larger than the design for no reason.
  */
 const NAMED_DIVERGENCES = {
+  "rp_text:font-size":            "the web's 16px exists only to stop iOS Safari zooming into a field; the native app has no zoom, and the founder asked for 14 (2026-10-03)",
   "assess_prompt:font-size":      "the phone renders .assess-flat (13.5px), not the bare rule",
   "assess_look_k:font-size":      "the phone renders .assess-flat (10px), not the bare rule",
   "assess_look_k:letter-spacing": ".1em of the FLAT 10px = 1.0px; the checker computes it off 9px",

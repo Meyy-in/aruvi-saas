@@ -209,9 +209,15 @@ function PersonalProfile({ onSaved, leaveGuardRef }) {
       <div className="acct-row"><span className="acct-k">Mobile</span>
         <span className="acct-v">{acct.phone || "—"}</span></div>
 
-      <EmailEntry current={email} label="Email" selfId={acct.account_id} fit={emailFit}
-        disabled={busy} onConfirmed={(v) => { setEmail(v); return ""; }}
-        onDraft={setEmailDraft} />
+      {/* ★ ONE GRID CELL FOR THE WHOLE EMAIL BLOCK (founder, 2026-10-03): on a wide screen this
+          form is two columns in DOM order, so "New email" landed to the RIGHT of the current
+          address and "Type it again" under it. Wrapped, the current address, the two new-address
+          boxes and Confirm stack in one column, under the current email. */}
+      <div className="pp-email">
+        <EmailEntry current={email} label="Email" selfId={acct.account_id} fit={emailFit}
+          disabled={busy} onConfirmed={(v) => { setEmail(v); return ""; }}
+          onDraft={setEmailDraft} />
+      </div>
 
       {/* WhatsApp support — see the state note above. `hasMail` is the CONFIRMED email on
           this form (an address mid-change does not count until Verify completes). */}
@@ -219,7 +225,7 @@ function PersonalProfile({ onSaved, leaveGuardRef }) {
         const hasMail = !emailDraft.editing && !!String(email || "").trim();
         const locked = wa && !hasMail;
         return (
-          <div className="login-field ob-field">
+          <div className="login-field ob-field pp-wa-field">
             <span>WhatsApp support</span>
             <div className="ob-email-view pp-wa">
               <span className="pp-wa-txt">{wa

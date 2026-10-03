@@ -390,8 +390,8 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
             footer={<>{onReport ? <ReportCard tour onPress={() => onReport("lesson")} /> : null}{lessonFooter}</>}
             bookmark={bookmark ? { ...bookmark, onLift: setLocked } : null} />
         ) : null}
-        {tab === "assess" ? <><AssessPanel ws={ws} t={t} items={items} assessment={assessment} />
-          {onReport ? <ReportCard onPress={() => onReport("assess")} /> : null}</> : null}
+        {tab === "assess" ? <AssessPanel ws={ws} t={t} items={items} assessment={assessment}
+          footer={onReport ? <ReportCard onPress={() => onReport("assess")} /> : null} /> : null}
         {tail}
       </ScrollView>
     </>

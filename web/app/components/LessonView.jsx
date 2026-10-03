@@ -383,7 +383,9 @@ function LessonPanel({ u, bookmark = null }) {
 // below whatever is already frozen above (in preview, .lv-stick pins the header + UNIT
 // tab bar). The group's `top` is measured at mount (app nav + .lv-stick height when
 // present) since those heights vary with title wrapping. Only panel content scrolls.
-function AssessPanel({ items, mathsMiddle = false, mathsSecondary = false }) {
+/* `footer` — "Report an issue ›" (2026-10-03), shown only under the Question and Answer tabs —
+   not the item's Overview or Inclusivity (founder, 2026-10-03). */
+function AssessPanel({ items, mathsMiddle = false, mathsSecondary = false, footer = null }) {
   const [at, setAt] = useState(0);
   const [itab, setITab] = useState("ov");
   const grpRef = useRef(null);
@@ -445,6 +447,7 @@ function AssessPanel({ items, mathsMiddle = false, mathsSecondary = false }) {
       </div>
       <AssessBody it={it} tab={tab} qn={many ? idx + 1 : null} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary}
         onNext={many && idx < items.length - 1 ? () => goto(idx + 1) : null} onTab={setITab} key={idx} />
+      {tab === "q" || tab === "an" ? footer : null}
     </>
   );
 }
@@ -455,17 +458,12 @@ function AssessPanel({ items, mathsMiddle = false, mathsSecondary = false }) {
  * LESSON (founder, 2026-07-25): a unit opens on the teaching script itself, and Next lands
  * there too; Overview/Material are reference tabs a teacher visits deliberately.
  * data-tour="unit-tabs": tour step 10's tooltip hangs below the bar. */
+/* ★ JUST THE LINK (founder, 2026-10-03: the card "looks too dominating"). One quiet pill,
+   right-aligned under the last phase — above "Mark this unit complete" on the Lesson tab, and at
+   the end of the Assess tab. No flag, no headline, no help line. */
 function ReportCard({ onClick }) {
   return (
-    <div className="lv-rcard" data-tour="report-issue">
-      <svg className="lv-rcard-flag" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 21V4" strokeWidth="2" strokeLinecap="round" />
-        <path d="M6 4h11l-2.5 4L17 12H6z" stroke="none" />
-      </svg>
-      <div className="lv-rcard-txt">
-        <div className="lv-rcard-t">Spotted something wrong?</div>
-        <div className="lv-rcard-s">Help us improve this lesson for other teachers.</div>
-      </div>
+    <div className="lv-rlink" data-tour="report-issue">
       <button type="button" className="lv-rcard-btn" onClick={onClick}>Report an issue ›</button>
     </div>
   );
@@ -510,8 +508,8 @@ function useUnitTabsParts(u, assessment, chapterTitle, lessonFooter = null, defa
           two: they are what improves the lesson; Overview and Material are marginal. */}
       {tab === "lesson" ? <><LessonPanel u={u} bookmark={bookmark} />
         {onReport ? <ReportCard onClick={() => onReport("lesson")} /> : null}{lessonFooter}</> : null}
-      {tab === "assess" ? <><AssessPanel items={items} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary} />
-        {onReport ? <ReportCard onClick={() => onReport("assess")} /> : null}</> : null}
+      {tab === "assess" ? <AssessPanel items={items} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary}
+        footer={onReport ? <ReportCard onClick={() => onReport("assess")} /> : null} /> : null}
     </>
   );
   return { bar, panel };

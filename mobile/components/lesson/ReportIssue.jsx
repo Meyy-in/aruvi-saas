@@ -3,8 +3,9 @@
  * channels Meyy already answers on. Same words, same rules as web/app/components/ReportProblem.jsx;
  * the lesson facts come from `@aruvi/shared/report`, so both surfaces describe a unit identically.
  *
- *   The CARD ("Spotted something wrong?") ends the Lesson tab ABOVE "Mark this unit complete", and
- *   ends the Assess tab — only those two (they improve the lesson; Overview/Material are marginal).
+ *   The LINK ("Report an issue ›", a right-aligned pill — the card it replaced was "too
+ *   dominating") ends the Lesson tab ABOVE "Mark this unit complete", and ends the Assess tab —
+ *   only those two (they improve the lesson; Overview/Material are marginal).
  *   The WINDOW is the app's own Sheet (not the web's bottom sheet — on the phone every window is
  *   this one, and a second shape is how windows start to differ). Inside: a green box with two
  *   rows in the nav-label style, an optional compact phase picker on row 1 (Lesson tab only,
@@ -16,7 +17,6 @@
  *   WhatsApp — it rides in the case context for Meyy only. */
 import { useEffect, useState } from "react";
 import { View, Pressable, Linking } from "react-native";
-import Svg, { Path } from "react-native-svg";
 import { Text, TextInput } from "../Text";
 import { getJSON, postJSON, waLink } from "@aruvi/shared/format";
 import { problemReport, reportWhatsAppText, phaseOptionLabel } from "@aruvi/shared/report";
@@ -29,22 +29,15 @@ import { versionLine } from "../../lib/version";
 
 const MAX = 4000;
 
-/* The card. `tour` names the anchor only where the tour rings it (the Lesson tab, step 13). */
+/* ★ JUST THE LINK (founder, 2026-10-03: the card "looks too dominating"). One quiet pill,
+   right-aligned under the last phase — above Mark complete on the Lesson tab, and at the end of
+   the Assess tab. `tour` names the anchor only where the tour rings it (Lesson tab, step 13). */
 export function ReportCard({ onPress, tour = false }) {
-  const { t } = useTheme();
   const ws = useWebStyles();
   const ref = useTourAnchor(tour ? "report-issue" : null);
   return (
-    <View ref={ref} collapsable={false} style={ws.lv_rcard}>
-      <Svg width={26} height={26} viewBox="0 0 24 24">
-        <Path d="M6 21V4" stroke={t.clay} strokeWidth={2} strokeLinecap="round" />
-        <Path d="M6 4h11l-2.5 4L17 12H6z" fill={t.clay} />
-      </Svg>
-      <View style={ws.lv_rcard_txt}>
-        <Text style={ws.lv_rcard_t}>Spotted something wrong?</Text>
-        <Text style={ws.lv_rcard_s}>Help us improve this lesson for other teachers.</Text>
-      </View>
-      <Pressable onPress={onPress} accessibilityRole="button" hitSlop={6}
+    <View ref={ref} collapsable={false} style={ws.lv_rlink}>
+      <Pressable onPress={onPress} accessibilityRole="button" hitSlop={8}
         style={({ pressed }) => [ws.lv_rcard_btn, pressed && { opacity: 0.7 }]}>
         <Text fixed style={ws.lv_rcard_btn_t}>Report an issue ›</Text>
       </Pressable>
@@ -110,7 +103,7 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
 
   if (sent) {
     return (
-      <Sheet visible scroll onClose={onClose} title="Sent — thank you">
+      <Sheet visible scroll belowBar onClose={onClose} title="Sent — thank you">
         <Text style={[ws.sup_refcap, { color: t.ink_soft, marginTop: 4 }]}>Your reference</Text>
         <Text style={[ws.sup_ref, { color: t.pine }]}>{sent.reference}</Text>
         <Text style={ws.rp_msg}>{sent.emailed
@@ -123,7 +116,7 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
   }
 
   return (
-    <Sheet visible scroll onClose={onClose} title="Report an issue">
+    <Sheet visible scroll belowBar onClose={onClose} title="Report an issue">
       {/* Two short rows, nothing else; the phase picker shares row 1 (founder, 2026-10-03). */}
       <View style={ws.rp_ctx}>
         <View style={ws.rp_ctx_row}>

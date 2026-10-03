@@ -7,8 +7,8 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
-**Report an issue (2026-10-03, web + mobile built).** A "Spotted something wrong? / Help us
-improve this lesson for other teachers. / REPORT AN ISSUE ›" card (`ReportCard` in LessonView.jsx)
+**Report an issue (2026-10-03, web + mobile built).** A right-aligned "REPORT AN ISSUE ›" pill (`ReportCard`
+in LessonView.jsx; the earlier "Spotted something wrong?" card was dropped as "too dominating")
 ends the Lesson tab ABOVE "Mark this unit complete", and ends the Assess tab — only those two
 (founder: they improve the lesson; Overview/Material are marginal). It opens
 `web/app/components/ReportProblem.jsx`: green box with two rows in the nav-label style
@@ -20,7 +20,7 @@ neither: a note. No how-to line, no activity name, no code shown to her or in Wh
 (`@aruvi/shared/report`, e.g. IX-MAT-02-U3-P2) rides in the case context for us only. Per-phase
 flags were tried and dropped (clutter). Mobile port must reuse `@aruvi/shared/report` and also make
 lesson text `selectable` (iPhone cannot copy lesson text today).
-Guided tour (web): new step 13 rings the card ("Spotted something wrong? Tell us."), so the web
+Guided tour (web): new step 13 rings the link ("Spotted something wrong? Tell us."), so the web
 tour is now 21 steps and every step from 13 on moved +1 (page.jsx tourNext/tourBack, MyPlans tour
 effects, GuidedTour table). ⚠️ The phone's tour (`mobile/components/GuidedTour.jsx`, explicit `n:`)
 is now 21 steps too (`lib/tour.js` TOUR_TOTAL/MOVES/BACK_MOVES, `app/(app)/index.jsx` tour effects,
