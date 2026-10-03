@@ -455,7 +455,23 @@ function AssessPanel({ items, mathsMiddle = false, mathsSecondary = false }) {
  * LESSON (founder, 2026-07-25): a unit opens on the teaching script itself, and Next lands
  * there too; Overview/Material are reference tabs a teacher visits deliberately.
  * data-tour="unit-tabs": tour step 10's tooltip hangs below the bar. */
-function useUnitTabsParts(u, assessment, chapterTitle, lessonFooter = null, defaultTab = "lesson", bookmark = null) {
+function ReportCard({ onClick }) {
+  return (
+    <div className="lv-rcard">
+      <svg className="lv-rcard-flag" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 21V4" strokeWidth="2" strokeLinecap="round" />
+        <path d="M6 4h11l-2.5 4L17 12H6z" stroke="none" />
+      </svg>
+      <div className="lv-rcard-txt">
+        <div className="lv-rcard-t">Spotted something wrong?</div>
+        <div className="lv-rcard-s">Help us improve this lesson for other teachers.</div>
+      </div>
+      <button type="button" className="lv-rcard-btn" onClick={onClick}>Report an issue ›</button>
+    </div>
+  );
+}
+
+function useUnitTabsParts(u, assessment, chapterTitle, lessonFooter = null, defaultTab = "lesson", bookmark = null, onReport = null) {
   const items = unitAssessItems(assessment, u);
   // Inclusivity keyword-bolding is stage-specific: middle maths writes differentiation as
   // "…struggling student…; challenge: …", so those two words are weighted (see InclusivityText).
@@ -489,8 +505,13 @@ function useUnitTabsParts(u, assessment, chapterTitle, lessonFooter = null, defa
       {/* lessonFooter (tracking only): the "Mark this unit complete" action lives HERE — at the
           END of the Lesson tab, the natural close of a period — so it stops appearing under every
           tab. Passed only for the pointer/just-completed unit; null everywhere else. */}
-      {tab === "lesson" ? <><LessonPanel u={u} bookmark={bookmark} />{lessonFooter}</> : null}
-      {tab === "assess" ? <AssessPanel items={items} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary} /> : null}
+      {/* ★ "SPOTTED SOMETHING WRONG?" (founder, 2026-10-03) — ends the Lesson tab ABOVE "Mark
+          this unit complete" (problems before completion) and ends the Assess tab. Only these
+          two: they are what improves the lesson; Overview and Material are marginal. */}
+      {tab === "lesson" ? <><LessonPanel u={u} bookmark={bookmark} />
+        {onReport ? <ReportCard onClick={() => onReport("lesson")} /> : null}{lessonFooter}</> : null}
+      {tab === "assess" ? <><AssessPanel items={items} mathsMiddle={mathsMiddle} mathsSecondary={mathsSecondary} />
+        {onReport ? <ReportCard onClick={() => onReport("assess")} /> : null}</> : null}
     </>
   );
   return { bar, panel };
@@ -499,8 +520,8 @@ function useUnitTabsParts(u, assessment, chapterTitle, lessonFooter = null, defa
 // Preview view: the header + tab bar are frozen together (one sticky block); only the panel
 // scrolls. `headerContent` is the topbar + name-plate built by the caller. Shared by My Lessons
 // preview, the read-only "View full lesson plan", AND the My Classes tracking view.
-function PreviewUnit({ headerContent, u, assessment, chapterTitle, lessonFooter = null, defaultTab = "lesson", bookmark = null }) {
-  const { bar, panel } = useUnitTabsParts(u, assessment, chapterTitle, lessonFooter, defaultTab, bookmark);
+function PreviewUnit({ headerContent, u, assessment, chapterTitle, lessonFooter = null, defaultTab = "lesson", bookmark = null, onReport = null }) {
+  const { bar, panel } = useUnitTabsParts(u, assessment, chapterTitle, lessonFooter, defaultTab, bookmark, onReport);
   return (
     <>
       <div className="lv-stick">
@@ -2141,7 +2162,8 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
   // "View full lesson plan" re-renders THIS view in preview layout; previewAt = which unit shows.
   const [showFullPlan, setShowFullPlan] = useState(false);
   // "Report a problem" pop-up (2026-10-03) — an overlay; the unit underneath stays mounted.
-  const [reporting, setReporting] = useState(false);
+  // null = closed · { part: "lesson" | "assess" } = the tab whose card opened it.
+  const [reporting, setReporting] = useState(null);
   // index of the unit shown in full-plan preview — defaults to the current pointer so the teacher
   // lands on the unit she's teaching (the next LU after the last one marked complete).
   const [previewAt, setPreviewAt] = useState(() => {
@@ -2320,21 +2342,16 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
   // previous unit) it becomes chapter-org navigation (founder 2026-07-23); on every other unit
   // it pages to the previous unit, as before. CENTRE is "Unit N / total", RIGHT is next unit.
   const totalAll = units.length + droppedUnits.length;
-  /* ★ REPORT A PROBLEM, ON THE UNIT SHE IS READING (founder, 2026-10-03). The Support box,
+  /* ★ REPORT AN ISSUE, ON THE UNIT SHE IS READING (founder, 2026-10-03). The Support box,
      opened where the fault was seen, with the lesson already attached — see ReportProblem.jsx.
-     Under the unit strip in every paged mode (My Lessons preview, full plan, My Classes). */
-  const reportUI = (
-    <>
-      <button type="button" className="lv-report" onClick={() => setReporting(true)}>
-        <span aria-hidden="true">⚑</span> Report a problem in this unit</button>
-      {reporting ? (
-        <ReportProblem lp={lp}
-          unitNumber={inDropped ? previewAt - units.length + 1 : previewAt + 1}
-          unitTitle={pu.title} dropped={inDropped}
-          onClose={() => setReporting(false)} />
-      ) : null}
-    </>
-  );
+     Opened from the card at the end of the Lesson and Assess tabs, in every paged mode. */
+  const reportUI = reporting ? (
+    <ReportProblem lp={lp}
+      unitNumber={inDropped ? previewAt - units.length + 1 : previewAt + 1}
+      unitTitle={pu.title} dropped={inDropped} part={reporting.part}
+      phases={(pu.phases || []).filter((ph) => ph.text || ph.label).map(phaseMin)}
+      onClose={() => setReporting(null)} />
+  ) : null;
   const pvNav = (endClass = "") => (
     <div className={`lv-pvnav lv-pvnav-thin ${endClass}`}>
       {previewAt <= 0 ? (
@@ -2418,7 +2435,8 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
       <div className="lessonview lv-pvview" data-tour="preview-root" ref={pvRef}>
         {/* Frozen block — header AND the Overview/Material/Lesson/Assess tab bar stay pinned;
             only the active panel scrolls beneath. Keyed by unit so paging resets to Overview. */}
-        <PreviewUnit key={previewAt} headerContent={headerContent} u={pu} assessment={view.assessment} chapterTitle={lp.chapter_title} />
+        <PreviewUnit key={previewAt} headerContent={headerContent} u={pu} assessment={view.assessment} chapterTitle={lp.chapter_title}
+          onReport={(part) => setReporting({ part })} />
         {/* Prev/next paging strip at the end of the lesson body. */}
         {pvNav("lv-pvnav-end")}
         {reportUI}
@@ -2506,7 +2524,8 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
           which also lands the mark-complete footer in view on open. My Lessons stays on Overview. */}
       <PreviewUnit key={previewAt} headerContent={trackHeader} u={pu} assessment={view.assessment}
         chapterTitle={lp.chapter_title} lessonFooter={previewAt === actUnit ? completionUI : null} defaultTab="lesson"
-        bookmark={sectionKey && previewAt === cur ? { phase: bkmkPhase, onMove: moveBookmark } : null} />
+        bookmark={sectionKey && previewAt === cur ? { phase: bkmkPhase, onMove: moveBookmark } : null}
+        onReport={(part) => setReporting({ part })} />
       {/* Unit strip (chapter-org on the left, Unit N/total, next unit). */}
       {pvNav("lv-pvnav-end")}
       {reportUI}

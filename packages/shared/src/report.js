@@ -33,7 +33,25 @@ function subjectCode(subject) {
   return (s.replace(/[^a-z]/g, "").slice(0, 3) || "GEN").toUpperCase();
 }
 
-export function problemReport({ lp, unitNumber, unitTitle = "", dropped = false } = {}) {
+/* "Phase 2 - 15 min" — the picker's option label; minutes left off when the plan has none. */
+export function phaseOptionLabel(n, mins) {
+  return mins != null && mins !== "" && Number.isFinite(Number(mins)) ? `Phase ${n} - ${mins} min` : `Phase ${n}`;
+}
+
+export function romanNumeral(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v) || v < 1) return "";
+  return ROMAN[v] || String(v);
+}
+
+/* `phase` is the 1-based phase number inside the unit's Lesson tab, or null for the whole unit.
+   `part` is the tab she reported from: "lesson" (default) or "assess" (→ "Assessment").
+   What SHE sees (founder, 2026-10-03): two short rows and nothing else —
+     line1  "Class IX · Mathematics"
+     line2  "Polynomials · Unit 3 · Phase 2"   (Arabic, as in the phase picker "Phase 2 - 15 min")
+   The activity's name is left out (the unit number is enough for Meyy), and the plan code is
+   internal: it rides in `context` for us, never on her screen or in her WhatsApp. */
+export function problemReport({ lp, unitNumber, unitTitle = "", dropped = false, phase = null, part = "lesson" } = {}) {
   const p = lp || {};
   const g = gradeRoman(p.grade);
   const subj = subjectWords(p.subject);
@@ -41,28 +59,35 @@ export function problemReport({ lp, unitNumber, unitTitle = "", dropped = false 
     ? String(p.chapter_number).trim() : "";
   const chTitle = String(p.chapter_title || "").trim();
   const n = Number.isFinite(Number(unitNumber)) ? Number(unitNumber) : null;
+  const assess = part === "assess";
+  const ph = !assess && phase != null && phase !== "" && Number.isFinite(Number(phase)) && Number(phase) >= 1
+    ? Number(phase) : null;
 
   const ref = [g || "X", subjectCode(p.subject),
     chNum ? chNum.padStart(2, "0") : "00",
-    n != null ? `${dropped ? "D" : "U"}${n}` : ""].filter(Boolean).join("-");
+    n != null ? `${dropped ? "D" : "U"}${n}` : "",
+    ph != null ? `P${ph}` : "", assess ? "A" : ""].filter(Boolean).join("-");
+
+  const unit = n != null ? `${dropped ? "Dropped section" : "Unit"} ${n}` : "";
+  const phaseWords = assess ? "Assessment" : (ph != null ? `Phase ${ph}` : "");
+  const line1 = [g ? `Class ${g}` : "", subj].filter(Boolean).join(" · ");
+  const line2 = [chTitle || (chNum ? `Ch ${chNum}` : ""), unit, phaseWords].filter(Boolean).join(" · ");
+  const line = [line1, line2].filter(Boolean).join(" · ");
 
   const chapter = [chNum ? `Ch ${chNum}` : "", chTitle].filter(Boolean).join(" ");
-  const unit = n != null
-    ? `${dropped ? "Dropped section" : "Unit"} ${n}${unitTitle ? ` · ${String(unitTitle).trim()}` : ""}`
-    : "";
-  const line = [g ? `Class ${g}` : "", subj, chapter, unit].filter(Boolean).join(" · ");
-
   const context = { screen: "Lesson › Report a problem", subject: String(p.subject || ""),
-    grade: g, chapter, unit, plan_ref: ref };
+    grade: g, chapter, unit, phase: phaseWords,
+    unit_title: String(unitTitle || "").trim(), plan_ref: ref };
   Object.keys(context).forEach((k) => { if (!context[k]) delete context[k]; });
-  return { ref, line, context };
+  return { ref, line, line1, line2, context };
 }
 
-/* The WhatsApp text: the lesson line and code on top, then her words. She can still edit
-   it in WhatsApp before sending — that is the point of sending from her own WhatsApp. */
+/* The WhatsApp text: where she was, then her words. No internal code — the line plus her
+   number (which Meyy already knows) is enough to find the plan. She can still edit it in
+   WhatsApp before sending; that is the point of sending from her own WhatsApp. */
 export function reportWhatsAppText(report, message) {
   const r = report || {};
-  const head = `Problem in: ${r.line || ""}${r.ref ? ` (Ref ${r.ref})` : ""}`.trim();
+  const head = `Problem in: ${r.line || ""}`.trim();
   const body = String(message || "").trim();
   return body ? `${head}\n\n${body}` : head;
 }

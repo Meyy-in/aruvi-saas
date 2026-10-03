@@ -7,13 +7,18 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
-**Report a problem (2026-10-03, web done, mobile pending).** A "⚑ Report a problem in this unit"
-link under the unit strip in every paged lesson view opens `web/app/components/ReportProblem.jsx`:
-lesson line + plan code (`@aruvi/shared/report` → e.g. `IX-MAT-02-U3`), a text box, then by
-channel — WhatsApp only: "Send on WhatsApp" (opens HER WhatsApp, text prefilled, she taps Send);
-email only: "Send" (POST /support, category `plan`, lesson as context → reference + ack mail);
-both: two buttons, she picks one; neither: a note to add one. Founder rule: no new channel —
-it is the Support box on the spot. Mobile port must reuse `@aruvi/shared/report` and also make
+**Report an issue (2026-10-03, web done, mobile pending).** A "Spotted something wrong? / Help us
+improve this lesson for other teachers. / REPORT AN ISSUE ›" card (`ReportCard` in LessonView.jsx)
+ends the Lesson tab ABOVE "Mark this unit complete", and ends the Assess tab — only those two
+(founder: they improve the lesson; Overview/Material are marginal). It opens
+`web/app/components/ReportProblem.jsx`: green box with two rows in the nav-label style
+("CLASS IX · MATHEMATICS" / "POLYNOMIALS · UNIT 3 · PHASE 2" or "· ASSESSMENT") and, from the
+Lesson tab, an optional phase dropdown ("Phase 2 - 15 min", empty by default). Then by channel —
+WhatsApp only: "Send on WhatsApp" (opens HER WhatsApp, text prefilled, she taps Send); email only:
+"Send" (POST /support, category `plan`, lesson as context → reference + ack mail); both: two buttons;
+neither: a note. No how-to line, no activity name, no code shown to her or in WhatsApp — `plan_ref`
+(`@aruvi/shared/report`, e.g. IX-MAT-02-U3-P2) rides in the case context for us only. Per-phase
+flags were tried and dropped (clutter). Mobile port must reuse `@aruvi/shared/report` and also make
 lesson text `selectable` (iPhone cannot copy lesson text today).
 
 Opt-in second support channel on the Meyy WhatsApp Business number (+91 93637 95723;

@@ -125,7 +125,7 @@ def test_the_acknowledgement_says_the_three_things():
     print("✓ The acknowledgement confirms arrival, names the case, and states the window")
 
 
-def test_a_lesson_report_carries_its_unit_and_plan_ref():
+def test_a_lesson_report_shows_unit_and_phase_not_the_code():
     """"Report a problem" on a lesson (2026-10-03) attaches the unit and a plan code; both
     come back to her in the acknowledgement, as every attached fact must."""
     body = mail_templates.support_acknowledgement(
@@ -133,12 +133,12 @@ def test_a_lesson_report_carries_its_unit_and_plan_ref():
         message="Q7 guide asks for an element that does not exist.", reply_days=2,
         received_on="2026-10-03",
         context={"screen": "Lesson › Report a problem", "subject": "mathematics", "grade": "IX",
-                 "chapter": "Ch 2 Polynomials", "unit": "Unit 3 · Zeroes of a polynomial",
-                 "plan_ref": "IX-MAT-02-U3"})
+                 "chapter": "Ch 2 Polynomials", "unit": "Unit 3", "phase": "Phase II",
+                 "plan_ref": "IX-MAT-02-U3-P2"})
     for part in ("text", "html"):
-        assert "Unit 3 · Zeroes of a polynomial" in body[part]
-        assert "IX-MAT-02-U3" in body[part]
-    print("✓ A lesson report shows her the unit and the plan ref it carried")
+        assert "Unit 3 · Phase II" in body[part]
+        assert "IX-MAT-02-U3-P2" not in body[part], "the plan code is internal, not hers"
+    print("✓ A lesson report shows her the unit and phase; the plan code stays internal")
 
 
 def test_billing_gets_the_firmer_window_and_no_ask_aruvi_line():

@@ -5863,16 +5863,9 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
   .ap-modal .ap-list-capped .ap-row { height: auto; min-height: 76px; }
 }
 
-/* ── "Report a problem" (2026-10-03) — Support opened on the spot from a lesson
+/* ── "Report an issue" (2026-10-03) — Support opened on the spot from a lesson
    (components/ReportProblem.jsx). A centred card on a desktop, a bottom sheet on a phone —
    the same split the chapter-notes window names. All colours are tokens, so dark mode follows. */
-.lv-report { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
-  gap: 6px; width: 100%; margin: 0 0 14px; padding: 9px 12px; cursor: pointer;
-  border: 1px dashed var(--edge); border-radius: 6px; background: var(--tint-pine);
-  font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
-  color: var(--pine); }
-.lv-report:hover { border-color: var(--pine); }
-.lv-report:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
 .rp-bg { position: fixed; inset: 0; z-index: 70; background: rgba(31,42,36,.45);
   display: flex; align-items: center; justify-content: center; padding: 20px; }
 .rp-sheet { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; box-sizing: border-box;
@@ -5889,7 +5882,12 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
   border-radius: 8px; padding: 9px 12px; }
 .rp-ctx-l, .rp-lab { display: block; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .14em;
   text-transform: uppercase; color: var(--ink-soft); }
-.rp-ctx-v { font-size: 14.5px; line-height: 1.4; margin-top: 3px; color: var(--ink); }
+/* The two location rows wear the top nav's "Add" label (.bnav-item): mono, uppercase, tracked,
+   --ink-soft — one notch smaller (founder, 2026-10-03): 10px on a phone, 11px from 1024px. */
+.rp-ctx-v { font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  line-height: 1.5; color: var(--pine); }   /* green, not grey (founder, 2026-10-03) */
+.rp-ctx-2 { margin-top: 2px; }
+@media (min-width: 1024px) { .rp-ctx-v { font-size: 11px; } }
 .rp-ctx-c { font-family: var(--f-mono); font-size: 11px; color: var(--pine); margin-top: 3px; }
 .rp-lab { margin-bottom: 6px; }
 .rp-text { min-height: 120px; background: var(--field-bg); }
@@ -5913,4 +5911,50 @@ button.rp-sec:disabled { opacity: .45; cursor: default; }
   .rp-grab { display: block; width: 40px; height: 4px; border-radius: 2px; background: var(--line);
     margin: 0 auto 12px; }
   .rp-text { font-size: 16px; }   /* 16px stops iOS zooming into the field */
+}
+
+/* "Spotted something wrong?" (founder's design, 2026-10-03) — ends the Lesson tab above "Mark
+   this unit complete", and the Assess tab. Clay flag on a soft clay tint; the button is PINE,
+   not red — an invitation, not an alarm. */
+.lv-rcard { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 13px 14px;
+  background: var(--tint-clay);
+  background: color-mix(in srgb, var(--tint-clay) 45%, var(--paper)); border: 1px solid var(--edge-clay);
+  border-radius: 8px; }
+.lv-rcard-flag { flex: none; width: 26px; height: 26px; fill: var(--clay); stroke: var(--clay); }
+.lv-rcard-txt { flex: 1; min-width: 0; }
+.lv-rcard-t { font-family: var(--f-display); font-weight: 600; font-size: 14.5px; color: var(--ink); line-height: 1.25; }
+.lv-rcard-s { font-size: 13px; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+.lv-rcard-btn { all: unset; box-sizing: border-box; flex: none; cursor: pointer; white-space: nowrap;
+  padding: 8px 14px; border: 1px solid var(--pine); border-radius: 999px; background: var(--paper-2);
+  font-family: var(--f-mono); font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--pine); }
+.lv-rcard-btn:hover { background: var(--pine); color: #f6f1e7; }
+.lv-rcard-btn:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
+.lv-rcard + .lv-markcard { margin-top: 12px; }
+.rp-ctx-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rp-ctx-row .rp-ctx-v { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The phase picker shares row 1 — compact, one notch under a form field (13px, tighter pad). */
+.rp-phase { flex: none; width: 168px; }
+/* One notch under the row's old 13px, in the field's own ink (clay was tried and dropped). */
+.rp-phase .dd-btn { font-size: 12px; padding: 4px 9px; border-radius: 6px; gap: 6px; }
+/* On a phone the button drops under the words, aligned with them, so the text keeps its width. */
+@media (max-width: 600px) {
+  .lv-rcard { flex-wrap: wrap; gap: 10px 12px; align-items: flex-start; }
+  .lv-rcard-txt { flex: 1 1 calc(100% - 40px); }
+  .lv-rcard-btn { margin-left: 40px; }
+}
+@media (max-width: 600px) {   /* after the base .rp-phase rule, so it wins */
+  .rp-phase { width: 146px; }
+  .rp-phase .dd-btn { padding: 4px 7px; }
+}
+@media (max-width: 370px) {   /* the narrowest phones: keep "CLASS IX · MATHEMATICS" whole */
+  .rp-ctx-row .rp-ctx-v { letter-spacing: .05em; }
+  .rp-phase { width: 136px; }
+  .rp-phase .dd-btn { font-size: 11.5px; }
+}
+/* On a computer the window can be moved by its title bar (founder, 2026-10-03) — so she can
+   read the lesson line she is describing. Phones keep the fixed bottom sheet. */
+@media (min-width: 601px) {
+  .rp-head { cursor: move; user-select: none; touch-action: none; }
+  .rp-head .rp-x { cursor: pointer; }
 }

@@ -378,11 +378,12 @@ def _context_rows(context: Dict[str, str]) -> List[Tuple[str, str]]:
         rows.append(("Class", " · ".join([x for x in (subj, grade) if x])))
     if c.get("chapter"):
         rows.append(("Chapter", str(c["chapter"])))
-    # From a lesson's "Report a problem" (2026-10-03): the unit she was on and its code.
+    # From a lesson's "Report a problem" (2026-10-03): the unit — and phase — she was on.
+    # The plan code (`plan_ref`) is deliberately NOT a row: it is Meyy's internal locator
+    # (founder: "it does not pertain to her") and reaches only the support@ copy, which
+    # prints every context key.
     if c.get("unit"):
-        rows.append(("Unit", str(c["unit"])))
-    if c.get("plan_ref"):
-        rows.append(("Plan ref", str(c["plan_ref"])))
+        rows.append(("Unit", " · ".join(x for x in (str(c["unit"]), str(c.get("phase") or "")) if x)))
     if c.get("screen"):
         rows.append(("Screen", str(c["screen"])))
     return rows

@@ -1,12 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { API, withUser, getJSON, errDetail, waLink } from "../lib/format";
-import { problemReport, reportWhatsAppText } from "@aruvi/shared/report";
+import { problemReport, reportWhatsAppText, phaseOptionLabel } from "@aruvi/shared/report";
+import Dropdown from "./Dropdown";
 import { versionLine } from "../lib/version";
 
-/* ───────── "Report a problem" — Support, opened on the spot from a lesson ─────────
+/* ───────── "Report an issue" — Support, opened on the spot from a lesson ─────────
  * Founder, 2026-10-03. Not a third channel: it is the Support box brought to where the fault
  * was seen, and it sends through the two channels Meyy already answers on.
+ *
+ *   Opened from the "Spotted something wrong?" card at the end of the Lesson tab (above
+ *   "Mark this unit complete") or the Assess tab. An optional phase picker turns the second
+ *   row into "Polynomials · Unit 3 · Phase 2".
  *
  *   WhatsApp only → "Send on WhatsApp": opens HER WhatsApp chat with Meyy, her words and the
  *                   lesson line already typed. She presses Send there, so the message sits in
@@ -23,8 +28,19 @@ import { versionLine } from "../lib/version";
  * the pop-up is an overlay, the lesson underneath never unmounts. */
 const MAX = 4000;
 
-export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped = false, onClose }) {
-  const report = problemReport({ lp, unitNumber, unitTitle, dropped });
+/* `part`   — the tab she opened it from: "lesson" or "assess" (founder, 2026-10-03: only the
+              two that improve the lesson carry the card).
+   `phases` — the unit's phases as minutes (null where the plan has none), for the optional
+              picker. Empty by default: she can ignore it and the report is for the whole unit. */
+export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped = false, part = "lesson",
+                                        phases = [], onClose }) {
+  const [phase, setPhase] = useState("");
+  const report = problemReport({ lp, unitNumber, unitTitle, dropped, phase, part });
+  const phaseOpts = part === "lesson" && phases.length
+    // "0" not "" — an empty value would match this option and hide the placeholder.
+    ? [{ value: "0", label: "No particular phase" },
+       ...phases.map((mins, i) => ({ value: String(i + 1), label: phaseOptionLabel(i + 1, mins) }))]
+    : [];
   const [meta, setMeta] = useState(null);      // {email, whatsapp, whatsapp_number} from GET /support
   const [metaErr, setMetaErr] = useState(false);
   const [text, setText] = useState("");
@@ -32,6 +48,31 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
   const [err, setErr] = useState("");
   const [sent, setSent] = useState(null);      // POST /support's reply (email route only)
   const taRef = useRef(null);
+  /* ★ MOVABLE ON A COMPUTER (founder, 2026-10-03): dragging the title bar slides the window,
+     so the lesson underneath stays readable while she writes about it. Phones keep the bottom
+     sheet — a drag there is a scroll. The offset is clamped so the bar can never leave the screen. */
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const dragRef = useRef(null);
+  const sheetRef = useRef(null);
+  const onDragStart = (e) => {
+    if (e.button !== 0 || e.target.closest("button")) return;
+    if (!window.matchMedia("(min-width: 601px)").matches) return;
+    const r = sheetRef.current?.getBoundingClientRect();
+    dragRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, r };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const onDragMove = (e) => {
+    const d = dragRef.current;
+    if (!d) return;
+    let dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+    if (d.r) {   // keep at least the title bar on screen
+      const W = window.innerWidth, H = window.innerHeight;
+      dx = Math.max(-d.r.left - d.r.width + 120, Math.min(W - d.r.left - 120, dx));
+      dy = Math.max(-d.r.top, Math.min(H - d.r.top - 60, dy));
+    }
+    setPos({ x: d.ox + dx, y: d.oy + dy });
+  };
+  const onDragEnd = () => { dragRef.current = null; };
 
   useEffect(() => {
     let live = true;
@@ -80,7 +121,7 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
   if (sent) {
     body = (
       <>
-        <div className="rp-head"><h2 className="rp-title">Sent — thank you</h2>
+        <div className="rp-head" onPointerDown={onDragStart} onPointerMove={onDragMove} onPointerUp={onDragEnd} onPointerCancel={onDragEnd}><h2 className="rp-title">Sent — thank you</h2>
           <button className="rp-x" aria-label="Close" onClick={onClose}>✕</button></div>
         <div className="sup-refcap rp-gap">Your reference</div>
         <div className="sup-ref">{sent.reference}</div>
@@ -94,12 +135,27 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
   } else {
     body = (
       <>
-        <div className="rp-head"><h2 className="rp-title">Report a problem</h2>
+        <div className="rp-head" onPointerDown={onDragStart} onPointerMove={onDragMove} onPointerUp={onDragEnd} onPointerCancel={onDragEnd}><h2 className="rp-title">Report an issue</h2>
           <button className="rp-x" aria-label="Close" onClick={onClose}>✕</button></div>
+        {/* ★ TWO SHORT ROWS, NOTHING ELSE (founder, 2026-10-03): "You were reading", the
+            activity's name and the plan code all went — the first was furniture, the second
+            does not concern her (the unit number is enough for Meyy), and the code is
+            internal (it still travels in the case's context, for us). */}
         <div className="rp-ctx">
-          <div className="rp-ctx-l">You were reading</div>
-          <div className="rp-ctx-v">{report.line}</div>
-          <div className="rp-ctx-c">Ref {report.ref}</div>
+          {/* Row 1: class · subject, and — from the Lesson tab — the optional phase picker on
+              the RIGHT of the same row (founder, 2026-10-03: "we do not need to waste a whole
+              row"), one notch smaller than a form field. Empty by default; "Phase 2 - 15 min"
+              so she recognises it by its length, not by counting. */}
+          <div className="rp-ctx-row">
+            <div className="rp-ctx-v">{report.line1}</div>
+            {phaseOpts.length ? (
+              <div className="rp-phase">
+                <Dropdown value={phase} onChange={(v) => setPhase(v === "0" ? "" : v)} options={phaseOpts}
+                  placeholder="Phase (optional)" ariaLabel="Which phase" />
+              </div>
+            ) : null}
+          </div>
+          <div className="rp-ctx-v rp-ctx-2">{report.line2}</div>
         </div>
         {!meta && !metaErr ? <p className="rp-msg rp-quiet">One moment…</p> : null}
         {metaErr ? (
@@ -129,15 +185,8 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
               <button className="primary rp-btn" disabled={!ready} onClick={sendEmail}>
                 {busy ? "Sending…" : "Send"}</button>
             )}
-            <p className="rp-note">
-              {hasWa && hasEmail
-                ? <>WhatsApp opens with your message ready — tap Send there. Email sends from
-                    here, with a copy to <strong>{meta.email}</strong>.</>
-                : hasWa
-                  ? <>Opens WhatsApp with your message ready. <strong>Tap Send there</strong>,
-                      then come back — your lesson stays open.</>
-                  : <>A copy goes to <strong>{meta.email}</strong>.</>}
-            </p>
+            {/* No how-to line under the buttons (founder, 2026-10-03): she learns what each
+                does the first time and does not need telling every time after. */}
           </>
         ) : null}
       </>
@@ -146,8 +195,9 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
 
   return (
     <div className="rp-bg" onClick={onClose}>
-      <div className="rp-sheet" role="dialog" aria-modal="true" aria-label="Report a problem"
-        onClick={(e) => e.stopPropagation()}>
+      <div className="rp-sheet" role="dialog" aria-modal="true" aria-label="Report an issue"
+        ref={sheetRef} onClick={(e) => e.stopPropagation()}
+        style={pos.x || pos.y ? { transform: `translate(${pos.x}px, ${pos.y}px)` } : undefined}>
         <div className="rp-grab" aria-hidden="true" />
         {body}
       </div>
