@@ -5832,6 +5832,13 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
      grows downward under the current address instead of pushing WhatsApp to its foot. */
   .setwrap.setwrap-tight > .pp-email, .setwrap.setwrap-tight > .pp-wa-field { align-self: start; }
 
+  /* WALK-A-189 — the "Prepare a new lesson" bar ends where the Subject · Class choosers end (800px)
+     while the shelf holds fewer than three cards (founder: "too right aligned … until there are
+     enough section cards, it should align with the right of the class wheel"). Once a row of three
+     fills the width, the bar runs the full width under it again. */
+  .mlp2 .mlp-allocate { max-width: 800px; }
+  .mlp2:has(.sc-list > :nth-child(3)) .mlp-allocate { max-width: none; }
+
   /* WALK-A-185 — the ⚙ in the brand bar two notches bigger on the web (founder): 18 → 22px. */
   .topbar .hdr-gear { font-size: 22px; }
 

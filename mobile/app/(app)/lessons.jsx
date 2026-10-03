@@ -644,10 +644,17 @@ export default function MyLessons() {
      a freshly prepared lesson wherever its chapter number fell — usually the bottom of a long
      list. The one card she is certain to want next is the one she just made. The fallback keeps
      the order STABLE rather than arbitrary when the stamp is missing or tied. */
+  /* ★ BOOK ORDER (WALK-A-188, founder 2026-10-03, all surfaces — REVERSES the 2026-08-06
+     "newest prepared first" rule above): "the list of chapters in Your lessons should be in the
+     order of the chapters as in the book … now it's a bit random". Newest-first read as random
+     once a teacher had more than a handful, because the order said nothing about the book she
+     teaches from. Now by chapter number; two plans of the SAME chapter (prepared again at a
+     different length) sit together, newest first. The name `byRecency` is kept so its callers
+     (list, archive) stay one comparator; the tour still finds its card by recency on its own. */
   const byRecency = (a, b) => {
-    const at = String(a.prepared_at || ""), bt = String(b.prepared_at || "");
-    if (at !== bt) return bt.localeCompare(at);      // ISO strings sort lexically
-    return (Number(a.chapter_number) || 0) - (Number(b.chapter_number) || 0);
+    const ca = Number(a.chapter_number) || 0, cb = Number(b.chapter_number) || 0;
+    if (ca !== cb) return ca - cb;
+    return String(b.prepared_at || "").localeCompare(String(a.prepared_at || ""));
   };
   const preparedPlans = (Array.isArray(plans) ? plans : [])
     /* WALK-A-164 (founder, 2026-10-02 — REVERSES the 2026-08-26 "once back in play it belongs
@@ -700,8 +707,12 @@ export default function MyLessons() {
      completed in one, stays attached, and then the step is skipped rather than pointing at
      nothing. Same conditions as the control itself in PlanCard. Reported to the tour, which owns
      the moves. */
-  const tourArchivable = !!ordered[0] && effView !== "archived" && !isAttached(ordered[0])
-    && busyIdx !== 0;
+  /* The tour's card is the lesson she prepared MOST RECENTLY (the web's tourPlanOf) — with book
+     order (WALK-A-188) that is no longer necessarily the first card. */
+  const tourCard = ordered.slice().filter((p) => !p.archived)
+    .sort((a, b) => String(b.prepared_at || "").localeCompare(String(a.prepared_at || "")))[0] || null;
+  const tourArchivable = !!tourCard && effView !== "archived" && !isAttached(tourCard)
+    && !(busyIdx === 0 && ordered[0] === tourCard);
   useEffect(() => { noteTourArchivable(tourArchivable); }, [tourArchivable]);
 
   /* Subject filter, alphabetical by LABEL (profile order is arbitrary — a stable A–Z list is
@@ -913,7 +924,7 @@ export default function MyLessons() {
             ) : null}
             {ordered.map((p, pi) => (
               <PlanCard key={p.filename} p={p} archived={effView === "archived"}
-                tourStep={pi === 0 ? tourNow.step : 0}
+                tourStep={tourCard && p.filename === tourCard.filename ? tourNow.step : 0}
                 status={statusFor(p)} attached={isAttached(p)} sSlug={sSlug} gSlug={gSlug}
                 busy={pi === busyIdx ? preparing : null} onDismissBusy={clearPreparing} onRetryBusy={retryPreparing}
                 onOpen={() => openLesson(p)}

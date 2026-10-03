@@ -1051,10 +1051,17 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
   // or tied — a plan that is attached but never explicitly prepared has no stamp, and two
   // prepared in the same second tie — so those settle by chapter number, ascending, below
   // everything stamped. Same comparator for the archive, so the two panes never disagree.
+  /* ★ BOOK ORDER (WALK-A-188, founder 2026-10-03, all surfaces — REVERSES the 2026-08-06
+     "newest prepared first" rule above): "the list of chapters in Your lessons should be in the
+     order of the chapters as in the book … now it's a bit random". Newest-first read as random
+     once a teacher had more than a handful, because the order said nothing about the book she
+     teaches from. Now by chapter number; two plans of the SAME chapter (prepared again at a
+     different length) sit together, newest first. The name `byRecency` is kept so its callers
+     (list, archive) stay one comparator; the tour still finds its card by recency on its own. */
   const byRecency = (a, b) => {
-    const at = String(a.prepared_at || ""), bt = String(b.prepared_at || "");
-    if (at !== bt) return bt.localeCompare(at);          // ISO strings sort lexically
-    return (Number(a.chapter_number) || 0) - (Number(b.chapter_number) || 0);
+    const ca = Number(a.chapter_number) || 0, cb = Number(b.chapter_number) || 0;
+    if (ca !== cb) return ca - cb;
+    return String(b.prepared_at || "").localeCompare(String(a.prepared_at || ""));
   };
   /* ★ THIS YEAR'S LIST HOLDS THIS YEAR'S WORK ONLY (founder, 2026-08-26).
      `isAttached` used to be enough to list a plan here, which was right before academic
