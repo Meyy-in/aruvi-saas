@@ -16,6 +16,11 @@ status → answered); Mark closed / Mark done; WhatsApp category select. Every i
 (Bearer) lets the founder's drafting session READ the queue (`/api/queue`, `/api/case/{ref}`,
 `/api/thread/{n}` — without marking read) and WRITE drafts (`POST /api/draft {kind, id, text,
 category}`); it can never reply, send or change status — the human gate by construction.
+EMAIL REPLIES (2026-10-03): her reply to a case mail lands in support@'s Gmail; `api/mail_sync.py` reads
+INBOX over IMAP (read-only, BODY.PEEK; SMTP account + app password unless `ARUVI_IMAP_*`), keeps mails whose
+subject has `[MEY-S-n]`/`[ARV-S-n]`, strips the quote, and calls `Inbox.case_inbound` (From must equal the case
+email; Message-ID dedups; reopens). Kicked in the background by `GET /api/queue` at most once a minute;
+`POST /api/mail/sync` runs it now; errors show under the list. `POST /api/case/{ref}/inbound` attaches by hand.
 WhatsApp REPORTS (a message starting "Problem in:", from Report an issue) get a reference from
 their own series MEY-W-n starting at MEY-W-1234 (`WA_REPORT_START`; `support/_series/whatsapp.json`), the lesson line parsed into rows
 (`parse_report`) and shown as a details card, and one automatic acknowledgement with the number

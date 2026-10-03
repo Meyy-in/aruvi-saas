@@ -2654,6 +2654,10 @@ support_inbox = _support_inbox_mod.Inbox(config=config, repo=wa_inbox_repo, wa_c
                                          notifier=notifier, account_repo=account_repo, log=_wa_log,
                                          support_repo=support_repo,
                                          category_label=mail_templates.support_category_label)
+if config.MAIL_SYNC:
+    from api.mail_sync import MailSync as _MailSync
+    support_inbox.mail_sync = _MailSync(support_inbox, config.IMAP_HOST, config.IMAP_USER,
+                                        config.IMAP_PASSWORD)
 app.include_router(_support_inbox_mod.build_router(support_inbox))
 
 

@@ -109,10 +109,6 @@ def test_founder_email_reply_threads_and_uses_up_the_draft():
     print("✓ An email reply goes to her address, threads under the case, and clears the draft")
 
 
-if __name__ == "__main__":
-    test_queue_lists_both_kinds_and_needs_auth()
-    test_token_drafts_but_can_never_send_or_close()
-    test_founder_email_reply_threads_and_uses_up_the_draft()
 
 
 def test_whatsapp_report_is_numbered_parsed_and_acknowledged_once():
@@ -149,3 +145,48 @@ def test_whatsapp_report_is_numbered_parsed_and_acknowledged_once():
     finally:
         m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
     print("✓ A WhatsApp report gets one MEY-W reference, parsed rows and one acknowledgement")
+
+
+def test_a_follow_up_reopens_a_resolved_whatsapp_thread_without_a_new_number():
+    m, c, _ = _setup()
+    orig_wa, orig_mail = m.wa_client.send_text, m.notifier.send
+    m.wa_client.send_text = lambda to, body: {"status": "sent", "message_id": "x"}
+    m.notifier.send = lambda msg: {"status": "sent"}
+    try:
+        m.support_inbox.on_message({"from": "919800000304", "id": "f1", "type": "text",
+            "text": {"body": "Problem in: Class VIII · Science · Stars · Unit 2\n\nWrong date"}})
+        ref = m.wa_inbox_repo.load("9800000304")["last_ref"]
+        m.wa_inbox_repo.patch("9800000304", status="done")
+        m.support_inbox.on_message({"from": "919800000304", "id": "f2", "type": "text",
+                                    "text": {"body": "I do not agree with your answer"}})
+        t = m.wa_inbox_repo.load("9800000304")
+        assert t["status"] == "open" and t["last_ref"] == ref
+        assert [x.get("ref") for x in t["messages"] if x.get("ref")] == [ref]
+    finally:
+        m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
+    print("✓ A follow-up reopens a resolved thread and keeps its reference")
+
+
+def test_an_email_reply_joins_its_case_once_and_reopens_it():
+    m, c, ref = _setup()
+    m.support_repo.find(ref)
+    cs = m.support_repo.find(ref); cs.status = "answered"; m.support_repo.save(cs)
+    body = {"text": "I do not agree.", "message_id": "gm-1", "sender": "Asha@Example.com"}
+    assert c.post(f"/support-inbox/api/case/{ref}/inbound", json=body, headers=BEARER).json()["status"] == "added"
+    assert c.post(f"/support-inbox/api/case/{ref}/inbound", json=body, headers=BEARER).json()["status"] == "duplicate"
+    assert c.post(f"/support-inbox/api/case/{ref}/inbound",
+                  json={**body, "message_id": "gm-2", "sender": "someone@else.com"}, headers=BEARER).status_code == 409
+    cs = m.support_repo.find(ref)
+    assert cs.status == "open" and [t["text"] for t in cs.thread if t["dir"] == "in"] == ["I do not agree."]
+    item = next(i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"] if i["id"] == ref)
+    assert item["needs_reply"]
+    print("✓ Her email reply joins its case once, from her address only, and reopens it")
+
+
+if __name__ == "__main__":
+    test_queue_lists_both_kinds_and_needs_auth()
+    test_token_drafts_but_can_never_send_or_close()
+    test_founder_email_reply_threads_and_uses_up_the_draft()
+    test_whatsapp_report_is_numbered_parsed_and_acknowledged_once()
+    test_a_follow_up_reopens_a_resolved_whatsapp_thread_without_a_new_number()
+    test_an_email_reply_joins_its_case_once_and_reopens_it()

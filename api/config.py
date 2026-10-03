@@ -191,6 +191,14 @@ SMTP_HOST = os.environ.get("ARUVI_SMTP_HOST", "").strip()
 SMTP_PORT = int(os.environ.get("ARUVI_SMTP_PORT", "587"))
 SMTP_USER = os.environ.get("ARUVI_SMTP_USER", "").strip()
 SMTP_PASSWORD = os.environ.get("ARUVI_SMTP_PASSWORD", "")
+# ★ EMAIL REPLIES → SUPPORT INBOX (2026-10-03). The server reads support@'s INBOX over IMAP
+# (read-only) for replies to case mails and files them on their case (api/mail_sync.py). Same
+# account and app password as sending unless overridden; ARUVI_MAIL_SYNC=0 turns it off.
+IMAP_HOST = os.environ.get("ARUVI_IMAP_HOST", "").strip() or (
+    "imap.gmail.com" if "gmail" in SMTP_HOST.lower() else "")
+IMAP_USER = os.environ.get("ARUVI_IMAP_USER", "").strip() or SMTP_USER
+IMAP_PASSWORD = os.environ.get("ARUVI_IMAP_PASSWORD", "") or SMTP_PASSWORD
+MAIL_SYNC = os.environ.get("ARUVI_MAIL_SYNC", "1").strip() != "0"
 # ★ THE ONE SUPPORT ADDRESS (founder, 2026-09-03: support@meyy.in). It is what a teacher
 # is told to write to, where every Aruvi mail's replies land, and where each filed
 # support case is delivered. Sender identity (MAIL_FROM) stays separate: Gmail rewrites

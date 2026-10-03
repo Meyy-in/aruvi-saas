@@ -145,6 +145,7 @@ class Inbox:
         self.notifier, self.accounts, self.log = notifier, account_repo, log
         self.cases = support_repo                    # email cases (None in old wiring/tests)
         self.cat_label = category_label or (lambda k: str(k or "").replace("_", " ").capitalize())
+        self.mail_sync = None                        # api.mail_sync.MailSync, wired in main.py
 
     # ── identity ──
     def _name_for(self, n: str, fallback: str = "") -> str:
@@ -184,7 +185,12 @@ class Inbox:
             if ack:
                 self.send_text(n, ack.replace("{ref}", ref), by="auto-ack")
             self.log({"kind": "wa_report", "ref": ref})
-        self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID)
+        # ★ SHE WROTE AGAIN → THE CONVERSATION IS OPEN AGAIN (2026-10-03). A thread the founder
+        # marked resolved comes back to "Needs reply" on her next message — a follow-up ("I do not
+        # agree") must never sit unseen under "All". Same thread, same last reference: a follow-up
+        # is not a new report, so it gets no new number.
+        self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID,
+                        **({"status": "open"} if (before.get("status") or "open") == "done" else {}))
         now = datetime.now(timezone.utc)
         # Greeting: first ever, or first after the gap — and never in answer to STOP.
         last_in = _parse(before.get("last_inbound_at", ""))
@@ -270,6 +276,28 @@ class Inbox:
                              "status": "accepted" if ok else "failed",
                              **({} if ok else {"error": str(res.get("error") or res.get("reason") or "")})})
 
+    def case_inbound(self, ref: str, text: str, message_id: str = "", at: str = "",
+                     sender: str = "") -> str:
+        """Her email reply to a case, attached by the drafting session from support@'s Gmail
+        (2026-10-03). Joins the case thread, reopens the case, and never duplicates: the Gmail
+        message id is the key. Returns "added" | "duplicate" | "missing" | "stranger"."""
+        c = self.cases.find(ref) if self.cases else None
+        if c is None:
+            return "missing"
+        # Only HER address may add to her case — a reply quoting a reference from anyone else
+        # is not filed (it could be a forward, or someone guessing a number).
+        if sender and c.email and sender.strip().lower() != c.email.strip().lower():
+            return "stranger"
+        if message_id and any(m.get("id") == message_id for m in (c.thread or [])):
+            return "duplicate"
+        c.thread = list(c.thread or []) + [{"at": at or datetime.now(timezone.utc).isoformat(),
+                                            "dir": "in", "text": text, "id": message_id,
+                                            "by": "email"}]
+        c.status = "open"
+        self.cases.save(c)
+        self.log({"kind": "case_inbound", "ref": c.reference})
+        return "added"
+
     # ── the one queue ──
     def queue(self) -> list:
         now = datetime.now(timezone.utc)
@@ -343,6 +371,13 @@ class DraftBody(BaseModel):
     category: str = ""         # WhatsApp only: problem | plan | billing | suggestion | other
 
 
+class InboundBody(BaseModel):
+    text: str
+    message_id: str = ""       # the Gmail message id — the de-duplication key
+    at: str = ""               # when she sent it (ISO)
+    sender: str = ""           # her From address; must match the case's email
+
+
 class LabelBody(BaseModel):
     category: Optional[str] = None
     status: str = ""           # open | answered | closed (cases) · open | done (WhatsApp)
@@ -406,7 +441,23 @@ def build_router(inbox: Inbox) -> APIRouter:
     @r.get("/support-inbox/api/queue")
     def queue(request: Request):
         need_read_or_token(request)
-        return {"items": inbox.queue(), "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
+        ms = inbox.mail_sync
+        if ms is not None:
+            ms.kick()                 # pulls email replies in the background, at most once a minute
+        return {"items": inbox.queue(), "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE),
+                "mail_sync": ms.status if ms is not None else {"enabled": False}}
+
+    @r.post("/support-inbox/api/mail/sync")
+    def mail_sync_now(request: Request):
+        """Pull email replies now and say what happened (founder's button, or the drafting session)."""
+        if not token_ok(request):
+            need_auth(request, write=True)
+        ms = inbox.mail_sync
+        if ms is None or not ms.enabled:
+            return {"enabled": False, "error": "Email sync is not set up on this server."}
+        ms.last = 0
+        ms.kick(wait=True)
+        return ms.status
 
     @r.get("/support-inbox/api/case/{ref}")
     def case(ref: str, request: Request):
@@ -459,6 +510,22 @@ def build_router(inbox: Inbox) -> APIRouter:
             fields["status"] = body.status
         inbox.repo.patch(n, **fields)
         return {"ok": True}
+
+    @r.post("/support-inbox/api/case/{ref}/inbound")
+    def case_inbound(ref: str, body: InboundBody, request: Request):
+        """Her email reply, attached to its case by the drafting session (or the founder). Adding
+        HER words is reading, not sending: the token may do it; it still cannot reply or close."""
+        need_draft(request)
+        text = (body.text or "").strip()
+        if not text:
+            raise HTTPException(status_code=400, detail="Empty reply.")
+        res = inbox.case_inbound(ref, text[:8000], body.message_id.strip(), body.at.strip(),
+                                 body.sender.strip())
+        if res == "missing":
+            raise HTTPException(status_code=404, detail="No such case.")
+        if res == "stranger":
+            raise HTTPException(status_code=409, detail="That address is not the one on the case.")
+        return {"status": res}
 
     @r.post("/support-inbox/api/draft")
     def draft(body: DraftBody, request: Request):
@@ -595,7 +662,7 @@ _APP = """<main class="app">
 <section class="list"><div class="filters" role="tablist">
   <button class="chip on" data-f="reply">Needs reply</button><button class="chip" data-f="open">Open</button>
   <button class="chip" data-f="all">All</button></div>
-  <div id="list"></div><div class="empty hidden" id="listEmpty">Nothing here.</div></section>
+  <div id="list"></div><div class="empty hidden" id="listEmpty">Nothing here.</div><div id="mailSync" class="hidden" style="margin:10px 14px;font-size:12px;color:#a33"></div></section>
 <section id="pick" class="pick">Choose a conversation on the left.</section>
 <section id="thread" class="thread hidden">
   <div class="thead"><button id="back" class="link">← All</button>
@@ -675,7 +742,7 @@ const key=i=>i.kind+':'+i.id;
 const shut=i=>i.status==='done'||i.status==='closed';
 const shown=i=>filter==='all'?true:filter==='open'?!shut(i):(i.needs_reply&&!shut(i));
 const pend={};   // status changes sent but not yet confirmed — a list refresh must not undo them
-async function loadList(){const j=await api('/queue');items=j.items.map(i=>pend[i.kind+':'+i.id]?{...i,status:pend[i.kind+':'+i.id]}:i);window._reopen=j.reopen_template;renderList()}
+async function loadList(){const j=await api('/queue');items=j.items.map(i=>pend[i.kind+':'+i.id]?{...i,status:pend[i.kind+':'+i.id]}:i);window._reopen=j.reopen_template;const ms=j.mail_sync||{},mse=document.getElementById('mailSync');if(mse){mse.textContent=ms.error?'Email replies are not syncing: '+ms.error:'';mse.classList.toggle('hidden',!ms.error)}renderList()}
 function renderList(){const L=$('#list');L.innerHTML='';
  const vis=items.filter(shown);$('#listEmpty').classList.toggle('hidden',vis.length>0);
  for(const t of vis){const b=document.createElement('button');b.className='row'+(cur&&key(t)===cur?' on':'');
