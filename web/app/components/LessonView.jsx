@@ -2,6 +2,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { pushSectionState, readLocalBookmark, setUnitPointer, writeLocalBookmark } from "../lib/sectionState";
 import { userKey, boldMarks, fetchPlanNotes, savePlanNote, planNoteKey, fetchEntitlement } from "../lib/format";
+import ReportProblem from "./ReportProblem";
 
 /* ───────── Lesson view (Screen 3) + assessment artifact (Screen 3b) ─────────
  * A COMPLETION surface, not a navigation one (2026-06-29 redesign). The plan's periods
@@ -2139,6 +2140,8 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
   const [undoTo, setUndoTo] = useState(null);    // index to revert to, or null = nothing to undo
   // "View full lesson plan" re-renders THIS view in preview layout; previewAt = which unit shows.
   const [showFullPlan, setShowFullPlan] = useState(false);
+  // "Report a problem" pop-up (2026-10-03) — an overlay; the unit underneath stays mounted.
+  const [reporting, setReporting] = useState(false);
   // index of the unit shown in full-plan preview — defaults to the current pointer so the teacher
   // lands on the unit she's teaching (the next LU after the last one marked complete).
   const [previewAt, setPreviewAt] = useState(() => {
@@ -2317,6 +2320,21 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
   // previous unit) it becomes chapter-org navigation (founder 2026-07-23); on every other unit
   // it pages to the previous unit, as before. CENTRE is "Unit N / total", RIGHT is next unit.
   const totalAll = units.length + droppedUnits.length;
+  /* ★ REPORT A PROBLEM, ON THE UNIT SHE IS READING (founder, 2026-10-03). The Support box,
+     opened where the fault was seen, with the lesson already attached — see ReportProblem.jsx.
+     Under the unit strip in every paged mode (My Lessons preview, full plan, My Classes). */
+  const reportUI = (
+    <>
+      <button type="button" className="lv-report" onClick={() => setReporting(true)}>
+        <span aria-hidden="true">⚑</span> Report a problem in this unit</button>
+      {reporting ? (
+        <ReportProblem lp={lp}
+          unitNumber={inDropped ? previewAt - units.length + 1 : previewAt + 1}
+          unitTitle={pu.title} dropped={inDropped}
+          onClose={() => setReporting(false)} />
+      ) : null}
+    </>
+  );
   const pvNav = (endClass = "") => (
     <div className={`lv-pvnav lv-pvnav-thin ${endClass}`}>
       {previewAt <= 0 ? (
@@ -2403,6 +2421,7 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
         <PreviewUnit key={previewAt} headerContent={headerContent} u={pu} assessment={view.assessment} chapterTitle={lp.chapter_title} />
         {/* Prev/next paging strip at the end of the lesson body. */}
         {pvNav("lv-pvnav-end")}
+        {reportUI}
         {/* The preview is READ-ONLY: the old "Attach to a class" CTA is retired (2026-07-06) —
             attaching happens only via the "+" on a My Classes section card. */}
       </div>
@@ -2490,6 +2509,7 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
         bookmark={sectionKey && previewAt === cur ? { phase: bkmkPhase, onMove: moveBookmark } : null} />
       {/* Unit strip (chapter-org on the left, Unit N/total, next unit). */}
       {pvNav("lv-pvnav-end")}
+      {reportUI}
     </div>
   );
 }

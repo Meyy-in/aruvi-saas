@@ -378,6 +378,11 @@ def _context_rows(context: Dict[str, str]) -> List[Tuple[str, str]]:
         rows.append(("Class", " · ".join([x for x in (subj, grade) if x])))
     if c.get("chapter"):
         rows.append(("Chapter", str(c["chapter"])))
+    # From a lesson's "Report a problem" (2026-10-03): the unit she was on and its code.
+    if c.get("unit"):
+        rows.append(("Unit", str(c["unit"])))
+    if c.get("plan_ref"):
+        rows.append(("Plan ref", str(c["plan_ref"])))
     if c.get("screen"):
         rows.append(("Screen", str(c["screen"])))
     return rows

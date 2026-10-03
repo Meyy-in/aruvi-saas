@@ -5862,3 +5862,55 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
   .ap-modal .ap-list-capped { max-height: 280px; }
   .ap-modal .ap-list-capped .ap-row { height: auto; min-height: 76px; }
 }
+
+/* ── "Report a problem" (2026-10-03) — Support opened on the spot from a lesson
+   (components/ReportProblem.jsx). A centred card on a desktop, a bottom sheet on a phone —
+   the same split the chapter-notes window names. All colours are tokens, so dark mode follows. */
+.lv-report { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+  gap: 6px; width: 100%; margin: 0 0 14px; padding: 9px 12px; cursor: pointer;
+  border: 1px dashed var(--edge); border-radius: 6px; background: var(--tint-pine);
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--pine); }
+.lv-report:hover { border-color: var(--pine); }
+.lv-report:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
+.rp-bg { position: fixed; inset: 0; z-index: 70; background: rgba(31,42,36,.45);
+  display: flex; align-items: center; justify-content: center; padding: 20px; }
+.rp-sheet { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; box-sizing: border-box;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px 22px;
+  box-shadow: 0 10px 34px rgba(0,0,0,.18); }
+.rp-grab { display: none; }
+.rp-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rp-title { font-family: var(--f-display); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); }
+.rp-x { all: unset; flex: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  color: var(--ink-soft); border: 1px solid var(--line); background: var(--paper-2); }
+.rp-x:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
+.rp-ctx { margin: 14px 0 12px; background: var(--tint-pine); border: 1px solid var(--edge-green);
+  border-radius: 8px; padding: 9px 12px; }
+.rp-ctx-l, .rp-lab { display: block; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink-soft); }
+.rp-ctx-v { font-size: 14.5px; line-height: 1.4; margin-top: 3px; color: var(--ink); }
+.rp-ctx-c { font-family: var(--f-mono); font-size: 11px; color: var(--pine); margin-top: 3px; }
+.rp-lab { margin-bottom: 6px; }
+.rp-text { min-height: 120px; background: var(--field-bg); }
+.rp-btn { display: block; width: 100%; margin-top: 14px; padding: 13px 10px; border-radius: 8px; }
+button.rp-btn { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  font-weight: 600; cursor: pointer; }
+button.rp-sec { background: var(--paper-2); color: var(--pine-d); border: 1px solid var(--pine); }
+button.rp-sec:disabled { opacity: .45; cursor: default; }
+.rp-two { display: flex; gap: 8px; margin-top: 14px; }
+.rp-two .rp-btn { flex: 1; margin-top: 0; font-size: 11.5px; padding: 13px 6px; }
+.rp-note, .rp-msg { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin: 9px 0 0; }
+.rp-note strong, .rp-msg strong { color: var(--ink); font-weight: 500; overflow-wrap: anywhere; }
+.rp-msg { font-size: 14.5px; color: var(--ink); }
+.rp-quiet { color: var(--ink-soft); }
+.rp-err { color: var(--danger); font-size: 13px; margin: 8px 0 0; }
+.rp-gap { margin-top: 16px; }
+@media (max-width: 600px) {
+  .rp-bg { align-items: flex-end; padding: 0; }
+  .rp-sheet { max-width: none; border-radius: 18px 18px 0 0; border-bottom: none; padding: 12px 18px 22px;
+    max-height: 88vh; }
+  .rp-grab { display: block; width: 40px; height: 4px; border-radius: 2px; background: var(--line);
+    margin: 0 auto 12px; }
+  .rp-text { font-size: 16px; }   /* 16px stops iOS zooming into the field */
+}

@@ -7,6 +7,15 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
+**Report a problem (2026-10-03, web done, mobile pending).** A "⚑ Report a problem in this unit"
+link under the unit strip in every paged lesson view opens `web/app/components/ReportProblem.jsx`:
+lesson line + plan code (`@aruvi/shared/report` → e.g. `IX-MAT-02-U3`), a text box, then by
+channel — WhatsApp only: "Send on WhatsApp" (opens HER WhatsApp, text prefilled, she taps Send);
+email only: "Send" (POST /support, category `plan`, lesson as context → reference + ack mail);
+both: two buttons, she picks one; neither: a note to add one. Founder rule: no new channel —
+it is the Support box on the spot. Mobile port must reuse `@aruvi/shared/report` and also make
+lesson text `selectable` (iPhone cannot copy lesson text today).
+
 Opt-in second support channel on the Meyy WhatsApp Business number (+91 93637 95723;
 `api/config.WHATSAPP_NUMBER` ↔ `@aruvi/shared/format` `WHATSAPP_NUMBER` — move one, move the other).
 **On the sign-in mobile only** (OTP-verified, no second-number field). **Service only, never
