@@ -1,6 +1,10 @@
 # The website view — making the web stop looking like a stretched phone
 
-**Status: PROPOSAL, nothing built.** Opened 2026-09-19 (founder: *"the web app is left behind
+**Status: BUILT and walked (2026-10-03).** All of it lives in ONE section at the end of
+`web/app/globals.css` ("★ THE WEBSITE VIEW"), every rule inside a `min-width: 1024px` block, plus
+`web/app/lib/navPlace.js` for the copy and one scroll fix in `MyPlans.jsx`. Parity 1 · 11 · 25
+unchanged. The founder's decisions are in §7 at the foot of this file; §§0–6 are the proposal as
+written, kept for its reasoning. Opened 2026-09-19 (founder: *"the web app is left behind
 looking like mobile… same functionality and UI as mobile is as it is now, just a web feel"*).
 Read with CLAUDE.md §0 (the mobile-first pivot and the 2026-09-13 surface split) and §4 (the
 design system). Nothing here changes what a screen DOES, what it says, or where anything lives.
@@ -184,3 +188,31 @@ the card-plane `:not()` chain (2026-08-30). Desktop media blocks go AFTER the ru
 3. **Does the widen toggle (2d) earn its chrome**, or is the responsive default enough?
 4. **Hover.** Only `.sc-card:hover` and the Dropdown carry hover states today. Should the design
    system gain a standard hover treatment, or stay quiet?
+
+
+---
+
+## 7. Decisions and what was built (founder, 2026-10-03)
+
+1. **Breakpoint 1024px** (§6 q1). An upright iPad keeps the phone layout.
+2. **Nav in a row under the brand bar** (§6 q2), 52px tall, items 12px with 20px glyphs and 18px
+   apart (WALK-A-182). The Settings bar is drawn below it.
+3. **Ask Meyy: no widen toggle** (§6 q3) — `clamp(380px, 30vw, 620px)`, docked right, no scrim,
+   pushing the page; the page keeps the nav row's left edge (WALK-A-178).
+4. **Hover: subtle and mouse-only** (§6 q4) — ink deepens / border goes pine; nothing floods or moves.
+5. **Copy that names the nav's place follows the bar, web only** (WALK-A-174).
+6. **Measures.** Collections at `--desk-w` 1200px: My Classes (incl. the first "Your classes are
+   ready" state, WALK-A-176), My Lessons, the Settings list as two columns with cards at their own
+   height (WALK-A-179). The lesson, Prepare and Settings subviews keep 860px, centred — the founder
+   ruled moving them left would look misaligned. Year Plan keeps an 800px ledger flush left; the
+   Subject · Class choosers share that 800px, equal widths, class number centred (WALK-A-180).
+7. **Density by `pointer: fine`**, type sizes untouched; a finished card's "COMPLETE" keeps air
+   above its + (WALK-A-177). My Lessons' "Prepare a new lesson" button two notches larger, not
+   centred, not the picker's (WALK-A-181).
+8. **Dialogs** start below the top chrome so tall ones (e.g. "Committed so far") stay whole on
+   screen; lists inside scroll with a permanent scrollbar clear of the numbers (WALK-A-184). List
+   dialogs of chapter cards are 600px with a two-column grid.
+9. **Leaving a lesson returns to the top of My Classes** (WALK-A-183, `MyPlans.jsx` — the shell's
+   one scroller used to carry the lesson's scroll depth back).
+10. **Next, separately:** WALK-A-175 — a one-subject teacher's My Classes grouped by CLASS
+    (heading per class), web + iPhone + Android.

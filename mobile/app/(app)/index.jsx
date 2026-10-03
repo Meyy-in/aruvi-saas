@@ -93,6 +93,19 @@ function bandsOf(classes) {
   });
   return bands;
 }
+/* ★ ONE SUBJECT → BANDED BY CLASS (WALK-A-175, founder 2026-10-03) — the web's MyPlans.jsx rule,
+   ported: when the teacher has one subject, her cards sit under a heading per CLASS, by adjacency
+   (the walk is subject → grade → section), and only when there is more than one class. Cards
+   unchanged — their kicker still names the subject, said nowhere else on the screen. */
+function classBandsOf(classes) {
+  const bands = [];
+  classes.forEach((c) => {
+    const last = bands[bands.length - 1];
+    if (last && last.grade === c.grade) last.items.push(c);
+    else bands.push({ grade: c.grade, items: [c] });
+  });
+  return bands;
+}
 
 export default function Home() {
   const { t } = useTheme();
@@ -490,6 +503,7 @@ export default function Home() {
   };
 
   const bands = bandsOf(st.classes);
+  const classBands = bands.length > 1 ? [] : classBandsOf(st.classes);
   /* ONE card, rendered the same whether or not it sits inside a subject band. The only thing
      the band changes is the KICKER: with the subject named above the group, repeating it on
      every card is the same word three times on one screen (the web's own note, MyPlans.jsx). */
@@ -734,6 +748,16 @@ export default function Home() {
                   {/* The subject, said ONCE per band. */}
                   <Text style={ws.sc_band_hd}>{b.subject}</Text>
                   <View style={ws.sc_band_list}>{b.items.map((c, i) => card(c, true, i))}</View>
+                </View>
+              ))}
+            </View>
+          ) : classBands.length > 1 ? (
+            <View style={ws.sc_bands} key={tick}>
+              {classBands.map((b, bi) => (
+                <View key={b.grade} style={bi ? ws.sc_band_gap : null}>
+                  {/* The class, said ONCE per band (WALK-A-175). */}
+                  <Text style={ws.sc_band_hd}>Class {classNum(b.grade)}</Text>
+                  <View style={ws.sc_band_list}>{b.items.map((c, i) => card(c, false, i))}</View>
                 </View>
               ))}
             </View>

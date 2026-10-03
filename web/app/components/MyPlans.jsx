@@ -115,6 +115,18 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     window.addEventListener("aruvi:back", onBack);
     return () => window.removeEventListener("aruvi:back", onBack);
   }, [openPlan]);
+  /* WALK-A-183 (2026-10-03): the shell has ONE scroller (.bodycontent), so closing a lesson left
+     My Classes at whatever depth the lesson had been scrolled to — clamped to the shorter page, a
+     small offset that tucked a subject heading under the frozen greeting. Leaving a lesson now
+     returns to the top of My Classes. Layout effect, so the first painted frame is already there. */
+  const hadPlanRef = useRef(false);
+  useLayoutEffect(() => {
+    if (openPlan) { hadPlanRef.current = true; return; }
+    if (!hadPlanRef.current) return;
+    hadPlanRef.current = false;
+    const sc = document.querySelector(".bodycontent");
+    if (sc) sc.scrollTop = 0;
+  }, [openPlan]);
   const [loading, setLoading] = useState(false);
   /* A lesson that will not open is SAID IN THE WINDOW, not in a browser alert() (the 079 rule,
      2026-09-24): same paper toast and the same sentences My Lessons uses for the same failure. */
@@ -979,6 +991,20 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     else bands.push({ subject: c.subjectName, slug: c.subjectSlug, items: [{ c, i }] });
   });
   const banded = bands.length > 1;
+  /* ★ ONE SUBJECT → BANDED BY CLASS (WALK-A-175, founder 2026-10-03, all surfaces). A teacher of a
+     single subject saw one flat run of cards; she thinks in classes ("my 6s, my 7s"), so her
+     cards now sit under a heading per CLASS. Same rules as the subject bands above: built by
+     ADJACENCY (the walk is subject → grade → section, so a class's sections are already together),
+     each item keeps its ORIGINAL index for the tour, and only when there is more than one class —
+     a heading over the only group on the screen adds nothing. The card is untouched (its kicker
+     still names the subject, which is said nowhere else on this screen). */
+  const classBands = [];
+  if (!banded) classes.forEach((c, i) => {
+    const last = classBands[classBands.length - 1];
+    if (last && last.grade === c.grade) last.items.push({ c, i });
+    else classBands.push({ grade: c.grade, items: [{ c, i }] });
+  });
+  const classBanded = classBands.length > 1;
 
   return (
     <div>
@@ -1160,6 +1186,15 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
                   house's mono uppercase kicker rather than a display-serif heading — this is
                   the spine of the list, not a title competing with the chapter names. */}
               <div className="sc-band-hd">{b.subject}</div>
+              <div className="sc-list">{b.items.map(({ c, i }) => renderCard(c, i))}</div>
+            </div>
+          ))}
+        </div>
+      ) : classBanded ? (
+        <div className="sc-bands">
+          {classBands.map((b) => (
+            <div className="sc-band" key={b.grade}>
+              <div className="sc-band-hd">Class {classNum(b.grade)}</div>
               <div className="sc-list">{b.items.map(({ c, i }) => renderCard(c, i))}</div>
             </div>
           ))}

@@ -1051,6 +1051,23 @@ generic look.
   the base rules. **A same-specificity override placed before its base rule does nothing — in this
   file, always check source order.**
 
+- ★ **THE WEBSITE VIEW — DESKTOP (built + walked 2026-10-03; spec `docs/web_desktop_view.md`).**
+  From **1024px** the web stops looking like a stretched phone; below it nothing changes (an
+  upright iPad keeps the phone layout). PRESENTATION ONLY — same screens, copy, IA and tree. ALL
+  of it is ONE section at the END of `globals.css` ("★ THE WEBSITE VIEW"), every rule inside a
+  `min-width: 1024px` block; no base rule was edited, so `mobile/theme/web.js` (measured at
+  390px) is untouched and `node mobile/theme/check-parity.mjs` must stay **1 · 11 · 25**.
+  Collections take `--desk-w` (1200px): My Classes (cards a 3-across grid), My Lessons, the
+  Settings LIST (two columns); prose keeps its 860px measure (lesson, Prepare, Settings subviews,
+  legal) and Year Plan keeps an 800px ledger. The **nav is a row under the brand bar** (52px,
+  `order` lifts `.bnav`; `--bnav-h` forced to 0, `--dnav-h` for consumers); the Settings bar is
+  drawn below it. **Ask Meyy docks right** (`clamp(380px, 30vw, 620px)`, no scrim, pushes the
+  page, which keeps the nav row's left edge). Density follows `pointer: fine`; hover is subtle and
+  mouse-only. Dialogs start below the top chrome and lists inside them scroll with a permanent
+  scrollbar. **Copy that says where the nav is follows the bar, web only** (`lib/navPlace.js`:
+  "the tool bar at the top" / "top of the screen"). The tour hangs its four nav steps BELOW
+  their items at ≥1024px. Walk at ≥1024px with the Claude side panel CLOSED (open, the tab is
+  ~1022px and shows the phone layout). Amendments WALK-A-174, 176–184.
 ---
 
 ## 5. Repo layout

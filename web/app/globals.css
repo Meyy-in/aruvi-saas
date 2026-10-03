@@ -5734,3 +5734,122 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
     display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); align-content: start;
   }
 }
+
+/* ── The re-walk's amendments (founder, 2026-10-03, walk at 1440px) ──
+   Same two rules as above: desktop blocks only, and this stays LAST. Each rule names its
+   amendment in data/testing/walk_state.json. */
+@media (min-width: 1024px) {
+  /* WALK-A-176 — the first My Classes she ever sees ("Your classes are ready", before anything
+     is attached) carries .dash-welcome-row, not .dash-hd, so it stayed at the 860px measure under
+     a 1200px nav row. It is the same collection screen, so it takes the same width. */
+  main:has(.dash-welcome-row) { max-width: var(--desk-w); }
+
+  /* WALK-A-179 — the Settings LIST becomes two columns ("too vertical and a good part hidden
+     below. Only for web"). Only the home list: it is the one .setwrap holding the Appearance
+     card (hidden at this width, but always rendered there), so no subview is touched. It also
+     takes the collection width, so its left edge sits under "⚙ Settings" and the nav row. The
+     Account group and the version line keep their places in the flow; the line spans both. */
+  main:has(.setwrap > .set-appearance) { max-width: var(--desk-w); }
+  .setwrap:has(> .set-appearance) {
+    max-width: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; align-items: start;
+  }
+  /* Each card keeps its own height (founder, re-walk: "Legal box too tall. Must be like rest") —
+     stretching to the taller Marketing card beside it made Legal look like a different object. */
+  .setwrap:has(> .set-appearance) > .set-bigcard { margin-bottom: 0; align-self: start; }
+  .setwrap:has(> .set-appearance) > .set-group { margin-bottom: 0; }
+  .setwrap:has(> .set-appearance) > .set-hint { grid-column: 1 / -1; margin-top: 6px; }
+
+  /* WALK-A-180 — Subject and Class choosers the same width on the web (they were 2:1). */
+  .mlp2-wheels .mlp2-wcol:first-child, .mlp2-wheels .mlp2-wcol:last-child { flex: 1; }
+  /* …and the class number sits in the middle of its box (founder, re-walk). On the phone it is
+     nudged left on purpose — centred, it hides under the thumb rolling the wheel — but a mouse has
+     no thumb. My Lessons' Class row keeps 44px on the right for the ▲▼ cue, so the left gets the
+     same 44px and the number lands on the box's centre. */
+  .mlp2 .fr-wheel[aria-label="Class"] .fr-wheel-row { justify-content: center; padding-left: 44px; }
+  .mlp2 .fr-wheel[aria-label="Class"] .fr-wheel-label { flex: 1 1 auto; text-align: center; }
+
+  /* WALK-A-181 — My Lessons' "+ Prepare a new lesson →" two notches larger; NOT centred, and NOT
+     the same button inside the + picker (.ap-modal), which keeps its size. */
+  .mlp2 .mlp-allocate-btn { font-size: 12px; padding: 12px 20px; }
+
+  /* WALK-A-182 — the four nav items were too small and too close for a pointer and a laptop
+     screen: a larger label and glyph, and real space between them. The row grows to match. */
+  html.app-shell { --dnav-h: 52px; }
+  html.app-shell .bnav-in { gap: 18px; }
+  html.app-shell .bnav-item { font-size: 12px; gap: 9px; padding: 0 14px; }
+  html.app-shell .bnav-item svg { width: 20px; height: 20px; }
+  html.app-shell .bnav-item::after { left: 14px; right: 14px; }
+
+  /* WALK-A-178 — with Ask Meyy docked, the page used to re-centre in what was left and slide to
+     the screen's edge. It now keeps the nav row's left edge (the bar's own centring term), and
+     the panel simply takes the room on the right. */
+  html.app-shell body:has(.aa-scrim) .bodycontent main {
+    margin-left: max(0px, calc((100vw - var(--desk-w)) / 2)); margin-right: auto;
+  }
+
+  /* WALK-A-186 — the teaching profile lays its subjects out side by side (founder: "Teaching can
+     also be aligned horizontally subject wise"). Same accordion, same cards. Closed subjects tile
+     across the collection width; the ONE open subject (the accordion allows one) takes the whole
+     row, and its classes sit side by side inside it. A first build let the open subject grow down
+     a single column, which pushed every subject after it a screen further down. */
+  main:has(.tp) { max-width: var(--desk-w); }
+  .tp {
+    max-width: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 0 14px; align-items: start;
+  }
+  .tp > :not(.tp-sub) { grid-column: 1 / -1; }
+  .tp > .tp-sticky .tp-stats { max-width: 560px; }
+  /* Every subject takes a full row, open or closed (founder: "provide full row rather than
+     shrinking the width … of the subject when it's not highlighted"), so the subjects read as one
+     list down the page and "+ add a subject" closes it. Only the OPEN subject's classes go across. */
+  .tp > .tp-sub { grid-column: 1 / -1; }
+  .tp > .tp-sub.open {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+  .tp > .tp-sub.open > :not(.tp-classcard) { grid-column: 1 / -1; }
+  .tp > .tp-sub.open > .tp-classcard { border-top: none; position: relative; }
+  /* …with a thin vertical rule between classes (founder: "a thin vertical line separating the
+     classes"). Every card draws it in the middle of the 16px gap on its LEFT; the first card of
+     each row draws it outside the box, where the subject's own clip-path cuts it off — so no row
+     ever starts with a rule, without knowing which card is first. (clip-path, not overflow:
+     hidden, which would break the subject header's sticky.) */
+  .tp > .tp-sub.open { column-gap: 16px; clip-path: inset(0 round 12px); }
+  .tp > .tp-sub.open > .tp-classcard::before {
+    content: ""; position: absolute; left: -8.5px; top: 12px; bottom: 14px; width: 1px;
+    background: var(--line);
+  }
+
+  /* WALK-A-187 — Personal profile laid out across the width too (founder: "Personal too"). Its
+     wrapper (.setwrap-tight) is used by this screen alone. Fields pair up two to a row in DOM order
+     (name · mobile, email · WhatsApp, role · …); Save stays the width of one column, under the
+     first. */
+  main:has(.setwrap-tight) { max-width: var(--desk-w); }
+  .setwrap.setwrap-tight {
+    max-width: none; display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; align-items: end;
+  }
+  .setwrap.setwrap-tight > .ob-cta { grid-column: 1; margin-top: 8px; }
+
+  /* WALK-A-185 — the ⚙ in the brand bar two notches bigger on the web (founder): 18 → 22px. */
+  .topbar .hdr-gear { font-size: 22px; }
+
+  /* WALK-A-184 — a tall window (Prepare's "Committed so far", and any other) was centred in the
+     whole screen, and the brand bar and nav row are drawn above it, so its top and its ✕ slid
+     under them. The window now starts below the top chrome (and below a Settings bar when one is
+     up); its existing max-height (min(82vh, 100%) of the overlay's box) then keeps it on screen
+     and the list scrolls inside it. The list's scrollbar is a real, always-drawn one whenever the
+     list overflows (macOS otherwise floats a hidden one OVER the right-hand numbers), with room
+     left for it so it never sits on the period column. */
+  html.app-shell .ap-overlay { padding-top: calc(var(--nav-h, 60px) + var(--dnav-h) + 16px); }
+  html.app-shell body:has(.set-bar) .ap-overlay {
+    padding-top: calc(var(--nav-h, 60px) + var(--dnav-h) + var(--dset-h) + 16px);
+  }
+  .ap-modal .ap-list { padding-right: 12px; scrollbar-gutter: stable; }
+  .ap-modal .ap-list::-webkit-scrollbar { width: 8px; }
+  .ap-modal .ap-list::-webkit-scrollbar-track { background: var(--paper-sunk); border-radius: 4px; }
+  .ap-modal .ap-list::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 4px; }
+}
+@media (min-width: 1024px) and (pointer: fine) {
+  /* WALK-A-177 — 2c tightened the action column to 4px, which put a finished card's "COMPLETE"
+     label right on top of its "+". The column keeps the density; the label gets its air back. */
+  .sc-actions-col .sc-status-done { margin-bottom: 4px; }
+}

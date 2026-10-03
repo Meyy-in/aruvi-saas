@@ -1,5 +1,12 @@
 # THE WEBSITE (DESKTOP) VIEW — built, awaiting its re-walk (hand-off written 2026-10-03)
 
+> **UPDATE 2026-10-03, later the same day: RE-WALK DONE.** Batches E then A–D walked at 1440px
+> (side panel closed). Fails raised and fixed: WALK-A-176 to 184 (all closed after the founder's
+> re-walk); WALK-A-174 closed. Still `recheck` only where a special state is needed: 01.24 /
+> 04.10 (privacy-notice bar), 01.30 (year cutover); 05.11 / 05.19 parked (prior year).
+> `docs/web_desktop_view.md` is now BUILT with the decisions (§7); CLAUDE.md §4 has the entry.
+> Next: WALK-A-175 (class headings for one-subject teachers, web + iPhone + Android).
+
 Read with `docs/web_desktop_view.md` (the plan) and CLAUDE.md §0 / §4. Status of the plan doc is
 still PROPOSAL — flip it to BUILT only after the re-walk below (see "Still to do").
 

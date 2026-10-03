@@ -1,0 +1,71 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desktop nav options</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f6f1e7;--sunk:#ece5d6;--ink:#1f2a25;--soft:#6b6a62;--pine:#164436;--clay:#b65a31;--cream:#f3efe6;--accent:#cf7f56;--edge:#d8cfbd}
+body{margin:0;background:#e9e4da;font-family:Newsreader,Georgia,serif;color:var(--ink);padding:24px 16px}
+h2{font-family:Fraunces,serif;font-weight:600;margin:28px 0 6px;font-size:20px}
+p.note{margin:0 0 12px;color:var(--soft);font-size:15px;max-width:760px}
+.screen{background:var(--paper);border:1px solid #cfc6b3;border-radius:8px;overflow:hidden;max-width:1100px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.bar{background:var(--pine);color:var(--cream)}
+.in{max-width:760px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:18px}
+.bar .in{height:54px}
+.mark{font-family:Fraunces,serif;font-weight:600;font-size:22px;letter-spacing:.02em}
+.mark i{color:#e0705f;font-style:normal}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;opacity:.66}
+.sp{flex:1}
+.user{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.85}
+.nav{display:flex;gap:4px}
+.item{display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;border-radius:6px;color:var(--soft);position:relative;white-space:nowrap}
+.item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.item.on{color:var(--clay)}
+.item.on::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:2.5px;border-radius:2px;background:var(--clay)}
+.row{background:var(--sunk);border-bottom:1px solid var(--edge)}
+.row .in{height:44px}
+.bar .item{color:rgba(243,239,230,.7)}
+.bar .item.on{color:var(--cream)}
+.bar .item.on::after{background:var(--accent);bottom:-9px}
+.body{max-width:760px;margin:0 auto;padding:22px 16px 30px}
+.kick{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--pine)}
+.h{font-family:Fraunces,serif;font-size:24px;margin:4px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:#fffdf8;border:1px solid var(--edge);border-radius:10px;height:74px}
+.label{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--pine);color:var(--cream);padding:3px 8px;border-radius:4px;margin-bottom:8px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="c" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></symbol>
+<symbol id="l" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M9 11h6M9 15h6"/></symbol>
+<symbol id="a" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></symbol>
+<symbol id="q" viewBox="0 0 24 24"><path d="M5 5h14v10H10l-5 4z"/></symbol>
+</defs></svg>
+
+<span class="label">Option A · recommended</span>
+<h2>A row under the brand bar</h2>
+<p class="note">The brand bar stays as it is today (wordmark left, gear and name right). The same four items sit in a quiet paper row directly beneath it, using the bottom bar's own skin: soft ink at rest, clay with a short underline when active. The wordmark keeps its room.</p>
+<div class="screen">
+ <div class="bar"><div class="in"><span class="mark">meyy<i>.</i></span><span class="tag">Lesson planning</span><span class="sp"></span><span class="user">⚙ &nbsp; Kumar</span></div></div>
+ <div class="row"><div class="in"><div class="nav">
+  <span class="item on"><svg><use href="#c"/></svg>My Classes</span>
+  <span class="item"><svg><use href="#l"/></svg>My Lessons</span>
+  <span class="item"><svg><use href="#a"/></svg>Add</span>
+  <span class="item"><svg><use href="#q"/></svg>Ask Meyy</span>
+ </div></div></div>
+ <div class="body"><div class="kick">My Classes</div><div class="h">Your classes are ready</div><div class="grid"><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div></div></div>
+</div>
+
+<span class="label" style="margin-top:34px">Option B</span>
+<h2>Inline in the brand bar, beside the wordmark</h2>
+<p class="note">One bar instead of two, so a little more of the page shows. But the items must turn cream-on-pine to read on the dark bar, the wordmark and tagline get squeezed, and on narrower laptops the bar gets crowded.</p>
+<div class="screen">
+ <div class="bar"><div class="in"><span class="mark">meyy<i>.</i></span>
+  <div class="nav" style="margin-left:14px">
+  <span class="item on"><svg><use href="#c"/></svg>My Classes</span>
+  <span class="item"><svg><use href="#l"/></svg>My Lessons</span>
+  <span class="item"><svg><use href="#a"/></svg>Add</span>
+  <span class="item"><svg><use href="#q"/></svg>Ask Meyy</span>
+  </div><span class="sp"></span><span class="user">⚙ &nbsp; Kumar</span></div></div>
+ <div class="body"><div class="kick">My Classes</div><div class="h">Your classes are ready</div><div class="grid"><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div></div></div>
+</div>
+<p class="note" style="margin-top:18px">Sketch only: colours and glyphs are approximations of the real ones. The real build reuses the bottom bar's actual icons and labels.</p>
+</body></html>
