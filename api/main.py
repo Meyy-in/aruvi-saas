@@ -1301,6 +1301,9 @@ def get_plan_view(subject: str, grade: str, filename: str) -> Dict[str, Any]:
             grade=g, chapter=chapter)
         sf = (saved.get("genon") or {}).get("slot_fill") or {}
         vm["dropped_sections"] = sf.get("uncovered_sections") or []
+    # Which saved plan this is (2026-10-03): "Report an issue" files it in the case's context, so
+    # whoever answers opens THE variant she taught from (a chapter has several period counts).
+    vm["plan_file"] = filename
     return {"meta": chapter, "view": vm}
 
 

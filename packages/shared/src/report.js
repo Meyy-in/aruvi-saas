@@ -51,7 +51,8 @@ export function romanNumeral(n) {
      line2  "Polynomials · Unit 3 · Phase 2"   (Arabic, as in the phase picker "Phase 2 - 15 min")
    The activity's name is left out (the unit number is enough for Meyy), and the plan code is
    internal: it rides in `context` for us, never on her screen or in her WhatsApp. */
-export function problemReport({ lp, unitNumber, unitTitle = "", dropped = false, phase = null, part = "lesson" } = {}) {
+export function problemReport({ lp, unitNumber, unitTitle = "", dropped = false, phase = null, part = "lesson",
+                                planFile = "" } = {}) {
   const p = lp || {};
   const g = gradeRoman(p.grade);
   const subj = subjectWords(p.subject);
@@ -77,7 +78,8 @@ export function problemReport({ lp, unitNumber, unitTitle = "", dropped = false,
   const chapter = [chNum ? `Ch ${chNum}` : "", chTitle].filter(Boolean).join(" ");
   const context = { screen: "Lesson › Report a problem", subject: String(p.subject || ""),
     grade: g, chapter, unit, phase: phaseWords,
-    unit_title: String(unitTitle || "").trim(), plan_ref: ref };
+    unit_title: String(unitTitle || "").trim(), plan_ref: ref,
+    plan_file: String(planFile || "").trim() };   // the saved variant she read — internal, like plan_ref
   Object.keys(context).forEach((k) => { if (!context[k]) delete context[k]; });
   return { ref, line, line1, line2, context };
 }

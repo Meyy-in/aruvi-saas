@@ -33,9 +33,9 @@ const MAX = 4000;
    `phases` — the unit's phases as minutes (null where the plan has none), for the optional
               picker. Empty by default: she can ignore it and the report is for the whole unit. */
 export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped = false, part = "lesson",
-                                        phases = [], onClose }) {
+                                        phases = [], planFile = "", onClose }) {
   const [phase, setPhase] = useState("");
-  const report = problemReport({ lp, unitNumber, unitTitle, dropped, phase, part });
+  const report = problemReport({ lp, unitNumber, unitTitle, dropped, phase, part, planFile });
   const phaseOpts = part === "lesson" && phases.length
     // "0" not "" — an empty value would match this option and hide the placeholder.
     ? [{ value: "0", label: "No particular phase" },

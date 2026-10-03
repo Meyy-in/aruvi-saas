@@ -47,7 +47,7 @@ export function ReportCard({ onPress, tour = false }) {
 
 /* The window. `phases` = the unit's phases as minutes (null where the plan has none). */
 export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = false, part = "lesson",
-                                      phases = [], onClose }) {
+                                      phases = [], planFile = "", onClose }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const [phase, setPhase] = useState("");
@@ -57,7 +57,7 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [sent, setSent] = useState(null);
-  const report = problemReport({ lp, unitNumber, unitTitle, dropped, phase, part });
+  const report = problemReport({ lp, unitNumber, unitTitle, dropped, phase, part, planFile });
   // "0" not "" — an empty value would match this option and hide the placeholder.
   const phaseOpts = part === "lesson" && phases.length
     ? [{ value: "0", label: "No particular phase" },

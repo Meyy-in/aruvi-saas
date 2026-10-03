@@ -2346,7 +2346,7 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
   const reportUI = reporting ? (
     <ReportProblem lp={lp}
       unitNumber={inDropped ? previewAt - units.length + 1 : previewAt + 1}
-      unitTitle={pu.title} dropped={inDropped} part={reporting.part}
+      unitTitle={pu.title} dropped={inDropped} part={reporting.part} planFile={view.plan_file || ""}
       phases={(pu.phases || []).filter((ph) => ph.text || ph.label).map(phaseMin)}
       onClose={() => setReporting(null)} />
   ) : null;

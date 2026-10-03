@@ -674,7 +674,8 @@ async function api(p,o={}){const r=await fetch('/support-inbox/api'+p,{credentia
 const key=i=>i.kind+':'+i.id;
 const shut=i=>i.status==='done'||i.status==='closed';
 const shown=i=>filter==='all'?true:filter==='open'?!shut(i):(i.needs_reply&&!shut(i));
-async function loadList(){const j=await api('/queue');items=j.items;window._reopen=j.reopen_template;renderList()}
+const pend={};   // status changes sent but not yet confirmed — a list refresh must not undo them
+async function loadList(){const j=await api('/queue');items=j.items.map(i=>pend[i.kind+':'+i.id]?{...i,status:pend[i.kind+':'+i.id]}:i);window._reopen=j.reopen_template;renderList()}
 function renderList(){const L=$('#list');L.innerHTML='';
  const vis=items.filter(shown);$('#listEmpty').classList.toggle('hidden',vis.length>0);
  for(const t of vis){const b=document.createElement('button');b.className='row'+(cur&&key(t)===cur?' on':'');
@@ -690,21 +691,22 @@ async function openItem(kind,id){cur=kind+':'+id;location.hash=cur;$('.app').cla
 function reportCard(m){const r=m.report||{};const rows=[['Reference',m.ref],['Class',[r.subject,r.grade].filter(Boolean).join(' · ')],['Chapter',r.chapter],['Unit',[r.unit,r.phase].filter(Boolean).join(' · ')]].filter(x=>x[1]);
  return `<div class="case wrep"><dl>${rows.map(x=>`<dt>${esc(x[0])}</dt><dd>${esc(x[1])}</dd>`).join('')}</dl></div>`}
 function bubble(m,who){return `<div class="m ${m.dir} ${m.status==='failed'?'failed':''}">${esc(m.text)}<span class="meta">${when(m.at)}${m.dir==='out'?' · '+esc(who(m))+(m.status?' · '+esc(m.status):''):''}${m.error?' — '+esc(m.error):''}</span></div>`}
-async function refresh(scroll,fill){if(!cur)return;const [kind,id]=[cur.slice(0,cur.indexOf(':')),cur.slice(cur.indexOf(':')+1)];
+async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id]=[cur.slice(0,cur.indexOf(':')),cur.slice(cur.indexOf(':')+1)];
  const M=$('#msgs'),atBottom=M.scrollHeight-M.scrollTop-M.clientHeight<60;let draft={},open=true,status='open';
- if(kind==='wa'){const t=await api('/thread/'+encodeURIComponent(id));detail={kind,...t};draft=t.draft||{};open=t.window_open;status=t.status||'open';
+ if(kind==='wa'){const t=await api('/thread/'+encodeURIComponent(id));if(cur!==want)return;detail={kind,...t};draft=t.draft||{};open=t.window_open;status=t.status||'open';
   $('#tname').textContent=t.name||t.phone;$('#tsub').textContent='WhatsApp · '+t.phone;
   M.innerHTML=t.messages.map(m=>(m.ref?reportCard(m):'')+bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='auto-ack'?'automatic acknowledgement':m.by==='system'?'automatic':'you')).join('');
   $('#tcat').innerHTML=CATS.map(([v,l])=>`<option value="${v}" ${v===(t.category||'')?'selected':''}>${esc(l)}</option>`).join('');$('#tcat').classList.remove('hidden');
   $('#tstatus').textContent=status==='done'?'Reopen':'Mark resolved';
   $('#closed').classList.toggle('hidden',open);$('#reopen').classList.toggle('hidden',!window._reopen);$('#send').textContent='Send on WhatsApp';
- }else{const c=await api('/case/'+encodeURIComponent(id));detail={kind,...c};draft=c.draft||{};status=c.status||'open';
+ }else{const c=await api('/case/'+encodeURIComponent(id));if(cur!==want)return;detail={kind,...c};draft=c.draft||{};status=c.status||'open';
   $('#tname').textContent=c.name||c.user_id;$('#tsub').textContent=`Email · ${c.reference} · ${c.email||'no email on the case'}`;
-  const ctx=c.context||{},rows=[['About',c.category_label],['Received',when(c.created_at)],['Class',[String(ctx.subject||'').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase()),ctx.grade].filter(Boolean).join(' · ')],['Chapter',ctx.chapter],['Unit',[ctx.unit,ctx.phase].filter(Boolean).join(' · ')],['Activity',ctx.unit_title],['Plan ref',ctx.plan_ref],['Screen',ctx.screen],['App',ctx.version]].filter(r=>r[1]);
+  const ctx=c.context||{},rows=[['About',c.category_label],['Received',when(c.created_at)],['Class',[String(ctx.subject||'').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase()),ctx.grade].filter(Boolean).join(' · ')],['Chapter',ctx.chapter],['Unit',[ctx.unit,ctx.phase].filter(Boolean).join(' · ')],['Activity',ctx.unit_title],['Plan ref',ctx.plan_ref],['Plan file',ctx.plan_file],['Screen',ctx.screen],['App',ctx.version]].filter(r=>r[1]);
   M.innerHTML=`<div class="case"><dl>${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl><div class="said">${esc(c.message)}</div></div>`+(c.thread||[]).map(m=>bubble(m,()=> 'you')).join('');
   $('#tcat').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark resolved';
   $('#closed').classList.add('hidden');open=!!c.email;$('#send').textContent='Send email';}
  if(scroll||atBottom)M.scrollTop=M.scrollHeight;
+ $('#tstatus').disabled=false;
  const T=$('#replyText');T.disabled=!open;$('#send').disabled=!open;
  $('#draftbar').classList.toggle('hidden',!draft.text);$('#draftwho').textContent=draft.by==='claude'?'Draft from your drafting session':'Saved draft';
  if(fill||(!T.value&&draft.text)){T.value=draft.text||'';}T.classList.toggle('drafted',!!draft.text&&T.value===draft.text)}
@@ -718,7 +720,11 @@ $('#tcat').onchange=async()=>{if(detail&&detail.kind==='wa'){await api('/thread/
 /* ★ INSTANT (founder, 2026-10-03: "it takes a second"). The button, the row and the list flip
    at once; the server is told in the background and the list re-syncs after. One name for both
    kinds — "Mark resolved" / "Reopen" — though a case stores `closed` and a chat `done`. */
-$('#tstatus').onclick=()=>{if(!detail)return;const wa=detail.kind==='wa';const now=detail.status||'open';
+/* ⚠️ ONE CLICK, ONE ITEM (founder, 2026-10-03: "sometimes it is getting stuck in reopen"). While the
+   next conversation was still loading, `detail` was still the one just resolved — a second click
+   (the natural "did it work?" click) flipped THAT one back open, and the pane showed Reopen. Now the
+   button is disabled and `detail` dropped the instant we move on, until the next item has loaded. */
+$('#tstatus').onclick=()=>{if(!detail||$('#tstatus').disabled)return;const wa=detail.kind==='wa';const now=detail.status||'open';
  const shutNow=now==='done'||now==='closed';const next=shutNow?'open':(wa?'done':'closed');
  const myId=wa?detail.number:detail.reference,kind=detail.kind;
  const before=items.filter(shown),pos=before.findIndex(i=>i.kind===kind&&i.id===myId);
@@ -728,11 +734,13 @@ $('#tstatus').onclick=()=>{if(!detail)return;const wa=detail.kind==='wa';const n
     resolved item leaves the list at once and the conversation below it (or above, if it was the
     last) opens in its place; with nothing left, the pane empties. Under "All" it stays, with Reopen. */
  if(!shutNow&&filter!=='all'){const after=items.filter(shown);const nxt=after[Math.min(Math.max(pos,0),after.length-1)];
+  detail=null;$('#tstatus').disabled=true;$('#send').disabled=true;$('#msgs').innerHTML='';$('#replyText').value='';
   if(nxt)openItem(nxt.kind,nxt.id);else{cur=null;detail=null;history.replaceState(null,'',location.pathname);
    $('.app').classList.remove('open');$('#thread').classList.add('hidden');renderList()}}
  else renderList();
- api(wa?'/thread/'+encodeURIComponent(detail.number)+'/label':'/case/'+encodeURIComponent(detail.reference)+'/label',{method:'POST',body:JSON.stringify({status:next})})
-  .then(()=>loadList()).catch(x=>{$('#err').textContent=x.message||'Could not save that.';refresh(false,false);loadList()})};
+ const pk=kind+':'+myId;pend[pk]=next;
+ api(wa?'/thread/'+encodeURIComponent(myId)+'/label':'/case/'+encodeURIComponent(myId)+'/label',{method:'POST',body:JSON.stringify({status:next})})
+  .then(()=>{delete pend[pk];loadList()}).catch(x=>{delete pend[pk];$('#err').textContent=x.message||'Could not save that.';refresh(false,false);loadList()})};
 $('#reopen').onclick=async()=>{if(!confirm('Send the re-open template to this customer?'))return;
  try{await api('/thread/'+encodeURIComponent(detail.number)+'/reopen',{method:'POST'});await refresh(true,false)}catch(x){$('#err').textContent=x.message}};
 $('#back').onclick=()=>{cur=null;history.replaceState(null,'',location.pathname);$('.app').classList.remove('open');loadList()};
