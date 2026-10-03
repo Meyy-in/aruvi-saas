@@ -625,16 +625,17 @@ async function api(p,o={}){const r=await fetch('/support-inbox/api'+p,{credentia
 const key=i=>i.kind+':'+i.id;
 const shut=i=>i.status==='done'||i.status==='closed';
 const shown=i=>filter==='all'?true:filter==='open'?!shut(i):(i.needs_reply&&!shut(i));
-async function loadList(){const j=await api('/queue');items=j.items;window._reopen=j.reopen_template;const L=$('#list');L.innerHTML='';
+async function loadList(){const j=await api('/queue');items=j.items;window._reopen=j.reopen_template;renderList()}
+function renderList(){const L=$('#list');L.innerHTML='';
  const vis=items.filter(shown);$('#listEmpty').classList.toggle('hidden',vis.length>0);
  for(const t of vis){const b=document.createElement('button');b.className='row'+(cur&&key(t)===cur?' on':'');
   const kind=t.kind==='wa'?'<span class="tag wa">WhatsApp</span>':`<span class="tag mail">Email · ${esc(t.id)}</span>`;
   const cat=t.category?`<span class="tag">${esc(t.category_label||CATL[t.category]||t.category)}</span>`:'';
-  const st=(t.status==='done'||t.status==='closed')?`<span class="tag done">${t.status}</span>`:'';
+  const st=(t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'';
   b.innerHTML=`<div class="rtop"><span class="rname">${t.kind==='wa'&&t.window_open?'<span class="dot" title="Reply window open"></span>':''}${esc(t.name)}${t.unread?`<span class="badge">${t.unread}</span>`:''}</span><span class="rtime">${when(t.at)}</span></div><div class="rtags">${kind}${cat}${t.has_draft?'<span class="tag draft">Draft ready</span>':''}${st}</div><div class="rprev">${t.preview_dir==='out'?'You: ':''}${esc(t.preview)}</div>`;
   b.onclick=()=>openItem(t.kind,t.id);L.appendChild(b)}}
-document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{filter=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));loadList()});
-async function openItem(kind,id){cur=kind+':'+id;location.hash=cur;$('.app').classList.add('open');$('#thread').classList.remove('hidden');$('#err').textContent='';await refresh(true,true);loadList()}
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{filter=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));renderList()});
+async function openItem(kind,id){cur=kind+':'+id;location.hash=cur;$('.app').classList.add('open');$('#thread').classList.remove('hidden');$('#err').textContent='';renderList();await refresh(true,true);loadList()}
 function bubble(m,who){return `<div class="m ${m.dir} ${m.status==='failed'?'failed':''}">${esc(m.text)}<span class="meta">${when(m.at)}${m.dir==='out'?' · '+esc(who(m))+(m.status?' · '+esc(m.status):''):''}${m.error?' — '+esc(m.error):''}</span></div>`}
 async function refresh(scroll,fill){if(!cur)return;const [kind,id]=[cur.slice(0,cur.indexOf(':')),cur.slice(cur.indexOf(':')+1)];
  const M=$('#msgs'),atBottom=M.scrollHeight-M.scrollTop-M.clientHeight<60;let draft={},open=true,status='open';
@@ -642,13 +643,13 @@ async function refresh(scroll,fill){if(!cur)return;const [kind,id]=[cur.slice(0,
   $('#tname').textContent=t.name||t.phone;$('#tsub').textContent='WhatsApp · '+t.phone;
   M.innerHTML=t.messages.map(m=>bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='system'?'automatic':'you')).join('');
   $('#tcat').innerHTML=CATS.map(([v,l])=>`<option value="${v}" ${v===(t.category||'')?'selected':''}>${esc(l)}</option>`).join('');$('#tcat').classList.remove('hidden');
-  $('#tstatus').textContent=status==='done'?'Reopen':'Mark done';
+  $('#tstatus').textContent=status==='done'?'Reopen':'Mark resolved';
   $('#closed').classList.toggle('hidden',open);$('#reopen').classList.toggle('hidden',!window._reopen);$('#send').textContent='Send on WhatsApp';
  }else{const c=await api('/case/'+encodeURIComponent(id));detail={kind,...c};draft=c.draft||{};status=c.status||'open';
   $('#tname').textContent=c.name||c.user_id;$('#tsub').textContent=`Email · ${c.reference} · ${c.email||'no email on the case'}`;
   const ctx=c.context||{},rows=[['About',c.category_label],['Received',when(c.created_at)],['Class',[String(ctx.subject||'').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase()),ctx.grade].filter(Boolean).join(' · ')],['Chapter',ctx.chapter],['Unit',[ctx.unit,ctx.phase].filter(Boolean).join(' · ')],['Activity',ctx.unit_title],['Plan ref',ctx.plan_ref],['Screen',ctx.screen],['App',ctx.version]].filter(r=>r[1]);
   M.innerHTML=`<div class="case"><dl>${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl><div class="said">${esc(c.message)}</div></div>`+(c.thread||[]).map(m=>bubble(m,()=> 'you')).join('');
-  $('#tcat').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark closed';
+  $('#tcat').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark resolved';
   $('#closed').classList.add('hidden');open=!!c.email;$('#send').textContent='Send email';}
  if(scroll||atBottom)M.scrollTop=M.scrollHeight;
  const T=$('#replyText');T.disabled=!open;$('#send').disabled=!open;
@@ -661,9 +662,16 @@ $('#replyForm').onsubmit=async e=>{e.preventDefault();const v=$('#replyText').va
   $('#replyText').value='';await refresh(true,true);loadList()}catch(x){$('#err').textContent=x.message||'Could not send.';$('#send').disabled=false}};
 $('#discard').onclick=async()=>{if(!detail)return;await api('/draft',{method:'POST',body:JSON.stringify({kind:detail.kind,id:detail.kind==='wa'?detail.number:detail.reference,text:''})});$('#replyText').value='';await refresh(false,true);loadList()};
 $('#tcat').onchange=async()=>{if(detail&&detail.kind==='wa'){await api('/thread/'+encodeURIComponent(detail.number)+'/label',{method:'POST',body:JSON.stringify({category:$('#tcat').value})});loadList()}};
-$('#tstatus').onclick=async()=>{if(!detail)return;const wa=detail.kind==='wa';const now=wa?(detail.status||'open'):(detail.status||'open');
- const next=wa?(now==='done'?'open':'done'):(now==='closed'?'open':'closed');
- await api(wa?'/thread/'+encodeURIComponent(detail.number)+'/label':'/case/'+encodeURIComponent(detail.reference)+'/label',{method:'POST',body:JSON.stringify({status:next})});await refresh(false,false);loadList()};
+/* ★ INSTANT (founder, 2026-10-03: "it takes a second"). The button, the row and the list flip
+   at once; the server is told in the background and the list re-syncs after. One name for both
+   kinds — "Mark resolved" / "Reopen" — though a case stores `closed` and a chat `done`. */
+$('#tstatus').onclick=()=>{if(!detail)return;const wa=detail.kind==='wa';const now=detail.status||'open';
+ const shutNow=now==='done'||now==='closed';const next=shutNow?'open':(wa?'done':'closed');
+ detail.status=next;$('#tstatus').textContent=shutNow?'Mark resolved':'Reopen';
+ const it=items.find(i=>i.kind===detail.kind&&i.id===(wa?detail.number:detail.reference));if(it)it.status=next;
+ renderList();
+ api(wa?'/thread/'+encodeURIComponent(detail.number)+'/label':'/case/'+encodeURIComponent(detail.reference)+'/label',{method:'POST',body:JSON.stringify({status:next})})
+  .then(()=>loadList()).catch(x=>{$('#err').textContent=x.message||'Could not save that.';refresh(false,false);loadList()})};
 $('#reopen').onclick=async()=>{if(!confirm('Send the re-open template to this customer?'))return;
  try{await api('/thread/'+encodeURIComponent(detail.number)+'/reopen',{method:'POST'});await refresh(true,false)}catch(x){$('#err').textContent=x.message}};
 $('#back').onclick=()=>{cur=null;history.replaceState(null,'',location.pathname);$('.app').classList.remove('open');loadList()};
