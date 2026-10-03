@@ -80,6 +80,10 @@ services:
         sync: false
       # TEST-ONLY (walk row X.13, phones): numbers whose GET /subjects fails for 60s after the
       # account is created. Leave EMPTY in normal running. api/config.TEST_SUBJECTS_FAIL.
+      - key: ARUVI_TEST_SUPPORT_UNCAPPED
+        sync: false
+      # TEST-ONLY (walk row X.13, phones): numbers whose GET /subjects fails for 60s after the
+      # account is created. Leave EMPTY in normal running. api/config.TEST_SUBJECTS_FAIL.
       - key: ARUVI_TEST_SUBJECTS_FAIL
         sync: false
       # TEST-ONLY (cutover walk): numbers that roll into next academic year NOW, once.

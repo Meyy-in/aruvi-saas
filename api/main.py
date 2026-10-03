@@ -2802,7 +2802,7 @@ def create_support_request(req: SupportMessage,
     today = datetime.now(timezone.utc).date().isoformat()
     sent_today = sum(1 for r in support_repo.load_all(tenant_id, user_id)
                      if str(r.created_at or "")[:10] == today)
-    if sent_today >= _SUPPORT_DAILY_CAP:
+    if sent_today >= _SUPPORT_DAILY_CAP and user_id not in config.TEST_SUPPORT_UNCAPPED:
         raise HTTPException(status_code=429, detail=_SUPPORT_CAP_REACHED)
     name = (acct.display_name if acct else "") or ""
     now = datetime.now(timezone.utc).isoformat()

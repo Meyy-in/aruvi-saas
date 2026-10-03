@@ -97,6 +97,13 @@ ENTITLEMENT_ENFORCED = os.environ.get("ARUVI_ENTITLEMENT_ENFORCED", "").strip().
 # serves. Empirical; env-overridable for the field test.
 TRIAL_CHAPTER_CAP = int(os.environ.get("ARUVI_TRIAL_CHAPTERS", "3"))
 
+# TEST_SUPPORT_UNCAPPED (2026-10-03): TEST-ONLY. Comma-separated mobile numbers exempt from the
+# support form's five-messages-a-day cap, so the founder can walk support flows on a test profile.
+# Empty in production; remove the numbers when the walk is done.
+TEST_SUPPORT_UNCAPPED = {
+    n.strip() for n in os.environ.get("ARUVI_TEST_SUPPORT_UNCAPPED", "").split(",") if n.strip()
+}
+
 # TEST_READBACK_SKEW (walk row X.02, 2026-09-29): TEST-ONLY. Comma-separated mobile numbers
 # (last 10 digits are compared). For a listed account, a GET /readiness within
 # READBACK_SKEW_SECONDS of its own POST /readiness answers with periods-a-week +1 on its first
