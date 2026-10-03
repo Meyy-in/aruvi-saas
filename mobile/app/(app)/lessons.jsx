@@ -374,35 +374,41 @@ export default function MyLessons() {
   const gSlug = gradeSlug(activeGrade);
   const key = sSlug && gSlug ? `${sSlug}/${gSlug}` : "";
 
-  /* Lazy: nothing is fetched until she opens a folder. ⚠️ Filtered to what she PREPARED that
+  /* Fetched with the subject·class (WALK-A-188). ⚠️ Filtered to what she PREPARED that
      year — the library is shared, so an unfiltered read would offer her every sample plan Meyy
      owns as her own — and excluding anything already brought into THIS year, which is the
      founder's 2026-08-26 screenshot: a chapter attached from the folder then showed twice on one
      screen, "Teaching now 9A" above and "Taught in 2026-27" below. Once a lesson is back in play
      it belongs to this year's list alone. */
+  /* ★ WALK-A-188 (founder, 2026-10-03): a folder is drawn only when that year HAS lessons for this
+     subject·class, so every prior year's list is fetched with the subject·class (one small request
+     each, usually one year) rather than when the folder opens. */
+  const priorYearsKey = ((year && year.info && year.info.prior_years) || []).slice().sort().reverse().join(",");
   useEffect(() => {
-    if (!openPrior || !key) return undefined;
-    const cacheKey = `${openPrior}|${key}`;
-    if (priorPlans._for === cacheKey && priorPlans[openPrior] !== undefined) return undefined;
+    const years = priorYearsKey ? priorYearsKey.split(",") : [];
+    if (!key || !years.length) { setPriorPlans({}); return undefined; }
+    const cacheKey = `${priorYearsKey}|${key}`;
     let live = true;
-    setPriorPlans({ _for: cacheKey });
-    getJSON(`/plans/${sSlug}/${gSlug}?year_id=${encodeURIComponent(openPrior)}`)
-      .then((d) => {
+    // Same subject·class refreshing: keep the folders on screen while the lists re-read.
+    setPriorPlans((prev) => (prev._for === cacheKey ? prev : { _for: cacheKey }));
+    Promise.all(years.map((yid) =>
+      getJSON(`/plans/${sSlug}/${gSlug}?year_id=${encodeURIComponent(yid)}`)
+        .then((d) => [yid, d]).catch(() => [yid, null])))
+      .then((pairs) => {
         if (!live) return;
         /* ⚠️ Read from `plansByKey` (declared far above), NEVER from `plans` — this effect sits
-           ABOVE `const plans = ...`, so naming it in the dep array would be the "const read from
-           a dep array before it existed" crash of `ed8fc93d` all over again. Going to the map
-           also keeps the filter FRESH: the closure would otherwise hold whatever this year's
-           listing was when the folder was opened. */
-        // WALK-A-164: only a fresh re-prepare leaves the folder; a carried-forward lesson stays.
+           ABOVE `const plans = ...` (the `ed8fc93d` crash). WALK-A-164: only a fresh re-prepare
+           leaves the folder; a carried-forward lesson stays. */
         const here = new Set((plansByKey[key] || []).filter((x) => x.prepared && !x.prepared_source_year)
           .map((x) => x.filename));
-        const mine = ((d && d.plans) || []).filter((x) => x.prepared && !here.has(x.filename));
-        setPriorPlans({ _for: cacheKey, [openPrior]: mine });
-      })
-      .catch(() => { if (live) setPriorPlans({ _for: cacheKey, [openPrior]: [] }); });
+        const out = { _for: cacheKey };
+        pairs.forEach(([yid, d]) => {
+          out[yid] = ((d && d.plans) || []).filter((x) => x.prepared && !here.has(x.filename));
+        });
+        setPriorPlans(out);
+      });
     return () => { live = false; };
-  }, [openPrior, key, sSlug, gSlug, plansByKey]);
+  }, [priorYearsKey, key, sSlug, gSlug, plansByKey]);
 
   // Opening a different subject·class closes the folder — its contents belong to the old one.
   useEffect(() => { setOpenPrior(null); }, [key]);
@@ -960,7 +966,9 @@ export default function MyLessons() {
         {/* Below the CTA, and only in the lessons pane: the archive is its own view, and the
             Year Plan pane is a lens on THIS year. */}
         {!loadErr && current && pane === "lessons" && effView !== "archived"
-          ? ((year && year.info && year.info.prior_years) || []).slice().sort().reverse().map((yid) => (
+          ? ((year && year.info && year.info.prior_years) || []).slice().sort().reverse()
+            .filter((yid) => (priorPlans[yid] || []).length > 0)   /* WALK-A-188 */
+            .map((yid) => (
           <View key={yid} style={[ws.mlp_prior, { borderTopColor: t.line }]}>
             <Pressable onPress={() => setOpenPrior(openPrior === yid ? null : yid)}
               accessibilityRole="button" accessibilityState={{ expanded: openPrior === yid }}

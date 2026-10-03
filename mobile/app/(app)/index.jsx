@@ -322,36 +322,42 @@ export default function Home() {
      the deps, so setting it re-ran the effect, whose cleanup cancelled the fetch it had just
      started and whose early return then refused to start another. The request is owned by a ref
      keyed to its cacheKey (the web's same fix); a re-run never cancels it. */
+  /* ★ WALK-A-188 (founder, 2026-10-03): the picker draws a prior-year folder only when that year
+     HAS lessons for this section's subject·class, so every prior year's list is fetched when the
+     picker opens (one small request each, usually one year) instead of when a folder opens. */
   const priorReq = useRef("");
+  const priorYearsList = ((year && year.info && year.info.prior_years) || []).slice().sort().reverse();
+  const priorYearsKey = priorYearsList.join(",");
   useEffect(() => {
-    if (!openPrior || !attachFor) return undefined;
+    if (!attachFor || !priorYearsKey) return undefined;
+    const years = priorYearsKey.split(",");
     const { c } = attachFor;
     const key = `${c.subjectSlug}/${c.gradeSlug}`;
     // Only a fresh re-prepare this year leaves the folder (WALK-A-164).
     const here = Object.values(st.plansBySG[key] || {})
       .filter((p) => p.prepared && !p.prepared_source_year);
-    const cacheKey = `${openPrior}|${key}|${here.length}`;
-    if (priorPlans._for === cacheKey && priorPlans[openPrior] !== undefined) return undefined;
+    const sectionKey = attachFor.sectionKey;
+    const cacheKey = `${priorYearsKey}|${key}|${sectionKey}|${here.length}`;
+    if (priorPlans._for === cacheKey) return undefined;
     if (priorReq.current === cacheKey) return undefined;
     priorReq.current = cacheKey;
     setPriorPlans({ _for: cacheKey });
-    const yid = openPrior;
-    const sectionKey = attachFor.sectionKey;
-    const settle = (mine) => {
-      if (priorReq.current !== cacheKey) return;
-      priorReq.current = "";
-      setPriorPlans({ _for: cacheKey, [yid]: mine });
-    };
-    getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(yid)}`)
-      .then((d) => {
-        const bound = readLocalSection(sectionKey).chapter;
-        const hereFiles = new Set(here.map((p) => p.filename));
-        settle(((d && d.plans) || []).filter((p) => p.prepared && !p.archived
-          && p.filename !== bound && !hereFiles.has(p.filename)));
-      })
-      .catch(() => settle([]));
+    const bound = readLocalSection(sectionKey).chapter;
+    const hereFiles = new Set(here.map((p) => p.filename));
+    Promise.all(years.map((yid) =>
+      getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(yid)}`)
+        .then((d) => [yid, ((d && d.plans) || []).filter((p) => p.prepared && !p.archived
+          && p.filename !== bound && !hereFiles.has(p.filename))])
+        .catch(() => [yid, []])))
+      .then((pairs) => {
+        if (priorReq.current !== cacheKey) return;
+        priorReq.current = "";
+        const out = { _for: cacheKey };
+        pairs.forEach(([yid, list]) => { out[yid] = list; });
+        setPriorPlans(out);
+      });
     return undefined;
-  }, [openPrior, attachFor, st.plansBySG, priorPlans._for]);
+  }, [attachFor, st.plansBySG, priorPlans._for, priorYearsKey]);
   const bump = () => setTick((n) => n + 1);
 
   /* ★ THE SECOND DEVICE, AND THE HOLD THAT MAKES IT SAFE (app. 05 rows A4, A5).
@@ -791,7 +797,7 @@ export default function Home() {
         boundFile={attachFor ? readLocalSection(attachFor.sectionKey).chapter : null}
         alsoAttachable={attachFor ? boundFilesForGrade(attachFor.c.subjectSlug, attachFor.c.gradeSlug) : null}
         onAttach={attachChapter} onClose={() => { setAttachFor(null); setOpenPrior(null); }}
-        priorYears={((year && year.info && year.info.prior_years) || []).slice().sort().reverse()}
+        priorYears={priorYearsList.filter((yid) => (priorPlans[yid] || []).length > 0)}
         openPrior={openPrior} onOpenPrior={setOpenPrior}
         priorPlans={priorPlans} onAttachPrior={attachPriorChapter} />
       <UntrackSheet target={untrackFor} onUntrack={untrackChapter} onClose={() => setUntrackFor(null)} />

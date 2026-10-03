@@ -489,36 +489,43 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
      returned early because `_for` already matched — so nothing was ever fetched again. A request
      is now owned by a ref keyed to its cacheKey: a re-run never cancels it, the result lands
      when it comes, and a stale answer for a different key is simply ignored. */
+  /* ★ WALK-A-188 (founder, 2026-10-03): the picker shows a prior-year folder only when that year
+     HAS lessons for this section's subject·class — so every prior year's list is fetched when the
+     picker opens (one small request each, usually one year), not when a folder is opened, and an
+     empty folder is never drawn. The 165 ownership rule stands: a request is owned by a ref keyed
+     to its cacheKey; a re-run never cancels it and a stale answer is ignored. */
   const apPriorReq = useRef("");
   useEffect(() => {
-    if (!apPrior || !attachFor) return;
+    if (!attachFor) return;
+    const years = ((yearInfo && yearInfo.prior_years) || []).slice().sort().reverse();
+    if (!years.length) return;
     const { c } = attachFor;
     /* Only a lesson RE-PREPARED fresh this year leaves the folder (WALK-A-164); one carried
        forward by attaching it stays under its own year. The count keys the cache, so a fresh
        re-prepare invalidates the folder's list. */
     const here = (plansByKey[`${c.subjectSlug}/${c.gradeSlug}`] || [])
       .filter((p) => p.prepared && !p.prepared_source_year);
-    const cacheKey = `${apPrior}|${c.subjectSlug}/${c.gradeSlug}|${here.length}`;
-    if (apPriorPlans._for === cacheKey && apPriorPlans[apPrior] !== undefined) return;
+    const cacheKey = `${years.join(",")}|${c.subjectSlug}/${c.gradeSlug}/${c.sectionTag}|${here.length}`;
+    if (apPriorPlans._for === cacheKey) return;
     if (apPriorReq.current === cacheKey) return;            // already on its way
     apPriorReq.current = cacheKey;
     setApPriorPlans({ _for: cacheKey });
-    const yid = apPrior;
-    const settle = (mine) => {
-      if (apPriorReq.current !== cacheKey) return;          // a newer request owns the folder
-      apPriorReq.current = "";
-      setApPriorPlans({ _for: cacheKey, [yid]: mine });
-    };
-    getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(yid)}`)
-      .then((d) => {
-        const bound = currentChapterFile(`${c.subjectSlug}_${c.gradeSlug}_${c.sectionTag}`);
-        const hereFiles = new Set(here.map((p) => p.filename));
-        settle((d.plans || []).filter((p) => p.prepared && !p.archived
-          && p.filename !== bound && !hereFiles.has(p.filename)));
-      })
-      .catch(() => settle([]));
+    const bound = currentChapterFile(`${c.subjectSlug}_${c.gradeSlug}_${c.sectionTag}`);
+    const hereFiles = new Set(here.map((p) => p.filename));
+    Promise.all(years.map((yid) =>
+      getJSON(`/plans/${c.subjectSlug}/${c.gradeSlug}?year_id=${encodeURIComponent(yid)}`)
+        .then((d) => [yid, (d.plans || []).filter((p) => p.prepared && !p.archived
+          && p.filename !== bound && !hereFiles.has(p.filename))])
+        .catch(() => [yid, []])))
+      .then((pairs) => {
+        if (apPriorReq.current !== cacheKey) return;        // a newer request owns the folders
+        apPriorReq.current = "";
+        const out = { _for: cacheKey };
+        pairs.forEach(([yid, list]) => { out[yid] = list; });
+        setApPriorPlans(out);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apPrior, attachFor, plansByKey]);
+  }, [attachFor, plansByKey, yearInfo]);
 
   // Tour ended (Done or Skip) → close anything the tour opened, back to the plain cards view.
   const prevTourRef = useRef(null);
@@ -780,7 +787,9 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
               a plan she already has would be absurd. Sits BELOW this year's list and above
               "prepare a new one", collapsed, so it never competes with current work.
               Attaching one makes it this year's work (see attachPriorChapter). */}
-          {((yearInfo && yearInfo.prior_years) || []).slice().sort().reverse().map((yid) => (
+          {((yearInfo && yearInfo.prior_years) || []).slice().sort().reverse()
+            .filter((yid) => (apPriorPlans[yid] || []).length > 0)   /* WALK-A-188 */
+            .map((yid) => (
             <div className="ap-prior" key={yid}>
               <button className="ap-prior-head" aria-expanded={apPrior === yid}
                 onClick={() => setApPrior(apPrior === yid ? null : yid)}>

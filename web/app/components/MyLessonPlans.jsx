@@ -665,7 +665,7 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
   const openPlanView = (p) => openLesson(p);
 
   /* Prior-year folders for this subject·class. `yearInfo.prior_years` comes from the
-     server; the plans themselves are fetched only when a folder is opened, and are
+     server; the plans themselves are fetched with the subject·class (WALK-A-188), and are
      filtered to what she actually PREPARED that year (the library is shared, so an
      unfiltered list would show her every sample plan Aruvi owns). */
   const priorYears = useMemo(
@@ -674,31 +674,40 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
   // Changing subject or class re-closes the folder (see the state note above).
   useEffect(() => { setOpenPrior(null); }, [key]);
 
+  /* ★ WALK-A-188 (founder, 2026-10-03): the folder shows only when that year HAS lessons for this
+     subject·class — an empty "lessons you prepared last year" folder is noise. So the lists are
+     fetched as soon as the subject·class is known (one small request per prior year, usually one),
+     not when the folder is opened, and a folder with nothing in it is never drawn. Opening it is
+     then instant. */
+  const priorKey = priorYears.join(",");
   useEffect(() => {
-    if (!openPrior || !key) return;
-    const cacheKey = `${openPrior}|${key}`;
-    if (priorPlans[openPrior] !== undefined && priorPlans._for === cacheKey) return;
+    if (!key || !priorYears.length) { setPriorPlans({}); return undefined; }
     let live = true;
-    setPriorPlans({ _for: cacheKey });          // undefined for openPrior → "Loading…"
-    getJSON(`/plans/${sSlug}/${gSlug}?year_id=${encodeURIComponent(openPrior)}`)
-      .then((d) => {
+    // Same subject·class refreshing: keep the folders on screen while the lists re-read.
+    setPriorPlans((prev) => (prev._for === key ? prev : { _for: key }));
+    Promise.all(priorYears.map((yid) =>
+      getJSON(`/plans/${sSlug}/${gSlug}?year_id=${encodeURIComponent(yid)}`)
+        .then((d) => [yid, d]).catch(() => [yid, null])))
+      .then((pairs) => {
         if (!live) return;
         /* Exclude anything she has ALREADY brought into this year (founder's screenshot,
            2026-08-26: a chapter attached from last year's folder then showed twice on one
-           screen — "Teaching now 9A" above and "Taught in 2026-27" below). The folder
-           answers "what else do I have from last year?", so once a lesson is back in play
-           it belongs to this year's list alone. */
-        /* WALK-A-164: only a lesson she RE-PREPARED fresh this year (prepared, no source year)
-           leaves the folder; one carried forward by attaching it stays here. */
+           screen). WALK-A-164: only a lesson she RE-PREPARED fresh this year (prepared, no
+           source year) leaves the folder; one carried forward by attaching it stays here. */
         const here = new Set((plansByKey[key] || []).filter((p) => p.prepared && !p.prepared_source_year)
           .map((p) => p.filename));
-        const mine = (d.plans || []).filter((p) => p.prepared && !here.has(p.filename));
-        setPriorPlans({ _for: cacheKey, [openPrior]: mine });
-      })
-      .catch(() => { if (live) setPriorPlans({ _for: cacheKey, [openPrior]: [] }); });
+        const out = { _for: key };
+        pairs.forEach(([yid, d]) => {
+          out[yid] = d ? (d.plans || []).filter((p) => p.prepared && !here.has(p.filename)) : [];
+        });
+        setPriorPlans(out);
+      });
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openPrior, key, sSlug, gSlug, plansNonce]);
+  }, [key, sSlug, gSlug, plansNonce, priorKey]);
+  // Only the years that actually hold lessons for this subject·class get a folder (WALK-A-188).
+  const shownPriorYears = priorPlans._for === key
+    ? priorYears.filter((yid) => (priorPlans[yid] || []).length > 0) : [];
 
   // Guided-tour orchestration (steps 3–7 live on this view: 3 the lesson row, 4 the report button,
   // 5 the archive button, 6 "open the lesson" — same card as 3, hand on it — and 7 the open
@@ -1363,7 +1372,7 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
           default — she is living in the new year. Read-only by nature: a prior year's
           plans open and export exactly as they always did, but nothing attaches them to
           a section, because sections belong to the year she is in now. */}
-      {priorYears.map((yid) => (
+      {shownPriorYears.map((yid) => (
         <div className="mlp-prior" key={yid}>
           <button className="mlp-prior-head" aria-expanded={openPrior === yid}
             onClick={() => setOpenPrior(openPrior === yid ? null : yid)}>

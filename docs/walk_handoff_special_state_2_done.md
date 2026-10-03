@@ -17,6 +17,16 @@ records what changed since.
   The founder reports the WhatsApp invoice template is approved and delivering to his own
   phone, so 158 may now be only a check with a real number.
 
+## ✅ WALK COMPLETE (2026-10-03)
+All 212 items pass (or are n/a) on every surface they apply to. Closed today: 06.14 ×3,
+05.11/05.12/05.19 ×3 (027 rolled into 2027-28 with ARUVI_TEST_CUTOVER, now cleared; fresh start
+pressed on the web), 01.30/01.24/04.10/04.37 web re-checks after the desktop view, WALK-A-175
+(phones), 01.25 ticked from X.02, 02.07 n/a. New: **WALK-A-188** (no empty last-year folder in
+My Lessons or the + picker) and **WALK-A-189** (web picker's last-year card clipped), both fixed
+and walked. **Next amendment: WALK-A-190.** Only 158 stays parked.
+Still to do, outside the tracker: the real-build pass (X.12, 077's phone half, Android-real
+column) on the Play internal-track build. 027 is now in 2027-28.
+
 ## ★ PLAN FOR THE NEXT SESSION (founder, 2026-10-02)
 1. **Close the last 19 checks of the walk** (614/633 done; only real-build checks remain after):
    04.37 web (wording re-look) · 06.14 ×3 (notes read-only while lapsed — revoke/grant 027) ·

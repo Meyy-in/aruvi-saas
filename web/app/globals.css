@@ -5853,3 +5853,12 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
      label right on top of its "+". The column keeps the density; the label gets its air back. */
   .sc-actions-col .sc-status-done { margin-bottom: 4px; }
 }
+
+/* WALK-A-189 (founder, 2026-10-03) — the "+" picker's last-year folder clipped its cards: the
+   phone's peek-scroll row (.ap-list-capped .ap-row: height 76px, overflow hidden) cannot hold a
+   two-line title + duration + year stamp in the desktop grid's ~250px column. On the website the
+   rows size to their content and the folder shows more of them. Desktop only, and LAST. */
+@media (min-width: 1024px) {
+  .ap-modal .ap-list-capped { max-height: 280px; }
+  .ap-modal .ap-list-capped .ap-row { height: auto; min-height: 76px; }
+}
