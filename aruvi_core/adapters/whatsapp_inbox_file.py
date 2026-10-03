@@ -39,6 +39,17 @@ def e164(n: str) -> str:
     return ("91" + d) if len(d) == 10 else d
 
 
+_AUTO = ("auto-greeting", "auto-ack", "system")
+
+
+def _last_human_dir(msgs: List[Dict[str, Any]]) -> str:
+    for m in reversed(msgs):
+        if m.get("dir") == "out" and m.get("by") in _AUTO:
+            continue
+        return m.get("dir", "")
+    return ""
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -59,6 +70,25 @@ class WhatsAppInboxFileImpl:
         return {"number": number_key(n), "name": "", "messages": [], "unread": 0,
                 "last_inbound_at": "", "last_activity_at": "", "greeted_at": "",
                 "last_alert_at": ""}
+
+    def has_message(self, n: str, message_id: str) -> bool:
+        t = self.load(n)
+        return bool(t and message_id and any(m.get("id") == message_id for m in t.get("messages", [])))
+
+    def next_reference(self, prefix: str = "MEY-W", start: int = 1) -> str:
+        """Next in the WhatsApp report series ("MEY-W-12"), gapless, under the backend lock.
+        The counter is the SELLER'S and lives outside every customer's folder, beside the email
+        series (support/_series/), so an erasure can never hand a used number out again."""
+        key = "support/_series/whatsapp.json"
+        with self.backend.lock(key):
+            raw = self.backend.get_json(key)
+            try:
+                k = int((raw or {}).get("last", 0)) if isinstance(raw, dict) else 0
+            except (TypeError, ValueError):
+                k = 0
+            k = max(k + 1, int(start))
+            self.backend.put_json(key, {"last": k})
+        return f"{prefix}-{k}"
 
     def append(self, n: str, msg: Dict[str, Any], name: str = "") -> Dict[str, Any]:
         """Add one message; returns the thread AS IT WAS BEFORE (so the caller can decide
@@ -133,7 +163,12 @@ class WhatsAppInboxFileImpl:
                         # The integrated inbox (2026-10-03): the founder's own labels.
                         "category": t.get("category", ""),
                         "status": t.get("status", "open"),
-                        "has_draft": bool((t.get("draft") or {}).get("text"))})
+                        "has_draft": bool((t.get("draft") or {}).get("text")),
+                        "last_ref": t.get("last_ref", ""),
+                        # Who spoke last, IGNORING the automatic greeting / report acknowledgement:
+                        # an automatic message is not an answer, so it must not take her off
+                        # "Needs reply".
+                        "needs_reply": _last_human_dir(t.get("messages") or []) == "in"})
         out.sort(key=lambda s: s.get("last_activity_at") or "", reverse=True)
         return out
 

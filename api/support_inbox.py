@@ -89,6 +89,37 @@ def window_open(thread: Optional[Dict[str, Any]], now: Optional[datetime] = None
     return bool(last and now - last < timedelta(hours=WINDOW_HOURS))
 
 
+REPORT_HEAD = "Problem in:"
+
+
+def parse_report(text: str) -> Optional[Dict[str, str]]:
+    """The lesson line @aruvi/shared/report puts at the top of a WhatsApp report —
+    "Problem in: Class IX · Mathematics · Polynomials · Unit 3 · Phase 2" — read back into rows.
+    None when the message is not a report. Tolerant: she may have edited the line."""
+    t = (text or "").strip()
+    if not t.lower().startswith(REPORT_HEAD.lower()):
+        return None
+    head = t[len(REPORT_HEAD):].split("\n", 1)[0].strip()
+    parts = [p.strip() for p in head.split("·") if p.strip()]
+    out: Dict[str, str] = {"line": head}
+    rest = []
+    for p in parts:
+        low = p.lower()
+        if low.startswith("class "):
+            out["grade"] = p[6:].strip()
+        elif low.startswith("unit ") or low.startswith("dropped section"):
+            out["unit"] = p
+        elif low.startswith("phase ") or low == "assessment":
+            out["phase"] = p
+        else:
+            rest.append(p)
+    if rest:
+        out["subject"] = rest[0]
+    if len(rest) > 1:
+        out["chapter"] = " · ".join(rest[1:])
+    return out
+
+
 def describe(m: Dict[str, Any]) -> str:
     """A WhatsApp message as one line of text for the thread."""
     t = m.get("type") or ""
@@ -136,16 +167,32 @@ class Inbox:
             self.log({"kind": "ignored_other_number", "to_pn": to_pn})
             return
         text = describe(m)
+        # A lesson report gets its number BEFORE it is filed — and only once: Meta re-delivering
+        # the same message must not spend a second reference.
+        report = parse_report(text)
+        ref = ""
+        if report and not self.repo.has_message(n, m.get("id", "")):
+            ref = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"))
         before = self.repo.append(
-            n, {"id": m.get("id", ""), "dir": "in", "type": m.get("type", ""), "text": text},
+            n, {"id": m.get("id", ""), "dir": "in", "type": m.get("type", ""), "text": text,
+                **({"ref": ref, "report": report} if ref else {})},
             name=self._name_for(n, profile_name))
+        if ref:
+            self.repo.patch(n, last_ref=ref)
+            ack = (getattr(self.config, "WA_REPORT_ACK", "") or "").strip()
+            if ack:
+                self.send_text(n, ack.replace("{ref}", ref), by="auto-ack")
+            self.log({"kind": "wa_report", "ref": ref})
         self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID)
         now = datetime.now(timezone.utc)
         # Greeting: first ever, or first after the gap — and never in answer to STOP.
         last_in = _parse(before.get("last_inbound_at", ""))
+        # ⚠️ Never TWO automatic messages for one: a numbered report has just been acknowledged,
+        # and the acknowledgement does the greeting's job, so it counts as the greeting.
         if text.strip().upper() != "STOP" and (
                 last_in is None or now - last_in > timedelta(days=self.config.WA_GREETING_GAP_DAYS)):
-            self.send_text(n, self.config.WA_GREETING, by="auto-greeting")
+            if not (ref and (getattr(self.config, "WA_REPORT_ACK", "") or "").strip()):
+                self.send_text(n, self.config.WA_GREETING, by="auto-greeting")
             self.repo.patch(n, greeted_at=now.isoformat())
         # Alert the founder — throttled per conversation.
         last_alert = _parse(before.get("last_alert_at", ""))
@@ -232,8 +279,8 @@ class Inbox:
                           "at": t.get("last_activity_at", ""), "unread": t.get("unread", 0),
                           "window_open": window_open(t, now, self.config.WA_PHONE_NUMBER_ID),
                           "category": t.get("category", ""), "status": t.get("status", "open"),
-                          "has_draft": t.get("has_draft", False),
-                          "needs_reply": t.get("preview_dir") == "in"})
+                          "has_draft": t.get("has_draft", False), "ref": t.get("last_ref", ""),
+                          "needs_reply": t.get("needs_reply", t.get("preview_dir") == "in")})
         for c in (self.cases.load_everyone() if self.cases else []):
             last = (c.thread or [])[-1] if c.thread else None
             items.append({"kind": "case", "id": c.reference, "name": c.name or c.user_id,
@@ -599,6 +646,7 @@ header form{margin:0}header .link{color:#f6f1e7}
 .case{align-self:stretch;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .case dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0 0 10px;font-size:13px}
 .case dt{color:var(--soft)}.case dd{margin:0}.case .said{white-space:pre-wrap;overflow-wrap:anywhere;border-left:3px solid var(--line);padding-left:10px}
+.case.wrep{align-self:flex-start;max-width:78%;padding:8px 12px;margin-bottom:-4px}.case.wrep dl{margin:0}
 .m{max-width:78%;padding:8px 12px;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere}
 .m.in{align-self:flex-start;background:var(--card);border:1px solid var(--line)}
 .m.out{align-self:flex-end;background:#dcebe3}.meta{display:block;font-size:11px;color:var(--soft);margin-top:4px}
@@ -629,19 +677,23 @@ async function loadList(){const j=await api('/queue');items=j.items;window._reop
 function renderList(){const L=$('#list');L.innerHTML='';
  const vis=items.filter(shown);$('#listEmpty').classList.toggle('hidden',vis.length>0);
  for(const t of vis){const b=document.createElement('button');b.className='row'+(cur&&key(t)===cur?' on':'');
-  const kind=t.kind==='wa'?'<span class="tag wa">WhatsApp</span>':`<span class="tag mail">Email · ${esc(t.id)}</span>`;
+  const kind=t.kind==='wa'?`<span class="tag wa">WhatsApp${t.ref?' · '+esc(t.ref):''}</span>`:`<span class="tag mail">Email · ${esc(t.id)}</span>`;
   const cat=t.category?`<span class="tag">${esc(t.category_label||CATL[t.category]||t.category)}</span>`:'';
   const st=(t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'';
   b.innerHTML=`<div class="rtop"><span class="rname">${t.kind==='wa'&&t.window_open?'<span class="dot" title="Reply window open"></span>':''}${esc(t.name)}${t.unread?`<span class="badge">${t.unread}</span>`:''}</span><span class="rtime">${when(t.at)}</span></div><div class="rtags">${kind}${cat}${t.has_draft?'<span class="tag draft">Draft ready</span>':''}${st}</div><div class="rprev">${t.preview_dir==='out'?'You: ':''}${esc(t.preview)}</div>`;
   b.onclick=()=>openItem(t.kind,t.id);L.appendChild(b)}}
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{filter=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));renderList()});
 async function openItem(kind,id){cur=kind+':'+id;location.hash=cur;$('.app').classList.add('open');$('#thread').classList.remove('hidden');$('#err').textContent='';renderList();await refresh(true,true);loadList()}
+/* A WhatsApp lesson report (MEY-W-n): its number and the lesson rows, above her message —
+   the email case's details panel, read back from her "Problem in:" line. */
+function reportCard(m){const r=m.report||{};const rows=[['Reference',m.ref],['Class',[r.subject,r.grade].filter(Boolean).join(' · ')],['Chapter',r.chapter],['Unit',[r.unit,r.phase].filter(Boolean).join(' · ')]].filter(x=>x[1]);
+ return `<div class="case wrep"><dl>${rows.map(x=>`<dt>${esc(x[0])}</dt><dd>${esc(x[1])}</dd>`).join('')}</dl></div>`}
 function bubble(m,who){return `<div class="m ${m.dir} ${m.status==='failed'?'failed':''}">${esc(m.text)}<span class="meta">${when(m.at)}${m.dir==='out'?' · '+esc(who(m))+(m.status?' · '+esc(m.status):''):''}${m.error?' — '+esc(m.error):''}</span></div>`}
 async function refresh(scroll,fill){if(!cur)return;const [kind,id]=[cur.slice(0,cur.indexOf(':')),cur.slice(cur.indexOf(':')+1)];
  const M=$('#msgs'),atBottom=M.scrollHeight-M.scrollTop-M.clientHeight<60;let draft={},open=true,status='open';
  if(kind==='wa'){const t=await api('/thread/'+encodeURIComponent(id));detail={kind,...t};draft=t.draft||{};open=t.window_open;status=t.status||'open';
   $('#tname').textContent=t.name||t.phone;$('#tsub').textContent='WhatsApp · '+t.phone;
-  M.innerHTML=t.messages.map(m=>bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='system'?'automatic':'you')).join('');
+  M.innerHTML=t.messages.map(m=>(m.ref?reportCard(m):'')+bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='auto-ack'?'automatic acknowledgement':m.by==='system'?'automatic':'you')).join('');
   $('#tcat').innerHTML=CATS.map(([v,l])=>`<option value="${v}" ${v===(t.category||'')?'selected':''}>${esc(l)}</option>`).join('');$('#tcat').classList.remove('hidden');
   $('#tstatus').textContent=status==='done'?'Reopen':'Mark resolved';
   $('#closed').classList.toggle('hidden',open);$('#reopen').classList.toggle('hidden',!window._reopen);$('#send').textContent='Send on WhatsApp';

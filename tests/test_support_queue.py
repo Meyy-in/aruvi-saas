@@ -113,3 +113,39 @@ if __name__ == "__main__":
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()
     test_founder_email_reply_threads_and_uses_up_the_draft()
+
+
+def test_whatsapp_report_is_numbered_parsed_and_acknowledged_once():
+    import hashlib, hmac, json
+    from api.support_inbox import parse_report
+    m, c, _ref = _setup()
+    r = parse_report("Problem in: Class IX · Mathematics · Polynomials · Unit 3 · Phase 2\n\nQ7 is wrong")
+    assert r == {"line": "Class IX · Mathematics · Polynomials · Unit 3 · Phase 2", "grade": "IX",
+                 "subject": "Mathematics", "chapter": "Polynomials", "unit": "Unit 3", "phase": "Phase 2"}
+    assert parse_report("Hello Meyy") is None
+    sent = []
+    orig_wa, orig_mail = m.wa_client.send_text, m.notifier.send
+    m.wa_client.send_text = lambda to, body: (sent.append(body), {"status": "sent", "message_id": f"o{len(sent)}"})[1]
+    m.notifier.send = lambda msg: {"status": "sent"}
+    try:
+        body = json.dumps({"entry": [{"changes": [{"field": "messages", "value": {
+            "metadata": {"phone_number_id": m.config.WA_PHONE_NUMBER_ID},
+            "messages": [{"from": "919800000303", "id": "rep1", "type": "text",
+                          "text": {"body": "Problem in: Class III · English · Shapes · Unit 1 · Phase 2\n\nThe star is missing"}}],
+            "statuses": [], "contacts": []}}]}]}).encode()
+        sig = "sha256=" + hmac.new(b"test-secret", body, hashlib.sha256).hexdigest()
+        for _ in range(2):   # Meta re-delivers: still ONE reference, ONE acknowledgement
+            assert c.post("/whatsapp/webhook", content=body, headers={"X-Hub-Signature-256": sig}).status_code == 200
+        t = m.wa_inbox_repo.load("9800000303")
+        reps = [x for x in t["messages"] if x.get("ref")]
+        assert len(reps) == 1 and reps[0]["ref"].startswith("MEY-W-") and reps[0]["report"]["unit"] == "Unit 1"
+        assert t["last_ref"] == reps[0]["ref"]
+        acks = [b for b in sent if reps[0]["ref"] in b]
+        assert len(acks) == 1 and len(sent) == 1, "the acknowledgement replaces the greeting"
+        # the greeting and the acknowledgement are automatic: she still NEEDS A REPLY
+        item = next(i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
+                    if i["id"] == "9800000303")
+        assert item["needs_reply"] and item["ref"] == reps[0]["ref"]
+    finally:
+        m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
+    print("✓ A WhatsApp report gets one MEY-W reference, parsed rows and one acknowledgement")

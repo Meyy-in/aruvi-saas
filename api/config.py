@@ -233,6 +233,15 @@ WA_GREETING = (os.environ.get("ARUVI_WA_GREETING", "").strip() or
                "Thank you for contacting Meyy! We reply to messages only, not calls. Please "
                "let us know your issues/feedback and we will get back to you.")
 WA_GREETING_GAP_DAYS = int(os.environ.get("ARUVI_WA_GREETING_GAP_DAYS", "14"))
+# ★ WHATSAPP REPORTS GET A REFERENCE (founder, 2026-10-03: "it will help to keep log"). A message
+# that starts "Problem in:" (sent from a lesson's "Report an issue") is numbered MEY-W-n, its lesson
+# line parsed into rows, and she is told the number — the email channel's acknowledgement, on
+# WhatsApp, free inside the window she just opened. Empty ack text = number it, say nothing.
+WA_REPORT_PREFIX = os.environ.get("ARUVI_WA_REPORT_PREFIX", "").strip() or "MEY-W"
+WA_REPORT_ACK = os.environ.get("ARUVI_WA_REPORT_ACK", None)
+if WA_REPORT_ACK is None:
+    WA_REPORT_ACK = ("Thank you — we have your report. Its reference is {ref}; please quote it if "
+                     "you write about it again. We will reply here within 2 working days.")
 # Optional: an APPROVED template (no variables) that re-opens a conversation after the
 # 24-hour reply window has closed. Empty = the inbox just says the window is closed.
 WA_REOPEN_TEMPLATE = os.environ.get("ARUVI_WA_REOPEN_TEMPLATE", "").strip()

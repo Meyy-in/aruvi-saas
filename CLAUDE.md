@@ -16,7 +16,11 @@ status → answered); Mark closed / Mark done; WhatsApp category select. Every i
 (Bearer) lets the founder's drafting session READ the queue (`/api/queue`, `/api/case/{ref}`,
 `/api/thread/{n}` — without marking read) and WRITE drafts (`POST /api/draft {kind, id, text,
 category}`); it can never reply, send or change status — the human gate by construction.
-Tests: tests/test_support_queue.py. Next: the drafting session itself (a Cowork skill).
+WhatsApp REPORTS (a message starting "Problem in:", from Report an issue) get a reference from
+their own series MEY-W-n (`support/_series/whatsapp.json`), the lesson line parsed into rows
+(`parse_report`) and shown as a details card, and one automatic acknowledgement with the number
+(`WA_REPORT_ACK`; it stands in for the greeting). Automatic messages never take a thread off
+"Needs reply" (`_last_human_dir`). Tests: tests/test_support_queue.py. Next: the drafting session itself (a Cowork skill).
 
 **Report an issue (2026-10-03, web + mobile built).** A right-aligned "REPORT AN ISSUE ›" pill (`ReportCard`
 in LessonView.jsx; the earlier "Spotted something wrong?" card was dropped as "too dominating")
