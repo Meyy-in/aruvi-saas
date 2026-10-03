@@ -138,7 +138,7 @@ def test_whatsapp_report_is_numbered_parsed_and_acknowledged_once():
             assert c.post("/whatsapp/webhook", content=body, headers={"X-Hub-Signature-256": sig}).status_code == 200
         t = m.wa_inbox_repo.load("9800000303")
         reps = [x for x in t["messages"] if x.get("ref")]
-        assert len(reps) == 1 and reps[0]["ref"].startswith("MEY-W-") and reps[0]["report"]["unit"] == "Unit 1"
+        assert len(reps) == 1 and reps[0]["ref"].startswith("MEY-W-") and int(reps[0]["ref"].rsplit("-", 1)[1]) >= 1234 and reps[0]["report"]["unit"] == "Unit 1"
         assert t["last_ref"] == reps[0]["ref"]
         acks = [b for b in sent if reps[0]["ref"] in b]
         assert len(acks) == 1 and len(sent) == 1, "the acknowledgement replaces the greeting"

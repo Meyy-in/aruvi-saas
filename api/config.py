@@ -238,6 +238,8 @@ WA_GREETING_GAP_DAYS = int(os.environ.get("ARUVI_WA_GREETING_GAP_DAYS", "14"))
 # line parsed into rows, and she is told the number — the email channel's acknowledgement, on
 # WhatsApp, free inside the window she just opened. Empty ack text = number it, say nothing.
 WA_REPORT_PREFIX = os.environ.get("ARUVI_WA_REPORT_PREFIX", "").strip() or "MEY-W"
+# The first WhatsApp report number (founder, 2026-10-03) — an offset, like the email series' 742.
+WA_REPORT_START = int(os.environ.get("ARUVI_WA_REPORT_START", "1234"))
 WA_REPORT_ACK = os.environ.get("ARUVI_WA_REPORT_ACK", None)
 if WA_REPORT_ACK is None:
     WA_REPORT_ACK = ("Thank you — we have your report. Its reference is {ref}; please quote it if "

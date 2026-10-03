@@ -172,7 +172,8 @@ class Inbox:
         report = parse_report(text)
         ref = ""
         if report and not self.repo.has_message(n, m.get("id", "")):
-            ref = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"))
+            ref = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"),
+                                           getattr(self.config, "WA_REPORT_START", 1234))
         before = self.repo.append(
             n, {"id": m.get("id", ""), "dir": "in", "type": m.get("type", ""), "text": text,
                 **({"ref": ref, "report": report} if ref else {})},

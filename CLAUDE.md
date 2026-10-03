@@ -17,7 +17,7 @@ status → answered); Mark closed / Mark done; WhatsApp category select. Every i
 `/api/thread/{n}` — without marking read) and WRITE drafts (`POST /api/draft {kind, id, text,
 category}`); it can never reply, send or change status — the human gate by construction.
 WhatsApp REPORTS (a message starting "Problem in:", from Report an issue) get a reference from
-their own series MEY-W-n (`support/_series/whatsapp.json`), the lesson line parsed into rows
+their own series MEY-W-n starting at MEY-W-1234 (`WA_REPORT_START`; `support/_series/whatsapp.json`), the lesson line parsed into rows
 (`parse_report`) and shown as a details card, and one automatic acknowledgement with the number
 (`WA_REPORT_ACK`; it stands in for the greeting). Automatic messages never take a thread off
 "Needs reply" (`_last_human_dir`). Tests: tests/test_support_queue.py. Next: the drafting session itself (a Cowork skill).
