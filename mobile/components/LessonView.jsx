@@ -32,6 +32,7 @@ import ChapterOrg, { kickerOf } from "./lesson/ChapterOrg";
 import PhaseBookmark from "./lesson/PhaseBookmark";
 import { useTourAnchor, registerTourScroller } from "../lib/tour";
 import AssessPanel from "./lesson/AssessPanel";
+import ReportIssue, { ReportCard } from "./lesson/ReportIssue";
 
 /* Walk groups (and children) into a flat unit list; each unit carries its group context. */
 export function flattenUnits(lp) {
@@ -250,7 +251,7 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
             {notesOpen ? <Text style={[ws.uv_tnotes_k, { marginLeft: "auto" }]}>–</Text> : <Text style={ws.uv_tnotes_teaser} numberOfLines={1}>{notes}</Text>}
           </Pressable>
           {notesOpen ? (
-            <Text style={ws.uv_tnotes_p}>
+            <Text selectable style={ws.uv_tnotes_p}>
               {notesLead ? <Text style={ws.uv_tnotes_ref}>{notesLead} </Text> : null}{boldPointers(notesLead ? notesRest : notes, ws.uv_tnotes_ref)}
             </Text>
           ) : null}
@@ -300,19 +301,23 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
                   <Text style={ws.uv_ph_n}>{mins != null ? mins : (ph.label || "—")}</Text>
                   {mins != null ? <Text style={ws.uv_ph_u}>min</Text> : null}
                 </View>
-                <Text style={ws.uv_ph_t}>{ph.text}</Text>
+                {/* ★ SELECTABLE (founder, 2026-10-03: "I am not able to copy the text of lesson
+                    plan on the iPhone"). A long press offers Copy for the phase — the whole block
+                    on iOS, which is how RN Text selection works — so she can paste the exact line
+                    into "Report an issue". */}
+                <Text selectable style={ws.uv_ph_t}>{ph.text}</Text>
               </View>
             );
           })}
         </View>
       ) : (u.activities && u.activities.length) ? u.activities.map((a, i) => (
-        <Text key={i} style={ws.phaserow}>{a}</Text>
+        <Text key={i} selectable style={ws.phaserow}>{a}</Text>
       )) : <Text style={ws.empty}>No phases recorded for this unit.</Text>}
 
       {u.homework ? (
         <View style={ws.uv_hw}>
           <Text style={ws.kicker}>Homework</Text>
-          <Text style={ws.uv_hw_p}>{parseBold(u.homework).map((r, i) => r.bold ? <Text key={i} style={ws.uv_tnotes_ref}>{r.text}</Text> : r.text)}</Text>
+          <Text selectable style={ws.uv_hw_p}>{parseBold(u.homework).map((r, i) => r.bold ? <Text key={i} style={ws.uv_tnotes_ref}>{r.text}</Text> : r.text)}</Text>
         </View>
       ) : null}
       {footer}
@@ -325,7 +330,7 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
    `PreviewUnit` both carry it), so a caller that forgets to pass one still opens on the teaching
    spine rather than on an undefined tab. */
 function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
-                       defaultTab = "lesson", bookmark, tail }) {
+                       defaultTab = "lesson", bookmark, tail, onReport = null }) {
   const items = unitAssessItems(assessment, u);
   const [tab, setTab] = useState(defaultTab);
   /* ⚠️ DECLARED HERE, NOT IN `LessonView`. It was in `LessonView` and used down here, which babel
@@ -379,10 +384,14 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
         {tab === "overview" ? <OverviewPanel ws={ws} u={u} chapterTitle={chapterTitle} /> : null}
         {tab === "material" ? <MaterialPanel ws={ws} t={t} u={u} /> : null}
         {tab === "lesson" ? (
-          <LessonPanel ws={ws} t={t} u={u} footer={lessonFooter}
+          /* ★ "SPOTTED SOMETHING WRONG?" ABOVE MARK COMPLETE (founder, 2026-10-03) — problems
+             before completion; also ends the Assess tab. Only these two tabs carry it. */
+          <LessonPanel ws={ws} t={t} u={u}
+            footer={<>{onReport ? <ReportCard tour onPress={() => onReport("lesson")} /> : null}{lessonFooter}</>}
             bookmark={bookmark ? { ...bookmark, onLift: setLocked } : null} />
         ) : null}
-        {tab === "assess" ? <AssessPanel ws={ws} t={t} items={items} assessment={assessment} /> : null}
+        {tab === "assess" ? <><AssessPanel ws={ws} t={t} items={items} assessment={assessment} />
+          {onReport ? <ReportCard onPress={() => onReport("assess")} /> : null}</> : null}
         {tail}
       </ScrollView>
     </>
@@ -429,6 +438,8 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
   const [previewAt, setPreviewAt] = useState(cur);
   const [doneFlag, setDoneFlag] = useState(() => (tracking ? readChapterDone(sectionKey) : false));
   const [undoTo, setUndoTo] = useState(null);
+  // "Report an issue" window: null = closed · { part: "lesson" | "assess" } = the tab that opened it.
+  const [reporting, setReporting] = useState(null);
   const [bkmkPhase, setBkmkPhase] = useState(() => {
     if (!tracking) return 0;
     const b = readLocalBookmark(sectionKey);
@@ -594,7 +605,14 @@ export default function LessonView({ view, sectionKey = "", sectionLabel = "", o
         defaultTab="lesson"
         lessonFooter={tracking && !inDropped && previewAt === actUnit ? completionUI : null}
         bookmark={tracking && !inDropped && previewAt === cur ? { phase: bkmkPhase, onMove: moveBookmark } : null}
-        tail={pvNav} />
+        tail={pvNav} onReport={(part) => setReporting({ part })} />
+      {reporting ? (
+        <ReportIssue lp={lp}
+          unitNumber={inDropped ? previewAt - units.length + 1 : previewAt + 1}
+          unitTitle={pu.title} dropped={inDropped} part={reporting.part}
+          phases={(pu.phases || []).filter((ph) => ph.text || ph.label).map(phaseMin)}
+          onClose={() => setReporting(null)} />
+      ) : null}
     </View>
   );
 }

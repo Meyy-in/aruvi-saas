@@ -7,7 +7,7 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
-**Report an issue (2026-10-03, web done, mobile pending).** A "Spotted something wrong? / Help us
+**Report an issue (2026-10-03, web + mobile built).** A "Spotted something wrong? / Help us
 improve this lesson for other teachers. / REPORT AN ISSUE ›" card (`ReportCard` in LessonView.jsx)
 ends the Lesson tab ABOVE "Mark this unit complete", and ends the Assess tab — only those two
 (founder: they improve the lesson; Overview/Material are marginal). It opens
@@ -23,7 +23,10 @@ lesson text `selectable` (iPhone cannot copy lesson text today).
 Guided tour (web): new step 13 rings the card ("Spotted something wrong? Tell us."), so the web
 tour is now 21 steps and every step from 13 on moved +1 (page.jsx tourNext/tourBack, MyPlans tour
 effects, GuidedTour table). ⚠️ The phone's tour (`mobile/components/GuidedTour.jsx`, explicit `n:`)
-is still 20 steps — renumber it in the same commit as the mobile port.
+is now 21 steps too (`lib/tour.js` TOUR_TOTAL/MOVES/BACK_MOVES, `app/(app)/index.jsx` tour effects,
+GuidedTour `n:` table renumbered). Mobile port: `mobile/components/lesson/ReportIssue.jsx` (card +
+window in the app's own Sheet; compact `Dropdown` prop), `ws.lv_rcard*` / `ws.rp_*` in theme/web.js,
+and lesson + assessment text is now `selectable` (long-press → Copy on iPhone).
 
 Opt-in second support channel on the Meyy WhatsApp Business number (+91 93637 95723;
 `api/config.WHATSAPP_NUMBER` ↔ `@aruvi/shared/format` `WHATSAPP_NUMBER` — move one, move the other).

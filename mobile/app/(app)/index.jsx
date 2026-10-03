@@ -563,7 +563,7 @@ export default function Home() {
     bump();                              // the module may have just re-bound; redraw from the store
     /* The picker is open at 9 (nothing bound, so the new lesson IS in the list — the hand points
        at it) and again at 15 (the bound chapter is excluded: "pick the NEXT one"). */
-    if (n === 9 || n === 15) { if (!attachFor) setAttachFor({ c: tourTarget.c, sectionKey: tourTarget.sectionKey }); }
+    if (n === 9 || n === 16) { if (!attachFor) setAttachFor({ c: tourTarget.c, sectionKey: tourTarget.sectionKey }); }
     else if (attachFor) setAttachFor(null);
   }, [tourNow.step, tourTarget]);   // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -577,7 +577,7 @@ export default function Home() {
     tourWasRunning.current = running;
   }, [tourNow.step]);   // eslint-disable-line react-hooks/exhaustive-deps
 
-  const tourDemoDone = tourNow.step === 14 || tourNow.step === 15;
+  const tourDemoDone = tourNow.step === 15 || tourNow.step === 16;
   /* ★ THE OFFER (app. 01 rows 59-61). Eligible = at most one bound section and nothing taught —
      she has a lesson and has not started using it, which is exactly the moment a walkthrough is
      worth her time. ⚠️ `null` from the check means we could not tell, and an unknown must never
@@ -680,7 +680,7 @@ export default function Home() {
     <ClassCard key={c.sectionKey} c={c} banded={banded}
       waitRef={waitCardRef} onWaitLayout={onWaitLayout}
       tourAdd={tourTarget && c.sectionKey === tourTarget.sectionKey
-               && (tourNow.step === 8 || tourNow.step === 14)}
+               && (tourNow.step === 8 || tourNow.step === 15)}
       tourTarget={tourTarget && c.sectionKey === tourTarget.sectionKey && tourNow.step === 10}
       demoDone={tourDemoDone && tourTarget && c.sectionKey === tourTarget.sectionKey}
       plans={st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`]}

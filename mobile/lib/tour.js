@@ -32,7 +32,7 @@ import { subjectSlug, gradeSlug, postJSON } from "@aruvi/shared/format";
 /* ★ TWENTY STEPS, DECLARED HERE. It lived in `GuidedTour.jsx` until the navigation moved into
    this module; importing the component from here to read one number would be a cycle, and the
    count is a fact about the tour rather than about the overlay that draws it. */
-export const TOUR_TOTAL = 20;
+export const TOUR_TOTAL = 21;   // 21 since 2026-10-03: step 13 "Report an issue", everything after it +1
 
 const anchors = new Map();          // data-tour name → { measure(cb) }
 let state = { step: 0, info: {}, target: null };  // step 0 = not running
@@ -242,8 +242,8 @@ export function useTour() {
  * ⚠️ THE MOVES ARE A TABLE, NOT A CHAIN OF `if`s — the web's `tourNext`/`tourBack` are two switch
  * statements twenty lines apart and drifted there at least once. Next and Back read the same
  * table from opposite ends, so a step cannot advance somewhere it will not come back from. */
-const MOVES = { 7: "/", 15: "/", 16: "/settings/profile", 17: "/" };   // 1-6 are all My Lessons
-const BACK_MOVES = { 8: "/lessons", 17: "/", 18: "/settings/profile" };  // 3→2 stays put now
+const MOVES = { 7: "/", 16: "/", 17: "/settings/profile", 18: "/" };   // 1-6 are all My Lessons
+const BACK_MOVES = { 8: "/lessons", 18: "/", 19: "/settings/profile" };  // 3→2 stays put now
 
 /* ★ `preview: true` OPENS IT THE WAY MY LESSONS DOES — with NO section, which is what makes
    `LessonView` a read-only preview and makes it claim `preview-root` rather than `lesson-root`.
@@ -373,11 +373,11 @@ export function tourNext() {
   const n = state.step;
   if (n === 4 && !archivable) { setTourStep(6); return; }
   if (n === TOUR_TOTAL) { closeAsk(); endTour(); router.navigate("/"); return; }
-  if (n === 18) openAsk();
-  if (n === 19) closeAsk();
+  if (n === 19) openAsk();
+  if (n === 20) closeAsk();
   if (n === 6) { openTourLesson({ preview: true }); setTourStep(7); return; }  // into the preview
   if (n === 10) { openTourLesson(); setTourStep(11); return; }                 // into the lesson
-  if (n === 13) { router.navigate("/"); setTourStep(14); return; }             // and back out of it
+  if (n === 14) { router.navigate("/"); setTourStep(15); return; }             // and back out of it
   if (MOVES[n]) router.navigate(MOVES[n]);
   setTourStep(n + 1);
 }
@@ -386,10 +386,10 @@ export function tourBack() {
   const n = state.step;
   if (n === 6 && !archivable) { setTourStep(4); return; }
   if (n === 1) { endTour(); return; }            // Back out of step 1 IS leaving the tour
-  if (n === 19 || n === 20) { if (n === 20) openAsk(); else closeAsk(); }
+  if (n === 20 || n === 21) { if (n === 21) openAsk(); else closeAsk(); }
   if (n === 7) { router.navigate("/lessons"); setTourStep(6); return; }   // back out of the preview
   if (n === 11) { router.navigate("/"); setTourStep(10); return; }        // back out of the lesson
-  if (n === 14) { openTourLesson(); setTourStep(13); return; }            // and back into it
+  if (n === 15) { openTourLesson(); setTourStep(14); return; }            // and back into it
   if (BACK_MOVES[n]) router.navigate(BACK_MOVES[n]);
   setTourStep(n - 1);
 }

@@ -51,7 +51,9 @@ function itemTabSet(n) {
 /* ── small blocks ── */
 /* the web's .assess-look block: uppercase mono key, then the text */
 const K = ({ ws, children }) => <Text style={ws.assess_look_k}>{children}</Text>;
-const P = ({ ws, children, style }) => <Text style={[ws.assess_look_t, style]}>{children}</Text>;
+/* Assessment prose is SELECTABLE (2026-10-03) — a long press copies it, so a teacher can quote a
+   question or marking guide into "Report an issue". */
+const P = ({ ws, children, style }) => <Text selectable style={[ws.assess_look_t, style]}>{children}</Text>;
 const Look = ({ ws, children }) => <View style={ws.assess_look}>{children}</View>;
 
 function ABlock({ ws, t, k, text }) {
@@ -142,10 +144,10 @@ function ATyped({ ws, t, b, passage = false }) {
     );
   }
   return passage
-    ? <View style={ws.assess_passage}><Text style={ws.assess_passage_t}>{b.content}</Text></View>
+    ? <View style={ws.assess_passage}><Text selectable style={ws.assess_passage_t}>{b.content}</Text></View>
     /* The web's `.assess-vs-prose` — the SAME green box as a passage, upright (app. 06 row 105;
        it was a bare paragraph here). */
-    : <View style={ws.assess_passage}><Text style={ws.assess_vs_prose_t}>{b.content}</Text></View>;
+    : <View style={ws.assess_passage}><Text selectable style={ws.assess_vs_prose_t}>{b.content}</Text></View>;
 }
 
 /* ── the four sub-panels ── */
@@ -176,7 +178,7 @@ function OptList({ ws, t, opts, showKey = "label" }) {
       {opts.map((o, i) => (
         <View key={i} style={ws.assess_opt}>
           <Text style={ws.assess_opt_lab}>{o[showKey]}</Text>
-          <Text style={ws.assess_opt_t}>{o.text}</Text>
+          <Text selectable style={ws.assess_opt_t}>{o.text}</Text>
         </View>
       ))}
     </View>
@@ -209,7 +211,7 @@ function AQuestionPanel({ ws, t, n, opts, sets, nav }) {
         </View>
       ) : n.stem_parts && n.stem_parts.length ? (
         <APartsList ws={ws} t={t} lead={n.stem_lead} parts={n.stem_parts} />
-      ) : <Text style={ws.assess_prompt}>{n.stem}</Text>}
+      ) : <Text selectable style={ws.assess_prompt}>{n.stem}</Text>}
 
       {/* ★ A LISTENING PASSAGE IS A DIFFERENT KIND OF THING (app. 06 row 101). It rendered as one
           more grey sentence in the flow, so the teacher had to READ that this question needs
@@ -368,9 +370,9 @@ function InclusivityText({ ws, t, text, mathsMiddle, mathsSecondary }) {
   };
   if (mathsSecondary || mathsMiddle) {
     const rows = text.split(/(?=\b(?:support|challenge)\s*:)/i).map((x) => x.trim()).filter(Boolean);
-    if (rows.length > 1) return <View style={{ gap: 8 }}>{rows.map((r, i) => <Text style={ws.assess_inc} key={i}>{render(r, i)}</Text>)}</View>;
+    if (rows.length > 1) return <View style={{ gap: 8 }}>{rows.map((r, i) => <Text selectable style={ws.assess_inc} key={i}>{render(r, i)}</Text>)}</View>;
   }
-  return <Text style={ws.assess_inc}>{render(text, 0)}</Text>;
+  return <Text selectable style={ws.assess_inc}>{render(text, 0)}</Text>;
 }
 
 /* ★ A LEGACY ITEM KEEPS THE OLD CARD, AND THE CARD HAD NO CHROME (app. 06 row 94). Flat items
@@ -383,8 +385,8 @@ function ALegacyCard({ ws, t, it }) {
   return (
     <View style={[ws.assess_card, { borderColor: t.edge_green }]}>
       <Text style={ws.assess_qtype}>{qtypeName(it.item_type)}</Text>
-      <Text style={ws.assess_prompt}>{it.prompt}</Text>
-      {it.options && it.options.length ? it.options.map((o, k) => <View key={k} style={ws.assess_opt}><Text style={ws.assess_opt_lab}>{k + 1}.</Text><Text style={ws.assess_opt_t}>{o}</Text></View>) : null}
+      <Text selectable style={ws.assess_prompt}>{it.prompt}</Text>
+      {it.options && it.options.length ? it.options.map((o, k) => <View key={k} style={ws.assess_opt}><Text style={ws.assess_opt_lab}>{k + 1}.</Text><Text selectable style={ws.assess_opt_t}>{o}</Text></View>) : null}
       {it.answer ? <P ws={ws} t={t} style={{ marginTop: 8 }}>Answer: {it.answer}</P> : null}
       {it.teacher_guide && it.teacher_guide.length ? <ABlock ws={ws} t={t} k="LOOK FOR" text={it.teacher_guide.join(" · ")} /> : null}
     </View>

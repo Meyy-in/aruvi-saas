@@ -30,8 +30,10 @@ import { useWebStyles } from "../theme/web";
 const valOf = (o) => (o && typeof o === "object" ? o.value : o);
 const labOf = (o) => (o && typeof o === "object" ? o.label : o);
 
+/* `compact` — the small in-row picker (Report an issue's phase choice, 2026-10-03): the web's
+   `.rp-phase .dd-btn` — 12px, 4/7 padding, 6px radius — one notch under a form field. */
 export default function Dropdown({ value, onChange, options = [], placeholder = "Choose one",
-                                   label, disabled = false }) {
+                                   label, disabled = false, compact = false }) {
   const { height: winH } = useWindowDimensions();
   const { t } = useTheme();
   const ws = useWebStyles();
@@ -46,9 +48,11 @@ export default function Dropdown({ value, onChange, options = [], placeholder = 
       <Pressable onPress={disabled ? undefined : () => setOpen(true)} disabled={disabled}
         accessibilityRole="button" accessibilityLabel={label}
         accessibilityValue={{ text: current ? labOf(current) : placeholder }}
-        style={[ws.dd_btn, { backgroundColor: t.field_bg, borderColor: open ? t.pine : t.line,
+        style={[ws.dd_btn, compact && { paddingVertical: 4, paddingHorizontal: 7, borderRadius: 6, columnGap: 6 },
+                { backgroundColor: t.field_bg, borderColor: open ? t.pine : t.line,
                              opacity: disabled ? 0.5 : 1 }]}>
-        <Text style={[ws.dd_lab, { color: unset ? t.ink_soft : t.ink }]} numberOfLines={1}>
+        <Text style={[ws.dd_lab, compact && { fontSize: 12, lineHeight: 16 }, { color: unset ? t.ink_soft : t.ink }]}
+          numberOfLines={1}>
           {current ? labOf(current) : placeholder}
         </Text>
         <Text style={[ws.dd_chev, { color: t.ink_soft }]}>▾</Text>

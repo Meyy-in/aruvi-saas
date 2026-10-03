@@ -78,7 +78,12 @@ export const STEPS = [
   { n: 12, anchor: "phase-bookmark", place: "above",
     title: "Bookmark where you left a particular section",
     body: "Move this bookmark to any particular phase to indicate where you stopped or wish to begin next for a section. Each section will have independent bookmarks." },
-  { n: 13, anchor: "mark-complete", place: "above", hand: true,
+  /* Step 13 — "Report an issue" (founder, 2026-10-03), the web's words: the card sits just above
+     Mark complete, so it is met before completion — problems first, then progress. */
+  { n: 13, anchor: "report-issue", place: "above", hand: true,
+    title: "Spotted something wrong? Tell us.",
+    body: "If anything in a unit looks wrong, report it here before you mark the unit complete. Choose WhatsApp or email, and pick the phase if you like — each report helps us improve the lesson for every teacher." },
+  { n: 14, anchor: "mark-complete", place: "above", hand: true,
     title: "Track progress.",
     body: (i) => `Track chapter progress of “${i.chapter}” with ${sec(i)} unit by unit. Upon completion of a unit, click this button to mark it complete.` },
   /* ⚠️ Step 14's body carries an inline "+" GLYPH on the web (`.gt-plus`, a 19px circled plus
@@ -89,25 +94,25 @@ export const STEPS = [
      10%-of-viewport lift — a compromise from the days when this step had no reliable anchor to
      sit under, and one that put the tip nowhere near the "+" it is talking about. Changed on BOTH
      surfaces in the same commit; the step table is one table. */
-  { n: 14, anchor: "section-add", place: "below", hand: true, plusBody: true,
+  { n: 15, anchor: "section-add", place: "below", hand: true, plusBody: true,
     title: "You have completed the chapter and are now ready for the next.",
     body: "Once all units of the chapter are marked complete by you, you are ready to teach another chapter. All you need is to click " },
-  { n: 15, anchor: "attach-pop", place: "over",
+  { n: 16, anchor: "attach-pop", place: "over",
     title: "Select a plan.",
     body: "Use the same window you used a moment ago to select an existing chapter or generate a new plan." },
-  { n: 16, anchor: "grow-add", place: "above",
+  { n: 17, anchor: "grow-add", place: "above",
     title: "Add or amend your classes and sections.",
     body: "Use this button to add a class or a section, or to change periods a week and the annual period budget." },
-  { n: 17, anchor: "settings-gear", place: "below",
+  { n: 18, anchor: "settings-gear", place: "below",
     title: "Your teaching profile.",
     body: "Your profile is built from what you do — read it whole here, at any time. Changes are made with ‘Add’ at the foot of the screen." },
-  { n: 18, anchor: "ask-aruvi", place: "above",
+  { n: 19, anchor: "ask-aruvi", place: "above",
     title: "Use Ask Meyy to answer your queries",
     body: "Get answers to over 100 questions across 5 categories, and use intelligent search to narrow your query." },
-  { n: 19, anchor: "ask-aruvi-root", place: "over",
+  { n: 20, anchor: "ask-aruvi-root", place: "over",
     title: "Use Ask Meyy to answer your queries",
     body: "Use either the categories or the intelligent search to look for answers to your queries." },
-  { n: 20, anchor: null, place: "center", welcome: true,
+  { n: 21, anchor: null, place: "center", welcome: true,
     title: "Welcome to Meyy", body: null },
 ];
 
