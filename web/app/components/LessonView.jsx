@@ -457,7 +457,7 @@ function AssessPanel({ items, mathsMiddle = false, mathsSecondary = false }) {
  * data-tour="unit-tabs": tour step 10's tooltip hangs below the bar. */
 function ReportCard({ onClick }) {
   return (
-    <div className="lv-rcard">
+    <div className="lv-rcard" data-tour="report-issue">
       <svg className="lv-rcard-flag" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M6 21V4" strokeWidth="2" strokeLinecap="round" />
         <path d="M6 4h11l-2.5 4L17 12H6z" stroke="none" />

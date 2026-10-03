@@ -431,7 +431,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
     return null;
   })();
   const tourIdx = tourTarget ? tourTarget.idx : -1;
-  const tourDemoDone = tourStep === 14 || tourStep === 15;   // demo-complete rendering only
+  const tourDemoDone = tourStep === 15 || tourStep === 16;   // demo-complete rendering only
 
   // Report the target's name + chapter up so the step copy can say "attach {chapter} to {tag}".
   useEffect(() => {
@@ -465,16 +465,16 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
        in the DOM for `[data-tour]` to find. I had assumed the web kept both mounted and spent
        three walks fixing the phone alone. It now lives in `page.jsx`, which is the shell and is
        always mounted — the same move the phone made into `lib/tour.js`, for the same reason. */
-    // Steps 11–13: the tracking lesson view is open (11 tracking · 12 the bookmark ·
-    // 13 mark-complete); any other step closes it.
-    if (tourStep === 11 || tourStep === 12 || tourStep === 13) {
+    // Steps 11–14: the tracking lesson view is open (11 tracking · 12 the bookmark ·
+    // 13 "Report an issue" · 14 mark-complete); any other step closes it.
+    if (tourStep >= 11 && tourStep <= 14) {
       if (!openPlan && !loading) openLesson(c.subjectSlug, c.gradeSlug, plan, sectionKey,
         c.sectionName || c.sectionTag);
     } else if (openPlan) setOpenPlan(null);
     // Steps 9 and 14: the "Track a chapter for this section" popup; any other step closes it.
     // (At 9 nothing is bound, so the just-generated lesson is IN the list — the hand points at
     // it; at 14 the bound chapter is excluded, matching the "pick the NEXT chapter" moment.)
-    if (tourStep === 9 || tourStep === 15) {
+    if (tourStep === 9 || tourStep === 16) {
       if (!attachFor) setAttachFor({ c, sectionKey });
     } else if (attachFor) setAttachFor(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -713,7 +713,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
   if (loading) return <div className="spin">Opening plan…</div>;
   if (openPlan) return <LessonView view={openPlan.view} sectionKey={openPlan.sectionKey}
     sectionLabel={openPlan.sectionLabel || ""}
-    tourUnit={tourStep === 11 || tourStep === 12 || tourStep === 13 || !!openPlan.landOnUnit}
+    tourUnit={(tourStep >= 11 && tourStep <= 14) || !!openPlan.landOnUnit}
     onExit={() => setOpenPlan(null)} />;
 
   // "+" attach-a-lesson picker — a focused MODAL layered over the cards (not a separate screen),

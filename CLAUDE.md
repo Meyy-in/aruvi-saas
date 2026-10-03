@@ -20,6 +20,10 @@ neither: a note. No how-to line, no activity name, no code shown to her or in Wh
 (`@aruvi/shared/report`, e.g. IX-MAT-02-U3-P2) rides in the case context for us only. Per-phase
 flags were tried and dropped (clutter). Mobile port must reuse `@aruvi/shared/report` and also make
 lesson text `selectable` (iPhone cannot copy lesson text today).
+Guided tour (web): new step 13 rings the card ("Spotted something wrong? Tell us."), so the web
+tour is now 21 steps and every step from 13 on moved +1 (page.jsx tourNext/tourBack, MyPlans tour
+effects, GuidedTour table). ⚠️ The phone's tour (`mobile/components/GuidedTour.jsx`, explicit `n:`)
+is still 20 steps — renumber it in the same commit as the mobile port.
 
 Opt-in second support channel on the Meyy WhatsApp Business number (+91 93637 95723;
 `api/config.WHATSAPP_NUMBER` ↔ `@aruvi/shared/format` `WHATSAPP_NUMBER` — move one, move the other).

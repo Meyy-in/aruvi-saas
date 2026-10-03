@@ -1032,20 +1032,21 @@ export default function Home() {
   // tourStep; here we only handle SHELL navigation (numbers shifted +1 from step 12 on —
   // the bookmark step, 2026-08-25): 1-7 all stand on My Lessons, where the tour now opens
   // (2026-09-17) · 7→8 back to My Classes ·
-  // 15→16 close the popup back to My Classes home (the "+" step) · 16→17 open the profile
-  // (step 17 rings the settings gear over it) · 17→18 back to My Classes (the Ask Aruvi
-  // mark) · 18→19 OPEN Ask Aruvi so step 19 rings the real panel · 19→20 close it again
-  // for the centred "Welcome to Aruvi" sign-off · 20 Done → My Classes.
+  // (+1 again from step 13 on — "Report an issue", 2026-10-03) ·
+  // 16→17 close the popup back to My Classes home (the "+" step) · 17→18 open the profile
+  // (step 18 rings the settings gear over it) · 18→19 back to My Classes (the Ask Aruvi
+  // mark) · 19→20 OPEN Ask Aruvi so step 20 rings the real panel · 20→21 close it again
+  // for the centred "Welcome to Aruvi" sign-off · 21 Done → My Classes.
   const tourNext = () => {
     // Step 5 is skipped when the tour's lesson has no archive button (founder, 2026-09-18).
     if (tour === 4 && !tourArchivable) { setTour(6); return; }
     if (tour === 7) goClasses();
-    else if (tour === 15) goClasses();
-    else if (tour === 16) goProfile();
-    else if (tour === 17) goClasses();          // leave the profile → show the Ask Aruvi mark on My Classes
-    else if (tour === 18) setAskOpen(true);     // show her the panel itself, not just its mark
-    else if (tour === 19) setAskOpen(false);    // clear the screen for the sign-off
-    else if (tour === 20) { setAskOpen(false); finishTour(); goClasses(); return; }
+    else if (tour === 16) goClasses();
+    else if (tour === 17) goProfile();
+    else if (tour === 18) goClasses();          // leave the profile → show the Ask Aruvi mark on My Classes
+    else if (tour === 19) setAskOpen(true);     // show her the panel itself, not just its mark
+    else if (tour === 20) setAskOpen(false);    // clear the screen for the sign-off
+    else if (tour === 21) { setAskOpen(false); finishTour(); goClasses(); return; }
     setTour(tour + 1);
   };
   // Tour Back — mirrors every move so each step reverses cleanly: 8→7 back to My Lessons (the
@@ -1056,10 +1057,10 @@ export default function Home() {
     if (tour === 1) { setTour(null); return; }
     if (tour === 6 && !tourArchivable) { setTour(4); return; }
     if (tour === 8) goLessons();
-    else if (tour === 17) goClasses();
-    else if (tour === 18) goProfile();   // back to the settings-gear step (profile open)
-    else if (tour === 19) setAskOpen(false);  // 19→18: the mark on the tab row, panel closed
-    else if (tour === 20) setAskOpen(true);   // 20→19: re-open the panel the step rings
+    else if (tour === 18) goClasses();
+    else if (tour === 19) goProfile();   // back to the settings-gear step (profile open)
+    else if (tour === 20) setAskOpen(false);  // 19→18: the mark on the tab row, panel closed
+    else if (tour === 21) setAskOpen(true);   // 20→19: re-open the panel the step rings
     setTour(tour - 1);
   };
   const goProfile = () => { setProfileViaSettings(false); setProfileAutoAdd(null); setProfilePortal(null); setProfilePortalScope(null); portalOriginRef.current = null; setEditFlow("profile"); setTab("myplans"); setGenerateEntry(null); };

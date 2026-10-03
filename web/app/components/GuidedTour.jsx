@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 // WALK-A-174: the four sentences that say where the nav is follow it — "foot" below 1024px, "top" above.
 const navEdge = () => (navAtTop() ? "top" : "foot");
 
-/* ───────── GuidedTour — the one-time first-run walk, 20 steps (bookmark step added
- * 2026-08-25) ─────────
+/* ───────── GuidedTour — the one-time first-run walk, 21 steps (bookmark step added
+ * 2026-08-25; "Report an issue" step 13 added 2026-10-03, everything after it +1) ─────────
  * Launched from the "Show me how" nudge on My Classes after the first lesson is generated but not
- * yet attached. Guide-driven: every step has Back · Skip · Next and an "N of 20" counter; Next
+ * yet attached. Guide-driven: every step has Back · Skip · Next and an "N of 21" counter; Next
  * itself performs the move (nav, opening the preview, the popup, the attach, the profile), with a
  * TRANSPARENT outline hand (SVG, not the filled emoji) showing where the real tap would land.
  * Steps 13–15 demo the completed state without touching her real progress.
@@ -26,15 +26,16 @@ const navEdge = () => (navAtTop() ? "top" : "foot");
  *   10 the attached card      — success; Next opens it
  *   11 the tracking view      — box lifted above the notes/mark-complete tail so both stay visible
  *   12 the phase BOOKMARK + hand — drag it to where you stopped / begin next; per section
- *   13 Mark-complete + hand   — demo only, never really clicked
- *   14 completed card's "+"   — card demoed as Complete; box pinned to the viewport bottom so the
+ *   13 "Report an issue" card + hand — report a problem BEFORE marking complete (2026-10-03)
+ *   14 Mark-complete + hand   — demo only, never really clicked
+ *   15 completed card's "+"   — card demoed as Complete; box pinned to the viewport bottom so the
  *                               progress rail AND the second section card stay visible
- *   15 the popup again        — pick the next chapter (bound one excluded)
- *   16 the bottom nav's "Add"  — add/amend sections, classes or subjects (the standing portal)
- *   17 the settings gear      — where the teaching profile lives
- *   18 the bottom nav's Ask Meyy — up to 100 Q&A across 5 categories + intelligent search
- *   19 Ask Aruvi OPEN          — page.jsx opens the panel on 18→19; the box rings the panel itself
- *   20 "Welcome to Aruvi"      — a centred sign-off, no anchor, no hand; Done lands on My Classes
+ *   16 the popup again        — pick the next chapter (bound one excluded)
+ *   17 the bottom nav's "Add"  — add/amend sections, classes or subjects (the standing portal)
+ *   18 the settings gear      — where the teaching profile lives
+ *   19 the bottom nav's Ask Meyy — up to 100 Q&A across 5 categories + intelligent search
+ *   20 Ask Aruvi OPEN          — page.jsx opens the panel on 18→19; the box rings the panel itself
+ *   21 "Welcome to Aruvi"      — a centred sign-off, no anchor, no hand; Done lands on My Classes
  *
  * Anchor extras per step: `handAnchor` (hand on a different element than the ring, e.g. the row
  * inside the popup), `tipAnchor` (tooltip placed off another element — first match in the array
@@ -116,6 +117,11 @@ const STEPS = [
   { anchor: "phase-bookmark", place: "above",
     title: "Bookmark where you left a particular section",
     body: () => "Move this bookmark to any particular phase to indicate where you stopped or wish to begin next for a section. Each section will have independent bookmarks." },
+  // Step 13 — "Report an issue" (founder, 2026-10-03): the card sits just above Mark complete,
+  // so it is met here, before completion — problems first, then progress.
+  { anchor: "report-issue", place: "above", hand: true,
+    title: "Spotted something wrong? Tell us.",
+    body: () => "If anything in a unit looks wrong, report it here before you mark the unit complete. Choose WhatsApp or email, and pick the phase if you like — each report helps us improve the lesson for every teacher." },
   { anchor: "mark-complete", place: "above", hand: true,
     title: "Track progress.",
     body: (i) => `Track chapter progress of “${i.chapter}” with ${sec(i)} unit by unit. Upon completion of a unit, click this button to mark it complete.` },
