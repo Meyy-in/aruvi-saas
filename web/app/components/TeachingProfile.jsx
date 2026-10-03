@@ -1,4 +1,5 @@
 "use client";
+import { useNavAtTop, addBarPhrase } from "../lib/navPlace";
 import { useEffect, useRef, useState } from "react";
 import { getJSON, pretty, ROMAN, stageOfGrade, projectReadiness, API, withUser,
          ESTIMATE_WEEKS, weeksFromAnnual, ppwFromAnnual, allowedStagesFor } from "../lib/format";
@@ -135,6 +136,7 @@ const Pencil = ({ size = 14 }) => (
 const stageOfRoman = stageOfGrade;   // lib/format is the web's ONE copy of the mapping
 
 export default function TeachingProfile({ readiness, onChange, onBack, lapsed, paidScopes, heldScopes, trial, autoAddClassSubject, onConsumeAutoAdd, portalIntent, onConsumePortal, portalScope, onSubscribe, onChrome, onSaveFailed }) {
+  const navTop = useNavAtTop();   // WALK-A-174: the copy follows the nav (lib/navPlace.js)
   /* `heldScopes` is what she has BOUGHT, and it decides one thing only: whether a subject
      survives losing its last class (`subjectSurvivesEmpty`). It is NOT `paidScopes`, which is a
      display filter and says "no limit" while enforcement is off — see @aruvi/shared/format. */
@@ -1635,7 +1637,7 @@ export default function TeachingProfile({ readiness, onChange, onBack, lapsed, p
             {open && !(s.grades || []).length && (
               <p className="fr-hint">You teach no class of {s.name} at the moment. Its lessons are
                 kept, and it stays here{trial ? "" : " for as long as you subscribe to it"}. To teach it again, add
-                a class under Class in the Add window from the bottom tool bar.</p>
+                a class under Class in the Add window from {addBarPhrase(navTop)}.</p>
             )}
 
             {open && (s.grades || []).map((g, gi) => {

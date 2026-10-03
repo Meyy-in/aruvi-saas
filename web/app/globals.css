@@ -5574,3 +5574,163 @@ html:not(.app-shell) .bodycontent { padding-bottom: 62px; } /* pre-shell only: r
 .sup-wa-num { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); }
 /* Personal profile's WhatsApp row — the email view's field shape with a switch at the end. */
 .pp-wa-txt { flex: 1 1 auto; min-width: 0; font-size: 13px; line-height: 1.35; }
+
+/* ═══════════════════════════════════════════════════════════════════════════════════════════
+   ★ THE WEBSITE VIEW — desktop widths (docs/web_desktop_view.md; founder decisions 2026-10-03:
+   breakpoint 1024px · nav in a row under the brand bar · no widen toggle on Ask Meyy · a subtle,
+   mouse-only hover). PRESENTATION ONLY: no screen changes what it does, says, or where anything
+   lives. Under 1024px nothing in this section applies, so the phone-width web — and therefore
+   mobile/theme/web.js, measured from it at 390px — is untouched.
+   ⚠️ TWO RULES FOR THIS SECTION (the plan's §5 traps, both paid for before):
+   (1) every rule lives INSIDE a min-width block — never edit a base value to get a desktop look;
+   (2) this section stays LAST in the file, after every rule it overrides (same specificity →
+       source order decides; an override placed above its base rule silently does nothing).
+   ═══════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ── 2b. Collections take the width; prose keeps its measure ──
+   --desk-w is the width a COLLECTION screen may use. The brand bar always caps to it, so the
+   wordmark lines up with the left edge of the card grid; the lesson, Settings and the legal
+   documents keep `main`'s 860px measure and simply sit centred beneath a wider bar, as an
+   article does on any website. `main` widens only while it holds a collection: My Classes
+   (its greeting row, .dash-hd) or My Lessons (.mlp2 — the shelf, the archive and the Year Plan).
+   Opening a lesson unmounts both, so the lesson is back at its measure without a rule of its own.
+   The card lists become a grid. CSS grid does not reorder the DOM, and the tour finds its card by
+   POSITION from measured rects, so both survive (plan §2b). Each subject band keeps its heading
+   and becomes its own grid. */
+@media (min-width: 1024px) {
+  html { --desk-w: 1200px; }
+  .topbar .hdr { max-width: var(--desk-w); }
+  main:has(.dash-hd), main:has(.mlp2) { max-width: var(--desk-w); }
+  .sc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .sc-band .sc-list { margin-top: 10px; }
+  /* The Year Plan is a LEDGER, not a collection: three columns of chapter · suggested · planned.
+     Stretched across 1100px the eye loses the row between the name and its numbers, so it keeps
+     a reading measure and sits flush left under the subject chooser. The Subject · Class choosers
+     take the same 800px: a 740px box holding one word read as a stretched phone, and capped they
+     sit over the grid as a website's filter row does. */
+  .mlp2-wheels { max-width: 800px; }
+  .yp { max-width: 800px; padding-left: 0; padding-right: 0; }
+}
+
+/* ── 2c. Density follows the POINTER, not the width ──
+   A fingertip needs ~44px targets with air around them; a mouse pointer is one pixel and needs
+   none of it. So the chrome tightens only where the pointer is FINE — a touchscreen laptop is
+   wide but still a finger, and keeps the roomy spacing. Type sizes are NOT touched (they are the
+   design's, CLAUDE.md §4, and the phone's web.js is measured from them): only padding, gaps and
+   the size of the round card buttons, whose glyphs stay the size they were. */
+@media (min-width: 1024px) and (pointer: fine) {
+  .hdr { padding-top: 12px; padding-bottom: 12px; }
+  main { padding-top: 28px; }
+  .dash-hd { padding: 4px 0 8px; }
+  .sc-list { gap: 10px; }
+  .sc-bands { margin-top: 2px; }
+  .sc-band + .sc-band { margin-top: 16px; }
+  .sc-card { padding: 8px 13px 8px 15px; gap: 11px; }
+  .sc-actions-col { gap: 4px; }
+  .sc-add, .sc-remove, .sc-hist { width: 26px; height: 26px; }
+  .mlp2-iconbtn { width: 26px; height: 26px; }
+}
+
+/* The standard hover (founder, 2026-10-03: "yes, subtle"). Mouse only — (hover: hover) keeps a
+   tap from leaving a stuck hover on a touchscreen. Most clickable surfaces already answer the
+   pointer (.sc-card, .ap-row, .co-card, .set-row, the Dropdown, Ask Meyy's questions); this fills
+   the gaps on the same terms — ink deepens, nothing floods, nothing moves. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .uv-tab:not(.on):hover, .assess-mt:not(.on):hover { color: var(--ink); }
+  .lv-pvbtn:not(.off):hover { color: var(--pine-d); text-decoration: underline; text-underline-offset: 3px; }
+  .aa-panel .aa-cat-head:hover .aa-cat-title { color: var(--pine-d); }
+}
+
+/* ── 2a. The nav moves up (founder, 2026-10-03: "a row under the brand bar") ──
+   The four items — My Classes · My Lessons · Add · Ask Meyy — leave the foot of the screen and
+   sit in a quiet row directly beneath the brand bar. NOTHING about them changes but position and
+   orientation: same labels, same glyphs, same order, same `activeNav` lighting, same lapsed
+   hiding (all JSX, untouched). The row keeps the bottom bar's own skin — sunk paper, soft ink at
+   rest, clay with a short clay rule when active — with its one --edge hairline moved from the
+   top edge to the bottom, where it now meets the page.
+   HOW: in shell mode body is a flex column (html.app-shell, above), so `order` lifts the bar
+   between .topbar and .bodycontent without moving it in the DOM. (Keyboard Tab order still
+   reaches the page before the nav, as on the phone; a desktop skip-to-nav is a later nicety.)
+   --bnav-h: page.jsx publishes the measured bar height inline on <html>; it means "how far
+   anything covering the body must stop short of the FOOT". With the bar at the top that answer
+   is 0, so it is forced here — `!important` in a stylesheet outranks the inline value — and every
+   consumer (Ask Meyy's scrim, the error toast) is right without a code change. --dnav-h is the
+   row's fixed height, for the one consumer that must now clear it from the TOP (the scrim, below).
+   GuidedTour reads matchMedia for the same 1024px to hang the four nav steps BELOW their items. */
+@media (min-width: 1024px) {
+  html.app-shell { --bnav-h: 0px !important; --dnav-h: 46px; }
+  html.app-shell .topbar { order: 1; }
+  html.app-shell .bnav { order: 2; border-top: none; border-bottom: 1px solid var(--edge); padding-bottom: 0; }
+  html.app-shell .bodycontent { order: 3; }
+  html.app-shell .bnav-in {
+    max-width: var(--desk-w); height: calc(var(--dnav-h) - 1px);
+    justify-content: flex-start; align-items: stretch; gap: 4px;
+    padding: 0 calc(var(--shell-pad) - 12px);
+  }
+  html.app-shell .bnav-item { position: relative; flex-direction: row; width: auto; gap: 8px; padding: 0 12px; }
+  html.app-shell .bnav-item svg { width: 18px; height: 18px; }
+  html.app-shell .bnav-item::after {
+    position: absolute; left: 12px; right: 12px; bottom: -1px; width: auto; margin: 0;
+  }
+  /* Ask Meyy's scrim (styled-jsx in AskAruvi.jsx, so its own rule carries a scoping class —
+     hence the extra weight here) hung off --hdr-h, the brand row's underside, which would now
+     bury the nav row. It starts below the whole top chrome instead: the bar, any Settings bar,
+     and the nav row. The founder's rule stands — the nav stays live behind Ask Meyy. */
+  html.app-shell body .aa-scrim[role="dialog"] { top: calc(var(--nav-h, 72px) + var(--dnav-h)); }
+}
+/* The frozen Settings bar ("⚙ Support ✕") lives INSIDE .topbar, so the nav row would land
+   between it and the screen it names. On the desktop it is lifted out of the bar's flow and
+   drawn just below the nav row instead — brand · nav · the name of the screen · the screen —
+   and the scroll region steps down by its height. Its contents cap to --desk-w like the brand's.
+   --nav-h, now measured without it, still puts Ask Meyy's scrim over it, exactly as before
+   (the scrim used to hang off --hdr-h, the brand row's underside, which covered this bar too). */
+@media (min-width: 1024px) {
+  html.app-shell { --dset-h: 52px; }
+  html.app-shell .topbar { position: relative; z-index: 7; }
+  html.app-shell .topbar .main-tabs.set-bar {
+    position: absolute; left: 0; right: 0; top: calc(100% + var(--dnav-h)); height: var(--dset-h);
+    box-sizing: border-box;
+    padding: 0 max(var(--shell-pad), calc((100% - var(--desk-w)) / 2 + var(--shell-pad)));
+  }
+  html.app-shell body:has(.set-bar) .bodycontent { margin-top: var(--dset-h); }
+}
+
+/* ── 2d. Ask Meyy docks as a side panel (founder, 2026-09-19; width decided 2026-10-03) ──
+   It is already a DESTINATION, not a modal (aria-modal false; the nav stays live). On a laptop
+   there is room for both, so from 1024px it docks to the right, below the nav row, full height:
+   · it PUSHES — .bodycontent steps in by the panel's width, so the lesson she opened it to ask
+     about stays in view beside it, never under it;
+   · NO scrim — a dimmed page says "everything behind is inert", which is no longer true;
+   · width clamp(380px, 30vw, 620px) — the responsive default; no widen toggle (founder: the
+     responsive width is enough).
+   Below 1024px it is exactly today's overlay. The panel's own rules are styled-jsx in
+   AskAruvi.jsx and carry a scoping class, hence the extra selector weight here. `:has()` reads
+   "is the panel open?" from the DOM, so no state had to be threaded through page.jsx. */
+@media (min-width: 1024px) {
+  html.app-shell { --aa-w: clamp(380px, 30vw, 620px); }
+  html.app-shell body .aa-scrim[role="dialog"] {
+    left: auto; right: 0; width: var(--aa-w); bottom: 0;
+    background: transparent; justify-content: stretch;
+  }
+  html.app-shell body .aa-scrim[role="dialog"] .aa-panel {
+    max-width: none; border-radius: 0; box-shadow: none;
+    border-left: 1px solid var(--edge);
+  }
+  html.app-shell body:has(.aa-scrim) .bodycontent { margin-right: var(--aa-w); }
+}
+
+/* ── The one dialog tweak (plan §3) ──
+   The dialogs are already proper web dialogs (.ap-modal: 460px, centred, dimmed backdrop). The
+   ones that carry a SCROLLING LIST — the section card's chapter picker, its history, Prepare's
+   prior-year list — were sized for a phone, where 460px is the whole screen. On a laptop they
+   take 600px (inside the plan's 560–640) and their list becomes a two-column grid, so several
+   more chapters show without scrolling. The confirm dialogs (.ap-confirm) and the four-row Add
+   window (.ap-grow) are not lists and keep their widths. Only lists of chapter CARDS (.ap-row)
+   take the grid: Section history (.ch-row) is an ordered record ruled row by row, and Prepare's
+   period breakdown (.prep-brk-row) is a ledger — both stay one column. */
+@media (min-width: 1024px) {
+  .ap-modal:has(.ap-list):not(.ap-confirm):not(.ap-grow) { max-width: 600px; }
+  .ap-modal:not(.ap-grow) .ap-list:has(> .ap-row) {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); align-content: start;
+  }
+}

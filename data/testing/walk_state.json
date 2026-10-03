@@ -1,7 +1,7 @@
 {
   "version": 1,
   "walk": "meyy-three-surface-walk",
-  "updated_at": "2026-10-02T15:21:41",
+  "updated_at": "2026-10-03T07:30:00",
   "items": {
     "04.19": {
       "ios": {
@@ -42,10 +42,10 @@
         "status": "pass"
       },
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T11:31:41",
-        "comment": "Four items, clay + underline on the active one; bar never scrolls away.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Four items, clay + underline on the active one; bar never scrolls away.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -695,11 +695,11 @@
     },
     "T.01": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:08:32",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Cycle 2 (02 rejoined, SS IX ch 4, 50 × 19): no nudge while the bar ran; nudge appeared as the lesson landed ✓. But the box gives no explicit invitation to click → WALK-A-013.\n✓ re-walked 2026-09-20 after WALK-A-013: solid 'Show me how →' button on the nudge."
+        "comment": "Cycle 2 (02 rejoined, SS IX ch 4, 50 × 19): no nudge while the bar ran; nudge appeared as the lesson landed ✓. But the box gives no explicit invitation to click → WALK-A-013.\n✓ re-walked 2026-09-20 after WALK-A-013: solid 'Show me how →' button on the nudge.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "by": "Kumar",
@@ -718,11 +718,11 @@
     },
     "T.02": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:08:32",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Offer NOT shown on My Classes (only My Lessons); still on My Lessons on return ✓. Founder: must be on both. Also ch 4 already attached to 9A before the tour → WALK-A-014.\n✓ re-walked 2026-09-20 after WALK-A-014: offer on BOTH My Lessons and My Classes; no set-up popup while on offer."
+        "comment": "Offer NOT shown on My Classes (only My Lessons); still on My Lessons on return ✓. Founder: must be on both. Also ch 4 already attached to 9A before the tour → WALK-A-014.\n✓ re-walked 2026-09-20 after WALK-A-014: offer on BOTH My Lessons and My Classes; no set-up popup while on offer.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "by": "Kumar",
@@ -741,10 +741,10 @@
     },
     "T.04": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T06:54:11",
-        "comment": "Tour opens on My Lessons (clay underline stays on My Lessons — she is standing there, as designed); ring on My Classes bar item, tip above: 'This is where your classes sit.' + body; 1 of 20 · Skip · Next.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Tour opens on My Lessons (clay underline stays on My Lessons — she is standing there, as designed); ring on My Classes bar item, tip above: 'This is where your classes sit.' + body; 1 of 20 · Skip · Next.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -764,10 +764,10 @@
     },
     "T.05": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:37:40",
-        "comment": "Next → ring on My Lessons bar item, tip above: 'This is where your generated lesson plans sit.'; still on My Lessons; 2 of 20 with Back.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Next → ring on My Lessons bar item, tip above: 'This is where your generated lesson plans sit.'; still on My Lessons; 2 of 20 with Back.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -787,10 +787,10 @@
     },
     "T.06": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:38:12",
-        "comment": "Ring + centred hand on the ch 4 lesson card, tip below: 'See the lesson plan you just now generated.'; lands immediately; 3 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Ring + centred hand on the ch 4 lesson card, tip below: 'See the lesson plan you just now generated.'; lands immediately; 3 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -810,10 +810,10 @@
     },
     "T.07": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:38:43",
-        "comment": "Ring on the card's report button, tip below with 'Generate PDF reports' copy; icon unmoved; 4 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Ring on the card's report button, tip below with 'Generate PDF reports' copy; icon unmoved; 4 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -833,10 +833,10 @@
     },
     "T.08": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:40:53",
-        "comment": "Ring on archive icon, tip 'You can archive a Lesson plan…'; card reads 'Ready to teach', not attached to any section (tour unbinds for steps 1–9, as designed); 5 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Ring on archive icon, tip 'You can archive a Lesson plan…'; card reads 'Ready to teach', not attached to any section (tour unbinds for steps 1–9, as designed); 5 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -856,11 +856,11 @@
     },
     "T.09": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Ring back on card, 6 of 20, Next advances ✓. Copy says 'click on the lesson card' but clicking the card does NOTHING — only Next works → WALK-A-015.\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+        "comment": "Ring back on card, 6 of 20, Next advances ✓. Copy says 'click on the lesson card' but clicking the card does NOTHING — only Next works → WALK-A-015.\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -879,11 +879,11 @@
     },
     "T.10": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Preview opens, ring + lifted tip. Tip body reads 'We will now attach this lesson to section your section from ‘My Classes’…' — no section named, broken wording → WALK-A-016.\n✓ re-walked 2026-09-20 after WALK-A-016: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+        "comment": "Preview opens, ring + lifted tip. Tip body reads 'We will now attach this lesson to section your section from ‘My Classes’…' — no section named, broken wording → WALK-A-016.\n✓ re-walked 2026-09-20 after WALK-A-016: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -902,11 +902,11 @@
     },
     "T.11": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Tour moves to My Classes; 9A empty; ring + hand on '+'; tip names 9A and ch 4 correctly; set-up window stays away ✓. But tip says 'Click the + sign' and clicking '+' does nothing — only Next advances → WALK-A-015 (same pattern as step 6).\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+        "comment": "Tour moves to My Classes; 9A empty; ring + hand on '+'; tip names 9A and ch 4 correctly; set-up window stays away ✓. But tip says 'Click the + sign' and clicking '+' does nothing — only Next advances → WALK-A-015 (same pattern as step 6).\n✓ re-walked 2026-09-20 after WALK-A-015: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -925,10 +925,10 @@
     },
     "T.12": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:49:56",
-        "comment": "Picker opens by itself; tip + hand inside the sheet on the ch 4 row: 'Select a lesson plan to track for Section 9A.'; Next reachable; 9 of 20. Clicking the row has no effect (same pattern as WALK-A-015; founder passes the step).",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Picker opens by itself; tip + hand inside the sheet on the ch 4 row: 'Select a lesson plan to track for Section 9A.'; Next reachable; 9 of 20. Clicking the row has no effect (same pattern as WALK-A-015; founder passes the step).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -948,11 +948,11 @@
     },
     "T.13": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Picker closes, 9A turns green, ring + hand, real names, 10 of 20 ✓. Copy: 'attached “…” for section 9A' should read 'to section 9A' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-015/017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+        "comment": "Picker closes, 9A turns green, ring + hand, real names, 10 of 20 ✓. Copy: 'attached “…” for section 9A' should read 'to section 9A' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-015/017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -971,10 +971,10 @@
     },
     "T.14": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:52:24",
-        "comment": "Opens attached lesson on unit 1, top; ring + tip by unit tabs naming the four tabs; 11 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Opens attached lesson on unit 1, top; ring + tip by unit tabs naming the four tabs; 11 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -994,10 +994,10 @@
     },
     "T.15": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:52:54",
-        "comment": "Lesson tab; ring on clay phase bookmark, tip above 'Bookmark where you left a particular section…'; bookmark unmoved; 12 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Lesson tab; ring on clay phase bookmark, tip above 'Bookmark where you left a particular section…'; bookmark unmoved; 12 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1017,10 +1017,10 @@
     },
     "T.16": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:53:44",
-        "comment": "Mark complete scrolled mid-screen, ring + hand, tip above 'Track progress.' with real chapter + 9A; 13 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Mark complete scrolled mid-screen, ring + hand, tip above 'Track progress.' with real chapter + 9A; 13 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1040,10 +1040,10 @@
     },
     "T.17": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:54:18",
-        "comment": "Back on My Classes; 9A drawn complete (clay); ring + hand on '+'; tip below 'You have completed the chapter…' ending in [+]; 14 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Back on My Classes; 9A drawn complete (clay); ring + hand on '+'; tip below 'You have completed the chapter…' ending in [+]; 14 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1063,11 +1063,11 @@
     },
     "T.18": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Picker opens with tour inside, 'Select a plan.', 15 of 20, Next closes it ✓. Copy says 'the same window shown in step 8' — it was step 9 → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+        "comment": "Picker opens with tour inside, 'Select a plan.', 15 of 20, Next closes it ✓. Copy says 'the same window shown in step 8' — it was step 9 → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1086,11 +1086,11 @@
     },
     "T.19": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Ring on Add, tip above, 16 of 20 ✓. Copy wrong: says it adds subjects (it cannot — the Add window has no Subject row; a subject is a purchase) and omits that it also amends periods a week and annual budget → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+        "comment": "Ring on Add, tip above, 16 of 20 ✓. Copy wrong: says it adds subjects (it cannot — the Add window has no Subject row; a subject is a purchase) and omits that it also amends periods a week and annual budget → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1109,11 +1109,11 @@
     },
     "T.20": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Tour opens the teaching profile; tip 'Your teaching profile.' Copy: founder — remove the last clause '…removing a subject is the one thing done here.' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed)."
+        "comment": "Tour opens the teaching profile; tip 'Your teaching profile.' Copy: founder — remove the last clause '…removing a subject is the one thing done here.' → WALK-A-017.\n✓ re-walked 2026-09-20 after WALK-A-017: tapping the target advances; copy corrected (section 9A named, 'to section', 'a moment ago', Add = classes/sections/periods/budget, profile line trimmed).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1132,11 +1132,11 @@
     },
     "T.21": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Ring on Ask Meyy, tip above 'Use Ask Meyy to answer your queries…'; 18 of 20. Note: says 'up to 100 questions across 5 categories' — bank holds 119 pairs in 5 categories (WALK-A-017 item 5).\n✓ re-walked: 'over 100 questions'."
+        "comment": "Ring on Ask Meyy, tip above 'Use Ask Meyy to answer your queries…'; 18 of 20. Note: says 'up to 100 questions across 5 categories' — bank holds 119 pairs in 5 categories (WALK-A-017 item 5).\n✓ re-walked: 'over 100 questions'.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1155,10 +1155,10 @@
     },
     "T.22": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T07:59:03",
-        "comment": "Tour opens Ask Meyy panel; tip 'Use either the categories or the intelligent search…'; 19 of 20.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Tour opens Ask Meyy panel; tip 'Use either the categories or the intelligent search…'; 19 of 20.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1178,11 +1178,11 @@
     },
     "T.23": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T08:03:19",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Step 20: Ask closes, centred 'Welcome to Meyy' card, dimmed scrim, 20 of 20. Done → My Classes, 9A green with ch 4 (first run's binding), no phantom progress."
+        "comment": "Step 20: Ask closes, centred 'Welcome to Meyy' card, dimmed scrim, 20 of 20. Done → My Classes, 9A green with ch 4 (first run's binding), no phantom progress.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1201,11 +1201,11 @@
     },
     "T.24": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T10:13:21",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Back 20→7 mirrors every move: Ask re-opens/closes, profile → My Classes (17→16 lands on the Add ring = step 16's target), 9→8 shows 9A unattached, forward 9→10 re-attaches; counter counts down. Forward again to 20 then Done.\n✓ re-walked: browser Back during the tour does nothing."
+        "comment": "Back 20→7 mirrors every move: Ask re-opens/closes, profile → My Classes (17→16 lands on the Add ring = step 16's target), 9→8 shows 9A unattached, forward 9→10 re-attaches; counter counts down. Forward again to 20 then Done.\n✓ re-walked: browser Back during the tour does nothing.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1224,11 +1224,11 @@
     },
     "T.26": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T08:03:19",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "After Done, ~1s later 'Would you like to check your set-up?' with values on the rows (Class 9 · Section 9A · 8 a week · 245 periods) — once. Skip half ✓ (cycle 3): set-up check window rose after Skip."
+        "comment": "After Done, ~1s later 'Would you like to check your set-up?' with values on the rows (Class 9 · Section 9A · 8 a week · 245 periods) — once. Skip half ✓ (cycle 3): set-up check window rose after Skip.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1247,11 +1247,11 @@
     },
     "T.25": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T08:21:15",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "Cycle 3: before = 9A green with ch 4. Skip at step 9 (picker open) → ends on My Classes, picker closed, no overlay remnants, 9A green with ch 4 restored. (Step-5 skip variant not walked — one skip per account.)"
+        "comment": "Cycle 3: before = 9A green with ch 4. Skip at step 9 (picker open) → ends on My Classes, picker closed, no overlay remnants, 9A green with ch 4 restored. (Step-5 skip variant not walked — one skip per account.)\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "status": "pass",
@@ -1270,11 +1270,11 @@
     },
     "T.03": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T08:23:26",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "After Skip: no offer on either tab; log out + sign in → shell, no offer, 9A still green with ch 4, no demo replay."
+        "comment": "After Skip: no offer on either tab; log out + sign in → shell, no offer, 9A still green with ch 4, no demo replay.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "by": "Kumar",
@@ -1431,11 +1431,11 @@
     },
     "T.28": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-20T09:39:10",
+        "at": "2026-10-03T07:30:00",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "04 (SS·6): step 11 → other tab 30s → back: same step, ring in place. Step 12 → closed the Meyy tab, reopened: no overlay/half-state, 6A shows the lesson attached (binding restored), no tour offer; the first-run set-up check rose instead (expected: tour no longer on offer)."
+        "comment": "04 (SS·6): step 11 → other tab 30s → back: same step, ring in place. Step 12 → closed the Meyy tab, reopened: no overlay/half-state, 6A shows the lesson attached (binding restored), no tour offer; the first-run set-up check rose instead (expected: tour no longer on offer).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       },
       "ios": {
         "by": "Kumar",
@@ -1457,7 +1457,7 @@
         "by": "Kumar",
         "at": "2026-09-20T09:39:10",
         "build": "web dev (localhost:3000 → Render)",
-        "comment": "NOT walkable by normal use: the tour is offered only with ≤1 bound section, so 'lesson attached to a second section during the tour' can't be arranged. Decide at fix time whether the row stays (needs a seeded state) or is retired."
+        "comment": "NOT walkable by normal use: the tour is offered only with ≤1 bound section, so 'lesson attached to a second section during the tour' can't be arranged. Decide at fix time whether the row stays (needs a seeded state) or is retired.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed."
       }
     },
     "03.19": {
@@ -1524,10 +1524,10 @@
     },
     "05.01": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T13:14:34",
-        "comment": "Greeting, sub-line, one card per subject-class-section in profile order, graph rule — all as specified. Divergence resolved: the whole greeting row (title + sub-line) shows once a chapter is bound, and there is NO temporary foot (no entitlement line, no Auto/Light/Dark) on web.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Greeting, sub-line, one card per subject-class-section in profile order, graph rule — all as specified. Divergence resolved: the whole greeting row (title + sub-line) shows once a chapter is bound, and there is NO temporary foot (no entitlement line, no Auto/Light/Dark) on web.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1547,10 +1547,10 @@
     },
     "05.02": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:50:00",
-        "comment": "(a) PASS. Repeated hard reloads as a teacher with bound classes: no welcome copy at any point, not one frame; held under Slow 4G too — the page takes 5–6s and still shows nothing before the server answers. The bindingsKnown gate holds.\n(b) PASS, by a different route than the row describes. 'Remove every subject' is impossible — a subject cannot be removed anywhere (WALK-A-060). The empty state was reached instead on 9000000004 by removing every CLASS of its only subject, and My Classes then showed exactly 'No classes set up yet' / 'Set up your teaching profile from the settings gear above to start planning.'\n⚠ That second line is now STALE INSTRUCTION: the settings gear opens a read-only profile view, and a class is added under Add on the bottom nav. Folded into WALK-A-060 as a copy fix.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "(a) PASS. Repeated hard reloads as a teacher with bound classes: no welcome copy at any point, not one frame; held under Slow 4G too — the page takes 5–6s and still shows nothing before the server answers. The bindingsKnown gate holds.\n(b) PASS, by a different route than the row describes. 'Remove every subject' is impossible — a subject cannot be removed anywhere (WALK-A-060). The empty state was reached instead on 9000000004 by removing every CLASS of its only subject, and My Classes then showed exactly 'No classes set up yet' / 'Set up your teaching profile from the settings gear above to start planning.'\n⚠ That second line is now STALE INSTRUCTION: the settings gear opens a read-only profile view, and a class is added under Add on the bottom nav. Folded into WALK-A-060 as a copy fix.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1570,10 +1570,10 @@
     },
     "05.03": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T13:45:59",
-        "comment": "Multi-subject: mono uppercase subject heading over each run, banded cards read 'Ch 4' with no subject in the kicker, unattached banded cards carry no kicker line. Single-subject: no headings at all. Renamed section: class number alone with her name in fine print beneath ('3' over 'Rose', never '3A'), profile chip keeps tag-first; the binding survived the rename. Rename done through Add — the Settings profile is a read-only view.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Multi-subject: mono uppercase subject heading over each run, banded cards read 'Ch 4' with no subject in the kicker, unattached banded cards carry no kicker line. Single-subject: no headings at all. Renamed section: class number alone with her name in fine print beneath ('3' over 'Rose', never '3A'), profile chip keeps tag-first; the binding survived the rename. Rename done through Add — the Settings profile is a read-only view.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1593,10 +1593,10 @@
     },
     "05.04": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T13:59:45",
-        "comment": "Kicker, title and sub-line all as specified. Cold cache forced by clearing the aruvi_plans_* localStorage keys and throttling to Slow 3G: 'Loading lessons…' shows while the fetch is out and the list never flashes the 'No other lessons prepared…' copy before the rows arrive. Rows read 'Ch. NN: Title ›' with a duration line; list caps at ~2 visible rows and scrolls inside the window. ✕, click outside and Escape all dismiss. NOT EXERCISED: the collapsed prior-year section — this account has no previous academic year, so it is correctly absent rather than confirmed present. Same gap applies to the '{year} version' edition chip on a row. Both belong to 05.11/05.19 and need an account with a rolled year.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Kicker, title and sub-line all as specified. Cold cache forced by clearing the aruvi_plans_* localStorage keys and throttling to Slow 3G: 'Loading lessons…' shows while the fetch is out and the list never flashes the 'No other lessons prepared…' copy before the rows arrive. Rows read 'Ch. NN: Title ›' with a duration line; list caps at ~2 visible rows and scrolls inside the window. ✕, click outside and Escape all dismiss. NOT EXERCISED: the collapsed prior-year section — this account has no previous academic year, so it is correctly absent rather than confirmed present. Same gap applies to the '{year} version' edition chip on a row. Both belong to 05.11/05.19 and need an account with a rolled year.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1616,10 +1616,10 @@
     },
     "05.05": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:04:37",
-        "comment": "Sheet closes on the tap and the card turns green at once: tag, kicker '{Subject} · Ch N', chapter title, unit rail with unit 1 ochre and the rest faint, − button present. Sibling pass-through respected. On Slow 3G the freshly-bound card reads 'Loading your lesson…', never 'Pick a chapter to begin'. Held steady for ~30s — no sand→green→sand flicker as the reconcile landed.\nNOTED (no cost, founder): after a section COMPLETES a chapter, that completed chapter is still offered in the same section's picker. → WALK-A-061.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Sheet closes on the tap and the card turns green at once: tag, kicker '{Subject} · Ch N', chapter title, unit rail with unit 1 ochre and the rest faint, − button present. Sibling pass-through respected. On Slow 3G the freshly-bound card reads 'Loading your lesson…', never 'Pick a chapter to begin'. Held steady for ~30s — no sand→green→sand flicker as the reconcile landed.\nNOTED (no cost, founder): after a section COMPLETES a chapter, that completed chapter is still offered in the same section's picker. → WALK-A-061.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1685,10 +1685,10 @@
     },
     "05.08": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:17:18",
-        "comment": "Taught a chapter to its last unit and marked it complete. Card reads 'Complete' above a + (− is gone), rail fully pine. Tapping + does all three in one action: records the chapter completed in history, frees the slot, opens the attach picker immediately. Closing the picker leaves the sand 'Pick a chapter to begin' card carrying a history glyph.\nNOTE: the founder saw only 'Complete' above the + — no visible 'Finish with this chapter and track the next' text. Correct: that string is the button's aria-label (MyPlans.jsx:1276), not visible copy, and no title attribute is set on any of the three round buttons, so there is no hover tooltip by design. The phone passes the same string as its accessibilityLabel (mobile/app/(app)/index.jsx:1005), so the surfaces agree — read the same way on the phone pass rather than as a fail.\nWALK-A-061 reproduced here as expected: the just-completed chapter is still offered in the picker that the + opens.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Taught a chapter to its last unit and marked it complete. Card reads 'Complete' above a + (− is gone), rail fully pine. Tapping + does all three in one action: records the chapter completed in history, frees the slot, opens the attach picker immediately. Closing the picker leaves the sand 'Pick a chapter to begin' card carrying a history glyph.\nNOTE: the founder saw only 'Complete' above the + — no visible 'Finish with this chapter and track the next' text. Correct: that string is the button's aria-label (MyPlans.jsx:1276), not visible copy, and no title attribute is set on any of the three round buttons, so there is no hover tooltip by design. The phone passes the same string as its accessibilityLabel (mobile/app/(app)/index.jsx:1005), so the surfaces agree — read the same way on the phone pass rather than as a fail.\nWALK-A-061 reproduced here as expected: the just-completed chapter is still offered in the picker that the + opens.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1708,10 +1708,10 @@
     },
     "05.09": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:20:43",
-        "comment": "Popup reads 'Section history' / 'Where each chapter stands for this section.' Rows 'Ch. NN: title' with Ongoing / Completed / Untracked pills and a mini rail; the 05.08 chapter shows Completed, the 05.07 one Untracked with its rail at the single unit taught. Attaching a chapter and teaching one unit puts it on top as Ongoing. All three negatives hold: a chapter untracked with zero units leaves no row, a section with no history shows no glyph in any card state, and the 'No chapters taught yet.' copy is unreachable through the UI because the glyph is correctly hidden when empty. The glyph never fires the card's own open-lesson target.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Popup reads 'Section history' / 'Where each chapter stands for this section.' Rows 'Ch. NN: title' with Ongoing / Completed / Untracked pills and a mini rail; the 05.08 chapter shows Completed, the 05.07 one Untracked with its rail at the single unit taught. Attaching a chapter and teaching one unit puts it on top as Ongoing. All three negatives hold: a chapter untracked with zero units leaves no row, a section with no history shows no glyph in any card state, and the 'No chapters taught yet.' copy is unreachable through the UI because the glyph is correctly hidden when empty. The glyph never fires the card's own open-lesson target.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1731,10 +1731,10 @@
     },
     "05.10": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:26:04",
-        "comment": "Picker foot reads 'Need a chapter you don't have yet?' with 'Prepare a new lesson →'. Prepare opens already scoped to that subject and class — no subject or class question. The wait is in place on the Prepare screen with no dashed preparing card anywhere (the documented web divergence). Lands on My Classes, not My Lessons, with the originating section already green on the new chapter; the binding survives a reload. Browser Back from there leaves the app to a blank tab — correct, rule 4 of the WALK-A-008 Back contract (My Classes with nothing open).\nNOTED: a one-frame sand-grey flash on the card before it turns green. → WALK-A-062.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Picker foot reads 'Need a chapter you don't have yet?' with 'Prepare a new lesson →'. Prepare opens already scoped to that subject and class — no subject or class question. The wait is in place on the Prepare screen with no dashed preparing card anywhere (the documented web divergence). Lands on My Classes, not My Lessons, with the originating section already green on the new chapter; the binding survives a reload. Browser Back from there leaves the app to a blank tab — correct, rule 4 of the WALK-A-008 Back contract (My Classes with nothing open).\nNOTED: a one-frame sand-grey flash on the card before it turns green. → WALK-A-062.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1757,7 +1757,7 @@
         "status": "pending",
         "by": "Kumar",
         "at": "2026-09-21T14:26:31",
-        "comment": "PARKED — needs an account with a prior academic year; 9000000003 has none. Deferred by decision 2026-09-21 to the end of the web pass: rolling a year now would change the state under rows not yet walked. Plan: at the fix point, roll a year on a throwaway account (aruvi-scripts/carry_over_year.py; 9000000004 is expendable) and walk 05.11, 05.12, 05.19 together, plus the two clauses left unexercised in 05.04 (the collapsed prior-year folder in the picker, and the '{year} version' edition chip).",
+        "comment": "PARKED — needs an account with a prior academic year; 9000000003 has none. Deferred by decision 2026-09-21 to the end of the web pass: rolling a year now would change the state under rows not yet walked. Plan: at the fix point, roll a year on a throwaway account (aruvi-scripts/carry_over_year.py; 9000000004 is expendable) and walk 05.11, 05.12, 05.19 together, plus the two clauses left unexercised in 05.04 (the collapsed prior-year folder in the picker, and the '{year} version' edition chip).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
@@ -1775,16 +1775,16 @@
         "status": "pending",
         "by": "Kumar",
         "at": "2026-09-21T14:26:31",
-        "comment": "PARKED — needs an account with a prior academic year; 9000000003 has none. Deferred by decision 2026-09-21 to the end of the web pass: rolling a year now would change the state under rows not yet walked. Plan: at the fix point, roll a year on a throwaway account (aruvi-scripts/carry_over_year.py; 9000000004 is expendable) and walk 05.11, 05.12, 05.19 together, plus the two clauses left unexercised in 05.04 (the collapsed prior-year folder in the picker, and the '{year} version' edition chip).",
+        "comment": "PARKED — needs an account with a prior academic year; 9000000003 has none. Deferred by decision 2026-09-21 to the end of the web pass: rolling a year now would change the state under rows not yet walked. Plan: at the fix point, roll a year on a throwaway account (aruvi-scripts/carry_over_year.py; 9000000004 is expendable) and walk 05.11, 05.12, 05.19 together, plus the two clauses left unexercised in 05.04 (the collapsed prior-year folder in the picker, and the '{year} version' edition chip).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       }
     },
     "05.13": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:28:53",
-        "comment": "Subjects A–Z with The World Around Us by its full label, classes as 'Class {n}', wheels at 2:1, a single option renders as a static box. A non-default pair survives leaving the tab and a full close-and-reopen of the browser, and the screen never comes up on a blank class. Keyboard stepping works on web (the documented divergence): arrows move row to row, rest exactly on a row, and commit as a drag does.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Subjects A–Z with The World Around Us by its full label, classes as 'Class {n}', wheels at 2:1, a single option renders as a static box. A non-default pair survives leaving the tab and a full close-and-reopen of the browser, and the screen never comes up on a blank class. Keyboard stepping works on web (the documented divergence): arrows move row to row, rest exactly on a row, and commit as a drag does.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1804,10 +1804,10 @@
     },
     "05.14": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:43:19",
-        "comment": "Walked on 9000000004 (Science·middle, its only class deleted). My Lessons offers 6/7/8 on the Class wheel, rests on Class 6 and shows 'There are no lesson plans prepared for Science · Class 6 yet.'; My Classes says 'No classes set up yet'; the teaching profile says 'You teach no class of Science at the moment. Its lessons are kept, and it stays here for as long as you subscribe to it — add a class under Class in the \"+\" window to teach it again.'\nFOUNDER RULING 2026-09-21, and this is the record of it: this is correct behaviour. The My Lessons drop-down is a way of ORGANISING her lesson plans, not proof that she has classes. A teacher may use Meyy for lesson plans alone and never track a section, so holding LPs with no class set up is a normal state. The 'why' belongs in the teaching profile, where the subject lives, and the profile says it correctly. My Classes' 'No classes set up yet' and the full class wheel are answers to different questions, not a contradiction. The em-dash / '{Subject} has no classes in your profile…' branch in My Lessons therefore only covers the in-flight case (held classes not yet fetched) — it is not the state this row was reaching for. WALK-A-063 closed, no defect.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Walked on 9000000004 (Science·middle, its only class deleted). My Lessons offers 6/7/8 on the Class wheel, rests on Class 6 and shows 'There are no lesson plans prepared for Science · Class 6 yet.'; My Classes says 'No classes set up yet'; the teaching profile says 'You teach no class of Science at the moment. Its lessons are kept, and it stays here for as long as you subscribe to it — add a class under Class in the \"+\" window to teach it again.'\nFOUNDER RULING 2026-09-21, and this is the record of it: this is correct behaviour. The My Lessons drop-down is a way of ORGANISING her lesson plans, not proof that she has classes. A teacher may use Meyy for lesson plans alone and never track a section, so holding LPs with no class set up is a normal state. The 'why' belongs in the teaching profile, where the subject lives, and the profile says it correctly. My Classes' 'No classes set up yet' and the full class wheel are answers to different questions, not a contradiction. The em-dash / '{Subject} has no classes in your profile…' branch in My Lessons therefore only covers the in-flight case (held classes not yet fetched) — it is not the state this row was reaching for. WALK-A-063 closed, no defect.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "and_emu": {
@@ -1827,10 +1827,10 @@
     },
     "05.15": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-21T14:50:00",
-        "comment": "Cards sit on plain paper with no status tint (the deliberate split from My Classes' tinted cards): chapter-number tag, title clamped to 2 lines, duration line, and status reading 'Ready to teach' or the 'Completed … · Teaching now …' form, agreeing with what My Classes says for the same sections. Spine colours follow the plan's standing. No '{year} version' chip, correctly, as the account has no prior edition. Tapping a card opens the lesson READ-ONLY — no mark-complete, no bookmark, no pointer movement, and nothing in My Classes moved afterwards. Empty shelf reads 'There are no lesson plans prepared for {Subject} · Class {n} yet.'\nNOT EXERCISED: the no-profile copy 'No subjects set up yet. Finish setup in My Classes to see your lessons here.' It needs a profile with NO SUBJECT at all. A subject cannot be removed (WALK-A-060), so on any account past first run the state is unreachable — it belongs to the pre-first-run window. Park with the year-dependent rows.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Cards sit on plain paper with no status tint (the deliberate split from My Classes' tinted cards): chapter-number tag, title clamped to 2 lines, duration line, and status reading 'Ready to teach' or the 'Completed … · Teaching now …' form, agreeing with what My Classes says for the same sections. Spine colours follow the plan's standing. No '{year} version' chip, correctly, as the account has no prior edition. Tapping a card opens the lesson READ-ONLY — no mark-complete, no bookmark, no pointer movement, and nothing in My Classes moved afterwards. Empty shelf reads 'There are no lesson plans prepared for {Subject} · Class {n} yet.'\nNOT EXERCISED: the no-profile copy 'No subjects set up yet. Finish setup in My Classes to see your lessons here.' It needs a profile with NO SUBJECT at all. A subject cannot be removed (WALK-A-060), so on any account past first run the state is unreachable — it belongs to the pre-first-run window. Park with the year-dependent rows.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1850,10 +1850,10 @@
     },
     "05.16": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-24T01:52:31",
-        "comment": "Attached lesson carries no archive icon. Archiving toasts 'Moved to Archive — find it in the box above.', the header count rises, the card leaves the shelf; inside, the left word reads 'Archive', cards say 'Archived' with a RESTORE button (screenshots taken, English · Class 3, count 7); Restore toasts 'Restored to your lessons.' and the count falls. Both empty states as specified.\nOFFLINE CLAUSE — the ROW IS WRONG, not the app. Offline, archive and restore both appear to succeed and nothing is said. That is deliberate: the pair goes through verifiedWrite (packages/shared/src/verify.js), which swallows the write error and treats the READ as the arbiter — offline the read fails too, so the status is 'unverified' and by design nothing is reverted and nothing is claimed ('we do not know that it failed'). The row's expected 'That didn't archive - it's still in your lessons.' fires only on a VERIFIED mismatch. MyLessonPlans.jsx:737 says so in as many words: 'this pair already reverted-and-toasted on a throw, which was the best behaviour in the app — but a throw is not the criterion.' The row text predates that change and needs amending on all three surfaces (the Android watch item carries the same stale expectation).\nThe real residual is filed as WALK-A-064: the act is silently LOST later.\nOPEN OBSERVATION: the open archive box shows a BLUE ring in the screenshots. The designed open state is pine border + pine ink + --tint-pine fill (globals.css:2113) and there is no blue in the palette, so this looks like Chrome's default focus ring — .mlp2-archfolder has no :focus-visible rule while globals.css styles focus in pine in at least eight other places. To be confirmed before it is raised.\n✓ re-walked 2026-09-24 after WALK-A-064 and WALK-A-078 (web): offline archive and restore now say one honest sentence each, in the plain paper box, clear of the bottom bar. Online toasts unchanged in wording and equally clear.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Attached lesson carries no archive icon. Archiving toasts 'Moved to Archive — find it in the box above.', the header count rises, the card leaves the shelf; inside, the left word reads 'Archive', cards say 'Archived' with a RESTORE button (screenshots taken, English · Class 3, count 7); Restore toasts 'Restored to your lessons.' and the count falls. Both empty states as specified.\nOFFLINE CLAUSE — the ROW IS WRONG, not the app. Offline, archive and restore both appear to succeed and nothing is said. That is deliberate: the pair goes through verifiedWrite (packages/shared/src/verify.js), which swallows the write error and treats the READ as the arbiter — offline the read fails too, so the status is 'unverified' and by design nothing is reverted and nothing is claimed ('we do not know that it failed'). The row's expected 'That didn't archive - it's still in your lessons.' fires only on a VERIFIED mismatch. MyLessonPlans.jsx:737 says so in as many words: 'this pair already reverted-and-toasted on a throw, which was the best behaviour in the app — but a throw is not the criterion.' The row text predates that change and needs amending on all three surfaces (the Android watch item carries the same stale expectation).\nThe real residual is filed as WALK-A-064: the act is silently LOST later.\nOPEN OBSERVATION: the open archive box shows a BLUE ring in the screenshots. The designed open state is pine border + pine ink + --tint-pine fill (globals.css:2113) and there is no blue in the palette, so this looks like Chrome's default focus ring — .mlp2-archfolder has no :focus-visible rule while globals.css styles focus in pine in at least eight other places. To be confirmed before it is raised.\n✓ re-walked 2026-09-24 after WALK-A-064 and WALK-A-078 (web): offline archive and restore now say one honest sentence each, in the plain paper box, clear of the bottom bar. Online toasts unchanged in wording and equally clear.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1919,10 +1919,10 @@
     },
     "05.20": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-22T09:42:45",
-        "comment": "The two words sit side by side with a '/' between them, live word inked with a clay underline, resting word in soft ink (not pine). Switching inks the other and moves the underline. The archive box shows on the lessons pane only and returns when she comes back to it. The pane is not remembered: leaving to My Classes and returning, and a full page reload, both reopen on 'Your lessons'. Under scroll on the Year plan pane the subject/class header stays frozen with the column header sticky beneath it — the web behaviour the phone will be compared against, where that header scrolls with the table.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "The two words sit side by side with a '/' between them, live word inked with a clay underline, resting word in soft ink (not pine). Switching inks the other and moves the underline. The archive box shows on the lessons pane only and returns when she comes back to it. The pane is not remembered: leaving to My Classes and returning, and a full page reload, both reopen on 'Your lessons'. Under scroll on the Year plan pane the subject/class header stays frozen with the column header sticky beneath it — the web behaviour the phone will be compared against, where that header scrolls with the table.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1942,10 +1942,10 @@
     },
     "05.21": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-22T09:45:01",
-        "comment": "Active subscription half PASSES: 'Need a chapter you don't have yet?' with the clay-to-ochre 'Prepare a new lesson →' CTA, the SVG gradient rendering as a gradient (the web reference for the Android emulator check); tapping it opens Prepare scoped to whatever pair the wheels are sitting on, re-checked after rolling the wheels to a different subject·class, so it follows the wheels rather than remembering the last scope.\nLAPSED HALF PARKED: needs an account whose subscription has lapsed (bar not rendered at all, Year Plan budget pencil inert). The session brief §5 already lists the paywall/lapsed states as skipped pending enforcement plus a CLI revoke, and revoking on 9000000003 would pull the shared account out from under the remaining rows. Walk it with 05.26's paywall clause, which carries the same dependency — one entitlement sitting, on a throwaway account.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Active subscription half PASSES: 'Need a chapter you don't have yet?' with the clay-to-ochre 'Prepare a new lesson →' CTA, the SVG gradient rendering as a gradient (the web reference for the Android emulator check); tapping it opens Prepare scoped to whatever pair the wheels are sitting on, re-checked after rolling the wheels to a different subject·class, so it follows the wheels rather than remembering the last scope.\nLAPSED HALF PARKED: needs an account whose subscription has lapsed (bar not rendered at all, Year Plan budget pencil inert). The session brief §5 already lists the paywall/lapsed states as skipped pending enforcement plus a CLI revoke, and revoking on 9000000003 would pull the shared account out from under the remaining rows. Walk it with 05.26's paywall clause, which carries the same dependency — one entitlement sitting, on a throwaway account.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -1988,10 +1988,10 @@
     },
     "05.23": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-24T02:00:35",
-        "comment": "Suggestion shows Meyy's number with 'use', which snaps the value back, and swaps to ✓ 'matches the suggestion' when the two are equal, both ways; the 'i' explanation opens as a web popover. Budget box: Total periods in pine agreeing with Year Plan for the same subject·class, Used, Available — which turns clay and reads '−n' when over, and returns when brought back into range. 'Used ⓘ' opens 'Committed so far' with 'Ch NN · title · n' rows and 'Total committed - {n} periods' agreeing with both the rows and what is actually prepared for that pair; disabled on a subject·class with nothing committed.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Suggestion shows Meyy's number with 'use', which snaps the value back, and swaps to ✓ 'matches the suggestion' when the two are equal, both ways; the 'i' explanation opens as a web popover. Budget box: Total periods in pine agreeing with Year Plan for the same subject·class, Used, Available — which turns clay and reads '−n' when over, and returns when brought back into range. 'Used ⓘ' opens 'Committed so far' with 'Ch NN · title · n' rows and 'Total committed - {n} periods' agreeing with both the rows and what is actually prepared for that pair; disabled on a subject·class with nothing committed.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -2103,10 +2103,10 @@
     },
     "05.28": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-24T07:41:28",
-        "comment": "Columns 'Chapter' / 'Suggested periods' / 'Your plan' correct; suggestion column all numeric; Your plan shows a number, 'not yet', and — where the book is awaited; the note defaults open and carries its closing Ask Meyy sentence; the 2px rule and the closing hairline are both there.\nTHREE FINDINGS:\n(1) The row title repeats the chapter number — the tag already reads NN and the title then reads 'Chapter N: Title'. Founder: remove it. → WALK-A-072.\n(2) 'Used' in Prepare's budget box does not tally with Year Plan's plan column, and CHANGES as she rolls the chapter wheel. → WALK-A-073.\n(3) Suggestions disagree between the two screens by one period: social_sciences class 9 on profile 9000000003 — ch 5 is 22 in Prepare and 21 in Year Plan; ch 3 is 13 in Prepare and 12 in Year Plan. → WALK-A-074, cause found.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.\nRow stays amber: WALK-A-072 (the row title repeating 'Chapter N:' beside the NN tag) is still open.\n✓ re-walked 2026-09-24 after WALK-A-072\n✓ re-walked 2026-09-24 after WALK-A-074",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Columns 'Chapter' / 'Suggested periods' / 'Your plan' correct; suggestion column all numeric; Your plan shows a number, 'not yet', and — where the book is awaited; the note defaults open and carries its closing Ask Meyy sentence; the 2px rule and the closing hairline are both there.\nTHREE FINDINGS:\n(1) The row title repeats the chapter number — the tag already reads NN and the title then reads 'Chapter N: Title'. Founder: remove it. → WALK-A-072.\n(2) 'Used' in Prepare's budget box does not tally with Year Plan's plan column, and CHANGES as she rolls the chapter wheel. → WALK-A-073.\n(3) Suggestions disagree between the two screens by one period: social_sciences class 9 on profile 9000000003 — ch 5 is 22 in Prepare and 21 in Year Plan; ch 3 is 13 in Prepare and 12 in Year Plan. → WALK-A-074, cause found.\n✓ re-walked 2026-09-24 after WALK-A-074: Prepare and Year Plan now read from one distribution (packages/shared suggestedPeriodsByChapter). Suggestions agree chapter for chapter.\nRow stays amber: WALK-A-072 (the row title repeating 'Chapter N:' beside the NN tag) is still open.\n✓ re-walked 2026-09-24 after WALK-A-072\n✓ re-walked 2026-09-24 after WALK-A-074\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -2126,10 +2126,10 @@
     },
     "05.29": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-23T15:17:56",
-        "comment": "The pencil on the totals row opens the budget editor for exactly this subject and class — neither pick screen is shown (the 'exact' portal scope). Saving returns to the Year plan pane and the suggested column and the note both follow the new budget; cancelling also returns to the Year plan pane with the figure unchanged. The pencil sits in the label cell without dragging the totals row's numbers out of alignment with the chapter rows. Budget moved 145 → 140 and back to 145 (English, Class III); original value restored.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "The pencil on the totals row opens the budget editor for exactly this subject and class — neither pick screen is shown (the 'exact' portal scope). Saving returns to the Year plan pane and the suggested column and the note both follow the new budget; cancelling also returns to the Year plan pane with the figure unchanged. The pencil sits in the label cell without dragging the totals row's numbers out of alignment with the chapter rows. Budget moved 145 → 140 and back to 145 (English, Class III); original value restored.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -2218,10 +2218,10 @@
     },
     "06.01": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-25T08:30:14",
-        "comment": "Section card with no unit taught → brief loading, then Chapter Organization (not a unit): kicker, ← back top right, chapter title, '{n} Learning Units  N × M min' meta — as specified. The kicker now also carries 'Section {x}' (the section label added by WALK-A-076); spec text predates it.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Section card with no unit taught → brief loading, then Chapter Organization (not a unit): kicker, ← back top right, chapter title, '{n} Learning Units  N × M min' meta — as specified. The kicker now also carries 'Section {x}' (the section label added by WALK-A-076); spec text predates it.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -2540,10 +2540,10 @@
     },
     "06.15": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-25T08:52:17",
-        "comment": "Header kicker + '← Orgn.', '{n}. {title}'; tabs Overview · Material · Lesson (· Assess when items); opens on Lesson; active tab clay with 2px underline; header + tabs frozen, panel scrolls; ← Orgn. returns.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Header kicker + '← Orgn.', '{n}. {title}'; tabs Overview · Material · Lesson (· Assess when items); opens on Lesson; active tab clay with 2px underline; header + tabs frozen, panel scrolls; ← Orgn. returns.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -2770,10 +2770,10 @@
     },
     "06.25": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-25T11:24:24",
-        "comment": "Overview: Competency · bold 'Learning outcome' + text · Section · Question type in full words · Cognitive demand; 'Q{n}.' pine italic beside the first words; Answer/Inclusivity only when populated; 'Question →', 'Answer →', 'Next question →' ride the last row and go where they say.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Overview: Competency · bold 'Learning outcome' + text · Section · Question type in full words · Cognitive demand; 'Q{n}.' pine italic beside the first words; Answer/Inclusivity only when populated; 'Question →', 'Answer →', 'Next question →' ride the last row and go where they say.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -2931,10 +2931,10 @@
     },
     "02.01": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-26T15:21:36",
-        "comment": "Frozen bar '⚙ Teaching profile' + ✕; no heading/pencil/Done/back; ✕ returns to Settings.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Frozen bar '⚙ Teaching profile' + ✕; no heading/pencil/Done/back; ✕ returns to Settings.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3046,10 +3046,10 @@
     },
     "02.08": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-26T15:26:39",
-        "comment": "Add from My Classes and My Lessons: four rows (Class · Section · Periods a week · Annual period budget) + ✕, no Subject row; ✕ and scrim close it, tab untouched.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Add from My Classes and My Lessons: four rows (Class · Section · Periods a week · Annual period budget) + ✕, no Subject row; ✕ and scrim close it, tab untouched.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3184,10 +3184,10 @@
     },
     "02.14": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T09:07:18",
-        "comment": "Subscriber half (Social Sciences): confirm reads '{subject} itself stays, with no classes'; subject stays empty in the profile, not removable. Trial half still to walk. Trial half (9000000013): subject goes as specified, but My Lessons empties (spent-chapter lesson unreachable) and Android also loses Add; web keeps a useless Add. → WALK-A-114 Re-walk after WALK-A-114 (9000000013, profile restored): trial confirm line shown, English stays with no classes, lesson still in My Lessons, Add stays. Confirmed again after a clean web rebuild (rm -rf web/.next): the first web re-walk had run a stale build of @aruvi/shared.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Subscriber half (Social Sciences): confirm reads '{subject} itself stays, with no classes'; subject stays empty in the profile, not removable. Trial half still to walk. Trial half (9000000013): subject goes as specified, but My Lessons empties (spent-chapter lesson unreachable) and Android also loses Add; web keeps a useless Add. → WALK-A-114 Re-walk after WALK-A-114 (9000000013, profile restored): trial confirm line shown, English stays with no classes, lesson still in My Lessons, Add stays. Confirmed again after a clean web rebuild (rm -rf web/.next): the first web re-walk had run a stale build of @aruvi/shared.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3667,10 +3667,10 @@
     },
     "01.06": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T11:18:48",
-        "comment": "One pine bar on every screen; wordmark, TM, lesson studio, gear, name/Log out; never scrolls away.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "One pine bar on every screen; wordmark, TM, lesson studio, gear, name/Log out; never scrolls away.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3713,10 +3713,10 @@
     },
     "01.08": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T12:57:59",
-        "comment": "Bar names each item with X; no second title. Change request on Teaching profile → WALK-A-116.\n✓ re-walked 2026-09-27 after WALK-A-116 (web).",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Bar names each item with X; no second title. Change request on Teaching profile → WALK-A-116.\n✓ re-walked 2026-09-27 after WALK-A-116 (web).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3736,10 +3736,10 @@
     },
     "01.09": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T11:22:25",
-        "comment": "My Lessons > gear > Personal profile > X > X: list, then My Lessons.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "My Lessons > gear > Personal profile > X > X: list, then My Lessons.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3782,10 +3782,10 @@
     },
     "01.12": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T12:57:59",
-        "comment": "Lesson from either place lights MY CLASSES; repository lights MY LESSONS; Settings lights neither; nav stays up. Change request: ADD should light while its window is open → WALK-A-117.\n✓ re-walked 2026-09-27 after WALK-A-117 (web).",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Lesson from either place lights MY CLASSES; repository lights MY LESSONS; Settings lights neither; nav stays up. Change request: ADD should light while its window is open → WALK-A-117.\n✓ re-walked 2026-09-27 after WALK-A-117 (web).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3828,10 +3828,10 @@
     },
     "01.14": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T12:57:59",
-        "comment": "Window, rows, X and tap-outside all right. Sub-line wording to change → WALK-A-118.\n✓ re-walked 2026-09-27 after WALK-A-118 (web).",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Window, rows, X and tap-outside all right. Sub-line wording to change → WALK-A-118.\n✓ re-walked 2026-09-27 after WALK-A-118 (web).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3943,10 +3943,10 @@
     },
     "01.20": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T11:45:16",
-        "comment": "Panel between bar and nav; ASK MEYY clay while open; toggles; destinations close it and go; ADD raises the window.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Panel between bar and nav; ASK MEYY clay while open; toggles; destinations close it and go; ADD raises the window.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -3966,10 +3966,10 @@
     },
     "01.22": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T12:59:00",
-        "comment": "Preparing card and in-place replacement fine online. Going Offline mid-prepare: the new card DISAPPEARS (older cards stay) instead of staying marked failed with a message and dismiss. Back online a second or two later, the completed lesson appears. → WALK-A-120\nDIAGNOSIS 2026-09-27: the failure path was never reached. The serve answered before Offline took effect (cached plans return in well under a second), so the prepare SUCCEEDED; the card is held for the 5 s beat, then cleared as done, and the list refresh that should bring the new lesson in failed offline - so for a moment there was neither card nor lesson. Back online, the refresh found it. Re-walk the failure half with the API blocked BEFORE tapping Prepare (DevTools › Network request blocking: meyy-api.onrender.com) - that should show the failed card with Try again + Dismiss (WALK-A-019).\nRE-WALK 2026-09-27, API domain blocked AFTER the chapter list loaded, then Prepare: card stays, failed sentence 'Couldn't build the lesson plan right now. Try again in a moment.' with TRY AGAIN + DISMISS, neutral edge (Toy Joy, Maths 3). Unblocked + Try again → lesson landed in place. The separate success-then-refresh-fails gap stays open as WALK-A-120.\n✓ re-walked 2026-09-27 after WALK-A-120 (web).",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Preparing card and in-place replacement fine online. Going Offline mid-prepare: the new card DISAPPEARS (older cards stay) instead of staying marked failed with a message and dismiss. Back online a second or two later, the completed lesson appears. → WALK-A-120\nDIAGNOSIS 2026-09-27: the failure path was never reached. The serve answered before Offline took effect (cached plans return in well under a second), so the prepare SUCCEEDED; the card is held for the 5 s beat, then cleared as done, and the list refresh that should bring the new lesson in failed offline - so for a moment there was neither card nor lesson. Back online, the refresh found it. Re-walk the failure half with the API blocked BEFORE tapping Prepare (DevTools › Network request blocking: meyy-api.onrender.com) - that should show the failed card with Try again + Dismiss (WALK-A-019).\nRE-WALK 2026-09-27, API domain blocked AFTER the chapter list loaded, then Prepare: card stays, failed sentence 'Couldn't build the lesson plan right now. Try again in a moment.' with TRY AGAIN + DISMISS, neutral edge (Toy Joy, Maths 3). Unblocked + Try again → lesson landed in place. The separate success-then-refresh-fails gap stays open as WALK-A-120.\n✓ re-walked 2026-09-27 after WALK-A-120 (web).\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4035,10 +4035,10 @@
     },
     "01.21": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-27T12:01:32",
-        "comment": "Offline (no reload): Ask Meyy from the nav and from Settings › Help open the same panel; categories and search answer from the device copy.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Offline (no reload): Ask Meyy from the nav and from Settings › Help open the same panel; categories and search answer from the device copy.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4173,10 +4173,10 @@
     },
     "04.01": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-28T05:43:17",
-        "comment": "Bar reads Settings / Support, no heading; X → list, X → My Lessons.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Bar reads Settings / Support, no heading; X → list, X → My Lessons.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4196,10 +4196,10 @@
     },
     "04.02": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-28T05:43:17",
-        "comment": "All four items stay up in Settings, none lit; My Lessons from Settings leaves and lights it.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "All four items stay up in Settings, none lit; My Lessons from Settings leaves and lights it.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4219,10 +4219,10 @@
     },
     "04.03": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-29T05:58:30",
-        "comment": "Cards and ACCOUNT rows in order with the right sub-lines; Delete in red; no Appearance at desktop width (web light only).\n✓ WALK-A-136: About Meyy gone; version line at the foot. (2026-09-29)",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Cards and ACCOUNT rows in order with the right sub-lines; Delete in red; no Appearance at desktop width (web light only).\n✓ WALK-A-136: About Meyy gone; version line at the foot. (2026-09-29)\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4679,10 +4679,10 @@
     },
     "04.28": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-29T05:09:35",
-        "comment": "Panel between bar and nav; ASK MEYY clay; toggles; destinations close and go; one X over Settings; desktop autofocus, Escape closes.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Panel between bar and nav; ASK MEYY clay; toggles; destinations close and go; one X over Settings; desktop autofocus, Escape closes.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4702,10 +4702,10 @@
     },
     "04.29": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-29T05:09:35",
-        "comment": "Five categories with counts in their colours; one rail follows the tap; sticky header; one answer open at a time, line breaks kept.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Five categories with counts in their colours; one rail follows the tap; sticky header; one answer open at a time, line breaks kept.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -4725,10 +4725,10 @@
     },
     "04.30": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-29T05:21:15",
-        "comment": "'period' → 40 results, flat ranked list with category tags; 'zzqqxx' → no-matches line; clearing restores categories.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "'period' → 40 results, flat ranked list with category tags; 'zzqqxx' → no-matches line; clearing restores categories.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "and_emu": {
@@ -5185,10 +5185,10 @@
     },
     "X.03": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-09-29T14:13:33",
-        "comment": "026. Every class unticked: 'No classes set up yet' / 'To start planning, add the classes you teach under Class in the Add window from the bottom tool bar.' One class re-added, first-run lesson unattached in My Lessons: 'Your classes are ready' / 'Your lesson is waiting in My Lessons — tap + on a class to start teaching it.' (the has-a-lesson variant; the no-lesson variant is 'Tap + on a class to prepare its first lesson.'). Phones must match word for word.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "026. Every class unticked: 'No classes set up yet' / 'To start planning, add the classes you teach under Class in the Add window from the bottom tool bar.' One class re-added, first-run lesson unattached in My Lessons: 'Your classes are ready' / 'Your lesson is waiting in My Lessons — tap + on a class to start teaching it.' (the has-a-lesson variant; the no-lesson variant is 'Tap + on a class to prepare its first lesson.'). Phones must match word for word.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -5254,10 +5254,10 @@
     },
     "01.30": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-10-02T08:44:23",
-        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. ✓ Start my classes fresh (pressed here): 'Ready for 2027-28.' result with counts + Got it (founder: wording perfect); 7A/7B stay, emptied; 2026-27 lessons + chapter note still in My Lessons; offer never returns.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "028, TEST cutover ON (rolled 2026-27 → 2027-28): cards unchanged (7A Ch 2 complete, 7B Ch 3 at unit 3) with the 2026-27 stamp; offer shown (WALK-A-161 wording, WALK-A-162 button); Not yet and ✕ hide it for the visit, it returns on the next open; 2026-27 lessons still in My Lessons. ✓ Start my classes fresh (pressed here): 'Ready for 2027-28.' result with counts + Got it (founder: wording perfect); 7A/7B stay, emptied; 2026-27 lessons + chapter note still in My Lessons; offer never returns.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -5369,10 +5369,10 @@
     },
     "04.10": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-10-02T12:42:44",
-        "comment": "↻ after WALK-A-172 (sign-in no longer stamps a recorded version), 003/026/027 reset to 0.3: 003 sign-in → bar 'Meyy's Privacy Notice has been updated (version 0.4).' Read it → Settings › Legal on the Privacy notice pill, v0.4; bar gone after reload. 027 → bar, Dismiss → gone after reload.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "↻ after WALK-A-172 (sign-in no longer stamps a recorded version), 003/026/027 reset to 0.3: 003 sign-in → bar 'Meyy's Privacy Notice has been updated (version 0.4).' Read it → Settings › Legal on the Privacy notice pill, v0.4; bar gone after reload. 027 → bar, Dismiss → gone after reload.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": "web dev (localhost:3000 → Render)"
       },
       "ios": {
@@ -5438,10 +5438,10 @@
     },
     "01.24": {
       "web": {
-        "status": "pass",
+        "status": "recheck",
         "by": "Kumar",
-        "at": "2026-10-02T15:21:41",
-        "comment": "Same feature as 04.10, walked 2026-10-02 after Privacy Notice v0.4 + WALK-A-172 (003 Read it / 027 Dismiss). Ticked from that walk.",
+        "at": "2026-10-03T07:30:00",
+        "comment": "Same feature as 04.10, walked 2026-10-02 after Privacy Notice v0.4 + WALK-A-172 (003 Read it / 027 Dismiss). Ticked from that walk.\n↻ re-walk after the desktop view (docs/web_desktop_view.md + WALK-A-174, 2026-10-03): layout at ≥1024px changed.",
         "build": ""
       },
       "ios": {
@@ -9016,6 +9016,22 @@
       "files": "packages/shared/src/setupCheck.js; packages/shared/test/setupCheck.test.js; web/app/components/SubscribeFlow.jsx; mobile/components/SubscribeWizard.jsx",
       "commit": "",
       "status": "closed"
+    },
+    {
+      "id": "WALK-A-174",
+      "opened": "2026-10-03T06:40:32",
+      "closed": "",
+      "feature": "desktop view (2a)",
+      "found_on": [
+        "web"
+      ],
+      "applies_to": "web",
+      "title": "At desktop width the nav is at the top, but the copy still says 'bottom tool bar' / 'foot of the screen'",
+      "what": "Founder, 2026-10-03, building docs/web_desktop_view.md 2a: from 1024px the four-item nav moves to a row under the brand bar. Seven sentences point at its old place: 'the Add window from the bottom tool bar' (My Classes empty state, My Lessons no-class line, Teaching profile classless subject) and the tour's 'at the foot of the screen' (steps 1, 2, preview and settings-gear). Founder chose: follow the bar, web only.",
+      "fix": "[FIXED web 2026-10-03T06:40:32] web/app/lib/navPlace.js (NAV_TOP_QUERY = (min-width: 1024px), the 2a breakpoint): useNavAtTop()/addBarPhrase() in MyPlans, MyLessonPlans and TeachingProfile give 'the tool bar at the top' at desktop width; GuidedTour's navEdge() gives 'top' / 'foot'. Below 1024px and on the phone app every word is unchanged.",
+      "files": "web/app/lib/navPlace.js, web/app/components/{MyPlans,MyLessonPlans,TeachingProfile,GuidedTour}.jsx",
+      "commit": "",
+      "status": "open"
     }
   ],
   "renewal_check": {

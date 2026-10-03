@@ -1,5 +1,8 @@
 "use client";
+import { navAtTop } from "../lib/navPlace";
 import { useEffect, useRef, useState } from "react";
+// WALK-A-174: the four sentences that say where the nav is follow it — "foot" below 1024px, "top" above.
+const navEdge = () => (navAtTop() ? "top" : "foot");
 
 /* ───────── GuidedTour — the one-time first-run walk, 20 steps (bookmark step added
  * 2026-08-25) ─────────
@@ -60,12 +63,12 @@ const Hand = () => (
 );
 
 const STEPS = [
-  { anchor: "nav-classes", place: "above",
+  { anchor: "nav-classes", place: "above", navItem: true,
     title: "This is where your classes sit.",
-    body: () => "The bar at the foot of the screen is how you move around Meyy. ‘My Classes’ is where your sections always are — each one points to where you have reached in its lesson plan. Soon we will see how." },
-  { anchor: "nav-lessons", place: "above",
+    body: () => `The bar at the ${navEdge()} of the screen is how you move around Meyy. ‘My Classes’ is where your sections always are — each one points to where you have reached in its lesson plan. Soon we will see how.` },
+  { anchor: "nav-lessons", place: "above", navItem: true,
     title: "This is where your generated lesson plans sit.",
-    body: () => "‘My Lessons’, beside it at the foot of the screen, holds every lesson plan you have generated — and is where you generate new ones." },
+    body: () => `‘My Lessons’, beside it at the ${navEdge()} of the screen, holds every lesson plan you have generated — and is where you generate new ones.` },
   { anchor: "lesson-first", place: "below", hand: true, handPos: "center",
     title: "See the lesson plan you just now generated.",
     body: () => "You can filter your lesson plans by subject and class to see them all in one place." },
@@ -90,7 +93,7 @@ const STEPS = [
   { anchor: "preview-root", place: "over", lift: 130,
     scrollTop: true,
     title: "Let us open the plan to have a quick view.",
-    body: (i) => `You may review a lesson plan in its entirety here anytime. We will now attach this lesson to ${sec(i)} from ‘My Classes’ at the foot of the screen.` },
+    body: (i) => `You may review a lesson plan in its entirety here anytime. We will now attach this lesson to ${sec(i)} from ‘My Classes’ at the ${navEdge()} of the screen.` },
   { anchor: "section-add", place: "below", hand: true, tap: true,
     title: "Let us attach a lesson plan to a section.",
     body: (i) => `You want to attach “${i.chapter}” to ${sec(i)}. Click the + sign of that section card.` },
@@ -127,7 +130,7 @@ const STEPS = [
   { anchor: "attach-pop", place: "over",
     title: "Select a plan.",
     body: () => "Use the same window you used a moment ago to select an existing chapter or generate a new plan." },
-  { anchor: "grow-add", place: "above",
+  { anchor: "grow-add", place: "above", navItem: true,
     title: "Add or amend your classes and sections.",
     body: () => "Use this button to add a class or a section, or to change periods a week and the annual period budget." },
   /* Step 17 — the settings gear. ★ RE-WORDED 2026-08-28 (founder): the profile is now a VIEW.
@@ -138,9 +141,9 @@ const STEPS = [
      purchase), and that is what this card now says. */
   { anchor: "settings-gear", place: "below",
     title: "Your teaching profile.",
-    body: () => "Your profile is built from what you do — read it whole here, at any time. Changes are made with ‘Add’ at the foot of the screen." },
+    body: () => `Your profile is built from what you do — read it whole here, at any time. Changes are made with ‘Add’ at the ${navEdge()} of the screen.` },
   // Step 18 — Ask Meyy (the stream-a mark in the bottom nav). Transparent hand centred on it.
-  { anchor: "ask-aruvi", place: "above",
+  { anchor: "ask-aruvi", place: "above", navItem: true,
     title: "Use Ask Meyy to answer your queries",
     body: () => "Get answers to over 100 questions across 5 categories, and use intelligent search to narrow your query." },
   // Step 18 — the panel is now OPEN (page.jsx opened it on Next from 17), so she sees the thing
@@ -248,7 +251,13 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
     tipStyle = { bottom: lift, left: "50%", transform: "translateX(-50%)" };
   } else {
     const left = Math.min(Math.max(12, tipBox.left), Math.max(12, vw - tw - 12));
-    if (cfg.place === "above") {
+    /* ★ THE NAV'S FOUR STEPS FOLLOW THE NAV (desktop view, 2026-10-03). `place: "above"` is
+       right while the items sit at the foot of the screen. From 1024px the website lifts them
+       into a row under the brand bar (globals.css, 2a), where "above" would push the box off
+       the top — so there they hang BELOW. Same breakpoint as the CSS; web-only, since the
+       phone app's bar never moves (its GuidedTour keeps "above"). */
+    const place = cfg.navItem && navAtTop() ? "below" : cfg.place;
+    if (place === "above") {
       tipStyle = { top: tipBox.top - 12, left, transform: "translateY(-100%)" };
     } else {
       // "below" — but CLAMPED to the viewport: if the target's underside is near/past the fold

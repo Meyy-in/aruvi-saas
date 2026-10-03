@@ -1,4 +1,5 @@
 "use client";
+import { useNavAtTop, addBarPhrase } from "../lib/navPlace";
 import { useEffect, useMemo, useRef, useState } from "react";
 /* `fetchSupportedGrades` / `heldClassesFor` left with WALK-A-068: the wheel no longer asks the
    entitlement which classes she holds — it asks her profile and her lessons. `subjectSlug` and
@@ -322,6 +323,7 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
                                         onStartTour, tourActive, onDismissPrepareError, onRetryPrepare, lapsed,
                                         yearInfo, onScope, onEditYearBudget, paneIntent,
                                         heldScopes, onTourArchivable }) {
+  const navTop = useNavAtTop();   // WALK-A-174: the copy follows the nav (lib/navPlace.js)
   const LS_SUBJECT = userKey("mylessons_subject");
   const LS_CLASS = userKey("mylessons_class");
   /* ⚠️ THIS BLOCK SITS ABOVE `subjects` ON PURPOSE (2026-09-24). `subjects` reads
@@ -1017,7 +1019,7 @@ export default function MyLessonPlans({ readiness, onAllocate, onOpenSection, to
       <span className="mlp-allocate-q">
         Your teaching profile does not specify the classes you teach. The lessons already generated
         are kept. To generate new lessons, add the classes you teach under Class in the Add window
-        from the bottom tool bar.
+        from {addBarPhrase(navTop)}.
       </span>
     </div>
   );

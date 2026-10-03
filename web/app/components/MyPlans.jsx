@@ -1,4 +1,5 @@
 "use client";
+import { useNavAtTop, addBarPhrase } from "../lib/navPlace";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getJSON, pretty, pad, classNum, markPrepared, gradeSlug, bareChapterTitle } from "../lib/format";
 import { pullSectionState, bindSectionChapter, unbindSection } from "../lib/sectionState";
@@ -105,6 +106,7 @@ const SectionTag = ({ c, muted }) => (
 );
 
 export default function MyPlans({ subject, grade, ready, readiness, onReady, onNavigate, onEnterGenerate, user, onSignOut, lapsed, pendingOpen, onConsumePending, pendingAttach, onConsumeAttach, onStartTour, tourActive, tourStep, onTourInfo, onOpenPortal, sectionCheck, yearInfo, onCutover, cutoverBusy, cutoverResult, onDismissCutoverResult, cutoverDismissed, onDismissCutover, preparingCard, preparingSection, onDismissPreparing, onRetryPreparing }) {
+  const navTop = useNavAtTop();   // WALK-A-174: the copy follows the nav (lib/navPlace.js)
   const [openPlan, setOpenPlan] = useState(null);  // { view, sectionKey } for LessonView
   // WALK-A-008: the browser's Back closes an open lesson first (page.jsx dispatches "aruvi:back").
   useEffect(() => {
@@ -932,7 +934,7 @@ export default function MyPlans({ subject, grade, ready, readiness, onReady, onN
           <div className="slotrail dim" />
           <div className="slotbody">
             <div className="slot-title muted">No classes set up yet</div>
-            <div className="slot-meta">To start planning, add the classes you teach under Class in the Add window from the bottom tool bar.</div>
+            <div className="slot-meta">To start planning, add the classes you teach under Class in the Add window from {addBarPhrase(navTop)}.</div>
           </div>
         </div>
       </div>
