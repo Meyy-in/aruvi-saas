@@ -36,7 +36,8 @@ import { Sheet } from "../../components/AttachSheet";
 import AskMeyy from "../../components/AskMeyy";
 import PaywallSheet from "../../components/PaywallSheet";
 import GuidedTour from "../../components/GuidedTour";
-import { useTour, tourNext, tourBack, tourSkip, useTourOverlayHost } from "../../lib/tour";
+import { useTour, tourNext, tourBack, tourSkip, useTourOverlayHost, canReplayTour, replayTour,
+         restoreTourReplayIfLeft } from "../../lib/tour";
 import { closeAsk, subscribeAsk, toggleAsk } from "../../lib/ask";
 import { onSessionRefused } from "../../lib/boot";
 import { endSession } from "../../lib/session";
@@ -189,6 +190,14 @@ export default function AppLayout() {
   const tour = useTour();
   const overlayHost = useTourOverlayHost();
   useEffect(() => subscribeAsk(setAskOpen), []);
+  /* "Show me" (2026-10-04) — the web's page.jsx `tourAction`, same three states: start it, say why
+     it cannot run (no lesson of hers yet · lapsed), or nothing while the tour itself is driving. */
+  useEffect(() => { restoreTourReplayIfLeft(); }, []);   // a replay cut short is put back here
+  const tourAction = !askOpen || tour.step ? null
+    : !ent.lapsed && canReplayTour() ? { start: () => { replayTour(); } }
+    : { note: ent.lapsed
+        ? "The tour walks you through tracking your classes, which needs an active subscription."
+        : "The tour shows you around using one of your own lesson plans. Prepare a lesson in My Lessons first, then come back here to start it." };
   const [barH, setBarH] = useState(0);
   useEffect(() => {
     let live = true;
@@ -520,7 +529,7 @@ export default function AppLayout() {
           ⚠️ It is held until `barH` has been reported. For one frame after mount the height is 0
           and the panel would start at the top of the window, over the brand bar — one frame of a
           panel jumping down the screen, for nothing. */}
-      {askOpen && barH > 0 ? <AskMeyy top={barH} onClose={closeAsk} /> : null}
+      {askOpen && barH > 0 ? <AskMeyy top={barH} onClose={closeAsk} tourAction={tourAction} /> : null}
 
       {/* ⚠️ ABOVE Ask Meyy and the bottom nav, because steps 18-19 ring them while they are open —
           a tour that sits under the thing it is pointing at cannot point at anything. */}

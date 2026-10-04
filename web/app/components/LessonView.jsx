@@ -460,11 +460,14 @@ function AssessPanel({ items, mathsMiddle = false, mathsSecondary = false, foote
  * data-tour="unit-tabs": tour step 10's tooltip hangs below the bar. */
 /* ★ JUST THE LINK (founder, 2026-10-03: the card "looks too dominating"). One quiet pill,
    right-aligned under the last phase — above "Mark this unit complete" on the Lesson tab, and at
-   the end of the Assess tab. No flag, no headline, no help line. */
+   the end of the Assess tab. No flag, no headline, no help line.
+   data-tour="report-issue" sits on the PILL, not the row (2026-10-04): the row is full-width and
+   right-aligns the pill, so on a wide desktop the tour's ring stretched across the page, its box
+   hung at the far left and the hand missed the button. On the button, step 13 rings just the pill. */
 function ReportCard({ onClick }) {
   return (
-    <div className="lv-rlink" data-tour="report-issue">
-      <button type="button" className="lv-rcard-btn" onClick={onClick}>Report an issue ›</button>
+    <div className="lv-rlink">
+      <button type="button" className="lv-rcard-btn" data-tour="report-issue" onClick={onClick}>Report an issue ›</button>
     </div>
   );
 }

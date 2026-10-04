@@ -122,7 +122,11 @@ const STEPS = [
   { anchor: "report-issue", place: "above", hand: true,
     title: "Spotted something wrong? Tell us.",
     body: () => "If anything in a unit looks wrong, report it here before you mark the unit complete. Choose WhatsApp or email, and pick the phase if you like — each report helps us improve the lesson for every teacher." },
-  { anchor: "mark-complete", place: "above", hand: true,
+  /* `deskCenter` (2026-10-04): the button is full-width — 860px+ on the website view — so the
+     default lower-right hand sat at the far end of a long bar, nowhere near its words, and the box
+     hung off the far left. From 1024px the hand and the box both centre on the button. Phone
+     widths are unchanged (there the button is the screen's width and the corner reads fine). */
+  { anchor: "mark-complete", place: "above", hand: true, deskCenter: true,
     title: "Track progress.",
     body: (i) => `Track chapter progress of “${i.chapter}” with ${sec(i)} unit by unit. Upon completion of a unit, click this button to mark it complete.` },
   /* ★ BELOW THE CARD (founder, 2026-09-17: "card 14 in both web app and expo should be placed
@@ -256,7 +260,9 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
     const lift = cfg.lift ? (cfg.lift < 1 ? Math.round(vh * cfg.lift) : cfg.lift) : 18;
     tipStyle = { bottom: lift, left: "50%", transform: "translateX(-50%)" };
   } else {
-    const left = Math.min(Math.max(12, tipBox.left), Math.max(12, vw - tw - 12));
+    const deskC = cfg.deskCenter && navAtTop();
+    const wantLeft = deskC ? tipBox.left + tipBox.width / 2 - tw / 2 : tipBox.left;
+    const left = Math.min(Math.max(12, wantLeft), Math.max(12, vw - tw - 12));
     /* ★ THE NAV'S FOUR STEPS FOLLOW THE NAV (desktop view, 2026-10-03). `place: "above"` is
        right while the items sit at the foot of the screen. From 1024px the website lifts them
        into a row under the brand bar (globals.css, 2a), where "above" would push the box off
@@ -276,8 +282,9 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
 
   // The hand — lower-right corner of its target by default; handPos "center" places it in the
   // middle of the target (e.g. centred on a listed lesson row / section card). Viewport-clamped.
+  const handCentred = cfg.handPos === "center" || (cfg.deskCenter && navAtTop());
   const handStyle = handBox && cfg.hand
-    ? (cfg.handPos === "center"
+    ? (handCentred
         ? { top: Math.min(handBox.top + handBox.height / 2 - 18, vh - 52),
             left: Math.min(handBox.left + handBox.width / 2 - 18, vw - 46) }
         : { top: Math.min(handBox.top + handBox.height - 16, vh - 52),

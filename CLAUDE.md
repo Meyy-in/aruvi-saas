@@ -204,6 +204,19 @@ marketing** (keeps privacy notice §9 / agreement §K true). Stored on `Account.
 - **Owed:** privacy notice update naming WhatsApp/Meta as a processor (versioned — a consent bump
   re-prompts everyone; batch it); mobile app (`mobile/app/(app)/settings/support.jsx`, subscribe flow).
 
+**"Show me" — the guided tour again, from Ask Meyy (2026-10-04, web + mobile).** Ask Meyy's d12
+("Is there a guided tour… Can I take it again?") carries `"action": "tour"` in the bank, and both
+apps draw a pine "START THE TOUR ›" pill under that answer (AskAruvi.jsx / AskMeyy.jsx, prop
+`tourAction` = `{start}` | `{note}` | null while the tour drives). Any number of times, Skip any
+time, and it CHANGES NOTHING: the demo really unbinds/rebinds a section, so a replay snapshots every
+section it borrows (chapter · pointer · done · bookmark) and puts each back exactly on Done or Skip —
+`@aruvi/shared/tourReplay` (one implementation; owner-tagged; a replay cut short is restored on the
+next load). First-run tours keep their own ending (no snapshot = not a replay). Not offered to a
+lapsed teacher or one with no prepared lesson (a one-line note says why). Tests:
+packages/shared/test/tourReplay.test.js; tests/test_ask_aruvi_kb.py pins the action on d12 —
+⚠️ any bank refresh must KEEP the `action` field. Same day: web tour cards 13/14 fixed for the
+website view (`data-tour="report-issue"` moved onto the pill; step 14 `deskCenter`). Live pass owed.
+
 ## 0. CURRENT DIRECTION — mobile-first, progressive acquisition (2026-07-01) ★ READ FIRST
 
 > ★★ **AMENDED 2026-07-02 — THE CALENDAR PURGE (overrides every day/week reference below and

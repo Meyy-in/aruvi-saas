@@ -87,9 +87,10 @@ function Chev({ color, up }) {
 
 /* One answer row, shared by both modes. `tag` is passed only in SEARCH mode — in browse she is
    already standing inside the category, so the pill would name what the header above says. */
-function Answer({ p, open, onToggle, tag, first, lead }) {
+function Answer({ p, open, onToggle, tag, first, lead, tourAction }) {
   const { t } = useTheme();
   const ws = useWebStyles();
+  const act = open && p.action === "tour" ? tourAction : null;
   return (
     /* `first` is the web's `.aa-results > .aa-item:first-child { border-top: none }` — in search
        mode the list opens straight under the count line and a hairline there would read as a rule
@@ -108,11 +109,25 @@ function Answer({ p, open, onToggle, tag, first, lead }) {
       {/* The answers are plain text with newlines in them — RN's Text keeps those, which is the
           web's `white-space: pre-wrap` for free. */}
       {open ? <Text style={[ws.aa_item_a, { color: t.ink_soft }]}>{p.answer}</Text> : null}
+      {/* "Show me" (2026-10-04) — the web's AskAruvi.jsx, ported 1:1. */}
+      {act && act.start ? (
+        <View style={ws.aa_item_act}>
+          <Pressable onPress={act.start} accessibilityRole="button" hitSlop={8}
+            style={({ pressed }) => [ws.aa_item_actbtn, pressed && { opacity: 0.8 }]}>
+            <Text fixed style={ws.aa_item_actbtn_t}>Start the tour ›</Text>
+          </Pressable>
+        </View>
+      ) : act && act.note ? (
+        <Text style={[ws.aa_item_note, { color: t.ink_soft }]}>{act.note}</Text>
+      ) : null}
     </View>
   );
 }
 
-export default function AskMeyy({ top = 0, onClose }) {
+/* `tourAction` (2026-10-04, "show me"): `{ start }` when the guided tour can run, `{ note }` when it
+   cannot, null while the tour itself is driving — exactly the web's prop. Drawn only under the one
+   answer whose bank entry says `"action": "tour"`. */
+export default function AskMeyy({ top = 0, onClose, tourAction = null }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   const insets = useSafeAreaInsets();
@@ -294,7 +309,7 @@ export default function AskMeyy({ top = 0, onClose }) {
                    is standing inside that category and the pill would only repeat its header. */
                 tag={section.cat ? undefined : (catMap[item.category] || {}).tag}
                 first={!section.cat && index === 0}
-                lead={!!section.cat && index === 0} />
+                lead={!!section.cat && index === 0} tourAction={tourAction} />
             )}
           />
         )}

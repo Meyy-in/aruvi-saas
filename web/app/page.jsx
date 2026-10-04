@@ -9,6 +9,7 @@ import { cachedPlans } from "@aruvi/shared/plans";
 import { invalidatePlans, confirmListed } from "./lib/plans";
 import { subjectSlug, gradeSlug } from "@aruvi/shared/format";
 import { clearLocalHistoryCache } from "./lib/sectionHistory";
+import { beginTourReplay, snapshotForReplay, restoreAfterReplay, isTourReplay } from "./lib/tourReplay";
 import { noteFreshStart } from "./lib/year";
 import { signOutAuth } from "./lib/auth";
 import { onSessionRefused } from "./lib/shared-setup";
@@ -386,6 +387,9 @@ export default function Home() {
     if (demoRef.current.section !== tg.section) {
       demoRef.current = { section: tg.section, pre: readLocalSection(tg.section).chapter || null };
     }
+    // A replay from Ask Meyy remembers this section WHOLE before the demo touches it (no-op
+    // on a first-run tour, which keeps its own ending). See lib/tourReplay.js.
+    snapshotForReplay(tg.section);
     const bound = readLocalSection(tg.section).chapter;
     if (tour >= 10 && bound !== tg.file) bindSectionChapter(tg.section, tg.file);
     else if (tour >= 1 && tour <= 9 && bound) unbindSection(tg.section);
@@ -395,7 +399,10 @@ export default function Home() {
   useEffect(() => {
     if (prevTourNum.current != null && tour == null) {
       const { section, pre } = demoRef.current;
-      if (section && pre && !readLocalSection(section).chapter) bindSectionChapter(section, pre);
+      /* A REPLAY (taken from Ask Meyy) gives back EVERYTHING it borrowed — chapter, pointer,
+         done, bookmark — on Done and on Skip alike. Only a first-run tour keeps the rule below. */
+      if (isTourReplay()) restoreAfterReplay();
+      else if (section && pre && !readLocalSection(section).chapter) bindSectionChapter(section, pre);
       demoRef.current = { section: null, pre: null };
     }
     prevTourNum.current = tour;
@@ -419,6 +426,31 @@ export default function Home() {
     markTourOffered();
     goLessons(); setTour(1);
   };
+
+  /* ★ "SHOW ME" — THE TOUR AGAIN, FROM ASK MEYY (founder, 2026-10-04). One answer in Ask Meyy
+     (the guided-tour question, `"action": "tour"` in the bank) carries a "Start the tour" button.
+     Any number of times, Skip any time — and it CHANGES NOTHING: the tour really unbinds and
+     rebinds a section to demonstrate attaching, so a replay snapshots every section it borrows
+     and puts each back exactly on Done or Skip (lib/tourReplay.js; a replay cut short by a
+     closed tab is put back on the next load — see the effect below). Offered only when there is
+     a lesson of hers to show it on, and never to a lapsed teacher (the tour walks My Classes,
+     which a lapsed teacher does not have). */
+  const replayTarget = askOpen && tour == null && !entLapsed ? tourDemoTarget() : null;
+  const replayTour = () => {
+    const tg = tourDemoTarget();
+    if (!tg) return;
+    setAskOpen(false);
+    beginTourReplay(tg.section);
+    demoRef.current = { section: null, pre: null };
+    startTour();
+  };
+  const tourAction = !askOpen || tour != null ? null
+    : replayTarget ? { start: replayTour }
+    : { note: entLapsed
+        ? "The tour walks you through tracking your classes, which needs an active subscription."
+        : "The tour shows you around using one of your own lesson plans. Prepare a lesson in My Lessons first, then come back here to start it." };
+  // A replay cut short (tab closed, browser quit) is put back the next time she is here.
+  useEffect(() => { if (user && tour == null) restoreAfterReplay(); }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Areas 4 + 5: a VERIFIED section mismatch — the class is not on the chapter she just
   // attached, or not marked complete. pushSectionState calls this only when the server was read
@@ -1874,7 +1906,7 @@ export default function Home() {
       {/* Ask Aruvi Q&A — full-screen deterministic helpline (browse + keyword search). */}
       {/* autoFocus off while the tour drives: step 19 opens this panel to SHOW it, and a
           focused search box raises the phone keyboard over the step's own window. */}
-      {askOpen && <AskAruvi onClose={() => setAskOpen(false)} autoFocus={tour == null} />}
+      {askOpen && <AskAruvi onClose={() => setAskOpen(false)} autoFocus={tour == null} tourAction={tourAction} />}
       {subscribeOpen && (
         <div className="subflow-overlay">
           <SubscribeFlow userId={user}

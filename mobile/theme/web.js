@@ -1867,6 +1867,14 @@ export function webStyles(t, scheme = "light") {
     /* `white-space: pre-wrap` on the web; RN's Text keeps the newlines for free. */
     aa_item_a:       { fontFamily: F.body(400), fontSize: 15, lineHeight: 24,
                        paddingLeft: 24, paddingRight: 2, paddingBottom: 15 },
+    /* "Show me" (2026-10-04) — `.aa-item-act*` / `.aa-item-note` in AskAruvi.jsx: the Report-an-issue
+       pill's shape, filled pine, under the one answer that starts the guided tour. */
+    aa_item_act:     { flexDirection: "row", paddingLeft: 24, paddingRight: 2, paddingBottom: 16, marginTop: -4 },
+    aa_item_actbtn:  { paddingVertical: 9, paddingHorizontal: 16, borderWidth: 1, borderColor: t.pine,
+                       borderRadius: 999, backgroundColor: t.pine },
+    aa_item_actbtn_t: { fontFamily: F.mono(600), fontSize: 11, letterSpacing: 0.88, textTransform: UP, color: "#f6f1e7" },
+    aa_item_note:    { fontFamily: F.body(400, true), fontSize: 14, lineHeight: 21,
+                       paddingLeft: 24, paddingRight: 2, paddingBottom: 15, marginTop: -4 },
 
     /* The one state with no answers. Quiet prose, not an error — see the component. */
     aa_empty:        { paddingVertical: 34, paddingHorizontal: 22, maxWidth: 420 },

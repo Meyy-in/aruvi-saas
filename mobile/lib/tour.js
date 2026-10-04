@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { openAsk, closeAsk } from "./ask";
 import { readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
+import { beginTourReplay, snapshotForReplay, restoreAfterReplay, isTourReplay } from "@aruvi/shared/tourReplay";
 import { cachedReadiness } from "@aruvi/shared/readiness";
 import { cachedPlans } from "@aruvi/shared/plans";
 import { subjectSlug, gradeSlug, postJSON } from "@aruvi/shared/format";
@@ -167,7 +168,11 @@ export function noteTourInfo(info) {
    assumed just as much for the one who skipped it. See `lib/firstRun.js`. */
 export function endTour() {
   ranThisSession = true;
-  restoreBinding();                 // give back what the demo borrowed, if it left the section empty
+  /* A REPLAY (from Ask Meyy) gives back EVERYTHING it borrowed — chapter, pointer, done, bookmark —
+     on Done and on Skip alike (@aruvi/shared/tourReplay). Only a first-run tour keeps the
+     give-back-if-empty rule. */
+  if (isTourReplay()) { restoreAfterReplay(); borrowed = { section: null, pre: null }; }
+  else restoreBinding();            // give back what the demo borrowed, if it left the section empty
   state = { step: 0, info: {}, target: null };
   pinPending = false;
   emit();
@@ -352,6 +357,7 @@ function syncDemo(n) {
 function rememberBinding() {
   const tg = currentTarget();
   if (!state.step || !tg || !tg.sectionKey) return;
+  snapshotForReplay(tg.sectionKey);   // a replay remembers the section WHOLE first (no-op otherwise)
   if (borrowed.section === tg.sectionKey) return;
   borrowed = { section: tg.sectionKey,
                pre: readLocalSection(tg.sectionKey).chapter || null };
@@ -362,6 +368,26 @@ function restoreBinding() {
   if (section && pre && !readLocalSection(section).chapter) bindSectionChapter(section, pre);
   borrowed = { section: null, pre: null };
 }
+
+/* ───────── "SHOW ME" — THE TOUR AGAIN, FROM ASK MEYY (founder, 2026-10-04) ─────────
+ * The guided-tour answer in Ask Meyy (`"action": "tour"` in the bank) carries "Start the tour".
+ * Any number of times, Skip any time, and it CHANGES NOTHING: the demo really unbinds and rebinds
+ * a section, so a replay snapshots every section it borrows and `endTour` puts each back exactly.
+ * The web's page.jsx `replayTour`, ported. */
+export function canReplayTour() { return !state.step && !!deriveTarget(); }
+export function replayTour() {
+  if (state.step) return false;
+  const tg = deriveTarget();
+  if (!tg) return false;
+  closeAsk();
+  state = { ...state, target: null };
+  borrowed = { section: null, pre: null };
+  beginTourReplay(tg.sectionKey);
+  startTour({ tag: tg.tag, chapter: tg.chapter });
+  return true;
+}
+/** A replay cut short (app killed mid-tour) is put back the next time the shell mounts. */
+export function restoreTourReplayIfLeft() { if (!state.step) restoreAfterReplay(); }
 
 /* ★ STEP 5 IS SKIPPED WHEN THERE IS NO ARCHIVE CONTROL TO RING (founder, 2026-09-18: an
    attached lesson is never archivable). My Lessons reports whether its first card shows one;

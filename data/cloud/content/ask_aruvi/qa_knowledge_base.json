@@ -1,6 +1,6 @@
 {
-  "version": "V3.3",
-  "last_refreshed": "2026-10-02",
+  "version": "V3.4",
+  "last_refreshed": "2026-10-04",
   "maintained": "Hand-written. Edit THIS file — it is the only copy — then run python3 aruvi-scripts/sync_ask_aruvi.py to re-index, and commit. Keywords are computed, never typed. The bank is served by GET /ask-aruvi and must NEVER be copied into web/app/ask-aruvi/: it would ship in a public page chunk and be readable before sign-in.",
   "categories": [
     {
@@ -452,8 +452,8 @@
       "question": "Why does my lesson plan not show learning outcomes?",
       "answer": "This is deliberate. Implied learning outcomes are derived from each activity and are reserved for the assessment — they define exactly what each question must test. The lesson plan shows what you and your students actually do: activities, materials, and homework. Displaying outcomes inside the plan would add framework language without helping you run the period. You will meet each outcome in the assessment, attached to the question that tests it.",
       "keywords": [
-        "shows",
         "outcome",
+        "shows",
         "learning",
         "reserved",
         "displaying",
@@ -903,9 +903,9 @@
         "set",
         "time",
         "allocate",
+        "preparing",
         "monitor",
-        "ongoing",
-        "basis"
+        "ongoing"
       ]
     },
     {
@@ -1069,8 +1069,8 @@
       "answer": "The period budget you enter is used fully for teaching — the assessment is generated alongside the plan but never eats into it. If you intend to administer the formative assessment in class, reduce that time before inputting the periods available for teaching the chapter. Note also that NCF's recommended annual teaching time excludes time allocated for summative examinations, so your annual budget should represent teaching time alone.",
       "keywords": [
         "allocated",
-        "time",
         "budget",
+        "time",
         "have",
         "period",
         "teaching"
@@ -1127,9 +1127,9 @@
         "main",
         "tabs",
         "card",
-        "class",
         "progressed",
-        "tap"
+        "tap",
+        "continue"
       ]
     },
     {
@@ -1156,8 +1156,8 @@
         "remember",
         "particular",
         "section",
-        "unit",
-        "pointer"
+        "pointer",
+        "unit"
       ]
     },
     {
@@ -1181,8 +1181,8 @@
       "answer": "A subject goes when its last class goes. Open the “+” in My Classes, choose Class, pick the subject, and untick its classes. Before anything is removed, Meyy names exactly what will go — the classes, their section cards and their bookmarks — and tells you whether the subject goes with them. Two things stay. Your lesson plans stay in the library, whatever you remove. And a subject you subscribe to stays in your profile too, with no classes, for as long as you subscribe — so its prepared lessons are still in My Lessons, and you can add a class back whenever you like.",
       "keywords": [
         "delete",
-        "class",
         "goes",
+        "class",
         "subject",
         "subscribe",
         "stays"
@@ -1289,15 +1289,16 @@
     {
       "id": "d12",
       "category": "cat_d",
-      "question": "Is there a guided tour that explains the basic features of Meyy?",
-      "answer": "Yes. When your first lesson is ready, Meyy offers a guided tour that points out the essentials on the live screen — your section cards, the lesson pointer, the Learning Unit tabs, preparing a new lesson, the documents you can generate, and the archive. It runs about twenty short steps, you can skip it at any point, and at the end Meyy asks whether the section it started you with is the right one. For anything the tour does not cover, Ask Meyy — this helpline — is available throughout the app.",
+      "question": "Is there a guided tour that shows me how to use Meyy? Can I take it again?",
+      "answer": "Yes. The guided tour is a short walkthrough that shows you around Meyy on the live screen — your section cards, your lesson plans, attaching a lesson to a class, the Learning Unit tabs, the bookmark, reporting an issue, marking a unit complete, adding classes, your teaching profile and Ask Meyy. Meyy offers it once when your first lesson is ready, and you can take it again at any time with the Start the tour button below, as often as you like. It runs about twenty short steps and you can skip it at any point. Taking it again changes nothing in your classes: whatever the tour shows on one of your sections is put back exactly as it was when the tour ends.",
+      "action": "tour",
       "keywords": [
         "tour",
+        "again",
         "guided",
-        "basic",
-        "features",
-        "explains",
-        "point"
+        "take",
+        "shows",
+        "short"
       ]
     },
     {
@@ -1311,7 +1312,7 @@
         "cover",
         "prepare",
         "choosing",
-        "often"
+        "trying"
       ]
     },
     {

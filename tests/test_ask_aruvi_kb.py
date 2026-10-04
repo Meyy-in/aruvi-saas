@@ -71,6 +71,13 @@ LANDINGS = [
     ("maximum periods",               "c22"),
     ("edit the plan",                 "e19"),
     ("refund",                        "e22"),
+    # "show me" (2026-10-04): the one answer that carries the Start-the-tour button
+    ("tour",                          "d12"),
+    ("guided tour",                   "d12"),
+    ("show me around",                "d12"),
+    ("how to use meyy",               "d12"),
+    ("walkthrough",                   "d12"),
+    ("take the tour again",           "d12"),
 ]
 
 
@@ -256,9 +263,19 @@ def test_no_retired_feature_names():
     print("  ok  no reference to the retired Period Notes")
 
 
+def test_the_tour_pair_carries_its_button():
+    """`"action": "tour"` is what makes Ask Meyy draw "Start the tour" (AskAruvi.jsx / AskMeyy.jsx).
+    Exactly one pair carries it; a refresh that drops the field silently removes the button."""
+    pairs = load(OFFICIAL)["pairs"]
+    acts = [(p["id"], p.get("action")) for p in pairs if p.get("action")]
+    assert acts == [("d12", "tour")], "tour action moved or vanished: %r" % acts
+    print("  ok  d12 carries the tour button, and nothing else carries an action")
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     print("test_ask_aruvi_kb — %d tests" % len(tests))
     for t in tests:
         t()
     print("all green")
+

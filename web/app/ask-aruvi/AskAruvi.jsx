@@ -21,7 +21,11 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { search } from "./askAruviSearch";
 import { loadBank } from "./bank";
 
-export default function AskAruvi({ onClose, autoFocus = true }) {
+/* `tourAction` (2026-10-04, "show me"): the ONE answer whose bank entry says `"action": "tour"`
+   carries the guided tour. page.jsx passes `{ start }` when the tour can run, `{ note }` when it
+   cannot (no lesson of hers yet, or lapsed), and null while the tour itself is driving (it opens
+   this panel at step 20 to SHOW it, and a button there would start a tour inside a tour). */
+export default function AskAruvi({ onClose, autoFocus = true, tourAction = null }) {
   /* Focus the search box only where a focused field is free (founder, 2026-09-11): on a
      PHONE, focus raises the keyboard over half the screen — and during the guided tour
      it hid step 19's own window behind it. So: desktop widths only (the 2026-08-08 rule
@@ -138,7 +142,7 @@ export default function AskAruvi({ onClose, autoFocus = true }) {
             /* ── SEARCH MODE — ranked list only, no categories ── */
             <div className="aa-results">
               {result.results.map((p) => (
-                <Answer key={p.id} p={p} open={openPair === p.id} onToggle={() => togglePair(p.id)} tag={catMap[p.category]?.tag} />
+                <Answer key={p.id} p={p} open={openPair === p.id} onToggle={() => togglePair(p.id)} tag={catMap[p.category]?.tag} tourAction={tourAction} />
               ))}
             </div>
           ) : (
@@ -171,7 +175,7 @@ export default function AskAruvi({ onClose, autoFocus = true }) {
                   {isOpen && (
                     <div className="aa-cat-list">
                       {pairs.map((p) => (
-                        <Answer key={p.id} p={p} open={openPair === p.id} onToggle={() => togglePair(p.id)} />
+                        <Answer key={p.id} p={p} open={openPair === p.id} onToggle={() => togglePair(p.id)} tourAction={tourAction} />
                       ))}
                     </div>
                   )}
@@ -272,12 +276,24 @@ export default function AskAruvi({ onClose, autoFocus = true }) {
           color: var(--ink-soft); border: 1px solid var(--line); border-radius: 20px; padding: 2px 7px; margin-top: 1px; }
         .aa-item-a { font-family: var(--f-body); font-size: 15px; color: var(--ink-soft); line-height: 1.6;
           padding: 0 2px 15px 24px; white-space: pre-wrap; }
+        /* "Show me" (2026-10-04): the pill is the Report-an-issue pill's shape, filled pine —
+           the one answer that does something, said once, under the words. */
+        .aa-item-act { padding: 0 2px 16px 24px; margin-top: -4px; }
+        .aa-item-actbtn { all: unset; box-sizing: border-box; cursor: pointer; white-space: nowrap;
+          padding: 9px 16px; border: 1px solid var(--pine); border-radius: 999px; background: var(--pine);
+          font-family: var(--f-mono); font-size: 11px; font-weight: 600; letter-spacing: .08em;
+          text-transform: uppercase; color: #f6f1e7; }
+        .aa-item-actbtn:hover { background: var(--pine-d); }
+        .aa-item-actbtn:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
+        .aa-item-note { font-family: var(--f-body); font-size: 14px; font-style: italic; color: var(--ink-soft);
+          line-height: 1.5; padding: 0 2px 15px 24px; margin-top: -4px; }
       `}</style>
     </div>
   );
 }
 
-function Answer({ p, open, onToggle, tag }) {
+function Answer({ p, open, onToggle, tag, tourAction }) {
+  const act = open && p.action === "tour" ? tourAction : null;
   return (
     <div className={`aa-item ${open ? "open" : ""}`}>
       <button className="aa-item-q" aria-expanded={open} onClick={onToggle}>
@@ -286,6 +302,11 @@ function Answer({ p, open, onToggle, tag }) {
         {tag && <span className="aa-item-tag">{tag}</span>}
       </button>
       {open && <div className="aa-item-a">{p.answer}</div>}
+      {act && act.start ? (
+        <div className="aa-item-act">
+          <button type="button" className="aa-item-actbtn" onClick={act.start}>Start the tour ›</button>
+        </div>
+      ) : act && act.note ? <div className="aa-item-note">{act.note}</div> : null}
     </div>
   );
 }
