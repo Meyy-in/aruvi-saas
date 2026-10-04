@@ -54,6 +54,7 @@ import { type } from "../../../theme/type";
 import { openAsk } from "../../../lib/ask";
 import EmailEntry from "../../../components/EmailEntry";
 import { versionLine } from "../../../lib/version";
+import { supportWhatsAppText, SUPPORT_CAP_NOTE } from "@aruvi/shared/report";
 
 /* Only ever a fallback for a server that sends no list — the categories are the API's
    (`mail_templates.SUPPORT_CATEGORIES`) and the stored `category_label` is what the founder
@@ -207,10 +208,19 @@ export default function Support() {
   /* WhatsApp only for a teacher who opted in — and only when we KNOW she did (WALK-A-142). */
   const hasWa = emailKnown && !!meta.whatsapp;
   const waOnly = hasWa && !hasEmail;
+  /* ★ ONE FORM, TWO WAYS TO SEND (founder, 2026-10-04) — as the web's SupportForm: subject and
+     her words, then WhatsApp or email by what is on her account. WhatsApp opens her chat with the
+     "Support:" header, her sign-in number and her words typed — the server opens an issue (MEY-W-n). */
+  const [waDone, setWaDone] = useState(false);
+  const capped = emailKnown && !!meta.cap_reached;      // 5 new requests today, email + WhatsApp
+  const catLabel = (cats.find((c) => c.key === cat) || {}).label || "";
   const openWa = () => {
-    const note = `Hello Meyy, I need help. My sign-in number is ${mobileWords(meta && meta.mobile)}.`;
-    Linking.openURL(waLink(note, meta && meta.whatsapp_number)).catch(() => {});
+    if (!cat || !text.trim()) return;
+    const msg = supportWhatsAppText(catLabel, mobileWords(meta && meta.mobile), text);
+    Linking.openURL(waLink(msg, meta && meta.whatsapp_number)).catch(() => {});
+    setText(""); setCat(""); setWaDone(true);
   };
+  const openChat = () => Linking.openURL(waLink("", meta && meta.whatsapp_number)).catch(() => {});
   const needsEmail = emailKnown && !hasEmail && !hasWa;
   const saveEmail = async (v) => {
     try {
@@ -300,32 +310,6 @@ export default function Support() {
         <Text style={[ws.set_chev, { color: t.ink_soft }]}>›</Text>
       </Pressable>
 
-      {/* 1b · WhatsApp — opted-in teachers only (WALK-A-142). */}
-      {hasWa ? (
-        <Pressable onPress={openWa} accessibilityRole="button" accessibilityLabel="Chat on WhatsApp"
-          style={[ws.set_bigcard, { backgroundColor: t.card_bg, borderColor: t.line }]}>
-          <View style={ws.set_bigtext}>
-            <Text style={[ws.set_biglab, { color: t.ink }]}>Chat on WhatsApp</Text>
-            <Text style={[ws.set_bigsub, { color: t.ink_soft }]}>Message Meyy support</Text>
-          </View>
-          <Text style={[ws.set_chev, { color: t.ink_soft }]}>›</Text>
-        </Pressable>
-      ) : null}
-
-      {/* A WhatsApp-only teacher (no email): the form gives way to adding one (the web's 04.37). */}
-      {waOnly ? (
-        <View style={ws.set_group}>
-          <Text style={[ws.set_cap, { color: t.ink_soft }]}>Email support</Text>
-          <View style={[ws.set_card, ws.set_card_pad,
-                        { borderColor: t.line, backgroundColor: t.card_bg }]}>
-            <Text style={[ws.set_plan_txt, { color: t.ink }]}>To use email support, first add an
-              email address to your account. Meanwhile, you can reach us on WhatsApp above.</Text>
-            <Link title="Add an email address →" style={{ textAlign: "left" }}
-              onPress={() => router.push("/settings/personal")} />
-          </View>
-        </View>
-      ) : null}
-
       {needsEmail ? (
         <View style={ws.set_group}>
           <Text style={[ws.set_cap, { color: t.ink_soft }]}>Email support</Text>
@@ -339,18 +323,42 @@ export default function Support() {
         </View>
       ) : null}
 
-      {/* 2 · the form, shaped like a mail: To · Subject · message — not before an email is on
-          record (needsEmail) */}
-      {!needsEmail && !waOnly ? (
+      {/* 2a · the day's cap reached — the note, and her chat for continuing an issue */}
+      {!needsEmail && capped ? (
+        <View style={ws.set_group}>
+          <Text style={[ws.set_cap, { color: t.ink_soft }]}>Write to us</Text>
+          <View style={[ws.set_card, ws.set_card_pad, { borderColor: t.line, backgroundColor: t.card_bg }]}>
+            <Text style={[ws.set_plan_txt, { color: t.ink }]}>{meta.cap_note || SUPPORT_CAP_NOTE}</Text>
+            {hasWa ? <Link title="Open WhatsApp chat →" style={{ textAlign: "left" }} onPress={openChat} /> : null}
+          </View>
+        </View>
+      ) : null}
+
+      {/* 2b · after "Send on WhatsApp" */}
+      {!needsEmail && !capped && waDone ? (
+        <View style={ws.set_group}>
+          <Text style={[ws.set_cap, { color: t.ink_soft }]}>Write to us</Text>
+          <View style={[ws.set_card, ws.set_card_pad, { borderColor: t.line, backgroundColor: t.card_bg }]}>
+            <Text style={[ws.set_plan_txt, { color: t.ink }]}>Your message is ready in WhatsApp — press
+              Send there to reach us. We’ll reply in the same chat.</Text>
+            <Link title="Write another message" style={{ textAlign: "left" }} onPress={() => setWaDone(false)} />
+          </View>
+        </View>
+      ) : null}
+
+      {/* 2 · the form — WhatsApp, email or both, by what is on her account */}
+      {!needsEmail && !capped && !waDone ? (
       <View style={ws.set_group}>
         <Text style={[ws.set_cap, { color: t.ink_soft }]}>Write to us</Text>
         <View style={[ws.set_card, ws.set_card_pad,
                       { borderColor: t.line, backgroundColor: t.card_bg }]}>
-          {/* A read-only VALUE, not a field: no plane, no border, nothing that invites a tap. */}
-          <View style={ws.sup_to_row}>
-            <Text style={[type.label, { color: t.ink_soft }]}>To</Text>
-            <Text style={[ws.sup_to, { color: t.ink_soft }]}>{SUPPORT_ADDRESS}</Text>
-          </View>
+          {/* A read-only VALUE, not a field — only when email is the one way to send. */}
+          {!hasWa ? (
+            <View style={ws.sup_to_row}>
+              <Text style={[type.label, { color: t.ink_soft }]}>To</Text>
+              <Text style={[ws.sup_to, { color: t.ink_soft }]}>{SUPPORT_ADDRESS}</Text>
+            </View>
+          ) : null}
 
           {/* No preselection — a dropdown that answers for her files a suggestion as a fault,
               and the choice also sets which reply window the server promises. */}
@@ -389,11 +397,11 @@ export default function Support() {
           {/* A trial teacher has no Personal profile, so her one door to her address is here —
               frozen, with "change" (WALK-A-135). */}
           {hasEmail && onTrial ? (
-            <EmailEntry current={meta.email} label="Our reply goes to" selfId={meta.mobile}
+            <EmailEntry current={meta.email} label={hasWa ? "Email replies go to" : "Our reply goes to"} selfId={meta.mobile}
               onConfirmed={saveEmail} />
           ) : null}
           {hasEmail && !onTrial ? (
-            <Text style={[ws.ob_quiet, { color: t.ink_soft }]}>Our reply goes to{" "}
+            <Text style={[ws.ob_quiet, { color: t.ink_soft }]}>{hasWa ? "Email replies go to" : "Our reply goes to"}{" "}
               <Text style={{ color: t.ink }}>{meta.email}</Text>.</Text>
           ) : null}
 
@@ -401,8 +409,21 @@ export default function Support() {
             <Text accessibilityRole="alert" style={[ws.ob_err, { color: t.danger }]}>{err}</Text>
           ) : null}
 
-          <Button title={busy ? "Sending…" : "Send message"} busy={busy}
-            disabled={!cat || !text.trim() || busy} onPress={send} style={{ marginTop: 16 }} />
+          {hasWa ? (
+            <Button title="Send on WhatsApp" disabled={!cat || !text.trim() || busy} onPress={openWa}
+              style={{ marginTop: 16 }} />
+          ) : null}
+          {hasEmail ? (
+            <Button title={busy ? "Sending…" : hasWa ? "Send by email" : "Send message"} busy={busy}
+              kind={hasWa ? "secondary" : "primary"} disabled={!cat || !text.trim() || busy} onPress={send}
+              style={[{ marginTop: hasWa ? 10 : 16 },
+                      hasWa ? { borderWidth: 1, borderColor: t.pine, backgroundColor: t.paper_2,
+                                opacity: !cat || !text.trim() || busy ? 0.45 : 1 } : null]} />
+          ) : null}
+          {waOnly ? (
+            <Link title="Add an email address to use email too →" style={{ textAlign: "left", marginTop: 10 }}
+              onPress={() => router.push("/settings/personal")} />
+          ) : null}
         </View>
       </View>
       ) : null}

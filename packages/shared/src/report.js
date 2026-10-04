@@ -93,3 +93,19 @@ export function reportWhatsAppText(report, message) {
   const body = String(message || "").trim();
   return body ? `${head}\n\n${body}` : head;
 }
+
+/* ★ SETTINGS › SUPPORT ON WHATSAPP (founder, 2026-10-04) — the same shape as a lesson report:
+ * a header the server reads back (api/support_inbox.parse_support — keep the two in step), her
+ * sign-in number, then her own words. Replaces the canned "Hello Meyy, I need help" opener, which
+ * spoke for her before she had said anything. Each such message is its own issue (MEY-W-n). */
+export function supportWhatsAppText(about, signin, message) {
+  const lines = [`Support: ${String(about || "").trim()}`];
+  if (String(signin || "").trim()) lines.push(`Sign-in: ${String(signin).trim()}`);
+  const body = String(message || "").trim();
+  return body ? `${lines.join("\n")}\n\n${body}` : lines.join("\n");
+}
+
+/* The day's cap on NEW support requests (email + WhatsApp together) — mirrors
+ * api/config.SUPPORT_CAP_NOTE; the server's own copy arrives as GET /support `cap_note`. */
+export const SUPPORT_CAP_NOTE = "You've sent 5 new requests today. To continue any of those issues, " +
+  "reply in your WhatsApp chat with Meyy or to our email. New requests open again tomorrow.";

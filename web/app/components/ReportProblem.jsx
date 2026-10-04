@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { API, withUser, getJSON, errDetail, waLink } from "../lib/format";
-import { problemReport, reportWhatsAppText, phaseOptionLabel } from "@aruvi/shared/report";
+import { problemReport, reportWhatsAppText, phaseOptionLabel, SUPPORT_CAP_NOTE } from "@aruvi/shared/report";
 import Dropdown from "./Dropdown";
 import { versionLine } from "../lib/version";
 
@@ -92,6 +92,8 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
   const hasEmail = known && !!meta.email;
   const hasWa = known && !!meta.whatsapp;
   const ready = !!text.trim() && !busy;
+  // The day's cap on new requests (email + WhatsApp together, 2026-10-04): a note instead of the form.
+  const capped = known && !!meta.cap_reached;
 
   // Opened straight from the click (no await first) so no browser treats it as a pop-up.
   const sendWa = () => {
@@ -166,7 +168,17 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
           <p className="rp-msg">Meyy replies only to an email address or WhatsApp on your account.
             Add one in Settings › Personal profile, then report this again.</p>
         ) : null}
-        {known && (hasEmail || hasWa) ? (
+        {known && capped && (hasEmail || hasWa) ? (
+          <>
+            <p className="rp-msg">{meta.cap_note || SUPPORT_CAP_NOTE}</p>
+            {hasWa ? (
+              <button className="primary rp-btn" onClick={() => {
+                window.open(waLink("", meta.whatsapp_number), "_blank", "noopener"); onClose(); }}>
+                Open WhatsApp chat</button>
+            ) : null}
+          </>
+        ) : null}
+        {known && !capped && (hasEmail || hasWa) ? (
           <>
             <label className="rp-lab" htmlFor="rp-text">What looks wrong?</label>
             <textarea id="rp-text" ref={taRef} className="sup-text rp-text" rows={5}

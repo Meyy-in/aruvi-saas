@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { problemReport, reportWhatsAppText, gradeRoman, phaseOptionLabel } from "../src/report.js";
+import { problemReport, reportWhatsAppText, supportWhatsAppText, gradeRoman, phaseOptionLabel } from "../src/report.js";
 
 const lp = { subject: "mathematics", grade: "grade_9", chapter_number: 2, chapter_title: "Polynomials" };
 
@@ -40,4 +40,10 @@ test("WhatsApp text puts the lesson first, then her words, with no code", () => 
   const t = reportWhatsAppText(r, "  Q7 guide is wrong. ");
   assert.equal(t, "Problem in: Class IX · Mathematics · Polynomials · Unit 3 · Phase 2\n\nQ7 guide is wrong.");
   assert.equal(t.includes("IX-MAT"), false);
+});
+
+test("Support text: header, sign-in, then her words", () => {
+  assert.equal(supportWhatsAppText("Billing or account", "98000 00306", " Charged twice "),
+    "Support: Billing or account\nSign-in: 98000 00306\n\nCharged twice");
+  assert.equal(supportWhatsAppText("A suggestion", "", "Hi"), "Support: A suggestion\n\nHi");
 });

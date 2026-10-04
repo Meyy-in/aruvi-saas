@@ -90,6 +90,7 @@ def window_open(thread: Optional[Dict[str, Any]], now: Optional[datetime] = None
 
 
 REPORT_HEAD = "Problem in:"
+SUPPORT_HEAD = "Support:"
 
 
 def parse_report(text: str) -> Optional[Dict[str, str]]:
@@ -117,6 +118,20 @@ def parse_report(text: str) -> Optional[Dict[str, str]]:
         out["subject"] = rest[0]
     if len(rest) > 1:
         out["chapter"] = " · ".join(rest[1:])
+    return out
+
+
+def parse_support(text: str) -> Optional[Dict[str, str]]:
+    """The header Settings › Support puts on a WhatsApp message (2026-10-04) —
+    "Support: Billing or account" / "Sign-in: 98…" — read back. None when it is not one."""
+    t = (text or "").strip()
+    if not t.lower().startswith(SUPPORT_HEAD.lower()):
+        return None
+    lines = t.split("\n")
+    out: Dict[str, str] = {"about": lines[0][len(SUPPORT_HEAD):].strip()}
+    for ln in lines[1:4]:
+        if ln.lower().startswith("sign-in:"):
+            out["signin"] = ln.split(":", 1)[1].strip()
     return out
 
 
@@ -208,14 +223,20 @@ class Inbox:
         # A lesson report gets its number BEFORE it is filed — and only once: Meta re-delivering
         # the same message must not spend a second reference.
         report = parse_report(text)
+        support = None if report else parse_support(text)
         ref = ""
         is_new = not self.repo.has_message(n, m.get("id", ""))
-        if report and is_new:
+        # Past the day's cap (email + WhatsApp together) a fresh request gets no new number:
+        # it joins her latest issue instead (founder, 2026-10-04).
+        capped = self.over_cap(n)
+        if (report or support) and is_new and not capped:
             ref = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"),
                                            getattr(self.config, "WA_REPORT_START", 1234))
         before = self.repo.append(
             n, {"id": m.get("id", ""), "dir": "in", "type": m.get("type", ""), "text": text,
-                **({"ref": ref, "report": report} if ref else {})},
+                **({"ref": ref} if ref else {}),
+                **({"report": report} if ref and report else {}),
+                **({"support": support} if ref and support else {})},
             name=self._name_for(n, profile_name))
         if ref:
             self.repo.patch(n, last_ref=ref)
@@ -240,6 +261,8 @@ class Inbox:
                 fields["draft"] = {}
             if st["status"] == "done" or ref:
                 fields["status"] = "open"
+            if ref:
+                fields["category"] = "plan" if report else self.category_for(support.get("about", ""))
             if fields:
                 self.repo.patch_issue(n, iss, **fields)
         now = datetime.now(timezone.utc)
@@ -359,6 +382,36 @@ class Inbox:
         self.cases.save(c)
         self.log({"kind": "case_inbound", "ref": c.reference})
         return "added"
+
+    # ── the day's cap on NEW requests (2026-10-04) ──
+    def new_today(self, n: str, tenant_id: str = "") -> int:
+        """New requests she opened today (UTC day — 5:30 am in India): her email cases plus
+        her WhatsApp issues. Replies and follow-ups are not requests."""
+        today = datetime.now(timezone.utc).date().isoformat()
+        key = number_key(n) or n
+        t = self.repo.load(key) or {}
+        k = sum(1 for m in t.get("messages") or []
+                if m.get("ref") and m.get("dir") == "in" and str(m.get("at", ""))[:10] == today)
+        if self.cases:
+            try:
+                k += sum(1 for c in self.cases.load_all(tenant_id or key, key)
+                         if str(c.created_at or "")[:10] == today)
+            except Exception:                                  # noqa: BLE001
+                pass
+        return k
+
+    def over_cap(self, n: str, tenant_id: str = "") -> bool:
+        key = number_key(n) or n
+        if key in getattr(self.config, "TEST_SUPPORT_UNCAPPED", set()):
+            return False
+        return self.new_today(key, tenant_id) >= int(getattr(self.config, "SUPPORT_DAILY_CAP", 5))
+
+    def category_for(self, label: str) -> str:
+        low = (label or "").strip().lower()
+        for k in ("problem", "plan", "billing", "suggestion", "other"):
+            if self.cat_label(k).strip().lower() == low:
+                return k
+        return "other"
 
     # ── the one queue ──
     def queue(self) -> list:
@@ -843,7 +896,7 @@ document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{filter=c.dataset.f;
 async function openItem(kind,id){cur=kind+':'+id;location.hash=cur;$('.app').classList.add('open');$('#thread').classList.remove('hidden');$('#err').textContent='';renderList();await refresh(true,true);loadList()}
 /* A WhatsApp lesson report (MEY-W-n): its number and the lesson rows, above her message —
    the email case's details panel, read back from her "Problem in:" line. */
-function reportCard(m){const r=m.report||{};const rows=[['Reference',m.ref],['Class',[r.subject,r.grade].filter(Boolean).join(' · ')],['Chapter',r.chapter],['Unit',[r.unit,r.phase].filter(Boolean).join(' · ')]].filter(x=>x[1]);
+function reportCard(m){const r=m.report||{},s=m.support;const rows=s?[['Reference',m.ref],['About',s.about],['Sign-in',s.signin]].filter(x=>x[1]):[['Reference',m.ref],['Class',[r.subject,r.grade].filter(Boolean).join(' · ')],['Chapter',r.chapter],['Unit',[r.unit,r.phase].filter(Boolean).join(' · ')]].filter(x=>x[1]);
  return `<div class="case wrep"><dl>${rows.map(x=>`<dt>${esc(x[0])}</dt><dd>${esc(x[1])}</dd>`).join('')}</dl></div>`}
 function bubble(m,who){return `<div class="m ${m.dir} ${m.status==='failed'?'failed':''}">${esc(m.text)}<span class="meta">${when(m.at)}${m.dir==='out'?' · '+esc(who(m))+(m.status?' · '+esc(m.status):''):''}${m.error?' — '+esc(m.error):''}</span></div>`}
 async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id]=[cur.slice(0,cur.indexOf(':')),cur.slice(cur.indexOf(':')+1)];

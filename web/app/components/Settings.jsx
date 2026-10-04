@@ -10,6 +10,7 @@ import Dropdown from "./Dropdown";
 import EmailEntry, { matchedDraft } from "./EmailEntry";
 import { dataExportName, cachedAccount } from "../lib/account";
 import { versionLine } from "../lib/version";
+import { supportWhatsAppText, SUPPORT_CAP_NOTE } from "@aruvi/shared/report";
 
 const maskEmail = (e) => {
   const [u, d] = String(e).split("@");
@@ -407,10 +408,22 @@ function SupportForm({ onOpenProfile, onAsk, trial = false }) {
       return "Couldn't save that just now — try again.";
     }
   };
-  const openWa = () => {
-    const note = `Hello Meyy, I need help. My sign-in number is ${mobileWords(meta && meta.mobile)}.`;
-    window.open(waLink(note, meta && meta.whatsapp_number), "_blank", "noopener");
+  /* ★ ONE FORM, TWO WAYS TO SEND (founder, 2026-10-04) — Settings › Support now works like
+     Report an issue: she chooses what it is about and writes, then sends on WhatsApp or by email,
+     whichever is on her account. The WhatsApp button opens HER chat with Meyy with the subject,
+     her sign-in number and her own words already typed — no canned "I need help" opener speaking
+     for her. The server reads the "Support:" header and opens a separate issue (MEY-W-n). */
+  const [waDone, setWaDone] = useState(false);
+  // Past the day's cap (5 new requests, email + WhatsApp together) both buttons give way to a note.
+  const capped = emailKnown && !!meta.cap_reached;
+  const catLabel = (cats.find((c) => c.key === cat) || {}).label || "";
+  const openWa = () => {        // straight from the click — no await first, or it is a pop-up
+    if (!cat || !text.trim()) return;
+    const msg = supportWhatsAppText(catLabel, mobileWords(meta && meta.mobile), text);
+    window.open(waLink(msg, meta && meta.whatsapp_number), "_blank", "noopener");
+    setText(""); setCat(""); setWaDone(true);
   };
+  const openChat = () => window.open(waLink("", meta && meta.whatsapp_number), "_blank", "noopener");
 
   const send = async () => {
     if (!text.trim() || busy) return;
@@ -480,30 +493,6 @@ function SupportForm({ onOpenProfile, onAsk, trial = false }) {
         <span className="set-chev">›</span>
       </button>
 
-      {/* 1b · WhatsApp — opted-in teachers only. For a WhatsApp-only teacher (no email) this
-          IS the written channel, so it is said as such and the email form below gives way
-          to the add-email note. */}
-      {hasWa && (
-        <button className="set-bigcard sup-wa" onClick={openWa}>
-          <span className="set-bigtext"><span className="set-biglab">Chat on WhatsApp</span>
-            <span className="set-bigsub">Message Meyy support</span></span>
-          <span className="set-chev">›</span>
-        </button>
-      )}
-
-      {waOnly && (
-        <div className="set-group">
-          <div className="set-cap">Email support</div>
-          <div className="set-card set-card-pad">
-            <p className="set-plan-txt">To use email support, first add an email address to
-              your account. Meanwhile, you can reach us on WhatsApp above.</p>
-            <button className="fr-link sup-addmail"
-              onClick={() => onOpenProfile && onOpenProfile()}>
-              Add an email address →</button>
-          </div>
-        </div>
-      )}
-
       {needsEmail && (
         <div className="set-group">
           <div className="set-cap">Email support</div>
@@ -516,22 +505,45 @@ function SupportForm({ onOpenProfile, onAsk, trial = false }) {
         </div>
       )}
 
-      {/* 2 · the form — not for a WhatsApp-only teacher (see 1b), nor before an email is
-          on record (see needsEmail) */}
-      {!waOnly && !needsEmail && (
+      {/* 2a · the day's cap reached — the note, and her chat for continuing an issue */}
+      {!needsEmail && capped && (
+        <div className="set-group">
+          <div className="set-cap">Write to us</div>
+          <div className="set-card set-card-pad">
+            <p className="set-plan-txt">{meta.cap_note || SUPPORT_CAP_NOTE}</p>
+            {hasWa && (
+              <button className="fr-link sup-addmail" onClick={openChat}>Open WhatsApp chat →</button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 2b · after "Send on WhatsApp": the message waits in her WhatsApp for her to press Send */}
+      {!needsEmail && !capped && waDone && (
+        <div className="set-group">
+          <div className="set-cap">Write to us</div>
+          <div className="set-card set-card-pad">
+            <p className="set-plan-txt">Your message is ready in WhatsApp — press Send there to
+              reach us. We'll reply in the same chat.</p>
+            <button className="fr-link sup-addmail" onClick={() => setWaDone(false)}>
+              Write another message</button>
+          </div>
+        </div>
+      )}
+
+      {/* 2 · the form — WhatsApp, email or both, by what is on her account */}
+      {!needsEmail && !capped && !waDone && (
       <div className="set-group">
         <div className="set-cap">Write to us</div>
         <div className="set-card set-card-pad">
-          {/* ★ THE FORM IS SHAPED LIKE A MAIL (founder, 2026-09-03): To · Subject ·
-              message. The To line is HARDCODED, not read from GET /support — the
-              running API had handed the screen the founder's Gmail (a process older
-              than the config change), and an address a teacher is told to write to
-              must not depend on which server answered. A read-only VALUE, not a field:
-              no plane, no border, nothing that invites a tap. */}
-          <div className="login-field ob-field sup-field sup-to-row">
-            <span>To</span>
-            <div className="sup-to">{SUPPORT_ADDRESS}</div>
-          </div>
+          {/* The To line only when email is the one way to send (2026-09-03); with WhatsApp
+              on the account the buttons say where it goes. */}
+          {!hasWa && (
+            <div className="login-field ob-field sup-field sup-to-row">
+              <span>To</span>
+              <div className="sup-to">{SUPPORT_ADDRESS}</div>
+            </div>
+          )}
           <label className="login-field ob-field sup-field">
             <span>Subject</span>
             {/* No preselection — a dropdown that answers for her files a suggestion as
@@ -553,39 +565,33 @@ function SupportForm({ onOpenProfile, onAsk, trial = false }) {
           {text.length > SUPPORT_MAX - 500 && (
             <p className="ob-quiet">{SUPPORT_MAX - text.length} characters left</p>
           )}
-          {/* ★ THE PROMISE IS MADE ONCE, AFTER SENDING (founder, 2026-09-04). It used
-                 to be stated here too, above the button, and then again on the "Message
-                 sent" screen in the same words — so the only thing the second telling
-                 added was the suspicion that it was a different promise. The moment it
-                 is load-bearing is the one where she is waiting, which is after she has
-                 sent, and that screen quotes the SERVER's own `reply_window` rather than
-                 a locally-derived guess. Removed with it: billing's "Billing questions
-                 come first", which was true and unactionable before sending — she cannot
-                 make her problem a billing problem, and the confirmation still states
-                 billing's own firmer window because the SERVER resolves it. */}
-          {/* ★ IN FULL, NOT MASKED (founder, 2026-09-04). It read "k•••@gmail.com", a
-                 privacy treatment borrowed from the subscribe flow's confirmation —
-                 where the address is being CONFIRMED BACK to her and the only job is
-                 recognition. Here the job is the opposite: this is the last moment she
-                 can catch a wrong or stale address, before spending effort writing to
-                 somewhere she will never be answered. A mask defeats exactly that check,
-                 since "k•••@gmail.com" matches every address she owns.
-                 `overflow-wrap` because an address has no spaces to break at, and a long
-                 one would otherwise push the card sideways at 360px. */}
-          {/* A trial teacher has no Personal profile, so her one door to her address is
-              HERE: frozen, with "change" (WALK-A-135 — a typo is never a dead end). */}
           {hasEmail && trial && (
-            <EmailEntry current={meta.email} label="Our reply goes to"
+            <EmailEntry current={meta.email} label={hasWa ? "Email replies go to" : "Our reply goes to"}
               selfId={meta.mobile} onConfirmed={saveEmail} />
           )}
           {hasEmail && !trial && (
-            <p className="ob-quiet">Our reply goes to{" "}
+            <p className="ob-quiet">{hasWa ? "Email replies go to" : "Our reply goes to"}{" "}
               <span className="sup-replyto">{meta.email}</span>.</p>
           )}
           {err && <p className="ob-err" role="alert">{err}</p>}
-          <button className="primary fr-cta ob-cta"
-            disabled={!cat || !text.trim() || busy}
-            onClick={send}>{busy ? "Sending…" : "Send message"}</button>
+          {hasWa && hasEmail ? (
+            <div className="sup-two">
+              <button className="primary fr-cta" disabled={!cat || !text.trim() || busy}
+                onClick={openWa}>Send on WhatsApp</button>
+              <button className="fr-cta sup-sec" disabled={!cat || !text.trim() || busy}
+                onClick={send}>{busy ? "Sending…" : "Send by email"}</button>
+            </div>
+          ) : hasWa ? (
+            <button className="primary fr-cta ob-cta" disabled={!cat || !text.trim()}
+              onClick={openWa}>Send on WhatsApp</button>
+          ) : (
+            <button className="primary fr-cta ob-cta" disabled={!cat || !text.trim() || busy}
+              onClick={send}>{busy ? "Sending…" : "Send message"}</button>
+          )}
+          {waOnly && (
+            <button className="fr-link sup-addmail" onClick={() => onOpenProfile && onOpenProfile()}>
+              Add an email address to use email too →</button>
+          )}
         </div>
       </div>
       )}

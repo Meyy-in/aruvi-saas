@@ -97,6 +97,13 @@ ENTITLEMENT_ENFORCED = os.environ.get("ARUVI_ENTITLEMENT_ENFORCED", "").strip().
 # serves. Empirical; env-overridable for the field test.
 TRIAL_CHAPTER_CAP = int(os.environ.get("ARUVI_TRIAL_CHAPTERS", "3"))
 
+# ★ NEW SUPPORT REQUESTS A DAY, PER TEACHER (founder, 2026-10-04): email cases (MEY-S) and
+# WhatsApp issues (MEY-W) count TOGETHER. Replies and follow-ups never count. Past the cap the app
+# disables both send buttons; a fresh WhatsApp message typed straight in joins her latest issue.
+SUPPORT_DAILY_CAP = int(os.environ.get("ARUVI_SUPPORT_DAILY_CAP", "5"))
+SUPPORT_CAP_NOTE = ("You've sent 5 new requests today. To continue any of those issues, reply in "
+                    "your WhatsApp chat with Meyy or to our email. New requests open again tomorrow.")
+
 # TEST_SUPPORT_UNCAPPED (2026-10-03): TEST-ONLY. Comma-separated mobile numbers exempt from the
 # support form's five-messages-a-day cap, so the founder can walk support flows on a test profile.
 # Empty in production; remove the numbers when the walk is done.

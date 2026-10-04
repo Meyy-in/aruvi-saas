@@ -2744,11 +2744,10 @@ async def whatsapp_webhook(request: Request) -> Dict[str, Any]:
 #     the worst case is a saved case with `acknowledged: false` — recoverable, and
 #     visible to the founder — rather than her words evaporating.
 _SUPPORT_MAX_CHARS = 4000
-_SUPPORT_DAILY_CAP = 5
+_SUPPORT_DAILY_CAP = config.SUPPORT_DAILY_CAP     # email + WhatsApp together — see config
 _SUPPORT_NEEDS_EMAIL = ("Meyy writes back only to an email address on your account — "
                         "add yours first.")
-_SUPPORT_CAP_REACHED = ("You've written to us five times today — we'll answer those first. "
-                        "You can write again tomorrow.")
+_SUPPORT_CAP_REACHED = config.SUPPORT_CAP_NOTE
 
 
 class SupportMessage(BaseModel):
@@ -2803,11 +2802,9 @@ def create_support_request(req: SupportMessage,
     if not to:
         raise HTTPException(status_code=409, detail=_SUPPORT_NEEDS_EMAIL)
     # A light daily cap, so the form cannot become a spam pipe (founder, 2026-09-28).
-    today = datetime.now(timezone.utc).date().isoformat()
-    sent_today = sum(1 for r in support_repo.load_all(tenant_id, user_id)
-                     if str(r.created_at or "")[:10] == today)
-    if sent_today >= _SUPPORT_DAILY_CAP and user_id not in config.TEST_SUPPORT_UNCAPPED:
-        raise HTTPException(status_code=429, detail=_SUPPORT_CAP_REACHED)
+    # ★ Email cases and WhatsApp issues count TOGETHER (founder, 2026-10-04).
+    if support_inbox.over_cap(acct.phone if acct and acct.phone else user_id, tenant_id):
+        raise HTTPException(status_code=429, detail=config.SUPPORT_CAP_NOTE)
     name = (acct.display_name if acct else "") or ""
     now = datetime.now(timezone.utc).isoformat()
     reference = support_repo.next_reference()
@@ -2885,6 +2882,11 @@ def list_support_requests(identity: tuple = Depends(_current_identity)) -> Dict[
             "whatsapp_number": config.WHATSAPP_NUMBER,
             # Her sign-in mobile, so the tap-to-chat note can say who is writing.
             "mobile": (acct.phone if acct and acct.phone else user_id),
+            # The day's cap on NEW requests, email + WhatsApp together (2026-10-04): past it
+            # the screens disable both send buttons and show `cap_note` instead.
+            "cap_reached": support_inbox.over_cap(acct.phone if acct and acct.phone else user_id,
+                                                  tenant_id),
+            "cap_note": config.SUPPORT_CAP_NOTE,
             "requests": [
         {"reference": r.reference, "category": r.category,
          "label": r.category_label or mail_templates.support_category_label(r.category),

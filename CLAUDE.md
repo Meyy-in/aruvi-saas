@@ -16,6 +16,11 @@ status → answered); Mark closed / Mark done; WhatsApp category select. Every i
 (Bearer) lets the founder's drafting session READ the queue (`/api/queue`, `/api/case/{ref}`,
 `/api/thread/{n}` — without marking read) and WRITE drafts (`POST /api/draft {kind, id, text,
 category}`); it can never reply, send or change status — the human gate by construction.
+SETTINGS › SUPPORT ON WHATSAPP (2026-10-04): the form sends on WhatsApp or email; WhatsApp opens her chat with
+`supportWhatsAppText` ("Support: <subject>\nSign-in: …\n\n<her words>", @aruvi/shared/report) — `parse_support`
+opens a MEY-W issue with that category. DAILY CAP: `SUPPORT_DAILY_CAP` (5) new requests a day, email cases + WhatsApp
+issues TOGETHER (`Inbox.new_today/over_cap`); GET /support returns `cap_reached`/`cap_note` and both screens (and
+Report an issue) show the note instead of the buttons; past the cap a fresh WhatsApp request joins her latest issue.
 ONE REPORT, ONE ISSUE (2026-10-04): each WhatsApp report is its own inbox row, id `<number>~<MEY-W-n>`
 (bare number = general chat before any report). `issues_of()` assigns messages: explicit `issue` field (founder
 replies/acks), else the report a message starts, else the latest report. Per-issue status/draft/category live in

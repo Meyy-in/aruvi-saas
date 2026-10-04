@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { View, Pressable, Linking } from "react-native";
 import { Text, TextInput } from "../Text";
 import { getJSON, postJSON, waLink } from "@aruvi/shared/format";
-import { problemReport, reportWhatsAppText, phaseOptionLabel } from "@aruvi/shared/report";
+import { problemReport, reportWhatsAppText, phaseOptionLabel, SUPPORT_CAP_NOTE } from "@aruvi/shared/report";
 import { Sheet } from "../AttachSheet";
 import Dropdown from "../Dropdown";
 import { useTheme } from "../../theme/ThemeContext";
@@ -76,6 +76,7 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
   const hasEmail = known && !!meta.email;
   const hasWa = known && !!meta.whatsapp;
   const ready = !!text.trim() && !busy;
+  const capped = known && !!meta.cap_reached;      // 5 new requests today, email + WhatsApp (2026-10-04)
 
   const sendWa = () => {
     if (!ready) return;
@@ -137,7 +138,21 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
         <Text style={ws.rp_msg}>Meyy replies only to an email address or WhatsApp on your account. Add one in
           Settings › Personal profile, then report this again.</Text>
       ) : null}
-      {known && (hasEmail || hasWa) ? (
+      {known && capped && (hasEmail || hasWa) ? (
+        <>
+          <Text style={ws.rp_msg}>{meta.cap_note || SUPPORT_CAP_NOTE}</Text>
+          {hasWa ? (
+            <View style={ws.rp_two}>
+              <Pressable accessibilityRole="button" onPress={() => {
+                  Linking.openURL(waLink("", meta.whatsapp_number)).catch(() => {}); onClose(); }}
+                style={({ pressed }) => [ws.rp_btn, { backgroundColor: t.pine, opacity: pressed ? 0.85 : 1 }]}>
+                <Text fixed style={[ws.rp_btn_t, { color: "#f6f1e7" }]}>Open WhatsApp chat</Text>
+              </Pressable>
+            </View>
+          ) : null}
+        </>
+      ) : null}
+      {known && !capped && (hasEmail || hasWa) ? (
         <>
           <Text fixed style={ws.rp_lab}>What looks wrong?</Text>
           <TextInput multiline textAlignVertical="top" value={text} onChangeText={setText} maxLength={MAX}

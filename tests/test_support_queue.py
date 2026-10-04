@@ -252,6 +252,44 @@ def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
         m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
     print("✓ Each WhatsApp report is its own issue: own row, own messages, own status and draft")
 
+
+def test_support_header_opens_an_issue_and_the_cap_counts_email_and_whatsapp_together():
+    m, c, _ = _setup()
+    from aruvi_core.ports import SupportRequest
+    n = "9800000306"
+    orig_wa, orig_mail = m.wa_client.send_text, m.notifier.send
+    sent = []
+    m.wa_client.send_text = lambda to, body: (sent.append(body), {"status": "sent", "message_id": f"s{len(sent)}"})[1]
+    m.notifier.send = lambda msg: {"status": "sent"}
+    try:
+        say = lambda mid, body: m.support_inbox.on_message({"from": "91" + n, "id": mid, "type": "text",
+                                                            "text": {"body": body}})
+        say("a1", "Support: Billing or account\nSign-in: 98000 00306\n\nI was charged twice")
+        t = m.wa_inbox_repo.load(n)
+        r1 = t["last_ref"]
+        msg = next(x for x in t["messages"] if x.get("ref") == r1)
+        assert msg["support"] == {"about": "Billing or account", "signin": "98000 00306"}
+        assert t["issues"][r1]["category"] == "billing"
+        assert any(r1 in b for b in sent), "acknowledged with its number"
+        # four email cases today → five requests in all: the cap is reached
+        for k in range(4):
+            ref = m.support_repo.next_reference()
+            m.support_repo.save(SupportRequest(reference=ref, tenant_id=n, user_id=n, category="other",
+                                               category_label="Something else", message=f"e{k}",
+                                               created_at=__import__("datetime").datetime.now(
+                                                   __import__("datetime").timezone.utc).isoformat()))
+        assert m.support_inbox.new_today(n) == 5 and m.support_inbox.over_cap(n)
+        say("a2", "Problem in: Class III · English · Paper Boats · Unit 6\n\nSixth one")
+        t = m.wa_inbox_repo.load(n)
+        assert t["last_ref"] == r1, "past the cap a fresh request joins her latest issue"
+        assert [x["text"] for x in t["messages"] if x.get("id") == "a2"]
+        m.config.TEST_SUPPORT_UNCAPPED = {n}
+        assert not m.support_inbox.over_cap(n)
+    finally:
+        m.config.TEST_SUPPORT_UNCAPPED = set()
+        m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
+    print("✓ A Support: message opens its own issue; the cap counts email and WhatsApp together")
+
 if __name__ == "__main__":
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()
@@ -261,3 +299,4 @@ if __name__ == "__main__":
     test_an_email_reply_joins_its_case_once_and_reopens_it()
     test_new_message_retires_a_stale_ai_draft_and_a_resend_is_one_message()
     test_each_whatsapp_report_is_its_own_issue_with_only_its_messages()
+    test_support_header_opens_an_issue_and_the_cap_counts_email_and_whatsapp_together()
