@@ -646,6 +646,9 @@ class Inbox:
         msgs = [x for r, x in pairs if r == ref]
         if not ref or not msgs or msgs[0].get("report") or msgs[0].get("support"):
             return None
+        # Once the founder has answered in this issue he has treated it as its own — no hint.
+        if any(x.get("dir") == "out" and x.get("by") not in _AUTO_BY for x in msgs):
+            return None
         start = _parse(msgs[0].get("at", ""))
         if start is None:
             return None
