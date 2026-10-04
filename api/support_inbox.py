@@ -1158,7 +1158,11 @@ header form{margin:0}header .link{color:#f6f1e7}
 .empty{padding:24px;color:var(--soft)}
 .thread{display:flex;flex-direction:column;min-width:0}
 .thead{display:flex;gap:14px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--card)}
-.thead #back{display:none}.tid{flex:1;min-width:0}.tname{font-weight:600}.tsub{font-size:12px;color:var(--soft);overflow-wrap:anywhere}
+.thead #back{display:none}
+/* One row (founder, 2026-10-04): name, then channel · reference · number beside it, cut short with … */
+.tid{flex:1;min-width:0;display:flex;align-items:baseline;gap:10px}.tname{font-weight:600;white-space:nowrap}
+.tsub{font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#tmerge{max-width:220px}
 .tctl{display:flex;gap:8px;align-items:center}.tctl select{font:13px inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:#fff}
 .msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
 .case{align-self:stretch;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
