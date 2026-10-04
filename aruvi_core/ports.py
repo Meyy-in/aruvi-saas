@@ -596,7 +596,7 @@ class WhatsAppClient(Protocol):
         public link. Media ids live ~30 days, long enough for any send. Never raises."""
         ...
 
-    def send_text(self, to: str, body: str) -> Dict[str, Any]:
+    def send_text(self, to: str, body: str, reply_to: str = "") -> Dict[str, Any]:
         """A free-form text reply. WhatsApp allows it ONLY inside the 24-hour window the
         customer opened with her last message; outside it Meta refuses (use a template).
         Same never-raises contract; a sent result carries `message_id`."""

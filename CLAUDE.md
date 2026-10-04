@@ -25,9 +25,17 @@ ONE REPORT, ONE ISSUE (2026-10-04): each WhatsApp report is its own inbox row, i
 (bare number = general chat before any report). `issues_of()` assigns messages: explicit `issue` field (founder
 replies/acks), else the report a message starts, else the latest report. Per-issue status/draft/category live in
 `thread.issues[ref]` (`patch_issue`); `/api/thread/{id}` returns only that issue's messages.
-ROUTING (2026-10-04): a plain WhatsApp message (no header) goes by `route_message`: swipe-reply (`context.id`) →
-quoted MEY-W ref → the one open issue / the open one we last answered → one resolved ≤3 days (reopens) → else a NEW
-issue (category other, acknowledged); past the cap or STOP → latest issue. Founder replies get "Re MEY-W-n" first.
+ROUTING v2 (founder, 2026-10-04 — "split liberally, merge deliberately"): NO daily cap. App messages (header) are
+always a new MEY-W issue. A plain message joins only on evidence (`route_message`): swipe-reply (`context.id`) → a typed
+reference (loose: "Mey 1236"; merged refs resolve via `merged_into`) → her burst (≤15 min after her previous message)
+or an answer to OUR reply (≤30 min after it), whichever is later → else a NEW issue. Every new inbound carries an
+explicit `issue`. References are NEVER shown in WhatsApp: no ref in acks, no "Re" prefix; founder replies go as
+quote-replies (`reply_to` → Cloud API `context.message_id`). ACK: `send_due_acks` (startup thread, every 60 s; Starter
+plan never sleeps; ONE instance — move the claim to a DB row before scaling) sends one message when her burst has been
+quiet 15 min: WA_ACK_TEXT, WA_ACK_GREET for a greeting-only burst, nothing for thanks/ok/emoji; ≤3/day/number; never
+after the founder answered or past 23 h. Email acks ≤ SUPPORT_EMAIL_ACKS_PER_DAY (10); cases always filed. Inbox:
+merge (`/merge {into}` — src keeps `merged_into`), split (`/split {message_id}` — that message and later ones), hint
+"Possibly continues …" (`hint_for`), "Many messages" flag (>10 new issues today → out of Needs reply).
 FRESH EMAIL: mail to support@ with no [MEY-S] from the ONE account carrying that address → `_case_from_mail` files a
 normal case (ack + copy, context.screen "Email (written directly)", mail_id dedup); past the cap → joins her latest
 case; strangers/auto-replies stay in Gmail. Counted only from `support/_series/mail_floor.json` (first sync).

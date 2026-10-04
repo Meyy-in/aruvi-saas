@@ -121,6 +121,16 @@ class WhatsAppInboxFileImpl:
             t.update(fields)
             self.backend.put_json(key, t)
 
+    def update(self, n: str, fn) -> None:
+        """Change a thread in place under its lock — `fn(thread)` mutates it (merge / split)."""
+        key = self._key(n)
+        with self.backend.lock(key):
+            t = self.load(n)
+            if t is None:
+                return
+            fn(t)
+            self.backend.put_json(key, t)
+
     def patch_issue(self, n: str, ref: str, **fields) -> None:
         """Set the founder's own state (status, draft, category) on ONE issue of the chat — a
         lesson report MEY-W-n — kept under thread["issues"][ref]. ref "" is the general chat,

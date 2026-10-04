@@ -35,7 +35,7 @@ class FileWhatsApp(WhatsAppClient):
         except Exception as e:                                  # noqa: BLE001
             return {"status": "error", "error": str(e)}
 
-    def send_text(self, to: str, body: str) -> Dict[str, Any]:
+    def send_text(self, to: str, body: str, reply_to: str = "") -> Dict[str, Any]:
         num = "".join(ch for ch in str(to or "") if ch.isdigit())
         if not num or not str(body or "").strip():
             return {"status": "skipped", "reason": "no recipient or empty text"}
@@ -43,7 +43,8 @@ class FileWhatsApp(WhatsAppClient):
             self.outbox_dir.mkdir(parents=True, exist_ok=True)
             stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%f")
             path = self.outbox_dir / f"{stamp}-{num}-text.json"
-            path.write_text(json.dumps({"to": num, "type": "text", "body": body}, indent=2),
+            path.write_text(json.dumps({"to": num, "type": "text", "body": body,
+                                        **({"reply_to": reply_to} if reply_to else {})}, indent=2),
                             encoding="utf-8")
             return {"status": "written", "path": str(path), "message_id": f"file.{stamp}"}
         except Exception as e:                                  # noqa: BLE001

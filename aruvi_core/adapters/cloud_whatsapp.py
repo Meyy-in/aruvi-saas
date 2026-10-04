@@ -75,12 +75,14 @@ class CloudWhatsApp(WhatsAppClient):
         except Exception as e:                                  # noqa: BLE001
             return {"status": "error", "error": str(e)}
 
-    def send_text(self, to: str, body: str) -> Dict[str, Any]:
+    def send_text(self, to: str, body: str, reply_to: str = "") -> Dict[str, Any]:
         num = "".join(ch for ch in str(to or "") if ch.isdigit())
         if not num or not str(body or "").strip():
             return {"status": "skipped", "reason": "no recipient or empty text"}
+        # `reply_to` (2026-10-04): a quote-reply — her message shows above ours in her chat.
         return self._post({"messaging_product": "whatsapp", "recipient_type": "individual",
                            "to": num, "type": "text",
+                           **({"context": {"message_id": reply_to}} if reply_to else {}),
                            "text": {"preview_url": False, "body": str(body)[:4096]}})
 
     def _post(self, payload: Dict[str, Any]) -> Dict[str, Any]:

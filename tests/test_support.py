@@ -244,21 +244,23 @@ def test_no_email_on_record_means_no_case_is_filed():
     print("✓ No email on record → refused before filing; add one and it goes")
 
 
-def test_five_messages_a_day_then_a_polite_no():
+def test_no_daily_cap_but_acknowledgement_mails_are_limited():
+    """2026-10-04: every request is filed and numbered; past SUPPORT_EMAIL_ACKS_PER_DAY only the
+    acknowledgement mail is skipped."""
     from fastapi.testclient import TestClient
     from api import main as api_main
 
     c = TestClient(api_main.app, raise_server_exceptions=False)
     H = _headers("SupportChatty")
     c.post("/account", headers=H, json={"email": "chatty@example.com"})
-    for n in range(api_main._SUPPORT_DAILY_CAP):
+    lim = api_main.config.SUPPORT_EMAIL_ACKS_PER_DAY
+    for n in range(lim):
         r = c.post("/support", headers=H, json={"category": "other", "message": f"Note {n}."})
-        assert r.status_code == 200, r.json()
+        assert r.status_code == 200 and r.json()["emailed"], r.json()
     r = c.post("/support", headers=H, json={"category": "other", "message": "One more."})
-    assert r.status_code == 429 and "tomorrow" in r.json()["detail"]
-    assert len(api_main.support_repo.load_all("SupportChatty", "SupportChatty")) == \
-        api_main._SUPPORT_DAILY_CAP
-    print("✓ The daily cap holds, and says when she can write again")
+    assert r.status_code == 200 and r.json()["reference"] and not r.json()["emailed"]
+    assert len(api_main.support_repo.load_all("SupportChatty", "SupportChatty")) == lim + 1
+    print("✓ No daily cap: every request is filed; acknowledgement mails stop at the limit")
 
 
 def test_an_empty_or_oversized_message_is_refused_in_her_words():
@@ -360,7 +362,7 @@ if __name__ == "__main__":
     test_html_escapes_what_she_typed()
     test_route_files_a_case_and_acknowledges_it()
     test_no_email_on_record_means_no_case_is_filed()
-    test_five_messages_a_day_then_a_polite_no()
+    test_no_daily_cap_but_acknowledgement_mails_are_limited()
     test_an_empty_or_oversized_message_is_refused_in_her_words()
     test_support_is_never_gated_on_subscription()
     test_messages_export_with_her_data_and_erase_with_her_account()

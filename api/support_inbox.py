@@ -193,48 +193,83 @@ _AUTO_BY = ("auto-greeting", "auto-ack", "system")
 # A reference as she might type it (founder, 2026-10-04: "Mey 1236" must find MEY-W-1236): the
 # prefix is required, the separators and the "W" are not — MEY-W-1236, mey w 1236, MEY1236, Mey-1236.
 _REF_RE = re.compile(r"\b(MEY|ARV)\s*[-–]?\s*(?:W\s*[-–]?\s*)?(\d{3,7})\b", re.I)
-REOPEN_DAYS = 3
+BURST_MIN = 15          # her messages this close together are one burst — one issue
+AFTER_REPLY_MIN = 30    # what she writes this soon after OUR reply answers it
+ACKS_PER_DAY = 3        # automatic acknowledgements per number per day
+FLOOD_ISSUES = 10       # more new issues than this in a day → "Many messages"
+
+
+def resolve_ref(t: Dict[str, Any], ref: str) -> str:
+    """A merged issue's reference still works: follow merged_into to where its messages went."""
+    seen = set()
+    while ref and ref not in seen:
+        seen.add(ref)
+        nxt = ((t.get("issues") or {}).get(ref) or {}).get("merged_into")
+        if not nxt:
+            break
+        ref = nxt
+    return ref
 
 
 def route_message(t: Dict[str, Any], m: Dict[str, Any], text: str,
                   now: Optional[datetime] = None) -> Optional[str]:
-    """★ WHICH ISSUE IS A PLAIN WHATSAPP MESSAGE ABOUT? (founder, 2026-10-04) — for a message she
-    typed straight into WhatsApp (no "Problem in:" / "Support:" line). First rule that applies:
-      1. she swiped to reply to one of OUR messages (or hers) → that message's issue
-      2. she quotes a reference (MEY-W-1236) that is hers → that issue
-      3. exactly one issue open → it;  several open → the one we last replied in
-      4. none open, one resolved in the last 3 days → that one (it reopens)
-    None = a FRESH request: the caller gives it a new number (or, past the day's cap, her latest)."""
+    """★ WHICH ISSUE IS A PLAIN WHATSAPP MESSAGE ABOUT? (founder, 2026-10-04 — "split liberally,
+    merge deliberately"). Only on clear evidence does it join an existing issue:
+      1. she swiped to reply to a message → that message's issue
+      2. she typed one of her references (loosely: "Mey 1236"), merged ones included
+      3. it is part of her burst — within 15 minutes of her previous message — or it answers
+         OUR reply, sent within the last 30 minutes (whichever happened later)
+    None = a NEW issue. Anything ambiguous is new: a wrong split is one click to merge; a wrong
+    join silently mixes two problems."""
     now = now or datetime.now(timezone.utc)
     pairs = issues_of(t.get("messages") or [])
-    refs = [r for r in dict.fromkeys(r for r, _ in pairs) if r]
-    if not refs:
-        return None
+    known = set(r for r, _ in pairs) | set((t.get("issues") or {}).keys())
     quoted = ((m.get("context") or {}).get("id") or "").strip()
     if quoted:
         for r, msg in pairs:
-            if msg.get("id") == quoted and r:
-                return r
+            if msg.get("id") == quoted:
+                return resolve_ref(t, r)
     for prefix, num in _REF_RE.findall(text or ""):
         up = f"{prefix.upper()}-W-{num}"
-        if up in refs:
-            return up
-    def last_ours(r):
-        return max((msg.get("at", "") for x, msg in pairs if x == r and msg.get("dir") == "out"
-                    and msg.get("by") not in _AUTO_BY), default="")
-    def last_any(r):
-        return max((msg.get("at", "") for x, msg in pairs if x == r), default="")
-    open_ = [r for r in refs if issue_state(t, r)["status"] != "done"]
-    if len(open_) == 1:
-        return open_[0]
-    if open_:
-        return max(open_, key=lambda r: (last_ours(r), last_any(r)))
-    recent = []
-    for r in refs:
-        when = _parse(issue_state(t, r)["resolved_at"] or last_any(r))
-        if when and now - when <= timedelta(days=REOPEN_DAYS):
-            recent.append((when, r))
-    return max(recent)[1] if recent else None
+        if up in known:
+            return resolve_ref(t, up)
+    cands = []
+    for r, msg in reversed(pairs):
+        if msg.get("dir") == "in":
+            at = _parse(msg.get("at", ""))
+            if at and now - at <= timedelta(minutes=BURST_MIN):
+                cands.append((at, r))
+            break
+    for r, msg in reversed(pairs):
+        if msg.get("dir") == "out" and msg.get("by") not in _AUTO_BY:
+            at = _parse(msg.get("at", ""))
+            if at and now - at <= timedelta(minutes=AFTER_REPLY_MIN):
+                cands.append((at, r))
+            break
+    if cands:
+        return resolve_ref(t, max(cands)[1])
+    return None
+
+
+_GREET = set("hi hii hiii hello helo hlo hey heyy good morning afternoon evening gm namaste namaskar "
+             "namaskaram vanakkam meyy team sir madam mam maam there dear all".split())
+_COURTESY = set("thanks thank you thankyou thanku thx tq ty ok okay okk k noted sure fine great got it "
+                "dhanyavaad dhanyavad shukriya nandri welcome much so very alright good".split())
+
+
+def ack_kind(texts) -> str:
+    """What to say when her burst goes quiet (founder, 2026-10-04): "greet" if she only said hello
+    (invite her to go on — never "we will revert" to a bare Hi), "none" if she only said thanks /
+    ok / an emoji, otherwise "ack"."""
+    words = []
+    for x in texts:
+        w = re.sub(r"[^a-z0-9\s]", " ", str(x or "").lower()).split()
+        words.extend(w)
+    if not words or all(w in _COURTESY for w in words):
+        return "none"
+    if all(w in _GREET or w in _COURTESY for w in words):
+        return "greet"
+    return "ack"
 
 
 class Inbox:
@@ -278,32 +313,33 @@ class Inbox:
         support = None if report else parse_support(text)
         ref = ""
         is_new = not self.repo.has_message(n, m.get("id", ""))
-        # Past the day's cap (email + WhatsApp together) a fresh request gets no new number:
-        # it joins her latest issue instead (founder, 2026-10-04).
-        capped = self.over_cap(n)
         t0 = self.repo.load(n) or {}
         issue: Optional[str] = None             # the existing issue a plain message joins
-        if is_new and not ((report or support) and not capped):
-            if not (report or support):
+        # ★ EVERY NEW REQUEST IS ITS OWN ISSUE, NO DAILY LIMIT (founder, 2026-10-04). A message from
+        # the app (Report an issue / Settings › Support) always is; a plain one only when nothing
+        # says it continues an issue (route_message). STOP is filed, never numbered.
+        if is_new:
+            if report or support:
+                pass
+            elif text.strip().upper() == "STOP":
+                issue = t0.get("last_ref") or ""
+            else:
                 issue = route_message(t0, m, text)
-            if issue is None and (capped or text.strip().upper() == "STOP"):
-                issue = t0.get("last_ref") or ""   # past the cap: her latest issue, no new number
-        if is_new and issue is None:            # a report, a Support: message, or a fresh request
+        if is_new and issue is None:
             ref = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"),
                                            getattr(self.config, "WA_REPORT_START", 1234))
         before = self.repo.append(
             n, {"id": m.get("id", ""), "dir": "in", "type": m.get("type", ""), "text": text,
-                **({"ref": ref} if ref else {}),
+                **({"ref": ref, "issue": ref} if ref else {}),
                 **({"issue": issue} if issue is not None else {}),
                 **({"report": report} if ref and report else {}),
                 **({"support": support} if ref and support else {})},
             name=self._name_for(n, profile_name))
         if ref:
+            # The reference is OURS (founder, 2026-10-04): never shown in the chat. The
+            # acknowledgement waits for her burst to go quiet — see send_due_acks.
             self.repo.patch(n, last_ref=ref)
-            ack = (getattr(self.config, "WA_REPORT_ACK", "") or "").strip()
-            if ack:
-                self.send_text(n, ack.replace("{ref}", ref), by="auto-ack", issue=ref)
-            self.log({"kind": "wa_report", "ref": ref})
+            self.log({"kind": "wa_issue", "ref": ref})
         # ★ SHE WROTE AGAIN → THE CONVERSATION IS OPEN AGAIN (2026-10-03). A thread the founder
         # marked resolved comes back to "Needs reply" on her next message — a follow-up ("I do not
         # agree") must never sit unseen under "All". Same thread, same last reference: a follow-up
@@ -324,18 +360,12 @@ class Inbox:
             if ref:
                 fields["category"] = ("plan" if report else
                                       self.category_for(support.get("about", "")) if support else "other")
+                fields["ack"] = "pending"
+                fields["opened_at"] = datetime.now(timezone.utc).isoformat()
             if fields:
                 self.repo.patch_issue(n, iss, **fields)
         now = datetime.now(timezone.utc)
-        # Greeting: first ever, or first after the gap — and never in answer to STOP.
-        last_in = _parse(before.get("last_inbound_at", ""))
-        # ⚠️ Never TWO automatic messages for one: a numbered report has just been acknowledged,
-        # and the acknowledgement does the greeting's job, so it counts as the greeting.
-        if text.strip().upper() != "STOP" and (
-                last_in is None or now - last_in > timedelta(days=self.config.WA_GREETING_GAP_DAYS)):
-            if not (ref and (getattr(self.config, "WA_REPORT_ACK", "") or "").strip()):
-                self.send_text(n, self.config.WA_GREETING, by="auto-greeting")
-            self.repo.patch(n, greeted_at=now.isoformat())
+        # (No greeting any more: the end-of-burst acknowledgement does its job — 2026-10-04.)
         # Alert the founder — throttled per conversation.
         last_alert = _parse(before.get("last_alert_at", ""))
         if last_alert is None or now - last_alert > timedelta(minutes=self.config.INBOX_ALERT_GAP_MIN):
@@ -367,11 +397,18 @@ class Inbox:
 
     # ── outbound ──
     def send_text(self, n: str, body: str, by: str = "founder",
-                  issue: Optional[str] = None) -> Dict[str, Any]:
-        res = self.wa.send_text(e164(n), body)
+                  issue: Optional[str] = None, reply_to: str = "") -> Dict[str, Any]:
+        if reply_to:
+            try:
+                res = self.wa.send_text(e164(n), body, reply_to=reply_to)
+            except TypeError:                                   # an adapter without quote-replies
+                res = self.wa.send_text(e164(n), body)
+        else:
+            res = self.wa.send_text(e164(n), body)
         ok = res.get("status") in ("sent", "written")
         self.repo.append(n, {"id": res.get("message_id", ""), "dir": "out", "type": "text",
                              "text": body, "by": by, **({} if issue is None else {"issue": issue}),
+                             **({"reply_to": reply_to} if reply_to else {}),
                              "status": "accepted" if ok else "failed",
                              **({} if ok else {"error": str(res.get("error") or res.get("reason") or "")})})
         self.log({"kind": "send_text", "by": by, "to": "…" + e164(n)[-4:], "result": res})
@@ -502,6 +539,130 @@ class Inbox:
                 return k
         return "other"
 
+    # ── the acknowledgement, when her burst goes quiet (founder, 2026-10-04) ──
+    def send_due_acks(self, now: Optional[datetime] = None) -> int:
+        """Run every minute by main.py. For each new issue still waiting: once she has been quiet
+        for 15 minutes, send ONE short message — no reference in it — or none:
+          · she asked something        → WA_ACK_TEXT ("we'll reply here soon")
+          · she only said hello        → WA_ACK_GREET ("please tell us what you need help with")
+          · she only said thanks / ok  → nothing
+        Never if the founder has already answered, never past the 24-hour window, and at most
+        ACKS_PER_DAY a day per number (a flood gets silence, not a hundred replies)."""
+        now = now or datetime.now(timezone.utc)
+        today = now.date().isoformat()
+        sent = 0
+        for summary in self.repo.list_threads():
+            n = summary["number"]
+            t = self.repo.load(n) or {}
+            pending = [r for r, st in (t.get("issues") or {}).items() if (st or {}).get("ack") == "pending"]
+            if not pending:
+                continue
+            last_in = _parse(t.get("last_inbound_at", ""))
+            if last_in is None or now - last_in < timedelta(minutes=BURST_MIN):
+                continue                                    # she may still be typing
+            pairs = issues_of(t.get("messages") or [])
+            acks_today = sum(1 for _, x in pairs if x.get("by") == "auto-ack"
+                             and str(x.get("at", ""))[:10] == today)
+            for ref in pending:
+                msgs = [x for r, x in pairs if r == ref]
+                if any(x.get("dir") == "out" and x.get("by") not in _AUTO_BY for x in msgs):
+                    self.repo.patch_issue(n, ref, ack="answered")
+                    continue
+                if now - last_in > timedelta(hours=23):
+                    self.repo.patch_issue(n, ref, ack="expired")
+                    continue
+                kind = ack_kind([x.get("text", "") for x in msgs if x.get("dir") == "in"])
+                if kind == "none":
+                    self.repo.patch_issue(n, ref, ack="not-needed")
+                    continue
+                if acks_today >= ACKS_PER_DAY:
+                    self.repo.patch_issue(n, ref, ack="over-limit")
+                    continue
+                body = (getattr(self.config, "WA_ACK_GREET", "") if kind == "greet"
+                        else getattr(self.config, "WA_ACK_TEXT", "")).strip()
+                self.repo.patch_issue(n, ref, ack="sent")   # claimed BEFORE sending: never twice
+                if body:
+                    self.send_text(n, body, by="auto-ack", issue=ref)
+                    acks_today += 1
+                    sent += 1
+        return sent
+
+    # ── merge and split (founder, 2026-10-04) ──
+    def merge(self, n: str, src: str, dst: str) -> str:
+        """Fold issue `src` into `dst`: its messages move, `src` stays as a pointer (a teacher who
+        types its reference lands in `dst`). Returns ok | missing | same."""
+        t = self.repo.load(n)
+        if t is None or not src or not dst:
+            return "missing"
+        dst = resolve_ref(t, dst)
+        if src == dst:
+            return "same"
+        refs = set(r for r, _ in issues_of(t.get("messages") or []))
+        if src not in refs or dst not in refs:
+            return "missing"
+
+        def change(th):
+            for r, x in issues_of(th.get("messages") or []):
+                if r == src:
+                    x["issue"] = dst
+            issues = dict(th.get("issues") or {})
+            issues[src] = {**(issues.get(src) or {}), "merged_into": dst, "status": "done", "draft": {}}
+            issues[dst] = {**(issues.get(dst) or {}), "status": "open"}
+            th["issues"] = issues
+        self.repo.update(n, change)
+        self.log({"kind": "wa_merge", "src": src, "dst": dst})
+        return "ok"
+
+    def split(self, n: str, src: str, message_id: str) -> str:
+        """Move one message — and what followed it in that issue — to a NEW issue (a different
+        topic that was joined by mistake). No acknowledgement. Returns the new reference, or ""."""
+        t = self.repo.load(n)
+        if t is None or not message_id:
+            return ""
+        msgs = [x for r, x in issues_of(t.get("messages") or []) if r == src]
+        ids = [x.get("id") for x in msgs]
+        if message_id not in ids or ids.index(message_id) == 0:
+            return ""                                        # the first message IS the issue
+        new = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"),
+                                       getattr(self.config, "WA_REPORT_START", 1234))
+        moving = set(i for i in ids[ids.index(message_id):] if i)
+
+        def change(th):
+            for r, x in issues_of(th.get("messages") or []):
+                if r == src and x.get("id") in moving:
+                    x["issue"] = new
+            issues = dict(th.get("issues") or {})
+            issues[new] = {"status": "open", "category": "other", "ack": "not-needed",
+                           "opened_at": datetime.now(timezone.utc).isoformat(), "split_from": src}
+            th["issues"] = issues
+        self.repo.update(n, change)
+        self.log({"kind": "wa_split", "src": src, "new": new})
+        return new
+
+    def hint_for(self, t: Dict[str, Any], ref: str) -> Optional[Dict[str, Any]]:
+        """"Possibly continues MEY-W-241 — you replied there 8 hours earlier": for an issue that
+        began as a plain message, the issue we last answered in the 72 hours before it began."""
+        pairs = issues_of(t.get("messages") or [])
+        msgs = [x for r, x in pairs if r == ref]
+        if not ref or not msgs or msgs[0].get("report") or msgs[0].get("support"):
+            return None
+        start = _parse(msgs[0].get("at", ""))
+        if start is None:
+            return None
+        best = None
+        for r, x in pairs:
+            if r in (ref, "") or ((t.get("issues") or {}).get(r) or {}).get("merged_into"):
+                continue
+            at = _parse(x.get("at", ""))
+            if (x.get("dir") == "out" and x.get("by") not in _AUTO_BY and at and at < start
+                    and start - at <= timedelta(hours=72)):
+                if best is None or at > best[0]:
+                    best = (at, r)
+        if best is None:
+            return None
+        hours = max(1, int((start - best[0]).total_seconds() // 3600))
+        return {"ref": best[1], "hours": hours}
+
     # ── the one queue ──
     def queue(self) -> list:
         now = datetime.now(timezone.utc)
@@ -511,8 +672,13 @@ class Inbox:
             t = self.repo.load(n) or {}
             pairs = issues_of(t.get("messages") or [])
             last_in = next((r for r, m in reversed(pairs) if m.get("dir") == "in"), None)
+            today = now.date().isoformat()
+            flood = sum(1 for _, x in pairs if x.get("ref") and x.get("dir") == "in"
+                        and str(x.get("at", ""))[:10] == today) > FLOOD_ISSUES
             for ref in dict.fromkeys(r for r, _ in pairs):   # one row per issue (and the general chat)
                 msgs = [m for r, m in pairs if r == ref]
+                if not msgs or ((t.get("issues") or {}).get(ref) or {}).get("merged_into"):
+                    continue
                 last, st = msgs[-1], issue_state(t, ref)
                 items.append({"kind": "wa", "id": item_id(n, ref), "number": n, "ref": ref,
                               "name": t.get("name") or ("+91 " + n),
@@ -522,7 +688,10 @@ class Inbox:
                               "window_open": window_open(summary, now, self.config.WA_PHONE_NUMBER_ID),
                               "category": st["category"], "status": st["status"],
                               "has_draft": bool(st["draft"].get("text")),
-                              "needs_reply": _last_human_dir(msgs) == "in"})
+                              # ★ A FLOOD (more than FLOOD_ISSUES new issues today) leaves "Needs
+                              # reply" so it cannot bury other teachers; still under Open and All.
+                              "flood": flood,
+                              "needs_reply": _last_human_dir(msgs) == "in" and not flood})
         for c in (self.cases.load_everyone() if self.cases else []):
             last = (c.thread or [])[-1] if c.thread else None
             items.append({"kind": "case", "id": c.reference, "name": c.name or c.user_id,
@@ -583,6 +752,14 @@ class DraftBody(BaseModel):
     id: str                    # the WhatsApp number key, or the case reference
     text: str = ""             # empty clears the draft
     category: str = ""         # WhatsApp only: problem | plan | billing | suggestion | other
+
+
+class MergeBody(BaseModel):
+    into: str
+
+
+class SplitBody(BaseModel):
+    message_id: str
 
 
 class InboundBody(BaseModel):
@@ -727,6 +904,25 @@ def build_router(inbox: Inbox) -> APIRouter:
         inbox.repo.patch_issue(n, ref, **fields)
         return {"ok": True}
 
+    @r.post("/support-inbox/api/thread/{ident}/merge")
+    def thread_merge(ident: str, body: MergeBody, request: Request):
+        need_auth(request, write=True)                # the founder only
+        n, ref = split_id(ident)
+        res = inbox.merge(n, ref, (body.into or "").strip().upper())
+        if res != "ok":
+            raise HTTPException(status_code=400 if res == "same" else 404,
+                                detail="Those two can't be merged." if res == "same" else "No such issue.")
+        return {"ok": True, "id": item_id(n, resolve_ref(inbox.repo.load(n) or {}, body.into.strip().upper()))}
+
+    @r.post("/support-inbox/api/thread/{ident}/split")
+    def thread_split(ident: str, body: SplitBody, request: Request):
+        need_auth(request, write=True)
+        n, ref = split_id(ident)
+        new = inbox.split(n, ref, (body.message_id or "").strip())
+        if not new:
+            raise HTTPException(status_code=400, detail="That message can't start a new issue.")
+        return {"ok": True, "id": item_id(n, new)}
+
     @r.post("/support-inbox/api/case/{ref}/inbound")
     def case_inbound(ref: str, body: InboundBody, request: Request):
         """Her email reply, attached to its case by the drafting session (or the founder). Adding
@@ -823,9 +1019,17 @@ def build_router(inbox: Inbox) -> APIRouter:
             inbox.repo.mark_read(n)
             unread = 0
         st = issue_state(t, ref)
+        others = []
+        if who == "founder":                          # the merge picker — never for the drafting key
+            for r in dict.fromkeys(r for r, _ in pairs):
+                if r in (ref, "") or ((t.get("issues") or {}).get(r) or {}).get("merged_into"):
+                    continue
+                first = next(x for x2, x in pairs if x2 == r)
+                others.append({"ref": r, "preview": (first.get("text") or "")[:60],
+                               "status": issue_state(t, r)["status"]})
         return {"id": item_id(n, ref), "number": n, "ref": ref, "name": t.get("name", ""),
                 "messages": msgs, "unread": unread, "status": st["status"], "draft": st["draft"],
-                "category": st["category"],
+                "category": st["category"], "others": others[::-1], "hint": inbox.hint_for(t, ref),
                 "window_open": window_open(t, current_pn=cfg.WA_PHONE_NUMBER_ID), "phone": _pretty(n),
                 "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
 
@@ -845,12 +1049,12 @@ def build_router(inbox: Inbox) -> APIRouter:
             raise HTTPException(status_code=409, detail=(
                 "More than 24 hours have passed since this customer last wrote, so WhatsApp "
                 "only allows an approved template now."))
-        # ★ EVERY ANSWER NAMES ITS ISSUE (2026-10-04): her phone shows ONE chat, so a reply opens
-        # with its reference — she can see which question it answers, and quoting it back routes
-        # her next message to the same issue.
-        if ref and ref.upper() not in text.upper():
-            text = f"Re {ref}\n\n{text}"
-        res = inbox.send_text(n, text, issue=ref)
+        # ★ NO REFERENCE IN THE CHAT; THE ANSWER QUOTES HER QUESTION (founder, 2026-10-04). The
+        # reply goes as a WhatsApp quote-reply to her latest message in this issue, so in her one
+        # continuous chat she sees which question it answers — and swiping back routes to it.
+        seg = [x for r, x in issues_of(t.get("messages") or []) if r == ref]
+        quote = next((x.get("id") for x in reversed(seg) if x.get("dir") == "in" and x.get("id")), "")
+        res = inbox.send_text(n, text, issue=ref, reply_to=quote)
         if res.get("status") not in ("sent", "written"):
             raise HTTPException(status_code=502, detail=f"WhatsApp refused it: {res.get('error') or res.get('reason')}")
         return {"status": "sent"}
@@ -904,7 +1108,8 @@ _APP = """<main class="app">
 <section id="thread" class="thread hidden">
   <div class="thead"><button id="back" class="link">← All</button>
     <div class="tid"><div id="tname" class="tname"></div><div id="tsub" class="tsub"></div></div>
-    <div class="tctl"><select id="tcat" title="Category"></select><button id="tstatus" class="ghost"></button></div></div>
+    <div class="tctl"><select id="tmerge" class="hidden" title="Merge this issue into another of hers"></select><select id="tcat" title="Category"></select><button id="tstatus" class="ghost"></button></div></div>
+  <div id="hint" class="hintbar hidden"></div>
   <div id="msgs" class="msgs"></div>
   <div id="closed" class="closed hidden">24-hour window closed — WhatsApp only allows an approved
     template until the customer writes again. <button id="reopen" class="link hidden">Send re-open template</button></div>
@@ -940,7 +1145,10 @@ header form{margin:0}header .link{color:#f6f1e7}
 .rtags{display:flex;gap:5px;flex-wrap:wrap;margin:3px 0 2px}
 .tag{font:600 10.5px ui-monospace,Menlo,monospace;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:1px 6px;background:#efe9dd;color:var(--soft)}
 .tag.wa{background:#e3f3ea;color:var(--wa)}.tag.mail{background:#e8ecf4;color:#4a5d86}.tag.draft{background:var(--pine);color:#fff}
-.tag.done{background:#eee;color:#888}
+.tag.done{background:#eee;color:#888}.tag.flood{background:#fbe9e4;color:var(--clay)}
+.hintbar{padding:8px 16px;background:#fff8e6;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
+.hintbar button{margin-left:8px}
+.mv{display:block;margin-top:4px;background:none;border:0;padding:0;font:11px inherit;color:var(--soft);text-decoration:underline;cursor:pointer}
 .rprev{font-size:13px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge{background:var(--clay);color:#fff;border-radius:10px;padding:0 7px;font-size:12px;margin-left:6px}
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4a9a6e;margin-right:6px;vertical-align:middle}
@@ -987,7 +1195,7 @@ function renderList(){const L=$('#list');L.innerHTML='';
  for(const t of vis){const b=document.createElement('button');b.className='row'+(cur&&key(t)===cur?' on':'');
   const kind=t.kind==='wa'?`<span class="tag wa">WhatsApp${t.ref?' · '+esc(t.ref):''}</span>`:`<span class="tag mail">Email · ${esc(t.id)}</span>`;
   const cat=t.category?`<span class="tag">${esc(t.category_label||CATL[t.category]||t.category)}</span>`:'';
-  const st=(t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'';
+  const st=((t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'')+(t.flood?'<span class="tag flood">Many messages</span>':'');
   b.innerHTML=`<div class="rtop"><span class="rname">${t.kind==='wa'&&t.window_open?'<span class="dot" title="Reply window open"></span>':''}${esc(t.name)}${t.unread?`<span class="badge">${t.unread}</span>`:''}</span><span class="rtime">${when(t.at)}</span></div><div class="rtags">${kind}${cat}${t.has_draft?'<span class="tag draft">Draft ready</span>':''}${st}</div><div class="rprev">${t.preview_dir==='out'?'You: ':''}${esc(t.preview)}</div>`;
   b.onclick=()=>openItem(t.kind,t.id);L.appendChild(b)}}
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{filter=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));renderList()});
@@ -1001,7 +1209,11 @@ async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id
  const M=$('#msgs'),atBottom=M.scrollHeight-M.scrollTop-M.clientHeight<60;let draft={},open=true,status='open';
  if(kind==='wa'){const t=await api('/thread/'+encodeURIComponent(id));if(cur!==want)return;detail={kind,...t};draft=t.draft||{};open=t.window_open;status=t.status||'open';
   $('#tname').textContent=t.name||t.phone;$('#tsub').textContent='WhatsApp · '+(t.ref?t.ref+' · ':'')+t.phone;
-  M.innerHTML=t.messages.map(m=>(m.ref?reportCard(m):'')+bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='auto-ack'?'automatic acknowledgement':m.by==='system'?'automatic':'you')).join('');
+  M.innerHTML=t.messages.map((m,i)=>(m.ref?reportCard(m):'')+bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='auto-ack'?'automatic acknowledgement':m.by==='system'?'automatic':'you')
+   +(i>0&&m.dir==='in'&&m.id&&t.ref?`<button class="mv" data-mid="${esc(m.id)}">Move this and later messages to a new issue</button>`:'')).join('');
+  M.querySelectorAll('.mv').forEach(b=>b.onclick=()=>splitAt(b.dataset.mid));
+  const others=t.others||[],mg=$('#tmerge');mg.innerHTML='<option value="">Merge into…</option>'+others.map(o=>`<option value="${esc(o.ref)}">${esc(o.ref)} · ${esc(o.preview)}</option>`).join('');mg.classList.toggle('hidden',!t.ref||!others.length);
+  const H=$('#hint');if(t.hint&&t.ref){H.innerHTML=`Possibly continues <b>${esc(t.hint.ref)}</b> — you replied there ${t.hint.hours} hour${t.hint.hours===1?'':'s'} earlier.<button class="ghost" id="hintgo">Merge into ${esc(t.hint.ref)}</button>`;H.classList.remove('hidden');$('#hintgo').onclick=()=>mergeInto(t.hint.ref)}else H.classList.add('hidden');
   $('#tcat').innerHTML=CATS.map(([v,l])=>`<option value="${v}" ${v===(t.category||'')?'selected':''}>${esc(l)}</option>`).join('');$('#tcat').classList.remove('hidden');
   $('#tstatus').textContent=status==='done'?'Reopen':'Mark resolved';
   $('#closed').classList.toggle('hidden',open);$('#reopen').classList.toggle('hidden',!window._reopen);$('#send').textContent='Send on WhatsApp';
@@ -1009,7 +1221,7 @@ async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id
   $('#tname').textContent=c.name||c.user_id;$('#tsub').textContent=`Email · ${c.reference} · ${c.email||'no email on the case'}`;
   const ctx=c.context||{},rows=[['About',c.category_label],['Received',when(c.created_at)],['Class',[String(ctx.subject||'').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase()),ctx.grade].filter(Boolean).join(' · ')],['Chapter',ctx.chapter],['Unit',[ctx.unit,ctx.phase].filter(Boolean).join(' · ')],['Activity',ctx.unit_title],['Plan ref',ctx.plan_ref],['Plan file',ctx.plan_file],['Screen',ctx.screen],['App',ctx.version]].filter(r=>r[1]);
   M.innerHTML=`<div class="case"><dl>${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl><div class="said">${esc(c.message)}</div></div>`+(c.thread||[]).map(m=>bubble(m,()=> 'you')).join('');
-  $('#tcat').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark resolved';
+  $('#tcat').classList.add('hidden');$('#tmerge').classList.add('hidden');$('#hint').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark resolved';
   $('#closed').classList.add('hidden');open=!!c.email;$('#send').textContent='Send email';}
  if(scroll||atBottom)M.scrollTop=M.scrollHeight;
  $('#tstatus').disabled=false;
@@ -1056,6 +1268,12 @@ $('#rfr').onclick=async()=>{const b=$('#rfr');if(b.disabled)return;b.disabled=tr
  try{const st=await api('/mail/sync',{method:'POST'});await loadList();await refresh(false,false);
   b.textContent=st&&st.added?`↻ ${st.added} new`:'↻ Up to date'}catch(x){b.textContent='↻ Refresh';$('#err').textContent=x.message||'Could not refresh.'}
  setTimeout(()=>{b.textContent='↻ Refresh';b.disabled=false},2500)};
+/* ★ MERGE AND SPLIT (founder, 2026-10-04): "split liberally, merge deliberately". */
+async function mergeInto(ref){if(!detail||!ref)return;if(!confirm(`Merge ${detail.ref} into ${ref}? Its messages move there; ${detail.ref} will point to ${ref}.`)){$('#tmerge').value='';return}
+ try{const j=await api('/thread/'+encodeURIComponent(detail.id)+'/merge',{method:'POST',body:JSON.stringify({into:ref})});await loadList();openItem('wa',j.id)}catch(x){$('#err').textContent=x.message||'Could not merge.'}}
+async function splitAt(mid){if(!detail)return;if(!confirm('Move this message, and the ones after it in this issue, to a new issue?'))return;
+ try{const j=await api('/thread/'+encodeURIComponent(detail.id)+'/split',{method:'POST',body:JSON.stringify({message_id:mid})});await loadList();openItem('wa',j.id)}catch(x){$('#err').textContent=x.message||'Could not move it.'}}
+$('#tmerge').onchange=()=>mergeInto($('#tmerge').value);
 $('#back').onclick=()=>{cur=null;history.replaceState(null,'',location.pathname);$('.app').classList.remove('open');loadList()};
 loadList().then(()=>{const h=decodeURIComponent(location.hash.slice(1));if(h.includes(':'))openItem(h.split(':')[0],h.slice(h.indexOf(':')+1));else if(/^\d+$/.test(h))openItem('wa',h)});
 setInterval(()=>{loadList();refresh(false,false)},15000);

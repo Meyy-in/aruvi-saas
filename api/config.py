@@ -266,6 +266,16 @@ WA_REPORT_ACK = os.environ.get("ARUVI_WA_REPORT_ACK", None)
 if WA_REPORT_ACK is None:
     WA_REPORT_ACK = ("Thank you — we have your report. Its reference is {ref}; please quote it if "
                      "you write about it again. We will reply here within 2 working days.")
+# ★ THE END-OF-BURST ACKNOWLEDGEMENT (founder, 2026-10-04) — sent once her messages have gone quiet
+# for 15 minutes, with NO reference in it (references stay internal on WhatsApp). WA_ACK_GREET is
+# for a burst that was only a greeting ("Hi"): an invitation, never "we will revert" to a bare Hi.
+WA_ACK_TEXT = (os.environ.get("ARUVI_WA_ACK_TEXT", "").strip() or
+               "Thanks — we've received your message and will reply here soon.")
+WA_ACK_GREET = (os.environ.get("ARUVI_WA_ACK_GREET", "").strip() or
+                "Hello! Please tell us what you need help with, and we'll reply here.")
+# Emails: at most this many automatic acknowledgements a day per teacher. Past it the case is
+# still opened and numbered; only the acknowledgement mail is skipped (sender reputation).
+SUPPORT_EMAIL_ACKS_PER_DAY = int(os.environ.get("ARUVI_SUPPORT_EMAIL_ACKS_PER_DAY", "10"))
 # Optional: an APPROVED template (no variables) that re-opens a conversation after the
 # 24-hour reply window has closed. Empty = the inbox just says the window is closed.
 WA_REOPEN_TEMPLATE = os.environ.get("ARUVI_WA_REOPEN_TEMPLATE", "").strip()

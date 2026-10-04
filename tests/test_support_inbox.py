@@ -71,17 +71,23 @@ def test_inbound_is_stored_greeted_once_and_alerts_once():
         t = m.wa_inbox_repo.load("9800000201")
         texts = [(x["dir"], x.get("by", ""), x["text"]) for x in t["messages"]]
         assert texts[0] == ("in", "", "My assessment answer key has an error")
-        # A first plain message is a fresh request (2026-10-04): numbered and acknowledged — the
-        # acknowledgement does the greeting's job.
-        assert texts[1][:2] == ("out", "auto-ack") and t["last_ref"] in texts[1][2]
+        # A first plain message is a new issue (2026-10-04) — numbered, but nothing is sent yet:
+        # the acknowledgement waits until her burst goes quiet.
+        assert len(texts) == 1 and t["last_ref"]
         assert t["name"] == "Priya" and t["unread"] == 1
         assert len(sent_mail) == 1 and "Priya" in sent_mail[0].subject
-        # a second message minutes later: no second greeting, no second alert
+        # a second message minutes later: same burst, same issue, no second alert
         _hook(c, [_msg("919800000201", "It is in chapter 4", "w2")])
         t = m.wa_inbox_repo.load("9800000201")
-        assert [x.get("by") for x in t["messages"]].count("auto-ack") == 1
-        assert [x.get("by") for x in t["messages"]].count("auto-greeting") == 0
         assert len(sent_mail) == 1 and t["unread"] == 2
+        assert len(set(x.get("issue") for x in t["messages"])) == 1
+        # 15 quiet minutes later: ONE acknowledgement, with no reference in it
+        later = datetime.now(timezone.utc) + timedelta(minutes=16)
+        assert m.support_inbox.send_due_acks(now=later) == 1
+        assert m.support_inbox.send_due_acks(now=later) == 0
+        t = m.wa_inbox_repo.load("9800000201")
+        acks = [x["text"] for x in t["messages"] if x.get("by") == "auto-ack"]
+        assert len(acks) == 1 and "MEY-W" not in acks[0] and "received" in acks[0]
         # Meta re-delivering the same message id is not a new message
         _hook(c, [_msg("919800000201", "It is in chapter 4", "w2")])
         assert len(m.wa_inbox_repo.load("9800000201")["messages"]) == 3
@@ -127,7 +133,8 @@ def test_reply_only_inside_the_24_hour_window():
     r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000204')}/reply", json={"text": "We are looking into it."}, headers=H)
     assert r.status_code == 200, r.text
     t = c.get(f"/support-inbox/api/thread/{_iid(m, '9800000204')}").json()
-    assert t["messages"][-1]["text"].endswith("We are looking into it.") and t["unread"] == 0
+    assert t["messages"][-1]["text"] == "We are looking into it." and t["unread"] == 0
+    assert t["messages"][-1].get("reply_to") == "r1", "sent as a quote-reply to her message"
     # age her last message past 24 hours
     old = (datetime.now(timezone.utc) - timedelta(hours=25)).isoformat()
     m.wa_inbox_repo.patch("9800000204", last_inbound_at=old)

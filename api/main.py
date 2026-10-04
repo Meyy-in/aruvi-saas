@@ -2680,6 +2680,27 @@ def _case_from_mail(acct: Any, subject: str, text: str, mail_id: str, at: str) -
 
 support_inbox.open_case_from_mail = _case_from_mail
 
+
+@app.on_event("startup")
+def _start_wa_ack_loop() -> None:
+    """Once a minute: acknowledge WhatsApp issues whose burst has gone quiet (support_inbox.
+    send_due_acks). Starter plan — the instance never sleeps, so the minute always comes round.
+    ⚠️ ONE instance today (the disk pins it); with several, send_due_acks's claim must move to a
+    database row so two instances never both acknowledge."""
+    import os as _os
+    import threading as _th
+    import time as _time
+
+    def loop():
+        while True:
+            try:
+                support_inbox.send_due_acks()
+            except Exception as e:                       # noqa: BLE001
+                _wa_log({"kind": "ack_loop_error", "error": str(e)[:300]})
+            _time.sleep(60)
+    if _os.environ.get("ARUVI_WA_ACK_LOOP", "1") != "0":
+        _th.Thread(target=loop, daemon=True, name="wa-ack").start()
+
 if config.MAIL_SYNC:
     from api.mail_sync import MailSync as _MailSync
     support_inbox.mail_sync = _MailSync(support_inbox, config.IMAP_HOST, config.IMAP_USER,
@@ -2827,10 +2848,12 @@ def create_support_request(req: SupportMessage,
     #   Still ungated on subscription: a trial or lapsed teacher with an email writes freely.
     if not to:
         raise HTTPException(status_code=409, detail=_SUPPORT_NEEDS_EMAIL)
-    # A light daily cap, so the form cannot become a spam pipe (founder, 2026-09-28).
-    # ★ Email cases and WhatsApp issues count TOGETHER (founder, 2026-10-04).
-    if support_inbox.over_cap(acct.phone if acct and acct.phone else user_id, tenant_id):
-        raise HTTPException(status_code=429, detail=config.SUPPORT_CAP_NOTE)
+    # ★ NO DAILY CAP ON REQUESTS (founder, 2026-10-04): every request gets its own case. What is
+    #   limited is the AUTOMATIC mail — past SUPPORT_EMAIL_ACKS_PER_DAY acknowledgements today the
+    #   case is still filed and numbered, only the acknowledgement is skipped (sender reputation).
+    today = datetime.now(timezone.utc).date().isoformat()
+    acked_today = sum(1 for r in support_repo.load_all(tenant_id, user_id)
+                      if str(r.created_at or "")[:10] == today and r.acknowledged)
     name = (acct.display_name if acct else "") or ""
     now = datetime.now(timezone.utc).isoformat()
     reference = support_repo.next_reference()
@@ -2845,7 +2868,7 @@ def create_support_request(req: SupportMessage,
     support_repo.save(record)      # stored BEFORE the mail — see the note above
 
     emailed = False
-    if to:
+    if to and acked_today < config.SUPPORT_EMAIL_ACKS_PER_DAY:
         body = mail_templates.support_acknowledgement(
             name=name, reference=reference, category=category, message=text,
             reply_days=days, received_on=now[:10], context=record.context)
@@ -2908,11 +2931,8 @@ def list_support_requests(identity: tuple = Depends(_current_identity)) -> Dict[
             "whatsapp_number": config.WHATSAPP_NUMBER,
             # Her sign-in mobile, so the tap-to-chat note can say who is writing.
             "mobile": (acct.phone if acct and acct.phone else user_id),
-            # The day's cap on NEW requests, email + WhatsApp together (2026-10-04): past it
-            # the screens disable both send buttons and show `cap_note` instead.
-            "cap_reached": support_inbox.over_cap(acct.phone if acct and acct.phone else user_id,
-                                                  tenant_id),
-            "cap_note": config.SUPPORT_CAP_NOTE,
+            # (No daily cap since 2026-10-04 — `cap_reached` stays false for older app builds.)
+            "cap_reached": False,
             "requests": [
         {"reference": r.reference, "category": r.category,
          "label": r.category_label or mail_templates.support_category_label(r.category),
