@@ -21,10 +21,12 @@ os.environ.setdefault("ARUVI_SUPPORT_INBOX_PASSWORD", "correct horse")
 from api.mail_sync import MailSync, fetch_replies, parse_reply, strip_quoted  # noqa: E402
 
 
-def _raw(subject, sender, body, mid, html=None):
+def _raw(subject, sender, body, mid, html=None, date="Sat, 03 Oct 2026 21:34:20 +0530", extra=None):
     m = _Mail()
     m["Subject"], m["From"], m["To"] = subject, sender, "support@meyy.in"
-    m["Message-ID"], m["Date"] = mid, "Sat, 03 Oct 2026 21:34:20 +0530"
+    m["Message-ID"], m["Date"] = mid, date
+    for k, v in (extra or {}).items():
+        m[k] = v
     m.set_content(body)
     if html:
         m.add_alternative(html, subtype="html")
@@ -53,13 +55,20 @@ class FakeBox:
         return "OK", [b"3"]
 
     def search(self, charset, *crit):
+        if "NOT" in crit:            # fresh mail: no reference in the subject
+            hits = [str(i + 1).encode() for i, r in enumerate(self.msgs)
+                    if b"MEY-S-" not in r.split(b"\n\n")[0] and b"ARV-S-" not in r.split(b"\n\n")[0]]
+            return "OK", [b" ".join(hits)]
         word = crit[-1].strip('"')
         hits = [str(i + 1).encode() for i, r in enumerate(self.msgs) if word.encode() in r]
         return "OK", [b" ".join(hits)]
 
     def fetch(self, num, what):
         assert "PEEK" in what, "fetching must not mark mail read"
-        return "OK", [(b"1 (BODY[] {n}", self.msgs[int(num) - 1]), b")"]
+        raw = self.msgs[int(num) - 1]
+        if "HEADER" in what:
+            raw = raw.split(b"\n\n", 1)[0] + b"\n\n"
+        return "OK", [(b"1 (BODY[] {n}", raw), b")"]
 
     def logout(self):
         pass
@@ -103,7 +112,7 @@ def test_sync_files_her_reply_once_and_reports_auth_errors():
              "Reply to: kumar@example.com\n----\nRobot paths overlap.", "<copy>"),   # our own copy
     ])
     ms = MailSync(m.support_inbox, "imap.gmail.com", "support@meyy.in", "pw",
-                  fetch=lambda h, u, p: fetch_replies(h, u, p, imap_factory=box))
+                  fetch=lambda h, u, p, **kw: fetch_replies(h, u, p, imap_factory=box))
     old = m.support_inbox.mail_sync
     m.support_inbox.mail_sync = ms
     try:
@@ -128,7 +137,47 @@ def test_sync_files_her_reply_once_and_reports_auth_errors():
     print("✓ Sync files her reply once (not our own copy), reopens the case, reports a refused sign-in")
 
 
+
+def test_fresh_mail_from_a_teacher_opens_a_case_and_strangers_are_left_alone():
+    from fastapi.testclient import TestClient
+    from datetime import datetime, timedelta, timezone
+    from email.utils import format_datetime
+    import api.main as m
+    from aruvi_core.ports import Account
+    m.account_repo.save(Account(account_id="9800000501", tenant_id="9800000501", display_name="Lata",
+                                email="lata@example.com", phone="9800000501"))
+    now = format_datetime(datetime.now(timezone.utc))
+    old = format_datetime(datetime.now(timezone.utc) - timedelta(days=30))
+    sent = []
+    orig = m.notifier.send
+    m.notifier.send = lambda msg: (sent.append(msg), {"status": "sent"})[1]
+    box = FakeBox([
+        _raw("Cannot download my plan", "Lata <Lata@Example.com>", "The PDF button does nothing.", "<f1>", date=now),
+        _raw("Hello", "stranger@else.com", "Who are you?", "<f2>", date=now),
+        _raw("Out of office", "lata@example.com", "Away", "<f3>", date=now, extra={"Auto-Submitted": "auto-replied"}),
+        _raw("Old mail", "lata@example.com", "Before the switch-on", "<f4>", date=old),
+    ])
+    ms = MailSync(m.support_inbox, "imap.gmail.com", "support@meyy.in", "pw",
+                  fetch=lambda h, u, p, **kw: fetch_replies(h, u, p, imap_factory=box, **kw))
+    ms.floor = lambda: datetime.now(timezone.utc) - timedelta(hours=1)
+    try:
+        st = ms.run_once()
+        assert st["error"] == "" and st["added"] == 1, st
+        cases = m.support_repo.load_all("9800000501", "9800000501")
+        assert len(cases) == 1 and cases[0].category == "other"
+        assert cases[0].message.startswith("Cannot download my plan") and "PDF button" in cases[0].message
+        assert cases[0].context["mail_id"] == "<f1>"
+        assert any(x.to == "lata@example.com" and cases[0].reference in x.subject for x in sent), "acknowledged"
+        assert ms.run_once()["added"] == 0                              # never twice
+        ms.skip.clear()
+        assert ms.run_once()["added"] == 0                              # not even after a restart
+        assert len(m.support_repo.load_all("9800000501", "9800000501")) == 1
+    finally:
+        m.notifier.send = orig
+    print("✓ Fresh mail from a teacher on record opens a case once; strangers, auto-replies, old mail ignored")
+
 if __name__ == "__main__":
     test_strip_quoted_and_parse()
     test_fetch_is_read_only_and_finds_both_series()
     test_sync_files_her_reply_once_and_reports_auth_errors()
+    test_fresh_mail_from_a_teacher_opens_a_case_and_strangers_are_left_alone()

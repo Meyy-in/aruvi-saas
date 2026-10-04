@@ -25,6 +25,12 @@ ONE REPORT, ONE ISSUE (2026-10-04): each WhatsApp report is its own inbox row, i
 (bare number = general chat before any report). `issues_of()` assigns messages: explicit `issue` field (founder
 replies/acks), else the report a message starts, else the latest report. Per-issue status/draft/category live in
 `thread.issues[ref]` (`patch_issue`); `/api/thread/{id}` returns only that issue's messages.
+ROUTING (2026-10-04): a plain WhatsApp message (no header) goes by `route_message`: swipe-reply (`context.id`) →
+quoted MEY-W ref → the one open issue / the open one we last answered → one resolved ≤3 days (reopens) → else a NEW
+issue (category other, acknowledged); past the cap or STOP → latest issue. Founder replies get "Re MEY-W-n" first.
+FRESH EMAIL: mail to support@ with no [MEY-S] from the ONE account carrying that address → `_case_from_mail` files a
+normal case (ack + copy, context.screen "Email (written directly)", mail_id dedup); past the cap → joins her latest
+case; strangers/auto-replies stay in Gmail. Counted only from `support/_series/mail_floor.json` (first sync).
 EMAIL REPLIES (2026-10-03): her reply to a case mail lands in support@'s Gmail; `api/mail_sync.py` reads
 INBOX over IMAP (read-only, BODY.PEEK; SMTP account + app password unless `ARUVI_IMAP_*`), keeps mails whose
 subject has `[MEY-S-n]`/`[ARV-S-n]`, strips the quote, and calls `Inbox.case_inbound` (From must equal the case

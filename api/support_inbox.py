@@ -33,6 +33,7 @@ import hashlib
 import hmac
 import html
 import json
+import re
 import time
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, Optional
@@ -182,10 +183,56 @@ def issues_of(messages):
 def issue_state(t: Dict[str, Any], ref: str) -> Dict[str, Any]:
     if not ref:
         return {"status": t.get("status", "open"), "draft": t.get("draft") or {},
-                "category": t.get("category", "")}
+                "category": t.get("category", ""), "resolved_at": t.get("resolved_at", "")}
     st = (t.get("issues") or {}).get(ref) or {}
     return {"status": st.get("status", "open"), "draft": st.get("draft") or {},
-            "category": st.get("category", "plan")}
+            "category": st.get("category", "plan"), "resolved_at": st.get("resolved_at", "")}
+
+
+_AUTO_BY = ("auto-greeting", "auto-ack", "system")
+_REF_RE = re.compile(r"\b((?:MEY|ARV)-W-\d+)\b", re.I)
+REOPEN_DAYS = 3
+
+
+def route_message(t: Dict[str, Any], m: Dict[str, Any], text: str,
+                  now: Optional[datetime] = None) -> Optional[str]:
+    """★ WHICH ISSUE IS A PLAIN WHATSAPP MESSAGE ABOUT? (founder, 2026-10-04) — for a message she
+    typed straight into WhatsApp (no "Problem in:" / "Support:" line). First rule that applies:
+      1. she swiped to reply to one of OUR messages (or hers) → that message's issue
+      2. she quotes a reference (MEY-W-1236) that is hers → that issue
+      3. exactly one issue open → it;  several open → the one we last replied in
+      4. none open, one resolved in the last 3 days → that one (it reopens)
+    None = a FRESH request: the caller gives it a new number (or, past the day's cap, her latest)."""
+    now = now or datetime.now(timezone.utc)
+    pairs = issues_of(t.get("messages") or [])
+    refs = [r for r in dict.fromkeys(r for r, _ in pairs) if r]
+    if not refs:
+        return None
+    quoted = ((m.get("context") or {}).get("id") or "").strip()
+    if quoted:
+        for r, msg in pairs:
+            if msg.get("id") == quoted and r:
+                return r
+    for found in _REF_RE.findall(text or ""):
+        up = found.upper()
+        if up in refs:
+            return up
+    def last_ours(r):
+        return max((msg.get("at", "") for x, msg in pairs if x == r and msg.get("dir") == "out"
+                    and msg.get("by") not in _AUTO_BY), default="")
+    def last_any(r):
+        return max((msg.get("at", "") for x, msg in pairs if x == r), default="")
+    open_ = [r for r in refs if issue_state(t, r)["status"] != "done"]
+    if len(open_) == 1:
+        return open_[0]
+    if open_:
+        return max(open_, key=lambda r: (last_ours(r), last_any(r)))
+    recent = []
+    for r in refs:
+        when = _parse(issue_state(t, r)["resolved_at"] or last_any(r))
+        if when and now - when <= timedelta(days=REOPEN_DAYS):
+            recent.append((when, r))
+    return max(recent)[1] if recent else None
 
 
 class Inbox:
@@ -198,6 +245,9 @@ class Inbox:
         self.cases = support_repo                    # email cases (None in old wiring/tests)
         self.cat_label = category_label or (lambda k: str(k or "").replace("_", " ").capitalize())
         self.mail_sync = None                        # api.mail_sync.MailSync, wired in main.py
+        # main.py's "file a case from a mail she wrote" (account, subject, text, message_id, at)
+        # → "added" | "joined" | …; None = fresh mail is not filed (old wiring, tests).
+        self.open_case_from_mail = None
 
     # ── identity ──
     def _name_for(self, n: str, fallback: str = "") -> str:
@@ -229,12 +279,20 @@ class Inbox:
         # Past the day's cap (email + WhatsApp together) a fresh request gets no new number:
         # it joins her latest issue instead (founder, 2026-10-04).
         capped = self.over_cap(n)
-        if (report or support) and is_new and not capped:
+        t0 = self.repo.load(n) or {}
+        issue: Optional[str] = None             # the existing issue a plain message joins
+        if is_new and not ((report or support) and not capped):
+            if not (report or support):
+                issue = route_message(t0, m, text)
+            if issue is None and (capped or text.strip().upper() == "STOP"):
+                issue = t0.get("last_ref") or ""   # past the cap: her latest issue, no new number
+        if is_new and issue is None:            # a report, a Support: message, or a fresh request
             ref = self.repo.next_reference(getattr(self.config, "WA_REPORT_PREFIX", "MEY-W"),
                                            getattr(self.config, "WA_REPORT_START", 1234))
         before = self.repo.append(
             n, {"id": m.get("id", ""), "dir": "in", "type": m.get("type", ""), "text": text,
                 **({"ref": ref} if ref else {}),
+                **({"issue": issue} if issue is not None else {}),
                 **({"report": report} if ref and report else {}),
                 **({"support": support} if ref and support else {})},
             name=self._name_for(n, profile_name))
@@ -254,7 +312,7 @@ class Inbox:
         if is_new:
             # The issue this message belongs to: a new report is its own; a plain message joins
             # the latest report (or the general chat before any).
-            iss = ref or (before.get("last_ref") or "")
+            iss = ref or (issue if issue is not None else (before.get("last_ref") or ""))
             st = issue_state(before, iss)
             fields = {}
             if (st["draft"] or {}).get("by") == "claude":
@@ -262,7 +320,8 @@ class Inbox:
             if st["status"] == "done" or ref:
                 fields["status"] = "open"
             if ref:
-                fields["category"] = "plan" if report else self.category_for(support.get("about", ""))
+                fields["category"] = ("plan" if report else
+                                      self.category_for(support.get("about", "")) if support else "other")
             if fields:
                 self.repo.patch_issue(n, iss, **fields)
         now = datetime.now(timezone.utc)
@@ -382,6 +441,34 @@ class Inbox:
         self.cases.save(c)
         self.log({"kind": "case_inbound", "ref": c.reference})
         return "added"
+
+    # ── fresh email: she wrote to support@ from her own mail app, no reference (2026-10-04) ──
+    def is_teacher_email(self, addr: str) -> bool:
+        try:
+            return bool(addr) and self.accounts.find_by_email(addr) is not None
+        except Exception:                                      # noqa: BLE001
+            return False
+
+    def mail_fresh(self, r: Dict[str, str]) -> str:
+        """A fresh mail → a NEW case (MEY-S-n, acknowledged like the app's form) when it comes from
+        the ONE account carrying that address; past the day's cap it joins her latest case. Mail
+        from an address on no account (or on two) is not filed — it stays in support@'s Gmail:
+        Meyy writes back only to what is on record. Returns added | joined | stranger | duplicate."""
+        if self.open_case_from_mail is None:
+            return "off"
+        try:
+            acct = self.accounts.find_by_email(r.get("sender", ""))
+        except Exception:                                      # noqa: BLE001
+            acct = None
+        if acct is None:
+            return "stranger"
+        mid = r.get("message_id", "")
+        if mid and self.cases:
+            for c in self.cases.load_all(acct.tenant_id, acct.account_id):
+                if (c.context or {}).get("mail_id") == mid or any(
+                        x.get("id") == mid for x in (c.thread or [])):
+                    return "duplicate"
+        return self.open_case_from_mail(acct, r.get("subject", ""), r.get("text", ""), mid, r.get("at", ""))
 
     # ── the day's cap on NEW requests (2026-10-04) ──
     def new_today(self, n: str, tenant_id: str = "") -> int:
@@ -634,6 +721,7 @@ def build_router(inbox: Inbox) -> APIRouter:
             fields["category"] = body.category
         if body.status in ("open", "done"):
             fields["status"] = body.status
+            fields["resolved_at"] = datetime.now(timezone.utc).isoformat() if body.status == "done" else ""
         inbox.repo.patch_issue(n, ref, **fields)
         return {"ok": True}
 
@@ -755,6 +843,11 @@ def build_router(inbox: Inbox) -> APIRouter:
             raise HTTPException(status_code=409, detail=(
                 "More than 24 hours have passed since this customer last wrote, so WhatsApp "
                 "only allows an approved template now."))
+        # ★ EVERY ANSWER NAMES ITS ISSUE (2026-10-04): her phone shows ONE chat, so a reply opens
+        # with its reference — she can see which question it answers, and quoting it back routes
+        # her next message to the same issue.
+        if ref and ref.upper() not in text.upper():
+            text = f"Re {ref}\n\n{text}"
         res = inbox.send_text(n, text, issue=ref)
         if res.get("status") not in ("sent", "written"):
             raise HTTPException(status_code=502, detail=f"WhatsApp refused it: {res.get('error') or res.get('reason')}")

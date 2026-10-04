@@ -85,8 +85,42 @@ def parse_reply(raw: bytes) -> Optional[Dict[str, str]]:
             "sender": parseaddr(str(msg.get("From", "")))[1].lower(), "at": at, "text": text[:8000]}
 
 
+def is_automatic(msg) -> bool:
+    """Bounces, auto-replies and lists — never a teacher writing (RFC 3834 and the usual headers)."""
+    auto = str(msg.get("Auto-Submitted", "no")).strip().lower()
+    prec = str(msg.get("Precedence", "")).strip().lower()
+    frm = parseaddr(str(msg.get("From", "")))[1].lower()
+    return (auto not in ("", "no") or prec in ("bulk", "junk", "list", "auto_reply")
+            or bool(msg.get("List-Id")) or frm.startswith(("mailer-daemon@", "postmaster@", "no-reply@",
+                                                            "noreply@", "do-not-reply@")))
+
+
+def parse_fresh(raw: bytes) -> Optional[Dict[str, str]]:
+    """A mail she wrote to support@ from her own mail app, with NO case reference: {subject,
+    message_id, sender, at, text}, or None (automatic mail, or nothing left to read)."""
+    msg = email.message_from_bytes(raw, policy=email.policy.default)
+    if is_automatic(msg) or REF_RE.search(str(msg.get("Subject", ""))):
+        return None
+    text = strip_quoted(body_text(msg))
+    subject = re.sub(r"^\s*((re|fwd?|fw)\s*:\s*)+", "", str(msg.get("Subject", "")), flags=re.I).strip()
+    if not (text or subject):
+        return None
+    try:
+        at = parsedate_to_datetime(str(msg.get("Date"))).astimezone(timezone.utc).isoformat()
+    except Exception:                                                  # noqa: BLE001
+        at = ""
+    return {"kind": "fresh", "subject": subject[:200], "message_id": str(msg.get("Message-ID", "")).strip(),
+            "sender": parseaddr(str(msg.get("From", "")))[1].lower(), "at": at, "text": text[:8000]}
+
+
 def fetch_replies(host: str, user: str, password: str, days: int = 14,
-                  imap_factory: Callable[..., Any] = imaplib.IMAP4_SSL) -> List[Dict[str, str]]:
+                  imap_factory: Callable[..., Any] = imaplib.IMAP4_SSL,
+                  fresh_since: Optional[datetime] = None,
+                  wanted: Optional[Callable[[str], bool]] = None,
+                  skip: Optional[set] = None) -> List[Dict[str, str]]:
+    """Replies to cases ([MEY-S-n] in the subject) — and, when `fresh_since` is given, FRESH mail
+    (no reference) received since then from an address `wanted` accepts (a teacher on record).
+    `skip` is a set of Message-IDs already handled; fresh ones read here are added to it."""
     since = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%d-%b-%Y")
     box = imap_factory(host)
     try:
@@ -107,6 +141,39 @@ def fetch_replies(host: str, user: str, password: str, days: int = 14,
                     r = parse_reply(raw)
                     if r:
                         out.append(r)
+        if fresh_since is not None:
+            fs = fresh_since.strftime("%d-%b-%Y")
+            typ, data = box.search(None, "SINCE", fs, "NOT", "SUBJECT", '"MEY-S-"',
+                                   "NOT", "SUBJECT", '"ARV-S-"')
+            for num in ((data[0] or b"").split() if typ == "OK" else []):
+                if num in seen:
+                    continue
+                seen.add(num)
+                # Headers first: most of support@'s mail is not from a teacher, and only hers is read.
+                typ, parts = box.fetch(num, "(BODY.PEEK[HEADER])")
+                head = next((p[1] for p in parts or [] if isinstance(p, tuple)), None)
+                if typ != "OK" or not head:
+                    continue
+                h = email.message_from_bytes(head, policy=email.policy.default)
+                mid = str(h.get("Message-ID", "")).strip()
+                if skip is not None and mid and mid in skip:
+                    continue
+                try:
+                    when = parsedate_to_datetime(str(h.get("Date")))
+                    if when.tzinfo is None:
+                        when = when.replace(tzinfo=timezone.utc)
+                except Exception:                                      # noqa: BLE001
+                    continue
+                sender = parseaddr(str(h.get("From", "")))[1].lower()
+                if when < fresh_since or is_automatic(h) or (wanted and not wanted(sender)):
+                    if skip is not None and mid:
+                        skip.add(mid)
+                    continue
+                typ, parts = box.fetch(num, "(BODY.PEEK[])")
+                raw = next((p[1] for p in parts or [] if isinstance(p, tuple)), None)
+                r = parse_fresh(raw) if typ == "OK" and raw else None
+                if r:
+                    out.append(r)
         return out
     finally:
         try:
@@ -123,6 +190,7 @@ class MailSync:
         self.inbox, self.host, self.user, self.password = inbox, host, user, password
         self.every, self.fetch = every, fetch
         self.last = 0.0
+        self.skip: set = set()          # Message-IDs of fresh mail already handled (this process)
         self.status: Dict[str, Any] = {"enabled": self.enabled}
         self._lock = threading.Lock()
 
@@ -130,12 +198,35 @@ class MailSync:
     def enabled(self) -> bool:
         return bool(self.host and self.user and self.password)
 
+    FLOOR_KEY = "support/_series/mail_floor.json"
+
+    def floor(self) -> Optional[datetime]:
+        """★ FRESH MAIL COUNTS FROM THE DAY THIS WAS SWITCHED ON (2026-10-04) — never support@'s
+        back catalogue. Stored once, on the first sync, beside the reference series."""
+        be = getattr(getattr(self.inbox, "repo", None), "backend", None)
+        if be is None:
+            return None
+        raw = be.get_json(self.FLOOR_KEY)
+        at = (raw or {}).get("at") if isinstance(raw, dict) else None
+        if not at:
+            at = datetime.now(timezone.utc).isoformat()
+            be.put_json(self.FLOOR_KEY, {"at": at})
+        return datetime.fromisoformat(at)
+
     def run_once(self) -> Dict[str, Any]:
         added = 0
         try:
-            for r in self.fetch(self.host, self.user, self.password):
-                res = self.inbox.case_inbound(r["ref"], r["text"], r["message_id"], r["at"], r["sender"])
-                added += res == "added"
+            fresh_on = getattr(self.inbox, "open_case_from_mail", None) is not None
+            kw = ({"fresh_since": self.floor(), "wanted": self.inbox.is_teacher_email, "skip": self.skip}
+                  if fresh_on else {})
+            for r in self.fetch(self.host, self.user, self.password, **kw):
+                if r.get("kind") == "fresh":
+                    res = self.inbox.mail_fresh(r)
+                    if r.get("message_id"):
+                        self.skip.add(r["message_id"])
+                else:
+                    res = self.inbox.case_inbound(r["ref"], r["text"], r["message_id"], r["at"], r["sender"])
+                added += res in ("added", "joined")
             self.status = {"enabled": True, "at": datetime.now(timezone.utc).isoformat(),
                            "added": added, "error": ""}
         except Exception as e:                                         # noqa: BLE001

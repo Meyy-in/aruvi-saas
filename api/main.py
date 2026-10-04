@@ -2654,6 +2654,32 @@ support_inbox = _support_inbox_mod.Inbox(config=config, repo=wa_inbox_repo, wa_c
                                          notifier=notifier, account_repo=account_repo, log=_wa_log,
                                          support_repo=support_repo,
                                          category_label=mail_templates.support_category_label)
+def _case_from_mail(acct: Any, subject: str, text: str, mail_id: str, at: str) -> str:
+    """★ A FRESH MAIL TO support@ BECOMES A CASE (founder, 2026-10-04) — exactly what the app's
+    support form files: a new MEY-S reference, the acknowledgement to her address, the copy to
+    support@. Category "other" (she chose none). Past the day's cap it joins her latest case."""
+    body = (f"{subject}\n\n{text}" if subject and text else (text or subject)).strip()
+    body = body[:_SUPPORT_MAX_CHARS]
+    try:
+        create_support_request(
+            SupportMessage(category="other", message=body,
+                           context={"screen": "Email (written directly)", "mail_id": mail_id,
+                                    "email_subject": subject[:200]}),
+            identity=(acct.tenant_id, acct.account_id))
+        return "added"
+    except HTTPException as e:
+        if e.status_code != 429:
+            return "refused"
+    latest = max(support_repo.load_all(acct.tenant_id, acct.account_id),
+                 key=lambda c: c.created_at or "", default=None)
+    if latest is None:
+        return "capped"
+    res = support_inbox.case_inbound(latest.reference, body, mail_id, at, acct.email)
+    return "joined" if res == "added" else res
+
+
+support_inbox.open_case_from_mail = _case_from_mail
+
 if config.MAIL_SYNC:
     from api.mail_sync import MailSync as _MailSync
     support_inbox.mail_sync = _MailSync(support_inbox, config.IMAP_HOST, config.IMAP_USER,

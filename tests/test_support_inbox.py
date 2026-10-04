@@ -51,6 +51,11 @@ def _msg(frm, text, mid):
     return {"from": frm, "id": mid, "type": "text", "text": {"body": text}}
 
 
+def _iid(m, n):
+    """The inbox id of her latest issue (2026-10-04: a plain first message is its own issue)."""
+    return f"{n}~{m.wa_inbox_repo.load(n)['last_ref']}"
+
+
 def _login(c):
     return c.post("/support-inbox/login", data={"password": PW}, follow_redirects=False)
 
@@ -66,13 +71,16 @@ def test_inbound_is_stored_greeted_once_and_alerts_once():
         t = m.wa_inbox_repo.load("9800000201")
         texts = [(x["dir"], x.get("by", ""), x["text"]) for x in t["messages"]]
         assert texts[0] == ("in", "", "My assessment answer key has an error")
-        assert texts[1][:2] == ("out", "auto-greeting") and "not calls" in texts[1][2]
+        # A first plain message is a fresh request (2026-10-04): numbered and acknowledged — the
+        # acknowledgement does the greeting's job.
+        assert texts[1][:2] == ("out", "auto-ack") and t["last_ref"] in texts[1][2]
         assert t["name"] == "Priya" and t["unread"] == 1
         assert len(sent_mail) == 1 and "Priya" in sent_mail[0].subject
         # a second message minutes later: no second greeting, no second alert
         _hook(c, [_msg("919800000201", "It is in chapter 4", "w2")])
         t = m.wa_inbox_repo.load("9800000201")
-        assert [x.get("by") for x in t["messages"]].count("auto-greeting") == 1
+        assert [x.get("by") for x in t["messages"]].count("auto-ack") == 1
+        assert [x.get("by") for x in t["messages"]].count("auto-greeting") == 0
         assert len(sent_mail) == 1 and t["unread"] == 2
         # Meta re-delivering the same message id is not a new message
         _hook(c, [_msg("919800000201", "It is in chapter 4", "w2")])
@@ -116,14 +124,14 @@ def test_reply_only_inside_the_24_hour_window():
     _login(c)
     H = {"X-Meyy-Inbox": "1"}
     _hook(c, [_msg("919800000204", "Hello", "r1")])
-    r = c.post("/support-inbox/api/thread/9800000204/reply", json={"text": "We are looking into it."}, headers=H)
+    r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000204')}/reply", json={"text": "We are looking into it."}, headers=H)
     assert r.status_code == 200, r.text
-    t = c.get("/support-inbox/api/thread/9800000204").json()
-    assert t["messages"][-1]["text"] == "We are looking into it." and t["unread"] == 0
+    t = c.get(f"/support-inbox/api/thread/{_iid(m, '9800000204')}").json()
+    assert t["messages"][-1]["text"].endswith("We are looking into it.") and t["unread"] == 0
     # age her last message past 24 hours
     old = (datetime.now(timezone.utc) - timedelta(hours=25)).isoformat()
     m.wa_inbox_repo.patch("9800000204", last_inbound_at=old)
-    r = c.post("/support-inbox/api/thread/9800000204/reply", json={"text": "Still there?"}, headers=H)
+    r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000204')}/reply", json={"text": "Still there?"}, headers=H)
     assert r.status_code == 409 and "24 hours" in r.json()["detail"]
 
 
@@ -138,11 +146,11 @@ def test_window_is_per_business_number_and_other_numbers_are_ignored():
         assert m.wa_inbox_repo.load("9800000207") is None
         # to the current number: filed, window open
         _hook(c, [_msg("919800000207", "to the new number", "o2")], pn="PN-NEW")
-        t = c.get("/support-inbox/api/thread/9800000207").json()
+        t = c.get(f"/support-inbox/api/thread/{_iid(m, '9800000207')}").json()
         assert t["window_open"] is True
         # if the sending number changes, the old window no longer counts
         m.config.WA_PHONE_NUMBER_ID = "PN-OTHER"
-        t = c.get("/support-inbox/api/thread/9800000207").json()
+        t = c.get(f"/support-inbox/api/thread/{_iid(m, '9800000207')}").json()
         assert t["window_open"] is False
     finally:
         m.config.WA_PHONE_NUMBER_ID = old
@@ -156,7 +164,7 @@ def test_reopen_template_sends_her_first_name_when_the_window_is_closed():
         m.config.WA_REOPEN_TEMPLATE = "meyy_followup"
         _hook(c, [_msg("919800000208", "hello", "f1")],
               contacts=[{"wa_id": "919800000208", "profile": {"name": "Geetha R"}}])
-        r = c.post("/support-inbox/api/thread/9800000208/reopen", headers={"X-Meyy-Inbox": "1"})
+        r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000208')}/reopen", headers={"X-Meyy-Inbox": "1"})
         assert r.status_code == 200, r.text
         last = m.wa_inbox_repo.load("9800000208")["messages"][-1]
         assert last.get("template") == "meyy_followup" and "Hello Geetha" in last["text"]

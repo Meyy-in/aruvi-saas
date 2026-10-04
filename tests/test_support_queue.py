@@ -197,12 +197,15 @@ def test_new_message_retires_a_stale_ai_draft_and_a_resend_is_one_message():
            headers=BEARER)
     assert m.support_repo.find(ref).draft["text"] == "Kumar typing"
     # WhatsApp: same rule; Meta re-delivering the SAME message does not clear a fresh draft.
-    n = "9800000302"
-    m.support_inbox.set_draft("wa", n, "AI reply", by="claude")
-    m.support_inbox.on_message({"from": "91" + n, "id": "q1", "type": "text", "text": {"body": "Hello"}})
-    assert m.wa_inbox_repo.load(n)["draft"]["text"] == "AI reply"
-    m.support_inbox.on_message({"from": "91" + n, "id": "q2", "type": "text", "text": {"body": "Anyone?"}})
-    assert not m.wa_inbox_repo.load(n).get("draft")
+    n = "9800000307"
+    m.support_inbox.on_message({"from": "91" + n, "id": "w1", "type": "text",
+                                "text": {"body": "Problem in: Class III · English · Shapes · Unit 1\n\nStar"}})
+    r = m.wa_inbox_repo.load(n)["last_ref"]
+    m.support_inbox.set_draft("wa", f"{n}~{r}", "AI reply", by="claude")
+    m.support_inbox.on_message({"from": "91" + n, "id": "w1", "type": "text", "text": {"body": "x"}})
+    assert m.wa_inbox_repo.load(n)["issues"][r]["draft"]["text"] == "AI reply"
+    m.support_inbox.on_message({"from": "91" + n, "id": "w2", "type": "text", "text": {"body": "Anyone?"}})
+    assert not m.wa_inbox_repo.load(n)["issues"][r].get("draft")
     print("✓ Her new message retires a stale AI draft (not the founder's); a resend is one message")
 
 
@@ -216,6 +219,7 @@ def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
         say = lambda mid, body: m.support_inbox.on_message({"from": "91" + n, "id": mid, "type": "text",
                                                             "text": {"body": body}})
         say("g1", "Hello, a general question")
+        g = m.wa_inbox_repo.load(n)["last_ref"]                 # a first plain message is its own issue
         say("r1", "Problem in: Class III · English · Paper Boats · Unit 6\n\nFirst issue")
         r1 = m.wa_inbox_repo.load(n)["last_ref"]
         say("r2", "Problem in: Class III · English · Paper Boats · Unit 6\n\nA second issue")
@@ -223,7 +227,7 @@ def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
         assert r1 != r2
         q = {i["id"]: i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
              if i.get("number") == n}
-        assert set(q) == {n, f"{n}~{r1}", f"{n}~{r2}"}
+        assert set(q) == {f"{n}~{g}", f"{n}~{r1}", f"{n}~{r2}"}
         assert q[f"{n}~{r1}"]["needs_reply"] and q[f"{n}~{r2}"]["needs_reply"]
         assert q[f"{n}~{r2}"]["unread"] and not q[f"{n}~{r1}"]["unread"]
         t2 = c.get(f"/support-inbox/api/thread/{n}~{r2}", headers=BEARER).json()
@@ -235,16 +239,16 @@ def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
         assert c.post(f"/support-inbox/api/thread/{n}~{r1}/reply", json={"text": "About your first issue"},
                       headers=H).json()["status"] == "sent"
         t1 = c.get(f"/support-inbox/api/thread/{n}~{r1}", headers=BEARER).json()
-        assert t1["messages"][-1]["text"] == "About your first issue"
-        assert "About your first issue" not in [x["text"] for x in
-                                                c.get(f"/support-inbox/api/thread/{n}~{r2}", headers=BEARER).json()["messages"]]
+        assert t1["messages"][-1]["text"] == f"Re {r1}\n\nAbout your first issue"
+        assert not any("About your first issue" in x["text"] for x in
+                                                c.get(f"/support-inbox/api/thread/{n}~{r2}", headers=BEARER).json()["messages"])
         # resolving one issue leaves the other open; drafts are per issue
         c.post(f"/support-inbox/api/thread/{n}~{r1}/label", json={"status": "done"}, headers=H)
         c.post("/support-inbox/api/draft", json={"kind": "wa", "id": f"{n}~{r2}", "text": "Draft 2"}, headers=BEARER)
         q = {i["id"]: i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
              if i.get("number") == n}
         assert q[f"{n}~{r1}"]["status"] == "done" and q[f"{n}~{r2}"]["status"] == "open"
-        assert q[f"{n}~{r2}"]["has_draft"] and not q[f"{n}~{r1}"]["has_draft"] and not q[n]["has_draft"]
+        assert q[f"{n}~{r2}"]["has_draft"] and not q[f"{n}~{r1}"]["has_draft"] and not q[f"{n}~{g}"]["has_draft"]
         # a plain follow-up joins the LATEST report
         say("f1", "Any update?")
         assert c.get(f"/support-inbox/api/thread/{n}~{r2}", headers=BEARER).json()["messages"][-1]["text"] == "Any update?"
@@ -290,6 +294,55 @@ def test_support_header_opens_an_issue_and_the_cap_counts_email_and_whatsapp_tog
         m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
     print("✓ A Support: message opens its own issue; the cap counts email and WhatsApp together")
 
+
+def test_plain_whatsapp_messages_are_routed_to_the_right_issue_or_open_a_new_one():
+    m, c, _ = _setup()
+    from api.support_inbox import route_message
+    n = "9800000308"
+    sent = []
+    orig_wa, orig_mail = m.wa_client.send_text, m.notifier.send
+    m.wa_client.send_text = lambda to, body: (sent.append(body), {"status": "sent", "message_id": f"out{len(sent)}"})[1]
+    m.notifier.send = lambda msg: {"status": "sent"}
+    try:
+        say = lambda mid, body, **kw: m.support_inbox.on_message({"from": "91" + n, "id": mid, "type": "text",
+                                                                  "text": {"body": body}, **kw})
+        load = lambda: m.wa_inbox_repo.load(n)
+        issue_of = lambda mid: next(r for r, x in __import__("api.support_inbox", fromlist=["x"]).issues_of(
+            load()["messages"]) if x.get("id") == mid)
+        # a first plain message is a FRESH request: its own number and an acknowledgement
+        say("p1", "Hello, the app will not open")
+        a = load()["last_ref"]
+        assert a and issue_of("p1") == a and load()["issues"][a]["category"] == "other"
+        assert any(a in b for b in sent)
+        say("p2", "It shows a white screen")                  # one open issue → joins it
+        assert issue_of("p2") == a
+        say("r1", "Problem in: Class III · English · Shapes · Unit 1\n\nStar missing")
+        b = load()["last_ref"]
+        assert b != a
+        # we answer A (after B arrived): our reply names A; her swipe-reply to it goes to A
+        _login(c)
+        c.post(f"/support-inbox/api/thread/{n}~{a}/reply", json={"text": "Please update the app"}, headers=H)
+        ours = load()["messages"][-1]
+        assert ours["text"].startswith(f"Re {a}\n\n") and issue_of(ours["id"]) == a
+        say("p3", "Done, thanks", context={"id": ours["id"]})
+        assert issue_of("p3") == a
+        say("p4", f"About {b.lower()}: also the moon")       # quoting a reference → that issue
+        assert issue_of("p4") == b
+        say("p5", "Any news?")                               # two open → the one we last answered
+        assert issue_of("p5") == a
+        # both resolved: within 3 days she reopens the latest resolved; later it is a NEW issue
+        c.post(f"/support-inbox/api/thread/{n}~{a}/label", json={"status": "done"}, headers=H)
+        c.post(f"/support-inbox/api/thread/{n}~{b}/label", json={"status": "done"}, headers=H)
+        say("p6", "I do not agree")
+        assert issue_of("p6") == b and load()["issues"][b]["status"] == "open"
+        t = load()
+        later = __import__("datetime").datetime.now(__import__("datetime").timezone.utc) + __import__("datetime").timedelta(days=4)
+        t["issues"][b]["status"] = "done"
+        assert route_message(t, {"id": "z"}, "New question", now=later) is None
+    finally:
+        m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
+    print("✓ Plain WhatsApp messages: swipe-reply, quoted reference, open issue, recent reopen, else new")
+
 if __name__ == "__main__":
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()
@@ -300,3 +353,4 @@ if __name__ == "__main__":
     test_new_message_retires_a_stale_ai_draft_and_a_resend_is_one_message()
     test_each_whatsapp_report_is_its_own_issue_with_only_its_messages()
     test_support_header_opens_an_issue_and_the_cap_counts_email_and_whatsapp_together()
+    test_plain_whatsapp_messages_are_routed_to_the_right_issue_or_open_a_new_one()
