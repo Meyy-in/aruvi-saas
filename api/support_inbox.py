@@ -802,7 +802,8 @@ _LOGIN = """<main class="login"><h1>Sign in</h1><!--err-->
 _APP = """<main class="app">
 <section class="list"><div class="filters" role="tablist">
   <button class="chip on" data-f="reply">Needs reply</button><button class="chip" data-f="open">Open</button>
-  <button class="chip" data-f="all">All</button></div>
+  <button class="chip" data-f="all">All</button>
+  <button class="rfr" id="rfr" title="Pull in new email replies and WhatsApp messages now">&#x21bb; Refresh</button></div>
   <div id="list"></div><div class="empty hidden" id="listEmpty">Nothing here.</div><div id="mailSync" class="hidden" style="margin:10px 14px;font-size:12px;color:#a33"></div></section>
 <section id="pick" class="pick">Choose a conversation on the left.</section>
 <section id="thread" class="thread hidden">
@@ -836,6 +837,8 @@ header form{margin:0}header .link{color:#f6f1e7}
 .filters{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card);z-index:1}
 .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font:13px inherit;cursor:pointer;color:var(--ink)}
 .chip.on{background:var(--pine);border-color:var(--pine);color:#fff}
+.rfr{margin-left:auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font:13px inherit;cursor:pointer;color:var(--pine)}
+.rfr:disabled{opacity:.55;cursor:default}
 .row{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:11px 14px;cursor:pointer;font:inherit;color:inherit}
 .row.on{background:#ece5d6}.rtop{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .rname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rtime{font-size:12px;color:var(--soft);white-space:nowrap}
@@ -862,7 +865,7 @@ header form{margin:0}header .link{color:#f6f1e7}
 .m.failed{border:1px solid var(--clay)}
 .closed,.draftbar{margin:0 16px 8px;padding:9px 12px;border-radius:8px;font-size:13px}
 .closed{background:#f3e3d6}.draftbar{background:var(--tint);border:1px solid #cde0d8;color:var(--pine)}
-.reply{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--card);align-items:flex-end}
+.reply{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--card);align-items:center}
 .reply textarea{flex:1;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;resize:vertical}
 .reply textarea.drafted{border-color:var(--pine);background:#fbfdfb}
 .pick{display:flex;align-items:center;justify-content:center;color:var(--soft)}.app.open .pick{display:none}
@@ -951,6 +954,13 @@ $('#tstatus').onclick=()=>{if(!detail||$('#tstatus').disabled)return;const wa=de
   .then(()=>{delete pend[pk];loadList()}).catch(x=>{delete pend[pk];$('#err').textContent=x.message||'Could not save that.';refresh(false,false);loadList()})};
 $('#reopen').onclick=async()=>{if(!confirm('Send the re-open template to this customer?'))return;
  try{await api('/thread/'+encodeURIComponent(detail.id)+'/reopen',{method:'POST'});await refresh(true,false)}catch(x){$('#err').textContent=x.message}};
+/* ↻ REFRESH (founder, 2026-10-04): pull email replies from support@ NOW (not on the once-a-minute
+   background pass), then reload the list and the open conversation. WhatsApp needs no pull — the
+   webhook files it the moment it arrives — so for WhatsApp this is just the reload. */
+$('#rfr').onclick=async()=>{const b=$('#rfr');if(b.disabled)return;b.disabled=true;b.textContent='Refreshing…';$('#err').textContent='';
+ try{const st=await api('/mail/sync',{method:'POST'});await loadList();await refresh(false,false);
+  b.textContent=st&&st.added?`↻ ${st.added} new`:'↻ Up to date'}catch(x){b.textContent='↻ Refresh';$('#err').textContent=x.message||'Could not refresh.'}
+ setTimeout(()=>{b.textContent='↻ Refresh';b.disabled=false},2500)};
 $('#back').onclick=()=>{cur=null;history.replaceState(null,'',location.pathname);$('.app').classList.remove('open');loadList()};
 loadList().then(()=>{const h=decodeURIComponent(location.hash.slice(1));if(h.includes(':'))openItem(h.split(':')[0],h.slice(h.indexOf(':')+1));else if(/^\d+$/.test(h))openItem('wa',h)});
 setInterval(()=>{loadList();refresh(false,false)},15000);
