@@ -140,7 +140,7 @@ def test_whatsapp_report_is_numbered_parsed_and_acknowledged_once():
         assert len(acks) == 1 and len(sent) == 1, "the acknowledgement replaces the greeting"
         # the greeting and the acknowledgement are automatic: she still NEEDS A REPLY
         item = next(i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
-                    if i["id"] == "9800000303")
+                    if i["id"] == "9800000303~" + reps[0]["ref"])
         assert item["needs_reply"] and item["ref"] == reps[0]["ref"]
     finally:
         m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
@@ -156,11 +156,11 @@ def test_a_follow_up_reopens_a_resolved_whatsapp_thread_without_a_new_number():
         m.support_inbox.on_message({"from": "919800000304", "id": "f1", "type": "text",
             "text": {"body": "Problem in: Class VIII · Science · Stars · Unit 2\n\nWrong date"}})
         ref = m.wa_inbox_repo.load("9800000304")["last_ref"]
-        m.wa_inbox_repo.patch("9800000304", status="done")
+        m.wa_inbox_repo.patch_issue("9800000304", ref, status="done")
         m.support_inbox.on_message({"from": "919800000304", "id": "f2", "type": "text",
                                     "text": {"body": "I do not agree with your answer"}})
         t = m.wa_inbox_repo.load("9800000304")
-        assert t["status"] == "open" and t["last_ref"] == ref
+        assert t["issues"][ref]["status"] == "open" and t["last_ref"] == ref
         assert [x.get("ref") for x in t["messages"] if x.get("ref")] == [ref]
     finally:
         m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
@@ -205,6 +205,53 @@ def test_new_message_retires_a_stale_ai_draft_and_a_resend_is_one_message():
     assert not m.wa_inbox_repo.load(n).get("draft")
     print("✓ Her new message retires a stale AI draft (not the founder's); a resend is one message")
 
+
+def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
+    m, c, _ = _setup()
+    n = "9800000305"
+    orig_wa, orig_mail = m.wa_client.send_text, m.notifier.send
+    m.wa_client.send_text = lambda to, body: {"status": "sent", "message_id": "o" + str(abs(hash(body)))}
+    m.notifier.send = lambda msg: {"status": "sent"}
+    try:
+        say = lambda mid, body: m.support_inbox.on_message({"from": "91" + n, "id": mid, "type": "text",
+                                                            "text": {"body": body}})
+        say("g1", "Hello, a general question")
+        say("r1", "Problem in: Class III · English · Paper Boats · Unit 6\n\nFirst issue")
+        r1 = m.wa_inbox_repo.load(n)["last_ref"]
+        say("r2", "Problem in: Class III · English · Paper Boats · Unit 6\n\nA second issue")
+        r2 = m.wa_inbox_repo.load(n)["last_ref"]
+        assert r1 != r2
+        q = {i["id"]: i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
+             if i.get("number") == n}
+        assert set(q) == {n, f"{n}~{r1}", f"{n}~{r2}"}
+        assert q[f"{n}~{r1}"]["needs_reply"] and q[f"{n}~{r2}"]["needs_reply"]
+        assert q[f"{n}~{r2}"]["unread"] and not q[f"{n}~{r1}"]["unread"]
+        t2 = c.get(f"/support-inbox/api/thread/{n}~{r2}", headers=BEARER).json()
+        texts = [x["text"] for x in t2["messages"]]
+        assert any("A second issue" in x for x in texts) and not any("First issue" in x or "general" in x for x in texts)
+        assert t2["ref"] == r2 and t2["category"] == "plan"
+        # the founder answers the FIRST issue after the second arrived: it stays in the first
+        _login(c)
+        assert c.post(f"/support-inbox/api/thread/{n}~{r1}/reply", json={"text": "About your first issue"},
+                      headers=H).json()["status"] == "sent"
+        t1 = c.get(f"/support-inbox/api/thread/{n}~{r1}", headers=BEARER).json()
+        assert t1["messages"][-1]["text"] == "About your first issue"
+        assert "About your first issue" not in [x["text"] for x in
+                                                c.get(f"/support-inbox/api/thread/{n}~{r2}", headers=BEARER).json()["messages"]]
+        # resolving one issue leaves the other open; drafts are per issue
+        c.post(f"/support-inbox/api/thread/{n}~{r1}/label", json={"status": "done"}, headers=H)
+        c.post("/support-inbox/api/draft", json={"kind": "wa", "id": f"{n}~{r2}", "text": "Draft 2"}, headers=BEARER)
+        q = {i["id"]: i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
+             if i.get("number") == n}
+        assert q[f"{n}~{r1}"]["status"] == "done" and q[f"{n}~{r2}"]["status"] == "open"
+        assert q[f"{n}~{r2}"]["has_draft"] and not q[f"{n}~{r1}"]["has_draft"] and not q[n]["has_draft"]
+        # a plain follow-up joins the LATEST report
+        say("f1", "Any update?")
+        assert c.get(f"/support-inbox/api/thread/{n}~{r2}", headers=BEARER).json()["messages"][-1]["text"] == "Any update?"
+    finally:
+        m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
+    print("✓ Each WhatsApp report is its own issue: own row, own messages, own status and draft")
+
 if __name__ == "__main__":
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()
@@ -213,3 +260,4 @@ if __name__ == "__main__":
     test_a_follow_up_reopens_a_resolved_whatsapp_thread_without_a_new_number()
     test_an_email_reply_joins_its_case_once_and_reopens_it()
     test_new_message_retires_a_stale_ai_draft_and_a_resend_is_one_message()
+    test_each_whatsapp_report_is_its_own_issue_with_only_its_messages()

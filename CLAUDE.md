@@ -16,6 +16,10 @@ status → answered); Mark closed / Mark done; WhatsApp category select. Every i
 (Bearer) lets the founder's drafting session READ the queue (`/api/queue`, `/api/case/{ref}`,
 `/api/thread/{n}` — without marking read) and WRITE drafts (`POST /api/draft {kind, id, text,
 category}`); it can never reply, send or change status — the human gate by construction.
+ONE REPORT, ONE ISSUE (2026-10-04): each WhatsApp report is its own inbox row, id `<number>~<MEY-W-n>`
+(bare number = general chat before any report). `issues_of()` assigns messages: explicit `issue` field (founder
+replies/acks), else the report a message starts, else the latest report. Per-issue status/draft/category live in
+`thread.issues[ref]` (`patch_issue`); `/api/thread/{id}` returns only that issue's messages.
 EMAIL REPLIES (2026-10-03): her reply to a case mail lands in support@'s Gmail; `api/mail_sync.py` reads
 INBOX over IMAP (read-only, BODY.PEEK; SMTP account + app password unless `ARUVI_IMAP_*`), keeps mails whose
 subject has `[MEY-S-n]`/`[ARV-S-n]`, strips the quote, and calls `Inbox.case_inbound` (From must equal the case

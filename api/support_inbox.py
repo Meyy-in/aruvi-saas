@@ -41,7 +41,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel
 
-from aruvi_core.adapters.whatsapp_inbox_file import number_key, e164
+from aruvi_core.adapters.whatsapp_inbox_file import number_key, e164, _last_human_dir
 from aruvi_core.ports import EmailMessage, WhatsAppTemplate
 
 COOKIE = "meyy_inbox"
@@ -136,6 +136,43 @@ def describe(m: Dict[str, Any]) -> str:
     return f"[{label} — open WhatsApp Manager to view]" + (f" {cap}" if cap else "")
 
 
+# ★ ONE REPORT, ONE ISSUE (founder, 2026-10-04). WhatsApp is ONE chat per number, but each lesson
+# report (a "Problem in:" message, MEY-W-n) is its own issue in the inbox — like an email case: its
+# own row, its own status and draft, and only ITS messages on screen and for the drafting session.
+# An issue's id is "<number>~<ref>"; the bare number is the general chat before any report.
+# A message's issue: its explicit "issue" field (a reply the founder sent from that issue), else
+# the report it starts, else the issue in force when it arrived (follow-ups join the latest report).
+SEP = "~"
+
+
+def split_id(ident: str):
+    n, _, ref = str(ident or "").partition(SEP)
+    return number_key(n) or n, ref
+
+
+def item_id(n: str, ref: str) -> str:
+    return f"{n}{SEP}{ref}" if ref else n
+
+
+def issues_of(messages):
+    """[(issue_ref, message)] in order — see the note above."""
+    cur, out = "", []
+    for m in messages or []:
+        if m.get("ref") and m.get("dir") == "in":
+            cur = m["ref"]
+        out.append((m["issue"] if "issue" in m else cur, m))
+    return out
+
+
+def issue_state(t: Dict[str, Any], ref: str) -> Dict[str, Any]:
+    if not ref:
+        return {"status": t.get("status", "open"), "draft": t.get("draft") or {},
+                "category": t.get("category", "")}
+    st = (t.get("issues") or {}).get(ref) or {}
+    return {"status": st.get("status", "open"), "draft": st.get("draft") or {},
+            "category": st.get("category", "plan")}
+
+
 class Inbox:
     """The inbox's behaviour, given the app's own objects (no import of api.main here)."""
 
@@ -184,7 +221,7 @@ class Inbox:
             self.repo.patch(n, last_ref=ref)
             ack = (getattr(self.config, "WA_REPORT_ACK", "") or "").strip()
             if ack:
-                self.send_text(n, ack.replace("{ref}", ref), by="auto-ack")
+                self.send_text(n, ack.replace("{ref}", ref), by="auto-ack", issue=ref)
             self.log({"kind": "wa_report", "ref": ref})
         # ★ SHE WROTE AGAIN → THE CONVERSATION IS OPEN AGAIN (2026-10-03). A thread the founder
         # marked resolved comes back to "Needs reply" on her next message — a follow-up ("I do not
@@ -192,9 +229,19 @@ class Inbox:
         # is not a new report, so it gets no new number.
         # ★ A DRAFT WRITTEN BEFORE HER NEW MESSAGE IS STALE (2026-10-03): it answers what she said
         # earlier, not this. The drafting session's draft goes; one the founder typed is kept.
-        stale = {"draft": {}} if is_new and (before.get("draft") or {}).get("by") == "claude" else {}
-        self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID, **stale,
-                        **({"status": "open"} if (before.get("status") or "open") == "done" else {}))
+        self.repo.patch(n, last_inbound_pn=to_pn or self.config.WA_PHONE_NUMBER_ID)
+        if is_new:
+            # The issue this message belongs to: a new report is its own; a plain message joins
+            # the latest report (or the general chat before any).
+            iss = ref or (before.get("last_ref") or "")
+            st = issue_state(before, iss)
+            fields = {}
+            if (st["draft"] or {}).get("by") == "claude":
+                fields["draft"] = {}
+            if st["status"] == "done" or ref:
+                fields["status"] = "open"
+            if fields:
+                self.repo.patch_issue(n, iss, **fields)
         now = datetime.now(timezone.utc)
         # Greeting: first ever, or first after the gap — and never in answer to STOP.
         last_in = _parse(before.get("last_inbound_at", ""))
@@ -224,7 +271,7 @@ class Inbox:
             return
         t = self.repo.load(n) or {}
         who = t.get("name") or ("+" + e164(n))
-        link = f"{self.config.PUBLIC_API_URL}/support-inbox#{n}"
+        link = f"{self.config.PUBLIC_API_URL}/support-inbox#wa:{item_id(n, t.get('last_ref') or '')}"
         try:
             self.notifier.send(EmailMessage(
                 to=to, subject=f"[Meyy WhatsApp] New message from {who}",
@@ -235,16 +282,17 @@ class Inbox:
             pass
 
     # ── outbound ──
-    def send_text(self, n: str, body: str, by: str = "founder") -> Dict[str, Any]:
+    def send_text(self, n: str, body: str, by: str = "founder",
+                  issue: Optional[str] = None) -> Dict[str, Any]:
         res = self.wa.send_text(e164(n), body)
         ok = res.get("status") in ("sent", "written")
         self.repo.append(n, {"id": res.get("message_id", ""), "dir": "out", "type": "text",
-                             "text": body, "by": by,
+                             "text": body, "by": by, **({} if issue is None else {"issue": issue}),
                              "status": "accepted" if ok else "failed",
                              **({} if ok else {"error": str(res.get("error") or res.get("reason") or "")})})
         self.log({"kind": "send_text", "by": by, "to": "…" + e164(n)[-4:], "result": res})
         if ok and by == "founder":
-            self.repo.patch(n, draft={})             # a sent reply uses the draft up
+            self.repo.patch_issue(n, issue or "", draft={})     # a sent reply uses the draft up
         return res
 
     # ── email cases ──
@@ -273,10 +321,11 @@ class Inbox:
         return {"status": "sent" if ok else "failed", "error": res.get("error")}
 
     def record_template(self, n: str, template: str, text: str, res: Dict[str, Any],
-                        by: str = "system") -> None:
+                        by: str = "system", issue: Optional[str] = None) -> None:
         ok = res.get("status") in ("sent", "written")
         self.repo.append(n, {"id": res.get("message_id", ""), "dir": "out", "type": "template",
                              "template": template, "text": text, "by": by,
+                             **({} if issue is None else {"issue": issue}),
                              "status": "accepted" if ok else "failed",
                              **({} if ok else {"error": str(res.get("error") or res.get("reason") or "")})})
 
@@ -315,14 +364,23 @@ class Inbox:
     def queue(self) -> list:
         now = datetime.now(timezone.utc)
         items = []
-        for t in self.repo.list_threads():
-            items.append({"kind": "wa", "id": t["number"], "name": t.get("name") or ("+91 " + t["number"]),
-                          "preview": t.get("preview", ""), "preview_dir": t.get("preview_dir", ""),
-                          "at": t.get("last_activity_at", ""), "unread": t.get("unread", 0),
-                          "window_open": window_open(t, now, self.config.WA_PHONE_NUMBER_ID),
-                          "category": t.get("category", ""), "status": t.get("status", "open"),
-                          "has_draft": t.get("has_draft", False), "ref": t.get("last_ref", ""),
-                          "needs_reply": t.get("needs_reply", t.get("preview_dir") == "in")})
+        for summary in self.repo.list_threads():
+            n = summary["number"]
+            t = self.repo.load(n) or {}
+            pairs = issues_of(t.get("messages") or [])
+            last_in = next((r for r, m in reversed(pairs) if m.get("dir") == "in"), None)
+            for ref in dict.fromkeys(r for r, _ in pairs):   # one row per issue (and the general chat)
+                msgs = [m for r, m in pairs if r == ref]
+                last, st = msgs[-1], issue_state(t, ref)
+                items.append({"kind": "wa", "id": item_id(n, ref), "number": n, "ref": ref,
+                              "name": t.get("name") or ("+91 " + n),
+                              "preview": (last.get("text") or "")[:120], "preview_dir": last.get("dir", ""),
+                              "at": last.get("at", ""),
+                              "unread": int(t.get("unread") or 0) if ref == last_in else 0,
+                              "window_open": window_open(summary, now, self.config.WA_PHONE_NUMBER_ID),
+                              "category": st["category"], "status": st["status"],
+                              "has_draft": bool(st["draft"].get("text")),
+                              "needs_reply": _last_human_dir(msgs) == "in"})
         for c in (self.cases.load_everyone() if self.cases else []):
             last = (c.thread or [])[-1] if c.thread else None
             items.append({"kind": "case", "id": c.reference, "name": c.name or c.user_id,
@@ -339,10 +397,11 @@ class Inbox:
                   category: str = "") -> bool:
         draft = {"text": text, "by": by, "at": datetime.now(timezone.utc).isoformat()} if text else {}
         if kind == "wa":
-            if self.repo.load(ident) is None:
+            n, ref = split_id(ident)
+            if self.repo.load(n) is None:
                 return False
             extra = {"category": category} if category else {}
-            self.repo.patch(ident, draft=draft, **extra)
+            self.repo.patch_issue(n, ref, draft=draft, **extra)
             return True
         c = self.cases.find(ident) if self.cases else None
         if c is None:
@@ -511,9 +570,10 @@ def build_router(inbox: Inbox) -> APIRouter:
         inbox.cases.save(c)
         return {"status": c.status}
 
-    @r.post("/support-inbox/api/thread/{n}/label")
-    def thread_label(n: str, body: LabelBody, request: Request):
+    @r.post("/support-inbox/api/thread/{ident}/label")
+    def thread_label(ident: str, body: LabelBody, request: Request):
         need_auth(request, write=True)
+        n, ref = split_id(ident)
         if inbox.repo.load(n) is None:
             raise HTTPException(status_code=404, detail="No such conversation.")
         fields = {}
@@ -521,7 +581,7 @@ def build_router(inbox: Inbox) -> APIRouter:
             fields["category"] = body.category
         if body.status in ("open", "done"):
             fields["status"] = body.status
-        inbox.repo.patch(n, **fields)
+        inbox.repo.patch_issue(n, ref, **fields)
         return {"ok": True}
 
     @r.post("/support-inbox/api/case/{ref}/inbound")
@@ -601,21 +661,35 @@ def build_router(inbox: Inbox) -> APIRouter:
             t["window_open"] = window_open(t, now, cfg.WA_PHONE_NUMBER_ID)
         return {"threads": out, "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
 
-    @r.get("/support-inbox/api/thread/{n}")
-    def thread(n: str, request: Request):
+    @r.get("/support-inbox/api/thread/{ident}")
+    def thread(ident: str, request: Request):
+        """ONE issue of a chat (or the general chat): only its messages and its own state — the
+        drafting session never sees her other issues."""
         who = need_read_or_token(request)
+        n, ref = split_id(ident)
         t = inbox.repo.load(n)
         if t is None:
             raise HTTPException(status_code=404, detail="No such conversation.")
-        if t.get("unread") and who == "founder":      # the drafting session never marks read
+        pairs = issues_of(t.get("messages") or [])
+        msgs = [m for r, m in pairs if r == ref]
+        if not msgs:
+            raise HTTPException(status_code=404, detail="No such conversation.")
+        last_in = next((r for r, m in reversed(pairs) if m.get("dir") == "in"), None)
+        unread = int(t.get("unread") or 0) if last_in == ref else 0
+        if unread and who == "founder":               # the drafting session never marks read
             inbox.repo.mark_read(n)
-            t["unread"] = 0
-        return {**t, "window_open": window_open(t, current_pn=cfg.WA_PHONE_NUMBER_ID), "phone": _pretty(n),
+            unread = 0
+        st = issue_state(t, ref)
+        return {"id": item_id(n, ref), "number": n, "ref": ref, "name": t.get("name", ""),
+                "messages": msgs, "unread": unread, "status": st["status"], "draft": st["draft"],
+                "category": st["category"],
+                "window_open": window_open(t, current_pn=cfg.WA_PHONE_NUMBER_ID), "phone": _pretty(n),
                 "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
 
-    @r.post("/support-inbox/api/thread/{n}/reply")
-    def reply(n: str, body: ReplyBody, request: Request):
+    @r.post("/support-inbox/api/thread/{ident}/reply")
+    def reply(ident: str, body: ReplyBody, request: Request):
         need_auth(request, write=True)
+        n, ref = split_id(ident)
         text = (body.text or "").strip()
         if not text:
             raise HTTPException(status_code=400, detail="Write a reply first.")
@@ -628,14 +702,15 @@ def build_router(inbox: Inbox) -> APIRouter:
             raise HTTPException(status_code=409, detail=(
                 "More than 24 hours have passed since this customer last wrote, so WhatsApp "
                 "only allows an approved template now."))
-        res = inbox.send_text(n, text)
+        res = inbox.send_text(n, text, issue=ref)
         if res.get("status") not in ("sent", "written"):
             raise HTTPException(status_code=502, detail=f"WhatsApp refused it: {res.get('error') or res.get('reason')}")
         return {"status": "sent"}
 
-    @r.post("/support-inbox/api/thread/{n}/reopen")
-    def reopen(n: str, request: Request):
+    @r.post("/support-inbox/api/thread/{ident}/reopen")
+    def reopen(ident: str, request: Request):
         need_auth(request, write=True)
+        n, ref = split_id(ident)
         if not cfg.WA_REOPEN_TEMPLATE:
             raise HTTPException(status_code=409, detail="No re-open template is configured.")
         if inbox.repo.load(n) is None:
@@ -647,7 +722,7 @@ def build_router(inbox: Inbox) -> APIRouter:
             params=[first] if getattr(cfg, "WA_REOPEN_NAME_PARAM", True) else []))
         inbox.record_template(n, cfg.WA_REOPEN_TEMPLATE,
                               getattr(cfg, "WA_REOPEN_PREVIEW", "").replace("{name}", first)
-                              or f"[template: {cfg.WA_REOPEN_TEMPLATE}]", res, by="founder")
+                              or f"[template: {cfg.WA_REOPEN_TEMPLATE}]", res, by="founder", issue=ref)
         if res.get("status") not in ("sent", "written"):
             raise HTTPException(status_code=502, detail=f"WhatsApp refused it: {res.get('error')}")
         return {"status": "sent"}
@@ -774,7 +849,7 @@ function bubble(m,who){return `<div class="m ${m.dir} ${m.status==='failed'?'fai
 async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id]=[cur.slice(0,cur.indexOf(':')),cur.slice(cur.indexOf(':')+1)];
  const M=$('#msgs'),atBottom=M.scrollHeight-M.scrollTop-M.clientHeight<60;let draft={},open=true,status='open';
  if(kind==='wa'){const t=await api('/thread/'+encodeURIComponent(id));if(cur!==want)return;detail={kind,...t};draft=t.draft||{};open=t.window_open;status=t.status||'open';
-  $('#tname').textContent=t.name||t.phone;$('#tsub').textContent='WhatsApp · '+t.phone;
+  $('#tname').textContent=t.name||t.phone;$('#tsub').textContent='WhatsApp · '+(t.ref?t.ref+' · ':'')+t.phone;
   M.innerHTML=t.messages.map(m=>(m.ref?reportCard(m):'')+bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='auto-ack'?'automatic acknowledgement':m.by==='system'?'automatic':'you')).join('');
   $('#tcat').innerHTML=CATS.map(([v,l])=>`<option value="${v}" ${v===(t.category||'')?'selected':''}>${esc(l)}</option>`).join('');$('#tcat').classList.remove('hidden');
   $('#tstatus').textContent=status==='done'?'Reopen':'Mark resolved';
@@ -793,10 +868,10 @@ async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id
 $('#replyForm').onsubmit=async e=>{e.preventDefault();const v=$('#replyText').value.trim();if(!v||!detail)return;
  const isWa=detail.kind==='wa';if(!confirm(isWa?'Send this on WhatsApp?':'Email this reply to '+(detail.email||'her')+'?'))return;
  $('#send').disabled=true;$('#err').textContent='';
- try{await api(isWa?'/thread/'+encodeURIComponent(detail.number)+'/reply':'/case/'+encodeURIComponent(detail.reference)+'/reply',{method:'POST',body:JSON.stringify({text:v})});
+ try{await api(isWa?'/thread/'+encodeURIComponent(detail.id)+'/reply':'/case/'+encodeURIComponent(detail.reference)+'/reply',{method:'POST',body:JSON.stringify({text:v})});
   $('#replyText').value='';await refresh(true,true);loadList()}catch(x){$('#err').textContent=x.message||'Could not send.';$('#send').disabled=false}};
-$('#discard').onclick=async()=>{if(!detail)return;await api('/draft',{method:'POST',body:JSON.stringify({kind:detail.kind,id:detail.kind==='wa'?detail.number:detail.reference,text:''})});$('#replyText').value='';await refresh(false,true);loadList()};
-$('#tcat').onchange=async()=>{if(detail&&detail.kind==='wa'){await api('/thread/'+encodeURIComponent(detail.number)+'/label',{method:'POST',body:JSON.stringify({category:$('#tcat').value})});loadList()}};
+$('#discard').onclick=async()=>{if(!detail)return;await api('/draft',{method:'POST',body:JSON.stringify({kind:detail.kind,id:detail.kind==='wa'?detail.id:detail.reference,text:''})});$('#replyText').value='';await refresh(false,true);loadList()};
+$('#tcat').onchange=async()=>{if(detail&&detail.kind==='wa'){await api('/thread/'+encodeURIComponent(detail.id)+'/label',{method:'POST',body:JSON.stringify({category:$('#tcat').value})});loadList()}};
 /* ★ INSTANT (founder, 2026-10-03: "it takes a second"). The button, the row and the list flip
    at once; the server is told in the background and the list re-syncs after. One name for both
    kinds — "Mark resolved" / "Reopen" — though a case stores `closed` and a chat `done`. */
@@ -806,7 +881,7 @@ $('#tcat').onchange=async()=>{if(detail&&detail.kind==='wa'){await api('/thread/
    button is disabled and `detail` dropped the instant we move on, until the next item has loaded. */
 $('#tstatus').onclick=()=>{if(!detail||$('#tstatus').disabled)return;const wa=detail.kind==='wa';const now=detail.status||'open';
  const shutNow=now==='done'||now==='closed';const next=shutNow?'open':(wa?'done':'closed');
- const myId=wa?detail.number:detail.reference,kind=detail.kind;
+ const myId=wa?detail.id:detail.reference,kind=detail.kind;
  const before=items.filter(shown),pos=before.findIndex(i=>i.kind===kind&&i.id===myId);
  detail.status=next;$('#tstatus').textContent=shutNow?'Mark resolved':'Reopen';
  const it=items.find(i=>i.kind===kind&&i.id===myId);if(it)it.status=next;
@@ -822,7 +897,7 @@ $('#tstatus').onclick=()=>{if(!detail||$('#tstatus').disabled)return;const wa=de
  api(wa?'/thread/'+encodeURIComponent(myId)+'/label':'/case/'+encodeURIComponent(myId)+'/label',{method:'POST',body:JSON.stringify({status:next})})
   .then(()=>{delete pend[pk];loadList()}).catch(x=>{delete pend[pk];$('#err').textContent=x.message||'Could not save that.';refresh(false,false);loadList()})};
 $('#reopen').onclick=async()=>{if(!confirm('Send the re-open template to this customer?'))return;
- try{await api('/thread/'+encodeURIComponent(detail.number)+'/reopen',{method:'POST'});await refresh(true,false)}catch(x){$('#err').textContent=x.message}};
+ try{await api('/thread/'+encodeURIComponent(detail.id)+'/reopen',{method:'POST'});await refresh(true,false)}catch(x){$('#err').textContent=x.message}};
 $('#back').onclick=()=>{cur=null;history.replaceState(null,'',location.pathname);$('.app').classList.remove('open');loadList()};
 loadList().then(()=>{const h=decodeURIComponent(location.hash.slice(1));if(h.includes(':'))openItem(h.split(':')[0],h.slice(h.indexOf(':')+1));else if(/^\d+$/.test(h))openItem('wa',h)});
 setInterval(()=>{loadList();refresh(false,false)},15000);

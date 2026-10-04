@@ -121,6 +121,23 @@ class WhatsAppInboxFileImpl:
             t.update(fields)
             self.backend.put_json(key, t)
 
+    def patch_issue(self, n: str, ref: str, **fields) -> None:
+        """Set the founder's own state (status, draft, category) on ONE issue of the chat — a
+        lesson report MEY-W-n — kept under thread["issues"][ref]. ref "" is the general chat,
+        whose state stays on the thread itself (as before issues existed)."""
+        if not ref:
+            self.patch(n, **fields)
+            return
+        key = self._key(n)
+        with self.backend.lock(key):
+            t = self.load(n)
+            if t is None:
+                return
+            issues = dict(t.get("issues") or {})
+            issues[ref] = {**(issues.get(ref) or {}), **fields}
+            t["issues"] = issues
+            self.backend.put_json(key, t)
+
     def set_status(self, n: str, message_id: str, status: str, error: str = "") -> bool:
         """Apply a delivery status. Never moves BACKWARDS (a late 'delivered' after 'read'
         is ignored) — Meta does not promise ordering."""
