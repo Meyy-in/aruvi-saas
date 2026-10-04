@@ -60,7 +60,7 @@ import {
 import { subscribeYear } from "@aruvi/shared/year";
 import { cachedAccount } from "@aruvi/shared/account";
 import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, noteTourArchivable,
-         tourOfferOpen } from "../../lib/tour";
+         tourOfferOpen, useTourScroller } from "../../lib/tour";
 import TourOffer from "../../components/TourOffer";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
@@ -714,6 +714,7 @@ export default function MyLessons() {
   const tourArchivable = !!tourCard && effView !== "archived" && !isAttached(tourCard)
     && !(busyIdx === 0 && ordered[0] === tourCard);
   useEffect(() => { noteTourArchivable(tourArchivable); }, [tourArchivable]);
+  const tourScroll = useTourScroller();   // lets the tour bring a card further down the list into view
 
   /* Subject filter, alphabetical by LABEL (profile order is arbitrary — a stable A–Z list is
      easier to scan). Copy before sort so the source order is untouched. */
@@ -866,7 +867,8 @@ export default function MyLessons() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={[ws.main, { paddingTop: 0 }]}
+      <ScrollView ref={tourScroll.ref} onScroll={tourScroll.onScroll} onLayout={tourScroll.onLayout} scrollEventThrottle={16}
+        contentContainerStyle={[ws.main, { paddingTop: 0 }]}
         /* Pull-to-refresh is her own "check again": `force` re-reads but KEEPS the ETag, so a
            listing that has not moved costs a 304 rather than a full payload. Invalidating here
            instead would throw the ETag away and buy the whole body every time — the opposite of

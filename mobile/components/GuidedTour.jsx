@@ -18,11 +18,11 @@
  * around empty paper.
  */
 import { useEffect, useMemo, useState, useRef } from "react";
-import { View, Pressable, useWindowDimensions } from "react-native";
+import { View, Pressable, useWindowDimensions, Animated, Easing, AccessibilityInfo } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
 import { measureAnchor, measureFirst, pinTourScroll, nudgeTourScroll, onAnchorRegistered,
-         TOUR_TOTAL } from "../lib/tour";
+         tourScrollFrame, TOUR_TOTAL } from "../lib/tour";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BNAV_H } from "./BottomNav";
 import { useTheme } from "../theme/ThemeContext";
@@ -139,6 +139,11 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
   const navH = BNAV_H + (insets.bottom || 0);
   const [rects, setRects] = useState(null);
   const [tick, setTick] = useState(0);
+  /* The tip's REAL height (onLayout), so "is there room for it below the card?" is a measurement,
+     not a guess. 230 is a typical two-line-title tip, used until the first layout lands. */
+  const [tipH, setTipH] = useState(230);
+  const tipHRef = useRef(230);
+  tipHRef.current = tipH;
   /* ★ PLACED ONCE, NOT TWICE (WALK-A-028). The confirming re-measure below is what made cards 12,
      13 and 14 JUMP: the tip was drawn at the first, still-settling position and then moved. It is
      now held invisible until that re-measure has run for this step. */
@@ -162,25 +167,63 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
      the comfortable viewport: a scroller that keeps re-centring fights a teacher reading under
      the box, which is the complaint the pin's own two-try limit exists to prevent. */
   const scrolls = useRef({ step: null, tries: 0, at: 0 });
+  const lastSig = useRef("");
+  /* ★ FOLLOW THE TARGET WHILE THE STEP IS UP (2026-10-04, founder: on an account with many lessons
+     cards 3-6 pointed at the wrong places; with two lessons they were right). Measuring only on
+     step change, layout and registration missed a target that MOVES afterwards without moving
+     itself: on a long list the cards above it change height once the demo unbinds a section and
+     the listing re-reads ("Teaching now 9A" lines vanish), status lines fill in as section state
+     arrives, a card is hoisted — each shift small, and they add up with the number of cards. The
+     ring stayed where the card HAD been. The web has always re-measured every 200ms; the phone now
+     does every 500ms, only while a tour step is on screen (seconds, not a battery cost), and only
+     a real move re-renders. With the glide, a correction slides instead of jumping. */
   useEffect(() => {
-    if (!cfg) { setRects(null); return undefined; }
+    if (!cfg || !cfg.anchor) return undefined;
+    const id = setInterval(() => setTick((n) => n + 1), 500);
+    return () => clearInterval(id);
+  }, [step, cfg]);
+  useEffect(() => {
+    if (!cfg) { lastSig.current = ""; setRects(null); return undefined; }
     let alive = true;
     (async () => {
       const ring = cfg.anchor ? await measureAnchor(cfg.anchor) : null;
       const tip = cfg.tipAnchor ? await measureFirst(cfg.tipAnchor) : ring;
       const hand = cfg.handAnchor ? await measureAnchor(cfg.handAnchor) : ring;
       if (!alive) return;
-      setRects({ ring, tip, hand });
+      /* Only a REAL move re-renders: the follow-up poll below measures every half second, and an
+         identical rect must not churn the overlay (or restart its glide). */
+      const key = (r) => (r ? `${Math.round(r.x)},${Math.round(r.y)},${Math.round(r.width)},${Math.round(r.height)}` : "-");
+      const sig = `${key(ring)}|${key(tip)}|${key(hand)}`;
+      if (sig !== lastSig.current) { lastSig.current = sig; setRects({ ring, tip, hand }); }
       if (ring && !cfg.scrollTop) {
         const st = scrolls.current;
         if (st.step !== step) { st.step = step; st.tries = 0; st.at = 0; }
         const MARGIN = 96;                       // room for the tip above or below the ring
-        const off = ring.y < MARGIN || ring.y + ring.height > vh - MARGIN;
         const now = Date.now();
-        if (off && st.tries < 5 && now - st.at > 400) {
+        /* ★ A "BELOW" STEP NEEDS ROOM FOR ITS TIP UNDER THE CARD (2026-10-04, replay walk: cards
+           3-6 and 8 had the tip clamped over the very card it described). Centring was enough for
+           a first run's one card at the top of the list; a replay's card can sit anywhere. So a
+           below-step scrolls the card UP until card + tip fit above the bottom bar — and no
+           higher than just under the top chrome. Above/over steps keep the old centring rule. */
+        let dy = 0;
+        if (cfg.place === "below" && !cfg.tipAnchor) {
+          /* The card must stay inside the SCROLLER's visible band — on My Lessons the title row
+             and wheels sit above it, and a card pushed past its top edge is hidden under them. */
+          const fr = tourScrollFrame();
+          const topMin = fr ? fr.top + PAD + 6 : (insets.top || 0) + 70;
+          const bottomMax = Math.min(vh - navH, fr ? fr.bottom : vh);
+          const need = ring.y + ring.height + PAD + 12 + tipHRef.current + 12 - bottomMax;
+          if (need > 0) dy = Math.min(need, Math.max(0, ring.y - PAD - topMin));
+          else if (ring.y - PAD < topMin - 2) dy = ring.y - PAD - topMin;   // tucked under the header: bring it back
+        } else if (ring.y < MARGIN || ring.y + ring.height > vh - MARGIN) {
+          dy = ring.y + ring.height / 2 - vh / 2;          // centre it
+        }
+        dy = Math.round(dy);
+        if (Math.abs(dy) > 4 && st.tries < 5 && now - st.at > 400) {
           st.tries += 1; st.at = now;
-          nudgeTourScroll(Math.round(ring.y + ring.height / 2 - vh / 2));   // centre it
-          setTick((n) => n + 1);                 // and re-measure where it landed
+          nudgeTourScroll(dy);
+          // re-measure where it landed — after a frame, so the scroll has been applied
+          setTimeout(() => { if (alive) setTick((n) => n + 1); }, 60);
         }
       }
     })();
@@ -266,8 +309,15 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
          the same result without needing to know its height first. */
       return { bottom: Math.max(12 + navH, vh - (box.top - 12)), left, width: tw };
     }
+    /* ★ NO ROOM BELOW (the list cannot scroll any further — her card is the last one) → sit ABOVE
+       the card instead of clamping on top of it, when there is room there. */
+    const roomBelow = vh - navH - (box.top + box.height + 12);
+    const roomAbove = box.top - 12 - ((insets.top || 0) + 8);
+    if (roomBelow < tipH && roomAbove >= tipH) {
+      return { bottom: vh - (box.top - 12), left, width: tw };
+    }
     return { top: Math.min(box.top + box.height + 12, Math.max(80, vh - 260 - navH)), left, width: tw };
-  }, [cfg, rects, vw, vh, tw, navH]);
+  }, [cfg, rects, vw, vh, tw, navH, tipH, insets.top]);
 
   const handPos = useMemo(() => {
     if (!cfg || !cfg.hand || !rects || !rects.hand) return null;
@@ -280,6 +330,67 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
              left: Math.min(b.x + b.width - 24, vw - 46) };
   }, [cfg, rects, vw, vh]);
 
+  /* ───────── SMOOTH, NOT ABRUPT (founder, 2026-10-04: "the card transition is abrupt") ─────────
+     The ring, the scrim's cut-out and the hand GLIDE from one target to the next; the tip fades
+     and rises into place once its step has settled. Driven by Animated values so the four scrim
+     rectangles follow the ring frame by frame (they are computed from the same four numbers).
+     The settle gate (WALK-A-028) is unchanged — a step still shows nothing until its target is
+     known; the motion only replaces the jump with a glide. Reduce Motion → instant, as before. */
+  const av = useRef(null);
+  if (!av.current) {
+    av.current = {
+      x: new Animated.Value(0), y: new Animated.Value(0), w: new Animated.Value(0), h: new Animated.Value(0),
+      hx: new Animated.Value(0), hy: new Animated.Value(0),
+      ringOp: new Animated.Value(0), tipOp: new Animated.Value(0),
+    };
+  }
+  const A = av.current;
+  // State, not refs: whether the animated ring/hand exist decides what RENDERS.
+  const [placed, setPlaced] = useState(false);
+  const [handPlaced, setHandPlaced] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  useEffect(() => {
+    let live = true;
+    AccessibilityInfo.isReduceMotionEnabled().then((v) => { if (live) setReduceMotion(!!v); }).catch(() => {});
+    const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", (v) => setReduceMotion(!!v));
+    return () => { live = false; if (sub && sub.remove) sub.remove(); };
+  }, []);
+  const GLIDE = reduceMotion ? 0 : 300;
+  const ease = Easing.out(Easing.cubic);
+  const rk = ring ? `${Math.round(ring.x)}|${Math.round(ring.y)}|${Math.round(ring.w)}|${Math.round(ring.h)}` : "";
+  useEffect(() => {
+    if (!ring) { setPlaced(false); A.ringOp.setValue(0); return; }
+    if (!settled) {
+      Animated.timing(A.ringOp, { toValue: 0, duration: reduceMotion ? 0 : 120, useNativeDriver: false }).start();
+      return;
+    }
+    const to = { x: ring.x, y: ring.y, w: ring.w, h: ring.h };
+    if (!placed || !GLIDE) {
+      Object.keys(to).forEach((k) => A[k].setValue(to[k]));
+      setPlaced(true);
+    } else {
+      Animated.parallel(Object.keys(to).map((k) =>
+        Animated.timing(A[k], { toValue: to[k], duration: GLIDE, easing: ease, useNativeDriver: false }))).start();
+    }
+    Animated.timing(A.ringOp, { toValue: 1, duration: reduceMotion ? 0 : 220, useNativeDriver: false }).start();
+  }, [rk, settled]);   // eslint-disable-line react-hooks/exhaustive-deps
+  const hk = handPos ? `${Math.round(handPos.top)}|${Math.round(handPos.left)}` : "";
+  useEffect(() => {
+    if (!handPos || !settled) { if (!handPos) setHandPlaced(false); return; }
+    if (!handPlaced || !GLIDE) {
+      A.hx.setValue(handPos.left); A.hy.setValue(handPos.top); setHandPlaced(true);
+    } else {
+      Animated.parallel([
+        Animated.timing(A.hx, { toValue: handPos.left, duration: GLIDE, easing: ease, useNativeDriver: false }),
+        Animated.timing(A.hy, { toValue: handPos.top, duration: GLIDE, easing: ease, useNativeDriver: false }),
+      ]).start();
+    }
+  }, [hk, settled]);   // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!settled) { A.tipOp.setValue(0); return; }
+    Animated.timing(A.tipOp, { toValue: 1, duration: reduceMotion ? 0 : 240, easing: ease, useNativeDriver: false }).start();
+  }, [settled, step]);   // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!cfg || step < 1 || step > TOUR_TOTAL) return null;
 
   const txt = (v) => (typeof v === "function" ? v({ tag: "", chapter: "your lesson", ...(info || {}) }) : v);
@@ -291,17 +402,18 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
      15 and 19 went suddenly very dull on Android. `overSheet` steps draw the cut-out without ink. */
   const overSheet = cfg.place === "over" && cfg.anchor && /attach-pop|ask-aruvi-root/.test(cfg.anchor);
   const scrimColor = overSheet ? "transparent" : SCRIM;
-  const scrim = ring ? [
-    { top: 0, left: 0, right: 0, height: Math.max(0, ring.y) },
-    { top: ring.y + ring.h, left: 0, right: 0, bottom: 0 },
-    { top: ring.y, left: 0, width: Math.max(0, ring.x), height: ring.h },
-    { top: ring.y, left: ring.x + ring.w, right: 0, height: ring.h },
+  const cl = (v) => v.interpolate({ inputRange: [0, 1], outputRange: [0, 1], extrapolateLeft: "clamp" });
+  const scrim = ring && placed ? [
+    { top: 0, left: 0, right: 0, height: cl(A.y) },
+    { top: Animated.add(A.y, A.h), left: 0, right: 0, bottom: 0 },
+    { top: A.y, left: 0, width: cl(A.x), height: A.h },
+    { top: A.y, left: Animated.add(A.x, A.w), right: 0, height: A.h },
   ] : [{ top: 0, left: 0, right: 0, bottom: 0 }];
 
   return (
     <View style={ws.gt_root} pointerEvents="box-none">
       {scrim.map((p, i) => (
-        <View key={i} pointerEvents="auto" style={[{ position: "absolute", backgroundColor: scrimColor }, p]} />
+        <Animated.View key={i} pointerEvents="auto" style={[{ position: "absolute", backgroundColor: scrimColor }, p]} />
       ))}
       {/* WALK-A-015: the thing she is told to tap is tappable — it advances exactly as Next does. */}
       {cfg.tap && settled && (cfg.handAnchor ? rects && rects.hand : ring) ? (() => {
@@ -313,16 +425,21 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
             style={{ position: "absolute", top: b.y, left: b.x, width: b.w, height: b.h }} />
         );
       })() : null}
-      {ring && settled ? (
-        <View pointerEvents="none" style={[ws.gt_ring, {
-          borderColor: t.ochre, top: ring.y, left: ring.x, width: ring.w, height: ring.h,
-          borderRadius: RING_R,
+      {ring && placed ? (
+        <Animated.View pointerEvents="none" style={[ws.gt_ring, {
+          borderColor: t.ochre, top: A.y, left: A.x, width: A.w, height: A.h,
+          borderRadius: RING_R, opacity: A.ringOp,
         }]} />
       ) : null}
-      {handPos && settled ? <View pointerEvents="none" style={[ws.gt_hand, handPos]}><Hand /></View> : null}
+      {handPos && handPlaced ? (
+        <Animated.View pointerEvents="none" style={[ws.gt_hand, { top: A.hy, left: A.hx, opacity: A.ringOp }]}>
+          <Hand />
+        </Animated.View>
+      ) : null}
 
-      <View style={[ws.gt_tip, tipPos, { backgroundColor: t.tint_pine, borderColor: t.pine },
-                    !settled && { opacity: 0 }]}
+      <Animated.View style={[ws.gt_tip, tipPos, { backgroundColor: t.tint_pine, borderColor: t.pine },
+                    { opacity: A.tipOp, transform: [{ translateY: A.tipOp.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }) }] }]}
+        onLayout={(e) => { const h = Math.round(e.nativeEvent.layout.height); if (h > 40 && Math.abs(h - tipH) > 2) setTipH(h); }}
         accessibilityRole="none" accessibilityLabel="Getting started">
         <Text style={[ws.gt_tip_title, cfg.welcome && ws.gt_tip_title_welcome, { color: t.pine_d }]}>
           {txt(cfg.title)}
@@ -345,7 +462,7 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
             </Pressable>
           </View>
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 }

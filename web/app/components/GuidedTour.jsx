@@ -314,7 +314,9 @@ export default function GuidedTour({ step, info, onNext, onBack, onSkip }) {
         <div className="gt-hand" style={handStyle} aria-hidden="true"><Hand /></div>
       )}
 
-      <div className={`gt-tip${cfg.welcome ? " gt-tip-welcome" : ""}`} style={{ ...tipStyle, width: tw }}
+      {/* key={step}: each card fades in fresh (globals.css .gt-tip, 2026-10-04 — "the card
+          transition is abrupt"); the ring and the hand GLIDE between targets instead. */}
+      <div key={step} className={`gt-tip${cfg.welcome ? " gt-tip-welcome" : ""}`} style={{ ...tipStyle, width: tw }}
         role="dialog" aria-label="Getting started">
         <div className="gt-tip-title">{title}</div>
         {cfg.body ? <div className="gt-tip-body">{cfg.body(i)}</div> : null}

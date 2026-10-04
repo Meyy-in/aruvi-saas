@@ -21,8 +21,8 @@
  * fast Next lands the previous step's ring on the next step's screen, which reads as the ring
  * "jumping" and is very hard to reproduce deliberately.
  */
-import { useEffect, useRef, useState } from "react";
-import { router } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
 import { openAsk, closeAsk } from "./ask";
 import { readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { beginTourReplay, snapshotForReplay, restoreAfterReplay, isTourReplay } from "@aruvi/shared/tourReplay";
@@ -216,6 +216,53 @@ export function pinTourScroll() {
   if (scroller) { try { scroller.top(); } catch {} return; }
   pinPending = true;
 }
+/* ★ MY LESSONS AND MY CLASSES SCROLL FOR THE TOUR TOO (2026-10-04, founder's replay walk). Only the
+   lesson view ever registered a scroller, so on My Lessons and My Classes the tour could not move
+   the list at all. A first-run teacher never noticed — her one lesson card is at the top — but on
+   a REPLAY the tour's card (the lesson prepared most recently) can sit far down a long list: on
+   Android the tip was clamped over the card it described (cards 3-6, 8), and on an iPhone the card
+   was below the fold, so the ring was drawn off-screen and the hand clamped onto something else.
+   FOCUS-scoped, not mount-scoped: both screens stay mounted under a pushed lesson, and the lesson
+   view takes the job while it is on top; on return, focus hands it back.
+   `animated: false` so the overlay's re-measure lands on where the card really is, not mid-glide.
+   Pass the screen's own ScrollView ref if it already has one. */
+export function useTourScroller(existingRef) {
+  const ownRef = useRef(null);
+  const ref = existingRef || ownRef;
+  const y = useRef(0);
+  /* ★ WHERE THE SCROLLER'S WINDOW IS (2026-10-04, founder's screenshots of *03, cards 3-6). My
+     Lessons' title row and wheels sit ABOVE its ScrollView, outside it. The tour scrolled the card
+     up to a fixed "just under the top bar" line — which is behind that header — so the card was
+     hidden under the wheels and the ring was drawn over "Your lessons / Year plan". The scroller
+     now reports its own visible band, and the tour keeps the card inside it. */
+  const frame = useRef(null);
+  const measureFrame = useCallback(() => {
+    try {
+      ref.current && ref.current.measureInWindow((fx, fy, fw, fh) => {
+        if (fh > 0) frame.current = { top: fy, bottom: fy + fh };
+      });
+    } catch {}
+  }, []);   // eslint-disable-line react-hooks/exhaustive-deps
+  useFocusEffect(useCallback(() => { measureFrame(); return registerTourScroller({
+    frame: () => { measureFrame(); return frame.current; },   // refreshed on every ask, for the next one
+    top: () => { try { ref.current && ref.current.scrollTo({ y: 0, animated: false }); y.current = 0; } catch {} },
+    by: (dy) => {
+      try {
+        const ny = Math.max(0, y.current + dy);
+        ref.current && ref.current.scrollTo({ y: ny, animated: false });
+        y.current = ny;
+      } catch {}
+    },
+  }); }, []));   // eslint-disable-line react-hooks/exhaustive-deps
+  const onScroll = useCallback((e) => { y.current = e.nativeEvent.contentOffset.y; }, []);
+  return { ref, onScroll, onLayout: measureFrame };
+}
+
+/** The visible band of the screen's scroller in window coordinates, or null when unknown. */
+export function tourScrollFrame() {
+  try { return scroller && scroller.frame ? scroller.frame() : null; } catch { return null; }
+}
+
 /** Scroll the current screen by `dy` so an off-screen anchor comes into view. No-op with none. */
 export function nudgeTourScroll(dy) {
   if (!scroller || !dy) return;
@@ -492,6 +539,21 @@ export function spendTourOffer(postJSON) {
   if (offeredThisSession) return;
   offeredThisSession = true;
   try { Promise.resolve(postJSON("/account/tour-offered", {})).catch(() => {}); } catch {}
+}
+
+/* ★ A NEW TEACHER ON THIS PHONE STARTS WITH A CLEAN TOUR (2026-10-04, founder: after replaying the
+   tour on one account, a brand-new account's first lesson never showed the "Show me around" offer).
+   `ranThisSession` and `offeredThisSession` are per APP RUN, not per teacher, and nothing cleared
+   them at sign-out — so the previous account's tour hid the next account's offer until the app
+   was restarted. The "show me" replay made that ordinary: take the tour on one account, sign out,
+   sign up another. Called from lib/session.js `clearSession`, the one place a session ends. */
+export function resetTourSession() {
+  ranThisSession = false;
+  offeredThisSession = false;
+  state = { step: 0, info: {}, target: null };
+  borrowed = { section: null, pre: null };
+  pinPending = false;
+  emit();
 }
 
 /** True while this session has not yet posted the spend — used to keep the nudge on screen

@@ -24,7 +24,7 @@ import { cachedAccount, cachedFirstName, fetchAccount, accountFirstName, subscri
 import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, tourOfferOpen,
-         noteTourInfo, noteTourTarget } from "../../lib/tour";
+         noteTourInfo, noteTourTarget, useTourScroller } from "../../lib/tour";
 import TourOffer from "../../components/TourOffer";
 import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
 import CardGrid from "../../components/CardGrid";
@@ -642,6 +642,7 @@ export default function Home() {
      down the list; the order stays (bands, no jumping) and the scroller moves to it ONCE per
      prepare, so a re-render or the failed state never pulls her back after she has scrolled. */
   const scrollRef = useRef(null);
+  const tourScroll = useTourScroller(scrollRef);   // the tour may bring a section card into view
   /* ★ MY CLASSES OPENS FULLY LOADED (WALK-A-115, founder 2026-09-27 — the web's twin). After a
      sign-in the device copy of her lesson lists is gone, so each class she teaches used to paint
      as "Loading your lesson…" and fill a beat later. The cards now wait together behind the
@@ -735,7 +736,7 @@ export default function Home() {
       ) : null}
       {/* The header sits outside the scroller, so it takes main's 26px top padding with it and
           the scroller must not repeat it — otherwise the card list starts 26px too low. */}
-      <ScrollView ref={scrollRef} contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
+      <ScrollView ref={scrollRef} onScroll={tourScroll.onScroll} onLayout={tourScroll.onLayout} scrollEventThrottle={16} contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
         refreshControl={<RefreshControl refreshing={false} onRefresh={() => load({ force: true })} tintColor={t.pine} />}>
 
         {st.loading || listsPending ? (
