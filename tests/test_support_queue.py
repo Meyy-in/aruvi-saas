@@ -328,6 +328,10 @@ def test_plain_whatsapp_messages_are_routed_to_the_right_issue_or_open_a_new_one
         assert issue_of("p3") == a
         say("p4", f"About {b.lower()}: also the moon")       # quoting a reference → that issue
         assert issue_of("p4") == b
+        num = b.rsplit("-", 1)[1]
+        for k, typed in enumerate([f"Mey {num} still wrong", f"mey-w {num}", f"MEY{num}?"]):
+            say(f"q{k}", typed)                               # typed loosely, still found
+            assert issue_of(f"q{k}") == b, typed
         say("p5", "Any news?")                               # two open → the one we last answered
         assert issue_of("p5") == a
         # both resolved: within 3 days she reopens the latest resolved; later it is a NEW issue

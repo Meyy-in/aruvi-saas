@@ -190,7 +190,9 @@ def issue_state(t: Dict[str, Any], ref: str) -> Dict[str, Any]:
 
 
 _AUTO_BY = ("auto-greeting", "auto-ack", "system")
-_REF_RE = re.compile(r"\b((?:MEY|ARV)-W-\d+)\b", re.I)
+# A reference as she might type it (founder, 2026-10-04: "Mey 1236" must find MEY-W-1236): the
+# prefix is required, the separators and the "W" are not — MEY-W-1236, mey w 1236, MEY1236, Mey-1236.
+_REF_RE = re.compile(r"\b(MEY|ARV)\s*[-–]?\s*(?:W\s*[-–]?\s*)?(\d{3,7})\b", re.I)
 REOPEN_DAYS = 3
 
 
@@ -213,8 +215,8 @@ def route_message(t: Dict[str, Any], m: Dict[str, Any], text: str,
         for r, msg in pairs:
             if msg.get("id") == quoted and r:
                 return r
-    for found in _REF_RE.findall(text or ""):
-        up = found.upper()
+    for prefix, num in _REF_RE.findall(text or ""):
+        up = f"{prefix.upper()}-W-{num}"
         if up in refs:
             return up
     def last_ours(r):
