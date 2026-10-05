@@ -365,6 +365,16 @@ def test_acknowledgement_waits_for_the_burst_and_fits_what_she_said():
         assert len(by["9800000401"]) == 1 and "what you need" in by["9800000401"][0]
         assert by["9800000402"] == []
         assert len(by["9800000403"]) == 1 and "received" in by["9800000403"][0]
+        # her answer to the "please tell us" invitation joins the Hello issue — not a new one
+        g = m.wa_inbox_repo.load("9800000401")["last_ref"]
+        def stamp_ack_now(th):
+            for x in th["messages"]:
+                if x.get("by") == "auto-ack":
+                    x["at"] = datetime.now(timezone.utc).isoformat()
+        _age(m, "9800000401", 20)
+        m.wa_inbox_repo.update("9800000401", stamp_ack_now)
+        say("9800000401", "g2", "The Class 6 fractions plan has an error")
+        assert _issue_of(m, "9800000401", "g2") == g
         # at most ten a day per number
         n = "9800000404"
         for k in range(12):

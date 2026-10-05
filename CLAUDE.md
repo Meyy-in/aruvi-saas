@@ -28,7 +28,7 @@ replies/acks), else the report a message starts, else the latest report. Per-iss
 ROUTING v2 (founder, 2026-10-04 — "split liberally, merge deliberately"): NO daily cap. App messages (header) are
 always a new MEY-W issue. A plain message joins only on evidence (`route_message`): swipe-reply (`context.id`) → a typed
 reference (loose: "Mey 1236"; merged refs resolve via `merged_into`) → her burst (≤15 min after her previous message)
-or an answer to OUR reply (≤30 min after it), whichever is later → else a NEW issue. Every new inbound carries an
+or an answer to OUR reply or acknowledgement (≤30 min after it), whichever is later → else a NEW issue. Every new inbound carries an
 explicit `issue`. References are NEVER shown in WhatsApp: no ref in acks, no "Re" prefix; founder replies go as
 quote-replies (`reply_to` → Cloud API `context.message_id`). ACK: `send_due_acks` (startup thread, every 60 s; Starter
 plan never sleeps; ONE instance — move the claim to a DB row before scaling) sends one message when her burst has been

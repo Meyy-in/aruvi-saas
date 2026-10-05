@@ -240,8 +240,10 @@ def route_message(t: Dict[str, Any], m: Dict[str, Any], text: str,
             if at and now - at <= timedelta(minutes=BURST_MIN):
                 cands.append((at, r))
             break
+    # Our reply — or our acknowledgement (2026-10-05): "Hello! Please tell us what you need help
+    # with" invites her next message, and what she adds after "we've received it" belongs there too.
     for r, msg in reversed(pairs):
-        if msg.get("dir") == "out" and msg.get("by") not in _AUTO_BY:
+        if msg.get("dir") == "out" and (msg.get("by") not in _AUTO_BY or msg.get("by") == "auto-ack"):
             at = _parse(msg.get("at", ""))
             if at and now - at <= timedelta(minutes=AFTER_REPLY_MIN):
                 cands.append((at, r))
