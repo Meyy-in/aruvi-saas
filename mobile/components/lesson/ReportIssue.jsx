@@ -109,8 +109,8 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
         <Text style={[ws.sup_ref, { color: t.pine }]}>{sent.reference}</Text>
         <Text style={ws.rp_msg}>{sent.emailed
           ? <>We’ve emailed a copy to <Text style={{ fontWeight: "600" }}>{sent.email}</Text>. Expect a reply
-              within {sent.reply_window || "2 working days"}.</>
-          : <>Your report is with us. Expect a reply within {sent.reply_window || "2 working days"}.</>}</Text>
+              within {sent.reply_window || "1 working day"}.</>
+          : <>Your report is with us. Expect a reply within {sent.reply_window || "1 working day"}.</>}</Text>
         <View style={ws.rp_two}><Btn title="Back to the lesson" onPress={onClose} primary /></View>
       </Sheet>
     );

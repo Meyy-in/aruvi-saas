@@ -129,8 +129,8 @@ export default function ReportProblem({ lp, unitNumber, unitTitle = "", dropped 
         <div className="sup-ref">{sent.reference}</div>
         <p className="rp-msg">{sent.emailed
           ? <>We've emailed a copy to <strong>{sent.email}</strong>. Expect a reply within{" "}
-              {sent.reply_window || "2 working days"}.</>
-          : <>Your report is with us. Expect a reply within {sent.reply_window || "2 working days"}.</>}</p>
+              {sent.reply_window || "1 working day"}.</>
+          : <>Your report is with us. Expect a reply within {sent.reply_window || "1 working day"}.</>}</p>
         <button className="primary rp-btn" onClick={onClose}>Back to the lesson</button>
       </>
     );

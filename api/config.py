@@ -330,7 +330,7 @@ MAIL_BCC_FOUNDER = os.environ.get("ARUVI_MAIL_BCC_FOUNDER", "1").strip().lower()
 # filed as ARV-S-… stay valid handles and are never renamed.
 SUPPORT_PREFIX = os.environ.get("ARUVI_SUPPORT_PREFIX", "MEY-S").strip() or "MEY-S"
 SUPPORT_START = int(os.environ.get("ARUVI_SUPPORT_START", "742"))
-SUPPORT_REPLY_DAYS = int(os.environ.get("ARUVI_SUPPORT_REPLY_DAYS", "2"))
+SUPPORT_REPLY_DAYS = int(os.environ.get("ARUVI_SUPPORT_REPLY_DAYS", "1"))  # founder, 2026-10-05: 1, as WhatsApp
 # Billing questions get the firmer promise: money carries a different anxiety, and a
 # teacher who thinks she has paid twice should not wait as long as one with a layout
 # question.

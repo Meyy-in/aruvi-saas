@@ -258,10 +258,10 @@ export default function Support() {
             {sent.emailed ? (
               <>A copy is on its way to <Text style={ws.lgl_b}>
                 {sent.email}</Text>. You can expect a response within{" "}
-                {sent.reply_window || replyWords(sent.reply_days || 2)}, Monday to Friday.</>
+                {sent.reply_window || replyWords(sent.reply_days || 1)}, Monday to Friday.</>
             ) : (
               <>Your message is with us and you can expect a response within{" "}
-                {sent.reply_window || replyWords(sent.reply_days || 2)}, Monday to Friday.</>
+                {sent.reply_window || replyWords(sent.reply_days || 1)}, Monday to Friday.</>
             )}
           </Text>
         </View>

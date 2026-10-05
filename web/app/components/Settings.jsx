@@ -462,10 +462,10 @@ function SupportForm({ onOpenProfile, onAsk, trial = false }) {
           <p className="set-plan-txt">
             {sent.emailed
               ? <>A copy is on its way to <strong>{sent.email}</strong>. You can expect a
-                  response within {sent.reply_window || replyWords(sent.reply_days || 2)},
+                  response within {sent.reply_window || replyWords(sent.reply_days || 1)},
                   Monday to Friday.</>
               : <>Your message is with us and you can expect a response within{" "}
-                  {sent.reply_window || replyWords(sent.reply_days || 2)}, Monday to
+                  {sent.reply_window || replyWords(sent.reply_days || 1)}, Monday to
                   Friday.</>}
           </p>
         </div>
