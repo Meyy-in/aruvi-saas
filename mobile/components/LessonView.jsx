@@ -30,7 +30,8 @@ import { useWebStyles } from "../theme/web";
 import Bar from "./Bar";
 import ChapterOrg, { kickerOf } from "./lesson/ChapterOrg";
 import PhaseBookmark from "./lesson/PhaseBookmark";
-import { useTourAnchor, registerTourScroller } from "../lib/tour";
+import { useTourAnchor, registerTourScroller, measureNodeBand } from "../lib/tour";
+import TourRing, { TourSpacer } from "./TourRing";
 import AssessPanel from "./lesson/AssessPanel";
 import ReportIssue, { ReportCard } from "./lesson/ReportIssue";
 
@@ -278,7 +279,9 @@ function LessonPanel({ ws, t, u, bookmark, footer }) {
             <PhaseBookmark anchorRef={bookmarkTourRef}
               centres={centres} phase={Math.min(bookmark.phase, phases.length - 1)}
               color={t.clay} onMove={bookmark.onMove} onOver={setOver}
-              onHold={(on) => { setHeld(on); if (bookmark.onLift) bookmark.onLift(on); }} />
+              onHold={(on) => { setHeld(on); if (bookmark.onLift) bookmark.onLift(on); }}>
+              <TourRing name="phase-bookmark" radius={10} />
+            </PhaseBookmark>
           ) : null}
           {phases.map((ph, i) => {
             const mins = phaseMin(ph);
@@ -344,6 +347,9 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
   const scrollTourRef = useRef(null);
   const scrollYRef = useRef(0);          // the offset only this scroller knows
   useEffect(() => registerTourScroller({
+    /* Its visible band in window coordinates — the tour compares it with the ringed target and the
+       docked panel, all three measured the same way (2026-10-05). */
+    frameAsync: () => measureNodeBand(scrollTourRef.current),
     top: () => {
       try { scrollTourRef.current && scrollTourRef.current.scrollTo({ y: 0, animated: true }); } catch {}
     },
@@ -376,6 +382,7 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
               <Text style={[ws.uv_tab_t, tab === id && ws.uv_tab_on_t]}>{label}</Text>
             </Pressable>
           ))}
+          <TourRing name="unit-tabs" radius={8} />
         </View>
       </View>
       <ScrollView ref={scrollTourRef} contentContainerStyle={s.body} scrollEnabled={!locked}
@@ -393,6 +400,7 @@ function PreviewUnit({ ws, t, header, u, assessment, chapterTitle, lessonFooter,
         {tab === "assess" ? <AssessPanel ws={ws} t={t} items={items} assessment={assessment}
           footer={onReport ? <ReportCard onPress={() => onReport("assess")} /> : null} /> : null}
         {tail}
+        <TourSpacer />
       </ScrollView>
     </>
   );
@@ -621,7 +629,10 @@ const NavBtn = ({ ws, label, onPress, off }) => (
   <Pressable onPress={onPress} disabled={off} hitSlop={6}><Text style={[ws.lv_pvbtn, off && ws.lv_pvbtn_off]}>{label}</Text></Pressable>
 );
 const MarkBtn = ({ ws, label, onPress }) => (
-  <View ref={useTourAnchor("mark-complete")} collapsable={false} style={ws.lv_markcard}><Pressable onPress={onPress} style={ws.lv_markbtn}><Text style={ws.lv_markbtn_t}>{label}</Text></Pressable></View>
+  <View ref={useTourAnchor("mark-complete")} collapsable={false} style={ws.lv_markcard}>
+    <Pressable onPress={onPress} style={ws.lv_markbtn}><Text style={ws.lv_markbtn_t}>{label}</Text></Pressable>
+    <TourRing name="mark-complete" radius={5} out={3} />
+  </View>
 );
 /* ★ THE CARD RECOLOURS WHOLE WHEN THE CHAPTER IS DONE (app. 06 rows 86, 87). A finished UNIT is
    pine; a finished CHAPTER is clay, and the mark, the title and the undo pill all move with the

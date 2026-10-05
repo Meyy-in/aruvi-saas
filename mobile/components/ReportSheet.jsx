@@ -36,13 +36,14 @@
  */
 import { useState } from "react";
 import { useTourAnchor } from "../lib/tour";
+import TourRing from "./TourRing";
 import { View, Pressable } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
 import { Sheet } from "./AttachSheet";
 import Checkbox from "./Checkbox";
 import { useRouter } from "expo-router";
-import { canPreview, downloadDocument, fetchDocument, planReport } from "../lib/download";
+import { canPreview, deliverDocument, fetchDocument, planReport } from "../lib/download";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 
@@ -96,7 +97,7 @@ function ReportWindow({ visible, sSlug, gSlug, filename, chapterTitle, onClose }
         })
       /* The web closes on success; so does this — the document has left, and a window still
          standing over the list invites a second tap that would send it twice. */
-      : downloadDocument(doc).then(() => onClose());
+      : deliverDocument(doc).then(() => onClose());
     run
       .catch((e) => setFail(
         e?.status === 404 ? "This Meyy server doesn’t have reports yet."
@@ -216,6 +217,7 @@ export default function ReportButton({ sSlug, gSlug, filename, chapterTitle, tou
         onPress={() => setOpen(true)} accessibilityRole="button" hitSlop={6}
         accessibilityLabel={`Create a report of ${chapterTitle}`} style={ws.sc_report}>
         <ReportIcon color={t.ink_soft} />
+        {tour ? <TourRing name={tour} radius={8} out={2} /> : null}
       </Pressable>
       {open ? (
         <ReportWindow visible sSlug={sSlug} gSlug={gSlug} filename={filename}

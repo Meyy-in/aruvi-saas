@@ -61,6 +61,7 @@ import { subscribeYear } from "@aruvi/shared/year";
 import { cachedAccount } from "@aruvi/shared/account";
 import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, noteTourArchivable,
          tourOfferOpen, useTourScroller } from "../../lib/tour";
+import TourRing, { TourSpacer } from "../../components/TourRing";
 import TourOffer from "../../components/TourOffer";
 import { storage } from "@aruvi/shared/storage";
 import { cachedPlans, fetchPlans, invalidatePlans } from "@aruvi/shared/plans";
@@ -1020,6 +1021,7 @@ export default function MyLessons() {
             ) : null}
           </View>
         )) : null}
+        <TourSpacer />
       </ScrollView>
 
       {/* The 402 window moved to the shell — components/PaywallSheet.jsx, mounted in
@@ -1033,7 +1035,9 @@ export default function MyLessons() {
           /* WALK-A-078 (founder, 2026-09-24): plain paper with a hairline, the house surface — not
              a black slab, and not clay for "we couldn't confirm it", which read as an alarm when
              nothing had gone wrong with her lesson. Told apart by its WORDS alone. */
-          backgroundColor: t.paper_2, borderColor: t.edge,
+          /* 2026-10-05: its own pine-tinted plane (--toast-bg), so it no longer melts into the
+             plain-paper lesson cards beneath it — see globals.css. */
+          backgroundColor: t.toast_bg, borderColor: t.toast_edge,
           shadowColor: "#000", shadowOpacity: 0.14, shadowRadius: 11, shadowOffset: { width: 0, height: 6 },
           elevation: 4,
         }]} accessibilityLiveRegion="polite">
@@ -1156,6 +1160,7 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
         <Pressable ref={archiveRef} onPress={onArchive} accessibilityRole="button" hitSlop={6}
           accessibilityLabel={`Archive ${p.chapter_title}`} style={ws.mlp2_iconbtn}>
           <ArchiveIcon size={18} color={t.ink_soft} />
+          {tourStep === 5 ? <TourRing name="lesson-archive" radius={8} out={2} /> : null}
         </Pressable>
       ) : null}
 
@@ -1173,6 +1178,8 @@ function PlanCard({ p, archived, status, attached, busy, sSlug, gSlug,
         <ReportButton sSlug={sSlug} gSlug={gSlug} filename={p.filename}
           chapterTitle={p.chapter_title} tour={tourStep === 4 ? "lesson-report" : null} />
       ) : null}
+      {/* The tour's ring around the whole card (steps 3 and 6) — drawn by the card, 2026-10-05. */}
+      {tourStep === 3 || tourStep === 6 ? <TourRing name="lesson-first" radius={11} inner /> : null}
     </View>
   );
 }

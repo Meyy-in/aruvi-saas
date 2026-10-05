@@ -37,7 +37,7 @@ import { API, getJSON, postJSON, withUser } from "@aruvi/shared/format";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
 import { clearSession, endSession } from "../../../lib/session";
 import { forgetDevice } from "@aruvi/shared/signout";
-import { downloadDocument, dataExport, fetchDocument, canPreview, openInViewer, discardFile } from "../../../lib/download";
+import { deliverDocument, dataExport, fetchDocument, canPreview } from "../../../lib/download";
 import { hasDownloaded, markDownloaded } from "../../../lib/dataRights";
 import { Sheet } from "../../../components/AttachSheet";
 import { Button, Input } from "../../../components/ui";
@@ -155,9 +155,9 @@ export default function SettingsHome() {
         router.push({ pathname: "/preview",
           params: { uri: f.uri, name: f.name, mime: f.mime, label: "Your data", from: "settings" } });
       } else {
-        const f = await fetchDocument(doc);
-        const shown = await openInViewer(f);
-        if (!shown) { await downloadDocument(doc); discardFile(f.uri); }
+        /* The viewer-then-sheet logic now lives once, in `deliverDocument` (it also stopped this
+           path fetching the file twice when no viewer could open it). */
+        await deliverDocument(doc);
         markDownloaded();
       }
     } catch {

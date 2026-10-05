@@ -25,6 +25,7 @@ import { endSession as endSessionShared } from "../../lib/session";
 import { pullSectionState, readLocalSection, bindSectionChapter, unbindSection } from "@aruvi/shared/sectionState";
 import { useTourAnchor, useTour, startTour, fetchTourEligible, spendTourOffer, tourOfferOpen,
          noteTourInfo, noteTourTarget, useTourScroller } from "../../lib/tour";
+import TourRing, { TourSpacer } from "../../components/TourRing";
 import TourOffer from "../../components/TourOffer";
 import { recordHistory, hasHistory, pullSectionHistory } from "@aruvi/shared/sectionHistory";
 import CardGrid from "../../components/CardGrid";
@@ -394,7 +395,28 @@ export default function Home() {
      ⚠️ A descriptor with NO section belongs to My Lessons and is ignored here, or the same wait
      would be drawn twice in two places. */
   const [prep, setPrep] = useState({ descriptor: null, paywall: "" });
-  useEffect(() => subscribePreparing(setPrep), []);
+  /* ★ THE CARD GOES STRAIGHT FROM WAITING TO GREEN (founder, 2026-10-05: "after completion of
+     progress bar, it shows the section card empty for a second and then becomes green"). The
+     binding was written before the descriptor cleared, but THIS screen's listing was the copy
+     from before the lesson existed — so for one round trip the card was bound to a file it
+     could not find and drew "Pick a chapter to begin". prepare.jsx has already force-read the
+     listing (`confirmListed`) before it clears, so the shared store holds the new plan; it is
+     copied into this screen's listing IN THE SAME CALLBACK as the clear, and React batches the
+     two into one render. Waiting → green, nothing in between. */
+  const prepSectionKey = useRef(null);
+  useEffect(() => subscribePreparing((next) => {
+    const d = next.descriptor;
+    if (d && d.section) prepSectionKey.current = `${d.subject}/${d.grade}`;
+    else if (prepSectionKey.current && !d) {
+      const key = prepSectionKey.current;
+      prepSectionKey.current = null;
+      const fresh = cachedPlans(key);
+      if (fresh) {
+        setSt((prev) => ({ ...prev, plansBySG: { ...prev.plansBySG, [key]: indexPlans(fresh) } }));
+      }
+    }
+    setPrep(next);
+  }), []);   // eslint-disable-line react-hooks/exhaustive-deps
   const preparing = prep.descriptor && prep.descriptor.section ? prep.descriptor : null;
   /* The plan landed and `prepare.jsx` bound it before clearing, so the listing has moved on:
      re-read it and re-render, which is what turns the waiting card into the attached one. */
@@ -408,8 +430,11 @@ export default function Home() {
     if (wasPreparing.current && !now) {
       const key = lastPrep.current;
       bump();                                  // the binding is written; redraw the card from it
+      /* No invalidate here any more (2026-10-05): prepare.jsx force-read this listing a moment
+         ago and the subscription above has already painted from it. This read only confirms —
+         it answers from that fresh copy, and dropping the cache first is what used to leave the
+         card with nothing to draw for a round trip. */
       if (key) {
-        invalidatePlans(key);
         fetchPlans(key)
           .then((rows) => setSt((prev) => ({
             ...prev, plansBySG: { ...prev.plansBySG, [key]: indexPlans(rows) },
@@ -665,6 +690,11 @@ export default function Home() {
       !!readLocalSection(c.sectionKey).chapter && !st.plansBySG[`${c.subjectSlug}/${c.gradeSlug}`]));
   const waitCardRef = useRef(null);
   const waitScrolledRef = useRef("");
+  /* Where the list is, and how tall its window is — so the waiting card is scrolled to ONLY when
+     it is not already in view (2026-10-05, founder: back from "+" the screen arrived "with a
+     jump"; the list scrolled to the card even when she was already looking at it). */
+  const listY = useRef(0);
+  const listH = useRef(0);
   const onWaitLayout = () => {
     if (!preparing) return;
     const key = `${preparing.subject}|${preparing.grade}|${preparing.section}|${preparing.chapterNo}`;
@@ -674,7 +704,11 @@ export default function Home() {
     waitScrolledRef.current = key;
     try {
       const inner = sv.getInnerViewRef ? sv.getInnerViewRef() : sv;
-      el.measureLayout(inner, (x, y) => sv.scrollTo({ y: Math.max(0, y - 96), animated: true }), () => {});
+      el.measureLayout(inner, (x, y, w, h) => {
+        const top = listY.current, bottom = listY.current + (listH.current || 0);
+        if (listH.current && y >= top + 8 && y + h <= bottom - 8) return;   // already in view: leave it
+        sv.scrollTo({ y: Math.max(0, y - 96), animated: true });
+      }, () => {});
     } catch (e) { /* measuring is best-effort; the card is still on the list */ }
   };
   const card = (c, banded, idx) => (
@@ -736,7 +770,9 @@ export default function Home() {
       ) : null}
       {/* The header sits outside the scroller, so it takes main's 26px top padding with it and
           the scroller must not repeat it — otherwise the card list starts 26px too low. */}
-      <ScrollView ref={scrollRef} onScroll={tourScroll.onScroll} onLayout={tourScroll.onLayout} scrollEventThrottle={16} contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
+      <ScrollView ref={scrollRef} scrollEventThrottle={16}
+        onScroll={(e) => { listY.current = e.nativeEvent.contentOffset.y; tourScroll.onScroll(e); }}
+        onLayout={(e) => { listH.current = e.nativeEvent.layout.height; }} contentContainerStyle={[ws.main, (!st.loading && !st.err) && { paddingTop: 0 }]}
         refreshControl={<RefreshControl refreshing={false} onRefresh={() => load({ force: true })} tintColor={t.pine} />}>
 
         {st.loading || listsPending ? (
@@ -780,6 +816,7 @@ export default function Home() {
             rather than moved, segments and all. The trial counter goes with them: the web has
             never shown it on My Classes, and its home is Subscription & billing. What is left
             is a screen that is only her classes, which is what this screen is for. */}
+        <TourSpacer />
       </ScrollView>
 
       <AttachSheet target={attachFor}
@@ -1011,6 +1048,7 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
         <View style={ws.sc_right}>
           <View ref={addRef} collapsable={false}>
             <Round glyph="+" color={t.pine_d} label="Attach a lesson to this section" onPress={onAttach} />
+            {tourAdd ? <TourRing name="section-add" radius={15} out={4} /> : null}
           </View>
           {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
@@ -1096,6 +1134,7 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
           <View ref={addRef} collapsable={false}>
             <Round glyph="+" color={t.pine_d} label="Finish with this chapter and track the next"
               onPress={() => onMoveOn(plan)} />
+            {tourAdd ? <TourRing name="section-add" radius={15} out={4} /> : null}
           </View>
           {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
@@ -1106,6 +1145,8 @@ function ClassCard({ c, banded, plans, preparing, onDismissPreparing, onOpen, on
           {hist ? <HistoryGlyph onPress={onHistory} /> : null}
         </View>
       )}
+      {/* Step 10's ring, drawn by the card it is about (2026-10-05). */}
+      {tourTarget ? <TourRing name="section-card-target" radius={11} inner /> : null}
     </View>
   );
 }

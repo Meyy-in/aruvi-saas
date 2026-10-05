@@ -40,7 +40,7 @@ import Svg, { Path } from "react-native-svg";
 
 const H = 26;   // arrow height; centred on the time cell
 
-export default function PhaseBookmark({ centres, phase, onMove, color, onHold, onOver, anchorRef }) {
+export default function PhaseBookmark({ centres, phase, onMove, color, onHold, onOver, anchorRef, children }) {
   const top = useRef(new Animated.Value(0)).current;
   const startTop = useRef(0);
   const curTop = useRef(0);
@@ -138,6 +138,8 @@ export default function PhaseBookmark({ centres, phase, onMove, color, onHold, o
             strokeWidth={1.5} strokeLinejoin="round" />
         </Svg>
       </Animated.View>
+      {/* The tour's ring (step 12) — drawn by the bookmark itself, 2026-10-05. */}
+      {children}
     </Animated.View>
   );
 }

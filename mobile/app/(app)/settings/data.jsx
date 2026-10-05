@@ -17,7 +17,7 @@ import { useState } from "react";
 import { View, ScrollView, Pressable } from "react-native";
 import { Text } from "../../../components/Text";
 import { useRouter } from "expo-router";
-import { canPreview, downloadDocument, dataExport, fetchDocument } from "../../../lib/download";
+import { canPreview, deliverDocument, dataExport, fetchDocument } from "../../../lib/download";
 import { markDownloaded } from "../../../lib/dataRights";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
@@ -39,7 +39,7 @@ export default function YourData() {
           params: { uri: f.uri, name: f.name, mime: f.mime, label: "Your data", from: "settings" } }))
       /* Only to word the final delete question honestly — never a gate. A PREVIEW is not a copy
          in her hands, so only the path that hands the file over marks it. */
-      : downloadDocument(doc).then(() => markDownloaded()))
+      : deliverDocument(doc).then(() => markDownloaded()))
       .catch(() => setFailMsg(
         "Couldn’t prepare your download right now. Try again in a moment."))
       .finally(() => setBusy(""));

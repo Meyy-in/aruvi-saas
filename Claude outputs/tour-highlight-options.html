@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tour highlight options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Newsreader:wght@400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --page:#efe9dd; --ink:#1f2a24; --ink-soft:#5d6660;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:Newsreader,Georgia,serif;padding:28px 16px 60px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-family:Fraunces,serif;font-weight:600;font-size:28px;margin:0 0 6px;color:#164436}
+  .lede{font-size:16px;line-height:1.5;max-width:760px;margin:0 0 26px;color:var(--ink-soft)}
+  .opt{background:#fbf8f2;border:1px solid #d9cfbb;border-radius:14px;padding:18px 18px 20px;margin:0 0 22px}
+  .opt-hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+  .tag{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:#164436;border-radius:6px;padding:3px 8px}
+  .opt h2{font-family:Fraunces,serif;font-weight:600;font-size:21px;margin:0}
+  .cur{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#b65a31}
+  .why{font-size:15px;line-height:1.5;color:var(--ink-soft);margin:4px 0 14px;max-width:900px}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:760px){.pair{grid-template-columns:1fr}}
+
+  /* the two phone themes */
+  .screen{border-radius:12px;padding:16px 14px 0;overflow:hidden;position:relative}
+  .screen .mode{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+  .light{background:#faf7f1;--ink:#1f2a24;--soft:#6b736d;--card:#ffffff;--card-edge:#cbbfa6;--going:#ceddd6;--going-edge:#a2bdb4;--pine:#1e5c4a;--pine-d:#164436;--clay:#b65a31;--ochre:#9a7321;--nav:#f1ece2;--line:#cbbfa6;--round:#ffffff}
+  .dark{background:#161d19;--ink:#e9e4d7;--soft:#a29b8c;--card:#1e2621;--card-edge:#3d4a43;--going:#24342d;--going-edge:#385449;--pine:#3f8f76;--pine-d:#5cae93;--clay:#cf7f56;--ochre:#c69c4d;--nav:#11170f;--line:#3d4a43;--round:#1e2621}
+  .screen{color:var(--ink)}
+  .screen .mode{color:var(--soft)}
+
+  .card{position:relative;border:1px solid var(--card-edge);background:var(--card);border-radius:11px;padding:12px 14px 12px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:11px 0 0 11px;background:var(--spine,#8aa79b)}
+  .card .no{font-family:Fraunces,serif;font-size:20px;color:var(--pine-d);min-width:30px}
+  .card .tt{font-family:Fraunces,serif;font-size:15px;font-weight:500;line-height:1.25}
+  .card .st{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-top:4px}
+  .card.going{background:var(--going);border-color:var(--going-edge);--spine:var(--pine)}
+  .round{position:relative;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--round);display:grid;place-items:center;font-size:19px;color:var(--pine-d);margin-left:auto;flex:none}
+  .row2{display:flex;gap:12px;align-items:flex-end;margin-bottom:0}
+  .mark{position:relative;flex:1;background:var(--pine);color:#f6f1e7;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:12px 8px;border-radius:3px;margin-bottom:14px}
+  .nav{display:flex;justify-content:space-around;background:var(--nav);border-top:1px solid var(--line);margin:0 -14px;padding:8px 0 10px}
+  .ni{position:relative;width:76px;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);padding:4px 0}
+  .ni svg{display:block;margin:0 auto 3px}
+
+  /* ── the highlight treatments ── */
+  .hl{position:absolute;pointer-events:none}
+  @keyframes breathe{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes breatheGlow{0%,100%{opacity:.24}50%{opacity:.08}}
+
+  /* A — current: ochre ring */
+  .A .hl{inset:-3px;border:2.5px solid var(--ochre);border-radius:inherit;animation:breathe 1.5s ease-in-out infinite}
+  /* B — pine ring */
+  .B .hl{inset:-3px;border:2.5px solid var(--pine-d);border-radius:inherit;animation:breathe 1.6s ease-in-out infinite}
+  .B .mark .hl,.C .mark .hl{inset:-4px}
+  /* C — pine halo: crisp line + soft wash outside */
+  .C .hl{inset:-3px;border:2px solid var(--pine-d);border-radius:inherit}
+  .C .hl::after{content:"";position:absolute;inset:-7px;border:5px solid var(--pine);opacity:.22;border-radius:inherit;animation:breatheGlow 1.8s ease-in-out infinite}
+  /* D — clay ring: the app's own "you are here" colour */
+  .D .hl{inset:-3px;border:2.5px solid var(--clay);border-radius:inherit;animation:breathe 1.6s ease-in-out infinite}
+  /* E — pine corner marks (a viewfinder), no full outline */
+  .E .hl{inset:-5px;animation:breathe 1.6s ease-in-out infinite}
+  .E .hl i{position:absolute;width:12px;height:12px;border:0 solid var(--pine-d)}
+  .E .hl i:nth-child(1){top:0;left:0;border-top-width:2.5px;border-left-width:2.5px;border-top-left-radius:6px}
+  .E .hl i:nth-child(2){top:0;right:0;border-top-width:2.5px;border-right-width:2.5px;border-top-right-radius:6px}
+  .E .hl i:nth-child(3){bottom:0;left:0;border-bottom-width:2.5px;border-left-width:2.5px;border-bottom-left-radius:6px}
+  .E .hl i:nth-child(4){bottom:0;right:0;border-bottom-width:2.5px;border-right-width:2.5px;border-bottom-right-radius:6px}
+  .E .round .hl i{width:9px;height:9px}
+
+  .card .hl{border-radius:13px}
+  .round .hl{border-radius:50%}
+  .mark .hl{border-radius:6px}
+  .ni .hl{border-radius:12px}
+
+  .notes{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;color:var(--ink-soft);margin-top:10px;line-height:1.6}
+  .rec{border-color:#1e5c4a;box-shadow:0 0 0 2px rgba(30,92,74,.15)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tour highlight — five options</h1>
+  <p class="lede">Each option is shown on the four kinds of thing the tour points at: a lesson card, the <b>+</b> on a green section card, “Mark complete”, and a bottom-bar item. Light theme on the left, dark on the right. The highlight breathes the way it will on the phone. All five can be drawn on Android and iPhone the same way the current ring is.</p>
+
+  <!-- template repeated per option -->
+  <section class="opt A">
+    <div class="opt-hd"><span class="tag">A</span><h2>Ochre ring</h2><span class="cur">what you have now</span></div>
+    <p class="why">Mustard-brown, borrowed from the web’s spotlight. It is the one colour on screen that belongs to nothing else in Meyy, which is why it reads as foreign. On green cards it goes muddy (3.1:1).</p>
+    <div class="pair" data-slot></div>
+  </section>
+
+  <section class="opt B rec">
+    <div class="opt-hd"><span class="tag">B</span><h2>Pine ring</h2></div>
+    <p class="why">Meyy’s own green — the same pine as the tour box’s border and its Next button, so the ring and the box read as one thing. Strongest contrast of the coloured options in both themes (5.5:1 on green cards, 7.8:1 on white). The ring sits a few points outside the target, so it still shows around the pine “Mark complete” button.</p>
+    <div class="pair" data-slot></div>
+  </section>
+
+  <section class="opt C">
+    <div class="opt-hd"><span class="tag">C</span><h2>Pine halo</h2></div>
+    <p class="why">The pine line plus a soft green wash just outside it, which breathes instead of the line. Gentler and more “lifted”, closest in feel to the website’s spotlight, without dimming anything. Takes a few more points of space around the target.</p>
+    <div class="pair" data-slot></div>
+  </section>
+
+  <section class="opt D">
+    <div class="opt-hd"><span class="tag">D</span><h2>Clay ring</h2></div>
+    <p class="why">Terracotta — the colour the bottom bar already uses for “you are here” and the section card uses for a finished chapter. Warm and on-brand, but it shares meaning with “complete” on My Classes (4.7:1 on white, 3.3:1 on green).</p>
+    <div class="pair" data-slot></div>
+  </section>
+
+  <section class="opt E">
+    <div class="opt-hd"><span class="tag">E</span><h2>Pine corner marks</h2></div>
+    <p class="why">Four pine corners instead of a full outline, like a camera viewfinder. The quietest and most editorial of the five; it frames the target without boxing it. Slightly less obvious on very small controls like the <b>+</b>.</p>
+    <div class="pair" data-slot></div>
+  </section>
+
+  <p class="notes">Contrast figures are for the ring colour against the surface it sits on. 3:1 is the usual minimum for a non-text mark.</p>
+</div>
+
+<template id="screen">
+  <div class="screen">
+    <div class="mode"></div>
+    <div class="card"><span class="no">04</span><div><div class="tt">Climates of India</div><div class="st">Ready to teach</div></div><span class="hl"><i></i><i></i><i></i><i></i></span></div>
+    <div class="card going"><span class="no">9A</span><div><div class="tt">Pick a chapter to begin</div><div class="st">Social Sciences</div></div><span class="round">+<span class="hl"><i></i><i></i><i></i><i></i></span></span></div>
+    <div class="mark">Mark this unit complete<span class="hl"><i></i><i></i><i></i><i></i></span></div>
+    <div class="nav">
+      <div class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>My Classes</div>
+      <div class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h11l3 3v13H5z"/><path d="M8 11h8M8 15h6"/></svg>My Lessons<span class="hl"><i></i><i></i><i></i><i></i></span></div>
+      <div class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg>Add</div>
+    </div>
+  </div>
+</template>
+<script>
+  const tpl = document.getElementById('screen');
+  document.querySelectorAll('[data-slot]').forEach((slot) => {
+    ['light','dark'].forEach((m) => {
+      const n = tpl.content.firstElementChild.cloneNode(true);
+      n.classList.add(m);
+      n.querySelector('.mode').textContent = m === 'light' ? 'Light' : 'Dark';
+      slot.appendChild(n);
+    });
+  });
+  // corner marks only use the <i>s; other options ignore them
+  document.querySelectorAll('.opt:not(.E) .hl i').forEach((i) => i.remove());
+</script>
+</body>
+</html>

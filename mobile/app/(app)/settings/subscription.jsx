@@ -35,7 +35,7 @@ import { Text } from "../../../components/Text";
 import { getJSON, fmtValidity, scopeRows, subsFromEntitlement, userKey } from "@aruvi/shared/format";
 import { storage } from "@aruvi/shared/storage";
 import { entitlementState, subscribeEntitlement } from "@aruvi/shared/entitlement";
-import { canPreview, downloadDocument, fetchDocument, invoicePdf } from "../../../lib/download";
+import { canPreview, deliverDocument, fetchDocument, invoicePdf } from "../../../lib/download";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useWebStyles } from "../../../theme/web";
 
@@ -189,7 +189,7 @@ export default function Subscription() {
     const run = canPreview(doc.mime)
       ? fetchDocument(doc).then((f) => router.push({ pathname: "/preview",
           params: { uri: f.uri, name: f.name, mime: f.mime, label: `Invoice ${number}`, from: "settings" } }))
-      : downloadDocument(doc);
+      : deliverDocument(doc);
     run
       .catch(() => setInvFail({ number, msg: "Couldn’t fetch that invoice right now. Try again in a moment." }))
       .finally(() => setBusy(""));

@@ -1,5 +1,5 @@
 /* ───────── Meyy design tokens, GENERATED from web/app/globals.css (Track D step 2, 2026-09-11) ─────────
- * One value per token per theme — the same 48 colours the web paints with (`:root` + the
+ * One value per token per theme — the same 50 colours the web paints with (`:root` + the
  * `[data-theme-effective="dark"]` block + the pine bar's --bar-* + the Ask Meyy section palette),
  * with the CSS aliases (--card-doc → --paper-2, --bar-fill → --pine-d) resolved per theme and the
  * kebab names snake-cased (--ink-soft → ink_soft). A token the dark block does not flip keeps its
@@ -55,6 +55,8 @@ export const light = {
   tint_cream: "#f3ede0",
   tint_pine: "#eef4f0",
   tint_pine_2: "#f1f6f3",
+  toast_bg: "#d6e6dc",
+  toast_edge: "#8fb3a3",
 };
 
 export const dark = {
@@ -106,6 +108,8 @@ export const dark = {
   tint_cream: "#262b22",
   tint_pine: "#1f2c26",
   tint_pine_2: "#1f2c26",
+  toast_bg: "#1e5c4a",
+  toast_edge: "#5cae93",
 };
 
-export const TOKEN_NAMES = ["bar_accent", "bar_fill", "bar_ink", "bar_ink_soft", "bar_line", "card_bg", "card_doc", "card_doc_edge", "card_done", "card_done_edge", "card_going", "card_going_edge", "card_grid", "card_muted", "card_new", "card_new_edge", "card_tick", "clay", "danger", "edge", "edge_clay", "edge_green", "field_bg", "ink", "ink_soft", "line", "line_soft", "ochre", "paper", "paper_2", "paper_sunk", "pine", "pine_d", "sec_a", "sec_a_bg", "sec_b", "sec_b_bg", "sec_c", "sec_c_bg", "sec_d", "sec_d_bg", "spine_shelf", "ss_plum", "ss_slate", "tint_clay", "tint_cream", "tint_pine", "tint_pine_2"];
+export const TOKEN_NAMES = ["bar_accent", "bar_fill", "bar_ink", "bar_ink_soft", "bar_line", "card_bg", "card_doc", "card_doc_edge", "card_done", "card_done_edge", "card_going", "card_going_edge", "card_grid", "card_muted", "card_new", "card_new_edge", "card_tick", "clay", "danger", "edge", "edge_clay", "edge_green", "field_bg", "ink", "ink_soft", "line", "line_soft", "ochre", "paper", "paper_2", "paper_sunk", "pine", "pine_d", "sec_a", "sec_a_bg", "sec_b", "sec_b_bg", "sec_c", "sec_c_bg", "sec_d", "sec_d_bg", "spine_shelf", "ss_plum", "ss_slate", "tint_clay", "tint_cream", "tint_pine", "tint_pine_2", "toast_bg", "toast_edge"];

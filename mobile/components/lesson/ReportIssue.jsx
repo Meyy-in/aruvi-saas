@@ -16,7 +16,7 @@
  *   No how-to line, no activity name, and the internal plan code is never shown or put in her
  *   WhatsApp — it rides in the case context for Meyy only. */
 import { useEffect, useState } from "react";
-import { View, Pressable, Linking } from "react-native";
+import { View, Pressable, Linking, Platform } from "react-native";
 import { Text, TextInput } from "../Text";
 import { getJSON, postJSON, waLink } from "@aruvi/shared/format";
 import { problemReport, reportWhatsAppText, phaseOptionLabel, SUPPORT_CAP_NOTE } from "@aruvi/shared/report";
@@ -25,9 +25,12 @@ import Dropdown from "../Dropdown";
 import { useTheme } from "../../theme/ThemeContext";
 import { useWebStyles } from "../../theme/web";
 import { useTourAnchor } from "../../lib/tour";
+import TourRing from "../TourRing";
 import { versionLine } from "../../lib/version";
 
 const MAX = 4000;
+/* Android's TextInput hint ignores lineHeight, so there the prompt is drawn by hand (see the box). */
+const ANDROID_HINT = Platform.OS === "android";
 
 /* ★ JUST THE LINK (founder, 2026-10-03: the card "looks too dominating"). One quiet pill,
    right-aligned under the last phase — above Mark complete on the Lesson tab, and at the end of
@@ -40,6 +43,7 @@ export function ReportCard({ onPress, tour = false }) {
       <Pressable onPress={onPress} accessibilityRole="button" hitSlop={8}
         style={({ pressed }) => [ws.lv_rcard_btn, pressed && { opacity: 0.7 }]}>
         <Text fixed style={ws.lv_rcard_btn_t}>Report an issue ›</Text>
+        {tour ? <TourRing name="report-issue" radius={999} out={3} /> : null}
       </Pressable>
     </View>
   );
@@ -98,7 +102,12 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
       style={({ pressed }) => [ws.rp_btn,
         primary ? { backgroundColor: t.pine } : { backgroundColor: t.paper_2, borderWidth: 1, borderColor: t.pine },
         { opacity: !ready ? 0.45 : pressed ? 0.85 : 1 }]}>
-      <Text fixed style={[ws.rp_btn_t, { color: primary ? "#f6f1e7" : t.pine_d }]}>{title}</Text>
+      {/* ONE LINE, ALWAYS (founder, 2026-10-05, Pixel: "Send on WhatsApp" broke onto two rows,
+          one row on iPhone). Sixteen spaced mono capitals need ~131px and a half-width button on a
+          360dp phone has about that, so Android's measurement wrapped it. It may shrink a shade to
+          fit — the header labels' WALK-A-027 treatment — but never break. */}
+      <Text fixed numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}
+        style={[ws.rp_btn_t, { color: primary ? "#f6f1e7" : t.pine_d }]}>{title}</Text>
     </Pressable>
   );
 
@@ -155,11 +164,27 @@ export default function ReportIssue({ lp, unitNumber, unitTitle = "", dropped = 
       {known && !capped && (hasEmail || hasWa) ? (
         <>
           <Text fixed style={ws.rp_lab}>What looks wrong?</Text>
-          <TextInput multiline textAlignVertical="top" value={text} onChangeText={setText} maxLength={MAX}
-            accessibilityLabel="What looks wrong?"
-            placeholder="Describe what looks wrong. You can paste the line from the lesson here."
-            placeholderTextColor={t.ink_soft}
-            style={[ws.rp_text, { borderColor: t.line, backgroundColor: t.field_bg, color: t.ink }]} />
+          {/* ★ ANDROID DRAWS ITS OWN PLACEHOLDER (founder, 2026-10-05, Pixel: the prompt's lines sat
+              "too close", where the iPhone spaces them well). Android's TextInput hint ignores
+              `lineHeight` — only typed text gets the 22px — so the two-line prompt came out at the
+              font's tight default. There the prompt is a plain Text laid over the empty box, at the
+              box's own padding (10/12 + the 1px border) and the same body face, so it spaces as
+              typed text will; it never takes a touch, and goes the moment she types. iOS keeps the
+              native placeholder, which already honours the line height. */}
+          <View>
+            <TextInput multiline textAlignVertical="top" value={text} onChangeText={setText} maxLength={MAX}
+              accessibilityLabel="What looks wrong?"
+              placeholder={ANDROID_HINT ? undefined
+                : "Describe what looks wrong. You can paste the line from the lesson here."}
+              placeholderTextColor={t.ink_soft}
+              style={[ws.rp_text, { borderColor: t.line, backgroundColor: t.field_bg, color: t.ink }]} />
+            {ANDROID_HINT && !text ? (
+              <Text pointerEvents="none" importantForAccessibility="no"
+                style={[ws.rp_text_hint, { color: t.ink_soft }]}>
+                Describe what looks wrong. You can paste the line from the lesson here.
+              </Text>
+            ) : null}
+          </View>
           {err ? <Text style={ws.rp_err}>{err}</Text> : null}
           <View style={ws.rp_two}>
             {hasWa ? <Btn title="Send on WhatsApp" onPress={sendWa} primary /> : null}

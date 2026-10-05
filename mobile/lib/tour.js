@@ -20,6 +20,23 @@
  * step it measured for is still the step on screen before it commits a rect — without that, a
  * fast Next lands the previous step's ring on the next step's screen, which reads as the ring
  * "jumping" and is very hard to reproduce deliberately.
+ *
+ * ★★ AMENDED 2026-10-05 — THE RING IS DRAWN BY ITS TARGET, NOT AIMED AT IT (founder, Redmi A5:
+ * "every card highlight is above or below where it should show"; "is there a different approach
+ * that will be lighter, smoother and accurate on any device?"). The overlay used to measure each
+ * target in WINDOW coordinates and draw the ring on its own layer in LAYOUT coordinates. On an
+ * iPhone those two origins coincide; on many Androids one counts the status bar and the other
+ * does not, so every ring landed a status bar's height off — and a 500 ms re-measure, retries and
+ * glides chased targets that moved as lists loaded, which is why it felt different every time.
+ * Now `TOUR_TARGETS` below names, per step, which anchor wears the ring, and `<TourRing>`
+ * (components/TourRing.jsx) is rendered INSIDE that anchor — part of its own layout, so it cannot
+ * be anywhere else, on any phone, at any text size, mid-scroll or mid-load. The tip is no longer
+ * placed beside the target either: it is a panel DOCKED above the bottom bar (GuidedTour.jsx).
+ * The registry stays for ONE job — bringing a target that is off-screen or behind that panel into
+ * view — and that sum is done only in window coordinates on both sides (target, scroller, panel),
+ * so whatever offset a phone adds cancels out of the subtraction.
+ * This is a NAMED DIVERGENCE from the web, which keeps its floating spotlight: a technical
+ * limitation of the phone (§0's first case), not a redesign. Same steps, same words.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { router, useFocusEffect } from "expo-router";
@@ -34,6 +51,62 @@ import { subjectSlug, gradeSlug, postJSON } from "@aruvi/shared/format";
    this module; importing the component from here to read one number would be a cycle, and the
    count is a fact about the tour rather than about the overlay that draws it. */
 export const TOUR_TOTAL = 21;   // 21 since 2026-10-03: step 13 "Report an issue", everything after it +1
+
+/* ★ WHAT EACH STEP POINTS AT (2026-10-05). `ring` is the anchor that draws the amber ring around
+   itself (null = nothing is ringed: the step's subject is the whole screen — the preview, the
+   picker, the Ask Meyy panel — or the closing welcome). `hand` adds the pointing hand inside it,
+   at its centre or toward its lower right. `tap` makes the ringed thing advance the tour when
+   tapped, exactly as Next does (WALK-A-015) — only where the copy asks her to tap. `scroll` brings
+   it into view above the docked panel. `free` leaves the screen live while the step is up (she
+   may scroll, explore, or tap the target); every other step holds the screen still, as the old
+   scrim did, so a stray tap cannot walk her out from under the tour.
+   ⚠️ Step 9 lost its `tap`: its target is one row in a list of lessons, and leaving the picker
+   live would let her attach a DIFFERENT lesson mid-tour. Its copy never asked for a tap. */
+export const TOUR_TARGETS = {
+  1:  { ring: "nav-classes" },
+  2:  { ring: "nav-lessons" },
+  3:  { ring: "lesson-first", hand: "center", scroll: true },
+  4:  { ring: "lesson-report", scroll: true },
+  5:  { ring: "lesson-archive", scroll: true },
+  6:  { ring: "lesson-first", tap: true, scroll: true, free: true },
+  7:  { ring: null, scrollTop: true, free: true },
+  8:  { ring: "section-add", hand: "left", tap: true, scroll: true, free: true },
+  9:  { ring: "attach-pop-row", hand: "center" },
+  10: { ring: "section-card-target", hand: "center", tap: true, scroll: true, free: true },
+  11: { ring: "unit-tabs", scrollTop: true, free: true },
+  12: { ring: "phase-bookmark", scroll: true },
+  13: { ring: "report-issue", hand: "corner", scroll: true },
+  14: { ring: "mark-complete", hand: "corner", scroll: true },
+  15: { ring: "section-add", hand: "left", scroll: true },
+  16: { ring: null },
+  17: { ring: "grow-add" },
+  18: { ring: "settings-gear" },
+  19: { ring: "ask-aruvi" },
+  20: { ring: null, free: true },
+  21: { ring: null },
+};
+export const tourTarget = (n) => TOUR_TARGETS[n] || null;
+
+/* ★ ROOM UNDER THE LAST ITEM FOR THE DOCKED PANEL (founder, 2026-10-05, Android: step 13 hid
+   "Report an issue" and step 14 hid "Mark complete"). Both sit at the very END of the lesson's
+   scroll, and a list cannot scroll past its end — so the most it could do was park them at the
+   bottom of the screen, which is exactly where the panel is. While a tour is up, each scrolling
+   screen adds a spacer the panel's height at the foot of its content (`<TourSpacer/>` in
+   components/TourRing.jsx), so the last item can always be lifted above the panel. The panel
+   reports its own height (GuidedTour onLayout); the spacer is 0 whenever no tour is running. */
+let panelH = 0;
+const padListeners = new Set();
+export function setTourPanelHeight(h) {
+  const v = Math.max(0, Math.round(h || 0));
+  if (Math.abs(v - panelH) < 2) return;
+  panelH = v;
+  padListeners.forEach((fn) => { try { fn(panelH); } catch {} });
+}
+export function useTourPanelHeight() {
+  const [h, setH] = useState(panelH);
+  useEffect(() => { setH(panelH); padListeners.add(setH); return () => padListeners.delete(setH); }, []);
+  return h;
+}
 
 const anchors = new Map();          // data-tour name → { measure(cb) }
 let state = { step: 0, info: {}, target: null };  // step 0 = not running
@@ -85,13 +158,20 @@ export function measureAnchor(name) {
   });
 }
 
-/** The first of several names that is actually mounted — the web's `tipAnchor: [a, b]` idiom. */
-export async function measureFirst(names) {
-  for (const n of [].concat(names || []).filter(Boolean)) {
-    const r = await measureAnchor(n);
-    if (r) return r;
-  }
-  return null;
+/** Measure any host node in window coordinates → {top, bottom} or null. Same timeout guard. */
+export function measureNodeBand(node) {
+  return new Promise((resolve) => {
+    if (!node || typeof node.measureInWindow !== "function") { resolve(null); return; }
+    let done = false;
+    try {
+      node.measureInWindow((x, y, w, h) => {
+        if (done) return;
+        done = true;
+        resolve(h > 0 ? { top: y, bottom: y + h } : null);
+      });
+    } catch { resolve(null); return; }
+    setTimeout(() => { if (!done) { done = true; resolve(null); } }, 250);
+  });
 }
 
 /* ── the state ──────────────────────────────────────────────────────────────────────────── */
@@ -224,49 +304,55 @@ export function pinTourScroll() {
    was below the fold, so the ring was drawn off-screen and the hand clamped onto something else.
    FOCUS-scoped, not mount-scoped: both screens stay mounted under a pushed lesson, and the lesson
    view takes the job while it is on top; on return, focus hands it back.
-   `animated: false` so the overlay's re-measure lands on where the card really is, not mid-glide.
+   Scrolls are ANIMATED since 2026-10-05: the ring is drawn by the card, so it travels with it and
+   nothing has to wait for the glide to finish before it is right.
    Pass the screen's own ScrollView ref if it already has one. */
 export function useTourScroller(existingRef) {
   const ownRef = useRef(null);
   const ref = existingRef || ownRef;
   const y = useRef(0);
-  /* ★ WHERE THE SCROLLER'S WINDOW IS (2026-10-04, founder's screenshots of *03, cards 3-6). My
-     Lessons' title row and wheels sit ABOVE its ScrollView, outside it. The tour scrolled the card
-     up to a fixed "just under the top bar" line — which is behind that header — so the card was
-     hidden under the wheels and the ring was drawn over "Your lessons / Year plan". The scroller
-     now reports its own visible band, and the tour keeps the card inside it. */
-  const frame = useRef(null);
-  const measureFrame = useCallback(() => {
-    try {
-      ref.current && ref.current.measureInWindow((fx, fy, fw, fh) => {
-        if (fh > 0) frame.current = { top: fy, bottom: fy + fh };
-      });
-    } catch {}
-  }, []);   // eslint-disable-line react-hooks/exhaustive-deps
-  useFocusEffect(useCallback(() => { measureFrame(); return registerTourScroller({
-    frame: () => { measureFrame(); return frame.current; },   // refreshed on every ask, for the next one
-    top: () => { try { ref.current && ref.current.scrollTo({ y: 0, animated: false }); y.current = 0; } catch {} },
+  /* ★ WHERE THE SCROLLER'S WINDOW IS — asked fresh each time, in window coordinates, so the
+     tour can compare it with the target and the docked panel measured the same way (2026-10-05:
+     comparing like with like is what makes the sum device-proof). My Lessons' title row and
+     wheels sit ABOVE this ScrollView, so "visible" means inside THIS band, not under the bar. */
+  useFocusEffect(useCallback(() => registerTourScroller({
+    frameAsync: () => measureNodeBand(ref.current),
+    top: () => { try { ref.current && ref.current.scrollTo({ y: 0, animated: true }); y.current = 0; } catch {} },
     by: (dy) => {
       try {
         const ny = Math.max(0, y.current + dy);
-        ref.current && ref.current.scrollTo({ y: ny, animated: false });
+        ref.current && ref.current.scrollTo({ y: ny, animated: true });
         y.current = ny;
       } catch {}
     },
-  }); }, []));   // eslint-disable-line react-hooks/exhaustive-deps
+  }), []));   // eslint-disable-line react-hooks/exhaustive-deps
   const onScroll = useCallback((e) => { y.current = e.nativeEvent.contentOffset.y; }, []);
-  return { ref, onScroll, onLayout: measureFrame };
+  return { ref, onScroll, onLayout: undefined };
 }
 
-/** The visible band of the screen's scroller in window coordinates, or null when unknown. */
-export function tourScrollFrame() {
-  try { return scroller && scroller.frame ? scroller.frame() : null; } catch { return null; }
-}
-
-/** Scroll the current screen by `dy` so an off-screen anchor comes into view. No-op with none. */
-export function nudgeTourScroll(dy) {
-  if (!scroller || !dy) return;
-  try { scroller.by(dy); } catch {}
+/* ★ BRING THE RINGED TARGET INTO VIEW, ABOVE THE DOCKED PANEL (2026-10-05). Three measurements,
+   all `measureInWindow`, so a status bar or cut-out a phone does or does not count is in all
+   three and cancels: the target, the screen's scroller, and the panel's top edge (`panelTop`).
+   One scroll, by exactly what is needed — the card lands just above the panel, or, if it is
+   taller than the gap, with its top at the top of the band.
+   Returns "ok" (already in view), "moved" (a scroll was asked for — check again after it),
+   "absent" (not mounted yet) or "none" (no scroller, nothing to do). */
+export async function bringTourTargetIntoView(name, panelTop) {
+  const r = await measureAnchor(name);
+  if (!r) return "absent";
+  const sc = scroller;
+  if (!sc || !sc.frameAsync || !sc.by) return "none";
+  const fr = await sc.frameAsync();
+  if (!fr) return "none";
+  const top = fr.top + 10;
+  const bottom = Math.min(fr.bottom, panelTop != null ? panelTop : fr.bottom) - 14;
+  let dy = 0;
+  if (r.y + r.height > bottom) dy = Math.min(r.y + r.height - bottom, r.y - top);
+  else if (r.y < top) dy = r.y - top;
+  dy = Math.round(dy);
+  if (Math.abs(dy) < 4) return "ok";
+  try { sc.by(dy); } catch { return "none"; }
+  return "moved";
 }
 
 /** Subscribe to the tour from a component. */

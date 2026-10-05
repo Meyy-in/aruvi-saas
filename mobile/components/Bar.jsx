@@ -25,6 +25,7 @@ import GearIcon from "./GearIcon";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { useTourAnchor } from "../lib/tour";
+import TourRing from "./TourRing";
 import { endSession } from "../lib/session";
 
 /* The bar's own height BELOW the status bar: the 32px lockup (19px mark + 2 + the 10px tag's line)
@@ -103,6 +104,7 @@ export default function Bar({ user = getUser(), onSettings = null, gear = true }
               <Pressable ref={gearRef} onPress={onSettings || undefined} disabled={!onSettings} hitSlop={8}
                 accessibilityRole="button" accessibilityLabel="Settings">
                 <View style={ws.hdr_gear_pad}><GearIcon color={t.bar_ink_soft} size={18} /></View>
+                <TourRing name="settings-gear" radius={8} out={3} onBar />
               </Pressable>
             ) : null}
             <View style={ws.hdr_user_id}>

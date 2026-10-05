@@ -36,6 +36,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTourAnchor, useTour, tourNext, tourBack, tourSkip,
          setTourOverlayHost } from "../lib/tour";
 import GuidedTour from "./GuidedTour";
+import TourRing from "./TourRing";
 import { readLocalSection } from "@aruvi/shared/sectionState";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -260,6 +261,7 @@ function ChapterRow({ plan, onPress, year, tourRow }) {
       </View>
       {plan.duration_label ? <Text style={ws.sc_durline}>{plan.duration_label}</Text> : null}
       {stamp ? <Text style={[ws.sc_yearstamp, { color: t.ochre }]}>{stamp} version</Text> : null}
+      {tourRow ? <TourRing name="attach-pop-row" radius={8} inner /> : null}
     </Pressable>
   );
 }

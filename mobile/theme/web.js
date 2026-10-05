@@ -1774,7 +1774,10 @@ export function webStyles(t, scheme = "light") {
        sizes to its own words on every platform, with no override and nothing to get wrong.
        ⚠️ A `flex` on a style that is sometimes a whole cell and sometimes one item inside one is
        a trap wherever it appears — the cell-ness belongs to the layout, not to the label. */
-    yp_tot_l:        { fontFamily: F.mono(400), fontSize: 10, lineHeight: 13,
+    /* `flexShrink: 1` (2026-10-05) is NOT the forbidden `flex` above: basis stays auto, it never
+       grows, and it only acts when the row would overflow — a 360dp Android pushed the plan total
+       out of the card. It lets "TOTAL PERIODS" fold onto two lines instead (numberOfLines={2}). */
+    yp_tot_l:        { flexShrink: 1, fontFamily: F.mono(400), fontSize: 10, lineHeight: 13,
                        letterSpacing: 0.6, textTransform: UP, color: t.ink_soft },
     yp_tot_n:        { textAlign: "right", fontFamily: F.display(600), fontSize: 18, lineHeight: 22, color: t.ink },
     /* `yp_tot_lrow` is gone: the label and pencil are direct children of the row now, with an
@@ -1961,6 +1964,10 @@ export function webStyles(t, scheme = "light") {
                        color: t.ink_soft, marginBottom: 6 },
     rp_text:         { minHeight: 120, height: 120, borderWidth: 1, borderRadius: 3, paddingVertical: 10, paddingHorizontal: 12,
                        fontFamily: F.body(400), fontSize: 14, lineHeight: 22 },   // two notches under 16, airier (founder, 2026-10-03)
+    /* Android-only stand-in for the box's placeholder (its hint ignores lineHeight) — sits exactly
+       where typed text starts: padding 10/12 plus the 1px border. ReportIssue.jsx. */
+    rp_text_hint:    { position: "absolute", top: 11, left: 13, right: 13,
+                       fontFamily: F.body(400), fontSize: 14, lineHeight: 22 },
     rp_two:          { flexDirection: "row", columnGap: 8, marginTop: 14 },
     rp_btn:          { flex: 1, minHeight: 44, borderRadius: 8, paddingVertical: 13, paddingHorizontal: 6,
                        alignItems: "center", justifyContent: "center" },

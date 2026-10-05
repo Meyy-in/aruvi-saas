@@ -34,6 +34,7 @@ import { Text } from "./Text";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
 import { useTourAnchor } from "../lib/tour";
+import TourRing from "./TourRing";
 
 /* The bar's own height ABOVE the safe-area inset — `.bnav`'s 56.85, measured 2026-09-13 at
    390×844 and recorded in theme/web.js's bnav comment. Published for the same reason
@@ -98,6 +99,7 @@ function Item({ Icon, label, active, onPress, hint, tour, fixed }) {
       {/* `fixed`: one line at the design's size whatever the text-size setting (2026-09-18). */}
       <Text fixed={fixed} numberOfLines={fixed ? 1 : undefined} style={[ws.bnav_label, { color }]}>{label}</Text>
       <View style={[ws.bnav_rule, active && { backgroundColor: t.clay }]} />
+      {tour ? <TourRing name={tour} radius={10} /> : null}
     </Pressable>
   );
 }

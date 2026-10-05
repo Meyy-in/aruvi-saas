@@ -55,7 +55,7 @@ import Svg, { Path } from "react-native-svg";
 import { Text } from "./Text";
 import { annualBudgetPeriods, bareChapterTitle, getJSON, pad, suggestedPeriodsByChapter } from "@aruvi/shared/format";
 import { useRouter } from "expo-router";
-import { canPreview, downloadDocument, fetchDocument, yearPlanExport } from "../lib/download";
+import { canPreview, deliverDocument, fetchDocument, yearPlanExport } from "../lib/download";
 import { fetchPlans } from "@aruvi/shared/plans";
 import { useTheme } from "../theme/ThemeContext";
 import { useWebStyles } from "../theme/web";
@@ -193,7 +193,8 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
     (canPreview(doc.mime)
       ? fetchDocument(doc).then((f) => router.push({ pathname: "/preview",
           params: { uri: f.uri, name: f.name, mime: f.mime, label: `Year plan · ${subjectName}` } }))
-      : downloadDocument(doc))
+      /* Android: her own document viewer, the sheet only if nothing can open it (2026-10-05). */
+      : deliverDocument(doc))
       .then(() => setExporting(""))
       .catch((e) => {
         /* The web's four sentences, chosen from the same two facts (`lib/download.js` puts the
@@ -302,9 +303,19 @@ export default function YearPlan({ subjectName, sSlug, gSlug, readiness, onEditB
             The `1fr` is now an explicit spacer below, so the label is a plain label that sizes to
             its own words. The unwrapped, direct-child arrangement stayed: it is simpler and reads
             closer to the web's inline span, and the pencil's `alignSelf` is cheap insurance — but
-            it is NOT what fixed this, and nobody should believe it was. */}
+            it is NOT what fixed this, and nobody should believe it was.
+
+            ★ THE PLAN TOTAL SAT OUTSIDE THE CARD ON ANDROID (founder, 2026-10-05, real device:
+            "displaced to the right of the table"; on iPhone "within but at the edge"). Nothing in
+            this row could give way: label ~86 + pencil 35 + export 31 + five 6px gaps + the two
+            number columns 126 ≈ 308px, against a card interior of (screen − 78). A 390pt iPhone
+            has 312 — 4 to spare, hence "at the edge"; a 360dp Android has 282, so the last column
+            was pushed ~26px past the card. The label now has `flexShrink: 1` (basis stays AUTO —
+            this is not the `flex` that hid it on iOS) and may take two lines, so on a narrow screen
+            "TOTAL / PERIODS" folds and the numbers keep their columns. Where it fits, nothing
+            changes. */}
         <View style={[ws.yp_tot, { borderBottomColor: t.ink }]}>
-          <Text style={ws.yp_tot_l} numberOfLines={1}>Total periods</Text>
+          <Text style={ws.yp_tot_l} numberOfLines={2}>Total periods</Text>
           {onEditBudget ? (
             <Pressable onPress={onEditBudget} accessibilityRole="button" hitSlop={10}
               accessibilityLabel={`Change your annual period budget for ${subjectName}`}

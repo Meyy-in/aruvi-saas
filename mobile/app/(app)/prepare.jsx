@@ -321,7 +321,12 @@ export default function Prepare() {
       .filter((r) => r.duration > 0 && r.count > 0);
     if (!matrix.length) { setError("Add at least one duration row."); return; }
 
-    setBusy(true); setError("");
+    /* ⚠️ NO `setBusy(true)` ON THIS PATH (founder, 2026-10-05, Android: the screen said it was
+       generating, THEN went back to My Classes). This screen hands off and leaves in the same
+       tick, so a busy label is only ever seen during the exit transition — a second message
+       about the wait, on the screen she is leaving, before the one on the card she is going to.
+       Double taps are already held off by `inFlight`. */
+    setError("");
     const startedAt = Date.now();
     /* The card goes up FIRST, from what she just told us — chapter, class, period shape. Nothing
        here is invented and nothing is fetched to draw it. Then we LEAVE, in the same tick, and

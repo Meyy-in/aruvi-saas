@@ -226,6 +226,30 @@ export async function downloadDocument(doc) {
   }
 }
 
+/* ★ THE NON-PREVIEW PATH SHOWS THE DOCUMENT ON ANDROID TOO (founder, 2026-10-05, real Pixel:
+   "the export … invokes app without showing the output on the screen as iphone seems to do").
+   WALK-A-030 built `openInViewer` for exactly this and wired it into ONE button (Settings' last-
+   step download); the Year Plan arrow, the lesson reports, the invoice and Your data all still
+   called `downloadDocument`, which on Android is the share sheet — a list of apps, no document.
+   This is the one place that decision now lives: iOS keeps its own path (`canPreview` → /preview,
+   chosen by each caller because only the caller can push its route), the web keeps its download,
+   and Android hands the file to her own viewer (Docs, Word, Drive, a PDF viewer), falling back
+   to the sheet only when nothing on the phone can open it. Same contract as `downloadDocument`:
+   resolves when the document has reached her, throws with no sentence of its own.
+   ⚠️ The courier file is NOT deleted after a viewer opens it — the viewer may still be reading it
+   when this resolves; the cache directory is the OS's to reclaim (same call as the last-step
+   download in Settings). */
+export async function deliverDocument(doc) {
+  if (IS_WEB || Platform.OS !== "android") return downloadDocument(doc);
+  const file = await fetchDocument(doc);
+  if (await openInViewer(file)) return;
+  try {
+    await shareFile(file);
+  } finally {
+    discardFile(file.uri);
+  }
+}
+
 /* The two documents Settings offers, named once so no screen spells them itself. */
 export const dataExport = (fmt) => ({
   path: `/data-rights/export?format=${fmt}`,

@@ -6572,3 +6572,35 @@ STATIC-verified only (babel-parse clean on `ChapterOrg.jsx`, `theme/web.js`, `Le
 CSS braces 2394/2394; every `ws.*` reference resolves, no orphan `cof_*` style). **The ribbon
 geometry is owed a live look on the phone** — it is the one thing here that cannot be read off
 the source.
+
+## 2026-10-05 — The phone tour stops AIMING its ring: the target draws it, the tip is docked
+
+Founder, Redmi A5: "every card highlight is above or below where it should show", and the tour
+"is not same everytime". Cause: GuidedTour measured targets with `measureInWindow` (WINDOW
+coordinates) and drew ring + scrim + tip at those numbers on its own layer (LAYOUT coordinates).
+On iPhone the two origins coincide; on many Androids they differ by the status bar. A 500 ms
+re-measure, retries, scroll nudges and JS-thread glides then chased targets that moved as lists
+loaded — hence different every run, worst on a slow phone.
+Rebuilt (founder chose option B over a coordinate patch):
+- `lib/tour.js` `TOUR_TARGETS` — per step: `ring` (anchor name or null), `hand`
+  ("center"|"corner"), `tap`, `scroll`, `scrollTop`, `free`. One table; targets read it.
+- `components/TourRing.jsx` — rendered as the LAST CHILD of the ringed element; draws an ochre
+  ring (native-driver pulse), the hand, and on `tap` steps a press layer calling `tourNext`.
+  Placed in: BottomNav Item, PlanCard + archive (lessons.jsx), ReportButton (ReportSheet.jsx),
+  section "+" ×2 + bound card (index.jsx), ChapterRow (AttachSheet), unit tabs / PhaseBookmark
+  (children) / MarkBtn (LessonView), ReportIssue pill, Bar gear.
+- `GuidedTour.jsx` — words only + a panel DOCKED above the bottom bar (`inSheet` → foot of the
+  picker). No scrim: non-`free` steps lay a CLEAR blocker under the panel. Measures nothing to draw.
+- Scroll-into-view (`bringTourTargetIntoView`) is the one sum left; target, scroller band
+  (`frameAsync`) and panel top are ALL `measureInWindow`, so a phone's offset cancels. Bounded
+  attempts per step, no interval.
+- Step 9 lost `tap` (its target is one row in a live list of lessons; its copy never asked).
+Named divergence from the web, which keeps its spotlight. STATIC-verified (babel-parse ×13,
+imports resolve, no undefined identifiers); **walk owed on the Redmi A5 and the iPhone**, every
+step, light + dark, and once at the Larger text size.
+Same day, first Android walk: 13/14 hid Report an issue / Mark complete — they end the lesson's
+scroll and a list cannot scroll past its end, so the panel covered them. Fix: GuidedTour reports
+its height (`setTourPanelHeight`) and each tour-scrolled screen ends its content with
+`<TourSpacer/>` (that height + 24 while a tour is up, else nothing). 15: hand clipped at the
+card's right edge → `hand: "left"` (mirrored) for section-add (8, 15). 16: the panel now docks
+above the bottom bar in the picker too (no `inSheet` position).
