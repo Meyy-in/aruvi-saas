@@ -195,7 +195,7 @@ _AUTO_BY = ("auto-greeting", "auto-ack", "system")
 _REF_RE = re.compile(r"\b(MEY|ARV)\s*[-–]?\s*(?:W\s*[-–]?\s*)?(\d{3,7})\b", re.I)
 BURST_MIN = 15          # her messages this close together are one burst — one issue
 AFTER_REPLY_MIN = 30    # what she writes this soon after OUR reply answers it
-ACKS_PER_DAY = 3        # automatic acknowledgements per number per day
+ACKS_PER_DAY = 10       # automatic acknowledgements per number per day (founder, 2026-10-05: as email)
 FLOOD_ISSUES = 10       # more new issues than this in a day → "Many messages"
 
 
@@ -1022,17 +1022,9 @@ def build_router(inbox: Inbox) -> APIRouter:
             inbox.repo.mark_read(n)
             unread = 0
         st = issue_state(t, ref)
-        others = []
-        if who == "founder":                          # the merge picker — never for the drafting key
-            for r in dict.fromkeys(r for r, _ in pairs):
-                if r in (ref, "") or ((t.get("issues") or {}).get(r) or {}).get("merged_into"):
-                    continue
-                first = next(x for x2, x in pairs if x2 == r)
-                others.append({"ref": r, "preview": (first.get("text") or "")[:60],
-                               "status": issue_state(t, r)["status"]})
         return {"id": item_id(n, ref), "number": n, "ref": ref, "name": t.get("name", ""),
                 "messages": msgs, "unread": unread, "status": st["status"], "draft": st["draft"],
-                "category": st["category"], "others": others[::-1], "hint": inbox.hint_for(t, ref),
+                "category": st["category"],
                 "window_open": window_open(t, current_pn=cfg.WA_PHONE_NUMBER_ID), "phone": _pretty(n),
                 "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
 
@@ -1111,8 +1103,7 @@ _APP = """<main class="app">
 <section id="thread" class="thread hidden">
   <div class="thead"><button id="back" class="link">← All</button>
     <div class="tid"><div id="tname" class="tname"></div><div id="tsub" class="tsub"></div></div>
-    <div class="tctl"><select id="tmerge" class="hidden" title="Merge this issue into another of hers"></select><select id="tcat" title="Category"></select><button id="tstatus" class="ghost"></button></div></div>
-  <div id="hint" class="hintbar hidden"></div>
+    <div class="tctl"><select id="tcat" title="Category"></select><button id="tstatus" class="ghost"></button></div></div>
   <div id="msgs" class="msgs"></div>
   <div id="closed" class="closed hidden">24-hour window closed — WhatsApp only allows an approved
     template until the customer writes again. <button id="reopen" class="link hidden">Send re-open template</button></div>
@@ -1149,8 +1140,6 @@ header form{margin:0}header .link{color:#f6f1e7}
 .tag{font:600 10.5px ui-monospace,Menlo,monospace;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:1px 6px;background:#efe9dd;color:var(--soft)}
 .tag.wa{background:#e3f3ea;color:var(--wa)}.tag.mail{background:#e8ecf4;color:#4a5d86}.tag.draft{background:var(--pine);color:#fff}
 .tag.done{background:#eee;color:#888}.tag.flood{background:#fbe9e4;color:var(--clay)}
-.hintbar{padding:8px 16px;background:#fff8e6;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
-.hintbar button{margin-left:8px}
 .mv{display:block;margin-top:4px;background:none;border:0;padding:0;font:11px inherit;color:var(--soft);text-decoration:underline;cursor:pointer}
 .rprev{font-size:13px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge{background:var(--clay);color:#fff;border-radius:10px;padding:0 7px;font-size:12px;margin-left:6px}
@@ -1162,7 +1151,7 @@ header form{margin:0}header .link{color:#f6f1e7}
 /* One row (founder, 2026-10-04): name, then channel · reference · number beside it, cut short with … */
 .tid{flex:1;min-width:0;display:flex;align-items:baseline;gap:10px}.tname{font-weight:600;white-space:nowrap}
 .tsub{font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-#tmerge{max-width:220px}
+
 .tctl{display:flex;gap:8px;align-items:center}.tctl select{font:13px inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:#fff}
 .msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
 .case{align-self:stretch;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
@@ -1219,8 +1208,7 @@ async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id
   M.innerHTML=t.messages.map((m,i)=>(m.ref?reportCard(m):'')+bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='auto-ack'?'automatic acknowledgement':m.by==='system'?'automatic':'you')
    +(i>0&&m.dir==='in'&&m.id&&t.ref?`<button class="mv" data-mid="${esc(m.id)}">Move this and later messages to a new issue</button>`:'')).join('');
   M.querySelectorAll('.mv').forEach(b=>b.onclick=()=>splitAt(b.dataset.mid));
-  const others=t.others||[],mg=$('#tmerge');mg.innerHTML='<option value="">Merge into…</option>'+others.map(o=>`<option value="${esc(o.ref)}">${esc(o.ref)} · ${esc(o.preview)}</option>`).join('');mg.classList.toggle('hidden',!t.ref||!others.length);
-  const H=$('#hint');if(t.hint&&t.ref){H.innerHTML=`Possibly continues <b>${esc(t.hint.ref)}</b> — you replied there ${t.hint.hours} hour${t.hint.hours===1?'':'s'} earlier.<button class="ghost" id="hintgo">Merge into ${esc(t.hint.ref)}</button>`;H.classList.remove('hidden');$('#hintgo').onclick=()=>mergeInto(t.hint.ref)}else H.classList.add('hidden');
+
   $('#tcat').innerHTML=CATS.map(([v,l])=>`<option value="${v}" ${v===(t.category||'')?'selected':''}>${esc(l)}</option>`).join('');$('#tcat').classList.remove('hidden');
   $('#tstatus').textContent=status==='done'?'Reopen':'Mark resolved';
   $('#closed').classList.toggle('hidden',open);$('#reopen').classList.toggle('hidden',!window._reopen);$('#send').textContent='Send on WhatsApp';
@@ -1228,7 +1216,7 @@ async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id
   $('#tname').textContent=c.name||c.user_id;$('#tsub').textContent=`Email · ${c.reference} · ${c.email||'no email on the case'}`;
   const ctx=c.context||{},rows=[['About',c.category_label],['Received',when(c.created_at)],['Class',[String(ctx.subject||'').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase()),ctx.grade].filter(Boolean).join(' · ')],['Chapter',ctx.chapter],['Unit',[ctx.unit,ctx.phase].filter(Boolean).join(' · ')],['Activity',ctx.unit_title],['Plan ref',ctx.plan_ref],['Plan file',ctx.plan_file],['Screen',ctx.screen],['App',ctx.version]].filter(r=>r[1]);
   M.innerHTML=`<div class="case"><dl>${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl><div class="said">${esc(c.message)}</div></div>`+(c.thread||[]).map(m=>bubble(m,()=> 'you')).join('');
-  $('#tcat').classList.add('hidden');$('#tmerge').classList.add('hidden');$('#hint').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark resolved';
+  $('#tcat').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark resolved';
   $('#closed').classList.add('hidden');open=!!c.email;$('#send').textContent='Send email';}
  if(scroll||atBottom)M.scrollTop=M.scrollHeight;
  $('#tstatus').disabled=false;
@@ -1275,12 +1263,10 @@ $('#rfr').onclick=async()=>{const b=$('#rfr');if(b.disabled)return;b.disabled=tr
  try{const st=await api('/mail/sync',{method:'POST'});await loadList();await refresh(false,false);
   b.textContent=st&&st.added?`↻ ${st.added} new`:'↻ Up to date'}catch(x){b.textContent='↻ Refresh';$('#err').textContent=x.message||'Could not refresh.'}
  setTimeout(()=>{b.textContent='↻ Refresh';b.disabled=false},2500)};
-/* ★ MERGE AND SPLIT (founder, 2026-10-04): "split liberally, merge deliberately". */
-async function mergeInto(ref){if(!detail||!ref)return;if(!confirm(`Merge ${detail.ref} into ${ref}? Its messages move there; ${detail.ref} will point to ${ref}.`)){$('#tmerge').value='';return}
- try{const j=await api('/thread/'+encodeURIComponent(detail.id)+'/merge',{method:'POST',body:JSON.stringify({into:ref})});await loadList();openItem('wa',j.id)}catch(x){$('#err').textContent=x.message||'Could not merge.'}}
+/* ★ MOVE A TOPIC OUT (2026-10-04). The merge menu and its hint bar were removed (founder, 2026-10-05:
+   the hint pointed at the issue we last ANSWERED, not the one she was waiting on — no use). */
 async function splitAt(mid){if(!detail)return;if(!confirm('Move this message, and the ones after it in this issue, to a new issue?'))return;
  try{const j=await api('/thread/'+encodeURIComponent(detail.id)+'/split',{method:'POST',body:JSON.stringify({message_id:mid})});await loadList();openItem('wa',j.id)}catch(x){$('#err').textContent=x.message||'Could not move it.'}}
-$('#tmerge').onchange=()=>mergeInto($('#tmerge').value);
 $('#back').onclick=()=>{cur=null;history.replaceState(null,'',location.pathname);$('.app').classList.remove('open');loadList()};
 loadList().then(()=>{const h=decodeURIComponent(location.hash.slice(1));if(h.includes(':'))openItem(h.split(':')[0],h.slice(h.indexOf(':')+1));else if(/^\d+$/.test(h))openItem('wa',h)});
 setInterval(()=>{loadList();refresh(false,false)},15000);

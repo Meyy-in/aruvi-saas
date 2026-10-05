@@ -32,10 +32,10 @@ or an answer to OUR reply (≤30 min after it), whichever is later → else a NE
 explicit `issue`. References are NEVER shown in WhatsApp: no ref in acks, no "Re" prefix; founder replies go as
 quote-replies (`reply_to` → Cloud API `context.message_id`). ACK: `send_due_acks` (startup thread, every 60 s; Starter
 plan never sleeps; ONE instance — move the claim to a DB row before scaling) sends one message when her burst has been
-quiet 15 min: WA_ACK_TEXT, WA_ACK_GREET for a greeting-only burst, nothing for thanks/ok/emoji; ≤3/day/number; never
+quiet 15 min: WA_ACK_TEXT ("…will reply within 1 working day"), WA_ACK_GREET for a greeting-only burst, nothing for thanks/ok/emoji; ≤10/day/number (founder, 2026-10-05); never
 after the founder answered or past 23 h. Email acks ≤ SUPPORT_EMAIL_ACKS_PER_DAY (10); cases always filed. Inbox:
-merge (`/merge {into}` — src keeps `merged_into`), split (`/split {message_id}` — that message and later ones), hint
-"Possibly continues …" (`hint_for`), "Many messages" flag (>10 new issues today → out of Needs reply).
+split (`/split {message_id}` — that message and later ones), "Many messages" flag (>10 new issues today → out of Needs
+reply). The merge MENU and its hint bar were removed (founder, 2026-10-05); `/merge` stays as an API only.
 FRESH EMAIL: mail to support@ with no [MEY-S] from the ONE account carrying that address → `_case_from_mail` files a
 normal case (ack + copy, context.screen "Email (written directly)", mail_id dedup); past the cap → joins her latest
 case; strangers/auto-replies stay in Gmail. Counted only from `support/_series/mail_floor.json` (first sync).

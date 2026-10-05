@@ -338,13 +338,11 @@ def test_plain_messages_join_only_on_clear_evidence():
         _age(m, n, 300)
         say("p6", f"about mey {b.rsplit('-', 1)[1]}: any news?")
         assert _issue_of(m, n, "p6") == b
-        # and a stray message hours later with no evidence is new — with a merge hint
+        # and a stray message hours later with no evidence is new
         _age(m, n, 300)
         say("p7", "It still doesn't work")
         cnew = m.wa_inbox_repo.load(n)["last_ref"]
         assert cnew not in (a, b)
-        th = c.get(f"/support-inbox/api/thread/{n}~{cnew}").json()
-        assert th["hint"] and th["hint"]["ref"] == a and {o["ref"] for o in th["others"]} == {a, b}
     print("✓ Plain messages join only on a swipe, a reference, a burst or an answer to us; else new")
 
 
@@ -367,14 +365,15 @@ def test_acknowledgement_waits_for_the_burst_and_fits_what_she_said():
         assert len(by["9800000401"]) == 1 and "what you need" in by["9800000401"][0]
         assert by["9800000402"] == []
         assert len(by["9800000403"]) == 1 and "received" in by["9800000403"][0]
-        # at most three a day per number
+        # at most ten a day per number
         n = "9800000404"
-        for k in range(5):
+        for k in range(12):
             say(n, f"x{k}", f"Problem in: Class III · English · Shapes · Unit {k + 1}\n\nQ{k}")
             _age(m, n, 20)
             m.support_inbox.send_due_acks()
-        assert sum(1 for x in m.wa_inbox_repo.load(n)["messages"] if x.get("by") == "auto-ack") == 3
-    print("✓ The acknowledgement waits for the burst, fits what she said, at most three a day")
+        assert sum(1 for x in m.wa_inbox_repo.load(n)["messages"] if x.get("by") == "auto-ack") == 10
+        assert "1 working day" in by["9800000403"][0]
+    print("✓ The acknowledgement waits for the burst, fits what she said, at most ten a day")
 
 
 def test_merge_and_split():
