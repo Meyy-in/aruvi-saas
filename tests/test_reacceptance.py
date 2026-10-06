@@ -148,8 +148,29 @@ def test_pre_launch_privacy_drafts_are_not_served():
     print("✓ The pre-launch privacy drafts are not served; earlier versions on request")
 
 
+def test_lawyer_notes_never_reach_a_teacher():
+    """Everything between a published document's title and its first `---` is a note to the
+    lawyer and must be a `>` line, or the app shows it as the opening paragraph (found live,
+    2026-10-06: six note lines lost their `>` and topped the Privacy Notice)."""
+    for v, name in ((legal.current_version(), "consent_and_disclaimer"),
+                    (legal.current_privacy_version(), "privacy_policy")):
+        lines = open(os.path.join(REAL_LEGAL, f"{name}_v{v}.md"), encoding="utf-8").read().split("\n")
+        end = lines.index("---")
+        stray = [ln for ln in lines[1:end] if ln.strip() and not ln.lstrip().startswith(">")]
+        assert not stray, f"{name} v{v}: lawyer-note lines without '>': {stray[:2]}"
+    body = legal.load_privacy_document()["body"]
+    assert body.lstrip().startswith("## The short version"), body[:120]
+    for leak in ("api/", "packages/", ".py", "What changed in"):
+        assert leak not in body, f"a note leaked into the notice: {leak!r}"
+    intro = legal.load_consent_document()["intro"]
+    for leak in ("Re-acceptance", "api/", "What changed"):
+        assert leak not in intro, f"a note leaked into the agreement: {leak!r}"
+    print("✓ Lawyer notes stay hidden in both published documents")
+
+
 if __name__ == "__main__":
     test_parser_reads_the_trigger_line()
     test_three_rows_end_to_end()
     test_pre_launch_privacy_drafts_are_not_served()
+    test_lawyer_notes_never_reach_a_teacher()
     print("✅ re-acceptance tests passed")
