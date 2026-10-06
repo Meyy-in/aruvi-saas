@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { API, getJSON, idInUse } from "../lib/format";
+import { API, getJSON, idInUse, knownLookup } from "../lib/format";
 import { DEVICE_SEEN_KEY as SEEN_KEY } from "@aruvi/shared/signout";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
          authHeaders } from "../lib/auth";
@@ -316,7 +316,7 @@ export default function Login({ onEnter }) {
                    door again; only an activated account is "already in use". */
                 let taken = false;
                 try {
-                  const k = await getJSON(`/onboarding/known?id=${encodeURIComponent(mobile.trim())}`);
+                  const k = await knownLookup(mobile.trim());
                   taken = !!(k && k.known && !k.fresh);
                 } catch { taken = await idInUse(mobile.trim()); }
                 if (taken) { setMobBusy(false); setMobErr(MOBILE_TAKEN); return; }
@@ -393,7 +393,7 @@ export default function Login({ onEnter }) {
     if (!signinOk) return;
     setSigninErr("");
     try {
-      const d = await getJSON(`/onboarding/known?id=${encodeURIComponent(trimmed)}`);
+      const d = await knownLookup(trimmed);
       if (d && d.known) {
         const uid = d.id || trimmed;
         if (!live) { enter(uid); return; }

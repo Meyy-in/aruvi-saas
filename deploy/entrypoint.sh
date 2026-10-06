@@ -32,4 +32,7 @@ else
   echo "[aruvi] mail: FILE OUTBOX — nothing will send"
 fi
 
-exec python3 -m uvicorn api.main:app --host 0.0.0.0 --port "${PORT:-8000}" --proxy-headers --forwarded-allow-ips='*'
+# --no-access-log: uvicorn's own access lines print the CONCRETE path with its query string, so
+# an id in a URL would sit in the host's logs. api/access_log.py keeps Meyy's one-year log
+# instead, with route patterns only (Privacy Notice v0.5 §2/§7).
+exec python3 -m uvicorn api.main:app --host 0.0.0.0 --port "${PORT:-8000}" --proxy-headers --forwarded-allow-ips='*' --no-access-log

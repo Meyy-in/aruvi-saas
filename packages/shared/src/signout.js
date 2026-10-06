@@ -39,7 +39,25 @@ export const TEACHER_CACHE_PREFIXES = [
   READINESS_CACHE_PREFIX,        // her teaching profile (readiness.js) — subjects, classes, sections
   ACCOUNT_CACHE_PREFIX,          // her account (account.js) — the NAME on the bar and in the greeting
   ENTITLEMENT_CACHE_PREFIX,      // her subscription (entitlement.js) — what the shell hides on a lapse
+  /* ★ EVERYTHING ELSE THAT IS HERS (Privacy Notice v0.5 §5, 2026-10-06: "Signing out removes all
+     of this"). These were swept only by the apps' own extra lists — or not at all — and each one
+     carries her mobile number in its NAME (userKey), so a leftover key is her number on a shared
+     device even when its value says nothing. Named HERE so both apps clear the same set: */
+  "aruvi_invoices_",             // her invoice list (the phone's copy, WALK-A-146)
+  "setup_check_pending_",        // owed check windows, incl. setup_check_pending_bought_
+  "first_run_check_pending_",    // the check window owed after first run
+  "mylessons_",                  // My Lessons' last subject and class
+  "allocations_",                // the web's allocation cache
+  "aruvi_fresh_start_",          // the year-cutover stamp (year.js)
+  "aruvi_pending_readiness_",    // an unconfirmed profile write — never another teacher's to send
 ];
+
+/* What a sign-out deliberately LEAVES (each says nothing about her): the theme (`aruvi-theme`),
+ * the phone's text size (`aruvi-text-size`), that this device has been used before
+ * (DEVICE_SEEN_KEY, below) and which sign-in door to open (`aruvi_signup_mode`). And one
+ * short-lived exception: a guided-tour REPLAY cut short by the sign-out keeps its snapshot
+ * (`tour_replay_restore`, tourReplay.js) so her classes can be put back — it is consumed, and
+ * deleted, at the next sign-in on this device, whoever signs in. Privacy Notice §5 says so. */
 
 export function clearTeacherCaches(extraPrefixes = []) {
   let n = 0;

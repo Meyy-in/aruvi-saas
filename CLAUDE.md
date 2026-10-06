@@ -1564,6 +1564,24 @@ silent (founder: internal demo). **`_KEPT` is SIX rows** and `tests/test_privacy
 pins it to notice §7 both ways; four places must agree: notice §7 · agreement §G · `_KEPT` ·
 the ledger's placement. Owed: agreement v0.5 (§F/§G → the notice), self-hosted fonts,
 dormancy job, ids out of URLs, sign-out clearing; live + 360px pass on every new screen.
+★ **v0.5 (2026-10-06): every `[value]` blank filled** — §6 Render (Singapore) · Supabase
+(Mumbai, ap-south-1) · MSG91 · Razorpay; §7 backups 30 days (ceiling; providers keep ≤7),
+invoices §128(5); §10 registered office. The Board's complaint link was DROPPED from §8 until
+the Board publishes one (founder). Same day, second pass: **every `[AT LAUNCH]` bracket gone**
+(founder: all seven confirmed for launch; testing may run with payment OFF). Code built with it:
+(a) **no identifier in any request path** — `POST /onboarding/known {id}` (`knownLookup` in
+@aruvi/shared/format; the GET survives for old builds) and **support-inbox ids are keyed HANDLES**
+`c<16hex>~MEY-W-n` (`handle_of`, keyed on TRIAL_LEDGER_KEY; raw numbers still accepted in paths);
+(b) **Meyy's own one-year access log** `api/access_log.py` — ROUTE PATTERNS only, no query string,
+unmatched paths digit-masked, day files purged after 365 days; `ARUVI_ACCESS_LOG_DIR=/var/aruvi/logs`
+(render.yaml — ⚠️ move it before the disk is ever removed); uvicorn runs `--no-access-log`;
+(c) **sign-out sweeps every per-teacher key** — the full list now lives in `TEACHER_CACHE_PREFIXES`;
+kept: theme, text size, device-seen, signup mode, and a cut-short tour-replay snapshot (consumed
+at the next sign-in). Tests: tests/test_access_log.py, test_support_queue (handles), shared.test.js.
+**v0.6 (same day):** Grievance Officer by DESIGNATION only (no personal name), "reply STOP" no
+longer promised, and all nine counsel questions CLOSED by the founder
+(`docs/legal/privacy_policy_considerations.md §9`). Still open: the 18+ self-declaration is not
+asked anywhere — batch it into agreement v0.6 with §F/§D/§J; the re-acceptance tiers (§J / §12).
 
 **Settings › Support — email is the ONLY channel, and the acknowledgement is the
 feature (2026-08-27).** No phone, no WhatsApp, no chat, no LLM answering tickets; Ask

@@ -161,13 +161,58 @@ def describe(m: Dict[str, Any]) -> str:
 SEP = "~"
 
 
+# ★ A CONVERSATION IS ADDRESSED BY A HANDLE, NEVER BY HER NUMBER (Privacy Notice v0.5 §2/§7,
+# 2026-10-06). Every inbox call names a conversation in its URL — /support-inbox/api/thread/{id} —
+# and a URL is written into every access log on the way (ours, the host's, any proxy's), kept a
+# year. Her WhatsApp number IS her sign-in mobile, so `{number}~MEY-W-n` put a year of
+# IP↔mobile pairs into the logs. The id the inbox hands out is now `c<16 hex>~MEY-W-n`: a keyed
+# one-way code of the number (the trial ledger's key, so it is stable across restarts and cannot
+# be reversed by trying all ~10^10 numbers without the key). The server maps it back by looking
+# it up; the number still travels in response BODIES, which are never logged.
+# A raw number is still ACCEPTED in a path (old links, tests, a hand-typed call) — only what
+# Meyy itself hands out changed.
+_HANDLE_KEY = b"meyy-dev-inbox-handle-key"
+_HANDLES: Dict[str, str] = {}
+_THREAD_NUMBERS: Optional[Callable[[], Any]] = None
+_HANDLE_RE = re.compile(r"^c[0-9a-f]{16}$")
+
+
+def _set_handle_source(key: str, numbers: Optional[Callable[[], Any]]) -> None:
+    global _HANDLE_KEY, _THREAD_NUMBERS
+    if key:
+        _HANDLE_KEY = ("support-inbox-handle:" + key).encode("utf-8")
+    _THREAD_NUMBERS = numbers
+    _HANDLES.clear()
+
+
+def handle_of(n: str) -> str:
+    n = number_key(n) or str(n or "")
+    h = "c" + hmac.new(_HANDLE_KEY, n.encode("utf-8"), hashlib.sha256).hexdigest()[:16]
+    _HANDLES[h] = n
+    return h
+
+
+def _number_for(head: str) -> str:
+    if not _HANDLE_RE.match(head):
+        return number_key(head) or head
+    if head not in _HANDLES and _THREAD_NUMBERS is not None:
+        try:                                   # a cold process: learn every handle once
+            for num in _THREAD_NUMBERS() or []:
+                if num:
+                    handle_of(num)
+        except Exception:                      # noqa: BLE001 — unknown handle → 404 upstream
+            pass
+    return _HANDLES.get(head, head)
+
+
 def split_id(ident: str):
-    n, _, ref = str(ident or "").partition(SEP)
-    return number_key(n) or n, ref
+    head, _, ref = str(ident or "").partition(SEP)
+    return _number_for(head), ref
 
 
 def item_id(n: str, ref: str) -> str:
-    return f"{n}{SEP}{ref}" if ref else n
+    h = handle_of(n)
+    return f"{h}{SEP}{ref}" if ref else h
 
 
 def issues_of(messages):
@@ -287,6 +332,12 @@ class Inbox:
         # main.py's "file a case from a mail she wrote" (account, subject, text, message_id, at)
         # → "added" | "joined" | …; None = fresh mail is not filed (old wiring, tests).
         self.open_case_from_mail = None
+        # Inbox ids are keyed handles, not numbers (see handle_of). The key is the trial
+        # ledger's — already a never-rotate Render secret — so a handle in a bookmarked link or
+        # the founder's alert email stays valid across restarts and deploys.
+        _set_handle_source(getattr(config, "TRIAL_LEDGER_KEY", "")
+                           or getattr(config, "TRIAL_LEDGER_DEV_KEY", ""),
+                           lambda: [s.get("number") for s in repo.list_threads()])
 
     # ── identity ──
     def _name_for(self, n: str, fallback: str = "") -> str:

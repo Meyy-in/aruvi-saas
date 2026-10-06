@@ -38,6 +38,14 @@ def _setup():
     return m, c, ref
 
 
+def _raw_id(i):
+    """A queue item named the way the tests write it, `{number}~{ref}` — the queue itself hands
+    out keyed handles (test_inbox_ids_never_carry_her_number), which tests cannot spell."""
+    if i.get("kind") != "wa":
+        return i["id"]
+    return f"{i['number']}~{i['ref']}" if i.get("ref") else i["number"]
+
+
 def _login(c):
     c.post("/support-inbox/login", data={"password": os.environ["ARUVI_SUPPORT_INBOX_PASSWORD"]},
            follow_redirects=False)
@@ -49,7 +57,7 @@ def test_queue_lists_both_kinds_and_needs_auth():
     assert c.get("/support-inbox/api/queue", headers={"Authorization": "Bearer wrong"}).status_code == 401
     items = c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
     kinds = {(i["kind"], i["id"]) for i in items}
-    assert ("case", ref) in kinds and ("wa", "9800000302") in kinds
+    assert ("case", ref) in kinds and ("wa", m._support_inbox_mod.item_id("9800000302", "")) in kinds
     case = next(i for i in items if i["id"] == ref)
     assert case["needs_reply"] and case["category"] == "plan" and case["name"] == "Asha Rao"
     print("✓ One queue, both kinds, closed without a session or the token")
@@ -142,7 +150,7 @@ def test_whatsapp_report_is_numbered_parsed_and_acknowledged_once():
         assert len(sent) == 1 and reps[0]["ref"] not in sent[0], "one acknowledgement, no reference"
         # the greeting and the acknowledgement are automatic: she still NEEDS A REPLY
         item = next(i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
-                    if i["id"] == "9800000303~" + reps[0]["ref"])
+                    if i["id"] == m._support_inbox_mod.item_id("9800000303", reps[0]["ref"]))
         assert item["needs_reply"] and item["ref"] == reps[0]["ref"]
     finally:
         m.wa_client.send_text, m.notifier.send = orig_wa, orig_mail
@@ -227,7 +235,7 @@ def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
         say("r2", "Problem in: Class III · English · Paper Boats · Unit 6\n\nA second issue")
         r2 = m.wa_inbox_repo.load(n)["last_ref"]
         assert r1 != r2
-        q = {i["id"]: i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
+        q = {_raw_id(i): i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
              if i.get("number") == n}
         assert set(q) == {f"{n}~{g}", f"{n}~{r1}", f"{n}~{r2}"}
         assert q[f"{n}~{r1}"]["needs_reply"] and q[f"{n}~{r2}"]["needs_reply"]
@@ -248,7 +256,7 @@ def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
         # resolving one issue leaves the other open; drafts are per issue
         c.post(f"/support-inbox/api/thread/{n}~{r1}/label", json={"status": "done"}, headers=H)
         c.post("/support-inbox/api/draft", json={"kind": "wa", "id": f"{n}~{r2}", "text": "Draft 2"}, headers=BEARER)
-        q = {i["id"]: i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
+        q = {_raw_id(i): i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
              if i.get("number") == n}
         assert q[f"{n}~{r1}"]["status"] == "done" and q[f"{n}~{r2}"]["status"] == "open"
         assert q[f"{n}~{r2}"]["has_draft"] and not q[f"{n}~{r1}"]["has_draft"] and not q[f"{n}~{g}"]["has_draft"]
@@ -400,9 +408,9 @@ def test_merge_and_split():
         say("s3", "Also, how do I download a plan?")         # same burst as s2 — joined to b
         _login(c)
         r = c.post(f"/support-inbox/api/thread/{n}~{b}/merge", json={"into": a}, headers=H)
-        assert r.status_code == 200 and r.json()["id"] == f"{n}~{a}"
+        assert r.status_code == 200 and r.json()["id"] == m._support_inbox_mod.item_id(n, a)
         q = {i["id"] for i in c.get("/support-inbox/api/queue").json()["items"] if i.get("number") == n}
-        assert q == {f"{n}~{a}"}
+        assert q == {m._support_inbox_mod.item_id(n, a)}
         texts = [x["text"] for x in c.get(f"/support-inbox/api/thread/{n}~{a}").json()["messages"]]
         assert texts == ["The LCM question is wrong", "It is in unit 4", "Also, how do I download a plan?"]
         # the merged reference still routes: she types it, it lands in a
@@ -418,6 +426,34 @@ def test_merge_and_split():
     print("✓ Merge folds an issue in (its reference still routes); split moves a topic out")
 
 
+def test_inbox_ids_never_carry_her_number():
+    """Privacy Notice v0.5 §2/§7: what the inbox HANDS OUT names a conversation by a keyed
+    handle, so no request path — and so no access-log line — carries her mobile. The handle
+    routes, survives a cold process (the cache is rebuilt from the store), and a raw number
+    is still accepted for old links."""
+    import re as _re
+    m, c, _ = _setup()
+    n = "9800000311"
+    sim = m._support_inbox_mod
+    with _Wa(m):
+        m.support_inbox.on_message({"from": "91" + n, "id": "h1", "type": "text",
+                                    "text": {"body": "The answer key is wrong"}})
+        ref = m.wa_inbox_repo.load(n)["last_ref"]
+        _login(c)
+        items = [i for i in c.get("/support-inbox/api/queue").json()["items"] if i.get("number") == n]
+        assert items, "her conversation is listed"
+        for i in items:
+            assert n not in i["id"] and not _re.search(r"\d{10}", i["id"]), i["id"]
+        hid = sim.item_id(n, ref)
+        assert hid.startswith("c") and hid.endswith("~" + ref)
+        assert c.get(f"/support-inbox/api/thread/{hid}").json()["number"] == n
+        sim._HANDLES.clear()                                  # a fresh process, nothing cached
+        assert c.get(f"/support-inbox/api/thread/{hid}").json()["number"] == n
+        assert c.get(f"/support-inbox/api/thread/{n}~{ref}").json()["number"] == n   # old form
+        assert c.get("/support-inbox/api/thread/c0000000000000000").status_code == 404
+    print("✓ Inbox ids are handles — no mobile in any path the inbox hands out")
+
+
 if __name__ == "__main__":
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()
@@ -431,3 +467,4 @@ if __name__ == "__main__":
     test_plain_messages_join_only_on_clear_evidence()
     test_acknowledgement_waits_for_the_burst_and_fits_what_she_said()
     test_merge_and_split()
+    test_inbox_ids_never_carry_her_number()

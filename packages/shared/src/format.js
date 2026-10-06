@@ -317,6 +317,30 @@ export const MOBILE_TAKEN =
   "This mobile number is already in use. Create using a different number.";
 
 
+/* ── IS THIS NUMBER (OR EMAIL) ALREADY AN ACCOUNT? — asked in the BODY, never the URL ──
+ * (Privacy Notice v0.5 §2/§7, 2026-10-06.) It used to be `GET /onboarding/known?id=<mobile>`,
+ * and a query string is written into every access log on the way — ours, the host's, any
+ * proxy's. Those logs are kept for a year, so the URL form made a year of IP↔mobile pairs.
+ * Same retries as any read (getJSON passes the options through); the lookup creates nothing,
+ * so repeating it is safe. Every caller goes through here — do not rebuild the URL by hand. */
+export async function knownLookup(id) {
+  const v = String(id || "").trim();
+  try {
+    return await getJSON("/onboarding/known", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: v }),
+    });
+  } catch (e) {
+    /* ★ AN API OLDER THAN THIS CLIENT ANSWERS 405 (2026-10-06, found live: the web was updated
+       before Render had deployed the POST route, and every sign-in said Meyy could not be
+       reached). Fall back to the old GET for that case ONLY, so a client is never broken by
+       the deploy order. Remove once every server has the POST route for a while. */
+    if (String(e && e.message) !== "405") throw e;
+    return getJSON(`/onboarding/known?id=${encodeURIComponent(v)}`);
+  }
+}
+
 /* ── "ALREADY IN USE" — one answer for the front door and the profile alike ──
  * Mobile and email are both CREDENTIALS (A5, 2026-08-26): a second account may never take
  * one that is already held. `/onboarding/known` answers for either shape and deliberately
@@ -331,9 +355,7 @@ export async function idInUse(value, selfId = "") {
   const v = String(value || "").trim();
   if (!v) return false;
   try {
-    const r = await fetch(`${API}/onboarding/known?id=${encodeURIComponent(v)}`);
-    if (!r.ok) return false;
-    const d = await r.json();
+    const d = await knownLookup(v);   // throws on a non-2xx → false below
     if (d && d.reason === "ambiguous_email") return true;
     if (!d || !d.known) return false;
     return String(d.id || v).toLowerCase() !== String(selfId || "").trim().toLowerCase();

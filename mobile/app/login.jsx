@@ -20,7 +20,7 @@ import { View, ScrollView, KeyboardAvoidingView, Keyboard, Platform, Pressable, 
 import { Text } from "../components/Text";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { API, getJSON, idInUse, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
+import { API, getJSON, idInUse, knownLookup, MOBILE_TAKEN, setUser } from "@aruvi/shared/format";
 import { DEVICE_SEEN_KEY as SEEN_KEY } from "@aruvi/shared/signout";
 import { authEnabled, sendOtp, verifyOtp as verifyOtpRemote, OTP_LEN, OTP_TTL_MS, OTP_EXPIRED,
          OTP_RESEND_LOCK_MS, authHeaders } from "@aruvi/shared/auth";
@@ -295,7 +295,7 @@ export default function Login() {
     if (!ok) return;
     setSigninErr(""); setSigninBusy(true);
     try {
-      const d = await getJSON(`/onboarding/known?id=${encodeURIComponent(trimmed)}`);
+      const d = await knownLookup(trimmed);
       if (d && d.known) {
         const uid = d.id || trimmed;
         if (!live) { setSigninBusy(false); enter(uid); return; }
@@ -378,7 +378,7 @@ export default function Login() {
                  this, backing out of the subscribe wizard left her with the trial door only. */
               let taken = false;
               try {
-                const k = await getJSON(`/onboarding/known?id=${encodeURIComponent(mobile.trim())}`);
+                const k = await knownLookup(mobile.trim());
                 taken = !!(k && k.known && !k.fresh);
               } catch { taken = await idInUse(mobile.trim()); }
               if (taken) { setMobBusy(false); setMobErr(MOBILE_TAKEN); return; }

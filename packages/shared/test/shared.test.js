@@ -99,6 +99,20 @@ test("sign-out clears every per-teacher cache", () => {
   assert.equal(loadBank(), null);
 });
 
+test("sign-out sweeps every per-teacher key and keeps only the device settings", () => {
+  // Privacy Notice v0.5 §5: "Signing out removes all of this" — except what says nothing about her.
+  const u = "9000000002";
+  for (const k of [`aruvi_invoices_${u}`, `setup_check_pending_${u}`, `setup_check_pending_bought_${u}`,
+    `first_run_check_pending_${u}`, `mylessons_subject_${u}`, `mylessons_class_${u}`,
+    `allocations_science_ix_${u}`, `aruvi_fresh_start_${u}`, `aruvi_pending_readiness_${u}`,
+    "current_chapter_science_ix_A", `chapter_notes_science_ix_x_${u}__synced`]) storage.setItem(k, "x");
+  const keep = { "aruvi-theme": "dark", "aruvi-text-size": "large", aruvi_device_seen: "1", aruvi_signup_mode: "signin" };
+  Object.entries(keep).forEach(([k, v]) => storage.setItem(k, v));
+  clearTeacherCaches();                          // NO extra prefixes: the shared list must be enough
+  assert.deepEqual(storage.keys().sort(), Object.keys(keep).sort());
+  Object.keys(keep).forEach((k) => storage.removeItem(k));
+});
+
 test("Ask Meyy search", () => {
   const pairs = [{ q: "How do I attach a lesson to a class?", a: "…" }, { q: "Where is my invoice?", a: "…" }];
   const r = search(pairs, "attach lesson");

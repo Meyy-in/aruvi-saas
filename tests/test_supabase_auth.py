@@ -154,13 +154,15 @@ def test_api_supabase_mode():
     # The open routes stay open.
     assert c.get("/health").status_code == 200
     assert c.get("/legal/privacy").status_code == 200
+    assert c.post("/onboarding/known", json={"id": "9876543210"}).json()["known"] is True
+    # the old GET answers the same, for an app build older than the body form
     assert c.get("/onboarding/known", params={"id": "9876543210"}).json()["known"] is True
     print("✓ API in supabase mode: bearer only, header ignored, account keyed by mobile")
 
     # WALK-A-018: a token minted BEFORE the erasure can never re-create the account; a fresh
     # sign-in (a later token) comes back as a new account. And a never-activated account is
     # `fresh` at /onboarding/known (WALK-A-021).
-    known = c.get("/onboarding/known", params={"id": "9876543210"}).json()
+    known = c.post("/onboarding/known", json={"id": "9876543210"}).json()
     assert known["known"] is True and known["fresh"] is True, known
     old = {"Authorization": f"Bearer {_token(iat_offset=-120)}"}
     r = c.post("/data-rights/erase", headers=old, json={"confirm": "erase", "downloaded_confirmed": True})

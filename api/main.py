@@ -76,6 +76,11 @@ app.add_middleware(
     CORSMiddleware, allow_origins=config.CORS_ORIGINS, allow_methods=["*"],
     allow_headers=["*"], expose_headers=["ETag", "Content-Disposition"],
 )
+# The one-year access log (api/access_log.py). Added LAST so it is the OUTERMOST layer and sees
+# every request's final status, CORS preflights included. It records route PATTERNS only.
+from .access_log import AccessLog  # noqa: E402
+app.add_middleware(AccessLog, log_dir=config.ACCESS_LOG_DIR, keep_days=config.ACCESS_LOG_DAYS,
+                   enabled=config.ACCESS_LOG_ENABLED)
 
 # Test-campaign tracker state (docs/testing.md §6a) — campaign tooling, not a teacher
 # surface: /api/testing/campaign{,/item,/defect,/export.csv} + /api/testing/tracker.
@@ -2939,6 +2944,22 @@ def list_support_requests(identity: tuple = Depends(_current_identity)) -> Dict[
          "message": r.message, "created_at": r.created_at,
          "acknowledged": r.acknowledged, "status": r.status}
         for r in support_repo.load_all(tenant_id, user_id)]}
+
+
+class KnownQuery(BaseModel):
+    """Body for POST /onboarding/known — the number (or email) she typed."""
+    id: str = ""
+
+
+@app.post("/onboarding/known")
+def onboarding_known_post(req: KnownQuery) -> Dict[str, Any]:
+    """★ THE NUMBER TRAVELS IN THE BODY, NEVER IN THE URL (Privacy Notice v0.5 §2/§7,
+    2026-10-06). A query string is written into every access log on the way — ours, the
+    host's, any proxy's — and those logs are kept for a year, so `?id=<mobile>` turned a
+    year of IP addresses into a year of IP↔mobile pairs. Both apps call THIS route; the GET
+    below survives only for an app build older than the change, and the access log never
+    records a query string anyway (api/access_log.py)."""
+    return onboarding_known(req.id)
 
 
 @app.get("/onboarding/known")

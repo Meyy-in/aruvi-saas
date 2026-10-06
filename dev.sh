@@ -84,8 +84,8 @@ start_all() {
   stop_all >/dev/null
 
   ARUVI_ENTITLEMENT_ENFORCED="$enforced" \
-    nohup python3 -m uvicorn api.main:app --host 0.0.0.0 --port "$API_PORT" \
-    > "$LOGS/api.log" 2>&1 &
+    nohup python3 -m uvicorn api.main:app --host 0.0.0.0 --port "$API_PORT" --no-access-log \
+    > "$LOGS/api.log" 2>&1 &   # request lines: .devlogs/access/ (api/access_log.py)
   nohup npm --prefix web run dev -- -H 0.0.0.0 > "$LOGS/web.log" 2>&1 &
 
   wait_port "$API_PORT" || { echo "API failed — tail $LOGS/api.log"; tail -20 "$LOGS/api.log"; }

@@ -96,7 +96,7 @@ private and secure" (`Login.jsx:260`) currently sits above that. The notice desc
 launch state (real OTP via an SMS provider, named in §6) — it must not go live before the
 code does.
 
-**3.2 Sign-in identifiers travel in URL query strings and land in access logs.** FIX.
+**3.2 Sign-in identifiers travel in URL query strings and land in access logs.** ✅ FIXED 2026-10-06 (POST body, inbox handles, `api/access_log.py` — route patterns, 365 days).
 `GET /onboarding/known?id=<mobile>` (`format.js:146`) — uvicorn's access log, redirected to
 `.devlogs/api.log` by `dev.sh:87`, holds `client_ip … ?id=<mobile>` lines with no rotation.
 Under Rule 6 these logs must be kept a year; a year of IP↔mobile pairs is a record the notice
@@ -104,7 +104,7 @@ would have to disclose as linked to her account. Move the identifier to a header
 logs hold IP + path only, then the notice's "not linked to your account" (§7) is true.
 Set log rotation to 12 months.
 
-**3.3 Sign-out clears two keys and leaves the rest.** FIX (small). `page.jsx:619-621` removes
+**3.3 Sign-out clears two keys and leaves the rest.** ✅ FIXED 2026-10-06 (`TEACHER_CACHE_PREFIXES` holds every per-teacher key; notice v0.5 §5 names what is kept). `page.jsx:619-621` removes
 `aruvi_user` and the Ask bank; `chapter_notes_*`, `lu_pointer_*`, `section_history_*`,
 `allocations_*`, prefs remain on a shared staff-room PC. The notice promises full clearing
 `[AT LAUNCH]`; clear every key with the user suffix and the section-state keys on sign-out.
@@ -302,7 +302,7 @@ the notice does not claim. So:
 | §10 | Languages | **English only** for requests; notice in English, translations to follow, no date promised |
 | §10 | Registered office | `[ ]` — to paste |
 | §7 | Invoice retention | **8 years** (Companies Act §128) `[accountant to confirm]` |
-| — | Grievance Officer | **The founder, by name** |
+| — | Grievance Officer | ~~The founder, by name~~ → **by DESIGNATION only, support@meyy.in** (founder, 2026-10-06; notice v0.6 §10) |
 
 Consequence for `_KEPT` (3.15): it grows from four rows to **six** — add "The record that
 you asked us to erase" (mobile, time, counts) and "Email we exchanged" (business mailbox,
@@ -318,7 +318,7 @@ deletion and Data safety requirements. Not legal advice — for counsel's review
 
 ---
 
-## 8. For counsel — the trial ledger (added 2026-09-18, founder)
+## 8. For counsel — the trial ledger (added 2026-09-18, founder) — CLOSED 2026-10-06, see §9
 
 **What was built.** A free trial is once per mobile number, including across an account erasure.
 On erasure Meyy keeps one line per number: an HMAC-SHA256 of the normalised mobile under a
@@ -338,3 +338,29 @@ free offer is a business interest, not a legal duty. Is disclosed, time-limited,
 for this purpose defensible (e.g. as a term of the trial offer the teacher accepts), and is 24
 months proportionate? If not, the fallbacks are: shorten the period; make it a condition shown
 and accepted at trial sign-up; or drop it and accept the loophole.
+
+---
+
+## 9. Counsel questions — CLOSED by the founder (2026-10-06)
+
+The nine questions drawn up for counsel on 2026-10-06 were settled by the founder instead. Recorded
+here so a later reviewer sees the decision and its reason, not an open item.
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | Is "to provide the service" (DPDP §7(a)) the right basis for everything except marketing email and WhatsApp? | **Keep as drafted.** Consent only where consent is the basis. |
+| 2 | Trial ledger — keyed hash of the mobile kept 24 months after erasure (§8 above) | **Closed.** Scrambled, minimal, disclosed — a legitimate use. |
+| 3 | Agreement-acceptance and erasure records keep the mobile after erasure | **Closed.** Evidence of the agreement and of the erasure — legitimate. |
+| 4 | WhatsApp basis; what to say about Meta's own copies | **Closed.** Consent, switched off in Settings › Personal profile. The notice no longer promises "reply STOP" (v0.6); the webhook still honours it. |
+| 5 | Must the Grievance Officer be named? | **Designation only**, support@meyy.in (v0.6 §10). |
+| 6 | Do the Consumer Protection (E-Commerce) Rules 2020 apply? | **Ignored** by decision. |
+| 7 | Refund (technical failure / billing error, 1 week) and liability cap (12 months' fees) | **Kept as drafted.** |
+| 8 | Is the tiered change mechanism (show / show + email / re-tick changed points) valid? | **Ignored** by decision. |
+| 9 | Is a self-declared "18 or older" enough? | **Yes** — self-declaration is the basis in India today; adopt online checks when standards for them exist. ⚠️ The declaration is not yet ASKED anywhere (see below). |
+
+⚠️ **Open from #9:** the notice says she must be 18 or older, but no screen asks her to say so — the
+trial asks only for a mobile, and the agreement's five ticks do not mention age. A self-declaration
+that is never made is not a basis. Fix with the next agreement version (one line in acknowledgement
+1 or the final tick), batched with the other agreement fixes still owed (§F names no Grievance
+Officer and a `[founder contact email]`; §D/§J `[support email]`).
+

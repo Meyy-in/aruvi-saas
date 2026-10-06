@@ -73,6 +73,12 @@ services:
         generateValue: true
       - key: ARUVI_ENTITLEMENT_ENFORCED
         value: "1"
+      # The one-year access log (api/access_log.py; Privacy Notice v0.5 §2/§7; DPDP Rules 2025
+      # rule 6). On the persistent disk, OUTSIDE the state folder, so it survives deploys and the
+      # erase walk never meets it. ⚠️ If the disk is ever removed (Supabase-only), move this to
+      # other persistent storage FIRST — the notice promises a year.
+      - key: ARUVI_ACCESS_LOG_DIR
+        value: /var/aruvi/logs
       # TEST-ONLY (walk row X.02): mobile numbers whose read-back right after a profile save
       # reports periods-a-week +1, so the save-failed banner can be walked. Leave EMPTY in
       # normal running; set in the dashboard only for the walk. api/config.TEST_READBACK_SKEW.

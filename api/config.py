@@ -38,6 +38,15 @@ DATA_DIR = os.environ.get("ARUVI_DATA_DIR", _DEFAULT_DATA)
 _DEFAULT_STATE = str(_REPO_ROOT / "data" / "cloud" / "state")
 STATE_DIR = os.environ.get("ARUVI_STATE_DIR", _DEFAULT_STATE)
 
+# Access log (Privacy Notice v0.5 §2/§7, DPDP Rules 2025 rule 6) — api/access_log.py. One file
+# per day, deleted after ACCESS_LOG_DAYS. Must sit on PERSISTENT storage in production (render.yaml
+# points it at the disk) and OUTSIDE STATE_DIR, so the erase walk and the export never meet it —
+# a line is not linked to any account. Locally it lands in .devlogs/ (git-ignored).
+ACCESS_LOG_DIR = (os.environ.get("ARUVI_ACCESS_LOG_DIR", "").strip()
+                  or str(_REPO_ROOT / ".devlogs" / "access"))
+ACCESS_LOG_DAYS = int(os.environ.get("ARUVI_ACCESS_LOG_DAYS", "365"))
+ACCESS_LOG_ENABLED = os.environ.get("ARUVI_ACCESS_LOG", "1").strip() not in ("0", "false", "off", "")
+
 # Testing-campaign state — local-only, outside the migration unit.
 _DEFAULT_TESTING = str(_REPO_ROOT / "data" / "testing")
 TESTING_DIR = os.environ.get("ARUVI_TESTING_DIR", _DEFAULT_TESTING)
