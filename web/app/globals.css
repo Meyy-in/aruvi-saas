@@ -5996,3 +5996,21 @@ button.rp-sec:disabled { opacity: .45; cursor: default; }
 button.sup-sec { background: var(--paper-2); color: var(--pine-d); border: 1px solid var(--pine); }
 button.sup-sec:disabled { opacity: .45; cursor: default; }
 @media (max-width: 420px) { .sup-two { flex-direction: column; } }
+
+/* ★ THE LEGAL PAGES TAKE THE WIDE SCREEN ON A COMPUTER (founder, 2026-10-06). Settings › Legal
+   kept `main`'s 860px reading column at ≥1024px, which squeezed the Privacy Notice's four-column
+   tables (§2, §6, §7) into tall narrow cells. The page — pinned pill band and card — now uses
+   the desktop collection width, so the TABLES and the five agreement cards spread out; running
+   prose is held to a readable line (~110 characters) inside that, left-aligned with everything
+   else, so a paragraph never becomes a 170-character line. Desktop only: the phone layout and
+   mobile/theme/web.js are untouched. Placed at the END of the file so it follows every base rule
+   it overrides (the same-specificity source-order trap, §4). */
+@media (min-width: 1024px) {
+  main:has(.set-legal) { max-width: var(--desk-w); }
+  .set-legal .lgl-p, .set-legal .lgl-ul, .set-legal .lgl-h2, .set-legal .lgl-h3,
+  .set-legal .lgl-intro, .set-legal .lgl-ack-body, .set-legal .lgl-accepted,
+  .set-legal .lgl-hint { max-width: 110ch; }
+  .set-legal .lgl-table { font-size: 13.5px; }
+  .set-legal .lgl-table td, .set-legal .lgl-table th { padding-right: 18px; }
+  .set-legal .lgl-table td:last-child, .set-legal .lgl-table th:last-child { padding-right: 0; }
+}
