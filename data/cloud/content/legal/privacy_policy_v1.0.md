@@ -13,6 +13,7 @@
 > AI model providers generically (frontier, open-source and future models) — ⚠️ the no-training
 > promise holds ONLY if every provider is used under terms that forbid training on what we send
 > (API / business terms, never a consumer chat app); §7 keeps app-use records up to one year.
+> §2's chapter-notes row also says Meyy collects no children's data and may delete any found (founder).
 > **Served since
 > 2026-09-04** — `GET /legal/privacy` (open, no identity), Settings › Legal (second pill),
 > the sign-in screens' links, and the agreement's final-tick words. GIVEN, NOT SIGNED: no
@@ -145,7 +146,7 @@ consent** (DPDP Act §6), which you can withdraw.
 | Subscribing (optional) | Your **marketing-email choice** — one tick, default off | To know whether we may email you about new subjects, features and teaching ideas. | **Your consent** — withdraw any time in Settings › Emails or from the link in any such email |
 | **Using Meyy** | Your **teaching profile**: the subjects, classes and sections you teach (labels such as "9A"; you may give a section a short nickname of up to 8 characters), period lengths, periods a week, and your annual period budget per class | This is what Meyy plans around. It is the only description of your teaching we hold. | To provide the service |
 | Using Meyy | Your **teaching progress**: for each section, the chapter you are on, the learning unit you reached, which chapters you marked complete, the chapters each section has been taught, bookmarks, and which plans you archived | So that "where did I stop?" has an answer on any device. | To provide the service |
-| Using Meyy | Your **chapter notes** — free text you write about a chapter, up to 500 words, one note per chapter per academic year. **The only free-text field in Meyy.** | Saved to your account so your note opens on any device. There is **no version history**: editing a note replaces it, and clearing it deletes it. | To provide the service |
+| Using Meyy | Your **chapter notes** — free text you write about a chapter, up to 500 words, one note per chapter per academic year. **The only free-text field in Meyy.** Notes are for your own teaching, never about a student: Meyy does not collect any data about children, and we have the right to delete any student's name, roll number, marks, health or family details found in a note (§4). | Saved to your account so your note opens on any device. There is **no version history**: editing a note replaces it, and clearing it deletes it. | To provide the service |
 | Using Meyy | Your **support messages**: the category you chose, what you wrote, the reference number we gave you, which screen you were on, and the name and email on your account if any | To answer you, and to keep a record of what was asked and answered. | To provide the service |
 | Using Meyy (optional) | **WhatsApp support**: whether you turned it on and when, and the messages you and Meyy exchange on WhatsApp (their text, time and delivery status), kept in Meyy's support inbox. Only on your sign-in mobile number. | To answer you on WhatsApp, and to send you service messages there: a welcome when you turn it on, your invoice, and replies or follow-ups to your support requests. | **Your consent** — turn it off any time in Settings › Personal profile |
 | Using Meyy | **Your subscription record**: which subject-stages you hold, the trial chapters you used, when your subscription runs to, and where it was bought (web, or an app store) | To know what you are entitled to. | To provide the service |
@@ -153,8 +154,7 @@ consent** (DPDP Act §6), which you can withdraw.
 | Using Meyy | **How you use the app**: which screens and features you open, and in what order. | To see what is hard to find or use, and to make Meyy better — including with the help of AI (§3a). | To provide the service |
 
 **What Meyy does not collect, and has no way to collect:** your location, contacts, photos,
-camera or microphone (the "Speak" button on the notes screen only opens the keyboard — no
-audio is recorded), your device's identifiers, or anything from other apps or websites. Meyy
+camera or microphone, your device's identifiers, or anything from other apps or websites. Meyy
 sets **no cookies** and includes **no advertising code and no third-party tracking code**.
 
 ---
@@ -240,11 +240,7 @@ or apps.
 
 ## 6. Who else handles your data
 
-Meyy is built and run by one person, and your data is seen by that one person only when
-running the service requires it (answering your support message, fixing a fault, issuing
-a refund). No employees, contractors or agencies have access.
-
-We use a small number of service providers ("Data Processors") who handle data only on our
+Meyy does not employ contractors or third parties to run the service. We use a small number of service providers ("Data Processors") who handle data only on our
 instructions and only to do the job named:
 
 | Provider | What they do | What they handle | Where |

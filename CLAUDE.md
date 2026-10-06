@@ -1599,6 +1599,10 @@ account-linkage left open), "no third-party tracking code"; §3a AI may help FIX
 future). ⚠️ The "nothing you give Meyy trains an AI model" promise holds ONLY under provider terms
 that forbid training (API/business terms — never a consumer chat app). §7 app-use records ≤ 1 year.
 When app-use tracking is built: it must honour that row (and erasure where linked).
+★ **LEGAL & COMPLIANCE CLOSED (founder, 2026-10-06).** v1.0 of both documents is the launch baseline.
+WhatsApp chats stay OUT of the data export by decision (she has them on her phone). Future changes:
+new version file + the founder picks the agreement's Re-acceptance line. Follow-ups, not blockers:
+dormancy job before 2029; `docs/legal/privacy_policy_considerations.md` last paragraph.
 
 **Settings › Support — email is the ONLY channel, and the acknowledgement is the
 feature (2026-08-27).** No phone, no WhatsApp, no chat, no LLM answering tickets; Ask

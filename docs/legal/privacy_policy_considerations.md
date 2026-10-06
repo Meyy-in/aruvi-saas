@@ -368,3 +368,10 @@ v1.0 every agreement file carries a `> **Re-acceptance:**` line (none · points 
 founder sets per change; see `api/legal.py reacceptance()` and `_consent_status` in api/main.py.
 The API serves privacy versions from v1.0 only (`legal.PRIVACY_FIRST_SERVED`).
 
+**CLOSED 2026-10-06 (founder): legal & compliance is complete for launch.** User Agreement v1.0 and
+Privacy Notice v1.0 are the baseline for new users. Decided the same day: WhatsApp chats are NOT added
+to the data export (the teacher holds them on her own phone and can restore them there); erasure still
+removes them. Left as known follow-ups, not blockers: the 3-year dormancy job (§7 promise; nothing is
+due before 2029), and the founder-side facts the notice states (two-step login on every admin account,
+real SMS via MSG91, Razorpay live, ARUVI_ACCESS_LOG_DIR on Render, AI providers only on no-training
+business terms).

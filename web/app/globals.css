@@ -6007,6 +6007,9 @@ button.sup-sec:disabled { opacity: .45; cursor: default; }
    it overrides (the same-specificity source-order trap, §4). */
 @media (min-width: 1024px) {
   main:has(.set-legal) { max-width: var(--desk-w); }
+  /* …and the Settings column inside it, which caps every subview at 560px (found live: widening
+     `main` alone changed nothing on screen). */
+  .setwrap:has(.set-legal) { max-width: none; }
   .set-legal .lgl-p, .set-legal .lgl-ul, .set-legal .lgl-h2, .set-legal .lgl-h3,
   .set-legal .lgl-intro, .set-legal .lgl-ack-body, .set-legal .lgl-accepted,
   .set-legal .lgl-hint { max-width: 110ch; }
