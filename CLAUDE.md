@@ -1593,6 +1593,12 @@ ticks, context `reconfirm`); all / no line → every tick (every pre-v1.0 draft)
 sign in full. `legal.reacceptance/required_since`, `_consent_status`, both Agreement.jsx, page.jsx +
 mobile _layout bars. Privacy drafts < v1.0 are NOT served (`PRIVACY_FIRST_SERVED`, 404 → "write to
 support@"). Tests: tests/test_reacceptance.py (scratch versions in a temp content root).
+Notice v1.0 ALSO (same day, folded in before launch): §2 "How you use the app" (screens/features;
+account-linkage left open), "no third-party tracking code"; §3a AI may help FIX what she reports,
+"a human gate is always involved"; §6 a generic **AI model providers** row (frontier · open-source ·
+future). ⚠️ The "nothing you give Meyy trains an AI model" promise holds ONLY under provider terms
+that forbid training (API/business terms — never a consumer chat app). §7 app-use records ≤ 1 year.
+When app-use tracking is built: it must honour that row (and erasure where linked).
 
 **Settings › Support — email is the ONLY channel, and the acknowledgement is the
 feature (2026-08-27).** No phone, no WhatsApp, no chat, no LLM answering tickets; Ask

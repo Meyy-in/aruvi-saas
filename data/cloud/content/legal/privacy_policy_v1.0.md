@@ -5,7 +5,14 @@
 > **What changed in v1.0:** §1 says the 18+ confirmation is made at sign-in; §12 describes what
 > really happens on a change (a one-line note in the app; current version in Settings › Legal;
 > earlier versions on request — the API no longer serves the pre-launch drafts v0.1–v0.6).
-> Nothing about collection, use, retention or rights changed.
+> Also in v1.0 (founder, same day, before launch — folded in so launch starts from ONE baseline):
+> §2 gains "How you use the app" (screens and features opened; whether it is linked to the account
+> is left open — founder: "we can ensure that later") and "no third-party tracking code" replaces
+> "no tracking code of any kind"; §3a lets AI help fix what a teacher REPORTS (Report an issue), with
+> "a human gate is always involved" (founder's words), and covers studying app use with AI; §6 names
+> AI model providers generically (frontier, open-source and future models) — ⚠️ the no-training
+> promise holds ONLY if every provider is used under terms that forbid training on what we send
+> (API / business terms, never a consumer chat app); §7 keeps app-use records up to one year.
 > **Served since
 > 2026-09-04** — `GET /legal/privacy` (open, no identity), Settings › Legal (second pill),
 > the sign-in screens' links, and the agreement's final-tick words. GIVEN, NOT SIGNED: no
@@ -92,7 +99,7 @@ Meyy is a lesson-planning tool for **teachers**, and the person whose data we ho
 — an adult who signed in with a mobile number. We keep what we need to run your account,
 bill you, and remember where you stopped teaching. We do not keep anything about your
 students, and we ask you not to give us any. We do not show advertisements, we do not use
-trackers or cookies, and we do not sell or share your data for anyone else's purposes. We use
+advertising trackers or cookies, and we do not sell or share your data for anyone else's purposes. We use
 AI to build and improve Meyy, and where that meets your data the rules are short: **nothing you
 give Meyy is used to train an AI model**, a person stays in the loop, and no AI decides anything
 about you (§3a). You can download everything we hold about
@@ -143,11 +150,12 @@ consent** (DPDP Act §6), which you can withdraw.
 | Using Meyy (optional) | **WhatsApp support**: whether you turned it on and when, and the messages you and Meyy exchange on WhatsApp (their text, time and delivery status), kept in Meyy's support inbox. Only on your sign-in mobile number. | To answer you on WhatsApp, and to send you service messages there: a welcome when you turn it on, your invoice, and replies or follow-ups to your support requests. | **Your consent** — turn it off any time in Settings › Personal profile |
 | Using Meyy | **Your subscription record**: which subject-stages you hold, the trial chapters you used, when your subscription runs to, and where it was bought (web, or an app store) | To know what you are entitled to. | To provide the service |
 | Using Meyy | **Technical records**: our web server records the address (IP) each request came from, the time, and the kind of page or action requested, as every web server does. They never include your mobile number, email or any other account identifier. | To keep the service running, detect abuse, and investigate faults. | To provide the service (and, once in force, the DPDP Rules' one-year log-retention requirement) |
+| Using Meyy | **How you use the app**: which screens and features you open, and in what order. | To see what is hard to find or use, and to make Meyy better — including with the help of AI (§3a). | To provide the service |
 
 **What Meyy does not collect, and has no way to collect:** your location, contacts, photos,
 camera or microphone (the "Speak" button on the notes screen only opens the keyboard — no
 audio is recorded), your device's identifiers, or anything from other apps or websites. Meyy
-sets **no cookies** and includes **no advertising or tracking code** of any kind.
+sets **no cookies** and includes **no advertising code and no third-party tracking code**.
 
 ---
 
@@ -180,9 +188,10 @@ for you. Where that meets your data, these are the rules:
 - **Nothing you give Meyy is used to train an AI model.**
 - Information that **does not identify you** may be used to fix faults, keep Meyy secure, and
   make the product better.
-- When you **write to us** — about a problem, your subscription or an invoice — we may use AI to
-  help work out the answer, using only what you sent and only to answer it. A person reads your
-  message and a person replies.
+- When you **write to us or report a problem in a lesson**, we may use AI to help work out the
+  answer and to fix what you reported, using only what you sent. A human gate is always involved
+  in the process.
+- **How you use the app** (§2) may be studied, with the help of AI, to make Meyy easier to use.
 - **A person stays in the loop, and no AI decides anything about you** — your teaching, your
   subscription or your billing.
 
@@ -246,9 +255,11 @@ instructions and only to do the job named:
 | **MSG91** (Walkover Web Solutions Private Limited) | Delivers your one-time sign-in code | Your mobile number and the code | India |
 | **Razorpay** (Razorpay Software Private Limited) | Takes your payment | Your payment details (which Meyy never sees), name, email, mobile, amount | India |
 | **Meta** (Meta Platforms, Inc. / WhatsApp), only if you turn on WhatsApp support | Delivers WhatsApp messages between you and Meyy (WhatsApp Business Platform) | Your mobile number, your first name, the messages exchanged and any invoice PDF sent to you there | Meta's infrastructure, which may be outside India |
+| **AI model providers** — today's leading frontier models, such as Claude (Anthropic), ChatGPT (OpenAI) and Gemini (Google); we may also use open-source models, and new models as they are released, on the same terms | Help us answer your support messages and problem reports, fix lesson plans, and improve Meyy (§3a) | The text of your message or report and the lesson it refers to; how the app is used (§2) | Their infrastructure, which may be outside India |
 | **Apple or Google**, only if you subscribe inside their app store | Takes the payment and manages that subscription under their own privacy policy | Your app-store account and payment; Meyy receives a purchase confirmation and no payment details | Their infrastructure |
 
-That is the complete list. Nobody else receives your personal data, with two exceptions any
+Whichever AI model we use, we use it only under terms that do not allow it to be trained on what
+we send. That is the complete list. Nobody else receives your personal data, with two exceptions any
 Indian company has: we will disclose data **if the law requires it** (a court order, or a
 lawful request from a government authority under the DPDP Act or the IT Act), and if Meyy
 is ever **sold or merged**, your data would pass to the new owner under this same notice,
@@ -276,6 +287,7 @@ providers if one is ever named.
 | The record that this mobile number has used its free trial | Kept for **24 months** after you erase your account, so that the free trial stays once per number: a **keyed, one-way code** made from your mobile number (the number itself is not stored) and how many trial chapters it used, or that a subscription was bought. Nothing else — no name, profile, notes or content. If you sign up again within those 24 months you start with a new, empty account, but the trial chapters already used are counted. After 24 months the record is deleted. |
 | The record that you asked us to erase | Kept as evidence of the erasure: your sign-in mobile number, the time you confirmed, and a count of what was removed. Nothing else. |
 | Web-server technical records (IP address, time, action) | **One year**, as the DPDP Rules, 2025 require of every data fiduciary, then deleted. They are not linked to your account. |
+| How you use the app (screens and features opened) | Up to **one year**, then deleted. Anything linked to your account is erased with it (§8). |
 | Shared lesson-plan library | Not personal data. Lesson plans are Meyy's shared library; your account holds references to them, and erasure removes the references. |
 | An account you stop using | If you neither sign in nor hold a subscription for **3 years**, we email you, wait **48 hours**, and then erase the account exactly as if you had asked (§8). |
 
