@@ -55,7 +55,9 @@ export function SectionFailedBar({ message, onDismiss }) {
  * decides what counts as an update by comparing the version on her account with the highest file
  * on disk, and an account with no recorded version is silent (founder, same day: no pop-up for
  * existing users). */
-export function PrivacyNoteBar({ version, onRead, onDismiss }) {
+/* `label` names the document — the same bar serves the User Agreement when an agreement change
+ * CARRIES her acceptance over (the three-row rule, 2026-10-06). */
+export function PrivacyNoteBar({ version, onRead, onDismiss, label = "Privacy Notice" }) {
   const { t } = useTheme();
   const ws = useWebStyles();
   if (!version) return null;
@@ -64,7 +66,7 @@ export function PrivacyNoteBar({ version, onRead, onDismiss }) {
                                 backgroundColor: t.paper_2 }]}
       accessibilityRole="summary">
       <Text style={[ws.pn_note_t, { color: t.ink }]}>
-        Meyy’s Privacy Notice has been updated (version {version}).
+        Meyy’s {label} has been updated (version {version}).
       </Text>
       <View style={ws.pn_note_acts}>
         <Pressable onPress={onRead} accessibilityRole="button" hitSlop={8}

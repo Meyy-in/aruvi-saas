@@ -64,7 +64,8 @@ def test_document_parses_into_five_plus_one():
             "the tick's own label belongs to the checkbox, not the body text"
     assert doc["final"]["text"].strip(), "the sixth tick exists"
     # The whole point of parsing rather than retyping: the body must actually be there.
-    assert "Data protection" in doc["agreement"] or "DPDP" in doc["agreement"]
+    # v1.0 (2026-10-06): §F is "Your personal data" and points to the Privacy Notice
+    assert "Your personal data" in doc["agreement"] and "Privacy Notice" in doc["agreement"]
     # The lawyer's front matter is scaffolding — a teacher never sees it.
     assert "legal review" not in doc["intro"].lower()
     print("✓ The agreement parses into five acknowledgements + a body + a final tick")

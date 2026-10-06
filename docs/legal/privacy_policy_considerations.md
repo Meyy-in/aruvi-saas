@@ -358,9 +358,13 @@ here so a later reviewer sees the decision and its reason, not an open item.
 | 8 | Is the tiered change mechanism (show / show + email / re-tick changed points) valid? | **Ignored** by decision. |
 | 9 | Is a self-declared "18 or older" enough? | **Yes** — self-declaration is the basis in India today; adopt online checks when standards for them exist. ⚠️ The declaration is not yet ASKED anywhere (see below). |
 
-⚠️ **Open from #9:** the notice says she must be 18 or older, but no screen asks her to say so — the
-trial asks only for a mobile, and the agreement's five ticks do not mention age. A self-declaration
-that is never made is not a basis. Fix with the next agreement version (one line in acknowledgement
-1 or the final tick), batched with the other agreement fixes still owed (§F names no Grievance
-Officer and a `[founder contact email]`; §D/§J `[support email]`).
+✅ **#9 is already met:** the create screen on both surfaces (web `Login.jsx`, phone
+`app/login.jsx`) says "By continuing you confirm you are 18 or older and have read Meyy's Privacy
+Notice" — the door every new number passes through, trial included. v1.0 of both documents states it
+too (agreement §A; notice §1 "you confirm that you are when you sign in").
+
+**PUBLISHED 2026-10-06: User Agreement v1.0 and Privacy Notice v1.0 — the launch baseline.** From
+v1.0 every agreement file carries a `> **Re-acceptance:**` line (none · points · all) that the
+founder sets per change; see `api/legal.py reacceptance()` and `_consent_status` in api/main.py.
+The API serves privacy versions from v1.0 only (`legal.PRIVACY_FIRST_SERVED`).
 

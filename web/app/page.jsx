@@ -1314,6 +1314,28 @@ export default function Home() {
     goSettings(); setSettingsView("legal"); setLegalDoc("privacy");
     stampPrivacySeen("updated_note_read");
   };
+  /* ★ "THE USER AGREEMENT WAS UPDATED" — the same quiet bar, for an agreement change the
+     founder marked `Re-acceptance: none` (the three-row rule, 2026-10-06): her acceptance
+     CARRIES OVER, so nothing is signed — she is told, once. `updated` comes from the server
+     (`carried` and not yet seen); a change that owes her ticks is asked for at her next
+     purchase instead, never here. */
+  const [agreementNote, setAgreementNote] = useState(null);
+  useEffect(() => {
+    if (!user) { setAgreementNote(null); return; }
+    let live = true;
+    getJSON("/legal/consent/status")
+      .then((d) => { if (live && d && d.updated) setAgreementNote(d); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [user]);
+  const stampAgreementSeen = (context) => {
+    setAgreementNote(null);
+    postJSON("/legal/consent/seen", { context }).catch(() => {});
+  };
+  const readAgreementNote = () => {
+    goSettings(); setSettingsView("legal"); setLegalDoc("agreement");
+    stampAgreementSeen("updated_note_read");
+  };
   /* ★ WALK-A-119 (founder 2026-09-27): the profile opened from the ADD WINDOW's footer is a
      visit FROM THAT WINDOW, so its ✕ puts the window back (over the tab she was on) — the
      portal's "exit by the door you came in". Holds `{ win }` only on that path; the list's own
@@ -1723,6 +1745,15 @@ export default function Home() {
                   onSaveFailed={() => setSaveFailed(true)}
                   onSubscribe={() => setSubscribeOpen(true)} />
               </div>
+            </div>
+          )}
+          {agreementNote && !(editFlow === "settings" && settingsView === "legal") && (
+            <div className="pn-note" role="status">
+              <span>Meyy&rsquo;s User Agreement has been updated (version {agreementNote.current_version}).</span>
+              <span className="pn-note-acts">
+                <button type="button" className="pn-note-read" onClick={readAgreementNote}>Read it</button>
+                <button type="button" onClick={() => stampAgreementSeen("updated_note_dismissed")}>Dismiss</button>
+              </span>
             </div>
           )}
           {privacyNote && !(editFlow === "settings" && settingsView === "legal") && (

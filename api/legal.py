@@ -249,6 +249,60 @@ def load_consent_document(version: Optional[str] = None) -> Dict[str, Any]:
     return doc
 
 
+# ── THE TRIGGER LINE (founder, 2026-10-06) ───────────────────────────────────────
+# From v1.0 every agreement file carries, in its lawyer notes, ONE line saying what a teacher
+# who accepted an EARLIER version must do when this one is published:
+#     > **Re-acceptance:** none        → her acceptance carries over; the shell shows a bar
+#     > **Re-acceptance:** 3, final    → at her next purchase she re-confirms ONLY those
+#     > **Re-acceptance:** all         → every tick again (the pre-v1.0 rule)
+# The founder chooses it per change. A file WITHOUT the line counts as `all`, which is what
+# every draft before v1.0 meant in practice — so old versions behave exactly as they did.
+_REACCEPT_RE = re.compile(r"^>\s*\*\*Re-acceptance:\*\*\s*(.+?)\s*$", re.IGNORECASE)
+ALL = "all"
+
+
+def reacceptance(version: str):
+    """`ALL`, or the SET of tick ids (`ack1`…`ack5`, `final`) a re-signatory must confirm
+    again for this version. An empty set means nothing — the acceptance carries over."""
+    for ln in _read(version).splitlines():
+        m = _REACCEPT_RE.match(ln.strip())
+        if not m:
+            continue
+        spec = m.group(1).strip().lower()
+        if spec.startswith("all"):
+            return ALL
+        if spec.startswith("none"):
+            return set()
+        out = set()
+        for tok in re.split(r"[,\s]+", spec):
+            tok = tok.strip()
+            if re.fullmatch(r"(ack)?[1-5]", tok):
+                out.add("ack" + tok[-1])
+            elif tok == FINAL_ACK_ID:
+                out.add(FINAL_ACK_ID)
+        if not out:
+            raise ConsentDocumentError(
+                f"Consent document v{version} has a Re-acceptance line that names nothing "
+                f"recognisable ({m.group(1)!r}) — write none, all, or points 1-5 / final.")
+        return out
+    return ALL
+
+
+def required_since(prior_version: str, current: Optional[str] = None):
+    """What a teacher whose standing acceptance is `prior_version` must re-confirm before the
+    CURRENT version binds her: the union of every published version after hers. `ALL` wins
+    over any set. An empty set = her acceptance carries over."""
+    current = current or current_version()
+    need: set = set()
+    for v in available_versions():
+        if _version_key(prior_version) < _version_key(v) <= _version_key(current):
+            spec = reacceptance(v)
+            if spec == ALL:
+                return ALL
+            need |= spec
+    return need
+
+
 def acknowledgement_ids(version: Optional[str] = None) -> List[str]:
     """The ids every acceptance must carry — the five, in order. The final tick is
     recorded separately (it accepts the body, not one point)."""
@@ -280,13 +334,21 @@ _PRIVACY_FILE_RE = re.compile(r"^privacy_policy_v([0-9][0-9.]*)\.md$")
 _DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
 
+# ★ THE PRE-LAUNCH DRAFTS ARE NOT SERVED (founder, 2026-10-06). v0.1–v0.6 were internal drafts —
+# they named the founder personally and carried open brackets — and v1.0 is the launch baseline.
+# Their files stay on disk (and in git) as the record; the API simply does not hand them out.
+# Notice v1.0 §12: "an earlier version is available on request from support@meyy.in".
+PRIVACY_FIRST_SERVED = "1.0"
+
+
 def privacy_versions() -> List[str]:
-    """Every published notice version, oldest first."""
+    """Every SERVED notice version (from PRIVACY_FIRST_SERVED on), oldest first."""
     from . import data
     names = [k.rsplit("/", 1)[-1]
              for k in data.storage().list_prefix(_LEGAL_PREFIX, ".md")]
     out = [m.group(1) for m in (_PRIVACY_FILE_RE.match(n) for n in names) if m]
-    return sorted(out, key=_version_key)
+    floor = _version_key(PRIVACY_FIRST_SERVED)
+    return sorted([v for v in out if _version_key(v) >= floor], key=_version_key)
 
 
 def current_privacy_version() -> str:
@@ -307,6 +369,8 @@ def load_privacy_document(version: Optional[str] = None) -> Dict[str, Any]:
     Cached per version — a version's text never changes once published."""
     from . import data
     version = version or current_privacy_version()
+    if version not in privacy_versions():
+        raise ConsentDocumentError(f"Privacy notice v{version} is not published.")
     if version in _privacy_cache:
         return _privacy_cache[version]
     raw = data.storage().get_text(f"{_LEGAL_PREFIX}/privacy_policy_v{version}.md")

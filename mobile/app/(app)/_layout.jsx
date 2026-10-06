@@ -261,6 +261,20 @@ export default function AppLayout() {
     setPrivacyNote(null);
     postJSON("/legal/privacy/seen", { context }).catch(() => {});
   };
+  /* ★ "The User Agreement has been updated" — the web's bar (page.jsx `agreementNote`): shown
+     once for an agreement change that CARRIES her acceptance over (`Re-acceptance: none`). */
+  const [agreementNote, setAgreementNote] = useState(null);
+  useEffect(() => {
+    let live = true;
+    getJSON("/legal/consent/status")
+      .then((d) => { if (live && d && d.updated) setAgreementNote(d); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, []);
+  const stampAgreementSeen = (context) => {
+    setAgreementNote(null);
+    postJSON("/legal/consent/seen", { context }).catch(() => {});
+  };
 
   /* ⓷ The Ask Meyy bank, refreshed on every signed-in load (row 24). It is an ETag request, so
      an unchanged bank costs a 304 and nothing else. Sign-in primes it; this is what keeps a
@@ -401,7 +415,7 @@ export default function AppLayout() {
       ) : null}
       {/* The notices ride between the bar and the screen — see components/Notices.jsx for why
           they are pinned here rather than at the top of a scroller. */}
-      <View style={{ paddingTop: (sectionFailed || privacyNote) ? 14 : 0 }}>
+      <View style={{ paddingTop: (sectionFailed || privacyNote || agreementNote) ? 14 : 0 }}>
         <SectionFailedBar message={sectionFailed} onDismiss={() => setSectionFailed("")} />
         {/* ⚠️ AND NOW THE "hide it inside Legal" CASE IS OWED AFTER ALL. While the destination
             was `/privacy` — a route outside `(app)` — this layout was not even mounted while she
@@ -410,6 +424,15 @@ export default function AppLayout() {
             reason for its `settingsView === "legal"` guard. Both actions stamp the version seen
             besides, so in practice it is already down; this is for the teacher who arrives at
             Legal by the gear while the bar is still up. */}
+        {!pathname.startsWith("/settings/legal") ? (
+        <PrivacyNoteBar label="User Agreement"
+          version={agreementNote && agreementNote.current_version}
+          onRead={() => {
+            stampAgreementSeen("updated_note_read");
+            router.push({ pathname: "/settings/legal", params: { doc: "agreement" } });
+          }}
+          onDismiss={() => stampAgreementSeen("updated_note_dismissed")} />
+        ) : null}
         {!pathname.startsWith("/settings/legal") ? (
         <PrivacyNoteBar version={privacyNote && privacyNote.current_version}
           onRead={() => {

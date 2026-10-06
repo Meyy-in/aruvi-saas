@@ -2059,12 +2059,22 @@ def get_entitlement(identity: tuple = Depends(_current_identity)) -> Dict[str, A
 # lives in ONE place — `_consent_outstanding` — so the screen and the gate can never
 # disagree about whether she has signed.
 
-def _consent_status(tenant_id: str) -> Dict[str, Any]:
-    """What this tenant has accepted, against what is current today."""
+def _consent_status(tenant_id: str, user_id: str = "") -> Dict[str, Any]:
+    """What this tenant has accepted, against what is current today.
+
+    ★ THE THREE-ROW RULE (founder, 2026-10-06). When a newer version than hers is published,
+    what she must do is decided by the versions in between (`legal.required_since`, from each
+    file's `Re-acceptance:` line):
+      * nothing   → her acceptance CARRIES OVER (`accepted`, `carried`); the shell shows a
+                    one-line bar until she reads or dismisses it (`updated`).
+      * some points → not accepted; `reaccept` names ONLY those, and the screen asks for them.
+      * all       → not accepted; every tick again (`reaccept` = every id) — the old rule.
+    """
     version = legal.current_version()
     rec = consent_repo.latest(tenant_id, legal.DOCUMENT_ID, version)
-    prior = consent_repo.latest(tenant_id, legal.DOCUMENT_ID)   # any version
-    return {
+    prior = consent_repo.latest(tenant_id, legal.DOCUMENT_ID)   # any version, in force
+    all_ids = legal.acknowledgement_ids(version) + [legal.FINAL_ACK_ID]
+    out = {
         "current_version": version,
         "accepted": rec is not None,
         "accepted_at": rec.accepted_at if rec else "",
@@ -2073,11 +2083,28 @@ def _consent_status(tenant_id: str) -> Dict[str, Any]:
         # and the screen should not address her as one.
         "prior_version": prior.document_version if (prior and rec is None) else "",
         "prior_accepted_at": prior.accepted_at if (prior and rec is None) else "",
+        "carried": False, "updated": False, "reaccept": [] if rec else all_ids,
     }
+    if rec is None and prior is not None:
+        need = legal.required_since(prior.document_version, version)
+        if need == legal.ALL:
+            out["reaccept"] = all_ids
+        elif not need:
+            # Carried: she stands on her earlier signature, under the current text.
+            out.update(accepted=True, carried=True, reaccept=[],
+                       accepted_at=prior.accepted_at, accepted_version=prior.document_version,
+                       prior_version="", prior_accepted_at="")
+            acct = account_repo.load(tenant_id, user_id or tenant_id)
+            seen = str(((acct.consent if acct else None) or {}).get("seen_version") or "")
+            out["updated"] = seen != version
+        else:
+            out["reaccept"] = [i for i in all_ids if i in need]
+    return out
 
 
 def _consent_outstanding(tenant_id: str) -> bool:
-    """True when the current version has NOT been accepted by this tenant."""
+    """True when the current version neither has been accepted by this tenant nor carries
+    over her earlier acceptance (the three-row rule in `_consent_status`)."""
     return not _consent_status(tenant_id)["accepted"]
 
 
@@ -2135,8 +2162,10 @@ def get_legal_consent(version: Optional[str] = None,
     accepted v0.1 after v0.2 has been published, because the document she is entitled to
     read back is the one she actually signed."""
     tenant_id, _user_id = identity
-    status = _consent_status(tenant_id)
-    want = version or status["accepted_version"] or status["current_version"]
+    status = _consent_status(tenant_id, _user_id)
+    # A CARRIED acceptance reads the CURRENT text — that is the agreement now binding her.
+    want = version or ("" if status.get("carried") else status["accepted_version"]) \
+        or status["current_version"]
     try:
         doc = legal.load_consent_document(want)
     except legal.ConsentDocumentError as exc:
@@ -2153,9 +2182,36 @@ def get_legal_consent_status(identity: tuple = Depends(_current_identity)) -> Di
     answer a yes/no would make that decision cost more than the step it might skip."""
     tenant_id, _user_id = identity
     try:
-        return _consent_status(tenant_id)
+        return _consent_status(tenant_id, _user_id)
     except legal.ConsentDocumentError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
+
+
+class AgreementSeen(BaseModel):
+    """Body for POST /legal/consent/seen — where the "agreement updated" bar was answered."""
+    context: str = "app"
+
+
+@app.post("/legal/consent/seen")
+def post_legal_consent_seen(req: AgreementSeen,
+                            identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """She has read or dismissed the "User Agreement updated" bar for a CARRIED acceptance.
+    Stamped on the account's consent mirror (erased with her; the ledger is untouched — this
+    is a notice, not a signature)."""
+    tenant_id, user_id = identity
+    try:
+        current = legal.current_version()
+    except legal.ConsentDocumentError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    acct = account_repo.load(tenant_id, user_id)
+    if acct is None:
+        raise HTTPException(status_code=404, detail="No account.")
+    c = dict(acct.consent or {})
+    c.update(seen_version=current, seen_at=datetime.now(timezone.utc).isoformat(),
+             seen_context=(req.context or "app").strip()[:40])
+    acct.consent = c
+    account_repo.save(acct)
+    return {"status": "seen", "version": current}
 
 
 class ConsentAccept(BaseModel):
@@ -2198,8 +2254,15 @@ def post_legal_consent(req: ConsentAccept,
         raise HTTPException(status_code=409, detail=(
             "The agreement has been updated. Please read and accept the current version."))
     ticked = [a for a in (req.acknowledgements or []) if a in expected]
-    missing = [a for a in expected if a not in ticked]
-    if missing or not req.final:
+    status = _consent_status(tenant_id, user_id)
+    owed = set(status.get("reaccept") or [])
+    prior = (consent_repo.latest(tenant_id, legal.DOCUMENT_ID)
+             if status.get("prior_version") else None)
+    partial = bool(prior) and owed and owed != set(expected + [legal.FINAL_ACK_ID])
+    must = [a for a in expected if a in owed] if partial else expected
+    final_owed = (legal.FINAL_ACK_ID in owed) if partial else True
+    missing = [a for a in must if a not in ticked]
+    if missing or (final_owed and not req.final):
         raise HTTPException(status_code=400, detail=(
             "Please confirm each point and accept the full agreement to continue."))
     now = datetime.now(timezone.utc).isoformat()
@@ -2211,9 +2274,13 @@ def post_legal_consent(req: ConsentAccept,
         # One timestamp per tick is what the document asks to be recorded. The client
         # does not send per-tick times (it would be sending us its own clock); they are
         # stamped here, at the moment the completed acceptance arrives.
-        acknowledgements={a: now for a in expected},
-        final_accepted_at=now,
-        context=(req.context or "subscription_checkout").strip(),
+        # A RE-confirmation stamps only the points she was asked again; the others keep the
+        # moment she first confirmed them, so the record never claims a tick she did not give.
+        acknowledgements=({a: (now if a in must else (prior.acknowledgements or {}).get(a)
+                               or prior.accepted_at) for a in expected}
+                          if partial else {a: now for a in expected}),
+        final_accepted_at=(now if final_owed else (prior.final_accepted_at or prior.accepted_at)),
+        context=("reconfirm" if partial else (req.context or "subscription_checkout").strip()),
         user_agent=(user_agent or "")[:300])
     consent_repo.save(record)
     # Mirrored onto the account record's existing `consent` field, which Step 0 put there
@@ -2281,6 +2348,10 @@ def get_legal_privacy(version: Optional[str] = None) -> Dict[str, Any]:
     X-Aruvi-User — because it is linked from the sign-in screen and must be readable by
     someone who has not yet told us her number. `?version=` serves an older published
     version (what her account says she was shown)."""
+    if version and version not in legal.privacy_versions():
+        raise HTTPException(status_code=404, detail=(
+            "That version of the Privacy Notice is not published here. "
+            "Write to support@meyy.in for an earlier version."))
     try:
         doc = legal.load_privacy_document(version)
         return {"document": doc, "current_version": legal.current_privacy_version(),

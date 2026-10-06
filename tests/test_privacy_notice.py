@@ -124,7 +124,7 @@ def test_routes_open_status_seen_export():
     assert d["document"]["document_id"] == "privacy_policy"
     assert d["current_version"] == d["document"]["version"]
     assert d["versions"] and d["versions"][-1] == d["current_version"]
-    assert c.get("/legal/privacy?version=9.9").status_code == 503, "an unpublished version is refused"
+    assert c.get("/legal/privacy?version=9.9").status_code == 404, "an unpublished version is refused"
     # ── STATUS before anything is recorded: SILENT (founder: no pop-up for existing
     #    accounts — only a real version bump counts) ──
     uid = "NoticeKumar"

@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 _LOGS = tempfile.mkdtemp(prefix="meyy-access-")
 os.environ["ARUVI_ACCESS_LOG_DIR"] = _LOGS
+os.environ["ARUVI_ACCESS_LOG"] = "1"
 os.environ.setdefault("ARUVI_STATE_DIR", tempfile.mkdtemp(prefix="meyy-state-"))
 
 

@@ -81,7 +81,19 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
   useEffect(() => {
     let live = true;
     getJSON("/legal/consent")
-      .then((d) => { if (live) setState(d); })
+      .then((d) => {
+        if (!live) return;
+        setState(d);
+        // ★ Re-confirm ONLY what changed (the three-row rule, 2026-10-06) — the web's rule.
+        const owed = Array.isArray(d && d.reaccept) ? d.reaccept : [];
+        const ids = ((d && d.document && d.document.acknowledgements) || []).map((a) => a.id);
+        if (d && d.prior_version && owed.length && owed.length < ids.length + 1) {
+          const pre = {};
+          ids.forEach((id) => { if (!owed.includes(id)) pre[id] = true; });
+          setTicks(pre);
+          if (!owed.includes("final")) setFinal(true);
+        }
+      })
       .catch(() => { if (live) setFailed(
         "The agreement couldn’t be loaded just now. Check your connection and try again."); });
     return () => { live = false; };
@@ -95,6 +107,9 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
   const accepted = state.accepted || state.prior_version;
   const signing = mode === "sign";
   const allTicked = acks.length > 0 && acks.every((a) => ticks[a.id]) && final;
+  const owed = Array.isArray(state.reaccept) ? state.reaccept : [];
+  const partial = signing && !!state.prior_version && owed.length > 0 && owed.length < acks.length + 1;
+  const locked = (id) => partial && !owed.includes(id);
 
   const accept = () => {
     setBusy(true); setErr("");
@@ -143,8 +158,9 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
       {signing ? (
         state.prior_version ? (
           <Text style={[ws.lgl_hint, { color: t.ink_soft }]}>
-            The agreement has been updated since you accepted version {state.prior_version}.
-            Please read it again and confirm each point.
+            The agreement has been updated since you accepted version {state.prior_version}.{" "}
+            {partial ? "Only the points still to be ticked below have changed — please read them and confirm them again."
+                     : "Please read it again and confirm each point."}
           </Text>
         ) : null
       ) : accepted ? (
@@ -153,6 +169,11 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
             <Text style={[ws.lgl_tick, { color: t.pine }]}>✓ </Text>
             Accepted on {dateWords(state.accepted_at || state.prior_accepted_at)} · version{" "}
             {state.accepted_version || state.prior_version}
+            {state.carried && state.current_version ? (
+              <Text style={[ws.lgl_stale, { color: t.ink_soft }]}>
+                {" "}— still in force under version {state.current_version}
+              </Text>
+            ) : null}
             {!state.accepted && state.prior_version ? (
               <Text style={[ws.lgl_stale, { color: t.ink_soft }]}>
                 {" "}— a newer version applies from your next subscription
@@ -190,10 +211,14 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
               <Pressable accessibilityRole="checkbox"
                 accessibilityState={{ checked: !!ticks[a.id] }}
                 accessibilityLabel={`Point ${a.n}: I understand and agree`}
+                disabled={locked(a.id)}
                 onPress={() => setTicks((prev) => ({ ...prev, [a.id]: !prev[a.id] }))}
                 style={[ws.lgl_check, { borderTopColor: t.line }]}>
                 <Checkbox checked={!!ticks[a.id]} />
-                <Text style={[ws.lgl_check_t, { color: t.ink }]}>I understand and agree.</Text>
+                <Text style={[ws.lgl_check_t, { color: locked(a.id) ? t.ink_soft : t.ink }]}>
+                  {locked(a.id) ? `Confirmed earlier (version ${state.prior_version}) — unchanged.`
+                                : "I understand and agree."}
+                </Text>
               </Pressable>
             ) : null}
           </View>
@@ -209,6 +234,7 @@ export default function Agreement({ mode = "read", onAccepted, onBack, backLabel
       {signing && doc.final ? (
         <View style={[ws.lgl_final, { backgroundColor: t.paper_sunk, borderColor: t.line }]}>
           <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: final }}
+            disabled={locked("final")}
             onPress={() => setFinal((v) => !v)}
             style={[ws.lgl_check, ws.lgl_check_flat]}>
             <Checkbox checked={final} />

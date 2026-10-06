@@ -84,7 +84,21 @@ export default function Agreement({ mode = "read", userId = "", onAccepted, onBa
           .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       : getJSON("/legal/consent");
     load
-      .then((d) => { if (live) setState(d); })
+      .then((d) => {
+        if (!live) return;
+        setState(d);
+        /* ★ RE-CONFIRM ONLY WHAT CHANGED (the three-row rule, 2026-10-06). When the server owes
+           her only SOME points (`reaccept`, after an earlier acceptance), the others arrive
+           ticked and locked — she confirmed them before and their text has not changed. */
+        const owed = Array.isArray(d && d.reaccept) ? d.reaccept : [];
+        const ids = ((d && d.document && d.document.acknowledgements) || []).map((a) => a.id);
+        if (d && d.prior_version && owed.length && owed.length < ids.length + 1) {
+          const pre = {};
+          ids.forEach((id) => { if (!owed.includes(id)) pre[id] = true; });
+          setTicks(pre);
+          if (!owed.includes("final")) setFinal(true);
+        }
+      })
       .catch(() => { if (live) setFailed(
         "The agreement couldn't be loaded just now. Check your connection and try again."); });
     return () => { live = false; };
@@ -97,6 +111,9 @@ export default function Agreement({ mode = "read", userId = "", onAccepted, onBa
   const acks = doc.acknowledgements || [];
   const signing = mode === "sign";
   const allTicked = acks.length > 0 && acks.every((a) => ticks[a.id]) && final;
+  const owed = Array.isArray(state.reaccept) ? state.reaccept : [];
+  const partial = signing && !!state.prior_version && owed.length > 0 && owed.length < acks.length + 1;
+  const locked = (id) => partial && !owed.includes(id);
 
   const accept = async () => {
     setBusy(true); setErr("");
@@ -162,6 +179,8 @@ export default function Agreement({ mode = "read", userId = "", onAccepted, onBa
             <span className="lgl-tick">✓</span> Accepted on{" "}
             {dateWords(state.accepted_at || state.prior_accepted_at)} · version{" "}
             {state.accepted_version || state.prior_version}
+            {state.carried && state.current_version && (
+              <span className="lgl-stale"> — still in force under version {state.current_version}</span>)}
             {!state.accepted && state.prior_version && (
               <span className="lgl-stale"> — a newer version applies from your next
                 subscription</span>)}
@@ -176,7 +195,9 @@ export default function Agreement({ mode = "read", userId = "", onAccepted, onBa
           should not greet her as one. */}
       {signing && state.prior_version && (
         <p className="lgl-hint">The agreement has been updated since you accepted version{" "}
-          {state.prior_version}. Please read it again and confirm each point.</p>
+          {state.prior_version}.{" "}
+          {partial ? "Only the points still to be ticked below have changed — please read them and confirm them again."
+                   : "Please read it again and confirm each point."}</p>
       )}
 
       {doc.intro && <div className="lgl-intro">{renderMarkdown(doc.intro, "intro")}</div>}
@@ -193,9 +214,10 @@ export default function Agreement({ mode = "read", userId = "", onAccepted, onBa
             <div className="lgl-ack-body">{renderMarkdown(a.body, a.id)}</div>
             {signing && (
               <label className="lgl-check">
-                <input type="checkbox" checked={!!ticks[a.id]}
+                <input type="checkbox" checked={!!ticks[a.id]} disabled={locked(a.id)}
                   onChange={(e) => setTicks((t) => ({ ...t, [a.id]: e.target.checked }))} />
-                <span>I understand and agree.</span>
+                <span>{locked(a.id) ? `Confirmed earlier (version ${state.prior_version}) — unchanged.`
+                                    : "I understand and agree."}</span>
               </label>
             )}
           </li>
@@ -208,7 +230,7 @@ export default function Agreement({ mode = "read", userId = "", onAccepted, onBa
       {signing && (
         <div className="lgl-final">
           <label className="lgl-check lgl-check-final">
-            <input type="checkbox" checked={final}
+            <input type="checkbox" checked={final} disabled={locked("final")}
               onChange={(e) => setFinal(e.target.checked)} />
             <span>{withNoticeLink(doc.final?.text, () => setShowPrivacy(true))}</span>
           </label>

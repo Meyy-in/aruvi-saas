@@ -1580,8 +1580,19 @@ kept: theme, text size, device-seen, signup mode, and a cut-short tour-replay sn
 at the next sign-in). Tests: tests/test_access_log.py, test_support_queue (handles), shared.test.js.
 **v0.6 (same day):** Grievance Officer by DESIGNATION only (no personal name), "reply STOP" no
 longer promised, and all nine counsel questions CLOSED by the founder
-(`docs/legal/privacy_policy_considerations.md §9`). Still open: the 18+ self-declaration is not
-asked anywhere — batch it into agreement v0.6 with §F/§D/§J; the re-acceptance tiers (§J / §12).
+(`docs/legal/privacy_policy_considerations.md §9`).
+★ **v1.0 OF BOTH PUBLISHED (2026-10-06) — the launch baseline; legal is now STABLE.** Agreement v1.0:
+18+ in §A, support@meyy.in in §D/§J, §F points to the notice + Grievance Officer by designation, §J
+says how changes are announced, final tick accepts the AGREEMENT. Notice v1.0: §1 18+ at sign-in,
+§12 truthful (note in app; current in Settings › Legal; earlier on request). **THE TRIGGER LINE:**
+every agreement file from v1.0 carries `> **Re-acceptance:** none | 3, final | all` — the founder
+picks it PER CHANGE. none → acceptance CARRIES (`carried`), one-line "User Agreement updated" bar
+(`updated`; POST /legal/consent/seen stamps `Account.consent.seen_version`); points → at the next
+purchase only those are asked (others arrive ticked + locked; record stamps only the re-confirmed
+ticks, context `reconfirm`); all / no line → every tick (every pre-v1.0 draft). New teachers always
+sign in full. `legal.reacceptance/required_since`, `_consent_status`, both Agreement.jsx, page.jsx +
+mobile _layout bars. Privacy drafts < v1.0 are NOT served (`PRIVACY_FIRST_SERVED`, 404 → "write to
+support@"). Tests: tests/test_reacceptance.py (scratch versions in a temp content root).
 
 **Settings › Support — email is the ONLY channel, and the acknowledgement is the
 feature (2026-08-27).** No phone, no WhatsApp, no chat, no LLM answering tickets; Ask
