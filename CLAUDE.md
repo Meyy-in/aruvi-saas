@@ -5,6 +5,19 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ---
 
+## ★ REAL SMS SIGN-IN CODES — MSG91 VIA THE SUPABASE SEND-SMS HOOK (2026-10-07)
+
+DLT is DONE (Airtel): entity MEYY (OPC) PRIVATE LIMITED 1001173771984363043 (valid to 2027-10-04),
+header **MEYYIN** (1005060628164897789), template **meyy_signin_otp_v2** Transactional, DLT id
+1077585560028067580: "Your Meyy sign-in code is {#numeric#}. Never share it with anyone."
+PE-TM chain to MSG91 (Walkover, TM 1302157225275643280) Active. MSG91 template id
+6ac52060a8bc430f4c03d7a2, variable `otp`; a live Flow-API test reached the founder's phone.
+Code: `aruvi_core/adapters/msg91_sms.py` + `POST /auth/sms-hook` (api/main.py) — verifies the
+Standard-Webhooks signature (5-min window), sends via MSG91, non-2xx on any failure; never logs
+the code. Env (Render, sync:false): `ARUVI_MSG91_AUTHKEY`, `ARUVI_SMS_HOOK_SECRET` ("v1,whsec_…"
+from Supabase); `ARUVI_MSG91_OTP_TEMPLATE_ID` defaults to the v2 id. Tests: tests/test_sms_hook.py.
+Supabase: Auth › Hooks › Send SMS → HTTPS → {API}/auth/sms-hook. Test numbers keep working.
+
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
 **Integrated Support inbox (2026-10-03).** `/support-inbox` is now ONE queue: WhatsApp threads AND

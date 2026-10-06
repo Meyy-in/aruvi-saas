@@ -243,6 +243,16 @@ WA_WELCOME_NAME_PARAM = os.environ.get("ARUVI_WA_WELCOME_NAME_PARAM", "1").strip
 WA_VERIFY_TOKEN = os.environ.get("ARUVI_WA_VERIFY_TOKEN", "").strip()
 WA_APP_SECRET = os.environ.get("ARUVI_WA_APP_SECRET", "").strip()
 
+# ── SMS sign-in codes via MSG91 (2026-10-07) ────────────────────────────────────
+# Supabase Auth calls POST /auth/sms-hook (its "Send SMS" hook) with the code; we hand it to
+# MSG91, which delivers it under the DLT header MEYYIN. The key and the secret come from
+# the Render dashboard only. HOOK_SECRET is the "v1,whsec_…" string Supabase shows when the hook is
+# created. Empty AUTHKEY or HOOK_SECRET → the hook refuses (503) and no SMS is sent.
+MSG91_AUTHKEY = os.environ.get("ARUVI_MSG91_AUTHKEY", "").strip()
+MSG91_OTP_TEMPLATE_ID = (os.environ.get("ARUVI_MSG91_OTP_TEMPLATE_ID", "").strip()
+                         or "6ac52060a8bc430f4c03d7a2")       # meyy_signin_otp_v2
+SMS_HOOK_SECRET = os.environ.get("ARUVI_SMS_HOOK_SECRET", "").strip()
+
 # ── The WhatsApp Support inbox (2026-09-30) ─────────────────────────────────────
 # Customer messages to the Meyy number arrive at the server; the founder reads and answers them
 # at {PUBLIC_API_URL}/support-inbox. The page is closed until SUPPORT_INBOX_PASSWORD is set

@@ -2784,6 +2784,67 @@ if config.MAIL_SYNC:
 app.include_router(_support_inbox_mod.build_router(support_inbox))
 
 
+# ── Supabase "Send SMS" auth hook → MSG91 (2026-10-07) ──────────────────────────
+# Supabase generates the sign-in code and POSTs {"user": {"phone": …}, "sms": {"otp": …}} here,
+# signed per Standard Webhooks (webhook-id / webhook-timestamp / webhook-signature, HMAC-SHA256
+# with the hook secret). We verify, then hand the code to MSG91. Any non-2xx tells Supabase
+# the send failed, and the app shows its normal "could not send" error. Never log the code.
+SMS_HOOK_TOLERANCE_S = 300
+
+
+def _sms_hook_signature_ok(secret: str, msg_id: str, ts: str, raw: bytes, header: str) -> bool:
+    import base64
+    import hmac
+    import time
+    if not (secret and msg_id and ts and header):
+        return False
+    try:
+        if abs(time.time() - int(ts)) > SMS_HOOK_TOLERANCE_S:
+            return False                      # stale or future — a replay
+        key = secret.split(",", 1)[-1]        # "v1,whsec_…" → "whsec_…"
+        key = key[len("whsec_"):] if key.startswith("whsec_") else key
+        signed = msg_id.encode() + b"." + ts.encode() + b"." + raw
+        want = base64.b64encode(hmac.new(base64.b64decode(key), signed,
+                                         hashlib.sha256).digest()).decode()
+    except Exception:                         # noqa: BLE001 — bad secret / bad timestamp
+        return False
+    for part in header.split():               # "v1,<sig> v1,<sig2>" during rotation
+        ver, _, sig = part.partition(",")
+        if ver == "v1" and hmac.compare_digest(sig, want):
+            return True
+    return False
+
+
+def _sms_hook_error(code: int, message: str) -> JSONResponse:
+    return JSONResponse(status_code=code, content={"error": {"http_code": code, "message": message}})
+
+
+@app.post("/auth/sms-hook")
+async def auth_sms_hook(request: Request):
+    from aruvi_core.adapters.msg91_sms import Msg91Sms
+    raw = await request.body()
+    if not (config.SMS_HOOK_SECRET and config.MSG91_AUTHKEY):
+        return _sms_hook_error(503, "SMS sending is not configured.")
+    h = request.headers
+    if not _sms_hook_signature_ok(config.SMS_HOOK_SECRET, h.get("webhook-id", ""),
+                                  h.get("webhook-timestamp", ""), raw,
+                                  h.get("webhook-signature", "")):
+        print("[aruvi] sms-hook: REJECTED (bad or missing signature)")
+        return _sms_hook_error(401, "Bad signature.")
+    try:
+        body = json.loads(raw or b"{}")
+    except ValueError:
+        return _sms_hook_error(400, "Bad request.")
+    phone = str(((body.get("user") or {}).get("phone")) or "")
+    otp = str(((body.get("sms") or {}).get("otp")) or "")
+    res = Msg91Sms(config.MSG91_AUTHKEY, config.MSG91_OTP_TEMPLATE_ID).send_otp(phone, otp)
+    print(f"[aruvi] sms-hook: …{phone[-4:]} {res.get('status')} "
+          f"{res.get('request_id') or res.get('error') or ''}")
+    if res.get("status") != "sent":
+        return _sms_hook_error(502, "Could not send the SMS. Please try again.")
+    return {}
+
+
 @app.get("/whatsapp/webhook")
 def whatsapp_webhook_verify(request: Request):
     q = request.query_params

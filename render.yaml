@@ -115,6 +115,10 @@ services:
         sync: false
       - key: ARUVI_WA_APP_SECRET
         sync: false
+      - key: ARUVI_MSG91_AUTHKEY
+        sync: false
+      - key: ARUVI_SMS_HOOK_SECRET
+        sync: false
       - key: ARUVI_SUPPORT_INBOX_PASSWORD
         sync: false
       - key: ARUVI_SUPPORT_DRAFT_TOKEN
