@@ -20,6 +20,13 @@ Supabase: Auth › Hooks › Send SMS → HTTPS → {API}/auth/sms-hook. Test nu
 
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
+**Non-member reply (2026-10-07, OFF until launch).** A number on no Meyy account (`Inbox.is_member`,
+lookup failure counts as member) gets ONE message ever — `WA_NONMEMBER_TEXT` (sign-up link to
+www.meyy.in) — in place of the end-of-burst acknowledgement; every later issue gets silence
+(`ack: nonmember-quiet`, thread `nonmember_info_at`). The inbox tags such rows "Not a member" (queue
+field `member`) and they still need a reply. Switch on with `ARUVI_WA_NONMEMBER_REPLY=1` on Render
+once the link leads somewhere she can sign up. Test: `test_a_non_member_gets_one_sign_up_message_ever_and_members_never_do`.
+
 **Integrated Support inbox (2026-10-03).** `/support-inbox` is now ONE queue: WhatsApp threads AND
 email cases (`support_repo.load_everyone()`), filters Needs reply / Open / All, tags (WhatsApp ·
 Email·MEY-S-… · category · Draft ready). Email cases show the app context ledger and are answered by

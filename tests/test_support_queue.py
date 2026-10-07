@@ -454,7 +454,54 @@ def test_inbox_ids_never_carry_her_number():
     print("✓ Inbox ids are handles — no mobile in any path the inbox hands out")
 
 
+def test_a_non_member_gets_one_sign_up_message_ever_and_members_never_do():
+    """Founder, 2026-10-07: a number on no Meyy account gets ONE message with the sign-up link,
+    instead of the acknowledgement, and then silence; a member (a trial counts) gets the normal
+    acknowledgement and never the sign-up text. Off unless WA_NONMEMBER_REPLY is on."""
+    m, c, _ = _setup()
+    from datetime import datetime, timedelta, timezone
+    c.post("/onboarding/verified", headers={"X-Aruvi-User": "9800000501"}, json={})   # a member
+    assert m.support_inbox.is_member("9800000501") and not m.support_inbox.is_member("9800000502")
+    old = m.config.WA_NONMEMBER_REPLY
+    m.config.WA_NONMEMBER_REPLY = True
+    try:
+        with _Wa(m) as wa:
+            def say(n, mid, body):
+                m.support_inbox.on_message({"from": "91" + n, "id": mid, "type": "text", "text": {"body": body}})
+            later = lambda: datetime.now(timezone.utc) + timedelta(minutes=16)
+            say("9800000501", "mm1", "Why is LCM asked here?")
+            say("9800000502", "nm1", "Hi, what is Meyy?")
+            m.support_inbox.send_due_acks(now=later())
+            def by(n, who):
+                return [x["text"] for x in m.wa_inbox_repo.load(n)["messages"] if x.get("by") == who]
+            assert len(by("9800000501", "auto-ack")) == 1 and by("9800000501", "auto-nonmember") == []
+            assert by("9800000502", "auto-ack") == []
+            info = by("9800000502", "auto-nonmember")
+            assert len(info) == 1 and "meyy.in" in info[0]
+            # she writes again much later, a new issue: silence this time
+            _age(m, "9800000502", 120)
+            say("9800000502", "nm2", "Hello? How do I pay?")
+            m.support_inbox.send_due_acks(now=later())
+            assert len(by("9800000502", "auto-nonmember")) == 1 and by("9800000502", "auto-ack") == []
+            # still in the inbox for the founder, tagged, and still needing a reply
+            items = [i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"]
+                     if i.get("number") == "9800000502"]
+            assert items and all(i["member"] is False for i in items)
+            assert any(i["needs_reply"] for i in items)
+        # switched off: a non-member gets the ordinary acknowledgement, no sign-up text
+        m.config.WA_NONMEMBER_REPLY = False
+        with _Wa(m):
+            m.support_inbox.on_message({"from": "919800000503", "id": "nx1", "type": "text",
+                                        "text": {"body": "Why is LCM asked here?"}})
+            m.support_inbox.send_due_acks(now=datetime.now(timezone.utc) + timedelta(minutes=16))
+            msgs = m.wa_inbox_repo.load("9800000503")["messages"]
+            assert [x for x in msgs if x.get("by") == "auto-ack"] and not [x for x in msgs if x.get("by") == "auto-nonmember"]
+    finally:
+        m.config.WA_NONMEMBER_REPLY = old
+
+
 if __name__ == "__main__":
+    test_a_non_member_gets_one_sign_up_message_ever_and_members_never_do()
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()
     test_founder_email_reply_threads_and_uses_up_the_draft()

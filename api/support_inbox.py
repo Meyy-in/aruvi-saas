@@ -234,7 +234,7 @@ def issue_state(t: Dict[str, Any], ref: str) -> Dict[str, Any]:
             "category": st.get("category", "plan"), "resolved_at": st.get("resolved_at", "")}
 
 
-_AUTO_BY = ("auto-greeting", "auto-ack", "system")
+_AUTO_BY = ("auto-greeting", "auto-ack", "auto-nonmember", "system")
 # A reference as she might type it (founder, 2026-10-04: "Mey 1236" must find MEY-W-1236): the
 # prefix is required, the separators and the "W" are not — MEY-W-1236, mey w 1236, MEY1236, Mey-1236.
 _REF_RE = re.compile(r"\b(MEY|ARV)\s*[-–]?\s*(?:W\s*[-–]?\s*)?(\d{3,7})\b", re.I)
@@ -347,6 +347,14 @@ class Inbox:
             a = None
         nm = (getattr(a, "display_name", "") or "").strip() if a else ""
         return nm if nm and not nm.isdigit() else (fallback or "")
+
+    def is_member(self, n: str) -> bool:
+        """True when this mobile is on a Meyy account (a trial counts). If the lookup fails we
+        answer True — the safe side: a member must never get the 'please sign up' message."""
+        try:
+            return self.accounts.load(n, n) is not None
+        except Exception:                                   # noqa: BLE001
+            return True
 
     # ── inbound (called by the webhook) ──
     def on_message(self, m: Dict[str, Any], profile_name: str = "", to_pn: str = "") -> None:
@@ -624,6 +632,19 @@ class Inbox:
                 if now - last_in > timedelta(hours=23):
                     self.repo.patch_issue(n, ref, ack="expired")
                     continue
+                if getattr(self.config, "WA_NONMEMBER_REPLY", False) and not self.is_member(n):
+                    # ★ A NON-MEMBER GETS ONE MESSAGE, EVER (founder, 2026-10-07) — this instead
+                    # of the acknowledgement, whatever she wrote; every later issue gets silence.
+                    if (self.repo.load(n) or {}).get("nonmember_info_at"):
+                        self.repo.patch_issue(n, ref, ack="nonmember-quiet")
+                        continue
+                    body = str(getattr(self.config, "WA_NONMEMBER_TEXT", "") or "").strip()
+                    self.repo.patch_issue(n, ref, ack="sent")   # claimed BEFORE sending: never twice
+                    self.repo.patch(n, nonmember_info_at=now.isoformat())
+                    if body:
+                        self.send_text(n, body, by="auto-nonmember", issue=ref)
+                        sent += 1
+                    continue
                 kind = ack_kind([x.get("text", "") for x in msgs if x.get("dir") == "in"])
                 if kind == "none":
                     self.repo.patch_issue(n, ref, ack="not-needed")
@@ -728,6 +749,7 @@ class Inbox:
             t = self.repo.load(n) or {}
             pairs = issues_of(t.get("messages") or [])
             last_in = next((r for r, m in reversed(pairs) if m.get("dir") == "in"), None)
+            member = self.is_member(n)
             today = now.date().isoformat()
             flood = sum(1 for _, x in pairs if x.get("ref") and x.get("dir") == "in"
                         and str(x.get("at", ""))[:10] == today) > FLOOD_ISSUES
@@ -747,6 +769,7 @@ class Inbox:
                               # ★ A FLOOD (more than FLOOD_ISSUES new issues today) leaves "Needs
                               # reply" so it cannot bury other teachers; still under Open and All.
                               "flood": flood,
+                              "member": member,
                               "needs_reply": _last_human_dir(msgs) == "in" and not flood})
         for c in (self.cases.load_everyone() if self.cases else []):
             last = (c.thread or [])[-1] if c.thread else None
@@ -1244,7 +1267,7 @@ function renderList(){const L=$('#list');L.innerHTML='';
  for(const t of vis){const b=document.createElement('button');b.className='row'+(cur&&key(t)===cur?' on':'');
   const kind=t.kind==='wa'?`<span class="tag wa">WhatsApp${t.ref?' · '+esc(t.ref):''}</span>`:`<span class="tag mail">Email · ${esc(t.id)}</span>`;
   const cat=t.category?`<span class="tag">${esc(t.category_label||CATL[t.category]||t.category)}</span>`:'';
-  const st=((t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'')+(t.flood?'<span class="tag flood">Many messages</span>':'');
+  const st=((t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'')+(t.flood?'<span class="tag flood">Many messages</span>':'')+(t.kind==='wa'&&t.member===false?'<span class="tag flood">Not a member</span>':'');
   b.innerHTML=`<div class="rtop"><span class="rname">${t.kind==='wa'&&t.window_open?'<span class="dot" title="Reply window open"></span>':''}${esc(t.name)}${t.unread?`<span class="badge">${t.unread}</span>`:''}</span><span class="rtime">${when(t.at)}</span></div><div class="rtags">${kind}${cat}${t.has_draft?'<span class="tag draft">Draft ready</span>':''}${st}</div><div class="rprev">${t.preview_dir==='out'?'You: ':''}${esc(t.preview)}</div>`;
   b.onclick=()=>openItem(t.kind,t.id);L.appendChild(b)}}
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{filter=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));renderList()});

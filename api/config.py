@@ -292,6 +292,21 @@ WA_ACK_TEXT = (os.environ.get("ARUVI_WA_ACK_TEXT", "").strip() or
                "Thanks — we've received your message and will reply within 1 working day.")
 WA_ACK_GREET = (os.environ.get("ARUVI_WA_ACK_GREET", "").strip() or
                 "Hello! Please tell us what you need help with, and we'll reply here.")
+# ★ THE ONE REPLY TO A NON-MEMBER (founder, 2026-10-07). A number on NO Meyy account that writes
+# to the WhatsApp number gets this ONCE, instead of the acknowledgement, when her burst goes
+# quiet; after that, nothing automatic ever again (she still shows in the inbox, tagged "Not a
+# member", for the founder to answer by hand). OFF until launch — the link must point somewhere a
+# teacher can actually sign up. Turn on with ARUVI_WA_NONMEMBER_REPLY=1 on Render.
+# Outside the app, so the stores' payment rules do not apply; it answers a message she started,
+# so it is inside WhatsApp's 24-hour window and needs no template.
+WA_NONMEMBER_REPLY = os.environ.get("ARUVI_WA_NONMEMBER_REPLY", "").strip().lower() in (
+    "1", "true", "yes", "on")
+WA_NONMEMBER_TEXT = (os.environ.get("ARUVI_WA_NONMEMBER_TEXT", "").strip().replace("\\n", "\n") or
+                     "Hello! Thanks for writing to Meyy.\n\n"
+                     "Meyy prepares lesson plans for your classes, aligned to NCF 2023. "
+                     "Try 3 chapters free: sign up at https://www.meyy.in or download the Meyy app.\n\n"
+                     "Already a member? Please write from the mobile number you signed in with.\n\n"
+                     "— Meyy support")
 # Emails: at most this many automatic acknowledgements a day per teacher. Past it the case is
 # still opened and numbered; only the acknowledgement mail is skipped (sender reputation).
 SUPPORT_EMAIL_ACKS_PER_DAY = int(os.environ.get("ARUVI_SUPPORT_EMAIL_ACKS_PER_DAY", "10"))
