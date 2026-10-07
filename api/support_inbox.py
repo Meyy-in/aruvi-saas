@@ -33,9 +33,7 @@ import hashlib
 import hmac
 import html
 import json
-import random
 import re
-import uuid
 import time
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, Optional
@@ -244,32 +242,6 @@ BURST_MIN = 15          # her messages this close together are one burst — one
 AFTER_REPLY_MIN = 30    # what she writes this soon after OUR reply answers it
 ACKS_PER_DAY = 10       # automatic acknowledgements per number per day (founder, 2026-10-05: as email)
 FLOOD_ISSUES = 10       # more new issues than this in a day → "Many messages"
-# ★ A CONSIDERED REPLY, NOT A CHAT (founder, 2026-10-07). The founder's WhatsApp answer is HELD
-# until a random 3–4 hours after her message, and goes out only between 6 am and 10 pm India time
-# (early-morning preparers and evening teachers, but nothing that encourages late nights). A fixed
-# hour would be unfair to whoever wrote just before it; a random hold keeps us from looking
-# instant. The automatic acknowledgement still goes after 15 quiet minutes. "Send now" overrides.
-HOLD_MIN_MIN, HOLD_MAX_MIN = 180, 240
-DAY_START_H, DAY_END_H = 6, 22          # India time; a reply never leaves outside [06:00, 22:00)
-MORNING_SPREAD_MIN = 30                 # night-held replies go 06:00–06:30, not all at 06:00 sharp
-WINDOW_GUARD = timedelta(hours=23, minutes=45)   # never let a hold run past WhatsApp's 24 hours
-IST = timezone(timedelta(hours=5, minutes=30))
-
-
-def reply_due(her_last: datetime, now: datetime, thread_last_in: Optional[datetime] = None,
-              rng: Optional[random.Random] = None) -> datetime:
-    """When a reply to a message she sent at `her_last` may go: 3–4 h after it (random), not
-    before now, and inside 06:00–22:00 IST (else the next 06:00–06:30). If that would pass the
-    24-hour window the chat allows, it goes at the guard instead — late beats a paid template."""
-    rng = rng or random
-    due = max(her_last + timedelta(minutes=rng.uniform(HOLD_MIN_MIN, HOLD_MAX_MIN)), now)
-    loc = due.astimezone(IST)
-    if not (DAY_START_H <= loc.hour < DAY_END_H):
-        day = loc.date() if loc.hour < DAY_START_H else loc.date() + timedelta(days=1)
-        due = (datetime(day.year, day.month, day.day, DAY_START_H, tzinfo=IST)
-               + timedelta(minutes=rng.uniform(0, MORNING_SPREAD_MIN))).astimezone(timezone.utc)
-    guard = (thread_last_in or her_last) + WINDOW_GUARD
-    return max(min(due, guard), now)
 
 
 def resolve_ref(t: Dict[str, Any], ref: str) -> str:
@@ -689,83 +661,6 @@ class Inbox:
                     sent += 1
         return sent
 
-    # ── held replies (founder, 2026-10-07) ──
-    def schedule_reply(self, n: str, ref: str, text: str, reply_to: str = "",
-                       now: Optional[datetime] = None, rng=None) -> Dict[str, Any]:
-        """Hold the founder's reply until reply_due(); if that is already now, send it now."""
-        now = now or datetime.now(timezone.utc)
-        t = self.repo.load(n) or {}
-        seg = [x for r, x in issues_of(t.get("messages") or []) if r == ref]
-        her = [_parse(x.get("at", "")) for x in seg if x.get("dir") == "in"]
-        her = [h for h in her if h] or [now]
-        due = reply_due(max(her), now, _parse(t.get("last_inbound_at", "")), rng)
-        if due <= now:
-            res = self.send_text(n, text, issue=ref, reply_to=reply_to)
-            return {"status": "sent" if res.get("status") in ("sent", "written") else "failed", "result": res}
-        item = {"sid": uuid.uuid4().hex[:12], "issue": ref, "text": text, "reply_to": reply_to,
-                "due": due.isoformat(), "created_at": now.isoformat()}
-        def add(th):
-            th["scheduled"] = list(th.get("scheduled") or []) + [item]
-        self.repo.update(n, add)
-        self.repo.patch_issue(n, ref, draft={})          # the draft became this held reply
-        self.log({"kind": "reply_scheduled", "to": "…" + n[-4:], "due": item["due"]})
-        return {"status": "scheduled", "due": item["due"], "sid": item["sid"]}
-
-    def _take_scheduled(self, n: str, sid: str) -> Optional[Dict[str, Any]]:
-        """Remove ONE held reply under the thread lock and return it — the claim that makes
-        sure a reply is never sent twice (the loop and a "Send now" tap can race)."""
-        got = {}
-        def take(th):
-            keep = []
-            for x in th.get("scheduled") or []:
-                if x.get("sid") == sid and not got:
-                    got["x"] = x
-                else:
-                    keep.append(x)
-            th["scheduled"] = keep
-        self.repo.update(n, take)
-        return got.get("x")
-
-    def _deliver(self, n: str, x: Dict[str, Any]) -> Dict[str, Any]:
-        t = self.repo.load(n) or {}
-        if not window_open(t, current_pn=self.config.WA_PHONE_NUMBER_ID):
-            # The 24 hours ran out (should not happen — reply_due guards it): give it back as
-            # a draft so the founder sees it and can send the re-open template.
-            self.repo.patch_issue(n, x.get("issue") or "", draft={"text": x.get("text", ""), "by": "founder"})
-            self.log({"kind": "reply_held_window_closed", "to": "…" + n[-4:]})
-            return {"status": "window_closed"}
-        return self.send_text(n, x.get("text", ""), issue=x.get("issue") or "",
-                              reply_to=x.get("reply_to", ""))
-
-    def send_scheduled_now(self, n: str, sid: str) -> Dict[str, Any]:
-        x = self._take_scheduled(n, sid)
-        return self._deliver(n, x) if x else {"status": "gone"}
-
-    def cancel_scheduled(self, n: str, sid: str) -> Dict[str, Any]:
-        x = self._take_scheduled(n, sid)
-        if not x:
-            return {"status": "gone"}
-        self.repo.patch_issue(n, x.get("issue") or "", draft={"text": x.get("text", ""), "by": "founder"})
-        return {"status": "cancelled"}
-
-    def send_due_replies(self, now: Optional[datetime] = None) -> int:
-        """Run every minute by main.py, beside send_due_acks."""
-        now = now or datetime.now(timezone.utc)
-        sent = 0
-        for summary in self.repo.list_threads():
-            n = summary["number"]
-            for x in list((self.repo.load(n) or {}).get("scheduled") or []):
-                due = _parse(x.get("due", ""))
-                if due and due <= now:
-                    got = self._take_scheduled(n, x.get("sid", ""))
-                    if got and self._deliver(n, got).get("status") in ("sent", "written"):
-                        sent += 1
-        return sent
-
-    def scheduled_for(self, t: Dict[str, Any], ref: str) -> list:
-        return [{"sid": x.get("sid"), "text": x.get("text", ""), "due": x.get("due", "")}
-                for x in (t.get("scheduled") or []) if (x.get("issue") or "") == (ref or "")]
-
     # ── merge and split (founder, 2026-10-04) ──
     def merge(self, n: str, src: str, dst: str) -> str:
         """Fold issue `src` into `dst`: its messages move, `src` stays as a pointer (a teacher who
@@ -875,9 +770,7 @@ class Inbox:
                               # reply" so it cannot bury other teachers; still under Open and All.
                               "flood": flood,
                               "member": member,
-                              "scheduled_at": min((x["due"] for x in self.scheduled_for(t, ref)), default=""),
-                              "needs_reply": (_last_human_dir(msgs) == "in" and not flood
-                                              and not self.scheduled_for(t, ref))})
+                              "needs_reply": _last_human_dir(msgs) == "in" and not flood})
         for c in (self.cases.load_everyone() if self.cases else []):
             last = (c.thread or [])[-1] if c.thread else None
             items.append({"kind": "case", "id": c.reference, "name": c.name or c.user_id,
@@ -931,7 +824,6 @@ class Inbox:
 
 class ReplyBody(BaseModel):
     text: str
-    now: bool = False          # WhatsApp only: skip the hold ("Send now")
 
 
 class DraftBody(BaseModel):
@@ -1208,7 +1100,7 @@ def build_router(inbox: Inbox) -> APIRouter:
         st = issue_state(t, ref)
         return {"id": item_id(n, ref), "number": n, "ref": ref, "name": t.get("name", ""),
                 "messages": msgs, "unread": unread, "status": st["status"], "draft": st["draft"],
-                "category": st["category"], "scheduled": inbox.scheduled_for(t, ref),
+                "category": st["category"],
                 "window_open": window_open(t, current_pn=cfg.WA_PHONE_NUMBER_ID), "phone": _pretty(n),
                 "reopen_template": bool(cfg.WA_REOPEN_TEMPLATE)}
 
@@ -1233,32 +1125,10 @@ def build_router(inbox: Inbox) -> APIRouter:
         # continuous chat she sees which question it answers — and swiping back routes to it.
         seg = [x for r, x in issues_of(t.get("messages") or []) if r == ref]
         quote = next((x.get("id") for x in reversed(seg) if x.get("dir") == "in" and x.get("id")), "")
-        if not body.now:
-            out = inbox.schedule_reply(n, ref, text, reply_to=quote)
-            if out["status"] == "scheduled":
-                return {"status": "scheduled", "due": out["due"]}
-            res = out.get("result") or {}
-        else:
-            res = inbox.send_text(n, text, issue=ref, reply_to=quote)
+        res = inbox.send_text(n, text, issue=ref, reply_to=quote)
         if res.get("status") not in ("sent", "written"):
             raise HTTPException(status_code=502, detail=f"WhatsApp refused it: {res.get('error') or res.get('reason')}")
         return {"status": "sent"}
-
-    @r.post("/support-inbox/api/thread/{ident}/scheduled/{sid}/send")
-    def scheduled_send(ident: str, sid: str, request: Request):
-        need_auth(request, write=True)
-        n, _ref = split_id(ident)
-        res = inbox.send_scheduled_now(n, sid)
-        if res.get("status") not in ("sent", "written"):
-            raise HTTPException(status_code=409 if res.get("status") in ("gone", "window_closed") else 502,
-                                detail="It could not go now: " + str(res.get("error") or res.get("status")))
-        return {"status": "sent"}
-
-    @r.post("/support-inbox/api/thread/{ident}/scheduled/{sid}/cancel")
-    def scheduled_cancel(ident: str, sid: str, request: Request):
-        need_auth(request, write=True)
-        n, _ref = split_id(ident)
-        return inbox.cancel_scheduled(n, sid)
 
     @r.post("/support-inbox/api/thread/{ident}/reopen")
     def reopen(ident: str, request: Request):
@@ -1316,7 +1186,7 @@ _APP = """<main class="app">
   <div id="draftbar" class="draftbar hidden"><span id="draftwho"></span> — read it, edit it, then send.
     <button id="discard" class="link">Discard draft</button></div>
   <form id="replyForm" class="reply"><textarea id="replyText" rows="4" placeholder="Write a reply…" maxlength="8000"></textarea>
-    <button class="primary" id="send">Send</button><button type="button" class="ghost hidden" id="sendNow">Send now</button></form>
+    <button class="primary" id="send">Send</button></form>
   <p id="err" class="err"></p>
 </section></main>"""
 
@@ -1372,7 +1242,6 @@ header form{margin:0}header .link{color:#f6f1e7}
 .closed{background:#f3e3d6}.draftbar{background:var(--tint);border:1px solid #cde0d8;color:var(--pine)}
 .reply{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--card);align-items:center}
 .reply textarea{flex:1;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;resize:vertical}
-.sched{margin:10px 0 4px auto;max-width:80%;border:1px dashed var(--pine);border-radius:10px;padding:8px 10px;background:#f4faf6}.sched .sh{font:600 11px ui-monospace,Menlo,monospace;color:var(--pine);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.sched .st{white-space:pre-wrap;margin-bottom:6px}
 .reply textarea.drafted{border-color:var(--pine);background:#fbfdfb}
 .pick{display:flex;align-items:center;justify-content:center;color:var(--soft)}.app.open .pick{display:none}
 .hidden{display:none!important}
@@ -1398,7 +1267,7 @@ function renderList(){const L=$('#list');L.innerHTML='';
  for(const t of vis){const b=document.createElement('button');b.className='row'+(cur&&key(t)===cur?' on':'');
   const kind=t.kind==='wa'?`<span class="tag wa">WhatsApp${t.ref?' · '+esc(t.ref):''}</span>`:`<span class="tag mail">Email · ${esc(t.id)}</span>`;
   const cat=t.category?`<span class="tag">${esc(t.category_label||CATL[t.category]||t.category)}</span>`:'';
-  const st=((t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'')+(t.flood?'<span class="tag flood">Many messages</span>':'')+(t.kind==='wa'&&t.member===false?'<span class="tag flood">Not a member</span>':'')+(t.scheduled_at?`<span class="tag draft">Reply at ${esc(dueTxt(t.scheduled_at))}</span>`:'');
+  const st=((t.status==='done'||t.status==='closed')?'<span class="tag done">Resolved</span>':'')+(t.flood?'<span class="tag flood">Many messages</span>':'')+(t.kind==='wa'&&t.member===false?'<span class="tag flood">Not a member</span>':'');
   b.innerHTML=`<div class="rtop"><span class="rname">${t.kind==='wa'&&t.window_open?'<span class="dot" title="Reply window open"></span>':''}${esc(t.name)}${t.unread?`<span class="badge">${t.unread}</span>`:''}</span><span class="rtime">${when(t.at)}</span></div><div class="rtags">${kind}${cat}${t.has_draft?'<span class="tag draft">Draft ready</span>':''}${st}</div><div class="rprev">${t.preview_dir==='out'?'You: ':''}${esc(t.preview)}</div>`;
   b.onclick=()=>openItem(t.kind,t.id);L.appendChild(b)}}
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{filter=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));renderList()});
@@ -1415,32 +1284,26 @@ async function refresh(scroll,fill){if(!cur)return;const want=cur;const [kind,id
   M.innerHTML=t.messages.map((m,i)=>(m.ref?reportCard(m):'')+bubble(m,m=>m.by==='auto-greeting'?'automatic greeting':m.by==='auto-ack'?'automatic acknowledgement':m.by==='system'?'automatic':'you')
    +(i>0&&m.dir==='in'&&m.id&&t.ref?`<button class="mv" data-mid="${esc(m.id)}">Move this and later messages to a new issue</button>`:'')).join('');
   M.querySelectorAll('.mv').forEach(b=>b.onclick=()=>splitAt(b.dataset.mid));
-  M.insertAdjacentHTML('beforeend',(t.scheduled||[]).map(x=>`<div class="sched"><div class="sh">Your reply goes at ${esc(dueTxt(x.due))}</div><div class="st">${esc(x.text)}</div><button class="ghost" data-sn="${esc(x.sid)}">Send now</button> <button class="link" data-sc="${esc(x.sid)}">Cancel and edit</button></div>`).join(''));
-  M.querySelectorAll('[data-sn]').forEach(b=>b.onclick=async()=>{if(!confirm('Send this reply now, without the usual wait?'))return;try{await api('/thread/'+encodeURIComponent(detail.id)+'/scheduled/'+b.dataset.sn+'/send',{method:'POST',body:'{}'});await refresh(true,true);loadList()}catch(x){$('#err').textContent=x.message}});
-  M.querySelectorAll('[data-sc]').forEach(b=>b.onclick=async()=>{try{await api('/thread/'+encodeURIComponent(detail.id)+'/scheduled/'+b.dataset.sc+'/cancel',{method:'POST',body:'{}'});await refresh(true,true);loadList()}catch(x){$('#err').textContent=x.message}});
 
   $('#tcat').innerHTML=CATS.map(([v,l])=>`<option value="${v}" ${v===(t.category||'')?'selected':''}>${esc(l)}</option>`).join('');$('#tcat').classList.remove('hidden');
   $('#tstatus').textContent=status==='done'?'Reopen':'Mark resolved';
-  $('#closed').classList.toggle('hidden',open);$('#reopen').classList.toggle('hidden',!window._reopen);$('#send').textContent='Schedule reply';$('#sendNow').classList.remove('hidden');
+  $('#closed').classList.toggle('hidden',open);$('#reopen').classList.toggle('hidden',!window._reopen);$('#send').textContent='Send on WhatsApp';
  }else{const c=await api('/case/'+encodeURIComponent(id));if(cur!==want)return;detail={kind,...c};draft=c.draft||{};status=c.status||'open';
   $('#tname').textContent=c.name||c.user_id;$('#tsub').textContent=`Email · ${c.reference} · ${c.email||'no email on the case'}`;
   const ctx=c.context||{},rows=[['About',c.category_label],['Received',when(c.created_at)],['Class',[String(ctx.subject||'').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase()),ctx.grade].filter(Boolean).join(' · ')],['Chapter',ctx.chapter],['Unit',[ctx.unit,ctx.phase].filter(Boolean).join(' · ')],['Activity',ctx.unit_title],['Plan ref',ctx.plan_ref],['Plan file',ctx.plan_file],['Screen',ctx.screen],['App',ctx.version]].filter(r=>r[1]);
   M.innerHTML=`<div class="case"><dl>${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl><div class="said">${esc(c.message)}</div></div>`+(c.thread||[]).map(m=>bubble(m,()=> 'you')).join('');
   $('#tcat').classList.add('hidden');$('#tstatus').textContent=status==='closed'?'Reopen':'Mark resolved';
-  $('#closed').classList.add('hidden');open=!!c.email;$('#send').textContent='Send email';$('#sendNow').classList.add('hidden');}
+  $('#closed').classList.add('hidden');open=!!c.email;$('#send').textContent='Send email';}
  if(scroll||atBottom)M.scrollTop=M.scrollHeight;
  $('#tstatus').disabled=false;
  const T=$('#replyText');T.disabled=!open;$('#send').disabled=!open;
  $('#draftbar').classList.toggle('hidden',!draft.text);$('#draftwho').textContent=draft.by==='claude'?'Draft from your drafting session':'Saved draft';
  if(fill||(!T.value&&draft.text)){T.value=draft.text||'';}T.classList.toggle('drafted',!!draft.text&&T.value===draft.text)}
-async function sendReply(now){const v=$('#replyText').value.trim();if(!v||!detail)return;
- const isWa=detail.kind==='wa';if(!confirm(isWa?(now?'Send this on WhatsApp NOW, without the usual 3–4 hour wait?':'Schedule this reply? It goes 3–4 hours after her message, between 6 am and 10 pm.'):'Email this reply to '+(detail.email||'her')+'?'))return;
+$('#replyForm').onsubmit=async e=>{e.preventDefault();const v=$('#replyText').value.trim();if(!v||!detail)return;
+ const isWa=detail.kind==='wa';if(!confirm(isWa?'Send this on WhatsApp?':'Email this reply to '+(detail.email||'her')+'?'))return;
  $('#send').disabled=true;$('#err').textContent='';
- try{const j=await api(isWa?'/thread/'+encodeURIComponent(detail.id)+'/reply':'/case/'+encodeURIComponent(detail.reference)+'/reply',{method:'POST',body:JSON.stringify(isWa?{text:v,now:!!now}:{text:v})});
-  $('#replyText').value='';await refresh(true,true);loadList()}catch(x){$('#err').textContent=x.message||'Could not send.';$('#send').disabled=false}}
-$('#replyForm').onsubmit=e=>{e.preventDefault();sendReply(false)};
-$('#sendNow').onclick=()=>sendReply(true);
-function dueTxt(iso){try{return new Date(iso).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',weekday:'short',hour:'numeric',minute:'2-digit'})}catch(e){return iso}}
+ try{await api(isWa?'/thread/'+encodeURIComponent(detail.id)+'/reply':'/case/'+encodeURIComponent(detail.reference)+'/reply',{method:'POST',body:JSON.stringify({text:v})});
+  $('#replyText').value='';await refresh(true,true);loadList()}catch(x){$('#err').textContent=x.message||'Could not send.';$('#send').disabled=false}};
 $('#discard').onclick=async()=>{if(!detail)return;await api('/draft',{method:'POST',body:JSON.stringify({kind:detail.kind,id:detail.kind==='wa'?detail.id:detail.reference,text:''})});$('#replyText').value='';await refresh(false,true);loadList()};
 $('#tcat').onchange=async()=>{if(detail&&detail.kind==='wa'){await api('/thread/'+encodeURIComponent(detail.id)+'/label',{method:'POST',body:JSON.stringify({category:$('#tcat').value})});loadList()}};
 /* ★ INSTANT (founder, 2026-10-03: "it takes a second"). The button, the row and the list flip

@@ -289,7 +289,7 @@ if WA_REPORT_ACK is None:
 # for 15 minutes, with NO reference in it (references stay internal on WhatsApp). WA_ACK_GREET is
 # for a burst that was only a greeting ("Hi"): an invitation, never "we will revert" to a bare Hi.
 WA_ACK_TEXT = (os.environ.get("ARUVI_WA_ACK_TEXT", "").strip() or
-               "Thanks — we've received your message and will reply within 1 working day.")
+               "Thanks — we've received your message and will reply soon.")
 WA_ACK_GREET = (os.environ.get("ARUVI_WA_ACK_GREET", "").strip() or
                 "Hello! Please tell us what you need help with, and we'll reply here.")
 # ★ THE ONE REPLY TO A NON-MEMBER (founder, 2026-10-07). A number on NO Meyy account that writes

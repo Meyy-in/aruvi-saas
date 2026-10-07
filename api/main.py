@@ -2771,7 +2771,6 @@ def _start_wa_ack_loop() -> None:
         while True:
             try:
                 support_inbox.send_due_acks()
-                support_inbox.send_due_replies()      # held founder replies (2026-10-07)
             except Exception as e:                       # noqa: BLE001
                 _wa_log({"kind": "ack_loop_error", "error": str(e)[:300]})
             _time.sleep(60)
