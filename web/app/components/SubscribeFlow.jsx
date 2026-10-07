@@ -163,6 +163,9 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
   const [rows, setRows] = useState([{ subject: "", stage: "" }]);
   const [price, setPrice] = useState(699);   // the server's /onboarding answer replaces it
   const [payBusy, setPayBusy] = useState(false);
+  /* How the website takes money (2026-10-07): "razorpay" once the server has its keys,
+     else "manual" — the no-money activation this screen has always done. From /entitlement. */
+  const [provider, setProvider] = useState("manual");
   const [payErr, setPayErr] = useState("");
   /* ★ THE AGREEMENT STEP (founder, 2026-08-27). null until the status lands, then
      {accepted, current_version, accepted_at, ...}. Asked on MOUNT — while she is still
@@ -262,6 +265,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
     if (screen !== "cart" || stageMap) return;
     getJSON("/entitlement").then((d) => {
       if (d && d.price_per_subject_stage) setPrice(d.price_per_subject_stage);
+      if (d && d.payment_provider) setProvider(d.payment_provider);
       /* ★ What she ALREADY holds, live, is not for sale again (founder, 2026-08-26).
          `live_scopes` is the server's own answer — the client never compares dates. A
          trial's "*" is not a holding: it would swallow the entire catalogue. */
@@ -281,7 +285,106 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
     rows.filter((r) => r.subject && r.stage).map((r) => `${r.subject}/${r.stage}`))),
     [rows]);
 
+  /* The About-you fields + cart, as both checkout paths send them. */
+  const checkoutBody = () => JSON.stringify({ scopes: cartScopes, name,
+    email: emailStage === "ok" ? email.trim() : "", whatsapp: wa,
+    role: roleToSave(role, roleOther), state: stateName, city, school });
+
+  /* A refused checkout (4xx/5xx) — shared by both paths. The server's own sentence is shown
+     (see the note in doCheckout). */
+  const showRefusal = async (r) => {
+    const detail = await errDetail(r,
+      "Couldn't complete the activation. Try again in a moment.");
+    /* ★ A consent refusal has a PLACE to send her, so send her there (2026-08-27).
+       The server refuses a checkout without a current-version acceptance — which
+       realistically means a new version was published between her reading one and
+       paying — and an error message on the Pay screen would leave her with advice
+       she cannot act on from where she is standing. Same lesson as the taken-email
+       409: a deterministic refusal must be shown at the step that can fix it. */
+    if (r.status === 409 && /User Agreement/i.test(detail)) {
+      setConsent((c) => ({ ...(c || {}), accepted: false }));
+      setPayBusy(false);
+      setScreen("agreement");
+      return;
+    }
+    setPayErr(detail);
+    setPayBusy(false);
+  };
+
+  /* After activation — the WhatsApp hello screen, or straight in. See doCheckout. */
+  const finishActivation = (out) => {
+    if (out && out.whatsapp) { setDone(out); setPayBusy(false); setScreen("done"); return; }
+    onDone && onDone(userId, cartScopes);
+  };
+
+  /* ★ RAZORPAY (2026-10-07). Start → Razorpay's own Checkout window (UPI AutoPay or card
+     mandate, yearly) → its success callback → /verify, where the SERVER checks Razorpay's
+     signature and activates. Nothing here decides she has paid. If the tab dies after
+     paying, Razorpay's webhook activates her anyway. */
+  const loadRazorpay = () => new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    if (window.Razorpay) return resolve(true);
+    const el = document.createElement("script");
+    el.src = "https://checkout.razorpay.com/v1/checkout.js";
+    el.onload = () => resolve(!!window.Razorpay);
+    el.onerror = () => resolve(false);
+    document.body.appendChild(el);
+  });
+
+  const doRazorpay = async () => {
+    setPayBusy(true); setPayErr("");
+    noteBoughtScopes(cartScopes);   // WALK-A-173 — same as doCheckout
+    try {
+      if (!(await loadRazorpay())) {
+        setPayErr("Couldn't open the payment window. Check your connection and try again.");
+        setPayBusy(false);
+        return;
+      }
+      const r = await fetch(`${API}/payments/razorpay/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders(userId) },
+        body: checkoutBody(),
+      });
+      if (!r.ok) { await showRefusal(r); return; }
+      const st = await r.json();
+      const n = cartScopes.length;
+      const rzp = new window.Razorpay({
+        key: st.key_id,
+        subscription_id: st.subscription_id,
+        name: "Meyy",
+        description: `${n} subject-stage${n > 1 ? "s" : ""} · renews yearly`,
+        prefill: st.prefill || {},
+        theme: { color: "#164436" },
+        handler: async (resp) => {
+          try {
+            const v = await fetch(`${API}/payments/razorpay/verify`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", ...authHeaders(userId) },
+              body: JSON.stringify(resp),
+            });
+            if (!v.ok) { await showRefusal(v); return; }
+            finishActivation(await v.json().catch(() => ({})));
+          } catch {
+            setPayErr("Your payment went through, but we couldn't confirm it just now. It will "
+              + "switch on by itself within a few minutes — please don't pay again.");
+            setPayBusy(false);
+          }
+        },
+        modal: { ondismiss: () => setPayBusy(false) },
+      });
+      rzp.on("payment.failed", (e) => {
+        const why = e && e.error && e.error.description;
+        setPayErr(why ? `Payment didn't go through: ${why}` : "Payment didn't go through. You can try again.");
+      });
+      rzp.open();
+    } catch {
+      setPayErr("Couldn't start the payment. Try again in a moment.");
+      setPayBusy(false);
+    }
+  };
+
   const doCheckout = async () => {
+    if (provider === "razorpay") return doRazorpay();
     setPayBusy(true); setPayErr("");
     noteBoughtScopes(cartScopes);   // WALK-A-173: noted BEFORE the post — see setupCheck.js
     try {
@@ -291,10 +394,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
         /* An email still mid-confirmation is NOT sent — only a verified one (`ok`). With
            WhatsApp on, a blank or abandoned email simply means none. `whatsapp` is null on
            the known-profile skip, which the server reads as "leave the stored choice". */
-        body: JSON.stringify({ scopes: cartScopes, name,
-                               email: emailStage === "ok" ? email.trim() : "",
-                               whatsapp: wa,
-                               role: roleToSave(role, roleOther), state: stateName, city, school }),
+        body: checkoutBody(),
       });
       /* ★ THE SERVER'S OWN SENTENCE (2026-08-26). This used to throw the status code
          away and print "Try again in a moment" — advice that can never work for a
@@ -303,25 +403,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
          are written for her, 5xx are engine talk and keep the generic line. The
          Verify-step check above should have caught the clash already; this is the net
          for the address taken in between, or reached by a path that skipped it. */
-      if (!r.ok) {
-        const detail = await errDetail(r,
-          "Couldn't complete the activation. Try again in a moment.");
-        /* ★ A consent refusal has a PLACE to send her, so send her there (2026-08-27).
-           The server refuses a checkout without a current-version acceptance — which
-           realistically means a new version was published between her reading one and
-           paying — and an error message on the Pay screen would leave her with advice
-           she cannot act on from where she is standing. Same lesson as the taken-email
-           409: a deterministic refusal must be shown at the step that can fix it. */
-        if (r.status === 409 && /User Agreement/i.test(detail)) {
-          setConsent((c) => ({ ...(c || {}), accepted: false }));
-          setPayBusy(false);
-          setScreen("agreement");
-          return;
-        }
-        setPayErr(detail);
-        setPayBusy(false);
-        return;
-      }
+      if (!r.ok) { await showRefusal(r); return; }
       const out = await r.json().catch(() => ({}));
       /* ★ THE HELLO (founder, 2026-09-26). A teacher who chose WhatsApp gets ONE more
          screen: a tap-to-chat with Meyy's number. SHE starts the chat — until the Business
@@ -712,13 +794,19 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
             in your subscription. Everything in what you are subscribing to stays.
           </p>
         )}
-        <p className="ob-quiet">Preview build: online payment opens soon — this activates your
-          subscription right away.</p>
+        {provider === "razorpay" ? (
+          <p className="ob-quiet">You'll pay securely through Razorpay by UPI or card. It renews
+            each year at the same price; you can cancel any time.</p>
+        ) : (
+          <p className="ob-quiet">Preview build: online payment opens soon — this activates your
+            subscription right away.</p>
+        )}
         {payErr && <p className="ob-err" role="alert">{payErr}</p>}
       </div>
       <div className="ob-foot">
         <button className="primary fr-cta" disabled={payBusy} onClick={doCheckout}>
-          {payBusy ? "Activating…" : `Pay ₹${total} & start →`}
+          {payBusy ? (provider === "razorpay" ? "Waiting for payment…" : "Activating…")
+                   : `Pay ₹${total} & start →`}
         </button>
         <button className="fr-link" onClick={() => setScreen("cart")}>← Back</button>
       </div>

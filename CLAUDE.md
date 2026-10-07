@@ -5,6 +5,20 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ---
 
+## ★ RAZORPAY WEB SUBSCRIPTIONS (2026-10-07, test mode first)
+Website only — the phone apps never sell (store rules). One yearly plan ₹699 (`ARUVI_RAZORPAY_PLAN_ID`),
+`quantity` = subject-stages in the cart, auto-renews by UPI AutoPay / card mandate. Adapter
+`aruvi_core/adapters/razorpay_gateway.py`; endpoints in api/main.py: `POST /payments/razorpay/start`
+(checks + About-you save via `_checkout_prepare`, creates the subscription, stores the cart at
+`payments/razorpay/subs/<sub_id>.json`), `/verify` (checkout signature → `_rzp_charge`), `/webhook`
+(X-Razorpay-Signature; `subscription.charged` activates if verify never came, and a NEW payment id
+later = renewal: each scope → max(its end, today) + 365, new invoice). Idempotent by payment id under
+`state.lock`. Grant/profile/purge/invoice/WhatsApp/mail live in `_activate_purchase` (shared with
+the manual checkout). Switched on when KEY_ID+KEY_SECRET+PLAN_ID are set (`config.razorpay_on()`);
+then `/onboarding/checkout` answers 409 except for `ARUVI_MANUAL_CHECKOUT_NUMBERS`.
+`/entitlement` gives `payment_provider` + `razorpay_key_id`; web SubscribeFlow opens Razorpay
+Checkout (checkout.js). Tests: tests/test_razorpay.py.
+
 ## ★ REAL SMS SIGN-IN CODES — MSG91 VIA THE SUPABASE SEND-SMS HOOK (2026-10-07)
 
 DLT is DONE (Airtel): entity MEYY (OPC) PRIVATE LIMITED 1001173771984363043 (valid to 2027-10-04),

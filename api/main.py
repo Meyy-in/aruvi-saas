@@ -13,7 +13,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import date, datetime, timezone
+import re
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
@@ -2044,6 +2045,10 @@ def get_entitlement(identity: tuple = Depends(_current_identity)) -> Dict[str, A
         "trial_chapters": ent.trial_chapters,
         "enforced": config.ENTITLEMENT_ENFORCED,
         "price_per_subject_stage": config.PRICE_PER_SUBJECT_STAGE,
+        # How the WEBSITE takes money (2026-10-07): "razorpay" once the keys are in
+        # Render, else "manual" (the no-money checkout). The key id is public by design.
+        "payment_provider": "razorpay" if config.razorpay_on() else "manual",
+        "razorpay_key_id": config.RAZORPAY_KEY_ID if config.razorpay_on() else "",
     }
 
 
@@ -3422,7 +3427,9 @@ def _scope_classes(scope: str) -> str:
 
 
 def _build_invoice(tenant_id: str, user_id: str, acct: Any, scopes: List[str],
-                   scope_valid_until: Dict[str, str]) -> Optional[Invoice]:
+                   scope_valid_until: Dict[str, str],
+                   payment_method: str = "Recorded manually (online payment not yet open)"
+                   ) -> Optional[Invoice]:
     """The invoice for ONE purchase — the scopes in THIS cart, never the whole holding.
 
     An invoice records a transaction, so it lists what was paid for on the day, at the
@@ -3480,7 +3487,7 @@ def _build_invoice(tenant_id: str, user_id: str, acct: Any, scopes: List[str],
         bill_to_place=place,
         lines=lines, subtotal=subtotal, tax_amount=tax, tax_note=note,
         total=total, amount_paid=total,
-        payment_method="Recorded manually (online payment not yet open)",
+        payment_method=payment_method,
         seller_gstin=config.GSTIN,
         seller_name=config.SELLER_NAME,
     )
@@ -3637,17 +3644,14 @@ def _send_subscription_confirmation(to: str, name: str, scopes: List[str],
     return result
 
 
-@app.post("/onboarding/checkout")
-def onboarding_checkout(req: CheckoutRequest,
-                        identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
-    """★ DEV STUB — the preview's 'payment' (founder, 2026-08-24). No gateway exists,
-    so this activates the subscription directly through the ManualBillingProvider (the
-    founder IS the gateway) and saves the checkout's demographic fields onto the
-    Account record. The real gateway adapter replaces the activation half wholesale
-    (web → Razorpay/UPI; the iOS app routes this step to Apple IAP instead); the
-    account-fields half stays. The UI never fakes a payment succeeded screen — it says
-    plainly that the preview activates instantly."""
-    tenant_id, user_id = identity
+MANUAL_PAYMENT_METHOD = "Recorded manually (online payment not yet open)"
+
+
+def _checkout_prepare(req: CheckoutRequest, tenant_id: str, user_id: str):
+    """The half of a purchase that happens BEFORE any money moves, shared by the manual
+    checkout and the Razorpay start (2026-10-07): the cart is sane, the agreement is
+    signed, nothing in it is still live, and the About-you fields are saved.
+    Returns (scopes, prior entitlement, account)."""
     scopes = [s.strip() for s in (req.scopes or []) if s.strip()]
     if not scopes:
         raise HTTPException(status_code=400, detail="Pick at least one subject & stage.")
@@ -3690,31 +3694,52 @@ def onboarding_checkout(req: CheckoutRequest,
         if req.whatsapp is not None:
             _set_whatsapp(acct, req.whatsapp)
         account_repo.save(acct)
+    return scopes, prior, acct
+
+
+def _activate_purchase(tenant_id: str, user_id: str, scopes: List[str], prior: Any,
+                       acct: Any, email: str = "", name: str = "", source: str = "web",
+                       payment_method: str = MANUAL_PAYMENT_METHOD,
+                       scope_until: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
+    """The half of a purchase that happens AFTER the money: grant, profile, trial purge,
+    invoice, WhatsApp, mail. Shared by the manual checkout, the Razorpay checkout and the
+    Razorpay renewal (2026-10-07). `scope_until` (renewal only) fixes each scope's new
+    end date; without it every scope runs one year from today. A renewal never touches
+    the profile or the trial — she already set both up a year ago."""
+    renewal = bool(scope_until)
     # ADDITIVE (founder, 2026-08-26 — reported live: "I purchased science middle and
     # secondary, then added English middle, and the English addition overwrote the
     # previous subscriptions"). The provider now merges and stamps each NEW scope with
     # its own year from today; what she already holds keeps its own dates.
-    result = billing_provider.create_subscription(
-        tenant_id, "individual_annual", scopes=scopes, source="web")
+    if renewal:
+        result: Dict[str, Any] = {}
+        for s in scopes:
+            result = billing_provider.create_subscription(
+                tenant_id, "individual_annual", scopes=[s],
+                valid_until=scope_until.get(s, ""), source=source)
+    else:
+        result = billing_provider.create_subscription(
+            tenant_id, "individual_annual", scopes=scopes, source=source)
     held = result.get("scopes") or scopes
-    # Every purchased scope becomes a ready-made profile entry (founder, 2026-08-25);
-    # out-of-scope trial artifacts are dropped. See _apply_subscription_profile. It is
-    # given the FULL held list, not just this cart — passing the cart alone would drop
-    # the subjects she bought last time, the profile-side twin of the overwrite bug.
-    try:
-        # `held` is everything she owns (so nothing bought earlier is dropped); `scopes` is
-        # THIS cart, and only a scope in it may seed a default class.
-        _apply_subscription_profile(
-            tenant_id, user_id, held, buying=scopes,
-            held_before=(list(prior.scopes or []) if prior is not None
-                         and prior.status != "trial" else []))
-    except Exception:
-        pass   # a profile hiccup must never fail an activation
+    if not renewal:
+        # Every purchased scope becomes a ready-made profile entry (founder, 2026-08-25);
+        # out-of-scope trial artifacts are dropped. See _apply_subscription_profile. It is
+        # given the FULL held list, not just this cart — passing the cart alone would drop
+        # the subjects she bought last time, the profile-side twin of the overwrite bug.
+        try:
+            # `held` is everything she owns (so nothing bought earlier is dropped); `scopes`
+            # is THIS cart, and only a scope in it may seed a default class.
+            _apply_subscription_profile(
+                tenant_id, user_id, held, buying=scopes,
+                held_before=(list(prior.scopes or []) if prior is not None
+                             and prior.status != "trial" else []))
+        except Exception:
+            pass   # a profile hiccup must never fail an activation
     # ★ FIRST purchase only: clear what the trial left in subjects she did not buy
     #   (founder, 2026-08-26 evening — see _purge_trial_artifacts). `prior` was read
     #   before the grant, so this is the last moment the trial is still visible.
     purged = {}
-    if prior is None or prior.status == "trial":
+    if not renewal and (prior is None or prior.status == "trial"):
         purged = _purge_trial_artifacts(tenant_id, user_id, held)
     amount = len(scopes) * config.PRICE_PER_SUBJECT_STAGE     # THIS purchase, not the whole holding
 
@@ -3727,7 +3752,8 @@ def onboarding_checkout(req: CheckoutRequest,
     invoice_pdf = None
     try:
         invoice = _build_invoice(tenant_id, user_id, acct, scopes,
-                                 result.get("scope_valid_until") or {})
+                                 result.get("scope_valid_until") or {},
+                                 payment_method=payment_method)
         if invoice is not None:
             from aruvi_core.export_invoice_pdf import export_invoice_pdf
             invoice_pdf = export_invoice_pdf(invoice)
@@ -3741,9 +3767,10 @@ def onboarding_checkout(req: CheckoutRequest,
             invoice = None
 
     # The WhatsApp welcome (2026-09-26) — before the mail, so the founder's sales log can
-    # say whether it went or is still his to send by hand.
+    # say whether it went or is still his to send by hand. Not on a renewal: she is
+    # already in the chat.
     wa_welcome = {"status": "skipped"}
-    if acct is not None and (acct.notify or {}).get("whatsapp"):
+    if not renewal and acct is not None and (acct.notify or {}).get("whatsapp"):
         try:
             wa_welcome = _wa_welcome(acct, acct.phone or user_id)
             account_repo.save(acct)
@@ -3756,8 +3783,8 @@ def onboarding_checkout(req: CheckoutRequest,
     except Exception as e:                             # noqa: BLE001
         wa_invoice = {"status": "error", "error": str(e)}
     mail = _send_subscription_confirmation(
-        to=(req.email or (acct.email if acct else "") or "").strip(),
-        name=(req.name or (acct.display_name if acct else "") or "").strip(),
+        to=(email or (acct.email if acct else "") or "").strip(),
+        name=(name or (acct.display_name if acct else "") or "").strip(),
         scopes=held,
         amount_inr=amount, valid_until=result.get("valid_until") or "", mobile=user_id,
         scope_valid_until=result.get("scope_valid_until") or {},
@@ -3785,6 +3812,206 @@ def onboarding_checkout(req: CheckoutRequest,
             # What happened to the confirmation mail, so the UI can say so honestly
             # rather than promising an email that was never attempted.
             "email_status": mail.get("status", "skipped")}
+
+
+def _manual_checkout_allowed(user_id: str) -> bool:
+    """Once Razorpay is switched on, the no-money checkout is closed to everyone except
+    the founder's own test numbers (ARUVI_MANUAL_CHECKOUT_NUMBERS) — otherwise anyone
+    could POST to it and get a free year. Compared on the last 10 digits."""
+    if not config.razorpay_on():
+        return True
+    me = re.sub(r"\D", "", user_id or "")[-10:]
+    return bool(me) and any(re.sub(r"\D", "", n)[-10:] == me
+                            for n in config.MANUAL_CHECKOUT_NUMBERS)
+
+
+@app.post("/onboarding/checkout")
+def onboarding_checkout(req: CheckoutRequest,
+                        identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """★ THE NO-MONEY CHECKOUT (founder, 2026-08-24). Activates the subscription directly
+    through the ManualBillingProvider (the founder IS the gateway) and saves the
+    checkout's demographic fields onto the Account record.
+
+    ★ CLOSED ONCE RAZORPAY IS ON (2026-10-07): the website then pays through
+    /payments/razorpay/start + /verify, and this path answers 409 for everyone not on
+    ARUVI_MANUAL_CHECKOUT_NUMBERS. The phone apps never sell (store rules, Option A)."""
+    tenant_id, user_id = identity
+    if not _manual_checkout_allowed(user_id):
+        raise HTTPException(status_code=409, detail=(
+            "Subscriptions are taken on the Meyy website. Please subscribe at meyy.in."))
+    scopes, prior, acct = _checkout_prepare(req, tenant_id, user_id)
+    return _activate_purchase(tenant_id, user_id, scopes, prior, acct,
+                              email=req.email, name=req.name, source="web")
+
+
+# ── Razorpay web subscriptions (2026-10-07) ────────────────────────────────────
+# One yearly plan (₹699), quantity = the number of subject-stages in her cart. Three
+# endpoints:
+#   start   — creates the Razorpay subscription and remembers the cart against its id
+#             (payments/razorpay/subs/<sub_id>.json); the browser then opens Checkout.
+#   verify  — the browser's "paid" callback: checks Razorpay's signature, activates.
+#   webhook — Razorpay telling the server directly. Activates if the browser never came
+#             back (closed tab, dead phone), and EXTENDS each scope by a year on every
+#             later yearly charge (the renewal).
+# Activation is idempotent by payment id, under one lock per subscription, so verify and
+# webhook racing each other give one grant, one invoice, one mail.
+
+def _rzp_key(sub_id: str) -> str:
+    return f"payments/razorpay/subs/{re.sub(r'[^A-Za-z0-9_]', '', sub_id)}.json"
+
+
+def _rzp_gateway():
+    from aruvi_core.adapters.razorpay_gateway import RazorpayGateway
+    return RazorpayGateway(config.RAZORPAY_KEY_ID, config.RAZORPAY_KEY_SECRET)
+
+
+def _rzp_charge(sub_id: str, payment_id: str, doc_if_missing: Optional[Dict[str, Any]] = None,
+                via: str = "") -> Dict[str, Any]:
+    """Record one successful charge on a subscription and grant what it paid for.
+    The first charge activates the cart; any later NEW payment id is a renewal and moves
+    each scope on by a year from where it ends (or from today, if it already lapsed).
+    A payment id already seen returns the stored answer and does nothing."""
+    key = _rzp_key(sub_id)
+    with state.lock(key):
+        doc = state.get_json(key) or doc_if_missing
+        if not doc:
+            return {"status": "unknown_subscription"}
+        doc.setdefault("payments", [])
+        if payment_id in doc["payments"]:
+            return doc.get("result") or {"status": "active"}
+        tenant_id, user_id = doc["tenant_id"], doc["user_id"]
+        scopes = list(doc.get("scopes") or [])
+        acct = account_repo.load(tenant_id, user_id)
+        method = f"Razorpay — online payment {payment_id}"
+        if not doc.get("activated_at"):
+            prior = entitlement_repo.load(tenant_id)
+            out = _activate_purchase(tenant_id, user_id, scopes, prior, acct,
+                                     email=doc.get("email", ""), name=doc.get("name", ""),
+                                     source="razorpay", payment_method=method)
+            doc["activated_at"] = datetime.now(timezone.utc).isoformat()
+            doc["result"] = out
+        else:
+            ent = entitlement_repo.load(tenant_id)
+            today = _today()
+            until: Dict[str, str] = {}
+            for s in scopes:
+                cur = _scope_until(ent, s) if ent is not None else ""
+                try:
+                    base = max(date.fromisoformat(cur), today) if cur else today
+                except ValueError:
+                    base = today
+                until[s] = (base + timedelta(days=365)).isoformat()
+            out = _activate_purchase(tenant_id, user_id, scopes, ent, acct,
+                                     email=doc.get("email", ""), name=doc.get("name", ""),
+                                     source="razorpay", payment_method=method,
+                                     scope_until=until)
+            doc.setdefault("renewals", []).append(
+                {"payment_id": payment_id, "at": datetime.now(timezone.utc).isoformat(),
+                 "invoice_number": out.get("invoice_number", "")})
+        doc["payments"].append(payment_id)
+        doc["status"] = "active"
+        doc["last_via"] = via
+        state.put_json(key, doc)
+        return doc.get("result") or out
+
+
+class RazorpayVerifyRequest(BaseModel):
+    razorpay_payment_id: str
+    razorpay_subscription_id: str
+    razorpay_signature: str
+
+
+@app.post("/payments/razorpay/start")
+def razorpay_start(req: CheckoutRequest,
+                   identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """Step 1 of a web payment: the same checks and About-you save as the manual checkout,
+    then a Razorpay subscription for this cart. Nothing is granted here."""
+    if not config.razorpay_on():
+        raise HTTPException(status_code=409, detail="Online payment is not open yet.")
+    tenant_id, user_id = identity
+    scopes, _prior, acct = _checkout_prepare(req, tenant_id, user_id)
+    got = _rzp_gateway().create_subscription(
+        config.RAZORPAY_PLAN_ID, quantity=len(scopes),
+        total_count=config.RAZORPAY_TOTAL_COUNT,
+        notes={"tenant_id": tenant_id, "user_id": user_id, "scopes": ",".join(scopes)})
+    if got.get("status") != "created":
+        print(f"[razorpay] start failed for {user_id}: {got}")
+        raise HTTPException(status_code=502, detail=(
+            "We couldn't reach the payment service just now. Please try again in a minute."))
+    sub_id = got["id"]
+    email = (req.email or (acct.email if acct else "") or "").strip()
+    name = (req.name or (acct.display_name if acct else "") or "").strip()
+    state.put_json(_rzp_key(sub_id), {
+        "subscription_id": sub_id, "tenant_id": tenant_id, "user_id": user_id,
+        "scopes": scopes, "email": email, "name": name, "status": "created",
+        "created_at": datetime.now(timezone.utc).isoformat(), "payments": []})
+    return {"subscription_id": sub_id, "key_id": config.RAZORPAY_KEY_ID,
+            "amount_inr": len(scopes) * config.PRICE_PER_SUBJECT_STAGE,
+            "prefill": {"name": name, "email": email,
+                        "contact": re.sub(r"\D", "", user_id)[-10:]}}
+
+
+@app.post("/payments/razorpay/verify")
+def razorpay_verify(req: RazorpayVerifyRequest,
+                    identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """Step 2: the browser hands back what Checkout gave it. The signature proves Razorpay
+    produced it; only then is anything granted. Answers like /onboarding/checkout."""
+    from aruvi_core.adapters.razorpay_gateway import verify_payment_signature
+    tenant_id, _user_id = identity
+    if not verify_payment_signature(config.RAZORPAY_KEY_SECRET, req.razorpay_payment_id,
+                                    req.razorpay_subscription_id, req.razorpay_signature):
+        raise HTTPException(status_code=400, detail=(
+            "We couldn't confirm this payment. If money left your account, write to us "
+            "and we'll sort it out."))
+    doc = state.get_json(_rzp_key(req.razorpay_subscription_id))
+    if not doc or doc.get("tenant_id") != tenant_id:
+        raise HTTPException(status_code=404, detail="Payment not found for this account.")
+    return _rzp_charge(req.razorpay_subscription_id, req.razorpay_payment_id, via="verify")
+
+
+@app.post("/payments/razorpay/webhook")
+async def razorpay_webhook(request: Request) -> Dict[str, Any]:
+    """Razorpay → server. Signed with the webhook secret over the raw body. Always 200 for
+    a genuine event (Razorpay retries anything else), 400 for a bad signature."""
+    from aruvi_core.adapters.razorpay_gateway import verify_webhook_signature
+    raw = await request.body()
+    if not verify_webhook_signature(config.RAZORPAY_WEBHOOK_SECRET, raw,
+                                    request.headers.get("x-razorpay-signature", "")):
+        raise HTTPException(status_code=400, detail="bad signature")
+    try:
+        evt = json.loads(raw.decode("utf-8"))
+    except Exception:                                          # noqa: BLE001
+        return {"ok": True, "ignored": "unreadable"}
+    event = evt.get("event", "")
+    payload = evt.get("payload") or {}
+    sub = ((payload.get("subscription") or {}).get("entity")) or {}
+    pay = ((payload.get("payment") or {}).get("entity")) or {}
+    sub_id = sub.get("id", "")
+    print(f"[razorpay] webhook {event} sub={sub_id} pay={pay.get('id', '')}")
+    if event == "subscription.charged" and sub_id and pay.get("id"):
+        # If the start record is gone, rebuild it from the notes we put on the
+        # subscription — so a paid charge is never left without its grant.
+        notes = sub.get("notes") or {}
+        fallback = None
+        if notes.get("tenant_id") and notes.get("scopes"):
+            fallback = {"subscription_id": sub_id, "tenant_id": notes["tenant_id"],
+                        "user_id": notes.get("user_id") or notes["tenant_id"],
+                        "scopes": [s for s in str(notes["scopes"]).split(",") if s],
+                        "email": "", "name": "", "payments": []}
+        out = _rzp_charge(sub_id, pay["id"], doc_if_missing=fallback, via="webhook")
+        return {"ok": True, "status": out.get("status", "")}
+    if sub_id and event in ("subscription.cancelled", "subscription.halted",
+                            "subscription.completed", "subscription.paused"):
+        # Nothing is taken away: what she paid for runs to its end date. Just noted.
+        key = _rzp_key(sub_id)
+        with state.lock(key):
+            doc = state.get_json(key)
+            if doc:
+                doc["status"] = event.split(".", 1)[1]
+                doc.setdefault("events", []).append(
+                    {"event": event, "at": datetime.now(timezone.utc).isoformat()})
+                state.put_json(key, doc)
+    return {"ok": True}
 
 
 @app.get("/invoices")
