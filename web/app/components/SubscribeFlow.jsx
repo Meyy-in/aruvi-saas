@@ -158,6 +158,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
   const [school, setSchool] = useState("");
   const [stageMap, setStageMap] = useState(null);
   const [owned, setOwned] = useState([]);            // live scopes — not for sale again
+  const [renewable, setRenewable] = useState([]);    // live, but near their end — may renew
   const [skippedAbout, setSkippedAbout] = useState(false);  // her details were already on file
   const [trialChapters, setTrialChapters] = useState([]);   // for the purge notice on Pay
   const [rows, setRows] = useState([{ subject: "", stage: "" }]);
@@ -270,7 +271,12 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
          `live_scopes` is the server's own answer — the client never compares dates. A
          trial's "*" is not a holding: it would swallow the entire catalogue. */
       const live = (d && Array.isArray(d.live_scopes)) ? d.live_scopes : [];
-      setOwned(d && d.status === "trial" ? [] : live.filter((s) => s !== "*"));
+      /* ★ Except a subject close to its end (2026-10-07): `renewable_scopes` may be
+         bought again, and the server starts the new year where the old one ends. */
+      const renew = (d && Array.isArray(d.renewable_scopes)) ? d.renewable_scopes : [];
+      setRenewable(renew);
+      setOwned(d && d.status === "trial" ? []
+        : live.filter((s) => s !== "*" && !renew.includes(s)));
       // Only a teacher still ON the trial has trial artifacts left to lose.
       setTrialChapters(d && d.status === "trial" ? (d.trial_chapters || []) : []);
     }).catch(() => {});
@@ -317,10 +323,10 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
     onDone && onDone(userId, cartScopes);
   };
 
-  /* ★ RAZORPAY (2026-10-07). Start → Razorpay's own Checkout window (UPI AutoPay or card
-     mandate, yearly) → its success callback → /verify, where the SERVER checks Razorpay's
-     signature and activates. Nothing here decides she has paid. If the tab dies after
-     paying, Razorpay's webhook activates her anyway. */
+  /* ★ RAZORPAY, PAY ONCE FOR A YEAR (2026-10-07). Start → Razorpay's own Checkout window
+     (any UPI app, card, netbanking — no mandate, no auto-debit) → its success callback →
+     /verify, where the SERVER checks Razorpay's signature and activates. Nothing here
+     decides she has paid. If the tab dies after paying, Razorpay's webhook activates her. */
   const loadRazorpay = () => new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
     if (window.Razorpay) return resolve(true);
@@ -350,9 +356,11 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
       const n = cartScopes.length;
       const rzp = new window.Razorpay({
         key: st.key_id,
-        subscription_id: st.subscription_id,
+        order_id: st.order_id,
+        amount: st.amount_paise,
+        currency: st.currency || "INR",
         name: "Meyy",
-        description: `${n} subject-stage${n > 1 ? "s" : ""} · renews yearly`,
+        description: `${n} subject-stage${n > 1 ? "s" : ""} · one year`,
         prefill: st.prefill || {},
         theme: { color: "#164436" },
         handler: async (resp) => {
@@ -673,9 +681,11 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
                   options={(stageMap[r.subject] || []).map((st) => {
                     const dup = takenElsewhere(r.subject, st, i);
                     const mine = alreadyOwned(r.subject, st);
+                    const renew = renewable.includes(`${r.subject}/${st}`);
                     return { value: st, disabled: dup,
                              label: pretty(st) + (mine ? " · you have this"
-                                                       : dup ? " · already added" : "") };
+                                                       : dup ? " · already added"
+                                                       : renew ? " · renew for another year" : "") };
                   })} />
                 <button type="button" className="ob-row-x" aria-label="Remove this row"
                   onClick={() => dropRow(i)}>✕</button>
@@ -795,8 +805,9 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
           </p>
         )}
         {provider === "razorpay" ? (
-          <p className="ob-quiet">You'll pay securely through Razorpay by UPI or card. It renews
-            each year at the same price; you can cancel any time.</p>
+          <p className="ob-quiet">You'll pay once, securely through Razorpay — any UPI app, card
+            or netbanking. One year of access; nothing renews by itself — you can renew
+            in its last month without losing a day.</p>
         ) : (
           <p className="ob-quiet">Preview build: online payment opens soon — this activates your
             subscription right away.</p>

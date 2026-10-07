@@ -255,24 +255,27 @@ MSG91_OTP_TEMPLATE_ID = (os.environ.get("ARUVI_MSG91_OTP_TEMPLATE_ID", "").strip
                          or "6ac52060a8bc430f4c03d7a2")       # meyy_signin_otp_v2
 SMS_HOOK_SECRET = os.environ.get("ARUVI_SMS_HOOK_SECRET", "").strip()
 
-# ── Razorpay (web subscriptions, 2026-10-07) ────────────────────────────────────
-# All four from the Render dashboard only. KEY_ID + KEY_SECRET + PLAN_ID set → the website
-# takes payment through Razorpay; any missing → the manual dev checkout (the founder is the
-# gateway). TEST keys (rzp_test_…) until KYC is approved, then the LIVE ones and the LIVE
-# plan. WEBHOOK_SECRET is the secret typed when the webhook is created in the dashboard.
+# ── Razorpay (web payments, 2026-10-07) ─────────────────────────────────────────
+# From the Render dashboard only. KEY_ID + KEY_SECRET set → the website takes payment
+# through Razorpay (one-time, a year per subject-stage — see razorpay_gateway.py); either
+# missing → the manual dev checkout (the founder is the gateway). TEST keys (rzp_test_…)
+# until KYC is approved, then the LIVE ones. WEBHOOK_SECRET is the secret typed when the
+# webhook is created in the dashboard.
 RAZORPAY_KEY_ID = os.environ.get("ARUVI_RAZORPAY_KEY_ID", "").strip()
 RAZORPAY_KEY_SECRET = os.environ.get("ARUVI_RAZORPAY_KEY_SECRET", "").strip()
-RAZORPAY_PLAN_ID = os.environ.get("ARUVI_RAZORPAY_PLAN_ID", "").strip()
 RAZORPAY_WEBHOOK_SECRET = os.environ.get("ARUVI_RAZORPAY_WEBHOOK_SECRET", "").strip()
-RAZORPAY_TOTAL_COUNT = int(os.environ.get("ARUVI_RAZORPAY_TOTAL_COUNT", "10"))   # yearly cycles
 # Mobiles still allowed the manual (free) checkout while Razorpay is on — the founder's
 # test numbers, so the phone app can be walked before it has store billing. Comma list.
 MANUAL_CHECKOUT_NUMBERS = [n.strip() for n in
                            os.environ.get("ARUVI_MANUAL_CHECKOUT_NUMBERS", "").split(",") if n.strip()]
+# ★ RENEWING EARLY (2026-10-07). With no auto-renew she pays again herself; a subject that
+# ends within this many days may be bought again, and the new year starts where the old
+# one ends — she loses no days by paying early.
+RENEW_WINDOW_DAYS = int(os.environ.get("ARUVI_RENEW_WINDOW_DAYS", "30"))
 
 
 def razorpay_on() -> bool:
-    return bool(RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET and RAZORPAY_PLAN_ID)
+    return bool(RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET)
 
 # ── The WhatsApp Support inbox (2026-09-30) ─────────────────────────────────────
 # Customer messages to the Meyy number arrive at the server; the founder reads and answers them

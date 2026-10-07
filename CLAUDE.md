@@ -5,19 +5,21 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ---
 
-## ★ RAZORPAY WEB SUBSCRIPTIONS (2026-10-07, test mode first)
-Website only — the phone apps never sell (store rules). One yearly plan ₹699 (`ARUVI_RAZORPAY_PLAN_ID`),
-`quantity` = subject-stages in the cart, auto-renews by UPI AutoPay / card mandate. Adapter
+## ★ RAZORPAY WEB PAYMENTS — PAY ONCE FOR A YEAR (2026-10-07, test mode first)
+Website only — the phone apps never sell (store rules). ★ Founder, after the first test: NO
+auto-renew (Subscriptions showed only card/e-mandate, no UPI, and a mandate scares off a
+teacher who wants to try). Each purchase = one Razorpay ORDER for cart x ₹699, any UPI app /
+card / netbanking, one year per subject-stage. Renewal = buying again: a live scope ending
+within `ARUVI_RENEW_WINDOW_DAYS` (30) is offered again (`renewable_scopes` on /entitlement)
+and its new year starts where the old one ends (`_activate_purchase`). Adapter
 `aruvi_core/adapters/razorpay_gateway.py`; endpoints in api/main.py: `POST /payments/razorpay/start`
-(checks + About-you save via `_checkout_prepare`, creates the subscription, stores the cart at
-`payments/razorpay/subs/<sub_id>.json`), `/verify` (checkout signature → `_rzp_charge`), `/webhook`
-(X-Razorpay-Signature; `subscription.charged` activates if verify never came, and a NEW payment id
-later = renewal: each scope → max(its end, today) + 365, new invoice). Idempotent by payment id under
-`state.lock`. Grant/profile/purge/invoice/WhatsApp/mail live in `_activate_purchase` (shared with
-the manual checkout). Switched on when KEY_ID+KEY_SECRET+PLAN_ID are set (`config.razorpay_on()`);
-then `/onboarding/checkout` answers 409 except for `ARUVI_MANUAL_CHECKOUT_NUMBERS`.
-`/entitlement` gives `payment_provider` + `razorpay_key_id`; web SubscribeFlow opens Razorpay
-Checkout (checkout.js). Tests: tests/test_razorpay.py.
+(`_checkout_prepare` + order; cart stored at `payments/razorpay/orders/<order_id>.json`),
+`/verify` (signature hmac(secret, order_id|payment_id) → `_rzp_paid`), `/webhook`
+(X-Razorpay-Signature; `order.paid` / `payment.captured` activate if verify never came; rebuilds
+from order notes if the record is gone). Once per order under `state.lock`. On when KEY_ID +
+KEY_SECRET are set (`config.razorpay_on()`); then `/onboarding/checkout` answers 409 except for
+`ARUVI_MANUAL_CHECKOUT_NUMBERS`. No renewal REMINDER exists yet (todo before the first year
+ends: WhatsApp template + mail). Tests: tests/test_razorpay.py.
 
 ## ★ REAL SMS SIGN-IN CODES — MSG91 VIA THE SUPABASE SEND-SMS HOOK (2026-10-07)
 
