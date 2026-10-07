@@ -130,7 +130,7 @@ def test_reply_only_inside_the_24_hour_window():
     _login(c)
     H = {"X-Meyy-Inbox": "1"}
     _hook(c, [_msg("919800000204", "Hello", "r1")])
-    r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000204')}/reply", json={"text": "We are looking into it."}, headers=H)
+    r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000204')}/reply", json={"text": "We are looking into it.", "now": True}, headers=H)
     assert r.status_code == 200, r.text
     t = c.get(f"/support-inbox/api/thread/{_iid(m, '9800000204')}").json()
     assert t["messages"][-1]["text"] == "We are looking into it." and t["unread"] == 0
@@ -138,7 +138,7 @@ def test_reply_only_inside_the_24_hour_window():
     # age her last message past 24 hours
     old = (datetime.now(timezone.utc) - timedelta(hours=25)).isoformat()
     m.wa_inbox_repo.patch("9800000204", last_inbound_at=old)
-    r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000204')}/reply", json={"text": "Still there?"}, headers=H)
+    r = c.post(f"/support-inbox/api/thread/{_iid(m, '9800000204')}/reply", json={"text": "Still there?", "now": True}, headers=H)
     assert r.status_code == 409 and "24 hours" in r.json()["detail"]
 
 

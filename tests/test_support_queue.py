@@ -246,7 +246,7 @@ def test_each_whatsapp_report_is_its_own_issue_with_only_its_messages():
         assert t2["ref"] == r2 and t2["category"] == "plan"
         # the founder answers the FIRST issue after the second arrived: it stays in the first
         _login(c)
-        assert c.post(f"/support-inbox/api/thread/{n}~{r1}/reply", json={"text": "About your first issue"},
+        assert c.post(f"/support-inbox/api/thread/{n}~{r1}/reply", json={"text": "About your first issue", "now": True},
                       headers=H).json()["status"] == "sent"
         t1 = c.get(f"/support-inbox/api/thread/{n}~{r1}", headers=BEARER).json()
         assert t1["messages"][-1]["text"] == "About your first issue"
@@ -334,7 +334,7 @@ def test_plain_messages_join_only_on_clear_evidence():
         # we answer A; within 30 minutes what she writes answers that reply
         _age(m, n, 60)
         _login(c)
-        c.post(f"/support-inbox/api/thread/{n}~{a}/reply", json={"text": "Which class?"}, headers=H)
+        c.post(f"/support-inbox/api/thread/{n}~{a}/reply", json={"text": "Which class?", "now": True}, headers=H)
         ours = m.wa_inbox_repo.load(n)["messages"][-1]
         assert ours["reply_to"] == "p2" and "MEY" not in ours["text"]
         say("p4", "Class 7")
@@ -500,7 +500,67 @@ def test_a_non_member_gets_one_sign_up_message_ever_and_members_never_do():
         m.config.WA_NONMEMBER_REPLY = old
 
 
+def test_reply_due_is_three_to_four_hours_later_and_only_between_6am_and_10pm_ist():
+    import random
+    from datetime import datetime, timedelta, timezone
+    from api.support_inbox import reply_due, IST
+    rng = random.Random(7)
+    ist = lambda h, mi=0, d=8: datetime(2026, 10, d, h, mi, tzinfo=IST).astimezone(timezone.utc)
+    for _ in range(200):                                  # 11:05 am → 2:05–3:05 pm the same day
+        due = reply_due(ist(11, 5), ist(11, 10), rng=rng)
+        assert ist(14, 5) <= due <= ist(15, 5)
+    for _ in range(200):                                  # 9:30 pm → next morning 6:00–6:30
+        due = reply_due(ist(21, 30), ist(21, 31), rng=rng)
+        assert ist(6, 0, 9) <= due <= ist(6, 30, 9)
+    for _ in range(200):                                  # 4 am → 6:00–6:30 or 7–8 am, never before 6
+        due = reply_due(ist(4, 0), ist(4, 1), rng=rng).astimezone(IST)
+        assert 6 <= due.hour < 22 and due.date().day == 8
+    # answered late (her message 9 hours ago, it is 2 pm): goes now
+    assert reply_due(ist(5, 0), ist(14, 0), rng=rng) == ist(14, 0)
+    # never past WhatsApp's 24 hours, even at night
+    due = reply_due(ist(1, 0), ist(23, 30), rng=rng)
+    assert due <= ist(1, 0) + timedelta(hours=23, minutes=45) + timedelta(minutes=1)
+
+
+def test_founder_reply_is_held_shown_and_sent_when_due_with_send_now_and_cancel():
+    m, c, _ = _setup()
+    _login(c)
+    from datetime import datetime, timedelta, timezone
+    with _Wa(m) as wa:
+        n = "9800000601"
+        m.support_inbox.on_message({"from": "91" + n, "id": "h1", "type": "text", "text": {"body": "Why is LCM here?"}})
+        ident = next(i["id"] for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"] if i.get("number") == n)
+        r = c.post(f"/support-inbox/api/thread/{ident}/reply", json={"text": "Unit 11 uses the product."}, headers=H)
+        assert r.status_code == 200 and r.json()["status"] == "scheduled", r.text
+        assert [b for b, _ in wa.sent if "Unit 11" in b] == [], "nothing goes before the hold"
+        item = next(i for i in c.get("/support-inbox/api/queue", headers=BEARER).json()["items"] if i.get("number") == n)
+        assert item["scheduled_at"] and item["needs_reply"] is False
+        th = c.get(f"/support-inbox/api/thread/{ident}", headers=BEARER).json()
+        assert len(th["scheduled"]) == 1 and th["scheduled"][0]["text"] == "Unit 11 uses the product."
+        assert m.support_inbox.send_due_replies() == 0
+        due = datetime.fromisoformat(th["scheduled"][0]["due"])
+        assert m.support_inbox.send_due_replies(now=due + timedelta(seconds=1)) == 1
+        assert m.support_inbox.send_due_replies(now=due + timedelta(minutes=5)) == 0, "never twice"
+        out = [x for x in m.wa_inbox_repo.load(n)["messages"] if x.get("text") == "Unit 11 uses the product."]
+        assert len(out) == 1 and out[0]["by"] == "founder" and out[0].get("reply_to") == "h1"
+        # cancel gives it back as a draft; send now skips the wait
+        r = c.post(f"/support-inbox/api/thread/{ident}/reply", json={"text": "Second answer"}, headers=H)
+        sid = c.get(f"/support-inbox/api/thread/{ident}", headers=BEARER).json()["scheduled"][0]["sid"]
+        assert c.post(f"/support-inbox/api/thread/{ident}/scheduled/{sid}/cancel", headers=H).json()["status"] == "cancelled"
+        th = c.get(f"/support-inbox/api/thread/{ident}", headers=BEARER).json()
+        assert th["scheduled"] == [] and th["draft"]["text"] == "Second answer"
+        c.post(f"/support-inbox/api/thread/{ident}/reply", json={"text": "Third answer"}, headers=H)
+        sid = c.get(f"/support-inbox/api/thread/{ident}", headers=BEARER).json()["scheduled"][0]["sid"]
+        assert c.post(f"/support-inbox/api/thread/{ident}/scheduled/{sid}/send", headers=H).status_code == 200
+        assert any(b == "Third answer" for b, _ in wa.sent)
+        assert c.post(f"/support-inbox/api/thread/{ident}/scheduled/{sid}/send", headers=H).status_code == 409
+        # the drafting key can never schedule, send or cancel
+        assert c.post(f"/support-inbox/api/thread/{ident}/reply", json={"text": "x"}, headers=BEARER).status_code in (401, 403)
+
+
 if __name__ == "__main__":
+    test_reply_due_is_three_to_four_hours_later_and_only_between_6am_and_10pm_ist()
+    test_founder_reply_is_held_shown_and_sent_when_due_with_send_now_and_cancel()
     test_a_non_member_gets_one_sign_up_message_ever_and_members_never_do()
     test_queue_lists_both_kinds_and_needs_auth()
     test_token_drafts_but_can_never_send_or_close()

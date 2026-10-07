@@ -20,6 +20,13 @@ Supabase: Auth › Hooks › Send SMS → HTTPS → {API}/auth/sms-hook. Test nu
 
 ## ★ WHATSAPP SUPPORT CHANNEL — WEB DONE, MOBILE PENDING (2026-09-26)
 
+**Held replies (2026-10-07).** A founder WhatsApp reply is SCHEDULED, not sent: random 3–4 h after
+her last message in that issue, only 06:00–22:00 IST (night → next 06:00–06:30), never past 23h45 of
+the 24-hour window (`reply_due`). Stored in thread `scheduled[]`; `send_due_replies` (the minute loop)
+claims-then-sends; "Send now" / "Cancel and edit" (cancel → back to draft). A scheduled issue leaves
+"Needs reply" and shows "Reply at …". The 15-minute auto-acknowledgement is unchanged; email replies
+are not held. API `reply` takes `now: true` to skip the hold. Tests: `test_reply_due_*`, `test_founder_reply_is_held_*`.
+
 **Non-member reply (2026-10-07, OFF until launch).** A number on no Meyy account (`Inbox.is_member`,
 lookup failure counts as member) gets ONE message ever — `WA_NONMEMBER_TEXT` (sign-up link to
 www.meyy.in) — in place of the end-of-burst acknowledgement; every later issue gets silence
