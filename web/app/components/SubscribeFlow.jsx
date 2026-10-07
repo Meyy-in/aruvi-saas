@@ -161,7 +161,7 @@ export default function SubscribeFlow({ userId, chrome = <DefaultBar />, onDone,
   const [skippedAbout, setSkippedAbout] = useState(false);  // her details were already on file
   const [trialChapters, setTrialChapters] = useState([]);   // for the purge notice on Pay
   const [rows, setRows] = useState([{ subject: "", stage: "" }]);
-  const [price, setPrice] = useState(500);
+  const [price, setPrice] = useState(699);   // the server's /onboarding answer replaces it
   const [payBusy, setPayBusy] = useState(false);
   const [payErr, setPayErr] = useState("");
   /* ★ THE AGREEMENT STEP (founder, 2026-08-27). null until the status lands, then

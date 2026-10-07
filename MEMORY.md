@@ -2068,7 +2068,7 @@ first run). → SUBSCRIBE path with step rail Verify·About you·Subjects·Pay: 
 name/role/state/city/school-optional (Account gained role/state/city fields —
 checkout-only, never trial; DPDP-minimal); Subjects = **the picker IS the cart** —
 subject·stage combos DERIVED from /subjects+grades (never hardcoded), live total at
-`config.PRICE_PER_SUBJECT_STAGE` (env ARUVI_PRICE_PER_SUBJECT_STAGE, default ₹500,
+`config.PRICE_PER_SUBJECT_STAGE` (env ARUVI_PRICE_PER_SUBJECT_STAGE, default ₹699 since 2026-10-07 (was ₹500),
 served via /entitlement); Pay = ★ HONEST STUB `POST /onboarding/checkout` — no fake
 gateway screen: saves demographics onto the Account, activates via ManualBillingProvider
 (source "web"), UI says "online payment opens soon — this activates right away"; iOS

@@ -137,12 +137,12 @@ def test_checkout_issues_stores_attaches_and_serves():
     accept_current(c, H)          # the agreement gate (2026-08-27)
     r = c.post("/onboarding/checkout", headers=H, json=body).json()
     assert r["invoice_number"].startswith("MEY/"), r
-    assert r["amount_inr"] == 2 * 500
+    assert r["amount_inr"] == 2 * api_main.config.PRICE_PER_SUBJECT_STAGE
 
     listed = c.get("/invoices", headers=H).json()["invoices"]
     assert len(listed) == 1
     inv = listed[0]
-    assert inv["total"] == 1000 and inv["has_pdf"] is True
+    assert inv["total"] == 2 * api_main.config.PRICE_PER_SUBJECT_STAGE and inv["has_pdf"] is True
     assert set(inv["scopes"]) == {"science/middle", "science/secondary"}
     assert all(ln["valid_until"] for ln in inv["lines"]), "each line carries its own end"
 
@@ -162,7 +162,8 @@ def test_checkout_issues_stores_attaches_and_serves():
                 json=dict(body, scopes=["english/middle"])).json()
     assert r2["invoice_number"] != r["invoice_number"]
     listed = c.get("/invoices", headers=H).json()["invoices"]
-    assert [i["total"] for i in listed] == [500, 1000], "newest first, this purchase only"
+    P = api_main.config.PRICE_PER_SUBJECT_STAGE
+    assert [i["total"] for i in listed] == [P, 2 * P], "newest first, this purchase only"
     print("✓ Checkout issues, stores and serves an invoice per purchase")
 
 

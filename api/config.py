@@ -167,7 +167,9 @@ TRIAL_LEDGER_DAYS = int(os.environ.get("ARUVI_TRIAL_LEDGER_DAYS", "730"))
 # PRICE_PER_SUBJECT_STAGE (₹/year): the working figure from the subscription-model
 # discussion (§0 — ₹500 pending the field test). Config, never code; the onboarding
 # cart reads it via GET /entitlement.
-PRICE_PER_SUBJECT_STAGE = int(os.environ.get("ARUVI_PRICE_PER_SUBJECT_STAGE", "500"))
+# ★ ₹699 FLAT (founder, 2026-10-07): one price per subject-stage per year, web and app stores
+# alike, auto-renewing in the stores; no second-subject concession (dropped as confusing).
+PRICE_PER_SUBJECT_STAGE = int(os.environ.get("ARUVI_PRICE_PER_SUBJECT_STAGE", "699"))
 
 # ── Invoicing (2026-08-26) ─────────────────────────────────────────────────────
 # Aruvi is NOT GST-registered today (founder's call), so an invoice carries no GSTIN
