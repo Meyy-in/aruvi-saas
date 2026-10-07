@@ -1,10 +1,59 @@
 # Going live — hosting the website, DNS, and what the stores require
 
-**Status: PLAN, nothing done.** Opened 2026-09-20. Covers the PUBLISHING side of launch: where
+**Status (2026-10-07): CODE BUILT, HOSTING IN PROGRESS.** See §0 below for what was built and
+the dashboard steps; §§1–5 are the plan as written on 2026-09-20, kept for its reasoning.
+Opened 2026-09-20. Covers the PUBLISHING side of launch: where
 the website is served from, how `meyy.in` points at it, and the public pages Google Play and the
 App Store require before a listing can be submitted. The BUILD side — that the last port is a
 simple switch — lives in `docs/walk_tracker.html`'s Release-switch gate and in the implementation
 map's Step 9. Read with `deploy/README.md` (the API container) and `STORAGE_POLICY.md`.
+
+
+---
+
+## 0. What was built (2026-10-07), and the steps that remain
+
+**Two front doors, one Meyy** (founder-approved): `www.meyy.in` is the shop window — what Meyy
+is, the price, and the six policy pages — and nobody signs in there; `app.meyy.in` is the app.
+Every button on the site leads into the app: **Start free → `app.meyy.in/?start`** (the choose
+screen) and **Sign in → `app.meyy.in/?signin`** (Login.jsx reads both, then cleans the URL).
+A teacher already signed in on that device simply lands in her app. Bare `meyy.in` redirects
+to `www`.
+
+**Built:**
+- `site/build.py` → `site/out/` — a static site, stdlib Python only, NO JavaScript: `/`,
+  `/pricing/`, `/terms/`, `/privacy/`, `/refunds/` (refunds & cancellation), `/shipping/`
+  (shipping & delivery), `/contact/`, `404.html`, `_headers`, robots + sitemap. The footer of
+  every page links Razorpay's six required pages. ★ Legal text is never retyped: terms and
+  privacy are read through `api/legal.py` (the loader the app uses), refunds quotes the
+  agreement's §D, contact takes the registered office from the notice's §10, and price /
+  renewal window / support address / WhatsApp come from `api/config.py`. The site's own words
+  live in `site/content/` with `{{tokens}}`; an unknown token fails the build. Styling:
+  `site/site.css` (the app's tokens and three faces).
+- `web/next.config.mjs` (+ the build-check twin): `output: "export"` → `web/out/`.
+  Verified: `next build` exports cleanly (8 static routes) and `/?start` / `/?signin` open the
+  right screens.
+- `api/public_pages._inline` now also renders relative `/path/` links.
+- `tests/test_public_site.py` (10 tests) pins all of the above.
+
+**Hosting (founder runs these; one step at a time):**
+1. Commit + push.
+2. Cloudflare Pages project **meyy-site** — build `python3 site/build.py`, output `site/out`,
+   framework preset None. Custom domain `www.meyy.in`.
+3. Cloudflare Pages project **meyy-app** — build `npm run build --workspace web`, output
+   `web/out`, framework preset None; env `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NODE_VERSION=22`. Custom domain `app.meyy.in`.
+4. Hostinger DNS: CNAME `www` → `meyy-site.pages.dev`, CNAME `app` → `meyy-app.pages.dev`;
+   bare `meyy.in` → a 301 redirect to `https://www.meyy.in` (Cloudflare Pages can serve an
+   apex only when the whole zone moves to Cloudflare — not done, because the Google
+   Workspace mail records live in this zone). **MX / SPF / DKIM / DMARC untouched.**
+5. Render: `ARUVI_CORS_ORIGINS` — DONE in **render.yaml** (a dashboard value is reverted by a
+   Blueprint sync): `https://app.meyy.in,https://meyy-app.pages.dev,http://localhost:3000,
+   http://localhost:8081`. Takes effect with the push in step 1.
+6. Then: Razorpay website URL + policy links; `ARUVI_WA_NONMEMBER_REPLY=1`; store listings'
+   privacy URL → `https://www.meyy.in/privacy/`.
+
+Render is on a PAID instance (founder, 2026-10-07) — §4's cold start no longer applies.
 
 ---
 

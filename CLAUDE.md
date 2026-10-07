@@ -5,6 +5,17 @@ progress is made. A fresh session starts cold — this file is how context carri
 
 ---
 
+## ★ THE PUBLIC WEBSITE www.meyy.in + THE APP AT app.meyy.in (2026-10-07)
+Two front doors, one Meyy — full record and hosting steps: `docs/going_live.md` §0.
+`site/build.py` (stdlib only, no JS) → `site/out/`: home · pricing · terms · privacy · refunds &
+cancellation · shipping & delivery · contact (Razorpay's six, in every footer). ★ Legal words are
+NEVER retyped — read via `api/legal.py`; refunds = agreement §D; contact address = notice §10;
+price/renewal/support/WhatsApp from `api/config.py`; site copy in `site/content/` with
+`{{tokens}}` (unknown token = failed build). The web app is a static export (`output: "export"`
+in BOTH next configs) for Cloudflare Pages; the site's buttons open `app.meyy.in/?start` (choose
+screen) and `/?signin` (Login.jsx). Tests: tests/test_public_site.py. Render is PAID (no cold
+start). Hosting: Cloudflare Pages ×2 + Hostinger CNAMEs, apex 301 → www, mail records untouched.
+
 ## ★ RAZORPAY WEB PAYMENTS — PAY ONCE FOR A YEAR (2026-10-07, test mode first)
 Website only — the phone apps never sell (store rules). ★ Founder, after the first test: NO
 auto-renew (Subscriptions showed only card/e-mandate, no UPI, and a mandate scares off a

@@ -52,8 +52,8 @@ const Benefits = () => {
     <View>
       <Text style={ws.ob_headline}>Plan engaging, NCF-aligned lessons in seconds.</Text>
       <Text style={ws.ob_benefits}>
-        <Tick /> Lesson plan in seconds, not hours   <Tick /> NCF / NCERT aligned   <Tick /> Assessment
-        built in   <Tick /> Every section’s status at one glance
+        <Tick /> NCF-aligned lesson plans in seconds   <Tick /> Assessment built in   <Tick /> Every
+        section’s status at one glance   <Tick /> Intelligent support
       </Text>
     </View>
   );

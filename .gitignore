@@ -18,6 +18,8 @@ dist/
 web/.next/
 node_modules/
 web/out/
+# Public website build output (site/build.py regenerates it; Cloudflare Pages builds its own)
+/site/out/
 # Expo (Track D)
 mobile/.expo/
 mobile/dist/

@@ -45,10 +45,11 @@ services:
       - key: ARUVI_DATA_DIR
         value: /app/data/cloud/content
       # Comma-separated browser origins allowed to call the API. Native apps send no
-      # Origin header, so this fences the WEB channel only. Set to the deployed web
-      # origin(s); "*" keeps today's open dev behaviour.
+      # Origin header, so this fences the WEB channel only. ★ 2026-10-07 (docs/going_live.md
+      # §0): the hosted app (app.meyy.in + its Cloudflare Pages address) and the founder's
+      # local dev servers (web :3000, Expo web :8081), which point at this API. Was "*".
       - key: ARUVI_CORS_ORIGINS
-        value: "*"
+        value: "https://app.meyy.in,https://meyy-app.pages.dev,http://localhost:3000,http://localhost:8081"
       # Identity (Track B). `header` = the dev stub (empty header → the "local" user); `supabase`
       # verifies the real Bearer token and reads the teacher's mobile from it.
       # ★ CUT OVER TO SUPABASE 2026-09-10 (Track B), verified from Chrome. Same story as

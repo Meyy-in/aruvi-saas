@@ -29,10 +29,10 @@ const Benefits = () => (
   <>
     <h1 className="ob-headline">Plan engaging, NCF-aligned lessons in seconds.</h1>
     <p className="ob-benefits">
-      <span className="ob-tick">✓</span> Lesson plan in seconds, not hours&ensp;
-      <span className="ob-tick">✓</span> NCF / NCERT aligned&ensp;
+      <span className="ob-tick">✓</span> NCF-aligned lesson plans in seconds&ensp;
       <span className="ob-tick">✓</span> Assessment built in&ensp;
-      <span className="ob-tick">✓</span> Every section&rsquo;s status at one glance
+      <span className="ob-tick">✓</span> Every section&rsquo;s status at one glance&ensp;
+      <span className="ob-tick">✓</span> Intelligent support
     </p>
   </>
 );
@@ -98,9 +98,17 @@ export default function Login({ onEnter }) {
   const openPrivacy = () => { setPrivacyFrom(screen); setScreen("privacy"); };
 
   // First-time device → the choose screen; returning → sign-in.
+  // ★ The public site's two buttons say which door she meant (2026-10-07, docs/going_live.md):
+  // www.meyy.in "Start free" → app.meyy.in/?start (the choose screen, even on a device that
+  // has signed in before), "Sign in" → /?signin (sign-in, even on a first visit). Web only —
+  // a URL is how the website reaches the app; the phone app has no such door.
   useEffect(() => {
     try {
-      if (!window.localStorage.getItem(SEEN_KEY)) setScreen("choose");
+      const q = new URLSearchParams(window.location.search);
+      if (q.has("start")) setScreen("choose");
+      else if (q.has("signin")) setScreen("signin");
+      else if (!window.localStorage.getItem(SEEN_KEY)) setScreen("choose");
+      if (q.has("start") || q.has("signin")) window.history.replaceState(null, "", window.location.pathname);
     } catch {}
   }, []);
 
