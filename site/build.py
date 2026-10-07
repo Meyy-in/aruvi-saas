@@ -47,10 +47,11 @@ OUT = Path(os.environ.get("MEYY_SITE_OUT", SITE / "out"))
 SITE_URL = "https://www.meyy.in"
 APP_URL = (os.environ.get("MEYY_APP_URL", "").strip() or "https://app.meyy.in").rstrip("/")
 
-# The footer, in this order, on every page. Razorpay's activation check looks for exactly
-# these: Pricing · Terms · Privacy · Cancellation & Refunds · Shipping · Contact.
+# The footer, in this order, on every page. Razorpay's website check asks for these: About us ·
+# Pricing · Terms · Privacy · Cancellation & Refunds · Shipping · Contact.
 FOOTER = [
     ("Home", "/"),
+    ("About", "/about/"),
     ("Pricing", "/pricing/"),
     ("Terms", "/terms/"),
     ("Privacy", "/privacy/"),
@@ -237,6 +238,8 @@ PAGES = [
     ("/", "Meyy", "home",
      "Meyy prepares NCF-aligned lesson plans and assessments for Indian teachers, chapter by "
      "chapter, for Classes 3 to 9. Try any 3 chapters free."),
+    ("/about/", "About Meyy", "doc-page",
+     "What Meyy is, why it exists and who runs it."),
     ("/pricing/", "Pricing", "doc-page",
      "Free to try for any 3 chapters. Subscribe for one year per subject-stage."),
     ("/terms/", "User Agreement", "doc-page", "Meyy's User Agreement and Disclaimer."),
@@ -257,7 +260,7 @@ def render(path: str, title: str, kind: str, f: dict) -> str:
     name = path.strip("/") + ".md"
     # No company-name line under Pricing or Contact (founder, 2026-10-07): Contact names the
     # company in its Grievance Officer block, and Pricing does not need it.
-    stamp = "" if path in ("/pricing/", "/contact/") else f["seller"]
+    stamp = "" if path in ("/pricing/", "/contact/", "/about/") else f["seller"]
     return doc_body(title, stamp, page_from_markdown(name, f))
 
 

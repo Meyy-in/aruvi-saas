@@ -45,7 +45,7 @@ def _text(html_s: str) -> str:
 
 
 def test_every_razorpay_page_exists_and_every_footer_links_them_all():
-    need = ["/pricing/", "/terms/", "/privacy/", "/refunds/", "/shipping/", "/contact/"]
+    need = ["/about/", "/pricing/", "/terms/", "/privacy/", "/refunds/", "/shipping/", "/contact/"]
     for p in need:
         assert p in _BUILT, p
     for p in _BUILT + ["/404"]:
@@ -53,7 +53,7 @@ def test_every_razorpay_page_exists_and_every_footer_links_them_all():
         foot = page.split('<footer class="foot">', 1)[1]
         for href in need:
             assert f'href="{href}"' in foot, (p, href)
-    print("✓ All six policy pages exist and every footer links all six")
+    print("✓ About + the six policy pages exist and every footer links all seven")
 
 
 def test_privacy_page_is_the_current_notice_word_for_word():
