@@ -50,6 +50,11 @@ services:
       # local dev servers (web :3000, Expo web :8081), which point at this API. Was "*".
       - key: ARUVI_CORS_ORIGINS
         value: "https://app.meyy.in,https://meyy-app.pages.dev,http://localhost:3000,http://localhost:8081"
+      # ★ ON since 2026-10-07 (founder): a number on no Meyy account gets ONE WhatsApp reply,
+      # WA_NONMEMBER_TEXT (sign up at www.meyy.in), now that the link leads to sign-up. In the
+      # file, not the dashboard, so a Blueprint sync cannot switch it back off.
+      - key: ARUVI_WA_NONMEMBER_REPLY
+        value: "1"
       # Identity (Track B). `header` = the dev stub (empty header → the "local" user); `supabase`
       # verifies the real Bearer token and reads the teacher's mobile from it.
       # ★ CUT OVER TO SUPABASE 2026-09-10 (Track B), verified from Chrome. Same story as

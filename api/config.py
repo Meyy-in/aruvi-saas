@@ -328,7 +328,7 @@ WA_NONMEMBER_REPLY = os.environ.get("ARUVI_WA_NONMEMBER_REPLY", "").strip().lowe
 WA_NONMEMBER_TEXT = (os.environ.get("ARUVI_WA_NONMEMBER_TEXT", "").strip().replace("\\n", "\n") or
                      "Hello! Thanks for writing to Meyy.\n\n"
                      "Meyy prepares lesson plans for your classes, aligned to NCF 2023. "
-                     "Try 3 chapters free: sign up at https://www.meyy.in or download the Meyy app.\n\n"
+                     "Try 3 chapters free: sign up at https://www.meyy.in\n\n"  # app-store line returns when the apps are listed (2026-10-07)
                      "Already a member? Please write from the mobile number you signed in with.\n\n"
                      "— Meyy support")
 # Emails: at most this many automatic acknowledgements a day per teacher. Past it the case is

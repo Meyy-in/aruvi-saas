@@ -22,6 +22,7 @@ does not move between www and app). Choose · sign-in · OTP are TWO COLUMNS (`.
 other front-door screen a centred card; CTA under the form, not pinned to the window. CSS:
 globals.css "THE FRONT DOOR ON A WEBSITE" (end of file). Phone unchanged; parity counts unchanged.
 LIVE: www.meyy.in + app.meyy.in (Pages); bare meyy.in redirect PARKED (Hostinger refuses).
+★ DNS MOVED TO CLOUDFLARE (2026-10-07): zone meyy.in on Cloudflare (Free), nameservers mona/piers.ns.cloudflare.com set at Hostinger (still the REGISTRAR — renewals there). Every DNS change now happens in Cloudflare, never Hostinger. Records: www/app CNAME → Pages (proxied) · A @ (proxied, for the apex→www Redirect Rule) · MX smtp.google.com · TXT SPF · TXT google-site-verification · TXT _dmarc `v=DMARC1; p=none` (tighten after DKIM is on) · DKIM google._domainkey from Google Admin.
 Meta (2026-10-07): the developer app's Privacy Policy URL is now https://www.meyy.in/privacy/ and
 Terms https://www.meyy.in/terms/; the WhatsApp business profile and the portfolio's Business info
 carry Website https://www.meyy.in. The API's GET /privacy stays served (same source file).
@@ -59,7 +60,7 @@ Supabase: Auth › Hooks › Send SMS → HTTPS → {API}/auth/sms-hook. Test nu
 
 **Ack wording (2026-10-07):** WA_ACK_TEXT is "Thanks — we've received your message and will reply soon." (founder; no time promise). A 3–4 h reply hold was tried the same day and REMOVED as too confusing — replies send immediately.
 
-**Non-member reply (2026-10-07, OFF until launch).** A number on no Meyy account (`Inbox.is_member`,
+**Non-member reply (2026-10-07; ★ SWITCHED ON the same day — `ARUVI_WA_NONMEMBER_REPLY: "1"` in render.yaml; the text's "or download the Meyy app" was cut until the apps are listed).** A number on no Meyy account (`Inbox.is_member`,
 lookup failure counts as member) gets ONE message ever — `WA_NONMEMBER_TEXT` (sign-up link to
 www.meyy.in) — in place of the end-of-burst acknowledgement; every later issue gets silence
 (`ack: nonmember-quiet`, thread `nonmember_info_at`). The inbox tags such rows "Not a member" (queue
