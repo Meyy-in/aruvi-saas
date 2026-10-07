@@ -6017,3 +6017,79 @@ button.sup-sec:disabled { opacity: .45; cursor: default; }
   .set-legal .lgl-table td, .set-legal .lgl-table th { padding-right: 18px; }
   .set-legal .lgl-table td:last-child, .set-legal .lgl-table th:last-child { padding-right: 0; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════════════════════
+   ★ THE FRONT DOOR ON A WEBSITE — desktop widths (founder, 2026-10-07: "app.meyy.in has a
+   mobile feel… change it", and then "the move from the wide www.meyy.in to a sudden narrow
+   sign-in is too jumpy").
+   The website view (above) covered the signed-in shell only; every screen before it — choose
+   plan · sign in · OTP · the Privacy Notice frame · the subscribe wizard — drew a 480px phone
+   column with its CTA pinned to the bottom of the WINDOW. From 1024px:
+     • the brand bar's contents sit on the PUBLIC SITE's measure (1080px, 16px gutter — see
+       site/site.css .wrap), so the wordmark does not move when she crosses from www to app;
+     • choose + sign-in (the two doors the site's buttons open, `.ob-split`) become TWO
+       COLUMNS across that same measure: the pitch on the left (headline + the four ticks as a
+       list), the form as a card on the right — the website's width, not a phone column;
+     • every other front-door screen is a centred CARD with its CTA directly under the form.
+   Mechanics. `.ob-body` and `.ob-foot` are SIBLINGS, so a card is drawn in two halves: top +
+   sides on the body (or `.ob-panel`), bottom + sides on the foot, no border between. On the
+   split screens `.ob-split` is `display: contents` and `.ob-wrap` becomes the grid, so the
+   pitch, the panel and the foot can be placed side by side although the foot lives outside the
+   body. A screen with no footer (the locked frames, the wizard's loading state) is
+   `.ob-body:last-child` and takes the whole outline. The locked frames keep their fixed-height
+   scroll; the agreement/notice bands' negative gutters follow the card's wider padding.
+   PRESENTATION ONLY below 1024px: `.ob-split/.ob-pitch/.ob-panel` have no rules there, the
+   phone keeps its sticky footer (it exists for iPhone Safari's toolbar), and parity is untouched.
+   ═══════════════════════════════════════════════════════════════════════════════════════════ */
+/* Below 1024px a desktop-only pitch (the OTP screen's) is simply not there. */
+.ob-pitch-desk { display: none; }
+@media (min-width: 1024px) {
+  .ob-wrap { --ob-card-pad: 40px; --ob-site-w: 1080px; }
+  .ob-wrap .fr-brand .hdr { max-width: var(--ob-site-w); padding: 14px 16px; }
+
+  /* ── the centred card (every front-door screen that is not a split door) ── */
+  .ob-wrap > .ob-body, .ob-wrap > .ob-foot { max-width: 600px; background: var(--paper-2);
+    border: 1px solid var(--edge); padding-left: var(--ob-card-pad); padding-right: var(--ob-card-pad); }
+  .ob-wrap > .ob-body { margin-top: 48px; border-bottom: 0; border-radius: 14px 14px 0 0;
+    padding-top: 34px; padding-bottom: 6px; }
+  .ob-wrap:not(.ob-wrap-lock) > .ob-body { flex: 0 0 auto; }
+  .ob-wrap > .ob-foot { position: static; border-top: 0; border-radius: 0 0 14px 14px;
+    padding-top: 14px; padding-bottom: 30px; margin-bottom: 56px; }
+  .ob-wrap > .ob-body:last-child { border-bottom: 1px solid var(--edge); border-radius: 14px;
+    padding-bottom: 30px; margin-bottom: 56px; }
+  .ob-wrap-lock > .ob-body { margin-top: 32px; }
+  .ob-wrap-lock > .ob-body:last-child { margin-bottom: 40px; padding-bottom: 0; }
+  .ob-wrap .lgl-sign .lgl-scroll, .ob-wrap .lgl-frame .lgl-scroll, .ob-wrap .lgl-foot {
+    margin-left: calc(-1 * var(--ob-card-pad)); margin-right: calc(-1 * var(--ob-card-pad));
+    padding-left: var(--ob-card-pad); padding-right: var(--ob-card-pad); }
+  .ob-wrap .lgl-sign .lgl-foot { border-radius: 0 0 14px 14px; padding-bottom: 22px; }
+  .ob-wrap .ob-title { font-size: 25px; }
+
+  /* ── the two split doors: pitch | card, across the site's measure ── */
+  .ob-wrap:has(> .ob-split) { display: grid; align-content: start;
+    grid-template-columns: minmax(16px, 1fr) minmax(0, 480px) 56px minmax(0, 512px) minmax(16px, 1fr);
+    grid-template-rows: auto auto auto 1fr; }
+  .ob-wrap:has(> .ob-split) > .fr-brand { grid-column: 1 / -1; grid-row: 1; }
+  .ob-wrap > .ob-split { display: contents; }
+  .ob-split > .ob-pitch { grid-column: 2; grid-row: 2 / span 2; align-self: start; padding-top: 92px; }
+  .ob-split > .ob-panel { grid-column: 4; grid-row: 2; margin-top: 56px; background: var(--paper-2);
+    border: 1px solid var(--edge); border-bottom: 0; border-radius: 14px 14px 0 0;
+    padding: 34px var(--ob-card-pad) 6px; }
+  .ob-wrap:has(> .ob-split) > .ob-foot { grid-column: 4; grid-row: 3; max-width: none; margin: 0 0 56px; }
+  .ob-split .ob-panel > .ob-rule:first-child { display: none; }
+  .ob-split .ob-panel > .ob-h2:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+  .ob-split .ob-panel > .ob-title:first-child, .ob-split .ob-panel > .login-kicker { margin-top: 0; }
+  .ob-split > .ob-pitch-desk { display: block; }
+
+  .ob-pitch .ob-headline { font-size: clamp(36px, 3.4vw, 48px); line-height: 1.12;
+    letter-spacing: -0.01em; margin: 0 0 28px; }
+  /* The four ticks as a LIST: the paragraph is ✓-span, text, ✓-span, text…; as a two-column
+     grid each tick and the words after it pair up on their own row (bare text runs become
+     anonymous grid items), so no markup changes. */
+  .ob-pitch .ob-benefits { display: grid; grid-template-columns: auto 1fr; column-gap: 12px;
+    row-gap: 12px; font-size: 18px; line-height: 1.4; margin: 0; }
+  .ob-pitch .ob-tick { font-size: 18px; }
+  .ob-split .ob-plan-hd { font-size: 17px; }
+  .ob-split .ob-plan-sub { font-size: 14px; }
+  .ob-split .ob-plan-points { font-size: 13px; }
+}

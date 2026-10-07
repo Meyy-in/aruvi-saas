@@ -15,6 +15,13 @@ price/renewal/support/WhatsApp from `api/config.py`; site copy in `site/content/
 in BOTH next configs) for Cloudflare Pages; the site's buttons open `app.meyy.in/?start` (choose
 screen) and `/?signin` (Login.jsx). Tests: tests/test_public_site.py. Render is PAID (no cold
 start). Hosting: Cloudflare Pages ×2 + Hostinger CNAMEs, apex 301 → www, mail records untouched.
+★ **The front door at ≥1024px (founder, 2026-10-07: "mobile feel… too jumpy" from www):** the
+pre-sign-in screens wear the PUBLIC SITE's measure (bar contents 1080px/16px, so the wordmark
+does not move between www and app). Choose · sign-in · OTP are TWO COLUMNS (`.ob-split` →
+`.ob-pitch` + `.ob-panel` in Login.jsx; OTP's pitch is `.ob-pitch-desk`, hidden on phones), every
+other front-door screen a centred card; CTA under the form, not pinned to the window. CSS:
+globals.css "THE FRONT DOOR ON A WEBSITE" (end of file). Phone unchanged; parity counts unchanged.
+LIVE: www.meyy.in + app.meyy.in (Pages); bare meyy.in redirect PARKED (Hostinger refuses).
 
 ## ★ RAZORPAY WEB PAYMENTS — PAY ONCE FOR A YEAR (2026-10-07, test mode first)
 Website only — the phone apps never sell (store rules). ★ Founder, after the first test: NO

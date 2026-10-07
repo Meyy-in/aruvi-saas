@@ -47,6 +47,13 @@ to `www`.
    bare `meyy.in` → a 301 redirect to `https://www.meyy.in` (Cloudflare Pages can serve an
    apex only when the whole zone moves to Cloudflare — not done, because the Google
    Workspace mail records live in this zone). **MX / SPF / DKIM / DMARC untouched.**
+   ★ DONE 2026-10-07: www and app CNAMEs live (www moved off the old "Launching soon" Pages
+   project `Meyy`, meyy-hk4.pages.dev). ⚠️ The APEX REDIRECT IS PARKED: Hostinger's Redirects
+   tab refuses meyy.in → www.meyy.in ("cannot redirect your domain to itself"), so bare
+   meyy.in still shows Hostinger's parking page (A @ 2.57.91.91). Everything published uses
+   www.meyy.in. Fix later by moving the zone to Cloudflare (copy MX, both TXT, both CNAMEs;
+   verify mail both ways), done in one session with Google Workspace DKIM + DMARC, which the
+   zone also lacks today.
 5. Render: `ARUVI_CORS_ORIGINS` — DONE in **render.yaml** (a dashboard value is reverted by a
    Blueprint sync): `https://app.meyy.in,https://meyy-app.pages.dev,http://localhost:3000,
    http://localhost:8081`. Takes effect with the push in step 1.

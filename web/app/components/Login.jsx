@@ -25,6 +25,11 @@ import PrivacyNotice from "./PrivacyNotice";
  * comes back from /onboarding/verified (the API derives the mobile from the verified token),
  * not from the box she typed in. Without the env vars the 0000 stub stays, labelled. */
 
+/* `.ob-split` › `.ob-pitch` + `.ob-panel` (2026-10-07): plain wrappers on a phone (no rule
+ * targets them below 1024px), and on a laptop the two columns of the front door — the pitch
+ * on the left, the sign-in card on the right — so arriving from www.meyy.in keeps the
+ * website's width instead of dropping into a phone column. Styles: globals.css, "THE FRONT
+ * DOOR ON A WEBSITE". */
 const Benefits = () => (
   <>
     <h1 className="ob-headline">Plan engaging, NCF-aligned lessons in seconds.</h1>
@@ -246,8 +251,9 @@ export default function Login({ onEnter }) {
     return (
       <div className="ob-wrap">
         <Bar />
-        <div className="ob-body">
-          <Benefits />
+        <div className="ob-body ob-split">
+          <div className="ob-pitch"><Benefits /></div>
+          <div className="ob-panel">
           <h2 className="ob-h2">Choose what works for you</h2>
 
           <button type="button" className={`ob-plan ${mode === "trial" ? "on" : ""}`}
@@ -263,6 +269,7 @@ export default function Login({ onEnter }) {
             <span className="ob-plan-sub">Unlimited access to plan across your subject &amp; stage.</span>
             <span className="ob-plan-points">In addition to core features to plan &amp; assess, Unlimited chapters · every class in that subject &amp; stage</span>
           </button>
+          </div>
         </div>
         <div className="ob-foot">
           <button className="primary fr-cta" onClick={() => { setFlow("create"); setOtpSent(false); setOtp(""); setOtpAt(0);
@@ -281,7 +288,11 @@ export default function Login({ onEnter }) {
     return (
       <div className="ob-wrap">
         <Bar />
-        <div className="ob-body">
+        <div className="ob-body ob-split">
+          {/* The pitch stays put on a laptop between the door and the code (desktop only —
+              `.ob-pitch-desk` is hidden on a phone, where this screen never showed it). */}
+          <div className="ob-pitch ob-pitch-desk"><Benefits /></div>
+          <div className="ob-panel">
           <h1 className="ob-title">Let&rsquo;s verify your mobile</h1>
           <p className="ob-sub">We&rsquo;ll send you a one-time password (OTP) to sign in securely.</p>
           <label className="login-field ob-field">
@@ -383,6 +394,7 @@ export default function Login({ onEnter }) {
               )}
             </>
           )}
+          </div>
         </div>
         <div className="ob-foot">
           <button className="fr-link" onClick={() => { setOtpSent(false); setOtp(""); setScreen(flow === "return" ? "signin" : "choose"); }}>← Back</button>
@@ -425,8 +437,9 @@ export default function Login({ onEnter }) {
   return (
     <div className="ob-wrap">
       <Bar />
-      <div className="ob-body">
-        <Benefits />
+      <div className="ob-body ob-split">
+        <div className="ob-pitch"><Benefits /></div>
+        <div className="ob-panel">
         <div className="ob-rule" />
         <div className="kicker login-kicker">Sign in</div>
         <h1 className="login-q">Who&rsquo;s planning today?</h1>
@@ -443,6 +456,7 @@ export default function Login({ onEnter }) {
         {signinErr && <p className="ob-err" role="alert">{signinErr}</p>}
         <p className="fr-secure">🛡 Your data is private and secure ·{" "}
           <button type="button" className="lgl-link" onClick={openPrivacy}>Privacy Notice</button></p>
+        </div>
       </div>
       <div className="ob-foot">
         <button className="fr-link" onClick={() => setScreen("choose")}>New to Meyy? Get started →</button>
