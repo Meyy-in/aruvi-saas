@@ -22,6 +22,9 @@ does not move between www and app). Choose · sign-in · OTP are TWO COLUMNS (`.
 other front-door screen a centred card; CTA under the form, not pinned to the window. CSS:
 globals.css "THE FRONT DOOR ON A WEBSITE" (end of file). Phone unchanged; parity counts unchanged.
 LIVE: www.meyy.in + app.meyy.in (Pages); bare meyy.in redirect PARKED (Hostinger refuses).
+Meta (2026-10-07): the developer app's Privacy Policy URL is now https://www.meyy.in/privacy/ and
+Terms https://www.meyy.in/terms/; the WhatsApp business profile and the portfolio's Business info
+carry Website https://www.meyy.in. The API's GET /privacy stays served (same source file).
 
 ## ★ RAZORPAY WEB PAYMENTS — PAY ONCE FOR A YEAR (2026-10-07, test mode first)
 Website only — the phone apps never sell (store rules). ★ Founder, after the first test: NO

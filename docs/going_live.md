@@ -59,6 +59,12 @@ to `www`.
    http://localhost:8081`. Takes effect with the push in step 1.
 6. Then: Razorpay website URL + policy links; `ARUVI_WA_NONMEMBER_REPLY=1`; store listings'
    privacy URL → `https://www.meyy.in/privacy/`.
+   ⏸ Razorpay (2026-10-07): the Business website form opens only once the account is
+   ACTIVATED, which waits on the company bank account (ICICI current account). When it opens:
+   website https://www.meyy.in · About /about/ · Contact /contact/ · Pricing /pricing/ · Terms
+   /terms/ · Privacy /privacy/ · Refunds /refunds/ · Shipping /shipping/ (an About page was
+   added for this form) · a sample invoice PDF · a reviewer test number with a fixed Supabase
+   code (login is needed to reach the payment page).
 
 Render is on a PAID instance (founder, 2026-10-07) — §4's cold start no longer applies.
 
