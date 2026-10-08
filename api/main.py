@@ -2874,12 +2874,12 @@ def _otp_second_channel(phone: str, otp: str, allow_whatsapp: bool = True) -> st
         to = (acct.email or "").strip()
         if to:
             res = notifier.send(EmailMessage(
-                to=to, subject=f"Your Meyy sign-in code is {otp}",
-                text=(f"Your Meyy sign-in code is {otp}.\n\nIt was also sent to your mobile by SMS. "
+                to=to, subject=f"{otp} is your Meyy sign-in code",
+                text=(f"{otp} is your Meyy sign-in code.\n\nIt was also sent to your mobile by SMS. "
                       "Never share it with anyone. If you did not try to sign in, you can ignore "
                       "this email.\n\n— Meyy"),
-                html=(f"<p>Your Meyy sign-in code is <strong style='font-size:20px;letter-spacing:2px'>"
-                      f"{otp}</strong></p><p>It was also sent to your mobile by SMS. Never share it "
+                html=(f"<p><strong style='font-size:24px;letter-spacing:3px'>{otp}</strong> is your "
+                      "Meyy sign-in code.</p><p>It was also sent to your mobile by SMS. Never share it "
                       "with anyone. If you did not try to sign in, you can ignore this email.</p>"
                       "<p>— Meyy</p>")))
             if str(res.get("status", "")) in ("sent", "written"):
