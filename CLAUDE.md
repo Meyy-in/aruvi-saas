@@ -2288,5 +2288,5 @@ done locally:** `python3 -m uvicorn api.main:app --port 8000; npm --prefix web r
 
 OTP SECOND COPY (founder, 2026-10-08): `/auth/sms-hook` sends the SMS (MSG91) and, for a SUBSCRIBER (entitlement
 status ≠ trial), the SAME code on ONE more channel (`_otp_second_channel`): EMAIL first (free); WhatsApp only with no
-email / mail failing (opted in + `ARUVI_WA_OTP_TEMPLATE`, approved Authentication template; body + copy-code button). Sent only on a RESEND (a 2nd code request for the number within 10 min, `_otp_is_resend`, in memory) when
-the SMS went — background thread; if the SMS failed, a successful second copy still answers 200. Trial: SMS only. Never log the code.
+email / mail failing (opted in + `ARUVI_WA_OTP_TEMPLATE`, approved Authentication template; body + copy-code button). EMAIL goes with EVERY code; WhatsApp only on a RESEND (2nd request within 10 min, `_otp_is_resend`, in memory) —
+background thread when the SMS went; if the SMS failed, a successful second copy still answers 200. Trial: SMS only. Never log the code.

@@ -83,6 +83,9 @@ export default function Login({ onEnter }) {
   const otpDead = otpAt > 0 && otpLeft === 0;
   const [otp, setOtp] = useState("");
   const [otpErr, setOtpErr] = useState("");
+  /* Subscribers also get the code by email (WhatsApp on resend if no email) — deliberately NOT said
+     on screen (founder, 2026-10-08): the copy just arrives as a bonus. otpResent is kept for that. */
+  const [otpResent, setOtpResent] = useState(false);
   const [trialUsed, setTrialUsed] = useState(false);   // the trial ledger said 0 left (2026-09-18)
   const [otpBusy, setOtpBusy] = useState(false);
   // "Already in use" on the CREATE path, checked before the OTP goes out.
@@ -386,7 +389,7 @@ export default function Login({ onEnter }) {
               {otpDead ? (
                 <button className="primary fr-cta ob-cta" disabled={otpBusy}
                   onClick={async () => { setOtpErr(""); setOtp("");
-                    const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }}>
+                    const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); else setOtpResent(true); }}>
                   Send a new code</button>
               ) : (
                 <button className="primary fr-cta ob-cta" disabled={otp.length !== otpLen || otpBusy}
@@ -397,7 +400,7 @@ export default function Login({ onEnter }) {
           </div>
         </div>
         <div className="ob-foot">
-          <button className="fr-link" onClick={() => { setOtpSent(false); setOtp(""); setScreen(flow === "return" ? "signin" : "choose"); }}>← Back</button>
+          <button className="fr-link" onClick={() => { setOtpSent(false); setOtp(""); setOtpResent(false); setScreen(flow === "return" ? "signin" : "choose"); }}>← Back</button>
         </div>
       </div>
     );

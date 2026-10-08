@@ -206,28 +206,37 @@ def test_sms_failure_still_succeeds_when_the_second_copy_went():
             plan_id="trial", status="trial", scopes=["*"]))
 
 
-def test_second_copy_only_on_resend():
+def test_email_with_every_code_whatsapp_only_on_resend():
     m, c = _client()
-    n = "9800000611"
-    _subscriber(m, n)
+    import time as _t
+    n, w = "9800000611", "9800000612"
+    _subscriber(m, n)                       # has email
+    _subscriber(m, w, email="")             # WhatsApp only
     wa, mail, undo = _capture(m)
     calls, undo2 = _patch_post(_FakeResp(200, {"type": "success", "message": "r1"}))
-    body = json.dumps({"user": {"phone": "91" + n}, "sms": {"otp": "246810"}}).encode()
-    import time as _t
+    old_tpl = m.config.WA_OTP_TEMPLATE
+    m.config.WA_OTP_TEMPLATE = "meyy_otp"
+
+    def hook(num, code):
+        b = json.dumps({"user": {"phone": "91" + num}, "sms": {"otp": code}}).encode()
+        assert c.post("/auth/sms-hook", content=b, headers=_signed(b)).status_code == 200
+
+    def wait(lst, k):
+        for _ in range(30):
+            if len(lst) >= k:
+                return
+            _t.sleep(0.1)
     try:
         m._OTP_LAST.clear()
-        assert c.post("/auth/sms-hook", content=body, headers=_signed(body)).status_code == 200
-        _t.sleep(0.3)
-        assert mail == [], "a normal sign-in is SMS only"
-        assert c.post("/auth/sms-hook", content=body, headers=_signed(body)).status_code == 200
-        for _ in range(20):
-            if mail:
-                break
-            _t.sleep(0.1)
-        assert len(mail) == 1 and "246810" in mail[0].subject, "Resend brings the second copy"
-        # long after: a fresh sign-in, SMS only again
-        assert m._otp_is_resend("91" + n, now=_t.time() + 3600) is False
+        hook(n, "246810"); wait(mail, 1)
+        assert len(mail) == 1 and "246810" in mail[0].subject, "email goes with the FIRST code too"
+        hook(w, "135790"); _t.sleep(0.4)
+        assert wa == [], "WhatsApp-only: the first code is SMS only"
+        hook(w, "975310"); wait(wa, 1)
+        assert len(wa) == 1 and wa[0].code_button == "975310", "…and the resend brings WhatsApp"
+        assert m._otp_is_resend("91" + w, now=_t.time() + 3600) is False
     finally:
+        m.config.WA_OTP_TEMPLATE = old_tpl
         undo2(); undo()
 
 if __name__ == "__main__":

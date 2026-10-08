@@ -2836,9 +2836,10 @@ def _sms_hook_error(code: int, message: str) -> JSONResponse:
     return JSONResponse(status_code=code, content={"error": {"http_code": code, "message": message}})
 
 
-# ★ THE SECOND COPY ONLY ON "RESEND" (founder, 2026-10-08). A normal sign-in is SMS only; a second
-# code request for the same number within OTP_RESEND_WINDOW_S means the first SMS did not arrive —
-# that is when the copy goes. In memory: a restart forgets, which at worst skips one copy.
+# ★ WHEN THE SECOND COPY GOES (founder, 2026-10-08, final): EMAIL — free — with EVERY code, the first
+# included. WHATSAPP — a paid template, only for a subscriber with no email — only on a RESEND: a
+# second code request for the same number within OTP_RESEND_WINDOW_S means the SMS did not arrive.
+# In memory: a restart forgets, which at worst skips one WhatsApp copy.
 OTP_RESEND_WINDOW_S = 600
 _OTP_LAST: Dict[str, float] = {}
 
@@ -2856,7 +2857,7 @@ def _otp_is_resend(phone: str, now: Optional[float] = None) -> bool:
     return prev is not None and now - prev <= OTP_RESEND_WINDOW_S
 
 
-def _otp_second_channel(phone: str, otp: str) -> str:
+def _otp_second_channel(phone: str, otp: str, allow_whatsapp: bool = True) -> str:
     """★ SUBSCRIBERS GET THE CODE TWICE (founder, 2026-10-08): the SAME code, on ONE more channel
     besides the SMS. EMAIL FIRST (founder, same day: it costs nothing); WhatsApp — a paid
     Authentication template — only when there is no email on the account or the mail fails.
@@ -2883,7 +2884,7 @@ def _otp_second_channel(phone: str, otp: str) -> str:
                       "<p>— Meyy</p>")))
             if str(res.get("status", "")) in ("sent", "written"):
                 return "email"
-        if (acct.notify or {}).get("whatsapp") and config.WA_OTP_TEMPLATE:
+        if allow_whatsapp and (acct.notify or {}).get("whatsapp") and config.WA_OTP_TEMPLATE:
             res = wa_client.send_template(WhatsAppTemplate(
                 to=_wa_e164(acct.phone or d), template=config.WA_OTP_TEMPLATE,
                 language=config.WA_OTP_LANG, params=[otp], code_button=otp))
@@ -2923,11 +2924,11 @@ async def auth_sms_hook(request: Request):
         if otp and _otp_second_channel(phone, otp):
             return {}
         return _sms_hook_error(502, "Could not send the SMS. Please try again.")
-    if otp and resend:
-        # The SMS went, but she asked again — the first one evidently didn't arrive. The second
-        # copy goes in the background, so the hook answers fast.
+    if otp:
+        # The SMS went: the email copy always follows; WhatsApp (no email) only on a resend. In the
+        # background, so the hook answers fast.
         import threading as _th
-        _th.Thread(target=_otp_second_channel, args=(phone, otp), daemon=True).start()
+        _th.Thread(target=_otp_second_channel, args=(phone, otp, resend), daemon=True).start()
     return {}
 
 

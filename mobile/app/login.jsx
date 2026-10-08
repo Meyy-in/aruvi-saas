@@ -191,6 +191,9 @@ export default function Login() {
   const otpCanResend = otpAt > 0 && otpElapsed >= OTP_RESEND_LOCK_MS / 1000;
   const [otp, setOtp] = useState("");
   const [otpErr, setOtpErr] = useState("");
+  /* Subscribers also get the code by email (WhatsApp on resend if no email) — deliberately NOT said
+     on screen (founder, 2026-10-08): the copy just arrives as a bonus. otpResent is kept for that. */
+  const [otpResent, setOtpResent] = useState(false);
   const [otpBusy, setOtpBusy] = useState(false);
   const [mobErr, setMobErr] = useState("");
   const [mobBusy, setMobBusy] = useState(false);
@@ -205,7 +208,7 @@ export default function Login() {
      leave the app (the default). */
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-      if (screen === "otp") { setOtpSent(false); setScreen(flow === "return" ? "signin" : "choose"); return true; }
+      if (screen === "otp") { setOtpSent(false); setOtpResent(false); setScreen(flow === "return" ? "signin" : "choose"); return true; }
       if (screen === "signin") { setScreen("choose"); return true; }
       return false;
     });
@@ -320,7 +323,7 @@ export default function Login() {
       <Wrap foot={<>
         <Button title="Create sign in →" onPress={() => {
           /* WALK-A-011 (founder, 2026-09-20): every fresh entry starts empty. */
-          setFlow("create"); setOtpSent(false); setMobile(""); setMobErr(""); setOtpAt(0); setScreen("otp"); }} />
+          setFlow("create"); setOtpSent(false); setOtpResent(false); setMobile(""); setMobErr(""); setOtpAt(0); setScreen("otp"); }} />
         <Link title="Already have an ID? Sign in" onPress={() => setScreen("signin")} />
       </>}>
         <Benefits />
@@ -345,7 +348,7 @@ export default function Login() {
 
   if (screen === "otp") {
     return (
-      <Wrap foot={<Link title="← Back" onPress={() => { setOtpSent(false); setScreen(flow === "return" ? "signin" : "choose"); }} />}>
+      <Wrap foot={<Link title="← Back" onPress={() => { setOtpSent(false); setOtpResent(false); setScreen(flow === "return" ? "signin" : "choose"); }} />}>
         <Text style={[type.title, { color: t.ink }]}>Let's verify your mobile</Text>
         <Text style={[type.body, { color: t.ink_soft, marginTop: 6 }]}>We'll send you a one-time password (OTP) to sign in securely.</Text>
         <Field label="Enter your mobile number">
@@ -412,7 +415,7 @@ export default function Login() {
             {otpDead ? (
               <Button title="Send a new code" busy={otpBusy} style={{ marginTop: 22 }}
                 onPress={async () => { if (otpBusy) return; setOtpErr(""); setOtp("");
-                  const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); }} />
+                  const err = await requestOtp(mobile.trim()); if (err) setOtpErr(err); else setOtpResent(true); }} />
             ) : (
               <Button title={otpBusy ? "Verifying…" : "Verify & continue →"} disabled={otp.length !== otpLen} busy={otpBusy} style={{ marginTop: 22 }} onPress={verifyOtp} />
             )}
