@@ -2836,6 +2836,66 @@ def _sms_hook_error(code: int, message: str) -> JSONResponse:
     return JSONResponse(status_code=code, content={"error": {"http_code": code, "message": message}})
 
 
+# ★ THE SECOND COPY ONLY ON "RESEND" (founder, 2026-10-08). A normal sign-in is SMS only; a second
+# code request for the same number within OTP_RESEND_WINDOW_S means the first SMS did not arrive —
+# that is when the copy goes. In memory: a restart forgets, which at worst skips one copy.
+OTP_RESEND_WINDOW_S = 600
+_OTP_LAST: Dict[str, float] = {}
+
+
+def _otp_is_resend(phone: str, now: Optional[float] = None) -> bool:
+    import time as _t
+    now = now if now is not None else _t.time()
+    d = "".join(ch for ch in str(phone or "") if ch.isdigit())[-10:]
+    if not d:
+        return False
+    for k in [k for k, v in _OTP_LAST.items() if now - v > OTP_RESEND_WINDOW_S]:
+        _OTP_LAST.pop(k, None)                    # forget the old ones as we go
+    prev = _OTP_LAST.get(d)
+    _OTP_LAST[d] = now
+    return prev is not None and now - prev <= OTP_RESEND_WINDOW_S
+
+
+def _otp_second_channel(phone: str, otp: str) -> str:
+    """★ SUBSCRIBERS GET THE CODE TWICE (founder, 2026-10-08): the SAME code, on ONE more channel
+    besides the SMS. EMAIL FIRST (founder, same day: it costs nothing); WhatsApp — a paid
+    Authentication template — only when there is no email on the account or the mail fails.
+    Trial accounts: SMS only. Returns "email" | "whatsapp" | "" (none sent). Never raises, never
+    logs the code."""
+    try:
+        d = "".join(ch for ch in str(phone or "") if ch.isdigit())[-10:]
+        if len(d) != 10:
+            return ""
+        acct = account_repo.load(d, d)
+        ent = entitlement_repo.load(d)
+        if acct is None or ent is None or ent.status == "trial":
+            return ""
+        to = (acct.email or "").strip()
+        if to:
+            res = notifier.send(EmailMessage(
+                to=to, subject=f"Your Meyy sign-in code is {otp}",
+                text=(f"Your Meyy sign-in code is {otp}.\n\nIt was also sent to your mobile by SMS. "
+                      "Never share it with anyone. If you did not try to sign in, you can ignore "
+                      "this email.\n\n— Meyy"),
+                html=(f"<p>Your Meyy sign-in code is <strong style='font-size:20px;letter-spacing:2px'>"
+                      f"{otp}</strong></p><p>It was also sent to your mobile by SMS. Never share it "
+                      "with anyone. If you did not try to sign in, you can ignore this email.</p>"
+                      "<p>— Meyy</p>")))
+            if str(res.get("status", "")) in ("sent", "written"):
+                return "email"
+        if (acct.notify or {}).get("whatsapp") and config.WA_OTP_TEMPLATE:
+            res = wa_client.send_template(WhatsAppTemplate(
+                to=_wa_e164(acct.phone or d), template=config.WA_OTP_TEMPLATE,
+                language=config.WA_OTP_LANG, params=[otp], code_button=otp))
+            _wa_log({"kind": "otp_copy", "channel": "whatsapp", "status": res.get("status"),
+                     "error": str(res.get("error") or "")[:200]})
+            if res.get("status") in ("sent", "written"):
+                return "whatsapp"
+    except Exception as e:                                     # noqa: BLE001
+        print(f"[aruvi] otp copy failed: {str(e)[:200]}")
+    return ""
+
+
 @app.post("/auth/sms-hook")
 async def auth_sms_hook(request: Request):
     from aruvi_core.adapters.msg91_sms import Msg91Sms
@@ -2854,11 +2914,20 @@ async def auth_sms_hook(request: Request):
         return _sms_hook_error(400, "Bad request.")
     phone = str(((body.get("user") or {}).get("phone")) or "")
     otp = str(((body.get("sms") or {}).get("otp")) or "")
+    resend = _otp_is_resend(phone)
     res = Msg91Sms(config.MSG91_AUTHKEY, config.MSG91_OTP_TEMPLATE_ID).send_otp(phone, otp)
-    print(f"[aruvi] sms-hook: …{phone[-4:]} {res.get('status')} "
+    print(f"[aruvi] sms-hook: …{phone[-4:]} {res.get('status')}{' (resend)' if resend else ''} "
           f"{res.get('request_id') or res.get('error') or ''}")
     if res.get("status") != "sent":
+        # SMS failed: a subscriber may still get the code on WhatsApp/email — then it is sent.
+        if otp and _otp_second_channel(phone, otp):
+            return {}
         return _sms_hook_error(502, "Could not send the SMS. Please try again.")
+    if otp and resend:
+        # The SMS went, but she asked again — the first one evidently didn't arrive. The second
+        # copy goes in the background, so the hook answers fast.
+        import threading as _th
+        _th.Thread(target=_otp_second_channel, args=(phone, otp), daemon=True).start()
     return {}
 
 

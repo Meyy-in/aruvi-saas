@@ -581,6 +581,8 @@ class WhatsAppTemplate:
     language: str = "en"
     params: List[str] = field(default_factory=list)
     document: Dict[str, str] = field(default_factory=dict)   # {id|link, filename} or {}
+    # An AUTHENTICATION template's copy-code button carries the code too (2026-10-08).
+    code_button: str = ""
 
 
 @runtime_checkable

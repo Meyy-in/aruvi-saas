@@ -137,6 +137,99 @@ def test_number_normalisation():
     assert indian_mobile("447700900123") == ""
 
 
+
+def _subscriber(m, n, *, status="active", whatsapp=True, email="t@example.com"):
+    from aruvi_core.ports import Account, Entitlement
+    m.account_repo.save(Account(account_id=n, tenant_id=n, display_name="T", email=email, phone=n,
+                                notify={"whatsapp": whatsapp}))
+    m.entitlement_repo.save(n, Entitlement(plan_id="trial" if status == "trial" else "individual_annual",
+                                           status=status, scopes=["*"]))
+
+
+def _capture(m):
+    wa, mail = [], []
+    old = (m.wa_client.send_template, m.notifier.send)
+    m.wa_client.send_template = lambda t: (wa.append(t), {"status": "sent"})[1]
+    m.notifier.send = lambda e: (mail.append(e), {"status": "sent"})[1]
+    return wa, mail, lambda: (setattr(m.wa_client, "send_template", old[0]), setattr(m.notifier, "send", old[1]))
+
+
+def test_subscriber_gets_the_same_code_on_one_second_channel():
+    m, c = _client()
+    n = "9800000601"
+    _subscriber(m, n)
+    wa, mail, undo = _capture(m)
+    old_tpl = m.config.WA_OTP_TEMPLATE
+    try:
+        m.config.WA_OTP_TEMPLATE = "meyy_otp"
+        # email on record → email, and only email (it costs nothing)
+        assert m._otp_second_channel("91" + n, "482913") == "email"
+        assert len(mail) == 1 and not wa and "482913" in mail[0].subject and mail[0].to == "t@example.com"
+        # no email → WhatsApp, with the code in the body and on the copy-code button
+        _subscriber(m, "9800000604", email="")
+        assert m._otp_second_channel("919800000604", "555666") == "whatsapp"
+        t = wa[0]
+        assert t.template == "meyy_otp" and t.params == ["555666"] and t.code_button == "555666"
+        from aruvi_core.adapters.cloud_whatsapp import CloudWhatsApp
+        comps = CloudWhatsApp.payload(t, "919800000604")["template"]["components"]
+        assert {"type": "button", "sub_type": "url", "index": "0",
+                "parameters": [{"type": "text", "text": "555666"}]} in comps
+        # the mail failing → WhatsApp instead
+        m.notifier.send = lambda e: {"status": "error", "error": "smtp"}
+        assert m._otp_second_channel("91" + n, "111222") == "whatsapp"
+        # no email and no template → nothing
+        m.config.WA_OTP_TEMPLATE = ""
+        assert m._otp_second_channel("919800000604", "333444") == ""
+        # not opted into WhatsApp and no email → nothing; trial → nothing
+        _subscriber(m, "9800000602", whatsapp=False, email="")
+        assert m._otp_second_channel("919800000602", "1") == ""
+        _subscriber(m, "9800000603", status="trial")
+        assert m._otp_second_channel("919800000603", "1") == ""
+        assert m._otp_second_channel("919800000699", "1") == ""   # no account at all
+    finally:
+        m.config.WA_OTP_TEMPLATE = old_tpl
+        undo()
+
+
+def test_sms_failure_still_succeeds_when_the_second_copy_went():
+    m, c = _client()
+    n = "9363795723"
+    _subscriber(m, n, whatsapp=False)
+    wa, mail, undo = _capture(m)
+    calls, undo2 = _patch_post(_FakeResp(200, {"type": "error", "message": "DLT"}))
+    try:
+        r = c.post("/auth/sms-hook", content=BODY, headers=_signed(BODY))
+        assert r.status_code == 200 and len(mail) == 1 and "482913" in mail[0].text
+    finally:
+        undo2(); undo()
+        m.entitlement_repo.save(n, __import__("aruvi_core.ports", fromlist=["x"]).Entitlement(
+            plan_id="trial", status="trial", scopes=["*"]))
+
+
+def test_second_copy_only_on_resend():
+    m, c = _client()
+    n = "9800000611"
+    _subscriber(m, n)
+    wa, mail, undo = _capture(m)
+    calls, undo2 = _patch_post(_FakeResp(200, {"type": "success", "message": "r1"}))
+    body = json.dumps({"user": {"phone": "91" + n}, "sms": {"otp": "246810"}}).encode()
+    import time as _t
+    try:
+        m._OTP_LAST.clear()
+        assert c.post("/auth/sms-hook", content=body, headers=_signed(body)).status_code == 200
+        _t.sleep(0.3)
+        assert mail == [], "a normal sign-in is SMS only"
+        assert c.post("/auth/sms-hook", content=body, headers=_signed(body)).status_code == 200
+        for _ in range(20):
+            if mail:
+                break
+            _t.sleep(0.1)
+        assert len(mail) == 1 and "246810" in mail[0].subject, "Resend brings the second copy"
+        # long after: a fresh sign-in, SMS only again
+        assert m._otp_is_resend("91" + n, now=_t.time() + 3600) is False
+    finally:
+        undo2(); undo()
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_") and callable(fn):

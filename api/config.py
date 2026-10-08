@@ -254,6 +254,12 @@ MSG91_AUTHKEY = os.environ.get("ARUVI_MSG91_AUTHKEY", "").strip()
 MSG91_OTP_TEMPLATE_ID = (os.environ.get("ARUVI_MSG91_OTP_TEMPLATE_ID", "").strip()
                          or "6ac52060a8bc430f4c03d7a2")       # meyy_signin_otp_v2
 SMS_HOOK_SECRET = os.environ.get("ARUVI_SMS_HOOK_SECRET", "").strip()
+# ★ A SECOND COPY OF THE SIGN-IN CODE FOR SUBSCRIBERS (founder, 2026-10-08). Besides the SMS,
+# a teacher who has subscribed (not trial) gets the SAME code on ONE more channel: WhatsApp if
+# she opted in and this APPROVED Authentication template (copy-code button) is set, otherwise
+# email if one is on her account. Empty template = email only.
+WA_OTP_TEMPLATE = os.environ.get("ARUVI_WA_OTP_TEMPLATE", "").strip()
+WA_OTP_LANG = os.environ.get("ARUVI_WA_OTP_LANG", "").strip() or WA_TEMPLATE_LANG
 
 # ── Razorpay (web payments, 2026-10-07) ─────────────────────────────────────────
 # From the Render dashboard only. KEY_ID + KEY_SECRET set → the website takes payment

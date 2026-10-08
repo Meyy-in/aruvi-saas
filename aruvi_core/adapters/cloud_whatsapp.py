@@ -42,6 +42,9 @@ class CloudWhatsApp(WhatsAppClient):
         if msg.params:
             components.append({"type": "body", "parameters": [
                 {"type": "text", "text": str(p)} for p in msg.params]})
+        if getattr(msg, "code_button", ""):
+            components.append({"type": "button", "sub_type": "url", "index": "0",
+                               "parameters": [{"type": "text", "text": str(msg.code_button)}]})
         tpl: Dict[str, Any] = {"name": msg.template, "language": {"code": msg.language}}
         if components:
             tpl["components"] = components

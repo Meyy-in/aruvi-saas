@@ -137,6 +137,8 @@ services:
         sync: false
       - key: ARUVI_SUPPORT_DRAFT_TOKEN
         sync: false
+      - key: ARUVI_WA_OTP_TEMPLATE
+        sync: false
       - key: ARUVI_MAIL_FROM
         sync: false
       - key: ARUVI_SUPPORT_ADDRESS
