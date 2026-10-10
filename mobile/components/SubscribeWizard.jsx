@@ -51,6 +51,7 @@ import { storage } from "@aruvi/shared/storage";
 import { dateWords } from "@aruvi/shared/legalmd";
 import { syncEntitlement } from "@aruvi/shared/entitlement";
 import { notePurchase } from "../lib/purchase";
+import { storeAvailable, storeLogin, storeBuy } from "../lib/store";
 import { noteBoughtScopes } from "@aruvi/shared/setupCheck";
 import { invalidateAccount } from "@aruvi/shared/account";
 import { fetchReadiness } from "@aruvi/shared/readiness";
@@ -187,6 +188,10 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
   const [price, setPrice] = useState(699);   // the server's /onboarding answer replaces it
   const [payBusy, setPayBusy] = useState(false);
   const [payErr, setPayErr] = useState("");
+  /* ★ HOW THIS PHONE PAYS (2026-10-09): "store" = the App Store / Google Play sheet through
+     RevenueCat (the server says so per caller); "manual" = the no-money checkout, which the
+     server keeps for the founder's test numbers and for builds before store billing. */
+  const [payVia, setPayVia] = useState("manual");
   const acctRef = useRef(null);
   /* ★ THE TRIAL FORK, ON MOUNT — after Verify, before About-you, and once (the web's `offeredRef`).
      No screen test: the wizard's first screen IS About-you, so the offer has to be the thing
@@ -306,6 +311,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
     if (screen !== "cart" || stageMap) return;
     getJSON("/entitlement").then((d) => {
       if (d && d.price_per_subject_stage) setPrice(d.price_per_subject_stage);
+      setPayVia(d && d.store_purchases === "store" ? "store" : "manual");
       /* What she already holds, LIVE, is not for sale again — the server's own answer; the
          client never compares dates. A trial's "*" is not a holding: it would swallow the
          whole catalogue. */
@@ -322,16 +328,63 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
     rows.filter((r) => r.subject && r.stage).map((r) => `${r.subject}/${r.stage}`))), [rows]);
   const total = cartScopes.length * price;
 
+  /* The checkout body — the web path and the store path send the same About-you fields. */
+  const checkoutBody = () => ({
+    scopes: cartScopes, name, email: emailStage === "ok" ? email.trim() : "",
+    /* null on the known-profile skip = "leave the stored choice" (server rule). */
+    whatsapp: wa,
+    role: roleToSave(role, roleOther), state: stateName, city, school,
+  });
+
   const doCheckout = () => {
     setPayBusy(true); setPayErr("");
     noteBoughtScopes(cartScopes);   // WALK-A-173: noted BEFORE the post — see setupCheck.js
-    postJSON("/onboarding/checkout", {
-      scopes: cartScopes, name, email: emailStage === "ok" ? email.trim() : "",
-      /* null on the known-profile skip = "leave the stored choice" (server rule). */
-      whatsapp: wa,
-      role: roleToSave(role, roleOther), state: stateName, city, school,
-    })
-      .then((out) => {
+    postJSON("/onboarding/checkout", checkoutBody())
+      .then(settle)
+      .catch(failPay);
+  };
+
+  /* ★ THE STORE PATH (2026-10-09). One store sheet per subject-stage — the sheets sell one
+     product at a time — then ONE server sync, which asks RevenueCat what she holds and grants
+     it (the webhook usually lands first; the sync is the belt to its braces). If she backs out
+     of a later sheet, what she already paid for is still granted and the screen says so. */
+  const doStoreCheckout = async () => {
+    setPayBusy(true); setPayErr("");
+    noteBoughtScopes(cartScopes);
+    try {
+      const st = await postJSON("/payments/store/start", checkoutBody());
+      await storeLogin(st.app_user_id);
+      let bought = 0;
+      for (const p of st.products || []) {
+        // eslint-disable-next-line no-await-in-loop
+        const r = await storeBuy(p.product_id);
+        if (!r.ok) break;
+        bought += 1;
+      }
+      if (bought === 0) { setPayBusy(false); return; }     // cancelled before paying
+      const sy = await postJSON("/payments/store/sync", {});
+      const left = (st.products || []).length - bought;
+      if (left > 0) {
+        setPayErr(`${bought} of ${st.products.length} subjects activated; the other${left > 1 ? "s were" : " was"} not paid for.`);
+      }
+      settle({ status: "active", whatsapp: false, added: (sy && sy.entitlement && sy.entitlement.scopes) || cartScopes });
+    } catch (e) { failPay(e); }
+  };
+
+  /* "Restore purchases": the server asks the store, grants anything missing. */
+  const doRestore = () => {
+    setPayBusy(true); setPayErr("");
+    postJSON("/payments/store/sync", {})
+      .then((sy) => {
+        if (sy && sy.granted > 0) { settle({ status: "active", whatsapp: false }); return; }
+        setPayErr("Nothing new to restore for this mobile number.");
+        setPayBusy(false);
+      })
+      .catch(failPay);
+  };
+
+  const settle = (out) => {
+    {
         /* Both stores hold what this just changed — her scopes and her account fields — and
            both are read by screens she lands on next. */
         /* ★ RE-READ, DON'T BLANK (founder, 2026-09-18). `invalidateEntitlement()` dropped the copy,
@@ -362,9 +415,12 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
            the SERVER's stored answer, not on `wa`. Everyone else goes straight on, as before. */
         if (out && out.whatsapp) { setDone(out); setPayBusy(false); setScreen("done"); return; }
         finish();
-      })
-      .catch((e) => {
-        const detail = (e && e.detail)
+    }
+  };
+
+  const failPay = (e) => {
+    {
+        const detail = (e && e.detail) || (e && e.message)
           || "Couldn’t complete the activation. Try again in a moment.";
         /* A consent refusal has a PLACE to send her, so send her there: the server refuses a
            checkout without a current-version acceptance, which realistically means a new version
@@ -378,7 +434,7 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
         }
         setPayErr(detail);
         setPayBusy(false);
-      });
+    }
   };
 
   /* Hold on bare paper while the entry screen is being decided — no words and no spinner: it
@@ -742,15 +798,25 @@ export default function SubscribeWizard({ onDone, onCancel, trialFork = false, n
           </Text>
         ) : null}
 
-        <Quiet>Preview build: online payment opens soon — this activates your subscription right
-          away.</Quiet>
+        {payVia === "store" && storeAvailable() ? (
+          <Quiet>Payment is taken by {Platform.OS === "ios" ? "the App Store" : "Google Play"} —
+            one sheet per subject. One year each; nothing renews by itself.</Quiet>
+        ) : payVia === "store" ? (
+          <Quiet>In-app purchase needs the store build of Meyy. Until then, subscribe on the
+            website at meyy.in — it is the same subscription.</Quiet>
+        ) : (
+          <Quiet>Preview build: online payment opens soon — this activates your subscription right
+            away.</Quiet>
+        )}
         {payErr ? (
           <Text accessibilityRole="alert" style={[ws.ob_err, { color: t.danger }]}>{payErr}</Text>
         ) : null}
       </ScrollView>
       <View style={[ws.ob_foot, footPad, { backgroundColor: t.paper }]}>
         <Button title={payBusy ? "Activating…" : `Pay ₹${total} & start →`} busy={payBusy}
-          disabled={payBusy} onPress={doCheckout} style={{ width: "100%" }} />
+          disabled={payBusy || (payVia === "store" && !storeAvailable())}
+          onPress={payVia === "store" ? doStoreCheckout : doCheckout} style={{ width: "100%" }} />
+        {payVia === "store" ? <Link title="Restore purchases" onPress={doRestore} /> : null}
         <Link title="← Back" onPress={() => setScreen("cart")} />
       </View>
     </View>

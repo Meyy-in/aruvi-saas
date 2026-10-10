@@ -15,7 +15,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "in.meyy.app"
+      "bundleIdentifier": "in.meyy.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "in.meyy.app",
@@ -37,6 +40,13 @@
       "bundler": "metro",
       "output": "single",
       "favicon": "./assets/icon.png"
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "67bd19c1-5aed-4fa3-988a-53eecc27f7df"
+      }
+    },
+    "owner": "punnax"
   }
 }

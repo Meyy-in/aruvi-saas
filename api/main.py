@@ -2059,9 +2059,35 @@ def get_entitlement(identity: tuple = Depends(_current_identity)) -> Dict[str, A
         "price_per_subject_stage": config.PRICE_PER_SUBJECT_STAGE,
         # How the WEBSITE takes money (2026-10-07): "razorpay" once the keys are in
         # Render, else "manual" (the no-money checkout). The key id is public by design.
-        "payment_provider": "razorpay" if config.razorpay_on() else "manual",
-        "razorpay_key_id": config.RAZORPAY_KEY_ID if config.razorpay_on() else "",
+        # ★ The founder's test numbers (ARUVI_MANUAL_CHECKOUT_NUMBERS) keep the no-money checkout
+        #   even with Razorpay on (2026-10-08) — so a test account can be made a subscriber
+        #   without a payment (Razorpay asks for things a WhatsApp-only tester may not have).
+        "payment_provider": "razorpay" if _razorpay_for(_user_id) else "manual",
+        "razorpay_key_id": config.RAZORPAY_KEY_ID if _razorpay_for(_user_id) else "",
+        # How the PHONE APPS take money (2026-10-09): "store" = Apple / Google in-app
+        # purchase through RevenueCat; "manual" for the founder's test numbers (or while
+        # RevenueCat is not configured) — the no-money checkout, as before.
+        "store_purchases": "store" if _store_for(_user_id) else "manual",
     }
+
+
+def _is_test_number(user_id: str) -> bool:
+    me = re.sub(r"\D", "", user_id or "")[-10:]
+    return bool(me) and any(re.sub(r"\D", "", n)[-10:] == me
+                            for n in config.MANUAL_CHECKOUT_NUMBERS)
+
+
+def _store_for(user_id: str) -> bool:
+    """RevenueCat is on AND this caller is not one of the founder's test numbers."""
+    return config.revenuecat_on() and not _is_test_number(user_id)
+
+
+def _razorpay_for(user_id: str) -> bool:
+    """Razorpay is on AND this caller is not one of the founder's test numbers."""
+    if not config.razorpay_on():
+        return False
+    me = re.sub(r"\D", "", user_id or "")[-10:]
+    return not (me and any(re.sub(r"\D", "", n)[-10:] == me for n in config.MANUAL_CHECKOUT_NUMBERS))
 
 
 # ── The user agreement: read it, tick it, prove it (2026-08-27) ────────────────
@@ -2840,7 +2866,7 @@ def _sms_hook_error(code: int, message: str) -> JSONResponse:
 # included. WHATSAPP — a paid template, only for a subscriber with no email — only on a RESEND: a
 # second code request for the same number within OTP_RESEND_WINDOW_S means the SMS did not arrive.
 # In memory: a restart forgets, which at worst skips one WhatsApp copy.
-OTP_RESEND_WINDOW_S = 600
+OTP_RESEND_WINDOW_S = 180   # the code lives 60 s; "Send a new code" comes right after
 _OTP_LAST: Dict[str, float] = {}
 
 
@@ -3786,7 +3812,8 @@ def _checkout_prepare(req: CheckoutRequest, tenant_id: str, user_id: str):
 
 def _activate_purchase(tenant_id: str, user_id: str, scopes: List[str], prior: Any,
                        acct: Any, email: str = "", name: str = "", source: str = "web",
-                       payment_method: str = MANUAL_PAYMENT_METHOD) -> Dict[str, Any]:
+                       payment_method: str = MANUAL_PAYMENT_METHOD,
+                       issue_invoice: bool = True) -> Dict[str, Any]:
     """The half of a purchase that happens AFTER the money: grant, profile, trial purge,
     invoice, WhatsApp, mail. Shared by the manual checkout, the Razorpay checkout and the
     Razorpay payment (2026-10-07). A scope she buys while it is still LIVE (an early
@@ -3847,9 +3874,12 @@ def _activate_purchase(tenant_id: str, user_id: str, scopes: List[str], prior: A
     invoice = None
     invoice_pdf = None
     try:
-        invoice = _build_invoice(tenant_id, user_id, acct, scopes,
-                                 result.get("scope_valid_until") or {},
-                                 payment_method=payment_method)
+        # ★ Store purchases (2026-10-09): Apple/Google are the seller and issue the receipt,
+        #   so no Meyy invoice unless config.STORE_INVOICE says so (X10, CA question).
+        if issue_invoice:
+            invoice = _build_invoice(tenant_id, user_id, acct, scopes,
+                                     result.get("scope_valid_until") or {},
+                                     payment_method=payment_method)
         if invoice is not None:
             from aruvi_core.export_invoice_pdf import export_invoice_pdf
             invoice_pdf = export_invoice_pdf(invoice)
@@ -4072,6 +4102,154 @@ async def razorpay_webhook(request: Request) -> Dict[str, Any]:
         out = _rzp_paid(order_id, pay["id"], doc_if_missing=fallback, via="webhook")
         return {"ok": True, "status": out.get("status", "")}
     return {"ok": True}
+
+
+# ── In-app purchases through RevenueCat (2026-10-09) ───────────────────────────
+# ★ SAME DEAL AS THE WEBSITE (founder): pay once for a year per subject-stage, no auto-renew.
+# Apple sells a NON-RENEWING subscription per subject-stage, Google a one-time (consumable)
+# product; product id = "meyy.<subject>.<stage>" (aruvi_core/adapters/revenuecat.py). Three
+# endpoints:
+#   start   — the same checks and About-you save as the web checkout, then the product ids
+#             the app must buy and the app_user_id it must be logged into RevenueCat as.
+#             Nothing is granted here. Also files app_user_id → (tenant, user).
+#   webhook — RevenueCat telling the server a purchase happened (Authorization header).
+#   sync    — the app asking the server to ASK RevenueCat what she holds (after a purchase
+#             the webhook may not have landed yet; and "Restore purchases").
+# A store TRANSACTION grants ONCE, under one lock per transaction, whichever path reports
+# it first; a sandbox transaction grants only the founder's test numbers. Each transaction
+# is one scope — the store sheets sell one product at a time — so a cart of two is two
+# transactions, each extending/starting its own year (see _activate_purchase).
+
+def _store_txn_key(store: str, txn: str) -> str:
+    # Upper-cased: the webhook says "PLAY_STORE", RevenueCat's REST API says "play_store" —
+    # the same transaction must land on ONE record, or sync and webhook would both grant it.
+    return (f"payments/store/transactions/{re.sub(r'[^A-Za-z0-9_]', '', (store or 'STORE').upper())}/"
+            f"{re.sub(r'[^A-Za-z0-9_.-]', '_', txn)}.json")
+
+
+def _store_user_key(app_user_id: str) -> str:
+    return f"payments/store/users/{re.sub(r'[^A-Za-z0-9_]', '', app_user_id)}.json"
+
+
+def _rc_client():
+    from aruvi_core.adapters.revenuecat import RevenueCatClient
+    return RevenueCatClient(config.REVENUECAT_SECRET_KEY)
+
+
+def _store_paid(p: Dict[str, Any], via: str = "") -> Dict[str, Any]:
+    """Grant what one store transaction bought — once. `p` is the parsed record (webhook or
+    REST shape). Returns the stored answer on a repeat, {"status": ...} otherwise."""
+    from aruvi_core.adapters.revenuecat import scope_for_product
+    txn, store = p.get("transaction_id") or "", p.get("store") or ""
+    if not txn:
+        return {"status": "ignored", "why": "no transaction id"}
+    scope = scope_for_product(p.get("product_id") or "")
+    if not scope:
+        return {"status": "ignored", "why": f"not a Meyy product: {p.get('product_id')}"}
+    key = _store_txn_key(store, txn)
+    with state.lock(key):
+        doc = state.get_json(key) or {}
+        if doc.get("activated_at"):
+            # `repeat` so a caller counting new grants (sync) does not count this one again.
+            return dict(doc.get("result") or {"status": "active"}, repeat=True)
+        # Who is she? The record /start filed, else the id itself (tenant == user).
+        ids = [p.get("app_user_id") or ""] + list(p.get("aliases") or [])
+        who = None
+        for aid in ids:
+            if aid and not aid.startswith("$RCAnonymousID"):
+                who = state.get_json(_store_user_key(aid)) or {"tenant_id": aid, "user_id": aid}
+                break
+        if who is None:
+            doc.update({"status": "unmatched", "seen_at": datetime.now(timezone.utc).isoformat(),
+                        "product_id": p.get("product_id"), "app_user_ids": ids, "via": via})
+            state.put_json(key, doc)
+            return {"status": "unmatched"}
+        tenant_id, user_id = who["tenant_id"], who["user_id"]
+        if p.get("sandbox") and not _is_test_number(user_id):
+            doc.update({"status": "sandbox_ignored", "tenant_id": tenant_id, "user_id": user_id,
+                        "seen_at": datetime.now(timezone.utc).isoformat(), "via": via,
+                        "product_id": p.get("product_id")})
+            state.put_json(key, doc)
+            return {"status": "sandbox_ignored"}
+        acct = account_repo.load(tenant_id, user_id)
+        prior = entitlement_repo.load(tenant_id)
+        label = {"APP_STORE": "the App Store", "MAC_APP_STORE": "the App Store",
+                 "PLAY_STORE": "Google Play"}.get(store.upper(), "the app store")
+        out = _activate_purchase(tenant_id, user_id, [scope], prior, acct,
+                                 source=f"store:{store.lower() or 'unknown'}",
+                                 payment_method=f"Paid through {label} ({txn})",
+                                 issue_invoice=config.STORE_INVOICE)
+        doc.update({"activated_at": datetime.now(timezone.utc).isoformat(),
+                    "tenant_id": tenant_id, "user_id": user_id, "scope": scope,
+                    "product_id": p.get("product_id"), "store": store,
+                    "sandbox": bool(p.get("sandbox")), "status": "paid", "via": via,
+                    "result": out})
+        state.put_json(key, doc)
+        return out
+
+
+@app.post("/payments/store/start")
+def store_start(req: CheckoutRequest,
+                identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """Step 1 of an in-app purchase: the same checks and About-you save as the web
+    checkout, then what to buy. Nothing is granted here."""
+    from aruvi_core.adapters.revenuecat import product_for_scope
+    tenant_id, user_id = identity
+    if not _store_for(user_id):
+        raise HTTPException(status_code=409, detail="In-app purchase is not open yet.")
+    scopes, _prior, _acct = _checkout_prepare(req, tenant_id, user_id)
+    state.put_json(_store_user_key(user_id), {
+        "app_user_id": user_id, "tenant_id": tenant_id, "user_id": user_id,
+        "filed_at": datetime.now(timezone.utc).isoformat()})
+    return {"app_user_id": user_id,
+            "products": [{"scope": s, "product_id": product_for_scope(s)} for s in scopes],
+            "price_per_subject_stage": config.PRICE_PER_SUBJECT_STAGE}
+
+
+@app.post("/payments/store/sync")
+def store_sync(identity: tuple = Depends(_current_identity)) -> Dict[str, Any]:
+    """The app asking: what does RevenueCat say I have bought? Grants anything not yet
+    granted (a purchase whose webhook is still in flight; Restore purchases). Answers
+    with the fresh entitlement, so the app can redraw at once."""
+    tenant_id, user_id = identity
+    if not config.revenuecat_on():
+        raise HTTPException(status_code=409, detail="In-app purchase is not open yet.")
+    got = _rc_client().purchases(user_id)
+    if got.get("status") != "ok":
+        print(f"[revenuecat] sync failed for {user_id}: {got.get('error', got.get('status'))}")
+        raise HTTPException(status_code=502, detail=(
+            "We couldn't check your purchases just now. Please try again in a minute."))
+    state.put_json(_store_user_key(user_id), {
+        "app_user_id": user_id, "tenant_id": tenant_id, "user_id": user_id,
+        "filed_at": datetime.now(timezone.utc).isoformat()})
+    results = [_store_paid(dict(p, app_user_id=user_id), via="sync")
+               for p in got["purchases"]]
+    granted = [r for r in results if r.get("status") == "active" and r.get("added")
+               and not r.get("repeat")]
+    ent = get_entitlement(identity=identity)   # the fresh answer, same shape as GET
+    return {"checked": len(results), "granted": sum(len(r.get("added") or []) for r in granted),
+            "entitlement": ent}
+
+
+@app.post("/payments/revenuecat/webhook")
+async def revenuecat_webhook(request: Request) -> Dict[str, Any]:
+    """RevenueCat → server. 200 for any genuine event (RevenueCat retries anything else),
+    401 for a missing/wrong Authorization header."""
+    from aruvi_core.adapters.revenuecat import parse_webhook, webhook_authorized
+    if not webhook_authorized(config.REVENUECAT_WEBHOOK_SECRET,
+                              request.headers.get("authorization", "")):
+        raise HTTPException(status_code=401, detail="unauthorized")
+    try:
+        body = json.loads((await request.body()).decode("utf-8"))
+    except Exception:                                          # noqa: BLE001
+        return {"ok": True, "ignored": "unreadable"}
+    p = parse_webhook(body)
+    if p is None:
+        return {"ok": True, "ignored": ((body or {}).get("event") or {}).get("type", "")}
+    print(f"[revenuecat] webhook {p['type']} store={p['store']} product={p['product_id']} "
+          f"txn={p['transaction_id']} sandbox={p['sandbox']}")
+    out = _store_paid(p, via="webhook")
+    return {"ok": True, "status": out.get("status", "")}
 
 
 @app.get("/invoices")

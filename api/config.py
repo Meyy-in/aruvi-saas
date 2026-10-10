@@ -283,6 +283,27 @@ RENEW_WINDOW_DAYS = int(os.environ.get("ARUVI_RENEW_WINDOW_DAYS", "30"))
 def razorpay_on() -> bool:
     return bool(RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET)
 
+# ── RevenueCat (in-app purchases on the phone, 2026-10-09) ──────────────────────
+# Same deal as the website: pay once for a year per subject-stage, no auto-renew. Apple and
+# Google each sell one product per subject-stage ("meyy.<subject>.<stage>"); RevenueCat
+# validates the receipts and calls POST /payments/revenuecat/webhook. From the Render
+# dashboard only. SECRET_KEY is the project's secret API key (lets the server ASK RevenueCat
+# what a teacher holds — restore purchases and missed webhooks); WEBHOOK_SECRET is the
+# Authorization value typed into the dashboard's webhook. Either empty → store purchases off.
+# The app's own (public) SDK keys live in mobile/eas.json, not here.
+REVENUECAT_SECRET_KEY = os.environ.get("ARUVI_REVENUECAT_SECRET_KEY", "").strip()
+REVENUECAT_WEBHOOK_SECRET = os.environ.get("ARUVI_REVENUECAT_WEBHOOK_SECRET", "").strip()
+# ★ A SANDBOX purchase costs nothing, so it may activate ONLY the founder's own test numbers
+#   (ARUVI_MANUAL_CHECKOUT_NUMBERS) — anyone else's sandbox receipt is recorded and ignored.
+# ★ STORE SALES AND THE INVOICE (X10, CA question open): Apple/Google are the seller of
+#   record and issue the receipt; Meyy's own tax invoice is NOT raised for a store purchase
+#   unless this is "1". Default off until the CA says otherwise.
+STORE_INVOICE = os.environ.get("ARUVI_STORE_INVOICE", "0").strip() == "1"
+
+
+def revenuecat_on() -> bool:
+    return bool(REVENUECAT_SECRET_KEY and REVENUECAT_WEBHOOK_SECRET)
+
 # ── The WhatsApp Support inbox (2026-09-30) ─────────────────────────────────────
 # Customer messages to the Meyy number arrive at the server; the founder reads and answers them
 # at {PUBLIC_API_URL}/support-inbox. The page is closed until SUPPORT_INBOX_PASSWORD is set

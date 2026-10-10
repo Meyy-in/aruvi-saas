@@ -191,6 +191,11 @@ def test_manual_checkout_allowlist_and_off_mode():
     try:
         H = {"X-Aruvi-User": "919000000001"}      # on the allowlist (last 10 digits)
         accept_current(c, H)
+        # a test number sees the no-money checkout on the website; anyone else sees Razorpay
+        assert c.get("/entitlement", headers=H).json()["payment_provider"] == "manual"
+        Hx = {"X-Aruvi-User": "9000000077"}
+        accept_current(c, Hx)
+        assert c.get("/entitlement", headers=Hx).json()["payment_provider"] == "razorpay"
         r = c.post("/onboarding/checkout", headers=H, json=dict(BODY, email="al@example.com"))
         assert r.status_code == 200 and r.json()["status"] == "active", r.json()
     finally:

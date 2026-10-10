@@ -1,0 +1,51 @@
+# EAS Build upload rules (2026-10-09). Expo would otherwise archive the whole repo (4.3 GB:
+# data/, textbooks/, web/, api/…). The phone build needs only mobile/ and packages/shared/
+# (mobile/package.json links it by `file:../packages/shared`). Builds run with EAS_NO_VCS=1
+# and EAS_PROJECT_ROOT=<repo root>, so this file — not .gitignore — decides what is uploaded.
+# Top-level folders and files the phone build does not need (listed explicitly — a
+# "/*" + "!/mobile/" pair was tried first and dropped mobile/ itself from the archive).
+/.claude/
+/.devlogs/
+/.git/
+/.pytest_cache/
+/.walk_tmp/
+/Claude outputs/
+/api/
+/archive/
+/aruvi-scripts/
+/aruvi_core/
+/backup/
+/backups/
+/cowork prompts/
+/data/
+/deploy/
+/docs/
+/genon/
+node_modules/
+/out/
+/runtime_data/
+/site/
+/tests/
+/textbooks/
+/web/
+/.dockerignore
+/.gitignore
+/CLAUDE.md
+/MEMORY.md
+/STORAGE_POLICY.md
+/Dockerfile
+/dev.sh
+/package.json
+/package-lock.json
+/pyproject.toml
+/render.yaml
+*.log
+
+# Inside mobile/ and packages/
+mobile/android/
+mobile/ios/
+mobile/.expo/
+.env
+.env.*
+!.env.example
+.DS_Store

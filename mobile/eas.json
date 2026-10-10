@@ -1,0 +1,39 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://meyy-api.onrender.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://npgqolatfnpvxaehdjiu.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://meyy-api.onrender.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://npgqolatfnpvxaehdjiu.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://meyy-api.onrender.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://npgqolatfnpvxaehdjiu.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
