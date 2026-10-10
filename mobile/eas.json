@@ -10,7 +10,8 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://meyy-api.onrender.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://npgqolatfnpvxaehdjiu.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_KEY": "goog_ntwbTCDwleosLjhdxHVcGSLhGAi"
       },
       "ios": {
         "simulator": false
@@ -21,7 +22,8 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://meyy-api.onrender.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://npgqolatfnpvxaehdjiu.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_KEY": "goog_ntwbTCDwleosLjhdxHVcGSLhGAi"
       }
     },
     "production": {
@@ -29,7 +31,8 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://meyy-api.onrender.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://npgqolatfnpvxaehdjiu.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Dy3sOrhvsieOfIGohhKbUA_5tzM8ysm",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_KEY": "goog_ntwbTCDwleosLjhdxHVcGSLhGAi"
       }
     }
   },
